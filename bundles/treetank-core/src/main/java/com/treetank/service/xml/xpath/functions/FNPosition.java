@@ -35,8 +35,6 @@ import com.treetank.utils.TypedValue;
  */
 public class FNPosition extends AbsFunction {
 
-    private Integer posCount;
-
     /**
      * Constructor.
      * 
@@ -58,19 +56,6 @@ public class FNPosition extends AbsFunction {
         final int returnType) {
 
         super(rtx, args, min, max, returnType);
-        posCount = 0;
-        if (getArgs().size() != 0) {
-            throw new IllegalStateException("This function is not supported yet.");
-        }
-    }
-
-    /**
-     * Resets the position counter. This is necessary, because the position of
-     * the current item is not the position in the final result sequence, but an
-     * intermediate result sequence.
-     */
-    public void resetCounter() {
-        posCount = 0;
     }
 
     /**
@@ -78,10 +63,16 @@ public class FNPosition extends AbsFunction {
      */
     @Override
     protected byte[] computeResult() {
+        Integer position = 0;
+        final long currentNode = getTransaction().getNode().getNodeKey();
+        getTransaction().moveToParent();
+        getTransaction().moveToFirstChild();
+        do {
+            position++;
+            getTransaction().moveToRightSibling();
+        } while (getTransaction().getNode().getNodeKey() != currentNode);
 
-        posCount++;
-
-        return TypedValue.getBytes(posCount.toString());
+        return TypedValue.getBytes(position.toString());
     }
 
 }

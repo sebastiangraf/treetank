@@ -15,12 +15,14 @@
  * 
  */
 
-package com.treetank.service.xml.xpath.functions;
+package com.treetank.service.xml.xpath.functions.sequences;
 
 import java.util.List;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.service.xml.xpath.functions.AbsFunction;
+import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
@@ -71,7 +73,7 @@ public class FNBoolean extends AbsFunction {
 
             final IReadTransaction rtx = axis.getTransaction();
 
-            if (rtx.getNode().getNodeKey() >= 0) { // first item is a node ->
+            if (rtx.getNode().getNodeKey() >= 0) { // first item is a real node ->
                 // true
                 value = true;
             } else {

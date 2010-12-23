@@ -31,6 +31,7 @@ import com.treetank.axis.AbsAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.service.xml.xpath.comparators.AbsComparator;
 import com.treetank.service.xml.xpath.comparators.CompKind;
+import com.treetank.service.xml.xpath.comparators.ValueComp;
 import com.treetank.service.xml.xpath.expr.AndExpr;
 import com.treetank.service.xml.xpath.expr.CastExpr;
 import com.treetank.service.xml.xpath.expr.CastableExpr;
@@ -51,6 +52,7 @@ import com.treetank.service.xml.xpath.expr.VariableAxis;
 import com.treetank.service.xml.xpath.filter.DupFilterAxis;
 import com.treetank.service.xml.xpath.filter.PredicateFilterAxis;
 import com.treetank.service.xml.xpath.functions.AbsFunction;
+import com.treetank.service.xml.xpath.functions.FNPosition;
 import com.treetank.service.xml.xpath.functions.FuncDef;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
@@ -76,8 +78,8 @@ public final class PipelineBuilder {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(PipelineBuilder.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(PipelineBuilder.class));
 
     private final FastStack<FastStack<ExpressionSingle>> mExprStack;
 
@@ -556,18 +558,17 @@ public final class PipelineBuilder {
                 // .getValue())));
                 // return; // TODO: YES! it is dirty!
 
-                // AtomicValue pos = new AtomicValue(transaction.getRawValue(),
-                // transaction.keyForName("xs:integer"));
-                // long position = transaction.getItemList().addItem(pos);
-                // predicate.reset(transaction.getNodeKey());
-                // IAxis function = new FNPosition(transaction, new
-                // ArrayList<IAxis>(),
-                // FuncDef.POS.getMin(), FuncDef.POS.getMax(), transaction
-                // .keyForName(FuncDef.POS.getReturnType()));
-                // IAxis expectedPos = new LiteralExpr(transaction, position);
+                // AtomicValue pos =
+                // new AtomicValue(mTransaction.getNode().getRawValue(), mTransaction
+                // .keyForName("xs:integer"));
+                // long position = mTransaction.getItemList().addItem(pos);
+                // mPredicate.reset(mTransaction.getNode().getNodeKey());
+                // IAxis function =
+                // new FNPosition(mTransaction, new ArrayList<IAxis>(), FuncDef.POS.getMin(), FuncDef.POS
+                // .getMax(), mTransaction.keyForName(FuncDef.POS.getReturnType()));
+                // IAxis expectedPos = new LiteralExpr(mTransaction, position);
                 //
-                // predicate = new ValueComp(transaction, function, expectedPos,
-                // CompKind.EQ);
+                // mPredicate = new ValueComp(mTransaction, function, expectedPos, CompKind.EQ);
 
             }
         }

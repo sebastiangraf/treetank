@@ -365,6 +365,8 @@ public class AtomicValue implements IItem {
         final StringBuilder builder = new StringBuilder();
         builder.append("Atomic Value: ");
         builder.append(new String(mValue));
+        builder.append("\nKey: ");
+        builder.append(mItemKey);
         return builder.toString();
     }
 

@@ -241,12 +241,7 @@ public class ReadTransactionState {
      * @return The item list.
      */
     public final IItemList getItemList() {
-        if (mItemList != null) {
-            return mItemList;
-        } else {
-            throw new IllegalStateException("No ItemList for transaction found.");
-        }
-
+        return mItemList;
     }
 
     // /**
@@ -405,6 +400,15 @@ public class ReadTransactionState {
         final long nodePageOffset =
             (mNodeKey - ((mNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
         return (int)nodePageOffset;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return new StringBuilder("DatabaseConfiguration: ").append(mDatabaseConfiguration.toString()).append(
+            "\nPageReader: ").append(mPageReader.toString()).append("\nUberPage: ").append(
+            mUberPage.toString()).append("\nRevRootPage: ").append(mRootPage.toString()).toString();
     }
 
 }

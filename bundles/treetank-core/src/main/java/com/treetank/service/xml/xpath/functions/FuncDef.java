@@ -20,6 +20,9 @@ package com.treetank.service.xml.xpath.functions;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.treetank.service.xml.xpath.functions.sequences.FNBoolean;
+import com.treetank.service.xml.xpath.functions.sequences.FNCount;
+
 /**
  * <h1>FuncDef</h1>
  * <p>
@@ -29,25 +32,102 @@ import java.util.Map;
  */
 public enum FuncDef {
 
-        /**
-         * <p>
-         * fn:node-name($arg as node()?) as xs:QName?
-         * </p>
-         * Returns an expanded-QName for node kinds that can have names. For other
-         * kinds of nodes it returns the empty sequence. If $arg is the empty
-         * sequence, the empty sequence is returned.
-         */
-        NODE_NAME("fn:node-name", AbsFunction.class, 1, 1, "xs:QName"),
+        // ////////////////////////
+        // SEQUENCE FUNCTIONS
+        // ////////////////////////
 
         /**
          * <p>
-         * fn:nilled : fn:nilled($arg as node()?) as xs:boolean?
+         * fn:boolean($arg as item()*) as xs:boolean
          * </p>
-         * Returns an xs:boolean indicating whether the argument node is "nilled".
-         * If the argument is not an element node, returns the empty sequence. If
-         * the argument is the empty sequence, returns the empty sequence.
+         * <p>
+         * Computes the effective boolean value of the sequence $arg. See Section 2.4.3 Effective Boolean
+         * ValueXP
+         * </p>
          */
-        NILLED("fn:nilled", AbsFunction.class, 1, 1, "xs:boolean"),
+        BOOLEAN(FNBoolean.class, 1, 1, "xs:boolean", "fn:boolean", "boolean"),
+
+        /**
+         * <p>
+         * fn:count($arg as item()*) as xs:integer
+         * </p>
+         * <p>
+         * Returns the number of items in the value of $arg.
+         * </p>
+         */
+        COUNT(FNCount.class, 1, 2, "xs:integer", "fn:count", "count"),
+
+        /**
+         * <p>
+         * fn:sum($arg as xs:anyAtomicType*) as xs:anyAtomicType
+         * </p>
+         * <p>
+         * fn:sum( $arg as xs:anyAtomicType*, $zero as xs:anyAtomicType?) as xs:anyAtomicType?
+         * </p>
+         * MIN
+         * <p>
+         * Returns a value obtained by adding together the values in $arg. If $zero is not specified, then the
+         * value returned for an empty sequence is the xs:integer value 0. If $zero is specified, then the
+         * value returned for an empty sequence is $zero.
+         * </p>
+         */
+        SUM(FNCount.class, 1, 2, "xs:anyAtomicType", "fn:sum", "sum"),
+
+        /**
+         * <p>
+         * fn:avg($arg as xs:anyAtomicType*) as xs:anyAtomicType?
+         * </p>
+         * <p>
+         * Returns the average of the values in the input sequence $arg, that is, the sum of the values
+         * divided by the number of values.
+         * </p>
+         */
+        AVG(AbsFunction.class, 1, 1, "xs:anyAtomicType", "fn:avg"),
+
+        /**
+         * <p>
+         * fn:max($arg as xs:anyAtomicType*) as xs:anyAtomicType?
+         * </p>
+         * <p>
+         * fn:max($arg as xs:anyAtomicType*, $collation as string) as xs:anyAtomicType?
+         * </p>
+         * <p>
+         * Selects an item from the input sequence $arg whose value is greater than or equal to the value of
+         * every other item in the input sequence. If there are two or more such items, then the specific item
+         * whose value is returned is �implementation dependent�.
+         * </p>
+         */
+        MAX(AbsFunction.class, 1, 2, "xs:anyAtomicType", "fn:max"),
+
+        /**
+         * <p>
+         * fn:min($arg as xs:anyAtomicType*) as xs:anyAtomicType?
+         * </p>
+         * <p>
+         * fn:min($arg as xs:anyAtomicType*, $collation as string) as xs:anyAtomicType?
+         * </p>
+         * <p>
+         * selects an item from the input sequence $arg whose value is less than or equal to the value of
+         * every other item in the input sequence. If there are two or more such items, then the specific item
+         * whose value is returned is �implementation dependent�.
+         * </p>
+         */
+        MIN(AbsFunction.class, 1, 2, "xs:anyAtomicType", "fn:min"),
+
+        // ////////////////////////
+        // END AGGREGATE FUNCTIONS
+        // ////////////////////////
+
+        /**
+         * <p>
+         * fn:not($arg as item()*) as xs:boolean
+         * </p>
+         * <p>
+         * $arg is first reduced to an effective boolean value by applying the fn:boolean() function. Returns
+         * true if the effective boolean value is false, and false if the effective boolean value is true.;
+         * </p>
+         */
+        NOT(FNNot.class, 1, 1, "xs:boolean", "fn:not", "not"),
 
         /**
          * <p>
@@ -62,7 +142,40 @@ public enum FuncDef {
          * exactly the same as if the context item had been passed as the argument.
          * </p>
          */
-        STRING("fn:string", FNString.class, 0, 1, "xs:string"),
+        STRING(FNString.class, 0, 1, "xs:string", "fn:string", "string"),
+
+        /**
+         * <p>
+         * fn:position with no argument
+         * </p>
+         * <p>
+         * fn:position with xs:integer
+         * </p>
+         * <p>
+         * Returns the context position from the dynamic contextas xs:intege.r
+         * </p>
+         */
+        POSITION(FNPosition.class, 0, 0, "xs:integer", "fn:position", "position"),
+
+        /**
+         * <p>
+         * fn:node-name($arg as node()?) as xs:QName?
+         * </p>
+         * Returns an expanded-QName for node kinds that can have names. For other
+         * kinds of nodes it returns the empty sequence. If $arg is the empty
+         * sequence, the empty sequence is returned.
+         */
+        NODE_NAME(AbsFunction.class, 1, 1, "xs:QName", "fn:node-name"),
+
+        /**
+         * <p>
+         * fn:nilled : fn:nilled($arg as node()?) as xs:boolean?
+         * </p>
+         * Returns an xs:boolean indicating whether the argument node is "nilled".
+         * If the argument is not an element node, returns the empty sequence. If
+         * the argument is the empty sequence, returns the empty sequence.
+         */
+        NILLED(AbsFunction.class, 1, 1, "xs:boolean", "fn:nilled"),
 
         /**
          * <p>
@@ -71,7 +184,7 @@ public enum FuncDef {
          * <p>
          * fn:data takes a sequence of items and returns a sequence of atomic values.
          */
-        DATA("fn:data", AbsFunction.class, 1, 1, "xs:anyAtomicType"),
+        DATA(AbsFunction.class, 1, 1, "xs:anyAtomicType", "fn:data"),
 
         /**
          * <p>
@@ -85,7 +198,7 @@ public enum FuncDef {
          * dm:base-uri() for that kind of node in Section 5.2 base-uri AccessorDM.
          * </p>
          */
-        BASE_URI("fn:base-uri", AbsFunction.class, 0, 1, "xs:anyURI"),
+        BASE_URI(AbsFunction.class, 0, 1, "xs:anyURI", "fn:base-uri"),
 
         /**
          * <p>
@@ -96,161 +209,8 @@ public enum FuncDef {
          * function defined in Section 6.1.2 AccessorsDM.
          * </p>
          */
-        DOC_URI("fn:document-uri", AbsFunction.class, 1, 1, "xs:anyURI"),
+        DOC_URI(AbsFunction.class, 1, 1, "xs:anyURI", "fn:document-uri"),
 
-        // /**
-        // * <p>
-        // * fn:error() as none
-        // * </p>
-        // * <p>
-        // * fn:error($error as xs:QName) as none
-        // * </p>
-        // * <p>
-        // * fn:error($error as xs:QName?, $description as xs:string) as none
-        // * </p>
-        // * <p>
-        // * fn:error( $error as xs:QName?, $description as xs:string, $error-object
-        // as
-        // * item()*) as none
-        // * </p>
-        // * <p>
-        // * The fn:error function raises an error. While this function never
-        // returns
-        // a
-        // * value, an error is returned to the external processing environment as
-        // an
-        // * xs:anyURI or an xs:QName. The error xs:anyURI is derived from the error
-        // * xs:QName. An error xs:QName with namespace URI NS and local part LP
-        // will
-        // be
-        // * returned as the xs:anyURI NS#LP. The method by which the xs:anyURI or
-        // * xs:QName is returned to the external processing environment is
-        // * implementation dependent�
-        // * </p>
-        // */
-        // ERROR("fn:error", AbstractFunction.class, 0, 3),
-        //
-        // /**
-        // * <p>
-        // * fn:trace($value as item()*, $label as xs:string) as item()*
-        // * </p>
-        // * <p>
-        // * Provides an execution trace intended to be used in debugging queries.
-        // * </p>
-        // */
-        // TRACE("fn:trace", 1, 2),
-        //
-        // /**
-        // * <p>
-        // * op:numeric-add($arg1 as numeric, $arg2 as numeric) as numeric.
-        // * </p>
-        // * <p>
-        // * Backs up the "+" operator and returns the arithmetic sum of its
-        // operands
-        // * </p>
-        // */
-        // N_ADD("op:numeric-add", 2, 2),
-        //
-        // /**
-        // * <p>
-        // * op:numeric-subtract($arg1 as numeric, $arg2 as numeric) as numeric
-        // * </p>
-        // * <p>
-        // * Backs up the "-" operator and returns the arithmetic difference of its
-        // * operands: ($arg1 - $arg2).
-        // * </p>
-        // */
-        // N_SUB("op:numeric-substract", 2, 2),
-        //
-        // /**
-        // * <p>
-        // * op:numeric-multiply($arg1 as numeric, $arg2 as numeric) as numeric
-        // * </p>
-        // * <p>
-        // * Backs up the "*" operator and returns the arithmetic product of its
-        // * operands: ($arg1 * $arg2).
-        // * </p>
-        // */
-        // N_MUL("op:numeric-multiply", 2, 2),
-        //
-        // /**
-        // * <p>
-        // * op:numeric-divide($arg1 as numeric, $arg2 as numeric) as numeric
-        // * </p>
-        // * <p>
-        // * Backs up the "div" operator and returns the arithmetic quotient of its
-        // * operands: ($arg1 div $arg2).
-        // * </p>
-        // */
-        // N_DIV("op:numeric-divide", 2, 2),
-        //
-        // /**
-        // * <p>
-        // * op:numeric-integer-divide($arg1 as numeric, $arg2 as numeric) as
-        // xs:integer
-        // * </p>
-        // * <p>
-        // * This function backs up the "idiv" operator and performs an integer
-        // * division: that is, it divides the first argument by the second, and
-        // returns
-        // * the integer obtained by truncating the fractional part of the result.
-        // The
-        // * division is performed so that the sign of the fractional part is the
-        // same
-        // * as the sign of the dividend.
-        // * </p>
-        // */
-        // N_IDIV("op:numeric_interger-divide", 2, 2),
-        //
-        // /**
-        // * <p>
-        // * op:numeric-mod($arg1 as numeric, $arg2 as numeric) as numeric
-        // * </p>
-        // * <p>
-        // * Backs up the "mod" operator. Informally, this function returns the
-        // * remainder resulting from dividing $arg1, the dividend, by $arg2, the
-        // * divisor. The operation a mod b for operands that are xs:integer or
-        // * xs:decimal, or types derived from them, produces a result such that (a
-        // idiv
-        // * b)*b+(a mod b) is equal to a and the magnitude of the result is always
-        // less
-        // * than the magnitude of b. This identity holds even in the special case
-        // that
-        // * the dividend is the negative integer of largest possible magnitude for
-        // its
-        // * type and the divisor is -1 (the remainder is 0). It follows from this
-        // rule
-        // * that the sign of the result is the sign of the dividend.
-        // * </p>
-        // */
-        // N_MOD("op:numeric:mod", 2, 2),
-        //
-        // /**
-        // * <p>
-        // * op:numeric-unary-plus($arg as numeric) as numeric
-        // * </p>
-        // * <p>
-        // * Backs up the unary "+" operator and returns its operand with the sign
-        // * unchanged: (+ $arg). Semantically, this operation performs no
-        // operation.
-        // * </p>
-        // */
-        // N_PLUS("op:numeric-unary-plus", 1, 1),
-        //
-        // /**
-        // * <p>
-        // * op:numeric-unary-minus($arg as numeric) as numeric
-        // * </p>
-        // * <p>
-        // * Backs up the unary "-" operator and returns its operand with the sign
-        // * reversed: (- $arg). If $arg is positive, its negative is returned; if
-        // it
-        // is
-        // * negative, its positive is returned.
-        // * </p>
-        // */
-        // N_MINUS("op:numeric-unary-minus", 1, 1),
-        //
         /**
          * <p>
          * op:numeric-equal($arg1 as numeric, $arg2 as numeric) as xs:boolean
@@ -262,7 +222,7 @@ public enum FuncDef {
          * This function backs up the "eq", "ne", "le" and "ge" operators on numeric values.
          * </p>
          */
-        N_EQ("op:numeric-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        N_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:numeric-equal"),
 
         /**
          * <p>
@@ -275,7 +235,7 @@ public enum FuncDef {
          * This function backs up the "lt" and "le" operators on numeric values.
          * </p>
          */
-        N_LT("op:numeric-less-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        N_LT(AbsFunction.class, 2, 2, "xs:boolean", "op:numeric-less-than"),
 
         /**
          * <p>
@@ -285,76 +245,8 @@ public enum FuncDef {
          * Returns true if and only if $arg1 is greater than $arg2. F
          * </p>
          */
-        N_GT("op:numeric-greater-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        N_GT(AbsFunction.class, 2, 2, "xs:boolean", "op:numeric-greater-than"),
 
-        // /**
-        // * <p>
-        // * fn:abs($arg as numeric?) as numeric?
-        // * </p>
-        // * <p>
-        // * Returns the absolute value of $arg.
-        // * </p>
-        // */
-        // ABS("fn:abs", 1, 1),
-        //
-        // /**
-        // * <p>
-        // * fn:ceiling($arg as numeric?) as numeric?
-        // * </p>
-        // * <p>
-        // * Returns the smallest (closest to negative infinity) number with no
-        // * fractional part that is not less than the value of $arg.
-        // * </p>
-        // */
-        // CEIL("fn:ceiling", 1, 1),
-        //
-        // /**
-        // * <p>
-        // * fn:floor($arg as numeric?) as numeric?
-        // * </p>
-        // * <p>
-        // * Returns the largest (closest to positive infinity) number with no
-        // * fractional part that is not greater than the value of $arg.
-        // * </p>
-        // */
-        // FLOOR("fn:floor", 1, 1),
-        //
-        // /**
-        // * <p>
-        // * fn:round($arg as numeric?) as numeric?
-        // * </p>
-        // * <p>
-        // * Returns the number with no fractional part that is closest to the
-        // argument.
-        // * If there are two such numbers, then the one that is closest to positive
-        // * infinity is returned. If type of $arg is one of the four numeric types
-        // * xs:float, xs:double, xs:decimal or xs:integer the type of the result is
-        // the
-        // * same as the type of $arg. If the type of $arg is a type derived from
-        // one
-        // of
-        // * the numeric types, the result is an instance of the base numeric type.
-        // */
-        // ROUND("fn:round", 1, 1),
-        //
-        // /**
-        // * <p>
-        // * fn:round-half-to-even($arg as numeric?) as numeric?
-        // * </p>
-        // * <p>
-        // * fn:round-half-to-even($arg as numeric?, $precision as xs:integer) as
-        // * numeric?
-        // * </p>
-        // * <p>
-        // * The value returned is the nearest (that is, numerically closest) value
-        // to
-        // * $arg that is a multiple of ten to the power of minus $precision. If two
-        // * such values are equally near (e.g. if the fractional part in $arg is
-        // * exactly .500...), the function returns the one whose least significant
-        // * digit is even.
-        // */
-        // ROUND_EVEN("fn:round-half-to-even", 1, 2),
-        //
         /**
          * <p>
          * fn:codepoints-to-string($arg as xs:integer*) as xs:string
@@ -365,7 +257,7 @@ public enum FuncDef {
          * character, an error is raised [err:FOCH0001].
          * </p>
          */
-        CODEPNT2STR("fn:codepoints-to-string", AbsFunction.class, 0, 1, "xs:string"),
+        CODEPNT2STR(AbsFunction.class, 0, 1, "xs:string", "fn:codepoints-to-string"),
 
         /**
          * <p>
@@ -375,7 +267,7 @@ public enum FuncDef {
          * Returns the sequence of [The Unicode Standard] code points that constitute an xs:string. If $arg is
          * a zero-length string or the empty sequence, the empty sequence is returned.
          */
-        STR2CODEPNT("fn:string-to-codepoints", AbsFunction.class, 1, 1, "xs:integer"),
+        STR2CODEPNT(AbsFunction.class, 1, 1, "xs:integer", "fn:string-to-codepoints"),
 
         /**
          * <p>
@@ -391,7 +283,7 @@ public enum FuncDef {
          * used.
          * <p>
          */
-        COMP("fn:compare", AbsFunction.class, 2, 3, "xs:integer"),
+        COMP(AbsFunction.class, 2, 3, "xs:integer", "fn:compare"),
 
         /**
          * <p>
@@ -403,7 +295,7 @@ public enum FuncDef {
          * (http://www.w3.org/2005/xpath-functions/collation/codepoint).
          * </p>
          */
-        CODEPNT_EQ("fn:codepoint-equal", AbsFunction.class, 2, 2, "xs:string"),
+        CODEPNT_EQ(AbsFunction.class, 2, 2, "xs:string", "fn:codepoint-equal"),
 
         /**
          * <p>
@@ -415,7 +307,7 @@ public enum FuncDef {
          * is the empty sequence, the argument is treated as the zero-length string.
          * </p>
          */
-        CONCAT("fn:concat", AbsFunction.class, 2, Integer.MAX_VALUE, "xs:string"),
+        CONCAT(AbsFunction.class, 2, Integer.MAX_VALUE, "xs:string", "fn:concat"),
 
         /**
          * <p>
@@ -427,7 +319,7 @@ public enum FuncDef {
          * concatenated without a separator.
          * </p>
          */
-        STRJOIN("fn:string-join", AbsFunction.class, 2, 2, "xs:string"),
+        STRJOIN(AbsFunction.class, 2, 2, "xs:string", "fn:string-join"),
 
         /**
          * <p>
@@ -444,7 +336,7 @@ public enum FuncDef {
          * those characters in positions greater than zero are returned.
          * </p>
          */
-        SUBSTR("fn:substring", AbsFunction.class, 2, 3, "xs:string"),
+        SUBSTR(AbsFunction.class, 2, 3, "xs:string", "fn:substring"),
 
         /**
          * <p>
@@ -457,7 +349,7 @@ public enum FuncDef {
          * Returns an xs:integer equal to the length in characters of the value of $arg.
          * <p>
          */
-        STRLEN("fn:string-length", AbsFunction.class, 0, 1, "xs:integer"),
+        STRLEN(AbsFunction.class, 0, 1, "xs:integer", "fn:string-length"),
 
         /**
          * <p>
@@ -470,7 +362,7 @@ public enum FuncDef {
          * Returns the value of $arg with whitespace normalized by stripping leading and trailing whitespace
          * and replacing sequences of one or more than one whitespace character with a single space, #x20.
          */
-        NORM_SPACE("fn:normalize-space", AbsFunction.class, 0, 1, "xs:string"),
+        NORM_SPACE(AbsFunction.class, 0, 1, "xs:string", "fn:normalize-space"),
 
         /**
          * <p>
@@ -484,7 +376,7 @@ public enum FuncDef {
          * form identified by the value of $normalizationForm. The effective value of the $normalizationForm
          * is computed by removing leading and trailing blanks, if present, and converting to upper case.
          */
-        NORM_UNI("fn:normalize-unicode", AbsFunction.class, 1, 2, "xs:string"),
+        NORM_UNI(AbsFunction.class, 1, 2, "xs:string", "fn:normalize-unicode"),
 
         /**
          * <p>
@@ -501,7 +393,7 @@ public enum FuncDef {
          * value in its original form.
          * </p>
          */
-        UP_CASE("fn:upper-case", AbsFunction.class, 1, 1, "xs:string"),
+        UP_CASE(AbsFunction.class, 1, 1, "xs:string", "fn:upper-case"),
 
         /**
          * <p>
@@ -518,7 +410,7 @@ public enum FuncDef {
          * value in its original form.
          * </p>
          */
-        LOW_CASE("fn:lower-case", AbsFunction.class, 1, 1, "xs:string"),
+        LOW_CASE(AbsFunction.class, 1, 1, "xs:string", "fn:lower-case"),
 
         /**
          * <p>
@@ -530,7 +422,7 @@ public enum FuncDef {
          * in the value of $transString.
          * </p>
          */
-        TRANSLATE("fn:translate", AbsFunction.class, 3, 3, "xs:string"),
+        TRANSLATE(AbsFunction.class, 3, 3, "xs:string", "fn:translate"),
 
         /**
          * <p>
@@ -544,7 +436,7 @@ public enum FuncDef {
          * percent-encoded form as described in [RFC 3986].
          * </p>
          */
-        ENCODE_URI("fn:encode-for-uri", AbsFunction.class, 1, 1, "xs:string"),
+        ENCODE_URI(AbsFunction.class, 1, 1, "xs:string", "fn:encode-for-uri"),
 
         /**
          * <p>
@@ -555,7 +447,7 @@ public enum FuncDef {
          * in Section 3.1 of [RFC 3987]. It is idempotent but not invertible.
          * </p>
          */
-        IRI2URI("fn:iri-to-uri", AbsFunction.class, 1, 1, "xs:string"),
+        IRI2URI(AbsFunction.class, 1, 1, "xs:string", "fn:iri-to-uri"),
 
         /**
          * <p>
@@ -571,7 +463,7 @@ public enum FuncDef {
          * hexadecimal representation of the octet. This function must always
          * generate hexadecimal values using the upper-case letters A-F.
          */
-        ESCAPE_HTML_URI("fn:escape-html-uri", AbsFunction.class, 1, 1, "xs:string"),
+        ESCAPE_HTML_URI(AbsFunction.class, 1, 1, "xs:string", "fn:escape-html-uri"),
 
         /**
          * <p>
@@ -585,7 +477,7 @@ public enum FuncDef {
          * collation units in the value of $arg2, according to the collation that is
          * used.
          */
-        CONTAINS("fn:contains", AbsFunction.class, 2, 3, "xs:boolean"),
+        CONTAINS(AbsFunction.class, 2, 3, "xs:boolean", "fn:contains"),
 
         /**
          * <p>
@@ -599,7 +491,7 @@ public enum FuncDef {
          * collation that is used.
          * <p>
          */
-        STARTS_WITH("fn:starts-with", AbsFunction.class, 2, 3, "xs:boolean"),
+        STARTS_WITH(AbsFunction.class, 2, 3, "xs:boolean", "fn:starts-with"),
 
         /**
          * <p>
@@ -612,7 +504,7 @@ public enum FuncDef {
          * collation that is used.
          * <p>
          */
-        ENDS_WITH("fn:ends-with", AbsFunction.class, 2, 3, "xs:boolean"),
+        ENDS_WITH(AbsFunction.class, 2, 3, "xs:boolean", "fn:ends-with"),
         /**
          * <p>
          * fn:substring-before($arg1 as xs:string?, $arg2 as xs:string?) as xs:string
@@ -626,7 +518,7 @@ public enum FuncDef {
          * $arg2 according to the collation that is used.
          * <p>
          */
-        SUBSTR_BEFORE("fn:substring-before", AbsFunction.class, 2, 3, "xs:string"),
+        SUBSTR_BEFORE(AbsFunction.class, 2, 3, "xs:string", "fn:substring-before"),
 
         /**
          * <p>
@@ -640,7 +532,7 @@ public enum FuncDef {
          * according to the collation that is used.
          * <p>
          */
-        SUBSTR_AFTER("fn:substring-after", AbsFunction.class, 2, 3, "xs:string"),
+        SUBSTR_AFTER(AbsFunction.class, 2, 3, "xs:string", "fn:substring-after"),
 
         /**
          * <p>
@@ -654,7 +546,7 @@ public enum FuncDef {
          * influenced by the value of $flags, if present; otherwise, it returns false.
          * <p>
          */
-        MATCH("fn:matches", AbsFunction.class, 2, 3, "xs:boolean"),
+        MATCH(AbsFunction.class, 2, 3, "xs:boolean", "fn:matches"),
 
         /**
          * <p>
@@ -669,7 +561,7 @@ public enum FuncDef {
          * $input that matches the given $pattern with an occurrence of the $replacement string.
          * </p>
          */
-        REPLACE("fn:replace", AbsFunction.class, 3, 4, "xs:string"),
+        REPLACE(AbsFunction.class, 3, 4, "xs:string", "fn:replace"),
 
         /**
          * <p>
@@ -683,7 +575,7 @@ public enum FuncDef {
          * matches $pattern as a separator. The separators themselves are not returned.
          * </p>
          */
-        TOKENIZE("fn:tokenize", AbsFunction.class, 2, 3, "xs:string"),
+        TOKENIZE(AbsFunction.class, 2, 3, "xs:string", "fn:tokenize"),
         /**
          * <p>
          * fn:resolve-uri($relative as xs:string?) as xs:anyURI?
@@ -695,7 +587,7 @@ public enum FuncDef {
          * The purpose of this function is to enable a relative URI to be resolved against an absolute URI.
          * </p>
          */
-        RESOLVE_URI("fn:resolve_uri", AbsFunction.class, 1, 2, "xs:string"),
+        RESOLVE_URI(AbsFunction.class, 1, 2, "xs:string", "fn:resolve_uri"),
 
         /**
          * <p>
@@ -703,7 +595,7 @@ public enum FuncDef {
          * </p>
          * Returns the xs:boolean value true. Equivalent to xs:boolean("1").
          */
-        TRUE("fn:true", AbsFunction.class, 0, 0, "xs:boolean"),
+        TRUE(AbsFunction.class, 0, 0, "xs:boolean", "fn:true"),
 
         /**
          * <p>
@@ -711,7 +603,7 @@ public enum FuncDef {
          * </p>
          * Returns the xs:boolean value false. Equivalent to xs:boolean("0").
          */
-        FALSE("fn:false", AbsFunction.class, 0, 0, "xs:boolean"),
+        FALSE(AbsFunction.class, 0, 0, "xs:boolean", "fn:false"),
 
         /**
          * <p>
@@ -721,7 +613,7 @@ public enum FuncDef {
          * Returns false if one of the arguments is true and the other argument is
          * false.
          */
-        B_EQ("op:boolean-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        B_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:boolean-equal"),
 
         /**
          * <p>
@@ -730,7 +622,7 @@ public enum FuncDef {
          * <p>
          * Returns true if $arg1 is false and $arg2 is true. Otherwise, returns false.
          */
-        B_LT("op:boolean-less-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        B_LT(AbsFunction.class, 2, 2, "xs:boolean", "op:boolean-less-than"),
 
         /**
          * <p>
@@ -740,18 +632,7 @@ public enum FuncDef {
          * Returns true if $arg1 is true and $arg2 is false. Otherwise, returns false.
          * </p>
          */
-        B_GT("op:boolean-greater-than", AbsFunction.class, 2, 2, "xs:boolean"),
-
-        /**
-         * <p>
-         * fn:not($arg as item()*) as xs:boolean
-         * </p>
-         * <p>
-         * $arg is first reduced to an effective boolean value by applying the fn:boolean() function. Returns
-         * true if the effective boolean value is false, and false if the effective boolean value is true.;
-         * </p>
-         */
-        NOT("fn:not", FNNot.class, 1, 1, "xs:boolean"),
+        B_GT(AbsFunction.class, 2, 2, "xs:boolean", "op:boolean-greater-than"),
 
         /**
          * <p>
@@ -762,7 +643,7 @@ public enum FuncDef {
          * Returns true if and only if $arg1 is less than $arg2. Returns false otherwise.
          * </p>
          */
-        YMD_LT("op:yearMonthDuration-less-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        YMD_LT(AbsFunction.class, 2, 2, "xs:boolean", "op:yearMonthDuration-less-than"),
 
         /**
          * <p>
@@ -773,7 +654,7 @@ public enum FuncDef {
          * Returns true if and only if $arg1 is greater than $arg2. Returns false otherwise.
          * </p>
          */
-        YMD_GT("op:yearMonthDuration-greater-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        YMD_GT(AbsFunction.class, 2, 2, "xs:boolean", "op:yearMonthDuration-greater-than"),
 
         /**
          * <p>
@@ -784,7 +665,7 @@ public enum FuncDef {
          * Returns true if and only if $arg1 is less than $arg2. Returns false otherwise.
          * </p>
          */
-        DTD_LT("op:dayTimeDuration-less-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        DTD_LT(AbsFunction.class, 2, 2, "xs:boolean", "op:dayTimeDuration-less-than"),
 
         /**
          * <p>
@@ -795,7 +676,7 @@ public enum FuncDef {
          * Returns true if and only if $arg1 is greater than $arg2. Returns false otherwise.
          * </p>
          */
-        DTD_GT("op:dayTimeDuration-greater-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        DTD_GT(AbsFunction.class, 2, 2, "xs:boolean", "op:dayTimeDuration-greater-than"),
 
         /**
          * <p>
@@ -806,7 +687,7 @@ public enum FuncDef {
          * and $arg2 compare equal respectively. Returns false otherwise.
          * </p>
          */
-        DUR_EQ("op:duration-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        DUR_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:duration-equal"),
 
         /**
          * <p>
@@ -818,7 +699,7 @@ public enum FuncDef {
          * "Order relation on dateTime" for xs:dateTime values with timezones. Returns false otherwise.
          * </p>
          */
-        DT_EQ("op:dateTime-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        DT_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:dateTime-equal"),
 
         /**
          * <p>
@@ -830,7 +711,7 @@ public enum FuncDef {
          * "Order relation on dateTime" for xs:dateTime values with timezones. Returns false otherwise.
          * </p>
          */
-        DT_LT("p:dateTime-less-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        DT_LT(AbsFunction.class, 2, 2, "xs:boolean", "p:dateTime-less-than"),
 
         /**
          * <p>
@@ -842,7 +723,7 @@ public enum FuncDef {
          * "Order relation on dateTime" for xs:dateTime values with timezones. Returns false otherwise.
          * </p>
          */
-        DT_GT("op:dateTime-greater-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        DT_GT(AbsFunction.class, 2, 2, "xs:boolean", "op:dateTime-greater-than"),
 
         /**
          * <p>
@@ -853,7 +734,7 @@ public enum FuncDef {
          * Returns false otherwise.
          * </p>
          */
-        DA_EQ("op:date-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        DA_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:date-equal"),
 
         /**
          * <p>
@@ -864,7 +745,7 @@ public enum FuncDef {
          * $arg2. Returns false otherwise.
          * </p>
          */
-        DA_LT("op:date-less-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        DA_LT(AbsFunction.class, 2, 2, "xs:boolean", "op:date-less-than"),
 
         /**
          * <p>
@@ -875,7 +756,7 @@ public enum FuncDef {
          * $arg2. Returns false otherwise.
          * </p>
          */
-        DA_GT("op:date-greater-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        DA_GT(AbsFunction.class, 2, 2, "xs:boolean", "op:date-greater-than"),
 
         /**
          * <p>
@@ -887,7 +768,7 @@ public enum FuncDef {
          * xs:dateTime using the date components from the same reference xs:dateTime. Returns false otherwise.
          * </p>
          */
-        T_EQ("op:time-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        T_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:time-equal"),
 
         /**
          * <p>
@@ -900,7 +781,7 @@ public enum FuncDef {
          * otherwise.
          * </p>
          */
-        T_LT("op:time-less-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        T_LT(AbsFunction.class, 2, 2, "xs:boolean", "op:time-less-than"),
 
         /**
          * <p>
@@ -912,7 +793,7 @@ public enum FuncDef {
          * xs:dateTime using the date components from the same reference xs:dateTime. Returns false otherwise.
          * </p>
          */
-        T_GT("op:time-greater-than", AbsFunction.class, 2, 2, "xs:boolean"),
+        T_GT(AbsFunction.class, 2, 2, "xs:boolean", "op:time-greater-than"),
 
         /**
          * <p>
@@ -925,7 +806,7 @@ public enum FuncDef {
          * the last day of the month component in $arg1 or $arg2. Returns false otherwise.
          * </p>
          */
-        GYM_EQ("op:gYearMonth-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        GYM_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:gYearMonth-equal"),
 
         /**
          * <p>
@@ -938,7 +819,7 @@ public enum FuncDef {
          * false otherwise.
          * </p>
          */
-        GY_EQ("op:gYear-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        GY_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:gYear-equal"),
 
         /**
          * <p>
@@ -951,7 +832,7 @@ public enum FuncDef {
          * xs:dateTime template such as 1972-xx-xxT00:00:00. Returns false otherwise.
          * </p>
          */
-        GMD_EQ("op:gMonthDay-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        GMD_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:gMonthDay-equal"),
 
         /**
          * <p>
@@ -965,7 +846,7 @@ public enum FuncDef {
          * component in $arg1 or $arg2. Returns false otherwise.
          * </p>
          */
-        GM_EQ("op:gMonth-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        GM_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:gMonth-equal"),
 
         /**
          * <p>
@@ -978,7 +859,7 @@ public enum FuncDef {
          * xs:dateTime template such as 1972-12-xxT00:00:00. Returns false otherwise.
          * </p>
          */
-        GD_EQ("op:gDay-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        GD_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:gDay-equal"),
 
         /**
          * <p>
@@ -990,7 +871,7 @@ public enum FuncDef {
          * computing the months component as described in 10.3.1.3 Canonical representation.
          * </p>
          */
-        MON_FROM_DUR("fn:months-from-duration", AbsFunction.class, 1, 1, "xs:integer"),
+        MON_FROM_DUR(AbsFunction.class, 1, 1, "xs:integer", "fn:months-from-duration"),
 
         /**
          * <p>
@@ -1002,7 +883,7 @@ public enum FuncDef {
          * computing the years component as described in 10.3.1.3 Canonical representation.
          * </p>
          */
-        YEAR_FROM_DUR("fn:years-from-duration", AbsFunction.class, 1, 1, "xs:integer"),
+        YEAR_FROM_DUR(AbsFunction.class, 1, 1, "xs:integer", "fn:years-from-duration"),
 
         /**
          * <p>
@@ -1014,7 +895,7 @@ public enum FuncDef {
          * the days component as described in 10.3.2.3 Canonical representation.
          * </p>
          */
-        DAYS_FROM_DUR("fn:days-from-duration", AbsFunction.class, 1, 1, "xs:integer"),
+        DAYS_FROM_DUR(AbsFunction.class, 1, 1, "xs:integer", "fn:days-from-duration"),
 
         /**
          * <p>
@@ -1026,7 +907,7 @@ public enum FuncDef {
          * the hours component as described in 10.3.2.3 Canonical representation.
          * </p>
          */
-        HOURS_FROM_DUR("fn:hours-from-duration", AbsFunction.class, 1, 1, "xs:integer"),
+        HOURS_FROM_DUR(AbsFunction.class, 1, 1, "xs:integer", "fn:hours-from-duration"),
 
         /**
          * <p>
@@ -1038,7 +919,7 @@ public enum FuncDef {
          * computing the minutes component as described in 10.3.2.3 Canonical representation.
          * </p>
          */
-        MIN_FROM_DUR("fn:minutes-from-duration", AbsFunction.class, 1, 1, "xs:integer"),
+        MIN_FROM_DUR(AbsFunction.class, 1, 1, "xs:integer", "fn:minutes-from-duration"),
 
         /**
          * <p>
@@ -1050,7 +931,7 @@ public enum FuncDef {
          * computing the seconds component as described in 10.3.2.3 Canonical representation.
          * </p>
          */
-        SEC_FROM_DUR("fn:seconds-from-duration", AbsFunction.class, 1, 1, "xs:decimal"),
+        SEC_FROM_DUR(AbsFunction.class, 1, 1, "xs:decimal", "fn:seconds-from-duration"),
 
         /**
          * <p>
@@ -1061,7 +942,7 @@ public enum FuncDef {
          * may be negative.
          * </p>
          */
-        YEAR_FROM_DT("fn:year-from-dateTime", AbsFunction.class, 1, 1, "xs:integer"),
+        YEAR_FROM_DT(AbsFunction.class, 1, 1, "xs:integer", "fn:year-from-dateTime"),
 
         /**
          * <p>
@@ -1072,7 +953,7 @@ public enum FuncDef {
          * localized value of $arg.
          * </p>
          */
-        MON_FROM_DT("fn:month-from-dateTime", AbsFunction.class, 1, 1, "xs:integer"),
+        MON_FROM_DT(AbsFunction.class, 1, 1, "xs:integer", "fn:month-from-dateTime"),
 
         /**
          * <p>
@@ -1083,7 +964,7 @@ public enum FuncDef {
          * localized value of $arg.
          * </p>
          */
-        DAY_FROM_DT("fn:day-from-dateTime", AbsFunction.class, 1, 1, "xs:integer"),
+        DAY_FROM_DT(AbsFunction.class, 1, 1, "xs:integer", "fn:day-from-dateTime"),
 
         /**
          * <p>
@@ -1094,7 +975,7 @@ public enum FuncDef {
          * localized value of $arg.
          * </p>
          */
-        HOURS_FROM_DT("fn:hours-from-dateTime", AbsFunction.class, 1, 1, "xs:integer"),
+        HOURS_FROM_DT(AbsFunction.class, 1, 1, "xs:integer", "fn:hours-from-dateTime"),
 
         /**
          * <p>
@@ -1105,7 +986,7 @@ public enum FuncDef {
          * the localized value of $arg.
          * </p>
          */
-        MIN_FROM_DT("fn:minutes-from-dateTime", AbsFunction.class, 1, 1, "xs:integer"),
+        MIN_FROM_DT(AbsFunction.class, 1, 1, "xs:integer", "fn:minutes-from-dateTime"),
 
         /**
          * <p>
@@ -1116,7 +997,7 @@ public enum FuncDef {
          * seconds and fractional seconds in the localized value of $arg.
          * </p>
          */
-        SEC_FROM_DT("fn:seconds-from-dateTime", AbsFunction.class, 1, 1, "xs:decimal"),
+        SEC_FROM_DT(AbsFunction.class, 1, 1, "xs:decimal", "fn:seconds-from-dateTime"),
 
         /**
          * <p>
@@ -1128,7 +1009,7 @@ public enum FuncDef {
          * hours, both inclusive. Otherwise, the result is the empty sequence.
          * </p>
          */
-        TZ_FROM_DT("fn:timezone-from-dateTime", AbsFunction.class, 1, 1, "xs:dayTimeDuration"),
+        TZ_FROM_DT(AbsFunction.class, 1, 1, "xs:dayTimeDuration", "fn:timezone-from-dateTime"),
 
         /**
          * <p>
@@ -1139,7 +1020,7 @@ public enum FuncDef {
          * negative.
          * </p>
          */
-        YEAR_FROM_DATE("fn:year-from-date", AbsFunction.class, 1, 1, "xs:integer"),
+        YEAR_FROM_DATE(AbsFunction.class, 1, 1, "xs:integer", "fn:year-from-date"),
 
         /**
          * <p>
@@ -1150,7 +1031,7 @@ public enum FuncDef {
          * localized value of $arg.
          * </p>
          */
-        MON_FROM_DATE("fn:month-from-date", AbsFunction.class, 1, 1, "xs:integer"),
+        MON_FROM_DATE(AbsFunction.class, 1, 1, "xs:integer", "fn:month-from-date"),
 
         /**
          * <p>
@@ -1161,7 +1042,7 @@ public enum FuncDef {
          * localized value of $arg.
          * </p>
          */
-        DAY_FROM_DATE("fn:day-from-date", AbsFunction.class, 1, 1, "xs:integer"),
+        DAY_FROM_DATE(AbsFunction.class, 1, 1, "xs:integer", "fn:day-from-date"),
 
         /**
          * <p>
@@ -1173,7 +1054,7 @@ public enum FuncDef {
          * hours, both inclusive. Otherwise, the result is the empty sequence.
          * </p>
          */
-        TZ_FROM_DATE("fn:timezone-from-date", AbsFunction.class, 1, 1, "xs:dayTimeDuration"),
+        TZ_FROM_DATE(AbsFunction.class, 1, 1, "xs:dayTimeDuration", "fn:timezone-from-date"),
 
         /**
          * <p>
@@ -1184,7 +1065,7 @@ public enum FuncDef {
          * component in the localized value of $arg.
          * </p>
          */
-        HOURS_FROM_TIME("fn:hours-from-time", AbsFunction.class, 1, 1, "xs:integer"),
+        HOURS_FROM_TIME(AbsFunction.class, 1, 1, "xs:integer", "fn:hours-from-time"),
 
         /**
          * <p>
@@ -1195,7 +1076,7 @@ public enum FuncDef {
          * component in the localized value of $arg.
          * </p>
          */
-        MIN_FROM_TIME("fn:minutes-from-time", AbsFunction.class, 1, 1, "xs:integer"),
+        MIN_FROM_TIME(AbsFunction.class, 1, 1, "xs:integer", "fn:minutes-from-time"),
 
         /**
          * <p>
@@ -1206,7 +1087,7 @@ public enum FuncDef {
          * seconds and fractional seconds in the localized value of $arg.
          * </p>
          */
-        SEC_FROM_TIME("fn:seconds-from-time", AbsFunction.class, 1, 1, "xs:decimal"),
+        SEC_FROM_TIME(AbsFunction.class, 1, 1, "xs:decimal", "fn:seconds-from-time"),
 
         /**
          * <p>
@@ -1218,7 +1099,7 @@ public enum FuncDef {
          * hours, both inclusive. Otherwise, the result is the empty sequence.
          * </p>
          */
-        TZ_FROM_TIME("fn:timezone-from-time", AbsFunction.class, 1, 1, "xs:dayTimeDuration"),
+        TZ_FROM_TIME(AbsFunction.class, 1, 1, "xs:dayTimeDuration", "fn:timezone-from-time"),
 
         /**
          * <p>
@@ -1230,7 +1111,7 @@ public enum FuncDef {
          * xs:yearMonthDuration values.
          * </p>
          */
-        ADD_YMD("op:add-yearMonthDurations", AbsFunction.class, 2, 2, "xs:yearMonthDuration"),
+        ADD_YMD(AbsFunction.class, 2, 2, "xs:yearMonthDuration", "op:add-yearMonthDurations"),
 
         /**
          * <p>
@@ -1242,7 +1123,7 @@ public enum FuncDef {
          * operator on xs:yearMonthDuration values.
          * </p>
          */
-        SUB_YMD("op:subtract-yearMonthDurations", AbsFunction.class, 2, 2, "xs:yearMonthDuration"),
+        SUB_YMD(AbsFunction.class, 2, 2, "xs:yearMonthDuration", "op:subtract-yearMonthDurations"),
 
         /**
          * <p>
@@ -1254,7 +1135,7 @@ public enum FuncDef {
          * month. For a value v, 0 <= v < 0.5 rounds to 0; 0.5 <= v < 1.0 rounds to 1.
          * </p>
          */
-        MUL_YMD("op:multiply-yearMonthDuration", AbsFunction.class, 2, 2, "xs:yearMonthDuration"),
+        MUL_YMD(AbsFunction.class, 2, 2, "xs:yearMonthDuration", "op:multiply-yearMonthDuration"),
 
         /**
          * <p>
@@ -1266,7 +1147,7 @@ public enum FuncDef {
          * month. For a value v, 0 <= v < 0.5 rounds to 0; 0.5 <= v < 1.0 rounds to 1.
          * </p>
          */
-        DIV_YMD("op:divide-yearMonthDuration", AbsFunction.class, 2, 2, "xs:yearMonthDuration"),
+        DIV_YMD(AbsFunction.class, 2, 2, "xs:yearMonthDuration", "op:divide-yearMonthDuration"),
 
         /**
          * <p>
@@ -1280,8 +1161,8 @@ public enum FuncDef {
          * op:numeric-divide with xs:integer operands.
          * </p>
          */
-        DIV_YMD_BY_YMD("op:divide-yearMonthDuration-by-yearMonthDuration", AbsFunction.class, 2, 2,
-            "xs:decimal"),
+        DIV_YMD_BY_YMD(AbsFunction.class, 2, 2, "xs:decimal",
+            "op:divide-yearMonthDuration-by-yearMonthDuration"),
 
         /**
          * <p>
@@ -1293,7 +1174,7 @@ public enum FuncDef {
          * xs:dayTimeDuration values.
          * </p>
          */
-        ADD_DTD("op:add-dayTimeDurations", AbsFunction.class, 2, 2, "xs:dayTimeDuration"),
+        ADD_DTD(AbsFunction.class, 2, 2, "xs:dayTimeDuration", "op:add-dayTimeDurations"),
 
         /**
          * <p>
@@ -1305,7 +1186,7 @@ public enum FuncDef {
          * operator on xs:dayTimeDuration values.
          * </p>
          */
-        SUB_DTD("op:subtract-dayTimeDurations", AbsFunction.class, 2, 2, "xs:dayTimeDuration"),
+        SUB_DTD(AbsFunction.class, 2, 2, "xs:dayTimeDuration", "op:subtract-dayTimeDurations"),
 
         /**
          * <p>
@@ -1315,7 +1196,7 @@ public enum FuncDef {
          * Returns the result of multiplying the value of $arg1 by $arg2.
          * </p>
          */
-        MUL_DTD("op:multiply-dayTimeDuration", AbsFunction.class, 2, 2, "xs:dayTimeDuration"),
+        MUL_DTD(AbsFunction.class, 2, 2, "xs:dayTimeDuration", "op:multiply-dayTimeDuration"),
 
         /**
          * <p>
@@ -1325,7 +1206,7 @@ public enum FuncDef {
          * Returns the result of dividing the value of $arg1 by $arg2.
          * </p>
          */
-        DIV_DTD("op:divide-dayTimeDuration", AbsFunction.class, 2, 2, "xs:dayTimeDuration"),
+        DIV_DTD(AbsFunction.class, 2, 2, "xs:dayTimeDuration", "op:divide-dayTimeDuration"),
 
         /**
          * <p>
@@ -1337,8 +1218,7 @@ public enum FuncDef {
          * decimals, the semantics of the division is identical to op:numeric-divide with xs:decimal operands.
          * </p>
          */
-        DIV_DTD_BY_DTD("op:divide-dayTimeDuration-by-dayTimeDuration", AbsFunction.class, 2, 2,
-            "xs:decimal"),
+        DIV_DTD_BY_DTD(AbsFunction.class, 2, 2, "xs:decimal", "op:divide-dayTimeDuration-by-dayTimeDuration"),
 
         /**
          * <p>
@@ -1354,7 +1234,7 @@ public enum FuncDef {
          * timezone.
          * </p>
          */
-        ADJUST_DT2TZ("fn:adjust-dateTime-to-timezone", AbsFunction.class, 1, 2, "xs:dateTime"),
+        ADJUST_DT2TZ(AbsFunction.class, 1, 2, "xs:dateTime", "fn:adjust-dateTime-to-timezone"),
 
         /**
          * <p>
@@ -1370,7 +1250,7 @@ public enum FuncDef {
          * 00:00:00.
          * </p>
          */
-        ADJUST_DATE2TZ("fn:adjust-date-to-timezone", AbsFunction.class, 1, 2, "xs:date"),
+        ADJUST_DATE2TZ(AbsFunction.class, 1, 2, "xs:date", "fn:adjust-date-to-timezone"),
 
         /**
          * <p>
@@ -1385,7 +1265,7 @@ public enum FuncDef {
          * timezone.
          * </p>
          */
-        ADJUST_TIME2TZ("fn:adjust-time-to-timezone", AbsFunction.class, 1, 2, "xs:time"),
+        ADJUST_TIME2TZ(AbsFunction.class, 1, 2, "xs:time", "fn:adjust-time-to-timezone"),
 
         /**
          * <p>
@@ -1399,7 +1279,7 @@ public enum FuncDef {
          * value.
          * </p>
          */
-        SUB_DT("op:subtract-dateTimes", AbsFunction.class, 2, 2, "xs:dayTimeDuration"),
+        SUB_DT(AbsFunction.class, 2, 2, "xs:dayTimeDuration", "op:subtract-dateTimes"),
 
         /**
          * <p>
@@ -1413,7 +1293,7 @@ public enum FuncDef {
          * value.
          * </p>
          */
-        SUB_DATES("op:subtract-dates", AbsFunction.class, 2, 2, "xs:dayTimeDuration"),
+        SUB_DATES(AbsFunction.class, 2, 2, "xs:dayTimeDuration", "op:subtract-dates"),
 
         /**
          * <p>
@@ -1428,7 +1308,7 @@ public enum FuncDef {
          * ComponentsXP.) is assumed to be present as part of the value.
          * </p>
          */
-        SUB_TIMES("op:subtract-times", AbsFunction.class, 2, 2, "xs:dayTimeDuration"),
+        SUB_TIMES(AbsFunction.class, 2, 2, "xs:dayTimeDuration", "op:subtract-times"),
 
         /**
          * <p>
@@ -1441,7 +1321,7 @@ public enum FuncDef {
          * about leap seconds. If $arg2 is negative, then the result xs:dateTime precedes $arg1.
          * </p>
          */
-        ADD_YMD2DT("op:add-yearMonthDuration-to-dateTime", AbsFunction.class, 2, 2, "xs:dateTime"),
+        ADD_YMD2DT(AbsFunction.class, 2, 2, "xs:dateTime", "op:add-yearMonthDuration-to-dateTime"),
 
         /**
          * <p>
@@ -1454,7 +1334,7 @@ public enum FuncDef {
          * about leap seconds. If $arg2 is negative, then the result xs:dateTime precedes $arg1.
          * </p>
          */
-        ADD_DTD2DT("op:add-dayTimeDuration-to-dateTime", AbsFunction.class, 2, 2, "xs:dateTime"),
+        ADD_DTD2DT(AbsFunction.class, 2, 2, "xs:dateTime", "op:add-dayTimeDuration-to-dateTime"),
 
         /**
          * <p>
@@ -1468,8 +1348,7 @@ public enum FuncDef {
          * follows $arg1.
          * </p>
          */
-        SUB_YMD_FROM_DT("op:subtract-yearMonthDuration-from-dateTime", AbsFunction.class, 2, 2,
-            "xs:dateTime"),
+        SUB_YMD_FROM_DT(AbsFunction.class, 2, 2, "xs:dateTime", "op:subtract-yearMonthDuration-from-dateTime"),
 
         /**
          * <p>
@@ -1483,8 +1362,7 @@ public enum FuncDef {
          * follows $arg1.
          * </p>
          */
-        SUB_DTD_FROM_DT("op:subtract-dayTimeDuration-from-dateTime", AbsFunction.class, 2, 2,
-            "xs:dateTime"),
+        SUB_DTD_FROM_DT(AbsFunction.class, 2, 2, "xs:dateTime", "op:subtract-dayTimeDuration-from-dateTime"),
 
         /**
          * <p>
@@ -1497,7 +1375,7 @@ public enum FuncDef {
          * $arg1.
          * </p>
          */
-        ADD_YMD2DATE("op:add-yearMonthDuration-to-date", AbsFunction.class, 2, 2, "xs:date"),
+        ADD_YMD2DATE(AbsFunction.class, 2, 2, "xs:date", "op:add-yearMonthDuration-to-date"),
 
         /**
          * <p>
@@ -1510,7 +1388,7 @@ public enum FuncDef {
          * $arg1.
          * </p>
          */
-        ADD_DTD2DATE("op:add-dayTimeDuration-to-date", AbsFunction.class, 2, 2, "xs:date"),
+        ADD_DTD2DATE(AbsFunction.class, 2, 2, "xs:date", "op:add-dayTimeDuration-to-date"),
 
         /**
          * <p>
@@ -1524,7 +1402,7 @@ public enum FuncDef {
          * xs:date returned precedes $arg1.
          * </p>
          */
-        SUB_YMD_FROM_DATE("op:subtract-yearMonthDuration-from-date", AbsFunction.class, 2, 2, "xs:date"),
+        SUB_YMD_FROM_DATE(AbsFunction.class, 2, 2, "xs:date", "op:subtract-yearMonthDuration-from-date"),
 
         /**
          * <p>
@@ -1537,7 +1415,7 @@ public enum FuncDef {
          * xs:date returned precedes $arg1.
          * </p>
          */
-        SUB_DTD_FROM_DATE("op:subtract-dayTimeDuration-from-date", AbsFunction.class, 2, 2, "xs:date"),
+        SUB_DTD_FROM_DATE(AbsFunction.class, 2, 2, "xs:date", "op:subtract-dayTimeDuration-from-date"),
 
         /**
          * <p>
@@ -1552,7 +1430,7 @@ public enum FuncDef {
          * than $arg1.
          * </p>
          */
-        ADD_DTD2TIME("op:add-dayTimeDuration-to-time", AbsFunction.class, 2, 2, "xs:time"),
+        ADD_DTD2TIME(AbsFunction.class, 2, 2, "xs:time", "op:add-dayTimeDuration-to-time"),
 
         /**
          * <p>
@@ -1567,7 +1445,7 @@ public enum FuncDef {
          * following day and may be greater than $arg1.
          * </p>
          */
-        SUB_DTD_FROM_TIME("op:subtract-dayTimeDuration-from-time", AbsFunction.class, 2, 2, "xs:time"),
+        SUB_DTD_FROM_TIME(AbsFunction.class, 2, 2, "xs:time", "op:subtract-dayTimeDuration-from-time"),
 
         /**
          * <p>
@@ -1579,7 +1457,7 @@ public enum FuncDef {
          * using the in-scope namespaces for a given element.
          * </p>
          */
-        RESOLVE_QNAME("fn:resolve-QName", AbsFunction.class, 2, 2, "xs:QName"),
+        RESOLVE_QNAME(AbsFunction.class, 2, 2, "xs:QName", "fn:resolve-QName"),
 
         /**
          * <p>
@@ -1593,7 +1471,7 @@ public enum FuncDef {
          * result is taken from the local part of $argumentsQName.
          * </p>
          */
-        QNAME("fn:QName", AbsFunction.class, 2, 2, "xs:QName"),
+        QNAME(AbsFunction.class, 2, 2, "xs:QName", "fn:QName"),
 
         /**
          * <p>
@@ -1608,7 +1486,7 @@ public enum FuncDef {
          * ignored.
          * </p>
          */
-        QNAME_EQ("op:QName-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        QNAME_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:QName-equal"),
 
         /**
          * <p>
@@ -1619,7 +1497,7 @@ public enum FuncDef {
          * sequence is returned. If $arg is in no namespace, the zero-length string is returned.
          * </p>
          */
-        NS_URI_FROM_QNAME("fn:namespace-uri-from-QName", AbsFunction.class, 1, 1, "xs:anyURI"),
+        NS_URI_FROM_QNAME(AbsFunction.class, 1, 1, "xs:anyURI", "fn:namespace-uri-from-QName"),
 
         /**
          * <p>
@@ -1630,7 +1508,7 @@ public enum FuncDef {
          * namespace prefix.
          * </p>
          */
-        NS_URI4PREF("fn:namespace-uri-for-prefix", AbsFunction.class, 2, 2, "xs:anyURI"),
+        NS_URI4PREF(AbsFunction.class, 2, 2, "xs:anyURI", "fn:namespace-uri-for-prefix"),
 
         /**
          * <p>
@@ -1642,7 +1520,7 @@ public enum FuncDef {
          * zero-length string.
          * </p>
          */
-        IN_SCOPE_PREF("fn:in-scope-prefixes", AbsFunction.class, 1, 1, "xs:string"),
+        IN_SCOPE_PREF(AbsFunction.class, 1, 1, "xs:string", "fn:in-scope-prefixes"),
 
         /**
          * <p>
@@ -1653,7 +1531,7 @@ public enum FuncDef {
          * the same octets in the same order. Otherwise, returns false.
          * </p>
          */
-        HEXBIN_EQ("op:hexBinary-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        HEXBIN_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:hexBinary-equal"),
 
         /**
          * <p>
@@ -1664,7 +1542,7 @@ public enum FuncDef {
          * the same octets in the same order. Otherwise, returns false.
          * </p>
          */
-        BASE64BIN_EQ("op:base64Binary-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        BASE64BIN_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:base64Binary-equal"),
 
         /**
          * <p>
@@ -1678,7 +1556,7 @@ public enum FuncDef {
          * Unicode code point collation. The prefix parts of $arg1 and $arg2, if any, are ignored.
          * </p>
          */
-        NOTATION_EQ("op:NOTATION-equal", AbsFunction.class, 2, 2, "xs:boolean"),
+        NOTATION_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:NOTATION-equal"),
 
         /**
          * <p>
@@ -1692,7 +1570,7 @@ public enum FuncDef {
          * lexical form of an xs:QName.
          * </p>
          */
-        NAME("fn:name", AbsFunction.class, 0, 1, " xs:string"),
+        NAME(AbsFunction.class, 0, 1, " xs:string", "fn:name"),
 
         /**
          * <p>
@@ -1706,7 +1584,7 @@ public enum FuncDef {
          * string or will have the lexical form of an xs:NCName.
          * </p>
          */
-        LOC_NAME("fn:local-name", AbsFunction.class, 0, 1, " xs:string"),
+        LOC_NAME(AbsFunction.class, 0, 1, " xs:string", "fn:local-name"),
 
         /**
          * <p>
@@ -1717,7 +1595,7 @@ public enum FuncDef {
          * the empty sequence.
          * </p>
          */
-        LOC_NAME_FROM_QNAME("fn:local-name-from-QName", AbsFunction.class, 1, 1, "xs:NCName"),
+        LOC_NAME_FROM_QNAME(AbsFunction.class, 1, 1, "xs:NCName", "fn:local-name-from-QName"),
 
         /**
          * <p>
@@ -1730,7 +1608,7 @@ public enum FuncDef {
          * Returns the namespace URI of the xs:QName of $arg.
          * </p>
          */
-        NS_URI("fn:namespace-uri", AbsFunction.class, 0, 1, "xs:anyURI"),
+        NS_URI(AbsFunction.class, 0, 1, "xs:anyURI", "fn:namespace-uri"),
 
         /**
          * <p>
@@ -1741,7 +1619,7 @@ public enum FuncDef {
          * atomization, converted to an xs:double
          * </p>
          */
-        NUMBER("fn:number", AbsFunction.class, 1, 1, "xs:double"),
+        NUMBER(AbsFunction.class, 1, 1, "xs:double", "fn:number"),
 
         /**
          * <p>
@@ -1761,7 +1639,7 @@ public enum FuncDef {
          * no such ancestor, then the function returns false
          * </p>
          */
-        LANG("fn:lang", AbsFunction.class, 1, 2, "xs:boolean"),
+        LANG(AbsFunction.class, 1, 2, "xs:boolean", "fn:lang"),
 
         /**
          * <p>
@@ -1774,23 +1652,23 @@ public enum FuncDef {
          * nodes.
          * </p>
          */
-        IS_SAME_NODE("op:is-same-node", AbsFunction.class, 2, 2, "xs:boolean"),
+        IS_SAME_NODE(AbsFunction.class, 2, 2, "xs:boolean", "op:is-same-node"),
 
 /**
-   * <p>
-   * op:node-before($argumentseter1 as node(), $argumentseter2 as node()) as
-   * xs:boolean
-   * </p>
-   * <p>
-   * If the node identified by the value of $argumentseter1 occurs in document
-   * order before the node identified by the value of $argumentseter2, this
-   * function returns true; otherwise, it returns false. The rules determining
-   * the order of nodes within a single document and in different documents can
-   * be found in Section 2.4 Document OrderDM. This function backs up the "<<"
-   * operator.
-   * </p>
-   */
-        NODE_BEFORE("op:node-before", AbsFunction.class, 2, 2, "xs:boolean"),
+         * <p>
+         * op:node-before($argumentseter1 as node(), $argumentseter2 as node()) as
+         * xs:boolean
+         * </p>
+         * <p>
+         * If the node identified by the value of $argumentseter1 occurs in document
+         * order before the node identified by the value of $argumentseter2, this
+         * function returns true; otherwise, it returns false. The rules determining
+         * the order of nodes within a single document and in different documents can
+         * be found in Section 2.4 Document OrderDM. This function backs up the "<<"
+         * operator.
+         * </p>
+         */
+        NODE_BEFORE(AbsFunction.class, 2, 2, "xs:boolean", "op:node-before"),
 
         /**
          * <p>
@@ -1803,50 +1681,8 @@ public enum FuncDef {
          * can be found in Section 2.4 Document OrderDM. This function backs up the ">>" operator.
          * </p>
          */
-        NODE_AFTER("op:node-after", AbsFunction.class, 2, 2, "xs:boolean"),
+        NODE_AFTER(AbsFunction.class, 2, 2, "xs:boolean", "op:node-after"),
 
-        // /**
-        // * <p>
-        // * fn:root() as node()
-        // * </p>
-        // * <p>
-        // * fn:root($arg as node()?) as node()?
-        // * </p>
-        // * <p>
-        // * Returns the root of the tree to which $arg belongs. This will usually,
-        // but
-        // * not necessarily, be a document node.fn:boolean($arg as item()*) as
-        // * xs:boolean
-        // * </p>
-        // */
-        // ROOT("fn:root", AbstractFunction.class, 0, 1),
-
-        /**
-         * <p>
-         * fn:boolean($arg as item()*) as xs:boolean
-         * </p>
-         * <p>
-         * Computes the effective boolean value of the sequence $arg. See Section 2.4.3 Effective Boolean
-         * ValueXP
-         * </p>
-         */
-        BOOLEAN("fn:boolean", AbsFunction.class, 1, 1, "xs:boolean"),
-
-        // /**
-        // * <p>
-        // * op:concatenate($seq1 as item()*, $seq2 as item()*) as item()
-        // * </p>
-        // * <p>
-        // * Returns a sequence consisting of the items in $seq1 followed by the
-        // items
-        // * in $seq2. This function backs up the infix operator ",
-        // AbstractFunction.class, ". If either
-        // sequence
-        // * is the empty sequence, the other operand is returned.
-        // * </p>
-        // */
-        // CONCATE("op:concatenate", AbstractFunction.class, 2, 2),
-        //
         /**
          * <p>
          * fn:index-of( $seqarguments as xs:anyAtomicType*, $srcharguments as xs:anyAtomicType) as xs:integer*
@@ -1860,7 +1696,7 @@ public enum FuncDef {
          * items that are equal to $srcharguments.
          * </p>
          */
-        INDEX_OF("fn:index-of", AbsFunction.class, 2, 3, "xs:integer"),
+        INDEX_OF(AbsFunction.class, 2, 3, "xs:integer", "fn:index-of"),
 
         /**
          * <p>
@@ -1871,7 +1707,7 @@ public enum FuncDef {
          * returns false.
          * </p>
          */
-        EMPTY("fn:empty", AbsFunction.class, 1, 1, "xs:boolean"),
+        EMPTY(AbsFunction.class, 1, 1, "xs:boolean", "fn:empty"),
 
         /**
          * <p>
@@ -1882,7 +1718,7 @@ public enum FuncDef {
          * returns false.
          * </p>
          */
-        EXISTES("fn:exists", AbsFunction.class, 1, 1, "xs:boolean"),
+        EXISTES(AbsFunction.class, 1, 1, "xs:boolean", "fn:exists"),
 
         /**
          * <p>
@@ -1899,117 +1735,8 @@ public enum FuncDef {
          * dependent�.
          * </p>
          */
-        DIST_VALUES("fn:distinct-values", AbsFunction.class, 1, 2, "xs:anyAtomicType"),
-        //
-        // /**
-        // * <p>
-        // * fn:insert-before( $target as item()*, $position as xs:integer, $inserts
-        // as
-        // * item()*) as item()*
-        // * </p>
-        // * <p>
-        // * Returns a new sequence constructed from the value of $target with the
-        // value
-        // * of $inserts inserted at the position specified by the value of
-        // $position.
-        // * (The value of $target is not affected by the sequence construction.)
-        // * </p>
-        // */
-        // INSERT_BEFORE("fn:insert-before", AbstractFunction.class, 3, 3),
-        //
-        // /**
-        // * <p>
-        // * fn:remove($target as item()*, $position as xs:integer) as item()
-        // * </p>
-        // * <p>
-        // * Returns a new sequence constructed from the value of $target with the
-        // item
-        // * at the position specified by the value of $position removed.
-        // * </p>
-        // */
-        // REMOVE("fn:remove", AbstractFunction.class, 2, 2),
-        //
-        // /**
-        // * <p>
-        // * fn:reverse($arg as item()*) as item()
-        // * </p>
-        // * <p>
-        // * Reverses the order of items in a sequence. If $arg is the empty
-        // sequence,
-        // * the empty sequence is returned.
-        // * </p>
-        // */
-        // REVERSE("fn:reverse", AbstractFunction.class, 1, 1),
-        //
-        // /**
-        // * <p>
-        // * fn:subsequence($sourceSeq as item()*, $startingLoc as xs:double) as
-        // item()
-        // * <p>
-        // * </p>
-        // * fn:subsequence( $sourceSeq as item()*, $startingLoc as xs:double,
-        // $length
-        // * as xs:double) as item()*
-        // * </p>
-        // * <p>
-        // * Returns the contiguous sequence of items in the value of $sourceSeq
-        // * beginning at the position indicated by the value of $startingLoc and
-        // * continuing for the number of items indicated by the value of $length.
-        // * </p>
-        // */
-        // SUBSEQ("fn:subsequence", AbstractFunction.class, 2, 3),
-        //
-        // /**
-        // * <p>
-        // * fn:unordered($sourceSeq as item()*) as item()
-        // * </p>
-        // * <p>
-        // * Returns the items of $sourceSeq in an �implementation dependent�
-        // order.
-        // * </p>
-        // */
-        // UNORDERED("fn:unordered", AbstractFunction.class, 1, 1),
-        //
-        // /**
-        // * <p>
-        // * fn:zero-or-one($arg as item()*) as item()?
-        // * </p>
-        // * <p>
-        // * Returns $arg if it contains zero or one items. Otherwise, raises an
-        // error
-        // * [err:FORG0003].
-        // * </p>
-        // */
-        // ZERO_OR_ONE("fn:zero-or-one", AbstractFunction.class, FNCount.class, 1,
-        // 1,
-        // ),
+        DIST_VALUES(AbsFunction.class, 1, 2, "xs:anyAtomicType", "fn:distinct-values"),
 
-        // /**
-        // * <p>
-        // * fn:one-or-more($arg as item()*) as item()+
-        // * </p>
-        // * <p>
-        // * Returns $arg if it contains one or more items. Otherwise, raises an
-        // error
-        // * [err:FORG0004].
-        // * </p>
-        // */
-        // ONE_OR_MORE("fn:one-or-more", AbstractFunction.class, FNCount.class, 1,
-        // 1),
-
-        // /**
-        // * <p>
-        // * fn:exactly-one($arg as item()*) as item()
-        // * </p>
-        // * <p>
-        // * Returns $arg if it contains exactly one item. Otherwise, raises an
-        // error
-        // * [err:FORG0005].
-        // * </p>
-        // */
-        // EXACTLY_ONE("fn:exactly-one", AbstractFunction.class, FNCount.class, 1,
-        // 1),
-        //
         /**
          * <p>
          * fn:deep-equal($argumentseter1 as item()*, $argumentseter2 as item()*) as xs:boolean
@@ -2027,116 +1754,7 @@ public enum FuncDef {
          * are compared), according to the rules in 7.3.1 Collations.
          * </p>
          */
-        DEEP_EQ("fn:deep-equal", AbsFunction.class, 2, 2, "xs:boolean"),
-
-        // /**
-        // * <p>
-        // * op:union($argumentseter1 as node()*, $argumentseter2 as node()*) as
-        // node()
-        // * </p>
-        // * <p>
-        // * Constructs a sequence containing every node that occurs in the values
-        // of
-        // * either $argumentseter1 or $argumentseter2, eliminating duplicate nodes.
-        // * Nodes are returned in document order. Two nodes are duplicates if they
-        // are
-        // * op:is-same-node().
-        // * </p>
-        // */
-        // UNION("op:union", AbstractFunction.class, 2, 2),
-        //
-        // /**
-        // * <p>
-        // * op:intersect($argumentseter1 as node()*, $argumentseter2 as node()*) as
-        // * node()
-        // * </p>
-        // * <p>
-        // * Constructs a sequence containing every node that occurs in the values
-        // of
-        // * both $argumentseter1 and $argumentseter2, eliminating duplicate nodes.
-        // * Nodes are returned in document order.
-        // * </p>
-        // */
-        // INTERSECT("op:intersect", AbstractFunction.class, 2, 2),
-        //
-        // /**
-        // * <p>
-        // * op:except($argumentseter1 as node()*, $argumentseter2 as node()*) as
-        // node()
-        // * </p>
-        // * <p>
-        // * Constructs a sequence containing every node that occurs in the value of
-        // * $argumentseter1, but not in the value of $argumentseter2, eliminating
-        // * duplicate nodes. Nodes are returned in document order.
-        // * </p>
-        // */
-        // EXCEPT("op:except", AbstractFunction.class, 2, 2),
-
-        /**
-         * <p>
-         * fn:count($arg as item()*) as xs:integer
-         * </p>
-         * <p>
-         * Returns the number of items in the value of $arg.
-         * </p>
-         */
-        COUNT("fn:count", FNCount.class, 1, 2, "xs:integer"),
-
-        /**
-         * <p>
-         * fn:avg($arg as xs:anyAtomicType*) as xs:anyAtomicType?
-         * </p>
-         * <p>
-         * Returns the average of the values in the input sequence $arg, that is, the sum of the values
-         * divided by the number of values.
-         * </p>
-         */
-        AVG("fn:avg", AbsFunction.class, 1, 1, "xs:anyAtomicType"),
-
-        /**
-         * <p>
-         * fn:max($arg as xs:anyAtomicType*) as xs:anyAtomicType?
-         * </p>
-         * <p>
-         * fn:max($arg as xs:anyAtomicType*, $collation as string) as xs:anyAtomicType?
-         * </p>
-         * <p>
-         * Selects an item from the input sequence $arg whose value is greater than or equal to the value of
-         * every other item in the input sequence. If there are two or more such items, then the specific item
-         * whose value is returned is �implementation dependent�.
-         * </p>
-         */
-        MAX("fn:max", AbsFunction.class, 1, 2, "xs:anyAtomicType"),
-
-        /**
-         * <p>
-         * fn:min($arg as xs:anyAtomicType*) as xs:anyAtomicType?
-         * </p>
-         * <p>
-         * fn:min($arg as xs:anyAtomicType*, $collation as string) as xs:anyAtomicType?
-         * </p>
-         * <p>
-         * selects an item from the input sequence $arg whose value is less than or equal to the value of
-         * every other item in the input sequence. If there are two or more such items, then the specific item
-         * whose value is returned is �implementation dependent�.
-         * </p>
-         */
-        MIN("fn:min", AbsFunction.class, 1, 2, "xs:anyAtomicType"),
-        //
-        /**
-         * <p>
-         * fn:sum($arg as xs:anyAtomicType*) as xs:anyAtomicType
-         * </p>
-         * <p>
-         * fn:sum( $arg as xs:anyAtomicType*, $zero as xs:anyAtomicType?) as xs:anyAtomicType?
-         * </p>
-         * <p>
-         * Returns a value obtained by adding together the values in $arg. If $zero is not specified, then the
-         * value returned for an empty sequence is the xs:integer value 0. If $zero is specified, then the
-         * value returned for an empty sequence is $zero.
-         * </p>
-         */
-        SUM("fn:sum", FNCount.class, 1, 2, "xs:anyAtomicType"),
+        DEEP_EQ(AbsFunction.class, 2, 2, "xs:boolean", "fn:deep-equal"),
 
         /**
          * <p>
@@ -2150,59 +1768,8 @@ public enum FuncDef {
          * returned.
          * </p>
          */
-        TO("op:to", AbsFunction.class, 2, 2, "xs:integer"),
-        //
-        // /**
-        // * <p>
-        // * fn:id($arg as xs:string*) as element()*
-        // * </p>
-        // * <p>
-        // * fn:id($arg as xs:string*, $node as node()) as element()*
-        // * </p>
-        // * <p>
-        // * Returns the sequence of element nodes that have an ID value matching
-        // the
-        // * value of one or more of the IDREF values supplied in $arg .
-        // * </p>
-        // */
-        // ID("fn:id", AbstractFunction.class, 1, 2),
-        //
-        // /**
-        // * <p>
-        // * fn:idref($arg as xs:string*) as node()*
-        // * </p>
-        // * <p>
-        // * fn:idref($arg as xs:string*, $node as node()) as node()*
-        // * </p>
-        // * <p>
-        // * Returns the sequence of element or attribute nodes with an IDREF value
-        // * matching the value of one or more of the ID values supplied in $arg.
-        // * </p>
-        // */
-        // IDREF("fn:idref", AbstractFunction.class, 1, 2),
-        //
-        // /**
-        // * <p>
-        // * fn:doc($uri as xs:string?) as document-node()?
-        // * </p>
-        // * <p>
-        // * Retrieves a document using an xs:anyURI, which may include a fragment
-        // * identifier, supplied as an xs:string. If $uri is not a valid xs:anyURI,
-        // an
-        // * error is raised [err:FODC0005]. If it is a relative URI Reference, it
-        // is
-        // * resolved relative to the value of the base URI property from the static
-        // * context. The resulting absolute URI Reference is promoted to an
-        // xs:string.
-        // * If the Available documents discussed in Section 2.1.2 Dynamic ContextXP
-        // * provides a mapping from this string to a document node, the function
-        // * returns that document node. If the Available documents provides no
-        // mapping
-        // * for the string, an error is raised [err:FODC0005].
-        // * </p>
-        // */
-        // DOC("fn:doc", AbstractFunction.class, 1, 1),
-        //
+        TO(AbsFunction.class, 2, 2, "xs:integer", "op:to"),
+
         /**
          * <p>
          * fn:doc-available($uri as xs:string?) as xs:boolean
@@ -2212,38 +1779,8 @@ public enum FuncDef {
          * xs:anyURI, an error is raised [err:FODC0005]. Otherwise, this function returns false.
          * </p>
          */
-        DOC_AVAILABLE("fn:doc-available", AbsFunction.class, 1, 1, "xs:boolean"),
+        DOC_AVAILABLE(AbsFunction.class, 1, 1, "xs:boolean", "fn:doc-available"),
 
-        // /**
-        // * <p>
-        // * fn:collection() as node()*
-        // * </p>
-        // * <p>
-        // * fn:collection($arg as xs:string?) as node()*
-        // * </p>
-        // * <p>
-        // * This function takes an xs:string as argument and returns a sequence of
-        // * nodes obtained by interpreting $arg as an xs:anyURI and resolving it
-        // * according to the mapping specified in Available collections described
-        // in
-        // * Section C.2 Dynamic Context ComponentsXP. If Available collections
-        // provides
-        // * a mapping from this string to a sequence of nodes, the function returns
-        // * that sequence. If Available collections maps the string to an empty
-        // * sequence, then the function returns an empty sequence. If Available
-        // * collections provides no mapping for the string, an error is raised
-        // * [err:FODC0004]. If $arg is not specified, the function returns the
-        // sequence
-        // * of the nodes in the default collection in the dynamic context. See
-        // Section
-        // * C.2 Dynamic Context ComponentsXP. If the value of the default
-        // collection
-        // is
-        // * undefined an error is raised [err:FODC0002].
-        // * </p>
-        // */
-        // COLLECTION("fn:collection", AbstractFunction.class, 0, 1),
-        //
         /**
          * <p>
          * fn:position() as xs:integer
@@ -2253,7 +1790,7 @@ public enum FuncDef {
          * ComponentsXP.) If the context item is undefined, an error is raised: [err:XPDY0002]XP.
          * </p>
          */
-        POS("fn:position", AbsFunction.class, 0, 0, "xs:integer"),
+        POS(AbsFunction.class, 0, 0, "xs:integer", "fn:position"),
 
         /**
          * <p>
@@ -2264,7 +1801,7 @@ public enum FuncDef {
          * If the context item is undefined, an error is raised: [err:XPDY0002]XP.
          * </p>
          */
-        LAST("fn:last", AbsFunction.class, 0, 0, "xs:integer"),
+        LAST(AbsFunction.class, 0, 0, "xs:integer", "fn:last"),
 
         /**
          * <p>
@@ -2278,7 +1815,7 @@ public enum FuncDef {
          * fn:current-dateTime() is �implementation dependent�.
          * </p>
          */
-        CURRENT_DT("fn:current-dateTime", AbsFunction.class, 0, 0, "xs:dateTime"),
+        CURRENT_DT(AbsFunction.class, 0, 0, "xs:dateTime", "fn:current-dateTime"),
 
         /**
          * <p>
@@ -2291,7 +1828,7 @@ public enum FuncDef {
          * by the value of fn:current-date() is �implementation dependent�.
          * </p>
          */
-        CURRENT_DATE("fn:current-date", AbsFunction.class, 0, 0, "xs:date"),
+        CURRENT_DATE(AbsFunction.class, 0, 0, "xs:date", "fn:current-date"),
 
         /**
          * <p>
@@ -2304,7 +1841,7 @@ public enum FuncDef {
          * by the value of fn:current-time() is �implementation dependent�.
          * </p>
          */
-        CURRENT_TIME("fn:current-time", AbsFunction.class, 0, 0, "xs:time"),
+        CURRENT_TIME(AbsFunction.class, 0, 0, "xs:time", "fn:current-time"),
 
         /**
          * <p>
@@ -2315,7 +1852,7 @@ public enum FuncDef {
          * dynamic context are discussed in Section C.2 Dynamic Context ComponentsXP.
          * </p>
          */
-        IMPLICIT_TZ("fn:implicit-timezone", AbsFunction.class, 0, 0, "xs:dayTimeDuration"),
+        IMPLICIT_TZ(AbsFunction.class, 0, 0, "xs:dayTimeDuration", "fn:implicit-timezone"),
 
         /**
          * <p>
@@ -2326,7 +1863,7 @@ public enum FuncDef {
          * static context are discussed in Section C.1 Static Context ComponentsXP.
          * </p>
          */
-        DEFAULT_COLL("fn:default-collation", AbsFunction.class, 0, 0, "xs:string"),
+        DEFAULT_COLL(AbsFunction.class, 0, 0, "xs:string", "fn:default-collation"),
 
         /**
          * <p>
@@ -2338,10 +1875,13 @@ public enum FuncDef {
          * Section C.1 Static Context ComponentsXP .
          * </p>
          */
-        STATIC_BASE_URI("fn:static-base-uri", AbsFunction.class, 0, 0, "xs:anyURI");
+        STATIC_BASE_URI(AbsFunction.class, 0, 0, "xs:anyURI", "fn:static-base-uri");
 
-    /** Name of the function. */
-    private final String mName;
+    /**
+     * Name of the function. Can inherit XPath 2.0 function name or XPath1.0 and XPath2.0 names for
+     * compatibility reasons.
+     */
+    private final String[] mNames;
 
     /** Minimum number of possible arguments. */
     private final int mMin;
@@ -2359,42 +1899,36 @@ public enum FuncDef {
     private static final Map<String, FuncDef> STRINGTOENUM = new HashMap<String, FuncDef>();
 
     static {
-        for (FuncDef def : values()) {
-            STRINGTOENUM.put(def.getName(), def);
+        for (final FuncDef def : values()) {
+            for (final String name : def.mNames) {
+                STRINGTOENUM.put(name, def);
+            }
         }
     }
 
     /**
      * Constructor. Initializes internal state.
      * 
-     * @param mName
+     * @param paramName
      *            qualified name of the function
-     * @param mFunc
+     * @param paramFunc
      *            class that implements the function
-     * @param min
+     * @param paramMin
      *            specified minimum number of function arguments
-     * @param max
+     * @param paramMax
      *            specified maximum number of function arguments
-     * @param returnType
+     * @param paramReturnType
      *            return type of the function
      */
-    private FuncDef(final String mName, final Class<? extends AbsFunction> mFunc, final int min,
-        final int max, final String returnType) {
+    private FuncDef(final Class<? extends AbsFunction> paramFunc, final int paramMin, final int paramMax,
+        final String paramReturnType, final String... paramName) {
 
-        this.mName = mName;
-        this.mFunc = mFunc;
-        this.mMin = min;
-        this.mMax = max;
-        this.mReturnType = returnType;
+        this.mNames = paramName;
+        this.mFunc = paramFunc;
+        this.mMin = paramMin;
+        this.mMax = paramMax;
+        this.mReturnType = paramReturnType;
 
-    }
-
-    /**
-     * @return the string representation of the function's name.
-     */
-    public String getName() {
-
-        return mName;
     }
 
     /**
@@ -2441,3 +1975,486 @@ public enum FuncDef {
     }
 
 }
+// /**
+// * <p>
+// * fn:error() as none
+// * </p>
+// * <p>
+// * fn:error($error as xs:QName) as none
+// * </p>
+// * <p>
+// * fn:error($error as xs:QName?, $description as xs:string) as none
+// * </p>
+// * <p>
+// * fn:error( $error as xs:QName?, $description as xs:string, $error-object
+// as
+// * item()*) as none
+// * </p>
+// * <p>
+// * The fn:error function raises an error. While this function never
+// returns
+// a
+// * value, an error is returned to the external processing environment as
+// an
+// * xs:anyURI or an xs:QName. The error xs:anyURI is derived from the error
+// * xs:QName. An error xs:QName with namespace URI NS and local part LP
+// will
+// be
+// * returned as the xs:anyURI NS#LP. The method by which the xs:anyURI or
+// * xs:QName is returned to the external processing environment is
+// * implementation dependent�
+// * </p>
+// */
+// ERROR("fn:error", AbstractFunction.class, 0, 3),
+//
+// /**
+// * <p>
+// * fn:trace($value as item()*, $label as xs:string) as item()*
+// * </p>
+// * <p>
+// * Provides an execution trace intended to be used in debugging queries.
+// * </p>
+// */
+// TRACE("fn:trace", 1, 2),
+//
+// /**
+// * <p>
+// * op:numeric-add($arg1 as numeric, $arg2 as numeric) as numeric.
+// * </p>
+// * <p>
+// * Backs up the "+" operator and returns the arithmetic sum of its
+// operands
+// * </p>
+// */
+// N_ADD("op:numeric-add", 2, 2),
+//
+// /**
+// * <p>
+// * op:numeric-subtract($arg1 as numeric, $arg2 as numeric) as numeric
+// * </p>
+// * <p>
+// * Backs up the "-" operator and returns the arithmetic difference of its
+// * operands: ($arg1 - $arg2).
+// * </p>
+// */
+// N_SUB("op:numeric-substract", 2, 2),
+//
+// /**
+// * <p>
+// * op:numeric-multiply($arg1 as numeric, $arg2 as numeric) as numeric
+// * </p>
+// * <p>
+// * Backs up the "*" operator and returns the arithmetic product of its
+// * operands: ($arg1 * $arg2).
+// * </p>
+// */
+// N_MUL("op:numeric-multiply", 2, 2),
+//
+// /**
+// * <p>
+// * op:numeric-divide($arg1 as numeric, $arg2 as numeric) as numeric
+// * </p>
+// * <p>
+// * Backs up the "div" operator and returns the arithmetic quotient of its
+// * operands: ($arg1 div $arg2).
+// * </p>
+// */
+// N_DIV("op:numeric-divide", 2, 2),
+//
+// /**
+// * <p>
+// * op:numeric-integer-divide($arg1 as numeric, $arg2 as numeric) as
+// xs:integer
+// * </p>
+// * <p>
+// * This function backs up the "idiv" operator and performs an integer
+// * division: that is, it divides the first argument by the second, and
+// returns
+// * the integer obtained by truncating the fractional part of the result.
+// The
+// * division is performed so that the sign of the fractional part is the
+// same
+// * as the sign of the dividend.
+// * </p>
+// */
+// N_IDIV("op:numeric_interger-divide", 2, 2),
+//
+// /**
+// * <p>
+// * op:numeric-mod($arg1 as numeric, $arg2 as numeric) as numeric
+// * </p>
+// * <p>
+// * Backs up the "mod" operator. Informally, this function returns the
+// * remainder resulting from dividing $arg1, the dividend, by $arg2, the
+// * divisor. The operation a mod b for operands that are xs:integer or
+// * xs:decimal, or types derived from them, produces a result such that (a
+// idiv
+// * b)*b+(a mod b) is equal to a and the magnitude of the result is always
+// less
+// * than the magnitude of b. This identity holds even in the special case
+// that
+// * the dividend is the negative integer of largest possible magnitude for
+// its
+// * type and the divisor is -1 (the remainder is 0). It follows from this
+// rule
+// * that the sign of the result is the sign of the dividend.
+// * </p>
+// */
+// N_MOD("op:numeric:mod", 2, 2),
+//
+// /**
+// * <p>
+// * op:numeric-unary-plus($arg as numeric) as numeric
+// * </p>
+// * <p>
+// * Backs up the unary "+" operator and returns its operand with the sign
+// * unchanged: (+ $arg). Semantically, this operation performs no
+// operation.
+// * </p>
+// */
+// N_PLUS("op:numeric-unary-plus", 1, 1),
+//
+// /**
+// * <p>
+// * op:numeric-unary-minus($arg as numeric) as numeric
+// * </p>
+// * <p>
+// * Backs up the unary "-" operator and returns its operand with the sign
+// * reversed: (- $arg). If $arg is positive, its negative is returned; if
+// it
+// is
+// * negative, its positive is returned.
+// * </p>
+// */
+// N_MINUS("op:numeric-unary-minus", 1, 1),
+//
+// /**
+// * <p>
+// * fn:abs($arg as numeric?) as numeric?
+// * </p>
+// * <p>
+// * Returns the absolute value of $arg.
+// * </p>
+// */
+// ABS("fn:abs", 1, 1),
+//
+// /**
+// * <p>
+// * fn:ceiling($arg as numeric?) as numeric?
+// * </p>
+// * <p>
+// * Returns the smallest (closest to negative infinity) number with no
+// * fractional part that is not less than the value of $arg.
+// * </p>
+// */
+// CEIL("fn:ceiling", 1, 1),
+//
+// /**
+// * <p>
+// * fn:floor($arg as numeric?) as numeric?
+// * </p>
+// * <p>
+// * Returns the largest (closest to positive infinity) number with no
+// * fractional part that is not greater than the value of $arg.
+// * </p>
+// */
+// FLOOR("fn:floor", 1, 1),
+//
+// /**
+// * <p>
+// * fn:round($arg as numeric?) as numeric?
+// * </p>
+// * <p>
+// * Returns the number with no fractional part that is closest to the
+// argument.
+// * If there are two such numbers, then the one that is closest to positive
+// * infinity is returned. If type of $arg is one of the four numeric types
+// * xs:float, xs:double, xs:decimal or xs:integer the type of the result is
+// the
+// * same as the type of $arg. If the type of $arg is a type derived from
+// one
+// of
+// * the numeric types, the result is an instance of the base numeric type.
+// */
+// ROUND("fn:round", 1, 1),
+//
+// /**
+// * <p>
+// * fn:round-half-to-even($arg as numeric?) as numeric?
+// * </p>
+// * <p>
+// * fn:round-half-to-even($arg as numeric?, $precision as xs:integer) as
+// * numeric?
+// * </p>
+// * <p>
+// * The value returned is the nearest (that is, numerically closest) value
+// to
+// * $arg that is a multiple of ten to the power of minus $precision. If two
+// * such values are equally near (e.g. if the fractional part in $arg is
+// * exactly .500...), the function returns the one whose least significant
+// * digit is even.
+// */
+// ROUND_EVEN("fn:round-half-to-even", 1, 2),
+//
+// /**
+// * <p>
+// * fn:root() as node()
+// * </p>
+// * <p>
+// * fn:root($arg as node()?) as node()?
+// * </p>
+// * <p>
+// * Returns the root of the tree to which $arg belongs. This will usually,
+// but
+// * not necessarily, be a document node.fn:boolean($arg as item()*) as
+// * xs:boolean
+// * </p>
+// */
+// ROOT("fn:root", AbstractFunction.class, 0, 1),
+// /**
+// * <p>
+// * op:concatenate($seq1 as item()*, $seq2 as item()*) as item()
+// * </p>
+// * <p>
+// * Returns a sequence consisting of the items in $seq1 followed by the
+// items
+// * in $seq2. This function backs up the infix operator ",
+// AbstractFunction.class, ". If either
+// sequence
+// * is the empty sequence, the other operand is returned.
+// * </p>
+// */
+// CONCATE("op:concatenate", AbstractFunction.class, 2, 2),
+//
+//
+// /**
+// * <p>
+// * fn:insert-before( $target as item()*, $position as xs:integer, $inserts
+// as
+// * item()*) as item()*
+// * </p>
+// * <p>
+// * Returns a new sequence constructed from the value of $target with the
+// value
+// * of $inserts inserted at the position specified by the value of
+// $position.
+// * (The value of $target is not affected by the sequence construction.)
+// * </p>
+// */
+// INSERT_BEFORE("fn:insert-before", AbstractFunction.class, 3, 3),
+//
+// /**
+// * <p>
+// * fn:remove($target as item()*, $position as xs:integer) as item()
+// * </p>
+// * <p>
+// * Returns a new sequence constructed from the value of $target with the
+// item
+// * at the position specified by the value of $position removed.
+// * </p>
+// */
+// REMOVE("fn:remove", AbstractFunction.class, 2, 2),
+//
+// /**
+// * <p>
+// * fn:reverse($arg as item()*) as item()
+// * </p>
+// * <p>
+// * Reverses the order of items in a sequence. If $arg is the empty
+// sequence,
+// * the empty sequence is returned.
+// * </p>
+// */
+// REVERSE("fn:reverse", AbstractFunction.class, 1, 1),
+//
+// /**
+// * <p>
+// * fn:subsequence($sourceSeq as item()*, $startingLoc as xs:double) as
+// item()
+// * <p>
+// * </p>
+// * fn:subsequence( $sourceSeq as item()*, $startingLoc as xs:double,
+// $length
+// * as xs:double) as item()*
+// * </p>
+// * <p>
+// * Returns the contiguous sequence of items in the value of $sourceSeq
+// * beginning at the position indicated by the value of $startingLoc and
+// * continuing for the number of items indicated by the value of $length.
+// * </p>
+// */
+// SUBSEQ("fn:subsequence", AbstractFunction.class, 2, 3),
+//
+// /**
+// * <p>
+// * fn:unordered($sourceSeq as item()*) as item()
+// * </p>
+// * <p>
+// * Returns the items of $sourceSeq in an �implementation dependent�
+// order.
+// * </p>
+// */
+// UNORDERED("fn:unordered", AbstractFunction.class, 1, 1),
+//
+// /**
+// * <p>
+// * fn:zero-or-one($arg as item()*) as item()?
+// * </p>
+// * <p>
+// * Returns $arg if it contains zero or one items. Otherwise, raises an
+// error
+// * [err:FORG0003].
+// * </p>
+// */
+// ZERO_OR_ONE("fn:zero-or-one", AbstractFunction.class, FNCount.class, 1,
+// 1,
+// ),
+// /**
+// * <p>
+// * op:union($argumentseter1 as node()*, $argumentseter2 as node()*) as
+// node()
+// * </p>
+// * <p>
+// * Constructs a sequence containing every node that occurs in the values
+// of
+// * either $argumentseter1 or $argumentseter2, eliminating duplicate nodes.
+// * Nodes are returned in document order. Two nodes are duplicates if they
+// are
+// * op:is-same-node().
+// * </p>
+// */
+// UNION("op:union", AbstractFunction.class, 2, 2),
+//
+// /**
+// * <p>
+// * op:intersect($argumentseter1 as node()*, $argumentseter2 as node()*) as
+// * node()
+// * </p>
+// * <p>
+// * Constructs a sequence containing every node that occurs in the values
+// of
+// * both $argumentseter1 and $argumentseter2, eliminating duplicate nodes.
+// * Nodes are returned in document order.
+// * </p>
+// */
+// INTERSECT("op:intersect", AbstractFunction.class, 2, 2),
+//
+// /**
+// * <p>
+// * op:except($argumentseter1 as node()*, $argumentseter2 as node()*) as
+// node()
+// * </p>
+// * <p>
+// * Constructs a sequence containing every node that occurs in the value of
+// * $argumentseter1, but not in the value of $argumentseter2, eliminating
+// * duplicate nodes. Nodes are returned in document order.
+// * </p>
+// */
+// EXCEPT("op:except", AbstractFunction.class, 2, 2),
+// /**
+// * <p>
+// * fn:one-or-more($arg as item()*) as item()+
+// * </p>
+// * <p>
+// * Returns $arg if it contains one or more items. Otherwise, raises an
+// error
+// * [err:FORG0004].
+// * </p>
+// */
+// ONE_OR_MORE("fn:one-or-more", AbstractFunction.class, FNCount.class, 1,
+// 1),
+// /**
+// * <p>
+// * fn:exactly-one($arg as item()*) as item()
+// * </p>
+// * <p>
+// * Returns $arg if it contains exactly one item. Otherwise, raises an
+// error
+// * [err:FORG0005].
+// * </p>
+// */
+// EXACTLY_ONE("fn:exactly-one", AbstractFunction.class, FNCount.class, 1,
+// 1),
+//
+//
+// /**
+// * <p>
+// * fn:id($arg as xs:string*) as element()*
+// * </p>
+// * <p>
+// * fn:id($arg as xs:string*, $node as node()) as element()*
+// * </p>
+// * <p>
+// * Returns the sequence of element nodes that have an ID value matching
+// the
+// * value of one or more of the IDREF values supplied in $arg .
+// * </p>
+// */
+// ID("fn:id", AbstractFunction.class, 1, 2),
+//
+// /**
+// * <p>
+// * fn:idref($arg as xs:string*) as node()*
+// * </p>
+// * <p>
+// * fn:idref($arg as xs:string*, $node as node()) as node()*
+// * </p>
+// * <p>
+// * Returns the sequence of element or attribute nodes with an IDREF value
+// * matching the value of one or more of the ID values supplied in $arg.
+// * </p>
+// */
+// IDREF("fn:idref", AbstractFunction.class, 1, 2),
+//
+// /**
+// * <p>
+// * fn:doc($uri as xs:string?) as document-node()?
+// * </p>
+// * <p>
+// * Retrieves a document using an xs:anyURI, which may include a fragment
+// * identifier, supplied as an xs:string. If $uri is not a valid xs:anyURI,
+// an
+// * error is raised [err:FODC0005]. If it is a relative URI Reference, it
+// is
+// * resolved relative to the value of the base URI property from the static
+// * context. The resulting absolute URI Reference is promoted to an
+// xs:string.
+// * If the Available documents discussed in Section 2.1.2 Dynamic ContextXP
+// * provides a mapping from this string to a document node, the function
+// * returns that document node. If the Available documents provides no
+// mapping
+// * for the string, an error is raised [err:FODC0005].
+// * </p>
+// */
+// DOC("fn:doc", AbstractFunction.class, 1, 1),
+//
+// /**
+// * <p>
+// * fn:collection() as node()*
+// * </p>
+// * <p>
+// * fn:collection($arg as xs:string?) as node()*
+// * </p>
+// * <p>
+// * This function takes an xs:string as argument and returns a sequence of
+// * nodes obtained by interpreting $arg as an xs:anyURI and resolving it
+// * according to the mapping specified in Available collections described
+// in
+// * Section C.2 Dynamic Context ComponentsXP. If Available collections
+// provides
+// * a mapping from this string to a sequence of nodes, the function returns
+// * that sequence. If Available collections maps the string to an empty
+// * sequence, then the function returns an empty sequence. If Available
+// * collections provides no mapping for the string, an error is raised
+// * [err:FODC0004]. If $arg is not specified, the function returns the
+// sequence
+// * of the nodes in the default collection in the dynamic context. See
+// Section
+// * C.2 Dynamic Context ComponentsXP. If the value of the default
+// collection
+// is
+// * undefined an error is raised [err:FODC0002].
+// * </p>
+// */
+// COLLECTION("fn:collection", AbstractFunction.class, 0, 1),
+//

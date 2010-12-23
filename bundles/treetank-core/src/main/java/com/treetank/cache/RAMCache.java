@@ -65,4 +65,11 @@ public final class RAMCache implements ICache {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return map.toString();
+    }
+
 }
