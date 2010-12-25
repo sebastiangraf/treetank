@@ -48,7 +48,7 @@ public class LiteralExpr extends AbsExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    public void evaluate() {
 
         // set transaction to literal
         getTransaction().moveTo(mLiteralKey);

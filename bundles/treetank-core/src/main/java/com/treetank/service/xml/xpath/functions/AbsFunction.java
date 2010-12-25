@@ -142,7 +142,7 @@ public abstract class AbsFunction extends AbsExpression {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() throws TTXPathException {
+    public void evaluate() throws TTXPathException {
 
         // compute the function's result
         final byte[] value = computeResult();

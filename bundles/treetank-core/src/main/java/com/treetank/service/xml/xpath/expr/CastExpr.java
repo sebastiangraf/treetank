@@ -86,7 +86,7 @@ public class CastExpr extends AbsExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() throws TTXPathException {
+    public void evaluate() throws TTXPathException {
 
         // atomic type must not be xs:anyAtomicType or xs:NOTATION
         if (mTargetType == Type.ANY_ATOMIC_TYPE || mTargetType == Type.NOTATION) {

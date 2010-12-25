@@ -89,7 +89,7 @@ public class CastableExpr extends AbsExpression implements IAxis {
      * 
      */
     @Override
-    protected void evaluate() throws TTXPathException {
+    public void evaluate() throws TTXPathException {
 
         // defines if current item is castable to the target type, or not
         boolean isCastable;
