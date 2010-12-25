@@ -106,4 +106,17 @@ public class SomeExpr extends AbsExpression implements IAxis {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        super.setTransaction(rtx);
+        for (IAxis axis : mVars) {
+            axis.setTransaction(rtx);
+        }
+
+        mSatisfy.setTransaction(rtx);
+    }
+
 }

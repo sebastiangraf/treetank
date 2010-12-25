@@ -19,6 +19,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IFilter;
+import com.treetank.api.IReadTransaction;
 
 /**
  * <h1>TestAxis</h1>
@@ -87,6 +88,18 @@ public class FilterAxis extends AbsAxis {
      */
     public final IAxis getAxis() {
         return mAxis;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        super.setTransaction(rtx);
+        mAxis.setTransaction(rtx);
+        for (IFilter filter : mAxisFilter) {
+            filter.setTransaction(rtx);
+        }
     }
 
 }

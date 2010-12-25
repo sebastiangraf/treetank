@@ -119,4 +119,14 @@ public class ExceptAxis extends AbsAxis implements IAxis {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        super.setTransaction(rtx);
+        mOp1.setTransaction(rtx);
+        mOp2.setTransaction(rtx);
+    }
+
 }

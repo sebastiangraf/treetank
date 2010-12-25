@@ -40,7 +40,7 @@ import com.treetank.api.IReadTransaction;
 public abstract class AbsAxis implements IAxis {
 
     /** Iterate over transaction exclusive to this step. */
-    private final IReadTransaction mRTX;
+    private IReadTransaction mRTX;
 
     /** Key of last found node. */
     private long mKey;
@@ -173,5 +173,16 @@ public abstract class AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     public abstract boolean hasNext();
+
+    /**
+     * Resets the transaction.
+     * 
+     * @param rtx
+     *            read transaction which is bound to transaction.
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        mRTX = rtx;
+    }
 
 }

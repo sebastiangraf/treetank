@@ -124,4 +124,14 @@ public class OrExpr extends AbsExpression implements IAxis {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        super.setTransaction(rtx);
+        mOp1.setTransaction(rtx);
+        mOp2.setTransaction(rtx);
+    }
+
 }

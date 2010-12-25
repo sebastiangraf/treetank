@@ -16,6 +16,8 @@
  */
 package com.treetank.access;
 
+import java.lang.reflect.Field;
+
 import javax.xml.namespace.QName;
 
 import com.treetank.api.IItem;
@@ -75,6 +77,41 @@ public class ReadTransaction implements IReadTransaction {
         mTransactionState = paramTransactionState;
         mCurrentNode = getTransactionState().getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
         mClosed = false;
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param paramTransactionState
+     *            Transaction state to work with.
+     */
+    public ReadTransaction(final ReadTransaction paramTransactionState) {
+        mTransactionID = paramTransactionState.getTransactionID();
+        Class c = paramTransactionState.getClass();
+        Field[] fields = c.getDeclaredFields();
+        try {
+            for (int i = 0; i < fields.length; i++) {
+                if (fields[i].getName().equals("mSessionState")) {
+                    mSessionState = (SessionState)(fields[i].get(paramTransactionState));
+                } else if (fields[i].getName().equals("mTransactionState")) {
+                    mTransactionState = (ReadTransactionState)fields[i].get(paramTransactionState);
+                }
+            }
+
+            assert mSessionState != null;
+            assert mTransactionState != null;
+            assert paramTransactionState.getNode().getNodeKey() >= 0; // has to be node
+            mCurrentNode = getTransactionState().getNode(paramTransactionState.getNode().getNodeKey());
+            mClosed = false;
+
+        } catch (final TTIOException mExp) {
+            mExp.getStackTrace();
+        } catch (final IllegalArgumentException mExp) {
+            mExp.printStackTrace();
+        } catch (final IllegalAccessException mExp) {
+            mExp.printStackTrace();
+        }
+
     }
 
     /**

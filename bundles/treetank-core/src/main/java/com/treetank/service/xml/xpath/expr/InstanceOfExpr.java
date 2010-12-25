@@ -115,4 +115,15 @@ public class InstanceOfExpr extends AbsExpression implements IAxis {
         getTransaction().moveTo(itemKey);
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        super.setTransaction(rtx);
+
+        mInputExpr.setTransaction(rtx);
+        mSequenceType.getFilter().setTransaction(rtx);
+    }
 }

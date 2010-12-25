@@ -77,7 +77,7 @@ public interface IFilter {
      * 
      * @return Transaction to which this filter is bound.
      */
-//    IReadTransaction getTransaction();
+    // IReadTransaction getTransaction();
 
     /**
      * Apply filter on current node of transaction.
@@ -85,5 +85,14 @@ public interface IFilter {
      * @return True if node passes filter. False else.
      */
     boolean filter();
+
+    /**
+     * Set transaction to which this filter is bound.
+     * 
+     * @param rtx
+     *            read transaction which is bound to transaction.
+     * 
+     */
+    void setTransaction(final IReadTransaction rtx);
 
 }

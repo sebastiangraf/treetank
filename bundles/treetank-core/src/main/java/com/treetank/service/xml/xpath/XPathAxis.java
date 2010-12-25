@@ -17,6 +17,9 @@
 
 package com.treetank.service.xml.xpath;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -70,7 +73,13 @@ import com.treetank.service.xml.xpath.parser.XPathParser;
 public final class XPathAxis extends AbsAxis implements IAxis {
 
     /** Declares if the evaluation is compatible to XPath 1.0 or not. */
-    public final static boolean XPATH_10_COMP = true;
+    public static final boolean XPATH_10_COMP = true;
+
+    /** Size of thread pool for executor service. */
+    private static int THREADPOOLSIZE = 2;
+
+    /** Executor Service holding the execution plan for future tasks. */
+    public static ExecutorService EXECUTOR;
 
     /** Axis holding the consecutive query execution plans of the query. */
     private IAxis mPipeline;
@@ -88,10 +97,14 @@ public final class XPathAxis extends AbsAxis implements IAxis {
      * @param mQuery
      *            XPath query to process.
      * @throws TTXPathException
+     *             throw a treetank xpath exception.
      */
     public XPathAxis(final IReadTransaction rtx, final String mQuery) throws TTXPathException {
 
         super(rtx);
+
+        /** Initializing executor service with fixed thread pool. */
+        EXECUTOR = Executors.newFixedThreadPool(THREADPOOLSIZE);
 
         // start parsing and get execution plans
         final XPathParser parser = new XPathParser(getTransaction(), mQuery);

@@ -199,4 +199,14 @@ public abstract class AbsObAxis extends AbsAxis {
      */
     protected abstract Type getReturnType(final int mOp1, final int mOp2) throws TTXPathException;
 
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mOperand1.setTransaction(rtx);
+      mOperand2.setTransaction(rtx);
+    }
 }
