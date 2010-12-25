@@ -81,7 +81,7 @@ public class EveryExpr extends AbsExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    public void evaluate() {
 
         boolean satisfiesCond = true;
 

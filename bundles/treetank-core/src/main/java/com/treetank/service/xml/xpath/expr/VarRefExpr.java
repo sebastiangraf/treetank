@@ -62,7 +62,7 @@ public class VarRefExpr extends AbsExpression implements IAxis, IObserver {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    public void evaluate() {
 
         // assure that the transaction is set to the current context item of the
         // variable's binding sequence.

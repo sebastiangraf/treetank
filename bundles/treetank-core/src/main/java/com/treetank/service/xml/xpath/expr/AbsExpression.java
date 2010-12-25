@@ -33,7 +33,8 @@ import com.treetank.exception.TTXPathException;
  * evaluated once. Therefore the axis returns true only for the first call and false for all others.
  * </p>
  */
-public abstract class AbsExpression extends AbsAxis {
+@Deprecated
+public abstract class AbsExpression extends AbsAxis implements IExpression {
 
     /** Defines, whether hasNext() has already been called. */
     private boolean mIsFirst;
@@ -99,6 +100,6 @@ public abstract class AbsExpression extends AbsAxis {
      * @throws TTXPathException
      *             if evaluation fails.
      */
-    protected abstract void evaluate() throws TTXPathException;
+    public abstract void evaluate() throws TTXPathException;
 
 }

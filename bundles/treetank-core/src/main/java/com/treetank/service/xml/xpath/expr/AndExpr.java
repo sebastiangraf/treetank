@@ -107,7 +107,7 @@ public class AndExpr extends AbsExpression {
      * @throws TTXPathException
      */
     @Override
-    protected void evaluate() throws TTXPathException {
+    public void evaluate() throws TTXPathException {
 
         // first find the effective boolean values of the two operands, then
         // determine value of the and-expression and store it in an item

@@ -83,7 +83,7 @@ public class SomeExpr extends AbsExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    public void evaluate() {
 
         boolean satisfiesCond = false;
 

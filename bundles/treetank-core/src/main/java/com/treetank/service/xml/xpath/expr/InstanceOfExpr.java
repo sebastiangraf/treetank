@@ -73,7 +73,7 @@ public class InstanceOfExpr extends AbsExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    public void evaluate() {
 
         boolean isInstanceOf;
 
