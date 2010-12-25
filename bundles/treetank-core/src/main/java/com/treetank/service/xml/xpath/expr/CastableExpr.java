@@ -129,4 +129,13 @@ public class CastableExpr extends AbsExpression implements IAxis {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        super.setTransaction(rtx);
+        mSourceExpr.setTransaction(rtx);
+    }
+
 }

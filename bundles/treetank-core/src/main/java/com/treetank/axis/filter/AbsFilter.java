@@ -30,7 +30,7 @@ import com.treetank.api.IReadTransaction;
 public abstract class AbsFilter implements IFilter {
 
     /** Iterate over transaction exclusive to this step. */
-    private final IReadTransaction mRTX;
+    private IReadTransaction mRTX;
 
     /**
      * Bind axis step to transaction.
@@ -55,5 +55,13 @@ public abstract class AbsFilter implements IFilter {
      */
     @Override
     public abstract boolean filter();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        mRTX = rtx;
+    }
 
 }

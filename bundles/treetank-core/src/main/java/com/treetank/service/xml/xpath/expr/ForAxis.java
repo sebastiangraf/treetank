@@ -120,4 +120,14 @@ public class ForAxis extends AbsAxis implements IAxis {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        super.setTransaction(rtx);
+        mRange.setTransaction(rtx);
+        mReturn.setTransaction(rtx);
+    }
+
 }

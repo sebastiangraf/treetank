@@ -78,6 +78,7 @@ public final class PipelineBuilder {
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(PipelineBuilder.class));
 
+    /** Stack of pipeline builder which stores expressions. */
     private final FastStack<FastStack<ExpressionSingle>> mExprStack;
 
     /** Maps a variable name to the item that the variable holds. */
@@ -110,7 +111,7 @@ public final class PipelineBuilder {
      */
     public void addExpr() {
 
-        mExprStack.push((new FastStack<ExpressionSingle>()));
+        mExprStack.push(new FastStack<ExpressionSingle>());
     }
 
     /**
@@ -224,7 +225,7 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= (mForConditionNum + 1);
 
-        AbsAxis forAxis = ((AbsAxis)(getPipeStack().pop().getExpr()));
+        AbsAxis forAxis = (AbsAxis)(getPipeStack().pop().getExpr());
         final IReadTransaction rtx = forAxis.getTransaction();
         int num = mForConditionNum;
 

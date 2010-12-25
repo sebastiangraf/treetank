@@ -39,8 +39,7 @@ import java.util.Iterator;
  * <li><code>IAxis.next()</code> must be called exactly once after <code>IAxis.hasNext() == true</code>.</li>
  * <li><code>IReadTransaction.getNodeKey()</code> must be equal right after <code>IAxis.hasNext()</code> and
  * right before the next call to <code>IAxis.hasNext()</code>.</li>
- * <li>If used with <code>IWriteTransaction</code>, there are no modification during an enhanced for loop.
- * </li>
+ * <li>If used with <code>IWriteTransaction</code>, there are no modification during an enhanced for loop.</li>
  * <li><strong>Postcondition</strong> after <code>IAxis.hasNext() == false</code>:
  * <code>IReadTransaction.getNodeKey() == n</code>.</li>
  * </ol>
@@ -114,6 +113,9 @@ import java.util.Iterator;
  *     }
  * 
  * }
+ * 
+ * 
+ * 
  * </pre>
  * 
  * </p>
@@ -134,5 +136,13 @@ public interface IAxis extends Iterator<Long>, Iterable<Long> {
      * @return Transaction to which this axis is bound.
      */
     IReadTransaction getTransaction();
+
+    /**
+     * Sets transaction to which this axis should be bound.
+     * 
+     * @param rtx
+     *            read transaction which is bound to transaction.
+     */
+    void setTransaction(final IReadTransaction rtx);
 
 }

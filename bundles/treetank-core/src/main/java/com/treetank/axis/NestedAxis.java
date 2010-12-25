@@ -18,6 +18,7 @@
 package com.treetank.axis;
 
 import com.treetank.api.IAxis;
+import com.treetank.api.IReadTransaction;
 
 /**
  * <h1>ChainedAxis</h1>
@@ -26,7 +27,7 @@ import com.treetank.api.IAxis;
  * Chains two axis operations.
  * </p>
  */
-public class NestedAxis extends AbsAxis{
+public class NestedAxis extends AbsAxis {
 
     /** Parent axis. */
     private final IAxis mParentAxis;
@@ -101,5 +102,15 @@ public class NestedAxis extends AbsAxis{
 
         resetToStartKey();
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+        super.setTransaction(rtx);
+        mParentAxis.setTransaction(rtx);
+        mChildAxis.setTransaction(rtx);
     }
 }

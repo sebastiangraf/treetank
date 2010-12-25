@@ -56,7 +56,7 @@ public abstract class AbsExpression extends AbsAxis implements IExpression {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         mIsFirst = true;
@@ -66,7 +66,7 @@ public abstract class AbsExpression extends AbsAxis implements IExpression {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
 
         resetToLastKey();
 
@@ -76,7 +76,7 @@ public abstract class AbsExpression extends AbsAxis implements IExpression {
             // evaluate expression
             try {
                 evaluate();
-            } catch (TTXPathException e) {
+            } catch (final TTXPathException e) {
                 throw new RuntimeException(e);
             }
 

@@ -113,4 +113,13 @@ public class DupFilterAxis extends AbsAxis {
         resetToStartKey();
         return false;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mAxis.setTransaction(rtx);
+    } 
 }
