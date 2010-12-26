@@ -116,7 +116,7 @@ public class ConcurrentAxisTest {
         // result
         // });
 
-        // TODO: bekommt hier kein Ergbnis zurück, NULL. Nachschauen ob Anfrage stimmt.
+        // TODO: bekommt hier kein Ergbnis zurueck, NULL. Nachschauen ob Anfrage stimmt.
         for (int i = 0; i < 1; i++) {
             assertEquals(true, axis.hasNext());
         }
