@@ -17,7 +17,6 @@
 
 package com.treetank.axis;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 
 /**

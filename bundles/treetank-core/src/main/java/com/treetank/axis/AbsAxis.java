@@ -20,7 +20,9 @@ package com.treetank.axis;
 import java.util.Iterator;
 
 import com.treetank.api.IAxis;
+import com.treetank.api.IExpression;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 
 /**
  * <h1>AbstractAxis</h1>
@@ -37,7 +39,7 @@ import com.treetank.api.IReadTransaction;
  * All users must make sure to call next() after hasNext() evaluated to true.
  * </p>
  */
-public abstract class AbsAxis implements IAxis {
+public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<Long>, IAxis{
 
     /** Iterate over transaction exclusive to this step. */
     private IReadTransaction mRTX;
@@ -180,9 +182,20 @@ public abstract class AbsAxis implements IAxis {
      * @param rtx
      *            read transaction which is bound to transaction.
      */
-    @Override
     public synchronized void setTransaction(final IReadTransaction rtx) {
         mRTX = rtx;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void evaluate() throws TTXPathException {
+        while (hasNext()) {
+            next();
+        }
+    }
+    
+    
 
 }

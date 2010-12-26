@@ -32,7 +32,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * Abstract axis that evaluates a comparison.
  * </p>
  */
-public abstract class AbsComparator extends AbsAxis implements IAxis {
+public abstract class AbsComparator extends AbsAxis  {
 
     /** Kind of comparison. */
     private final CompKind mComp;

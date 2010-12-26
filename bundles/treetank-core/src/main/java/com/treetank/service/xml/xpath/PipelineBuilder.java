@@ -504,7 +504,7 @@ public final class PipelineBuilder {
      * @param mFilter
      *            the node test to add to the pipeline.
      */
-    public void addStep(final IAxis axis, final IFilter mFilter) {
+    public void addStep(final AbsAxis axis, final IFilter mFilter) {
 
         getExpression().add(new FilterAxis(axis, mFilter));
     }

@@ -23,6 +23,7 @@ import java.util.List;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.node.ENodes;
 import com.treetank.service.xml.xpath.AtomicValue;
@@ -37,7 +38,7 @@ public class Function {
         final FuncDef ebv = FuncDef.BOOLEAN;
         final List<IAxis> param = new ArrayList<IAxis>();
         param.add(axis);
-        final IAxis bAxis =
+        final AbsAxis bAxis =
             new FNBoolean(axis.getTransaction(), param, ebv.getMin(), ebv.getMax(), axis.getTransaction()
                 .keyForName(ebv.getReturnType()));
         if (bAxis.hasNext()) {

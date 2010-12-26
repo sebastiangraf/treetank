@@ -20,20 +20,19 @@ package com.treetank.axis;
 
 import javax.xml.namespace.QName;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TTException;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class AttributeAxisTest {
 
@@ -103,7 +102,7 @@ public class AttributeAxisTest {
         Assert.assertEquals("foo2", wtx.nameForKey(wtx.getNode().getNameKey()));
 
         Assert.assertEquals(true, wtx.moveTo(nodeKey));
-        final IAxis axis = new AttributeAxis(wtx);
+        final AbsAxis axis = new AttributeAxis(wtx);
 
         Assert.assertEquals(true, axis.hasNext());
         axis.next();

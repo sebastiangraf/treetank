@@ -18,28 +18,28 @@
 
 package com.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ThreadTest {
 
@@ -92,7 +92,7 @@ public class ThreadTest {
         }
 
         public Void call() throws Exception {
-            final IAxis axis = new DescendantAxis(mRTX);
+            final AbsAxis axis = new DescendantAxis(mRTX);
             while (axis.hasNext()) {
                 axis.next();
             }
