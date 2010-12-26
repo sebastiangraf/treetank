@@ -41,13 +41,13 @@ import com.treetank.axis.AbsAxis;
  * binding sequence from which they were derived.
  * </p>
  */
-public class ForAxis extends AbsAxis implements IAxis {
+public class ForAxis extends AbsAxis {
 
     /** The range expression. */
     private final IAxis mRange;
 
     /** The result expression. */
-    private final AbsAxis mReturn;
+    private final IAxis mReturn;
 
     /** Defines, whether is first call of hasNext(). */
     private boolean mIsFirst;
@@ -62,7 +62,7 @@ public class ForAxis extends AbsAxis implements IAxis {
      * @param returnExpr
      *            the return expression of the for expression
      */
-    public ForAxis(final IReadTransaction rtx, final IAxis range, final AbsAxis returnExpr) {
+    public ForAxis(final IReadTransaction rtx, final IAxis range, final IAxis returnExpr) {
 
         super(rtx);
         mRange = range;
