@@ -19,9 +19,9 @@ package com.treetank.service.xml.serialize;
 
 import java.util.concurrent.Callable;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
 import com.treetank.node.AbsStructNode;
@@ -118,7 +118,7 @@ abstract class AbsSerializer implements Callable<Void> {
 
             rtx.moveTo(mNodeKey);
 
-            final IAxis descAxis = new DescendantAxis(rtx, true);
+            final AbsAxis descAxis = new DescendantAxis(rtx, true);
 
             // Setup primitives.
             boolean closeElements = false;

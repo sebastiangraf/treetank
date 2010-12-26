@@ -18,25 +18,24 @@
 
 package com.treetank.axis;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TTException;
 import com.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class IAxisTest {
 
@@ -45,7 +44,7 @@ public class IAxisTest {
         TestHelper.deleteEverything();
     }
 
-    public static void testIAxisConventions(final IAxis axis, final long[] expectedKeys) {
+    public static void testIAxisConventions(final AbsAxis axis, final long[] expectedKeys) {
 
         final IReadTransaction rtx = axis.getTransaction();
 
@@ -90,7 +89,7 @@ public class IAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
-        final IAxis axis = new DescendantAxis(wtx);
+        final AbsAxis axis = new DescendantAxis(wtx);
         long count = 0L;
         while (axis.hasNext()) {
             count += 1;

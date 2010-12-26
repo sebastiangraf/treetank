@@ -116,10 +116,12 @@ import java.util.Iterator;
  * 
  * 
  * 
+ * 
  * </pre>
  * 
  * </p>
  */
+@Deprecated
 public interface IAxis extends Iterator<Long>, Iterable<Long> {
 
     /**

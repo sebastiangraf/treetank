@@ -28,8 +28,8 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.XMLEvent;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.filter.TextFilter;
@@ -82,7 +82,7 @@ public final class StAXSerializer implements XMLEventReader {
     private transient boolean mNextTag;
 
     /** {@link IAxis} for iteration. */
-    private final transient IAxis mAxis;
+    private final transient AbsAxis mAxis;
 
     /** Stack for reading end element. */
     private final transient FastStack<Long> mStack;
@@ -114,9 +114,9 @@ public final class StAXSerializer implements XMLEventReader {
      * the tank ids.
      * 
      * @param paramAxis
-     *            {@link IAxis} which is used to iterate over and generate StAX events.
+     *            {@link AbsAxis} which is used to iterate over and generate StAX events.
      */
-    public StAXSerializer(final IAxis paramAxis) {
+    public StAXSerializer(final AbsAxis paramAxis) {
         this(paramAxis, true);
     }
 
@@ -126,11 +126,11 @@ public final class StAXSerializer implements XMLEventReader {
      * the tank ids.
      * 
      * @param paramAxis
-     *            {@link IAxis} which is used to iterate over and generate StAX events.
+     *            {@link AbsAxis} which is used to iterate over and generate StAX events.
      * @param paramCloseRtx
      *            Determines if rtx should be closed afterwards.
      */
-    public StAXSerializer(final IAxis paramAxis, final boolean paramCloseRtx) {
+    public StAXSerializer(final AbsAxis paramAxis, final boolean paramCloseRtx) {
         mNextTag = false;
         mAxis = paramAxis;
         mCloseRtx = paramCloseRtx;

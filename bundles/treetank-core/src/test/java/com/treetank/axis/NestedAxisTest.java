@@ -18,10 +18,6 @@
 
 package com.treetank.axis;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
@@ -33,6 +29,10 @@ import com.treetank.axis.filter.NodeFilter;
 import com.treetank.axis.filter.TextFilter;
 import com.treetank.exception.TTException;
 import com.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class NestedAxisTest {
 
@@ -54,13 +54,13 @@ public class NestedAxisTest {
 
         // XPath expression /p:a/b/text()
         // Part: /p:a
-        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
         // Part: /b
-        final IAxis childB = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
+        final AbsAxis childB = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
         // Part: /text()
-        final IAxis text = new FilterAxis(new ChildAxis(wtx), new TextFilter(wtx));
+        final AbsAxis text = new FilterAxis(new ChildAxis(wtx), new TextFilter(wtx));
         // Part: /p:a/b/text()
-        final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
+        final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
         IAxisTest.testIAxisConventions(axis, new long[] {
             6L, 12L
@@ -85,13 +85,13 @@ public class NestedAxisTest {
 
         // XPath expression /[:a/b/@p:x]
         // Part: /p:a
-        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
         // Part: /b
-        final IAxis childB = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
+        final AbsAxis childB = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
         // Part: /@x
-        final IAxis attributeX = new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "p:x"));
+        final AbsAxis attributeX = new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "p:x"));
         // Part: /p:a/b/@p:x
-        final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), attributeX);
+        final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB), attributeX);
 
         IAxisTest.testIAxisConventions(axis, new long[] {
             10L
@@ -116,13 +116,13 @@ public class NestedAxisTest {
 
         // XPath expression p:a/node():
         // Part: /p:a
-        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
 
         // Part: /node()
-        final IAxis childNode = new FilterAxis(new ChildAxis(wtx), new NodeFilter(wtx));
+        final AbsAxis childNode = new FilterAxis(new ChildAxis(wtx), new NodeFilter(wtx));
 
         // Part: /p:a/node():
-        final IAxis axis = new NestedAxis(childA, childNode);
+        final AbsAxis axis = new NestedAxis(childA, childNode);
 
         IAxisTest.testIAxisConventions(axis, new long[] {
             4L, 5L, 8L, 9L, 13L

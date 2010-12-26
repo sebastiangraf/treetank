@@ -18,6 +18,7 @@
 package com.treetank.service.xml.xpath;
 
 import com.treetank.api.IAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.AncestorAxis;
 import com.treetank.axis.ChildAxis;
 import com.treetank.axis.DescendantAxis;
@@ -46,10 +47,10 @@ public class ExpressionSingle {
     private int mNumber;
 
     /** The first added axis has to be stored till a second one is added. */
-    private IAxis mFirstAxis;
+    private AbsAxis mFirstAxis;
 
     /** Contains the execution chain consisting of nested NestedAxis. */
-    private IAxis mExpr;
+    private AbsAxis mExpr;
 
     /** Current ordering state. */
     private OrdState mOrd;
@@ -79,7 +80,7 @@ public class ExpressionSingle {
      *            The axis to add.
      */
     public void add(final IAxis mAx) {
-        IAxis axis = mAx;
+        AbsAxis axis = (AbsAxis)mAx;
 
         if (isDupOrd(axis)) {
             axis = new DupFilterAxis(axis.getTransaction(), axis);
@@ -96,7 +97,7 @@ public class ExpressionSingle {
             mNumber++;
             break;
         default:
-            final IAxis cache = mExpr;
+            final AbsAxis cache = mExpr;
             mExpr = new NestedAxis(cache, axis);
         }
 

@@ -17,24 +17,24 @@
 
 package com.treetank.service.revIndex;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Stack;
+
+import com.treetank.TestHelper;
+import com.treetank.TestHelper.PATHS;
+import com.treetank.api.IDatabase;
+import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
+import com.treetank.axis.DescendantAxis;
+import com.treetank.exception.TTException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TTException;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 
@@ -63,7 +63,7 @@ public class RevIndexTest {
         rtx.moveToDocumentRoot();
         rtx.moveToFirstChild();
         rtx.moveToRightSibling();
-        final IAxis desc = new DescendantAxis(rtx);
+        final AbsAxis desc = new DescendantAxis(rtx);
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
@@ -149,7 +149,7 @@ public class RevIndexTest {
         rtx.moveToFirstChild();
         rtx.moveToRightSibling();
         rtx.moveToRightSibling();
-        final IAxis desc = new DescendantAxis(rtx);
+        final AbsAxis desc = new DescendantAxis(rtx);
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));

@@ -23,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IStructuralItem;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
 import com.treetank.exception.TTIOException;
@@ -283,8 +283,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertNamespace(final String mUri, final String mPrefix)
-        throws TTException {
+    public synchronized long insertNamespace(final String mUri, final String mPrefix) throws TTException {
         if (getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
@@ -321,7 +320,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         } else if (getCurrentNode() instanceof AbsStructNode) {
             final AbsStructNode node = (AbsStructNode)getCurrentNode();
             // // removing subtree
-            final IAxis desc = new DescendantAxis(this, false);
+            final AbsAxis desc = new DescendantAxis(this, false);
             while (desc.hasNext()) {
                 desc.next();
                 getTransactionState().removeNode((AbsNode)getCurrentNode());

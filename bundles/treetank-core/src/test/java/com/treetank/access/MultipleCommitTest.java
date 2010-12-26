@@ -18,29 +18,29 @@
 
 package com.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.PostOrderAxis;
 import com.treetank.exception.TTException;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class MultipleCommitTest {
 
@@ -122,7 +122,7 @@ public class MultipleCommitTest {
         wtx.commit();
         wtx.moveToDocumentRoot();
 
-        final IAxis postorderAxis = new PostOrderAxis(wtx);
+        final AbsAxis postorderAxis = new PostOrderAxis(wtx);
         while (postorderAxis.hasNext()) {
             postorderAxis.next();
             if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND
@@ -137,7 +137,7 @@ public class MultipleCommitTest {
         wtx.moveToDocumentRoot();
 
         int attrTouch = 0;
-        final IAxis descAxis = new DescendantAxis(wtx);
+        final AbsAxis descAxis = new DescendantAxis(wtx);
         while (descAxis.hasNext()) {
             descAxis.next();
             if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND) {

@@ -17,7 +17,6 @@
 
 package com.treetank.axis;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 
 /**
@@ -30,10 +29,10 @@ import com.treetank.api.IReadTransaction;
 public class NestedAxis extends AbsAxis {
 
     /** Parent axis. */
-    private final IAxis mParentAxis;
+    private final AbsAxis mParentAxis;
 
     /** Child axis to apply to each node found with parent axis. */
-    private final IAxis mChildAxis;
+    private final AbsAxis mChildAxis;
 
     /** Is it the first run of parent axis? */
     private boolean mIsFirst;
@@ -46,7 +45,7 @@ public class NestedAxis extends AbsAxis {
      * @param mChildAxis
      *            Outer nested axis.
      */
-    public NestedAxis(final IAxis parentAxis, final IAxis mChildAxis) {
+    public NestedAxis(final AbsAxis parentAxis, final AbsAxis mChildAxis) {
         super(parentAxis.getTransaction());
         this.mParentAxis = parentAxis;
         this.mChildAxis = mChildAxis;

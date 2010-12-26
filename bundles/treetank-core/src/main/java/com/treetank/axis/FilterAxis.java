@@ -17,7 +17,6 @@
 
 package com.treetank.axis;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 
@@ -31,7 +30,7 @@ import com.treetank.api.IReadTransaction;
 public class FilterAxis extends AbsAxis {
 
     /** Axis to test. */
-    private final IAxis mAxis;
+    private final AbsAxis mAxis;
 
     /** Test to apply to axis. */
     private final IFilter[] mAxisFilter;
@@ -44,7 +43,7 @@ public class FilterAxis extends AbsAxis {
      * @param axisTest
      *            Test to perform for each node found with axis.
      */
-    public FilterAxis(final IAxis axis, final IFilter... axisTest) {
+    public FilterAxis(final AbsAxis axis, final IFilter... axisTest) {
         super(axis.getTransaction());
         mAxis = axis;
         mAxisFilter = axisTest;
@@ -86,7 +85,7 @@ public class FilterAxis extends AbsAxis {
      * 
      * @return the axis
      */
-    public final IAxis getAxis() {
+    public final AbsAxis getAxis() {
         return mAxis;
     }
 
