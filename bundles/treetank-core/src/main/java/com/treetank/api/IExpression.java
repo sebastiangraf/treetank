@@ -1,4 +1,4 @@
-package com.treetank.service.xml.xpath.expr;
+package com.treetank.api;
 
 import com.treetank.exception.TTXPathException;
 
