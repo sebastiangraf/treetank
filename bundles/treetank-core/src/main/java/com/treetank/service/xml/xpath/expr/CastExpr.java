@@ -17,8 +17,8 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.SingleType;
 import com.treetank.service.xml.xpath.XPathError;
@@ -40,10 +40,10 @@ import com.treetank.utils.TypedValue;
  * optional occurrence indicator "?" denotes that an empty sequence is permitted.
  * </p>
  */
-public class CastExpr extends AbsExpression implements IAxis {
+public class CastExpr extends AbsExpression  {
 
     /** The input expression to cast to a specified target expression. */
-    private final IAxis mSourceExpr;
+    private final AbsAxis mSourceExpr;
 
     /** The type, to which the input expression will be casted to. */
     private final Type mTargetType;
@@ -61,7 +61,7 @@ public class CastExpr extends AbsExpression implements IAxis {
      * @param mTarget
      *            Type the input expression will be casted to.
      */
-    public CastExpr(final IReadTransaction rtx, final IAxis mInputExpr, final SingleType mTarget) {
+    public CastExpr(final IReadTransaction rtx, final AbsAxis mInputExpr, final SingleType mTarget) {
 
         super(rtx);
         mSourceExpr = mInputExpr;

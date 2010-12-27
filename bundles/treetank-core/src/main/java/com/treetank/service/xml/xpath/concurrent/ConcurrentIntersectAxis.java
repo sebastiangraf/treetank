@@ -19,7 +19,6 @@
 
 package com.treetank.service.xml.xpath.concurrent;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
@@ -34,7 +33,7 @@ import com.treetank.settings.EFixed;
  * order and duplicate free.
  * </p>
  */
-public class ConcurrentIntersectAxis extends AbsAxis implements IAxis {
+public class ConcurrentIntersectAxis extends AbsAxis {
 
     /** First operand sequence. */
     private final ConcurrentAxis mOp1;
@@ -61,7 +60,7 @@ public class ConcurrentIntersectAxis extends AbsAxis implements IAxis {
      * @param operand2
      *            Second operand
      */
-    public ConcurrentIntersectAxis(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2) {
+    public ConcurrentIntersectAxis(final IReadTransaction rtx, final AbsAxis operand1, final AbsAxis operand2) {
 
         super(rtx);
         mOp1 = new ConcurrentAxis(rtx, operand1);
@@ -157,7 +156,7 @@ public class ConcurrentIntersectAxis extends AbsAxis implements IAxis {
      * @return the next result of the axis. If the axis has no next result, the
      *         null node key is returned.
      */
-    private long getNext(final IAxis axis) {
+    private long getNext(final AbsAxis axis) {
         return (axis.hasNext()) ? axis.next() : (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
 
     }

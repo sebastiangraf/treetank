@@ -22,10 +22,10 @@ import java.io.File;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.filter.IFilterTest;
 import com.treetank.axis.filter.TypeFilter;
 import com.treetank.exception.TTException;
@@ -38,8 +38,8 @@ import org.junit.Test;
 
 public class TypeFilterTest {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "test.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
 
     @Before
     public void setUp() throws TTException {
@@ -64,7 +64,7 @@ public class TypeFilterTest {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
-        final IAxis axis = new XPathAxis(rtx, "a");
+        final AbsAxis axis = new XPathAxis(rtx, "a");
         final IReadTransaction xtx = axis.getTransaction();
 
         xtx.moveTo(9L);

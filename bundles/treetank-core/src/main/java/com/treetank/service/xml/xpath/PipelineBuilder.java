@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -75,14 +74,14 @@ public final class PipelineBuilder {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(PipelineBuilder.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(PipelineBuilder.class));
 
     /** Stack of pipeline builder which stores expressions. */
     private final FastStack<FastStack<ExpressionSingle>> mExprStack;
 
     /** Maps a variable name to the item that the variable holds. */
-    private final Map<String, IAxis> mVarRefMap;
+    private final Map<String, AbsAxis> mVarRefMap;
 
     /**
      * Constructor.
@@ -91,7 +90,7 @@ public final class PipelineBuilder {
 
         mExprStack = new FastStack<FastStack<ExpressionSingle>>();
 
-        mVarRefMap = new HashMap<String, IAxis>();
+        mVarRefMap = new HashMap<String, AbsAxis>();
 
     }
 
@@ -137,10 +136,10 @@ public final class PipelineBuilder {
         }
         int no = mNum;
 
-        IAxis[] axis;
+        AbsAxis[] axis;
         if (no > 1) {
 
-            axis = new IAxis[no];
+            axis = new AbsAxis[no];
 
             // add all SingleExpression to a list
             while (no-- > 0) {
@@ -159,7 +158,7 @@ public final class PipelineBuilder {
 
         } else if (no == 1) {
             // only one expression does not need to be capsled by a seq
-            axis = new IAxis[1];
+            axis = new AbsAxis[1];
             axis[0] = getPipeStack().pop().getExpr();
 
             if (mExprStack.size() > 1) {
@@ -172,7 +171,7 @@ public final class PipelineBuilder {
 
             }
 
-            final IAxis iAxis;
+            final AbsAxis iAxis;
             if (mExprStack.size() == 1 && getPipeStack().size() == 1 && getExpression().getSize() == 0) {
                 iAxis = new SequenceAxis(mTransaction, axis);
             } else {
@@ -251,9 +250,9 @@ public final class PipelineBuilder {
 
         final IReadTransaction rtx = mTransaction;
 
-        final IAxis elseExpr = getPipeStack().pop().getExpr();
-        final IAxis thenExpr = getPipeStack().pop().getExpr();
-        final IAxis ifExpr = getPipeStack().pop().getExpr();
+        final AbsAxis elseExpr = getPipeStack().pop().getExpr();
+        final AbsAxis thenExpr = getPipeStack().pop().getExpr();
+        final AbsAxis ifExpr = getPipeStack().pop().getExpr();
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
@@ -276,11 +275,11 @@ public final class PipelineBuilder {
 
         final IReadTransaction rtx = mTransaction;
 
-        final IAxis paramOperandTwo = getPipeStack().pop().getExpr();
-        final IAxis paramOperandOne = getPipeStack().pop().getExpr();
+        final AbsAxis paramOperandTwo = getPipeStack().pop().getExpr();
+        final AbsAxis paramOperandOne = getPipeStack().pop().getExpr();
 
         final CompKind kind = CompKind.fromString(mComp);
-        final IAxis axis = AbsComparator.getComparator(rtx, paramOperandOne, paramOperandTwo, kind, mComp);
+        final AbsAxis axis = AbsComparator.getComparator(rtx, paramOperandOne, paramOperandTwo, kind, mComp);
 
         // // TODO: use typeswitch of JAVA 7
         // if (mComp.equals("eq")) {
@@ -356,15 +355,15 @@ public final class PipelineBuilder {
 
         final IReadTransaction rtx = mTransaction;
 
-        final IAxis mOperand2 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
 
         // the unary operation only has one operator
-        final IAxis mOperand1 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand1 = getPipeStack().pop().getExpr();
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
 
-        final IAxis axis;
+        final AbsAxis axis;
 
         // TODO: use typeswitch of JAVA 7
         if (mOperator.equals("+")) {
@@ -399,8 +398,8 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= 2;
 
-        final IAxis mOperand2 = getPipeStack().pop().getExpr();
-        final IAxis mOperand1 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand1 = getPipeStack().pop().getExpr();
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -417,8 +416,8 @@ public final class PipelineBuilder {
     public void addAndExpression(final IReadTransaction mTransaction) {
         assert getPipeStack().size() >= 2;
 
-        final IAxis mOperand2 = getPipeStack().pop().getExpr();
-        final IAxis operand1 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
+        final AbsAxis operand1 = getPipeStack().pop().getExpr();
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -435,8 +434,8 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= 2;
 
-        final IAxis mOperand2 = getPipeStack().pop().getExpr();
-        final IAxis mOperand1 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand1 = getPipeStack().pop().getExpr();
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
@@ -458,10 +457,10 @@ public final class PipelineBuilder {
 
         final IReadTransaction rtx = mTransaction;
 
-        final IAxis mOperand2 = getPipeStack().pop().getExpr();
-        final IAxis mOperand1 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand1 = getPipeStack().pop().getExpr();
 
-        final IAxis axis =
+        final AbsAxis axis =
             mIsIntersect ? new IntersectAxis(rtx, mOperand1, mOperand2) : new ExceptAxis(rtx, mOperand1,
                 mOperand2);
 
@@ -491,7 +490,7 @@ public final class PipelineBuilder {
      * @param axis
      *            the axis step to add to the pipeline.
      */
-    public void addStep(final IAxis axis) {
+    public void addStep(final AbsAxis axis) {
 
         getExpression().add(axis);
     }
@@ -515,7 +514,7 @@ public final class PipelineBuilder {
      * 
      * @return all build pipelines
      */
-    public IAxis getPipeline() {
+    public AbsAxis getPipeline() {
 
         assert getPipeStack().size() <= 1;
 
@@ -537,7 +536,7 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= 2;
 
-        final IAxis mPredicate = getPipeStack().pop().getExpr();
+        final AbsAxis mPredicate = getPipeStack().pop().getExpr();
 
         if (mPredicate instanceof LiteralExpr) {
 
@@ -591,8 +590,8 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= (mVarNum + 1);
 
-        final IAxis satisfy = getPipeStack().pop().getExpr();
-        final List<IAxis> vars = new ArrayList<IAxis>();
+        final AbsAxis satisfy = getPipeStack().pop().getExpr();
+        final List<AbsAxis> vars = new ArrayList<AbsAxis>();
         int num = mVarNum;
 
         while (num-- > 0) {
@@ -600,7 +599,7 @@ public final class PipelineBuilder {
             vars.add(num, getPipeStack().pop().getExpr());
         }
 
-        final IAxis mAxis =
+        final AbsAxis mAxis =
             mIsSome ? new SomeExpr(mTransaction, vars, satisfy) : new EveryExpr(mTransaction, vars, satisfy);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
@@ -621,9 +620,9 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= 1;
 
-        final IAxis candidate = getPipeStack().pop().getExpr();
+        final AbsAxis candidate = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new CastableExpr(mTransaction, candidate, mSingleType);
+        final AbsAxis axis = new CastableExpr(mTransaction, candidate, mSingleType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -641,10 +640,10 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= 2;
 
-        final IAxis mOperand2 = getPipeStack().pop().getExpr();
-        final IAxis mOperand1 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
+        final AbsAxis mOperand1 = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new RangeAxis(mTransaction, mOperand1, mOperand2);
+        final AbsAxis axis = new RangeAxis(mTransaction, mOperand1, mOperand2);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -664,9 +663,9 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= 1;
 
-        final IAxis candidate = getPipeStack().pop().getExpr();
+        final AbsAxis candidate = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new CastExpr(mTransaction, candidate, mSingleType);
+        final AbsAxis axis = new CastExpr(mTransaction, candidate, mSingleType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -686,9 +685,9 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= 1;
 
-        final IAxis candidate = getPipeStack().pop().getExpr();
+        final AbsAxis candidate = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new InstanceOfExpr(mTransaction, candidate, mSequenceType);
+        final AbsAxis axis = new InstanceOfExpr(mTransaction, candidate, mSequenceType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -723,9 +722,9 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= 1;
 
-        final IAxis bindingSeq = getPipeStack().pop().getExpr();
+        final AbsAxis bindingSeq = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new VariableAxis(mTransaction, bindingSeq);
+        final AbsAxis axis = new VariableAxis(mTransaction, bindingSeq);
         mVarRefMap.put(mVarName, axis);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
@@ -751,7 +750,7 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= mNum;
 
-        final List<IAxis> args = new ArrayList<IAxis>(mNum);
+        final List<AbsAxis> args = new ArrayList<AbsAxis>(mNum);
         // arguments are stored on the stack in reverse order -> invert arg
         // order
         for (int i = 0; i < mNum; i++) {
@@ -781,7 +780,7 @@ public final class PipelineBuilder {
         try {
             // instantiate function class with right constructor
             final Constructor<?> cons = function.getConstructor(paramTypes);
-            final IAxis axis = (IAxis)cons.newInstance(mTransaction, args, min, max, returnType);
+            final AbsAxis axis = (AbsAxis)cons.newInstance(mTransaction, args, min, max, returnType);
 
             if (getPipeStack().empty() || getExpression().getSize() != 0) {
                 addExpressionSingle();

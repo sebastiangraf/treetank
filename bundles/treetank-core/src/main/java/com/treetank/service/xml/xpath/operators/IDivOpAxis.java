@@ -17,17 +17,17 @@
 
 package com.treetank.service.xml.xpath.operators;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
+import com.treetank.utils.LogWrapper;
 import com.treetank.utils.TypedValue;
 
-import com.treetank.utils.LogWrapper;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -53,7 +53,7 @@ public class IDivOpAxis extends AbsObAxis {
      * @param mOp2
      *            Second value of the operation
      */
-    public IDivOpAxis(final IReadTransaction rtx, final IAxis mOp1, final IAxis mOp2) {
+    public IDivOpAxis(final IReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
 
         super(rtx, mOp1, mOp2);
     }

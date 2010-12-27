@@ -20,7 +20,6 @@ package com.treetank.service.xml.xpath.expr;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.XPathError;
@@ -33,13 +32,13 @@ import com.treetank.service.xml.xpath.XPathError.ErrorType;
  * sequence containing all the nodes that occur in both operands.
  * </p>
  */
-public class IntersectAxis extends AbsAxis implements IAxis {
+public class IntersectAxis extends AbsAxis {
 
     /** First operand sequence. */
-    private final IAxis mOp1;
+    private final AbsAxis mOp1;
 
     /** Second operand sequence. */
-    private final IAxis mOp2;
+    private final AbsAxis mOp2;
 
     /** Set to decide, if an item is contained in both sequences. */
     private final Set<Long> mDupSet;
@@ -54,7 +53,7 @@ public class IntersectAxis extends AbsAxis implements IAxis {
      * @param mOperand2
      *            Second operand
      */
-    public IntersectAxis(final IReadTransaction rtx, final IAxis mOperand1, final IAxis mOperand2) {
+    public IntersectAxis(final IReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
         mOp1 = mOperand1;

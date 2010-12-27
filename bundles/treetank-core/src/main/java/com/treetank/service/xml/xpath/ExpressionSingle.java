@@ -17,7 +17,7 @@
 
 package com.treetank.service.xml.xpath;
 
-import com.treetank.api.IAxis;
+import com.treetank.api.IExpression;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.AncestorAxis;
 import com.treetank.axis.ChildAxis;
@@ -77,10 +77,10 @@ public class ExpressionSingle {
      * it is nested with the first one and builds the execution chain.
      * 
      * @param mAx
-     *            The axis to add.
+     *            ach The axis to add.
      */
-    public void add(final IAxis mAx) {
-        AbsAxis axis = (AbsAxis)mAx;
+    public void add(final AbsAxis mAx) {
+        AbsAxis axis = mAx;
 
         if (isDupOrd(axis)) {
             axis = new DupFilterAxis(axis.getTransaction(), axis);
@@ -109,7 +109,7 @@ public class ExpressionSingle {
      * 
      * @return The query execution chain
      */
-    public IAxis getExpr() {
+    public AbsAxis getExpr() {
 
         return (mNumber == 1) ? mFirstAxis : mExpr;
     }
@@ -136,9 +136,9 @@ public class ExpressionSingle {
      *            name of the current axis
      * @return true, if expression is still duplicate free
      */
-    public boolean isDupOrd(final IAxis ax) {
+    public boolean isDupOrd(final IExpression ax) {
 
-        IAxis axis = ax;
+        IExpression axis = ax;
 
         while (axis instanceof FilterAxis) {
             axis = ((FilterAxis)axis).getAxis();

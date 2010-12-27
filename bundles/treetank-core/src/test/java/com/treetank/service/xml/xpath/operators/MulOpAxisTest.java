@@ -18,22 +18,13 @@
 
 package com.treetank.service.xml.xpath.operators;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathError;
@@ -41,6 +32,16 @@ import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.expr.SequenceAxis;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class MulOpAxisTest {
 
@@ -63,8 +64,8 @@ public class MulOpAxisTest {
         IItem item1 = new AtomicValue(3.0, Type.DOUBLE);
         IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-        IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
-        IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
+        AbsAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
+        AbsAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
         AbsObAxis axis = new MulOpAxis(rtx, op1, op2);
 
         assertEquals(true, axis.hasNext());
@@ -84,8 +85,8 @@ public class MulOpAxisTest {
         final ISession session = database.getSession();
         IReadTransaction rtx = session.beginReadTransaction();
 
-        IAxis op1 = new SequenceAxis(rtx);
-        IAxis op2 = new SequenceAxis(rtx);
+        AbsAxis op1 = new SequenceAxis(rtx);
+        AbsAxis op2 = new SequenceAxis(rtx);
         AbsObAxis axis = new MulOpAxis(rtx, op1, op2);
 
         assertEquals(Type.DOUBLE, axis
@@ -136,7 +137,8 @@ public class MulOpAxisTest {
 
         try {
 
-            axis.getReturnType(rtx.keyForName("xs:yearMonthDuration"), rtx.keyForName("xs:yearMonthDuration"));
+            axis
+                .getReturnType(rtx.keyForName("xs:yearMonthDuration"), rtx.keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "

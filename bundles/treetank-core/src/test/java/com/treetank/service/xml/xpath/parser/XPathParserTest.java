@@ -18,22 +18,21 @@
 
 package com.treetank.service.xml.xpath.parser;
 
-import static org.junit.Assert.assertEquals;
+import com.treetank.TestHelper;
+import com.treetank.TestHelper.PATHS;
+import com.treetank.api.IDatabase;
+import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
+import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTException;
+import com.treetank.service.xml.xpath.XPathAxis;
+import com.treetank.utils.TypedValue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.exception.TTException;
-import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.service.xml.xpath.parser.XPathParser;
-import com.treetank.utils.TypedValue;
+import static org.junit.Assert.assertEquals;
 
 public class XPathParserTest {
 
@@ -59,7 +58,7 @@ public class XPathParserTest {
 
         rtx.moveTo(2L);
 
-        IAxis axis;
+        AbsAxis axis;
 
         axis = new XPathAxis(rtx, "\"12.5\"");
         assertEquals(true, axis.hasNext());

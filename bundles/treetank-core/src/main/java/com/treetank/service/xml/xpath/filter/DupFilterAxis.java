@@ -20,7 +20,6 @@ package com.treetank.service.xml.xpath.filter;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.FilterAxis;
@@ -41,7 +40,7 @@ import com.treetank.service.xml.xpath.expr.UnionAxis;
 public class DupFilterAxis extends AbsAxis {
 
     /** Sequence that may contain duplicates. */
-    private final IAxis mAxis;
+    private final AbsAxis mAxis;
 
     /** Set that stores all already returned item keys. */
     private final Set<Long> mDupSet;
@@ -60,7 +59,7 @@ public class DupFilterAxis extends AbsAxis {
      * @param mDupAxis
      *            Sequence that may return duplicates.
      */
-    public DupFilterAxis(final IReadTransaction rtx, final IAxis mDupAxis) {
+    public DupFilterAxis(final IReadTransaction rtx, final AbsAxis mDupAxis) {
 
         super(rtx);
         mAxis = mDupAxis;

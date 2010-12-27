@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
@@ -39,13 +38,13 @@ import com.treetank.utils.TypedValue;
  * operands, in increasing order.
  * </p>
  */
-public class RangeAxis extends AbsAxis implements IAxis {
+public class RangeAxis extends AbsAxis {
 
     /** The expression the range starts from. */
-    private final IAxis mFrom;
+    private final AbsAxis mFrom;
 
     /** The expression the range ends. */
-    private final IAxis mTo;
+    private final AbsAxis mTo;
 
     /** Is it the first run of range axis? */
     private boolean mFirst;
@@ -66,7 +65,7 @@ public class RangeAxis extends AbsAxis implements IAxis {
      * @param mTo
      *            the end of the range
      */
-    public RangeAxis(final IReadTransaction rtx, final IAxis mFrom, final IAxis mTo) {
+    public RangeAxis(final IReadTransaction rtx, final AbsAxis mFrom, final AbsAxis mTo) {
 
         super(rtx);
         this.mFrom = mFrom;

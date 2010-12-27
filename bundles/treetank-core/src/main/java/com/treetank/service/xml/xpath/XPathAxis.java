@@ -20,7 +20,6 @@ package com.treetank.service.xml.xpath;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
@@ -70,7 +69,7 @@ import com.treetank.service.xml.xpath.parser.XPathParser;
  * 
  * </p>
  */
-public final class XPathAxis extends AbsAxis implements IAxis {
+public final class XPathAxis extends AbsAxis {
 
     /** Declares if the evaluation is compatible to XPath 1.0 or not. */
     public static final boolean XPATH_10_COMP = true;
@@ -82,7 +81,7 @@ public final class XPathAxis extends AbsAxis implements IAxis {
     public static ExecutorService EXECUTOR;
 
     /** Axis holding the consecutive query execution plans of the query. */
-    private IAxis mPipeline;
+    private AbsAxis mPipeline;
 
     /**
      * <p>

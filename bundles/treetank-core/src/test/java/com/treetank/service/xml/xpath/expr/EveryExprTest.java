@@ -18,23 +18,23 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import static org.junit.Assert.assertEquals;
+import com.treetank.TestHelper;
+import com.treetank.TestHelper.PATHS;
+import com.treetank.api.IDatabase;
+import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTException;
+import com.treetank.service.xml.xpath.XPathAxis;
+import com.treetank.utils.DocumentCreater;
+import com.treetank.utils.TypedValue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
-import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.utils.DocumentCreater;
-import com.treetank.utils.TypedValue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit-test class to test the functionality of the UnionAxis.
@@ -63,18 +63,18 @@ public class EveryExprTest {
         wtx.commit();
         IReadTransaction rtx = session.beginReadTransaction();
 
-        final IAxis axis1 = new XPathAxis(rtx, "every $child in child::node()" + "satisfies $child/@i");
+        final AbsAxis axis1 = new XPathAxis(rtx, "every $child in child::node()" + "satisfies $child/@i");
         assertEquals(true, axis1.hasNext());
         assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        final IAxis axis2 = new XPathAxis(rtx, "every $child in child::node()" + "satisfies $child/@abc");
+        final AbsAxis axis2 = new XPathAxis(rtx, "every $child in child::node()" + "satisfies $child/@abc");
         assertEquals(true, axis2.hasNext());
         assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis2.hasNext());
 
         rtx.moveTo(1L);
-        final IAxis axis3 =
+        final AbsAxis axis3 =
             new XPathAxis(rtx, "every $child in child::element()"
                 + " satisfies $child/attribute::attribute()");
         assertEquals(true, axis3.hasNext());
@@ -82,7 +82,7 @@ public class EveryExprTest {
         assertEquals(false, axis3.hasNext());
 
         rtx.moveTo(1L);
-        final IAxis axis4 = new XPathAxis(rtx, "every $child in child::element() satisfies $child/child::c");
+        final AbsAxis axis4 = new XPathAxis(rtx, "every $child in child::element() satisfies $child/child::c");
         assertEquals(true, axis4.hasNext());
         assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis4.hasNext());

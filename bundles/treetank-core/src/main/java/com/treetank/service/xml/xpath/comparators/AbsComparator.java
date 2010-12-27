@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.comparators;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -38,10 +37,10 @@ public abstract class AbsComparator extends AbsAxis  {
     private final CompKind mComp;
 
     /** First value of the comparison. */
-    private final IAxis mOperand1;
+    private final AbsAxis mOperand1;
 
     /** Second value of the comparison. */
-    private final IAxis mOperand2;
+    private final AbsAxis mOperand2;
 
     /** Is first evaluation? */
     private boolean mIsFirst;
@@ -58,7 +57,7 @@ public abstract class AbsComparator extends AbsAxis  {
      * @param mComp
      *            comparison kind
      */
-    public AbsComparator(final IReadTransaction mRtx, final IAxis mOperand1, final IAxis mOperand2,
+    public AbsComparator(final IReadTransaction mRtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
         final CompKind mComp) {
 
         super(mRtx);
@@ -178,7 +177,7 @@ public abstract class AbsComparator extends AbsAxis  {
      * @throws TTXPathException
      *             if any goes wrong.
      */
-    protected abstract AtomicValue[] atomize(final IAxis paramOperand) throws TTXPathException;
+    protected abstract AtomicValue[] atomize(final AbsAxis paramOperand) throws TTXPathException;
 
     /**
      * Returns the common comparable type of the two operands, or an error, if
@@ -218,7 +217,7 @@ public abstract class AbsComparator extends AbsAxis  {
      * @return
      */
     public static final AbsComparator getComparator(final IReadTransaction paramRtx,
-        final IAxis paramOperandOne, final IAxis paramOperandTwo, final CompKind paramKind,
+        final AbsAxis paramOperandOne, final AbsAxis paramOperandTwo, final CompKind paramKind,
         final String paramVal) {
         if ("eq".equals(paramVal) || "lt".equals(paramVal) || "le".equals(paramVal) || "gt".equals(paramVal)
             || "ge".equals(paramVal)) {

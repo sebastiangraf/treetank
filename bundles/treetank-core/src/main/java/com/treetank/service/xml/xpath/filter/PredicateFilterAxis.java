@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.filter;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.utils.TypedValue;
@@ -31,11 +30,11 @@ import com.treetank.utils.TypedValue;
  * evaluation has to be reset to the key that it was set to before the evaluation.
  * </p>
  */
-public class PredicateFilterAxis extends AbsAxis implements IAxis {
+public class PredicateFilterAxis extends AbsAxis {
 
     private boolean mIsFirst;
 
-    private final IAxis mPredicate;
+    private final AbsAxis mPredicate;
 
     /**
      * Constructor. Initializes the internal state.
@@ -45,7 +44,7 @@ public class PredicateFilterAxis extends AbsAxis implements IAxis {
      * @param predicate
      *            predicate expression
      */
-    public PredicateFilterAxis(final IReadTransaction rtx, final IAxis predicate) {
+    public PredicateFilterAxis(final IReadTransaction rtx, final AbsAxis predicate) {
 
         super(rtx);
         mIsFirst = true;

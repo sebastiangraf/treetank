@@ -18,23 +18,23 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import static org.junit.Assert.assertEquals;
+import com.treetank.TestHelper;
+import com.treetank.TestHelper.PATHS;
+import com.treetank.api.IDatabase;
+import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTException;
+import com.treetank.service.xml.xpath.XPathAxis;
+import com.treetank.utils.DocumentCreater;
+import com.treetank.utils.TypedValue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
-import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.utils.DocumentCreater;
-import com.treetank.utils.TypedValue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit-test class to test the functionality of the CompAxis.
@@ -66,17 +66,17 @@ public class CompAxisTest {
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
 
-        final IAxis axis1 = new XPathAxis(rtx, "1.0 = 1.0");
+        final AbsAxis axis1 = new XPathAxis(rtx, "1.0 = 1.0");
         assertEquals(true, axis1.hasNext());
         assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        final IAxis axis2 = new XPathAxis(rtx, "(1, 2, 3) < (2, 3)");
+        final AbsAxis axis2 = new XPathAxis(rtx, "(1, 2, 3) < (2, 3)");
         assertEquals(true, axis2.hasNext());
         assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis2.hasNext());
 
-        final IAxis axis3 = new XPathAxis(rtx, "(1, 2, 3) > (3, 4)");
+        final AbsAxis axis3 = new XPathAxis(rtx, "(1, 2, 3) > (3, 4)");
         assertEquals(true, axis3.hasNext());
         assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis3.hasNext());

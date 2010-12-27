@@ -17,8 +17,8 @@
 
 package com.treetank.service.xml.xpath.comparators;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.EXPathError;
@@ -31,7 +31,7 @@ import com.treetank.utils.TypedValue;
  * Node comparisons are used to compare two nodes, by their identity or by their document order.
  * </p>
  */
-public class NodeComp extends AbsComparator implements IAxis {
+public class NodeComp extends AbsComparator {
 
     /**
      * Constructor. Initializes the internal state.
@@ -45,7 +45,7 @@ public class NodeComp extends AbsComparator implements IAxis {
      * @param mComp
      *            comparison kind
      */
-    public NodeComp(final IReadTransaction rtx, final IAxis mOperand1, final IAxis mOperand2,
+    public NodeComp(final IReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
         final CompKind mComp) {
 
         super(rtx, mOperand1, mOperand2, mComp);
@@ -55,7 +55,7 @@ public class NodeComp extends AbsComparator implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected AtomicValue[] atomize(final IAxis mOperand) throws TTXPathException {
+    protected AtomicValue[] atomize(final AbsAxis mOperand) throws TTXPathException {
 
         final IReadTransaction rtx = getTransaction();
         // store item key as atomic value

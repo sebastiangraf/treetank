@@ -20,11 +20,11 @@ package com.treetank.service.xml.xpath.operators;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
@@ -64,8 +64,8 @@ public class AddOpAxisTest {
         IItem item1 = new AtomicValue(1.0, Type.DOUBLE);
         IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-        IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
-        IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
+        AbsAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
+        AbsAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
         AbsObAxis axis = new AddOpAxis(rtx, op1, op2);
 
         assertEquals(true, axis.hasNext());
@@ -85,8 +85,8 @@ public class AddOpAxisTest {
         final ISession session = database.getSession();
         IReadTransaction rtx = session.beginReadTransaction();
 
-        IAxis op1 = new SequenceAxis(rtx);
-        IAxis op2 = new SequenceAxis(rtx);
+        AbsAxis op1 = new SequenceAxis(rtx);
+        AbsAxis op2 = new SequenceAxis(rtx);
         AbsObAxis axis = new AddOpAxis(rtx, op1, op2);
 
         assertEquals(Type.DOUBLE, axis

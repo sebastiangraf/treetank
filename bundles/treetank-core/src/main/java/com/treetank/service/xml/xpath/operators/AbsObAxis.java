@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.operators;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -37,10 +36,10 @@ import static com.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 public abstract class AbsObAxis extends AbsAxis {
 
     /** First arithmetic operand. */
-    private final IAxis mOperand1;
+    private final AbsAxis mOperand1;
 
     /** Second arithmetic operand. */
-    private final IAxis mOperand2;
+    private final AbsAxis mOperand2;
 
     /** True, if axis has not been evaluated yet. */
     private boolean mIsFirst;
@@ -55,7 +54,7 @@ public abstract class AbsObAxis extends AbsAxis {
      * @param mOp2
      *            Second value of the operation
      */
-    public AbsObAxis(final IReadTransaction rtx, final IAxis mOp1, final IAxis mOp2) {
+    public AbsObAxis(final IReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
 
         super(rtx);
         mOperand1 = mOp1;
@@ -134,7 +133,7 @@ public abstract class AbsObAxis extends AbsAxis {
      *            the operand to atomize
      * @return the atomized operand. (always an atomic value)
      */
-    private AtomicValue atomize(final IAxis mOperand) {
+    private AtomicValue atomize(final AbsAxis mOperand) {
 
         final IReadTransaction rtx = getTransaction();
         int type = rtx.getNode().getTypeKey();

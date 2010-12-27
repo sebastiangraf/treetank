@@ -17,8 +17,8 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.SequenceType;
 import com.treetank.utils.TypedValue;
@@ -30,10 +30,10 @@ import com.treetank.utils.TypedValue;
  * in its second operand, according to the rules for SequenceType matching; otherwise it returns false.
  * </p>
  */
-public class InstanceOfExpr extends AbsExpression implements IAxis {
+public class InstanceOfExpr extends AbsExpression {
 
     /** The sequence to test. */
-    private final IAxis mInputExpr;
+    private final AbsAxis mInputExpr;
 
     /** The sequence type that the sequence needs to have to be an instance of. */
     private final SequenceType mSequenceType;
@@ -48,7 +48,7 @@ public class InstanceOfExpr extends AbsExpression implements IAxis {
      * @param mSequenceType
      *            sequence type to test whether the input sequence matches to.
      */
-    public InstanceOfExpr(final IReadTransaction mRtx, final IAxis mInputExpr,
+    public InstanceOfExpr(final IReadTransaction mRtx, final AbsAxis mInputExpr,
         final SequenceType mSequenceType) {
 
         super(mRtx);

@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
@@ -36,13 +35,13 @@ import com.treetank.service.xml.xpath.functions.Function;
  * </p>
  * 
  */
-public class IfAxis extends AbsAxis implements IAxis {
+public class IfAxis extends AbsAxis {
 
-    private final IAxis mIf;
-    private final IAxis mThen;
-    private final IAxis mElse;
+    private final AbsAxis mIf;
+    private final AbsAxis mThen;
+    private final AbsAxis mElse;
     private boolean mFirst;
-    private IAxis mResult;
+    private AbsAxis mResult;
 
     /**
      * 
@@ -57,8 +56,8 @@ public class IfAxis extends AbsAxis implements IAxis {
      * @param mElseAxis
      *            Will be evaluated if test expression evaluates to false.
      */
-    public IfAxis(final IReadTransaction rtx, final IAxis mIfAxis, final IAxis mThenAxis,
-        final IAxis mElseAxis) {
+    public IfAxis(final IReadTransaction rtx, final AbsAxis mIfAxis, final AbsAxis mThenAxis,
+        final AbsAxis mElseAxis) {
 
         super(rtx);
         mIf = mIfAxis;

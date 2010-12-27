@@ -18,22 +18,22 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import static org.junit.Assert.assertEquals;
+import com.treetank.TestHelper;
+import com.treetank.TestHelper.PATHS;
+import com.treetank.api.IDatabase;
+import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTException;
+import com.treetank.service.xml.xpath.XPathAxis;
+import com.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
-import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.utils.DocumentCreater;
+import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit-test class to test the functionality of the RangeAxis.
@@ -83,7 +83,7 @@ public class RangeAxisTest {
         // assertEquals(false, axis2.hasNext());
 
         rtx.moveTo(1L);
-        final IAxis axis3 = new XPathAxis(rtx, "15 to 10");
+        final AbsAxis axis3 = new XPathAxis(rtx, "15 to 10");
         assertEquals(false, axis3.hasNext());
 
         rtx.close();

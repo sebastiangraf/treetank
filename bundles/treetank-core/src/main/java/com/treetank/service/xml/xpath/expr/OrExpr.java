@@ -17,8 +17,8 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.functions.Function;
@@ -60,13 +60,13 @@ import com.treetank.utils.TypedValue;
  * </tr>
  * </table>
  */
-public class OrExpr extends AbsExpression implements IAxis {
+public class OrExpr extends AbsExpression {
 
     /** First operand of the logical expression. */
-    private final IAxis mOp1;
+    private final AbsAxis mOp1;
 
     /** Second operand of the logical expression. */
-    private final IAxis mOp2;
+    private final AbsAxis mOp2;
 
     /**
      * Constructor. Initializes the internal state.
@@ -78,7 +78,7 @@ public class OrExpr extends AbsExpression implements IAxis {
      * @param mOperand2
      *            Second operand
      */
-    public OrExpr(final IReadTransaction rtx, final IAxis mOperand1, final IAxis mOperand2) {
+    public OrExpr(final IReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
         mOp1 = mOperand1;

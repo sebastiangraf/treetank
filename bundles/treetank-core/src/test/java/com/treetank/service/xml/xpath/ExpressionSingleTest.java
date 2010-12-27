@@ -18,21 +18,14 @@
 
 package com.treetank.service.xml.xpath;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.ChildAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FollowingSiblingAxis;
@@ -44,12 +37,19 @@ import com.treetank.service.xml.xpath.expr.UnionAxis;
 import com.treetank.service.xml.xpath.filter.DupFilterAxis;
 import com.treetank.utils.DocumentCreater;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class ExpressionSingleTest {
 
     ExpressionSingle builder;
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resoruces"
-        + File.separator + "factbook.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resoruces" + File.separator + "factbook.xml";
 
     @Before
     public void setUp() throws TTException {
@@ -72,13 +72,13 @@ public class ExpressionSingleTest {
         DocumentCreater.create(wtx);
 
         // test one axis
-        IAxis self = new SelfAxis(wtx);
+        AbsAxis self = new SelfAxis(wtx);
         builder.add(self);
         assertEquals(builder.getExpr(), self);
 
         // test 2 axis
-        IAxis axis1 = new SelfAxis(wtx);
-        IAxis axis2 = new SelfAxis(wtx);
+        AbsAxis axis1 = new SelfAxis(wtx);
+        AbsAxis axis2 = new SelfAxis(wtx);
         builder.add(axis1);
         builder.add(axis2);
         assertTrue(builder.getExpr() instanceof NestedAxis);
