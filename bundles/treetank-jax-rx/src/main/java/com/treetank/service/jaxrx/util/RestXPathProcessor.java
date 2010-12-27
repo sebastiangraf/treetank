@@ -15,10 +15,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.treetank.access.Database;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 
@@ -154,7 +154,7 @@ public class RestXPathProcessor {
 
             final boolean exist = rtx.moveTo(rId);
             if (exist) {
-                final IAxis axis = new XPathAxis(rtx, qQuery);
+                final AbsAxis axis = new XPathAxis(rtx, qQuery);
                 if (doWrap) {
                     output.write(beginResult.getBytes());
                     for (final long key : axis) {
@@ -222,7 +222,7 @@ public class RestXPathProcessor {
                 rtx = session.beginReadTransaction(revision);
             }
 
-            final IAxis axis = new XPathAxis(rtx, xpath);
+            final AbsAxis axis = new XPathAxis(rtx, xpath);
             for (final long key : axis) {
                 if (key >= 0) {
                     WorkerHelper.serializeXML(session, output, false, nodeid, key, revision).call();

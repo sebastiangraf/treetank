@@ -18,23 +18,23 @@
 
 package com.treetank.service.xml.xpath;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.shredder.XMLShredder;
+
+import static org.junit.Assert.fail;
 
 public class ShreddFileInvocation {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "content.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "content.xml";
 
     public static void main(String[] args) {
         try {
@@ -49,7 +49,8 @@ public class ShreddFileInvocation {
             final IWriteTransaction wtx = session.beginWriteTransaction();
             rtx.moveToDocumentRoot();
 
-            final IAxis xpath = new XPathAxis(wtx, "/office:document-content/office:body/office:text/text:p");
+            final AbsAxis xpath =
+                new XPathAxis(wtx, "/office:document-content/office:body/office:text/text:p");
             for (long node : xpath) {
                 System.out.println(node);
                 wtx.moveTo(node);

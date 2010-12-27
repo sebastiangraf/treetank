@@ -10,31 +10,26 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTException;
-import com.treetank.exception.TTIOException;
-import com.treetank.exception.TTUsageException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.settings.EDatabaseSetting;
-import com.treetank.utils.TypedValue;
 
 public class XPathTestQueries {
 
-    final private static String XMLFILE = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "factbook.xml";
+    final private static String XMLFILE =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "factbook.xml";
 
-    final private static File OUTPUTFILE = new File(File.separatorChar + "tmp" + File.separatorChar + "tt"
-        + File.separatorChar + "factbook.tnk");
+    final private static File OUTPUTFILE =
+        new File(File.separatorChar + "tmp" + File.separatorChar + "tt" + File.separatorChar + "factbook.tnk");
 
     final private static String QUERY = "//country/name";
 
@@ -48,7 +43,7 @@ public class XPathTestQueries {
             session = db.getSession();
             rtx = session.beginReadTransaction();
 
-            IAxis axis = new XPathAxis(rtx, QUERY);
+            AbsAxis axis = new XPathAxis(rtx, QUERY);
             int resultSize = 0;
             while (axis.hasNext()) {
                 axis.next();

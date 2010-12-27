@@ -19,7 +19,6 @@ package com.treetank.service.xml.xpath.functions;
 
 import java.util.List;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
@@ -58,7 +57,7 @@ public class FNString extends AbsFunction {
      * @throws TTXPathException
      *             if function check fails
      */
-    public FNString(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+    public FNString(final IReadTransaction rtx, final List<AbsAxis> args, final int min, final int max,
         final int returnType) throws TTXPathException {
 
         super(rtx, args, min, max, returnType);
@@ -75,7 +74,7 @@ public class FNString extends AbsFunction {
         if (getArgs().size() == 0) {
             value = getStrValue();
         } else {
-            final IAxis axis = getArgs().get(0);
+            final AbsAxis axis = getArgs().get(0);
             final StringBuilder val = new StringBuilder();
             while (axis.hasNext()) {
                 String nodeValue = getStrValue();

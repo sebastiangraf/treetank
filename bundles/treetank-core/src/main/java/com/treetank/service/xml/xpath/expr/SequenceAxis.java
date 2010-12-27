@@ -20,7 +20,6 @@ package com.treetank.service.xml.xpath.expr;
 import java.util.Arrays;
 import java.util.List;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 
@@ -34,10 +33,10 @@ import com.treetank.axis.AbsAxis;
  * </p>
  * 
  */
-public class SequenceAxis extends AbsAxis implements IAxis {
+public class SequenceAxis extends AbsAxis {
 
-    private final List<IAxis> mSeq;
-    private IAxis mCurrent;
+    private final List<AbsAxis> mSeq;
+    private AbsAxis mCurrent;
     private int mNum;
 
     /**
@@ -49,7 +48,7 @@ public class SequenceAxis extends AbsAxis implements IAxis {
      * @param axis
      *            The singleExpressions contained by the sequence
      */
-    public SequenceAxis(final IReadTransaction rtx, final IAxis... axis) {
+    public SequenceAxis(final IReadTransaction rtx, final AbsAxis... axis) {
 
         super(rtx);
         mSeq = Arrays.asList(axis);
@@ -63,7 +62,7 @@ public class SequenceAxis extends AbsAxis implements IAxis {
     public void reset(final long mNodeKey) {
         super.reset(mNodeKey);
         if (mSeq != null) {
-            for (IAxis ax : mSeq) {
+            for (AbsAxis ax : mSeq) {
                 ax.reset(mNodeKey);
             }
         }

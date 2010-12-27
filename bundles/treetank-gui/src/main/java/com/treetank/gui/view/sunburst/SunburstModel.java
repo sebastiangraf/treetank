@@ -30,11 +30,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.xpath.XPathException;
-
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
 import com.treetank.exception.TTIOException;
@@ -390,7 +388,7 @@ final class SunburstModel extends AbsComponent {
         int depthMax = 0;
         int depth = 0;
         final long nodeKey = paramRtx.getNode().getNodeKey();
-        for (final IAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
             final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
             if (node.hasFirstChild()) {
                 depth++;
@@ -422,7 +420,7 @@ final class SunburstModel extends AbsComponent {
      */
     private void getMinMaxTextLength(final IReadTransaction paramRtx) {
         assert paramRtx != null && !paramRtx.isClosed();
-        for (final IAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
             if (paramRtx.getNode().getKind() == ENodes.TEXT_KIND) {
                 final int length = paramRtx.getValueOfCurrentNode().length();
                 if (length < mMinTextLength) {
@@ -460,7 +458,7 @@ final class SunburstModel extends AbsComponent {
         final ExecutorService executor =
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         boolean firstNode = true;
-        for (final IAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
             final Future<List<?>> submit =
                 executor.submit(new TreeWalk(paramRevision, paramRtx.getNode().getNodeKey()));
 
@@ -495,7 +493,7 @@ final class SunburstModel extends AbsComponent {
         final ExecutorService executor =
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         boolean firstNode = true;
-        for (final IAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
             final Future<Long> submit = executor.submit(new Descendants(paramRtx.getNode().getNodeKey()));
 
             if (firstNode) {
@@ -558,7 +556,7 @@ final class SunburstModel extends AbsComponent {
         public void run() {
             try {
                 final List<Long> nodeKeys = new LinkedList<Long>();
-                final IAxis axis = new XPathAxis(mRTX, mQuery);
+                final AbsAxis axis = new XPathAxis(mRTX, mQuery);
 
                 while (axis.hasNext()) {
                     axis.next();
@@ -772,7 +770,7 @@ final class SunburstModel extends AbsComponent {
                 final Item item = Item.ITEM;
                 final Builder builder = Item.BUILDER;
 
-                for (final IAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
+                for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
                     builder.set(angle, extension, indexToParent).setDescendantCount(
                         (Long)descsAndMods.get(indexToParent).get().get(0));
                     moved.processCompareMove(mRtx, item, angleStack, extensionStack, descendantsStack,
@@ -989,7 +987,7 @@ final class SunburstModel extends AbsComponent {
                 final Item item = Item.ITEM;
                 final Builder builder = Item.BUILDER;
 
-                for (final IAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
+                for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
                     builder.set(angle, extension, indexToParent).setChildCountPerDepth(childCountPerDepth)
                         .set();
                     moved.processMove(mRtx, item, angleStack, extensionStack, childrenPerDepth, parentStack);
@@ -1136,8 +1134,8 @@ final class SunburstModel extends AbsComponent {
         public List<?> call() throws Exception {
             final List<Object> retVal = new LinkedList<Object>();
 
-            final IAxis revNew = new DescendantAxis(mNewRev, true);
-            final IAxis revOld = new DescendantAxis(mOldRev, true);
+            final AbsAxis revNew = new DescendantAxis(mNewRev, true);
+            final AbsAxis revOld = new DescendantAxis(mOldRev, true);
             int descendants = 0;
             int modifications = 0;
             while (revNew.hasNext()) {
@@ -1184,7 +1182,7 @@ final class SunburstModel extends AbsComponent {
         public Long call() throws Exception {
             long retVal = 0;
 
-            for (final IAxis axis = new DescendantAxis(mRTX, false); axis.hasNext(); axis.next()) {
+            for (final AbsAxis axis = new DescendantAxis(mRTX, false); axis.hasNext(); axis.next()) {
                 retVal++;
             }
 

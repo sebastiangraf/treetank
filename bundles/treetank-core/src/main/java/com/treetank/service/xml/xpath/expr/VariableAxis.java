@@ -20,7 +20,6 @@ package com.treetank.service.xml.xpath.expr;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 
@@ -32,10 +31,10 @@ import com.treetank.axis.AbsAxis;
  * evaluated.
  * </p>
  */
-public class VariableAxis extends AbsAxis implements IAxis {
+public class VariableAxis extends AbsAxis {
 
     /** Sequence that defines the values, the variable is bound to. */
-    private final IAxis mBindingSeq;
+    private final AbsAxis mBindingSeq;
 
     private final List<VarRefExpr> mVarRefs;
 
@@ -47,7 +46,7 @@ public class VariableAxis extends AbsAxis implements IAxis {
      * @param mInSeq
      *            sequence, the variable is bound to.
      */
-    public VariableAxis(final IReadTransaction rtx, final IAxis mInSeq) {
+    public VariableAxis(final IReadTransaction rtx, final AbsAxis mInSeq) {
 
         super(rtx);
         mBindingSeq = mInSeq;

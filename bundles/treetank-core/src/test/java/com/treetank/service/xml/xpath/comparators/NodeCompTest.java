@@ -20,11 +20,11 @@ package com.treetank.service.xml.xpath.comparators;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
 import com.treetank.exception.TTXPathException;
@@ -117,7 +117,7 @@ public class NodeCompTest {
     @Test
     public void testAtomize() throws TTXPathException {
 
-        IAxis axis = new LiteralExpr(rtx, -2);
+        AbsAxis axis = new LiteralExpr(rtx, -2);
         axis.hasNext(); // this is needed, because hasNext() has already been
         // called
         AtomicValue[] value = comparator.atomize(axis);

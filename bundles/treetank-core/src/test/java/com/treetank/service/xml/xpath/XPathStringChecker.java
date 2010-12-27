@@ -18,19 +18,18 @@
 
 package com.treetank.service.xml.xpath;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import com.treetank.TestHelper;
+import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTException;
+import com.treetank.utils.TypedValue;
 
 import org.junit.After;
 import org.junit.Before;
 
-import com.treetank.TestHelper;
-import com.treetank.api.IAxis;
-import com.treetank.api.IReadTransaction;
-import com.treetank.exception.TTException;
-import com.treetank.node.ENodes;
-import com.treetank.utils.TypedValue;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class XPathStringChecker {
 
@@ -44,7 +43,7 @@ public class XPathStringChecker {
         TestHelper.closeEverything();
     }
 
-    public static void testIAxisConventions(final IAxis axis, final String[] expectedValues) {
+    public static void testIAxisConventions(final AbsAxis axis, final String[] expectedValues) {
 
         final IReadTransaction rtx = axis.getTransaction();
 

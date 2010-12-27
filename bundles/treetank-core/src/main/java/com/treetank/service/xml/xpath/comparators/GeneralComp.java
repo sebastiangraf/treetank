@@ -20,8 +20,8 @@ package com.treetank.service.xml.xpath.comparators;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.functions.Function;
@@ -51,7 +51,7 @@ public class GeneralComp extends AbsComparator {
      * @param mCom
      *            comparison kind
      */
-    public GeneralComp(final IReadTransaction rtx, final IAxis mOperand1, final IAxis mOperand2,
+    public GeneralComp(final IReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
         final CompKind mCom) {
 
         super(rtx, mOperand1, mOperand2, mCom);
@@ -83,7 +83,7 @@ public class GeneralComp extends AbsComparator {
      * {@inheritDoc}
      */
     @Override
-    protected AtomicValue[] atomize(final IAxis mOperand) {
+    protected AtomicValue[] atomize(final AbsAxis mOperand) {
 
         final IReadTransaction rtx = getTransaction();
         final List<AtomicValue> op = new ArrayList<AtomicValue>();

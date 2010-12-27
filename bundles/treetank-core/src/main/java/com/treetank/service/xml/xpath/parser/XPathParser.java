@@ -20,7 +20,6 @@ package com.treetank.service.xml.xpath.parser;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IFilter;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
@@ -50,11 +49,10 @@ import com.treetank.axis.filter.TypeFilter;
 import com.treetank.axis.filter.WildcardFilter;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.PipelineBuilder;
 import com.treetank.service.xml.xpath.SequenceType;
 import com.treetank.service.xml.xpath.SingleType;
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.filter.DocumentNodeAxis;
 import com.treetank.service.xml.xpath.filter.SchemaAttributeFilter;
 import com.treetank.service.xml.xpath.filter.SchemaElementFilter;
@@ -698,7 +696,7 @@ public final class XPathParser {
             // step
             mPipeBuilder.addStep(new DocumentNodeAxis(getTransaction()));
 
-            final IAxis mAxis = new DescendantAxis(getTransaction(), true);
+            final AbsAxis mAxis = new DescendantAxis(getTransaction(), true);
 
             mPipeBuilder.addStep(mAxis);
 
@@ -724,7 +722,7 @@ public final class XPathParser {
         while (mToken.getType() == TokenType.SLASH || mToken.getType() == TokenType.DESC_STEP) {
 
             if (is(TokenType.DESC_STEP, true)) {
-                final IAxis mAxis = new DescendantAxis(getTransaction(), true);
+                final AbsAxis mAxis = new DescendantAxis(getTransaction(), true);
 
                 mPipeBuilder.addStep(mAxis);
             } else {
@@ -818,8 +816,10 @@ public final class XPathParser {
      * <p>
      * [29] ForwardStep ::= (ForwardAxis NodeTest) | AbbrevForwardStep .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseForwardStep() {
+    private void parseForwardStep() throws TTXPathException {
 
         AbsAxis axis;
         IFilter filter;
@@ -844,8 +844,9 @@ public final class XPathParser {
      * </p>
      * 
      * @return axis
+     * @throws TTXPathException
      */
-    private AbsAxis parseForwardAxis() {
+    private AbsAxis parseForwardAxis() throws TTXPathException {
 
         final AbsAxis axis;
         if (is("child", true)) {
@@ -876,7 +877,7 @@ public final class XPathParser {
 
         } else {
             is("namespace", true);
-            throw new XPathError(ErrorType.XPST0010);
+            throw EXPathError.XPST0010.getEncapsulatedException();
 
         }
 
@@ -1638,8 +1639,8 @@ public final class XPathParser {
             if (!name.equals("*")) {
                 filter = new NestedFilter(getTransaction(), filter, new NameFilter(getTransaction(), name));
             } // if it is '*', all attributes are accepted, so the normal
-              // attribute
-              // filter is sufficient
+            // attribute
+            // filter is sufficient
 
             if (is(TokenType.COMMA, true)) {
                 // add type filter
@@ -1735,7 +1736,7 @@ public final class XPathParser {
             if (!mName.equals("*")) {
                 filter = new NestedFilter(getTransaction(), filter, new NameFilter(getTransaction(), mName));
             } // if it is '*', all elements are accepted, so the normal element
-              // filter is sufficient
+            // filter is sufficient
 
             if (is(TokenType.COMMA, true)) {
 
@@ -2197,7 +2198,7 @@ public final class XPathParser {
      * 
      * @return the query pipelines.
      */
-    public IAxis getQueryPipeline() {
+    public AbsAxis getQueryPipeline() {
 
         return mPipeBuilder.getPipeline();
     }

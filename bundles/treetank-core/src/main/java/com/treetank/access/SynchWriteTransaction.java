@@ -4,7 +4,6 @@ import java.util.concurrent.locks.Lock;
 
 import javax.xml.namespace.QName;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IStructuralItem;
 import com.treetank.axis.DescendantAxis;

@@ -20,11 +20,10 @@
 package com.treetank.service.xml.xpath.concurrent;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Exchanger;
 
 import com.treetank.access.ReadTransaction;
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.comparators.AbsComparator;
 import com.treetank.service.xml.xpath.expr.ExceptAxis;
@@ -56,7 +55,7 @@ public class ConcurrentAxisHelper implements Runnable {
     private final IReadTransaction mRTX;
 
     /** Axis that computes the results. */
-    private final IAxis mAxis;
+    private final AbsAxis mAxis;
 
     /**
      * Queue that stores result keys already computed by this axis. End of the
@@ -81,7 +80,7 @@ public class ConcurrentAxisHelper implements Runnable {
      * @param rtx
      *            Transaction to operate with.
      */
-    public ConcurrentAxisHelper(final IReadTransaction rtx, final IAxis axis,
+    public ConcurrentAxisHelper(final IReadTransaction rtx, final AbsAxis axis,
         final BlockingQueue<Long> results) {
         mRTX = new ReadTransaction((ReadTransaction)rtx);
         mAxis = axis;

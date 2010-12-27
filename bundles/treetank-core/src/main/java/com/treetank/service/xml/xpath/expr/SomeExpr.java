@@ -19,8 +19,8 @@ package com.treetank.service.xml.xpath.expr;
 
 import java.util.List;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.utils.TypedValue;
 
@@ -35,11 +35,11 @@ import com.treetank.utils.TypedValue;
  * generate zero binding tuples, the value of the quantified expression is false.
  * </p>
  */
-public class SomeExpr extends AbsExpression implements IAxis {
+public class SomeExpr extends AbsExpression  {
 
-    private final List<IAxis> mVars;
+    private final List<AbsAxis> mVars;
 
-    private final IAxis mSatisfy;
+    private final AbsAxis mSatisfy;
 
     /**
      * Constructor. Initializes the internal state.
@@ -52,7 +52,7 @@ public class SomeExpr extends AbsExpression implements IAxis {
      *            condition that must be satisfied by at least one item of the
      *            variable results in order to evaluate expression to true
      */
-    public SomeExpr(final IReadTransaction rtx, final List<IAxis> mVars, final IAxis mSatisfy) {
+    public SomeExpr(final IReadTransaction rtx, final List<AbsAxis> mVars, final AbsAxis mSatisfy) {
 
         super(rtx);
         this.mVars = mVars;
@@ -68,7 +68,7 @@ public class SomeExpr extends AbsExpression implements IAxis {
         super.reset(mNodeKey);
 
         if (mVars != null) {
-            for (IAxis var : mVars) {
+            for (AbsAxis var : mVars) {
                 var.reset(mNodeKey);
             }
         }
@@ -87,7 +87,7 @@ public class SomeExpr extends AbsExpression implements IAxis {
 
         boolean satisfiesCond = false;
 
-        for (IAxis axis : mVars) {
+        for (AbsAxis axis : mVars) {
             while (axis.hasNext()) {
                 if (mSatisfy.hasNext()) {
                     // condition is satisfied for this item -> expression is
@@ -112,7 +112,7 @@ public class SomeExpr extends AbsExpression implements IAxis {
     @Override
     public synchronized void setTransaction(final IReadTransaction rtx) {
         super.setTransaction(rtx);
-        for (IAxis axis : mVars) {
+        for (AbsAxis axis : mVars) {
             axis.setTransaction(rtx);
         }
 

@@ -22,11 +22,11 @@ import javax.ws.rs.core.StreamingOutput;
 
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTException;
 import com.treetank.service.jaxrx.util.RESTProps;
 import com.treetank.service.jaxrx.util.RESTResponseHelper;
@@ -485,7 +485,7 @@ public class DatabaseRepresentation {
 
             // Connection to treetank, creating a session
             IDatabase database = null;
-            IAxis axis = null;
+            AbsAxis axis = null;
             IReadTransaction rtx = null;
             ISession session = null;
             // List for all restIds of modifications

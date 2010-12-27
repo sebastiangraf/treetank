@@ -34,9 +34,9 @@ import com.treetank.utils.TypedValue;
 
 public class Function {
 
-    public static boolean ebv(final IAxis axis) throws TTXPathException {
+    public static boolean ebv(final AbsAxis axis) throws TTXPathException {
         final FuncDef ebv = FuncDef.BOOLEAN;
-        final List<IAxis> param = new ArrayList<IAxis>();
+        final List<AbsAxis> param = new ArrayList<AbsAxis>();
         param.add(axis);
         final AbsAxis bAxis =
             new FNBoolean(axis.getTransaction(), param, ebv.getMin(), ebv.getMax(), axis.getTransaction()
@@ -114,7 +114,7 @@ public class Function {
      * @return true if sucessfull, false otherwise
      * @throws TTXPathException
      */
-    public static boolean fnBoolean(final IReadTransaction rtx, final IAxis axis) throws TTXPathException {
+    public static boolean fnBoolean(final IReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
 
         final boolean ebv = ebv(axis);
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(ebv));

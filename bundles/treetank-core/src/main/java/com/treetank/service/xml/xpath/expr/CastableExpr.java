@@ -17,8 +17,8 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.SingleType;
@@ -42,10 +42,10 @@ import com.treetank.utils.TypedValue;
  * given value.
  * </p>
  */
-public class CastableExpr extends AbsExpression implements IAxis {
+public class CastableExpr extends AbsExpression  {
 
     /** The input expression to cast to a specified target expression. */
-    private final IAxis mSourceExpr;
+    private final AbsAxis mSourceExpr;
 
     /** The type, to which the input expression should be cast to. */
     private final Type mTargetType;
@@ -63,7 +63,7 @@ public class CastableExpr extends AbsExpression implements IAxis {
      * @param mTarget
      *            Type to test, whether the input expression can be casted to.
      */
-    public CastableExpr(final IReadTransaction rtx, final IAxis inputExpr, final SingleType mTarget) {
+    public CastableExpr(final IReadTransaction rtx, final AbsAxis inputExpr, final SingleType mTarget) {
 
         super(rtx);
         mSourceExpr = inputExpr;

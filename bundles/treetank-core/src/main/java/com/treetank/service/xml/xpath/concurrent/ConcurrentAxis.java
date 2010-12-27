@@ -22,7 +22,6 @@ package com.treetank.service.xml.xpath.concurrent;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.XPathAxis;
@@ -44,10 +43,10 @@ import com.treetank.settings.EFixed;
  * used by any class that implements the IAxis interface. Note: Make sure that the used class is thread-safe.
  * </p>
  */
-public class ConcurrentAxis extends AbsAxis implements IAxis {
+public class ConcurrentAxis extends AbsAxis {
 
     /** Axis that is running in an own thread and produces results for this axis. */
-    private final IAxis mProducer;
+    private final AbsAxis mProducer;
 
     /**
      * Queue that stores result keys already computed by the producer. End of the
@@ -75,7 +74,7 @@ public class ConcurrentAxis extends AbsAxis implements IAxis {
      * @param childAxis
      *            Producer axis.
      */
-    public ConcurrentAxis(final IReadTransaction rtx, final IAxis mChildAxis) {
+    public ConcurrentAxis(final IReadTransaction rtx, final AbsAxis mChildAxis) {
         super(rtx);
         mResults = new ArrayBlockingQueue<Long>(M_CAPACITY);
         mFirst = true;

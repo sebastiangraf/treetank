@@ -20,7 +20,6 @@ package com.treetank.service.xml.xpath.expr;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.XPathError;
@@ -34,13 +33,13 @@ import com.treetank.service.xml.xpath.XPathError.ErrorType;
  * the second operand.
  * </p>
  */
-public class ExceptAxis extends AbsAxis implements IAxis {
+public class ExceptAxis extends AbsAxis {
 
     /** First operand sequence. */
-    private final IAxis mOp1;
+    private final AbsAxis mOp1;
 
     /** Second operand sequence. */
-    private final IAxis mOp2;
+    private final AbsAxis mOp2;
 
     /**
      * Set that is used to determine, whether an item of the first operand is
@@ -58,7 +57,7 @@ public class ExceptAxis extends AbsAxis implements IAxis {
      * @param mOperand2
      *            Second operand
      */
-    public ExceptAxis(final IReadTransaction rtx, final IAxis mOperand1, final IAxis mOperand2) {
+    public ExceptAxis(final IReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
         mOp1 = mOperand1;

@@ -19,8 +19,8 @@ package com.treetank.service.xml.xpath.functions;
 
 import java.util.List;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.EXPathError;
@@ -66,7 +66,7 @@ import com.treetank.service.xml.xpath.expr.AbsExpression;
 public abstract class AbsFunction extends AbsExpression {
 
     /** The function's arguments. */
-    private final List<IAxis> mArgs;
+    private final List<AbsAxis> mArgs;
 
     /** Minimum number of possible function arguments. */
     private final int mMin;
@@ -94,7 +94,7 @@ public abstract class AbsFunction extends AbsExpression {
      * @throws TTXPathException
      *             if the verify process is failing.
      */
-    public AbsFunction(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+    public AbsFunction(final IReadTransaction rtx, final List<AbsAxis> args, final int min, final int max,
         final int returnType) throws TTXPathException {
 
         super(rtx);
@@ -132,7 +132,7 @@ public abstract class AbsFunction extends AbsExpression {
 
         super.reset(mNodeKey);
         if (mArgs != null) {
-            for (IAxis ax : mArgs) {
+            for (AbsAxis ax : mArgs) {
                 ax.reset(mNodeKey);
             }
         }
@@ -167,20 +167,20 @@ public abstract class AbsFunction extends AbsExpression {
     /**
      * @return the list of function arguments
      */
-    protected List<IAxis> getArgs() {
+    protected List<AbsAxis> getArgs() {
 
         return mArgs;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public synchronized void setTransaction(final IReadTransaction rtx) {
-      super.setTransaction(rtx);
-      for (IAxis ax: mArgs) {
-        ax.setTransaction(rtx);
-      }
+        super.setTransaction(rtx);
+        for (AbsAxis ax : mArgs) {
+            ax.setTransaction(rtx);
+        }
     }
 
 }

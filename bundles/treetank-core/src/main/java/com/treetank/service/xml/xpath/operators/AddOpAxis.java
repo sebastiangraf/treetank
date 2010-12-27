@@ -17,9 +17,9 @@
 
 package com.treetank.service.xml.xpath.operators;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.EXPathError;
@@ -52,7 +52,7 @@ public class AddOpAxis extends AbsObAxis {
      * @param mOp2
      *            Second value of the operation
      */
-    public AddOpAxis(final IReadTransaction rtx, final IAxis mOp1, final IAxis mOp2) {
+    public AddOpAxis(final IReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
 
         super(rtx, mOp1, mOp2);
     }

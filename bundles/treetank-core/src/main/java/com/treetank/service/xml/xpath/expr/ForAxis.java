@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 
@@ -44,10 +43,10 @@ import com.treetank.axis.AbsAxis;
 public class ForAxis extends AbsAxis {
 
     /** The range expression. */
-    private final IAxis mRange;
+    private final AbsAxis mRange;
 
     /** The result expression. */
-    private final IAxis mReturn;
+    private final AbsAxis mReturn;
 
     /** Defines, whether is first call of hasNext(). */
     private boolean mIsFirst;
@@ -62,7 +61,7 @@ public class ForAxis extends AbsAxis {
      * @param returnExpr
      *            the return expression of the for expression
      */
-    public ForAxis(final IReadTransaction rtx, final IAxis range, final IAxis returnExpr) {
+    public ForAxis(final IReadTransaction rtx, final AbsAxis range, final AbsAxis returnExpr) {
 
         super(rtx);
         mRange = range;
