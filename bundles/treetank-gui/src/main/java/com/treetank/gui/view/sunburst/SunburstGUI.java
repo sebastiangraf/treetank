@@ -30,18 +30,13 @@ import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 import com.treetank.utils.LogWrapper;
 
-import controlP5.ControlEvent;
-import controlP5.ControlGroup;
-import controlP5.ControlP5;
-import controlP5.Range;
-import controlP5.Slider;
-import controlP5.Textfield;
-import controlP5.Toggle;
+import controlP5.*;
 
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PImage;
 
 /**
@@ -65,7 +60,7 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstGUI.class));
 
     /** Path to save visualization as a PDF or PNG file. */
-    private static final String SAVEPATH = "target" + File.separator + timestamp();
+    private static final String SAVEPATH = "target" + File.separator;
 
     /** Amount of effect in the fisheye transformation. */
     private static final float EFFECT_AMOUNT = 0.9f;
@@ -131,7 +126,13 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
     transient int mDepthMax;
 
     /** {@link Sempahore} to block re-initializing sunburst item list until draw() is finished(). */
-    transient Semaphore mLock = new Semaphore(1);
+    private transient Semaphore mLock = new Semaphore(1);
+
+    /** Buffered image. */
+    private transient PGraphics mBuffer;
+
+    /** Image to draw. */
+    private transient PImage mImg;
 
     /** Leaf node arc scale. */
     private transient float mLeafArcScale = 1.0f;
@@ -157,6 +158,14 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
     /** Determines if current state should be saved as a PDF-file. */
     private transient boolean mSavePDF;
 
+    private transient float mAngle;
+
+    private transient int mDepth;
+
+    private transient float mX;
+
+    private transient float mY;
+
     /** {@link ControlP5} reference. */
     private transient ControlP5 mControlP5;
 
@@ -177,15 +186,6 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
 
     /** {@link ControlP5} text field. */
     private transient Textfield mXPathField;
-
-    /** Determines the update state. */
-    private enum State {
-        /** Drawing "event". */
-        DRAW,
-
-        /** Click event. */
-        CLICK
-    };
 
     /**
      * Temporary {@link List} of {@link List}s of {@link SunburstItem}s.
@@ -226,8 +226,8 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
      *            read database
      * @return a GUI singleton
      */
-    static SunburstGUI getInstance(final PApplet paramParentApplet, final SunburstModel paramModel,
-        final ReadDB paramReadDB) {
+    static synchronized SunburstGUI getInstance(final PApplet paramParentApplet,
+        final SunburstModel paramModel, final ReadDB paramReadDB) {
         if (mGUI == null) {
             mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
             mGUI.setupGUI();
@@ -446,9 +446,7 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
             mStrokeWeightEnd = f[1];
         }
 
-        for (final SunburstItem item : mItems) {
-            item.update(mMappingMode);
-        }
+        update();
     }
 
     /**
@@ -465,50 +463,61 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
      * Implements the {@link PApplet} draw() method.
      */
     void draw() {
-        if (mItems != null && mControlP5 != null) {
+        if (mControlP5 != null) {
             try {
-                mLock.tryAcquire();
+                mLock.acquire();
                 mParent.pushMatrix();
+                mParent.image(mImg, 0, 0);
                 mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
-                mParent.background(0, 0, mBackgroundBrightness);
                 mParent.noFill();
                 mParent.ellipseMode(PConstants.RADIUS);
                 mParent.strokeCap(PConstants.SQUARE);
                 mParent.textLeading(14);
                 mParent.textAlign(PConstants.LEFT, PConstants.TOP);
                 mParent.smooth();
-
-                // Add menubar height (21 pixels).
                 mParent.translate(mParent.width / 2, mParent.height / 2 + 21);
 
-                // Draw the vizualization items.
+                // Mouse rollover, arc hittest vars.
+                rolloverInit();
+                int hitTestIndex = -1;
+                int index = 0;
                 for (final SunburstItem item : mItems) {
-                    // Draw arcs or rects.
-                    if (mShowArcs) {
-                        if (mUseArc) {
-                            item.drawArc(mInnerNodeArcScale, mLeafArcScale);
-                        } else {
-                            item.drawRect(mInnerNodeArcScale, mLeafArcScale);
-                        }
+                    // Hittest, which arc is the closest to the mouse.
+                    if (item.getDepth() == mDepth && mAngle > item.getAngleStart()
+                        && mAngle < item.getAngleEnd()) {
+                        hitTestIndex = index;
+                    }
+
+                    index++;
+                }
+
+                // Mouse rollover.
+                if (!mShowGUI) {
+                    // Depth level focus.
+                    if (mDepth <= mDepthMax) {
+                        final float firstRad = calcEqualAreaRadius(mDepth, mDepthMax);
+                        final float secondRad = calcEqualAreaRadius(mDepth + 1, mDepthMax);
+                        mParent.stroke(0, 0, 0, 30);
+                        mParent.strokeWeight(5.5f);
+                        mParent.ellipse(0, 0, firstRad, firstRad);
+                        mParent.ellipse(0, 0, secondRad, secondRad);
+                    }
+                    // Rollover text.
+                    if (hitTestIndex != -1) {
+                        final String text = mItems.get(hitTestIndex).toString();
+                        final float texW = mParent.textWidth(text) * 1.2f;
+                        mParent.fill(0, 0, 0);
+                        final int offset = 5;
+                        mParent.rect(mX + offset, mY + offset, texW + 4, mParent.textAscent() * 3.6f);
+                        mParent.fill(0, 0, 100);
+                        mParent.text(text.toUpperCase(), mX + offset + 2, mY + offset + 2);
                     }
                 }
 
-                for (final SunburstItem item : mItems) {
-                    if (mShowLines) {
-                        if (mUseBezierLine) {
-                            item.drawRelationBezier();
-                        } else {
-                            item.drawRelationLine();
-                        }
-                    }
+                // Fisheye view.
+                if (mFisheye) {
+                    fisheye(mParent.mouseX, mParent.mouseY, 120);
                 }
-
-                for (final SunburstItem item : mItems) {
-                    item.drawDot();
-                }
-
-                // Rollover test.
-                rollover(State.DRAW);
 
                 mParent.popMatrix();
 
@@ -519,10 +528,8 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
                 }
 
                 drawGUI();
-
-                if (mFisheye) {
-                    fisheye(mParent.mouseX, mParent.mouseY, 120);
-                }
+            } catch (final InterruptedException e) {
+                LOGWRAPPER.warn(e.getMessage(), e);
             } finally {
                 mLock.release();
             }
@@ -530,64 +537,68 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
     }
 
     /**
-     * Mouse rollover test.
-     * 
-     * @param paramState
-     *            Determines the state, if item info should be printed or not.
-     * @return Index of the {@link SunburstItem}, which is currently hovered. -1 if no matching item can be
-     *         found.
+     * Draws a complex drawing into an off-screen buffer.
      */
-    private int rollover(final State paramState) {
-        // Mouse rollover, arc hittest vars.
-        int hitTestIndex = -1;
-        final float x = mParent.mouseX - mParent.width / 2;
-        final float y = mParent.mouseY - (mParent.height / 2 + 21);
-        float angle = PApplet.atan2(y - 0, x - 0);
-        final float radius = PApplet.dist(0, 0, x, y);
+    void renderComplexImage() {
+        if (mItems != null) {
+            try {
+                mLock.acquire();
+                mBuffer.pushMatrix();
+                mBuffer.colorMode(PConstants.HSB, 360, 100, 100, 100);
+                mBuffer.background(0, 0, mBackgroundBrightness);
+                mBuffer.noFill();
+                mBuffer.ellipseMode(PConstants.RADIUS);
+                mBuffer.strokeCap(PConstants.SQUARE);
+                mBuffer.textLeading(14);
+                mBuffer.textAlign(PConstants.LEFT, PConstants.TOP);
+                mBuffer.smooth();
 
-        if (angle < 0) {
-            angle = PApplet.map(angle, -PConstants.PI, 0, PConstants.PI, PConstants.TWO_PI);
+                // Add menubar height (21 pixels).
+                mBuffer.translate(mParent.width / 2, mParent.height / 2 + 21);
+
+                // Draw items.
+                for (final SunburstItem item : mItems) {
+                    if (mShowArcs) {
+                        if (mUseArc) {
+                            item.drawArc(mInnerNodeArcScale, mLeafArcScale, mBuffer);
+                        } else {
+                            item.drawRect(mInnerNodeArcScale, mLeafArcScale, mBuffer);
+                        }
+                    }
+
+                    if (mShowLines) {
+                        if (mUseBezierLine) {
+                            item.drawRelationBezier(mBuffer);
+                        } else {
+                            item.drawRelationLine(mBuffer);
+                        }
+                    }
+
+                    item.drawDot(mBuffer);
+                }
+                mBuffer.popMatrix();
+            } catch (final InterruptedException e) {
+                LOGWRAPPER.warn(e.getMessage(), e);
+            } finally {
+                mLock.release();
+            }
+        }
+    }
+
+    /** Initialize rollover method. */
+    private void rolloverInit() {
+        mX = mParent.mouseX - mParent.width / 2;
+        mY = mParent.mouseY - (mParent.height / 2 + 21);
+        mAngle = PApplet.atan2(mY - 0, mX - 0);
+        final float radius = PApplet.dist(0, 0, mX, mY);
+
+        if (mAngle < 0) {
+            mAngle = PApplet.map(mAngle, -PConstants.PI, 0, PConstants.PI, PConstants.TWO_PI);
         } else {
-            angle = PApplet.map(angle, 0, PConstants.PI, 0, PConstants.PI);
+            mAngle = PApplet.map(mAngle, 0, PConstants.PI, 0, PConstants.PI);
         }
         // Calc mouse depth with mouse radius ... transformation of calcEqualAreaRadius()
-        final int depth =
-            PApplet.floor(PApplet.pow(radius, 2) * (mDepthMax + 1) / PApplet.pow(getInitialRadius(), 2));
-
-        int index = 0;
-        for (final SunburstItem item : mItems) {
-            // Hittest, which arc is the closest to the mouse.
-            if (item.getDepth() == depth && angle > item.getAngleStart() && angle < item.getAngleEnd()) {
-                hitTestIndex = index;
-            }
-
-            index++;
-        }
-
-        // Mouse rollover.
-        if (!mShowGUI && paramState == State.DRAW) {
-            // Depth level focus.
-            if (depth <= mDepthMax) {
-                final float firstRad = calcEqualAreaRadius(depth, mDepthMax);
-                final float secondRad = calcEqualAreaRadius(depth + 1, mDepthMax);
-                mParent.stroke(0, 0, 0, 30);
-                mParent.strokeWeight(5.5f);
-                mParent.ellipse(0, 0, firstRad, firstRad);
-                mParent.ellipse(0, 0, secondRad, secondRad);
-            }
-            // Rollover text.
-            if (hitTestIndex != -1) {
-                final String text = mItems.get(hitTestIndex).toString();
-                final float texW = mParent.textWidth(text) * 1.2f;
-                mParent.fill(0, 0, 0);
-                final int offset = 5;
-                mParent.rect(x + offset, y + offset, texW + 4, mParent.textAscent() * 3.6f);
-                mParent.fill(0, 0, 100);
-                mParent.text(text.toUpperCase(), x + offset + 2, y + offset + 2);
-            }
-        }
-
-        return hitTestIndex;
+        mDepth = PApplet.floor(PApplet.pow(radius, 2) * (mDepthMax + 1) / PApplet.pow(getInitialRadius(), 2));
     }
 
     /**
@@ -642,7 +653,7 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
      * @return initial radius
      */
     private float getInitialRadius() {
-        return mParent.height / 2f;
+        return mParent.height / 2f + 21;
     }
 
     /**
@@ -663,7 +674,7 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
                 // Save PDF.
                 mSavePDF = true;
                 PApplet.println("\n" + "saving to pdf – starting");
-                mParent.beginRecord(PConstants.PDF, SAVEPATH + ".pdf");
+                mParent.beginRecord(PConstants.PDF, SAVEPATH + timestamp() + ".pdf");
                 break;
             case '\b':
                 // Backspace.
@@ -671,15 +682,14 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
                 try {
                     mLock.acquire();
 
-                    if (!mItems.isEmpty()) {
+                    if (!mLastItems.isEmpty()) {
                         // Go back one index in history list.
                         final int lastItemIndex = mLastItems.size() - 1;
 
                         mItems = mLastItems.get(lastItemIndex);
                         mLastItems.remove(lastItemIndex);
-                        for (final SunburstItem item : mItems) {
-                            item.update(mMappingMode);
-                        }
+
+                        update();
                     }
                 } catch (final Exception e) {
                     LOGWRAPPER.warn(e.getMessage(), e);
@@ -706,9 +716,7 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
             case '1':
             case '2':
             case '3':
-                for (final SunburstItem item : mItems) {
-                    item.update(mMappingMode);
-                }
+                update();
                 break;
             case 'm':
             case 'M':
@@ -725,6 +733,18 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
                 mControlP5.group("menu").close();
             }
         }
+    }
+
+    /**
+     * Implements processing mouseMoved.
+     * 
+     * @param paramEvent
+     *            The {@link MouseEvent}.
+     * 
+     * @see processing.core.PApplet#mouseMoved
+     */
+    void mouseMoved(final MouseEvent paramEvent) {
+        // draw();
     }
 
     /**
@@ -763,7 +783,18 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
         mControlP5.controlWindow.mouseEvent(paramEvent);
 
         // Mouse rollover.
-        final int hitTestIndex = rollover(State.CLICK);
+        rolloverInit();
+        int index = 0;
+        int hitTestIndex = -1;
+        for (final SunburstItem item : mItems) {
+            // Hittest, which arc is the closest to the mouse.
+            if (item.getDepth() == mDepth && mAngle > item.getAngleStart() && mAngle < item.getAngleEnd()) {
+                hitTestIndex = index;
+            }
+
+            index++;
+        }
+
         if (!mShowGUI && hitTestIndex != -1) {
             switch (paramEvent.getClickCount()) {
             case 1:
@@ -816,9 +847,9 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
      * Calculate area so that radiuses have equal areas in each depth.
      * 
      * @param paramDepth
-     *            The actual depth.e
+     *            the actual depth
      * @param paramDepthMax
-     *            The maximum depth.
+     *            the maximum depth
      * @return calculated area
      */
     float calcEqualAreaRadius(final int paramDepth, final int paramDepthMax) {
@@ -866,13 +897,33 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
     }
 
     /**
+     * Populates the off-screen buffer with a complex image then copies
+     * the buffer contents to an image that we will display on screen.
+     */
+    void updateBuffer() {
+        renderComplexImage();
+        mBuffer.endDraw();
+        mImg = mBuffer.get(0, 0, mBuffer.width, mBuffer.height);
+    }
+
+    /** Update items as well as the buffered offscreen image. */
+    private void update() {
+        mBuffer = mParent.createGraphics(mParent.width, mParent.height, PConstants.JAVA2D);
+        mBuffer.beginDraw();
+        for (final SunburstItem item : mItems) {
+            item.update(mGUI.getMappingMode(), mBuffer);
+        }
+        updateBuffer();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     @Override
     public void propertyChange(final PropertyChangeEvent paramEvent) {
-        mParent.noLoop();
         try {
+            mParent.noLoop();
             mLock.acquire();
 
             if (paramEvent.getPropertyName().equals("items")) {
@@ -881,12 +932,10 @@ final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
             } else if (paramEvent.getPropertyName().equals("maxDepth")) {
                 assert paramEvent.getNewValue() instanceof Integer;
                 mDepthMax = (Integer)paramEvent.getNewValue();
+                mLock.release();
+                update();
             }
-
-            for (final SunburstItem item : mItems) {
-                item.update(mGUI.getMappingMode());
-            }
-        } catch (final Exception e) {
+        } catch (final InterruptedException e) {
             LOGWRAPPER.warn(e.getMessage(), e);
         } finally {
             mLock.release();

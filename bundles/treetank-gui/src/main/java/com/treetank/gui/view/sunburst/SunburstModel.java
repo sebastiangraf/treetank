@@ -40,6 +40,7 @@ import com.treetank.exception.TTXPathException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.Item.Builder;
 import com.treetank.gui.view.sunburst.SunburstItem.StructType;
+import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.service.xml.xpath.XPathAxis;
@@ -132,10 +133,9 @@ final class SunburstModel extends AbsComponent {
         assert paramApplet != null && paramDb != null;
         mParent = paramApplet;
         try {
-            final IReadTransaction rtx = paramDb.getRtx();
             mSession = paramDb.getSession();
-            mRtx = mSession.beginReadTransaction(rtx.getRevisionNumber());
-            mRtx.moveTo(rtx.getNode().getNodeKey());
+            mRtx = mSession.beginReadTransaction(paramDb.getRevisionNumber());
+            mRtx.moveTo(paramDb.getNodeKey());
         } catch (final TTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
@@ -144,6 +144,7 @@ final class SunburstModel extends AbsComponent {
         mModel = this;
         mDb = paramDb;
         addPropertyChangeListener(mGUI);
+        addPropertyChangeListener((Embedded)paramApplet);
     }
 
     /**
@@ -203,111 +204,13 @@ final class SunburstModel extends AbsComponent {
         }
     }
 
-    // final long nodeKey = initialize(paramKey);
-    //
-    // try {
-    // if (paramRevision < mRtx.getRevisionNumber()) {
-    // throw new IllegalArgumentException(
-    // "paramRevision must be greater than the currently opened revision!");
-    // }
-    // final IReadTransaction rtx = mSession.beginReadTransaction(paramRevision);
-    //
-    // // Temporary list.
-    // final List<SunburstItem> itemList = new LinkedList<SunburstItem>(mItems);
-    //
-    // // Temporary max depth.
-    // // final int maxDepth = getDepthMax();
-    //
-    // // Remove all elements from item list.
-    // mItems.clear();
-    //
-    // // Initial extension and childExtension.
-    // float extension = PConstants.TWO_PI;
-    // float childExtension = 0f;
-    //
-    // // Node relations used for simplyfing the SunburstItem constructor.
-    // final NodeRelations relations = new NodeRelations();
-    //
-    // // Depth in the tree starting at 0.
-    // int depth = 0;
-    //
-    // // Start angle.
-    // float angle = 0f;
-    //
-    // final List<SunburstItem> items = new LinkedList<SunburstItem>();
-    // final List<Integer> modifications = new LinkedList<Integer>();
-    // final Stack<Integer> modCountPerSubtree = new Stack<Integer>();
-    //
-    // if (rtx.moveTo(nodeKey)) {
-    // final SunburstPostOrderAxis revision = new SunburstPostOrderAxis(mRtx);
-    // final SunburstPostOrderAxis secRevision = new SunburstPostOrderAxis(rtx);
-    // int modificationsPerNode = 0;
-    // final Future<Long> descCount =
-    // getDescendantsOfNode(secRevision.getTransaction().getNode().getNodeKey());
-    //
-    // for (int index = 0; secRevision.hasNext(); index++) {
-    // final Future<Long> childDescCount =
-    // getDescendantsOfNode(secRevision.getTransaction().getNode().getNodeKey());
-    //
-    // // Move cursors.
-    // if (mod == Modification.DELETED) {
-    // mod = Modification.NONE;
-    // } else {
-    // secRevision.next();
-    // }
-    // if (revision.hasNext()) {
-    // revision.next();
-    // }
-    //
-    // modificationsPerNode = checkModification(rtx);
-    //
-    // switch (secRevision.getMoved()) {
-    // case CHILD:
-    // if (modCountPerSubtree.empty()) {
-    // modCountPerSubtree.push(modificationsPerNode);
-    // } else {
-    // throw new IllegalStateException("Stack should be empty!");
-    // }
-    //
-    // break;
-    // case SIBL:
-    // modCountPerSubtree.push(modCountPerSubtree.pop() + modificationsPerNode);
-    // break;
-    // case PARENT:
-    // assert !modCountPerSubtree.empty();
-    // modificationsPerNode += modCountPerSubtree.pop();
-    // assert modCountPerSubtree.empty();
-    // break;
-    // default:
-    // break;
-    // }
-    //
-    // childExtension = extension * descCount.get() / childDescCount.get();
-    // }
-    // } else {
-    // throw new IllegalArgumentException("Parameter nodeKey must exist in both revisions!");
-    // }
-    //
-    // firePropertyChange("list", itemList, Collections.unmodifiableList(mItems));
-    // // firePropertyChange("maxDepth", maxDepth, getDepthMax());
-    // } catch (final TreetankException e) {
-    // LOGWRAPPER.error(e.getMessage(), e);
-    // } catch (final InterruptedException e) {
-    // LOGWRAPPER.error(e.getMessage(), e);
-    // } catch (final ExecutionException e) {
-    // LOGWRAPPER.error(e.getMessage(), e);
-    // }
-    //
-    // mRtx.moveTo(nodeKey);
-    // }
-
     /**
      * Check for modification of the current node.
      * 
      * @param paramNewRtx
-     *            the {@link IReadTransaction} from the new revision
+     *            the {@link IReadTransaction} on the new revision
      * @param paramOldRtx
-     *            the {@link IReadTransaction} from the old revision
+     *            the {@link IReadTransaction} on the old revision
      */
     private void checkModification(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         assert paramNewRtx != null;
@@ -324,7 +227,7 @@ final class SunburstModel extends AbsComponent {
                 // See if one of the right sibling matches.
                 final long key = paramNewRtx.getNode().getNodeKey();
                 do {
-                    if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
+                    if (paramNewRtx.getNode().getHash() == paramOldRtx.getNode().getHash()) {
                         found = true;
                     }
 
@@ -335,12 +238,14 @@ final class SunburstModel extends AbsComponent {
                     && paramNewRtx.moveToRightSibling() && !found);
                 paramNewRtx.moveTo(key);
 
-                if (isRightSibling) {
-                    // It has been deleted.
-                    mMod = Modification.DELETED;
-                } else if (found) {
-                    // Same.
-                    mMod = Modification.NONE;
+                if (found) {
+                    if (isRightSibling) {
+                        // It has been deleted.
+                        mMod = Modification.DELETED;
+                    } else {
+                        // Same.
+                        mMod = Modification.NONE;
+                    }
                 } else {
                     // It has been inserted.
                     mMod = Modification.INSERTED;
@@ -361,14 +266,14 @@ final class SunburstModel extends AbsComponent {
      *            weighting of text length
      */
     void traverseTree(final long paramKey, final float paramTextWeight) {
-        // final ExecutorService executor = Executors.newSingleThreadExecutor();
-        // executor.submit(new TraverseTree(paramKey, this));
-        // executor.shutdown();
         assert paramKey >= 0;
         assert paramTextWeight >= 0;
         try {
             mLock.acquire();
-            new Thread(new TraverseTree(paramKey, this)).start();
+            final ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(new TraverseTree(paramKey, this));
+            executor.shutdown();
+            // new Thread(new TraverseTree(paramKey, this)).start();
         } catch (final Exception e) {
             LOGWRAPPER.warn(e.getMessage(), e);
         } finally {
@@ -588,8 +493,8 @@ final class SunburstModel extends AbsComponent {
                 }
 
                 // Copy list and fire changes with unmodifiable lists.
-                mModel.firePropertyChange("items", Collections.unmodifiableList(itemList), Collections
-                    .unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+                mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
+                    Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
                 mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
             } catch (final TTXPathException exc) {
                 LOGWRAPPER.error(exc);
@@ -748,7 +653,7 @@ final class SunburstModel extends AbsComponent {
                 mDepthMax = getDepthMax(secondRtx);
 
                 // Determines movement of transaction.
-                EMoved moved = EMoved.START;
+                EMoved moved = EMoved.STARTRIGHTSIBL;
 
                 // Initialize modification.
                 mMod = Modification.NONE;
@@ -771,8 +676,9 @@ final class SunburstModel extends AbsComponent {
                 final Builder builder = Item.BUILDER;
 
                 for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
-                    builder.set(angle, extension, indexToParent).setDescendantCount(
-                        (Long)descsAndMods.get(indexToParent).get().get(0));
+                    builder.set(angle, extension, indexToParent)
+                        .setDescendantCount((Long)descsAndMods.get(indexToParent).get().get(0))
+                        .setModificationCount((Integer)descsAndMods.get(indexToParent).get().get(1));
                     moved.processCompareMove(mRtx, item, angleStack, extensionStack, descendantsStack,
                         parentStack, modificationStack);
                     angle = item.mAngle;
@@ -784,7 +690,7 @@ final class SunburstModel extends AbsComponent {
                     // Add a sunburst item.
                     final AbsStructNode node = (AbsStructNode)mRtx.getNode();
                     final StructType structKind =
-                        node.hasFirstChild() ? StructType.ISINNERNODE : StructType.ISLEAF;
+                        node.hasFirstChild() ? StructType.ISINNERNODE : StructType.ISLEAFNODE;
 
                     // Calculate extension.
                     if (descendantCount == 0) {
@@ -854,6 +760,7 @@ final class SunburstModel extends AbsComponent {
                     } else if (node.hasRightSibling()) {
                         // Next node will be a right sibling node.
                         angle += childExtension;
+                        moved = EMoved.STARTRIGHTSIBL;
                     } else if (!node.hasRightSibling()) {
                         // Next node will be a right sibling of an anchestor node or the traversal ends.
                         moved = EMoved.ANCHESTSIBL;
@@ -895,8 +802,8 @@ final class SunburstModel extends AbsComponent {
             }
 
             // Copy list and fire changes with unmodifiable lists.
-            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList), Collections
-                .unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
+                Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
             mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
 
             mRtx.moveTo(mKey);
@@ -922,7 +829,9 @@ final class SunburstModel extends AbsComponent {
          *            The {@link SunburstModel}.
          */
         private TraverseTree(final long paramKey, final SunburstModel paramModel) {
-            assert paramKey > -1 && mRtx != null && !mRtx.isClosed();
+            assert paramKey > -1;
+            assert mRtx != null;
+            assert !mRtx.isClosed();
             mKey = paramKey;
             mModel = paramModel;
 
@@ -940,8 +849,8 @@ final class SunburstModel extends AbsComponent {
             LOGWRAPPER.debug("Build sunburst items.");
 
             // Initialize variables. =============================
-            final List<SunburstItem> itemList = new ArrayList<SunburstItem>(mItems);
-            final int maxDepth = mDepthMax;
+//            final List<SunburstItem> itemList = new ArrayList<SunburstItem>(mItems);
+//            final int maxDepth = mDepthMax;
 
             // Remove all elements from item list.
             mItems.clear();
@@ -972,7 +881,7 @@ final class SunburstModel extends AbsComponent {
                 final List<Future<Long>> descendants = getDescendants(rtx);
 
                 // Determines movement of transaction.
-                EMoved moved = EMoved.START;
+                EMoved moved = EMoved.STARTRIGHTSIBL;
 
                 // Index to parent node.
                 int indexToParent = -1;
@@ -998,14 +907,16 @@ final class SunburstModel extends AbsComponent {
 
                     // Add a sunburst item.
                     final AbsStructNode node = (AbsStructNode)mRtx.getNode();
+//                    if (depth < 3) {
                     final StructType structKind =
-                        node.hasFirstChild() ? StructType.ISINNERNODE : StructType.ISLEAF;
-                    final long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
+                        node.hasFirstChild() ? StructType.ISINNERNODE : StructType.ISLEAFNODE;
+                    long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
 
                     // Calculate extension.
                     if (childCountPerDepth == 0) {
                         final long key = mRtx.getNode().getNodeKey();
                         mRtx.moveToParent();
+                        childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
                         childExtension = extension / (float)childCount;
                         mRtx.moveTo(key);
                     } else {
@@ -1033,6 +944,7 @@ final class SunburstModel extends AbsComponent {
                         mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension,
                             relations, mDb).setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
                     }
+//                    }
 
                     // Set depth max.
                     mDepthMax = Math.max(depth, mDepthMax);
@@ -1052,6 +964,7 @@ final class SunburstModel extends AbsComponent {
                     } else if (node.hasRightSibling()) {
                         // Next node will be a right sibling node.
                         angle += childExtension;
+                        moved = EMoved.STARTRIGHTSIBL;
                     } else if (!node.hasRightSibling()) {
                         // Next node will be a right sibling of an anchestor node or the traversal ends.
                         moved = EMoved.ANCHESTSIBL;
@@ -1090,9 +1003,10 @@ final class SunburstModel extends AbsComponent {
             }
 
             // Copy list and fire changes with unmodifiable lists.
-            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList), Collections
-                .unmodifiableList(new ArrayList<SunburstItem>(mItems)));
-            mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
+            mModel.firePropertyChange("items", null,
+                Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+            mModel.firePropertyChange("maxDepth", null, mDepthMax);
+            mModel.firePropertyChange("done", null, true);
 
             mRtx.moveTo(mKey);
 
@@ -1127,7 +1041,11 @@ final class SunburstModel extends AbsComponent {
             } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
-            mOldRev.moveTo(paramNodeKey);
+
+            if (!mNewRev.moveTo(paramNodeKey) || !mOldRev.moveTo(paramNodeKey)) {
+                throw new IllegalStateException(
+                    "Both transactions have to be able to move to the specified start node key!");
+            }
         }
 
         @Override

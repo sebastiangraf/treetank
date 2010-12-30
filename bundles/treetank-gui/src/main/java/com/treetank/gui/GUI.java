@@ -142,14 +142,10 @@ public final class GUI extends JFrame {
      *            Determines the revision.
      */
     void execute(final File paramFile, final long paramRevision) {
-        try {
-            if (mReadDB == null || !paramFile.equals(mReadDB.getDatabase().getFile())
-                || paramRevision != mReadDB.getRtx().getRevisionNumber()) {
-                mReadDB = new ReadDB(paramFile, paramRevision);
-                mNotifier.init();
-            }
-        } catch (final TTIOException e) {
-            LOGGER.error(e.getMessage(), e);
+        if (mReadDB == null || !paramFile.equals(mReadDB.getDatabase().getFile())
+            || paramRevision != mReadDB.getRevisionNumber()) {
+            mReadDB = new ReadDB(paramFile, paramRevision);
+            mNotifier.init();
         }
         mNotifier.update();
     }

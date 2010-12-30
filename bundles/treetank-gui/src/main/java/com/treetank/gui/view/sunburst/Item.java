@@ -42,10 +42,10 @@ public final class Item {
     /** Child count per depth. */
     transient long mChildCountPerDepth;
 
-    /** Child count per depth. */
+    /** Descendant count. */
     transient long mDescendantCount;
     
-    /** Child count per depth. */
+    /** Modification count on a node (counts subtree modifications). */
     transient int mModificationCount;
 
     /** Builder to simplify item constructor. */
@@ -66,8 +66,16 @@ public final class Item {
         /** Index to the parent item. */
         transient int mIndexToParent;
         
-        /** Child count per depth. */
+        /** Modification count on a node (counts subtree modifications). */
         transient int mModificationCount;
+        
+        /** 
+         * Private constructor to prevent instantiation other then via the public
+         * Builder instance. 
+         */
+        private Builder() {
+            
+        }
 
         /**
          * Set all fields.
@@ -106,7 +114,7 @@ public final class Item {
          * Set descendant count.
          * 
          * @param paramDescendantCount
-         *            parent descendant count
+         *            descendant count
          * @return this builder
          */
         Builder setDescendantCount(final long paramDescendantCount) {
@@ -133,6 +141,14 @@ public final class Item {
             assert mChildCountPerDepth != -1L || mDescendantCount != -1L;
             ITEM.setAll(this);
         }
+    }
+    
+    /** 
+     * Private constructor to prevent instantiation other then via the public
+     * Item instance. 
+     */
+    private Item() {
+        
     }
 
     /**

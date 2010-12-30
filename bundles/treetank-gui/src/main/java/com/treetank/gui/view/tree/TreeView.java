@@ -113,12 +113,22 @@ public final class TreeView extends JScrollPane implements IView {
      *            {@link ViewNotifier} to notify views of changes etc.pp.
      * @return {@link TreeView} instance.
      */
-    public static TreeView getInstance(final ViewNotifier paramNotifier) {
+    public synchronized static TreeView getInstance(final ViewNotifier paramNotifier) {
         if (mView == null) {
             mView = new TreeView(paramNotifier);
         }
         
         return mView;
+    }
+    
+    /** 
+     * Not supported.
+     * 
+     * @see Object#clone()
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
     }
 
     /** {@inheritDoc} */
@@ -148,7 +158,6 @@ public final class TreeView extends JScrollPane implements IView {
     public void refreshUpdate() {
         // Use our Treetank model and renderer.
         final ReadDB db = mGUI.getReadDB();
-        mRtx = db.getRtx();
 
         if (mTree.getTreeSelectionListeners().length == 0) {
             // Listen for when the selection changes.
@@ -163,7 +172,7 @@ public final class TreeView extends JScrollPane implements IView {
                          * a single selection.
                          */
                         final IItem node = (IItem)paramE.getNewLeadSelectionPath().getLastPathComponent();
-                        mRtx.moveTo(node.getNodeKey());
+                        db.setNodeKey(node.getNodeKey());
                         mNotifier.update();
                     }
                 }

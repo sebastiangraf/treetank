@@ -18,11 +18,15 @@ package com.treetank.gui.view.tree;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTException;
 import com.treetank.gui.ReadDB;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.DocumentRootNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>TreeModel</h1>
@@ -37,8 +41,12 @@ import com.treetank.node.ElementNode;
  */
 public final class TreeModel extends AbsTreeModel {
 
+    /** Logger. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(TreeModel.class));
+    
     /** Treetank {@link IReadTransaction}. */
-    private final IReadTransaction mRTX;
+    private transient IReadTransaction mRTX;
 
     /**
      * Constructor.
@@ -47,7 +55,11 @@ public final class TreeModel extends AbsTreeModel {
      *            {@link ReadDB}.
      */
     public TreeModel(final ReadDB paramDB) {
-        mRTX = paramDB.getRtx();
+        try {
+            mRTX = paramDB.getSession().beginReadTransaction(paramDB.getRevisionNumber());
+        } catch (final TTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
     }
 
     /**
