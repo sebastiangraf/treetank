@@ -17,6 +17,7 @@
 package com.treetank.gui.view.sunburst;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 
 /**
  * XPath enum to determine if current item is found by an XPath expression or not.
@@ -31,8 +32,8 @@ enum EXPathState {
          * {@inheritDoc}
          */
         @Override
-        void setStroke(final PApplet paramApplet, final int paramColor) {
-            paramApplet.stroke(1);
+        void setStroke(final PGraphics paramBuffer, final int paramColor) {
+            paramBuffer.stroke(1);
         }
     },
 
@@ -42,18 +43,18 @@ enum EXPathState {
          * {@inheritDoc}
          */
         @Override
-        void setStroke(final PApplet paramApplet, final int paramColor) {
-            paramApplet.stroke(paramColor);
+        void setStroke(final PGraphics paramBuffer, final int paramColor) {
+            paramBuffer.stroke(paramColor);
         }
     };
 
     /**
      * Set stroke.
      * 
-     * @param paramApplet
-     *            Processing {@link PApplet} core.
+     * @param paramBuffer
+     *            Processing {@link PGraphics}
      * @param paramColor
-     *            The color to use.
+     *            the color to use
      */
-    abstract void setStroke(final PApplet paramApplet, final int paramColor);
+    abstract void setStroke(final PGraphics paramBuffer, final int paramColor);
 }

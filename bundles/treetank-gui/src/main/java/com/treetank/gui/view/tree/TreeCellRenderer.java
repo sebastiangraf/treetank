@@ -25,8 +25,13 @@ import javax.xml.namespace.QName;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTException;
 import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.text.TextView;
 import com.treetank.node.ElementNode;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 import static com.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
 import static com.treetank.gui.GUIConstants.DOC_COLOR;
@@ -49,8 +54,12 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
      */
     private static final long serialVersionUID = -6242168246410260644L;
 
+    /** Logger. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(TreeCellRenderer.class));
+
     /** Treetant reading transaction {@link IReadTransaction}. */
-    private final IReadTransaction mRTX;
+    private transient IReadTransaction mRTX;
 
     /** Path to file. */
     private final String mPATH;
@@ -68,7 +77,11 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
         setBackgroundNonSelectionColor(null);
         setTextSelectionColor(Color.red);
 
-        mRTX = paramReadDB.getRtx();
+        try {
+            mRTX = paramReadDB.getSession().beginReadTransaction(paramReadDB.getNodeKey());
+        } catch (final TTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
         mPATH = paramReadDB.getDatabase().getFile().getName();
     }
 

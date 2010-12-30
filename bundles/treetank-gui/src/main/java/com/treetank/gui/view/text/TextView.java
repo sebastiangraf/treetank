@@ -42,6 +42,7 @@ import javax.xml.stream.events.XMLEvent;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.exception.TTException;
 import com.treetank.gui.GUI;
 import com.treetank.gui.GUIProp;
 import com.treetank.gui.ReadDB;
@@ -170,12 +171,22 @@ public final class TextView extends JScrollPane implements IView {
      *            {@link ViewNotifier} to notify views of changes etc.pp.
      * @return {@link TextView} instance.
      */
-    public static TextView getInstance(final ViewNotifier paramNotifier) {
+    public synchronized static TextView getInstance(final ViewNotifier paramNotifier) {
         if (mView == null) {
             mView = new TextView(paramNotifier);
         }
 
         return mView;
+    }
+    
+    /** 
+     * Not supported.
+     * 
+     * @see Object#clone()
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
     }
 
     /**
@@ -258,11 +269,17 @@ public final class TextView extends JScrollPane implements IView {
         assert mGUI != null;
         // Get references.
         final ReadDB db = mGUI.getReadDB();
-        final IReadTransaction rtx = db.getRtx();
-        final IItem node = rtx.getNode();
+        IReadTransaction rtx;
+        try {
+            rtx = db.getSession().beginReadTransaction();
+            rtx.moveTo(db.getNodeKey());
+            final IItem node = rtx.getNode();
 
-        serialize(rtx, node);
-        mText.setCaretPosition(0);
+            serialize(rtx, node);
+            mText.setCaretPosition(0);
+        } catch (final TTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
 
         repaint();
     }

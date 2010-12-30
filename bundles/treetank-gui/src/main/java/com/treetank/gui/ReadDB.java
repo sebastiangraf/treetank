@@ -23,6 +23,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -106,6 +107,14 @@ public final class ReadDB {
      */
     public IDatabase getDatabase() {
         return mDatabase;
+        // /**
+        // * Get the {@link IReadTransaction} instance.
+        // *
+        // * @return the Rtx.
+        // */
+        // public IReadTransaction getRtx() {
+        // return mRtx;
+        // }
     }
 
     /**
@@ -118,12 +127,37 @@ public final class ReadDB {
     }
 
     /**
-     * Get the {@link IReadTransaction} instance.
+     * Get revision number.
      * 
-     * @return the Rtx.
+     * @return current revision number or 0 if a TreetankIOException occured
      */
-    public IReadTransaction getRtx() {
-        return mRtx;
+    public long getRevisionNumber() {
+        long retVal = 0;
+        try {
+            retVal = mRtx.getRevisionNumber();
+        } catch (final TTIOException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
+        return retVal;
+    }
+
+    /**
+     * Get current node key.
+     * 
+     * @return node key
+     */
+    public long getNodeKey() {
+        return mRtx.getNode().getNodeKey();
+    }
+
+    /**
+     * Set node key.
+     * 
+     * @param paramNodeKey
+     *            node key
+     */
+    public void setNodeKey(final long paramNodeKey) {
+        mRtx.moveTo(paramNodeKey);
     }
 
     /**

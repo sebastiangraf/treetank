@@ -17,10 +17,12 @@
 package com.treetank.gui.view.sunburst;
 
 /**
+ * Menu options.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public enum EMenu {
+enum EMenu {
     /** Insert element as first child. */
     INSERT_ELEMENT_AS_FIRST_CHILD,
 

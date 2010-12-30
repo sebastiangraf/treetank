@@ -29,8 +29,8 @@ import com.treetank.node.AbsStructNode;
  */
 enum EMoved {
 
-    /** Start of traversal. */
-    START {
+    /** Start of traversal or cursor moved to a right sibling of a node. */
+    STARTRIGHTSIBL {
         /**
          * {@inheritDoc}
          */
