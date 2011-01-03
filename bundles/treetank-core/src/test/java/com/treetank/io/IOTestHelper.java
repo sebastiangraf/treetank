@@ -76,9 +76,8 @@ public final class IOTestHelper {
      * @param sessionConf
      *            to be tested
      */
-    public static void
-        testFactory(final DatabaseConfiguration dbConf, final SessionConfiguration sessionConf)
-            throws TTException {
+    public static void testFactory(final DatabaseConfiguration dbConf, final SessionConfiguration sessionConf)
+        throws TTException {
         final AbsIOFactory fac1 = AbsIOFactory.getInstance(dbConf, sessionConf);
         final AbsIOFactory fac2 = AbsIOFactory.getInstance(dbConf, sessionConf);
         assertSame(fac1, fac2);
