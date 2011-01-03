@@ -30,10 +30,9 @@ public class ShredBench {
         + File.separator + "small.xml");
     public static File TNKFolder = new File("tnk");
 
-
     public void beforeShred() {
         try {
-            final IDatabase database = Database.openDatabase(new File(TNKFolder,XMLFile.getName()+".tnk"));
+            final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
             final ISession session = database.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
             if (wtx.moveToFirstChild()) {
@@ -46,8 +45,7 @@ public class ShredBench {
         }
     }
 
-    @Bench(beforeEachRun = "beforeShred",afterEachRun = "tearDown",
-        runs = RUNS)
+    @Bench(beforeEachRun = "beforeShred", afterEachRun = "tearDown", runs = RUNS)
     public void benchInsert() {
         try {
             shredderNone.call();
@@ -57,7 +55,12 @@ public class ShredBench {
     }
 
     public void tearDown() {
-        TestHelper.closeEverything();
+        try {
+            Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
+        } catch (TTException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public static void main(final String[] args) {
