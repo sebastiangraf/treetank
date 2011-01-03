@@ -163,4 +163,13 @@ public abstract class AbsIOFactory {
      *             if storage is not accessable
      */
     public abstract boolean exists() throws TTIOException;
+
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("factory keys: ").append(FACTORIES.keySet()).append("\n");
+        builder.append("DatabaseConfig: ").append(mDatabaseConfig.toString()).append("\n");
+        builder.append("SessionConfig: ").append(mSessionConfig.toString()).append("\n");
+//        builder.append("exists: ").append(exists()).append("\n");
+        return builder.toString();
+    }
 }

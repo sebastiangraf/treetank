@@ -38,7 +38,7 @@ public final class IOTestHelper {
      */
     public static DatabaseConfiguration createDBConf(final StorageType type) throws TTUsageException {
         final Properties props = new Properties();
-        props.setProperty(EDatabaseSetting.REVISION_TYPE.name(), type.name());
+        props.setProperty(EDatabaseSetting.STORAGE_TYPE.name(), type.name());
         return new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile(), props);
     }
 
@@ -89,7 +89,6 @@ public final class IOTestHelper {
 
     public static void testReadWriteFirstRef(final DatabaseConfiguration dbConf,
         final SessionConfiguration sessionConf) throws TTException {
-
         final AbsIOFactory fac = AbsIOFactory.getInstance(dbConf, sessionConf);
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();

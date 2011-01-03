@@ -110,4 +110,11 @@ public final class SessionConfiguration {
         return mProps;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public final String toString() {
+        return new StringBuilder(mProps.toString()).toString();
+    }
+    
 }
