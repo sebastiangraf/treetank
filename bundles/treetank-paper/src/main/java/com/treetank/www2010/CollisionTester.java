@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
 import com.treetank.access.Database;
 import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
@@ -16,7 +15,8 @@ import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 import org.perfidix.AbstractConfig;
@@ -50,7 +50,8 @@ public class CollisionTester {
             final IDatabase database = TestHelper.getDatabase(TNKFILE);
             final ISession session = database.getSession();
             wtx = session.beginWriteTransaction();
-            final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
+            final XMLShredder shredder =
+                new XMLShredder(wtx, XMLShredder.createReader(XMLFile), EShredderInsert.ADDASFIRSTCHILD);
             shredder.call();
             wtx.close();
             final IReadTransaction rtx1 = session.beginReadTransaction();
@@ -72,7 +73,8 @@ public class CollisionTester {
             final IDatabase database = TestHelper.getDatabase(TNKFILE);
             final ISession session = database.getSession();
             wtx = session.beginWriteTransaction();
-            final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
+            final XMLShredder shredder =
+                new XMLShredder(wtx, XMLShredder.createReader(XMLFile), EShredderInsert.ADDASFIRSTCHILD);
             shredder.call();
             wtx.close();
             final IReadTransaction rtx1 = session.beginReadTransaction();
@@ -122,7 +124,7 @@ public class CollisionTester {
     public void tearDown() {
         try {
             Database.forceCloseDatabase(TNKFILE);
-        } catch (TreetankException e) {
+        } catch (TTException e) {
             e.printStackTrace();
         }
         nodeCounter.reset();
@@ -202,8 +204,12 @@ public class CollisionTester {
         }
 
         @Override
+        public void setTransaction(IReadTransaction rtx) {
+            this.rtx = rtx;
+        }
+
         public IReadTransaction getTransaction() {
-            return rtx;
+            return this.rtx;
         }
 
     }

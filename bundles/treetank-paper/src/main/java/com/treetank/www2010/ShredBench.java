@@ -8,14 +8,14 @@ import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 import org.perfidix.Benchmark;
 import org.perfidix.annotation.AfterEachRun;
 import org.perfidix.annotation.Bench;
 import org.perfidix.ouput.CSVOutput;
-import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 
 public class ShredBench {
@@ -35,7 +35,8 @@ public class ShredBench {
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
-            shredderNone = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
+            shredderNone =
+                new XMLShredder(wtx, XMLShredder.createReader(XMLFile), EShredderInsert.ADDASFIRSTCHILD);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,7 +50,8 @@ public class ShredBench {
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
-            shredderNone = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
+            shredderNone =
+                new XMLShredder(wtx, XMLShredder.createReader(XMLFile), EShredderInsert.ADDASFIRSTCHILD);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,7 +65,8 @@ public class ShredBench {
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
-            shredderNone = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
+            shredderNone =
+                new XMLShredder(wtx, XMLShredder.createReader(XMLFile), EShredderInsert.ADDASFIRSTCHILD);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,7 +76,7 @@ public class ShredBench {
     public void benchPostorder() {
         try {
             shredderNone.call();
-        } catch (TreetankException e) {
+        } catch (TTException e) {
             e.printStackTrace();
         }
     }
@@ -82,7 +85,7 @@ public class ShredBench {
     public void benchRolling() {
         try {
             shredderNone.call();
-        } catch (TreetankException e) {
+        } catch (TTException e) {
             e.printStackTrace();
         }
     }
@@ -91,7 +94,7 @@ public class ShredBench {
     public void benchNone() {
         try {
             shredderNone.call();
-        } catch (TreetankException e) {
+        } catch (TTException e) {
             e.printStackTrace();
         }
     }
