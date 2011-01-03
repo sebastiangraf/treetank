@@ -1,6 +1,7 @@
 package com.treetank.xmlprague;
 
 import java.io.File;
+import java.util.Properties;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
@@ -30,6 +31,11 @@ public class ShredBench {
         + File.separator + "small.xml");
     public static File TNKFolder = new File("tnk");
 
+    public void beforeFirst(){
+        final Properties props = new Properties();
+        props.put("", "");
+    }
+    
     public void beforeShred() {
         try {
             final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
