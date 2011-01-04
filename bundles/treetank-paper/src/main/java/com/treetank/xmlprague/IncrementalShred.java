@@ -25,58 +25,41 @@ import org.perfidix.result.BenchmarkResult;
 
 public class IncrementalShred {
 
-    private XMLShredder shredderNone;
+    public static File XMLFile = new File("");
+    public static File TNKFolder = new File("");
 
-    private static final int RUNS = 100;
 
-    public static File XMLFile = new File("src" + File.separator + "main" + File.separator + "resources"
-        + File.separator + "small.xml");
-    public static final File TNKFolder = new File("tnk");
-
-    private int counter = 0;
-
-    public void beforeFirst() {
-        final Properties props = new Properties();
-        props.put("", "");
-    }
-
-//    public void beforeFirstRun
-    
-    public void beforeShred() {
+    @Bench
+    public void benchNormal() {
         try {
-            System.out.println("Starting Shredding " + counter);
             final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
             final ISession session = database.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
-//            if (wtx.moveToFirstChild()) {
-//                wtx.remove();
-//            }
-            shredderNone =
-                new XMLShredder(wtx, XMLShredder.createReader(XMLFile), EShredderInsert.ADDASFIRSTCHILD);
+            final XMLShredder shredderNone = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), EShredderInsert.ADDASFIRSTCHILD);
+            shredderNone.call();
+            wtx.commit();
+            Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Bench(beforeEachRun = "beforeShred", afterEachRun = "tearDown", runs = RUNS)
-    public void benchInsert() {
+    @Bench
+    public void bench100Commit() {
         try {
+            final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
+            final ISession session = database.getSession();
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            final XMLShredder shredderNone = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), EShredderInsert.ADDASFIRSTCHILD);
             shredderNone.call();
-        } catch (TTException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void tearDown() {
-        try {
-            System.out.println("Finished Shredding Version " + counter);
-            counter++;
+            wtx.commit();
             Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
-        } catch (TTException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
+   
 
     public static void main(final String[] args) {
 
@@ -100,7 +83,7 @@ public class IncrementalShred {
                 new FilesizeMeter(new File(new File(new File(TNKFolder, XMLFile.getName() + ".tnk"), "tt"),
                     "tt.tnk"));
 
-            final Benchmark bench = new Benchmark(new AbstractConfig(RUNS, new AbstractMeter[] {
+            final Benchmark bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
                 meter, new TimeMeter(Time.MilliSeconds)
             }, new AbstractOutput[0], KindOfArrangement.SequentialMethodArrangement, 1.0d) {
             });
