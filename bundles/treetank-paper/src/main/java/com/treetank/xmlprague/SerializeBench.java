@@ -77,7 +77,9 @@ public class SerializeBench {
             TNKFILE = currentFile;
             System.out.println("Starting benchmark for " + TNKFILE.getName());
             final int runs = (int)getRevisions(TNKFILE);
-
+            final int index = currentFile.getName().lastIndexOf(".");
+            final File folder = new File(filetoexport, currentFile.getName().substring(0, index));
+            folder.mkdirs();
             final Benchmark bench = new Benchmark(new AbstractConfig(runs, new AbstractMeter[] {
                 new TimeMeter(Time.MilliSeconds)
             }, new AbstractOutput[0], KindOfArrangement.SequentialMethodArrangement, 1.0d) {
@@ -85,7 +87,7 @@ public class SerializeBench {
             bench.add(SerializeBench.class);
             final BenchmarkResult res = bench.run();
             new TabularSummaryOutput(System.out).visitBenchmark(res);
-            new CSVOutput(filetoexport).visitBenchmark(res);
+            new CSVOutput(folder).visitBenchmark(res);
             System.out.println("Finished benchmark for " + TNKFILE.getName());
         }
 
