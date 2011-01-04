@@ -204,22 +204,22 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @param paramWtx
      *            {@link IWriteTransaction} where the new XML Fragment should be
-     *            placed.
+     *            placed
      * @param paramReader
-     *            {@link XMLEventReader} (StAX parser) of the XML Fragment.
+     *            {@link XMLEventReader} (StAX parser) of the XML Fragment
      * @param paramAddAsFirstChild
-     *            If the insert is occuring on a node in an existing tree. <code>false</code> is not possible
-     *            when wtx is on root node.
+     *            if the insert is occuring on a node in an existing tree. <code>false</code> is not possible
+     *            when wtx is on root node
      * @param paramData
-     *            The data the update shredder operates on. Either a {@link List} of {@link XMLEvent}s or a
-     *            {@link File}.
+     *            the data the update shredder operates on. Either a {@link List} of {@link XMLEvent}s or a
+     *            {@link File}
      * @param paramCommit
-     *            Determines if changes should be commited.
+     *            determines if changes should be commited
      * @throws TTUsageException
-     *             If insertasfirstChild && updateOnly is both true OR if wtx is
+     *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
      * @throws TTIOException
-     *             If Treetank cannot access node keys.
+     *             if Treetank cannot access node keys
      * 
      */
     @SuppressWarnings("unchecked")
@@ -244,8 +244,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * Invoking the shredder.
      * 
      * @throws TTException
-     *             In case any Treetank exception occured.
-     * @return revision of last revision (before commit).
+     *             if Treetank encounters something went wrong
+     * @return revision of last revision (before commit)
      */
     @Override
     public Long call() throws TTException {
@@ -261,7 +261,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * Update a shreddered file.
      * 
      * @throws TTException
-     *             In case of any Treetank error.
+     *             if Treetank encounters something went wrong
      */
     private void updateOnly() throws TTException {
         try {

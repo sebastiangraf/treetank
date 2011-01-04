@@ -84,6 +84,7 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Iterator<Long> iterator() {
         return this;
     }
@@ -91,6 +92,7 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Long next() {
         if (!mNext) {
             throw new IllegalStateException("IAxis.next() must be called exactely once after hasNext()"
@@ -104,6 +106,7 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void remove() {
         throw new UnsupportedOperationException();
     }
@@ -111,9 +114,9 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     /**
      * {@inheritDoc}
      */
-    public void reset(final long nodeKey) {
-        mStartKey = nodeKey;
-        mKey = nodeKey;
+    public void reset(final long paramNodeKey) {
+        mStartKey = paramNodeKey;
+        mKey = paramNodeKey;
         mNext = false;
     }
 
@@ -173,6 +176,7 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     /**
      * {@inheritDoc}
      */
+    @Override
     public abstract boolean hasNext();
 
     /**

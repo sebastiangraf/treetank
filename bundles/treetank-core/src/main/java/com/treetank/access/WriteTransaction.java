@@ -126,6 +126,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         if (maxTime > 0) {
             mCommitScheduler = Executors.newScheduledThreadPool(1);
             mCommitScheduler.scheduleAtFixedRate(new Runnable() {
+                @Override
                 public void run() {
                     if (mModificationCount > 0) {
                         try {

@@ -225,6 +225,12 @@ public final class Database implements IDatabase {
         }
         return mSession;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public synchronized DatabaseConfiguration getDatabaseConf() {
+        return mDatabaseConfiguration;
+    }
 
     /**
      * {@inheritDoc}
