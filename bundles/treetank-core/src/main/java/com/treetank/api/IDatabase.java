@@ -19,6 +19,7 @@ package com.treetank.api;
 
 import java.io.File;
 
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.exception.TTException;
 
 /**
@@ -78,7 +79,7 @@ public interface IDatabase {
      * Getting the session associated within this database.
      * 
      * @throws TTException
-     *             if can't get session.
+     *             if can't get session
      * @return the database
      */
     ISession getSession() throws TTException;
@@ -90,5 +91,12 @@ public interface IDatabase {
      *             if close is not valid
      */
     void close() throws TTException;
+    
+    /**
+     * Get the database configuration.
+     * 
+     * @return the {@link DatabaseConfiguration}
+     */
+    DatabaseConfiguration getDatabaseConf();
 
 }

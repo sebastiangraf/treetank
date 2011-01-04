@@ -411,6 +411,7 @@ public final class WikipediaImport implements IImport<StartElement> {
      * @return true if it is whitespace, otherwise false.
      */
     private boolean isWhitespace(final XMLEvent paramEvent) {
+        assert paramEvent != null;
         return paramEvent.isCharacters() && paramEvent.asCharacters().isWhiteSpace();
     }
 
@@ -422,6 +423,7 @@ public final class WikipediaImport implements IImport<StartElement> {
      * @return string representation.
      */
     private static String qNameToString(final QName paramQName) {
+        assert paramQName != null;
         String retVal = null;
         if (null == paramQName.getPrefix() || "".equals(paramQName.getPrefix())) {
             retVal = paramQName.getLocalPart();
@@ -438,6 +440,7 @@ public final class WikipediaImport implements IImport<StartElement> {
      *            {@link StartElement} page.
      */
     private void moveToLastPage(final StartElement paramPage) {
+        assert paramPage != null;
         // All subsequent shredders, move cursor to the end.
         mWTX.moveToFirstChild();
         mWTX.moveToFirstChild();
@@ -463,7 +466,7 @@ public final class WikipediaImport implements IImport<StartElement> {
      * @throws XMLStreamException
      *             handling XML Stream Exception
      */
-    static boolean checkStAXStartElement(final StartElement mStartTag, final StartElement mElem)
+    private static boolean checkStAXStartElement(final StartElement mStartTag, final StartElement mElem)
         throws XMLStreamException {
         assert mStartTag != null && mElem != null;
         boolean retVal = false;
