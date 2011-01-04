@@ -66,6 +66,7 @@ public class ShredBench {
     public void tearDown() {
         try {
             System.out.println("Finished Shredding Version " + counter);
+            counter++;
             Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
         } catch (TTException e) {
             // TODO Auto-generated catch block
