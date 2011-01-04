@@ -31,6 +31,8 @@ public class ShredBench {
         + File.separator + "small.xml");
     public static File TNKFolder = new File("tnk");
 
+    private int counter=0;
+    
     public void beforeFirst(){
         final Properties props = new Properties();
         props.put("", "");
@@ -38,6 +40,7 @@ public class ShredBench {
     
     public void beforeShred() {
         try {
+            System.out.println("Starting Shredding " + counter);
             final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
             final ISession session = database.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -62,6 +65,7 @@ public class ShredBench {
 
     public void tearDown() {
         try {
+            System.out.println("Finished Shredding Version " + counter);
             Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
         } catch (TTException e) {
             // TODO Auto-generated catch block
