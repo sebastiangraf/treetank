@@ -36,6 +36,7 @@ public class RandomInsert {
     private static File TNKFile = new File("");
 
     private IWriteTransaction wtx;
+    private long counter = 0;
 
     @BeforeBenchClass
     public void before() {
@@ -67,6 +68,7 @@ public class RandomInsert {
 
             }
             wtx.commit();
+            System.out.println(counter++);
         } catch (TTException e) {
             e.printStackTrace();
         }
