@@ -32,7 +32,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>com.treetank.xmlprague.RandomInsert</mainClass>
+							<mainClass>com.treetank.xmlprague.SerializeBench</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
