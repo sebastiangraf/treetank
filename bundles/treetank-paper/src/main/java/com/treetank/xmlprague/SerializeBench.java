@@ -1,9 +1,6 @@
 package com.treetank.xmlprague;
 
 import java.io.File;
-
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -34,7 +31,7 @@ public class SerializeBench {
 
     public void beforeSerialize() {
         try {
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+            final IDatabase database = Database.openDatabase(TNKFILE);
             final ISession session = database.getSession();
 
             final XMLSerializerBuilder builder =
@@ -56,8 +53,12 @@ public class SerializeBench {
     }
 
     public void tearDown() {
-        TestHelper.closeEverything();
-        revisionKey++;
+        try {
+            Database.forceCloseDatabase(TNKFILE);
+        } catch (TTException e) {
+            e.printStackTrace();
+        }
+        System.out.println(revisionKey++);
     }
 
     public static void main(final String[] args) {
@@ -75,18 +76,16 @@ public class SerializeBench {
         for (final File currentFile : files) {
             TNKFILE = currentFile;
             System.out.println("Starting benchmark for " + TNKFILE.getName());
-            final int index = currentFile.getName().lastIndexOf(".");
-            final File folder = new File(filetoexport, currentFile.getName().substring(0, index));
-            folder.mkdirs();
             final int runs = (int)getRevisions(TNKFILE);
 
             final Benchmark bench = new Benchmark(new AbstractConfig(runs, new AbstractMeter[] {
                 new TimeMeter(Time.MilliSeconds)
             }, new AbstractOutput[0], KindOfArrangement.SequentialMethodArrangement, 1.0d) {
             });
+            bench.add(SerializeBench.class);
             final BenchmarkResult res = bench.run();
             new TabularSummaryOutput(System.out).visitBenchmark(res);
-            new CSVOutput(folder).visitBenchmark(res);
+            new CSVOutput(filetoexport).visitBenchmark(res);
             System.out.println("Finished benchmark for " + TNKFILE.getName());
         }
 
