@@ -27,8 +27,8 @@ import org.perfidix.result.BenchmarkResult;
 
 public class RandomInsert {
 
-    private final static int RUNS = 10000;
-    private static final int stepsForcommit = 1000;
+    private static int RUNS = 10000;
+    private static int NODESPERCOMMIT = 1000;
 
     private static final Random RAN = new Random(234234234l);
     private final static QName name = new QName("a");
@@ -55,7 +55,7 @@ public class RandomInsert {
     @Bench
     public void benchInsert() {
         try {
-            for (int i = 0; i < stepsForcommit; i++) {
+            for (int i = 0; i < NODESPERCOMMIT; i++) {
                 if (RAN.nextBoolean()) {
                     wtx.insertElementAsRightSibling(name);
                 } else {
@@ -86,13 +86,18 @@ public class RandomInsert {
 
     public static void main(final String[] args) {
 
-        if (args.length != 2) {
-            System.out.println("Please use java -jar JAR \"folder to store\" \"folder to write csv\"");
+        if (args.length != 4) {
+            System.out
+                .println("Please use java -jar JAR \"folder to store\" \"folder to write csv\" \"RUNS\" \"NODESPERCOMMIT\"");
             System.exit(-1);
         }
 
-        final File filetoexport = new File(args[1]);
+        RUNS = Integer.parseInt(args[2]);
+        NODESPERCOMMIT = Integer.parseInt(args[3]);
+
         TNKFile = new File(args[0]);
+        final File filetoexport = new File(args[1]);
+
         System.out.println("Starting benchmark for " + TNKFile.getName());
         final FilesizeMeter meter = new FilesizeMeter(new File(new File(TNKFile, "tt"), "tt.tnk"));
         filetoexport.mkdirs();
