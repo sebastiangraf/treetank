@@ -26,7 +26,7 @@ import org.perfidix.result.BenchmarkResult;
 public class IncrementalShred {
 
     public static File XMLFile = new File("");
-    public static File TNKFolder = new File("");
+    public static File TNKFolder = new File("tnk");
 
 
     @Bench
