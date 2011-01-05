@@ -29,73 +29,73 @@ public class IncrementalShred {
     public static File TNKFolder = new File("tnk");
 
 
-    @Bench
-    public void benchNormal() {
-        try {
-            System.out.println("0 started");
-            final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
-            final ISession session = database.getSession();
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            final XMLShredderWithCommit shredderNone = new XMLShredderWithCommit(wtx, XMLShredder.createReader(XMLFile),0.0d);
-            shredderNone.call();
-            wtx.commit();
-            Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
-            System.out.println("0 ended");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Bench
-    public void bench100Commit() {
-        try {
-            System.out.println("100 started");
-            final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
-            final ISession session = database.getSession();
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            final XMLShredderWithCommit shredderNone = new XMLShredderWithCommit(wtx, XMLShredder.createReader(XMLFile),1.0d);
-            shredderNone.call();
-            wtx.commit();
-            Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
-            System.out.println("100 ended");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
 //    @Bench
-//    public void bench75Commit() {
+//    public void benchNormal() {
 //        try {
-//            System.out.println("75 started");
+//            System.out.println("0 started");
 //            final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
 //            final ISession session = database.getSession();
 //            final IWriteTransaction wtx = session.beginWriteTransaction();
-//            final XMLShredderWithCommit shredderNone = new XMLShredderWithCommit(wtx, XMLShredder.createReader(XMLFile),0.75d);
+//            final XMLShredderWithCommit shredderNone = new XMLShredderWithCommit(wtx, XMLShredder.createReader(XMLFile),0.0d);
 //            shredderNone.call();
 //            wtx.commit();
 //            Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
-//            System.out.println("75 ended");
+//            System.out.println("0 ended");
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
 //    }
 //
 //    @Bench
-//    public void bench25Commit() {
+//    public void bench100Commit() {
 //        try {
-//            System.out.println("25 started");
+//            System.out.println("100 started");
 //            final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
 //            final ISession session = database.getSession();
 //            final IWriteTransaction wtx = session.beginWriteTransaction();
-//            final XMLShredderWithCommit shredderNone = new XMLShredderWithCommit(wtx, XMLShredder.createReader(XMLFile),0.25d);
+//            final XMLShredderWithCommit shredderNone = new XMLShredderWithCommit(wtx, XMLShredder.createReader(XMLFile),1.0d);
 //            shredderNone.call();
 //            wtx.commit();
 //            Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
-//            System.out.println("25 ended");
+//            System.out.println("100 ended");
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
 //    }
+    
+    @Bench
+    public void bench75Commit() {
+        try {
+            System.out.println("75 started");
+            final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
+            final ISession session = database.getSession();
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            final XMLShredderWithCommit shredderNone = new XMLShredderWithCommit(wtx, XMLShredder.createReader(XMLFile),0.75d);
+            shredderNone.call();
+            wtx.commit();
+            Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
+            System.out.println("75 ended");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Bench
+    public void bench25Commit() {
+        try {
+            System.out.println("25 started");
+            final IDatabase database = Database.openDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
+            final ISession session = database.getSession();
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            final XMLShredderWithCommit shredderNone = new XMLShredderWithCommit(wtx, XMLShredder.createReader(XMLFile),0.25d);
+            shredderNone.call();
+            wtx.commit();
+            Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
+            System.out.println("25 ended");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
     @Bench
     public void bench50Commit() {
