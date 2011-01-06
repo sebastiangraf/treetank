@@ -30,7 +30,7 @@ import com.treetank.io.AbsIOFactory.StorageType;
 public enum EDatabaseSetting {
 
     /** Default storage. */
-    STORAGE_TYPE(StorageType.File.name()),
+    STORAGE_TYPE(StorageType.Berkeley.name()),
 
     /** Revision properties. */
     REVISION_TYPE(ERevisioning.DIFFERENTIAL.name()),
