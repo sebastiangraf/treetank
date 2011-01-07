@@ -30,7 +30,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AttributeAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
-import com.treetank.axis.IAxisTest;
+import com.treetank.axis.AbsAxisTest;
 import com.treetank.axis.filter.NameFilter;
 import com.treetank.axis.filter.ValueFilter;
 import com.treetank.exception.TTException;
@@ -51,7 +51,7 @@ public class FilterAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
-        IAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(wtx), new NameFilter(wtx, "b")),
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(wtx), new NameFilter(wtx, "b")),
             new long[] {
                 5L, 9L
             });
@@ -71,7 +71,7 @@ public class FilterAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
-        IAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(wtx), new ValueFilter(wtx, "foo")),
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(wtx), new ValueFilter(wtx, "foo")),
             new long[] {
                 6L
             });
@@ -91,13 +91,13 @@ public class FilterAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "i"),
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "i"),
             new ValueFilter(wtx, "j")), new long[] {
             2L
         });
 
         wtx.moveTo(9L);
-        IAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "y"),
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "y"),
             new ValueFilter(wtx, "y")), new long[] {});
 
         wtx.abort();

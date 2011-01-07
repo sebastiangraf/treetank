@@ -47,22 +47,22 @@ public class DescendantAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
-        IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
             1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
         });
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
             4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
         });
 
         wtx.moveTo(9L);
-        IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
             11L, 12L
         });
 
         wtx.moveTo(13L);
-        IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {});
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {});
 
         wtx.abort();
         wtx.close();
@@ -79,22 +79,22 @@ public class DescendantAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
-        IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
             (Long)EFixed.ROOT_NODE_KEY.getStandardProperty(), 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
         });
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
             1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
         });
 
         wtx.moveTo(9L);
-        IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
             9L, 11L, 12L
         });
 
         wtx.moveTo(13L);
-        IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
             13L
         });
 

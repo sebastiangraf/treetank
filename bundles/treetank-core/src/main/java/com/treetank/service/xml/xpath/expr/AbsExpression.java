@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IExpression;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;

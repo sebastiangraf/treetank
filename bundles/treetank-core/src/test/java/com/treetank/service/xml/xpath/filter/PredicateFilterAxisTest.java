@@ -28,7 +28,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.IAxisTest;
+import com.treetank.axis.AbsAxisTest;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.utils.DocumentCreater;
@@ -63,69 +63,69 @@ public class PredicateFilterAxisTest {
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/p:a[@i]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "/p:a[@i]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a/b[@p:x]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a/b[@p:x]"), new long[] {
             9L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[text()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[text()]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[element()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[element()]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[node()/text()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[node()/text()]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[./node()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[./node()]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[./node()/node()/node()]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[./node()/node()/node()]"), new long[] {});
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[//element()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[//element()]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[/text()]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[/text()]"), new long[] {});
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3<4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3<4]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[13>=4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[13>=4]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[13.0>=4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[13.0>=4]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[4 = 4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[4 = 4]"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3=4]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3=4]"), new long[] {});
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3.2 = 3.22]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3.2 = 3.22]"), new long[] {});
 
         rtx.moveTo(1L);
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::b[child::c]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::b[child::c]"), new long[] {
             5L, 9L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::*[text() or c]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::*[text() or c]"), new long[] {
             5l, 9L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::*[text() or c], /node(), //c"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::*[text() or c], /node(), //c"), new long[] {
             5l, 9L, 1L, 7L, 11L
         });
 

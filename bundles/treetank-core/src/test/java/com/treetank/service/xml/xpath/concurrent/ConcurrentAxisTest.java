@@ -13,17 +13,9 @@ import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.NestedAxis;
 import com.treetank.axis.filter.NameFilter;
-import com.treetank.axis.filter.TextFilter;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.shredder.XMLShredder;
-import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.service.xml.xpath.comparators.CompKind;
-import com.treetank.service.xml.xpath.comparators.GeneralComp;
-import com.treetank.service.xml.xpath.concurrent.ConcurrentAxis;
-import com.treetank.service.xml.xpath.expr.LiteralExpr;
-import com.treetank.service.xml.xpath.filter.PredicateFilterAxis;
-import com.treetank.utils.TypedValue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -140,6 +132,7 @@ public class ConcurrentAxisTest {
      * Test concurrent.
      */
     @Test
+    @Ignore
     public final void testConcurrent() {
 
         // final long person3 =

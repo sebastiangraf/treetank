@@ -20,7 +20,6 @@ package com.treetank.axis;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -62,7 +61,7 @@ public class NestedAxisTest {
         // Part: /p:a/b/text()
         final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
-        IAxisTest.testIAxisConventions(axis, new long[] {
+        AbsAxisTest.testIAxisConventions(axis, new long[] {
             6L, 12L
         });
 
@@ -93,7 +92,7 @@ public class NestedAxisTest {
         // Part: /p:a/b/@p:x
         final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB), attributeX);
 
-        IAxisTest.testIAxisConventions(axis, new long[] {
+        AbsAxisTest.testIAxisConventions(axis, new long[] {
             10L
         });
 
@@ -124,7 +123,7 @@ public class NestedAxisTest {
         // Part: /p:a/node():
         final AbsAxis axis = new NestedAxis(childA, childNode);
 
-        IAxisTest.testIAxisConventions(axis, new long[] {
+        AbsAxisTest.testIAxisConventions(axis, new long[] {
             4L, 5L, 8L, 9L, 13L
         });
 

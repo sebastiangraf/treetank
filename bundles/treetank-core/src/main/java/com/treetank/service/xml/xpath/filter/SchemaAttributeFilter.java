@@ -40,7 +40,7 @@ import com.treetank.axis.filter.AbsFilter;
  * declarations, a static error is raised [err:XPST0008].
  * </p>
  */
-public class SchemaAttributeFilter extends AbsFilter implements IFilter {
+public class SchemaAttributeFilter extends AbsFilter {
 
     // /** The specified name for the attribute. */
     // private final String attributeName;

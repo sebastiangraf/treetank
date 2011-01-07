@@ -26,7 +26,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
-import com.treetank.axis.IAxisTest;
+import com.treetank.axis.AbsAxisTest;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.shredder.XMLShredder;
 
@@ -66,19 +66,19 @@ public class XPathAxisWideTest {
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/mondial/continent[@id]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "/mondial/continent[@id]"), new long[] {
             2L, 5L, 8L, 11L, 14L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "mondial/continent[@name]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "mondial/continent[@name]"), new long[] {
             2L, 5L, 8L, 11L, 14L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "mondial/continent[@id=\"f0_119\"]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "mondial/continent[@id=\"f0_119\"]"), new long[] {
             2L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/mondial/continent[@name = \"Africa\"]"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "/mondial/continent[@name = \"Africa\"]"),
             new long[] {
                 14L
             });

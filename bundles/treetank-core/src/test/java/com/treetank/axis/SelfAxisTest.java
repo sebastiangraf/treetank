@@ -45,12 +45,12 @@ public class SelfAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveTo(4L);
-        IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] {
             4L
         });
 
         wtx.moveTo(8L);
-        IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] {
             8L
         });
 

@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 
 /**
@@ -26,7 +25,7 @@ import com.treetank.api.IReadTransaction;
  * Reference to the current item of the variable expression.
  * </p>
  */
-public class VarRefExpr extends AbsExpression implements IAxis, IObserver {
+public class VarRefExpr extends AbsExpression implements IObserver {
 
     /** Key of the item the variable is set to at the moment. */
     private long mVarKey;

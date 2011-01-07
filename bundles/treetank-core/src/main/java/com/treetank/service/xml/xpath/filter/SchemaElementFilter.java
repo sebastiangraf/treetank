@@ -43,7 +43,7 @@ import com.treetank.axis.filter.AbsFilter;
  * static error is raised [err:XPST0008].
  * </p>
  */
-public class SchemaElementFilter extends AbsFilter implements IFilter {
+public class SchemaElementFilter extends AbsFilter {
 
     // /** The specified name for the element. */
     // private final String elementName;

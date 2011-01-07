@@ -15,46 +15,19 @@
 
 package com.treetank.service.xml.serialize;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
-
-import javax.management.modelmbean.XMLParseException;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
-import org.xml.sax.SAXException;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.access.Database;
-import com.treetank.access.DatabaseConfiguration;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-import com.treetank.service.xml.shredder.XMLShredder;
-import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.settings.EDatabaseSetting;
 import com.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

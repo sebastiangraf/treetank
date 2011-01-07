@@ -27,7 +27,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.IAxisTest;
+import com.treetank.axis.AbsAxisTest;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.utils.DocumentCreater;
@@ -63,31 +63,31 @@ public class IntersectAxisTest {
 
         rtx.moveTo(1L);
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::node() intersect b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::node() intersect b"), new long[] {
             5L, 9L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx,
             "child::node() intersect b intersect child::node()[@p:x]"), new long[] {
             9L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx,
             "child::node() intersect child::node()[attribute::p:x]"), new long[] {
             9L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx,
             "child::node()/parent::node() intersect self::node()"), new long[] {
             1L
         });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "//node() intersect //text()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "//node() intersect //text()"), new long[] {
             4L, 8L, 13L, 6L, 12L
         });
 
         rtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "b/preceding::node() intersect text()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "b/preceding::node() intersect text()"),
             new long[] {
                 4L, 8L
             });
