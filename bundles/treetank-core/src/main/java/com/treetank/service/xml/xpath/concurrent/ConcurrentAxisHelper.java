@@ -70,8 +70,6 @@ public class ConcurrentAxisHelper implements Runnable {
      */
     private final boolean callNext;
 
-    // private Logger logger = Logger.getLogger("ThreadedAxisHelper");
-
     /**
      * Bind axis step to transaction.
      * Make sure to create a new ReadTransaction instead of using the parameter
@@ -95,7 +93,7 @@ public class ConcurrentAxisHelper implements Runnable {
     }
 
     public void run() {
-
+        System.out.println("hier bin ich");
         // Compute all results of the given axis and store the results in the queue.
         while (mAxis.hasNext()) {
             // for some axis next(( has to be called here
@@ -106,9 +104,9 @@ public class ConcurrentAxisHelper implements Runnable {
                 // store result in queue as soon as there is space left
                 mResults.put(mAxis.getTransaction().getNode().getNodeKey());
                 // wait until next thread arrives and exchange blocking queue
-                ConcurrentExchanger.getInstance().exchange(mResults);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                //ConcurrentExchanger.getInstance().exchange(mResults);
+            } catch (final InterruptedException mExp) {
+                mExp.printStackTrace();
 
             }
         }
@@ -116,8 +114,8 @@ public class ConcurrentAxisHelper implements Runnable {
         try {
             // Mark end of result sequence by the NULL_NODE_KEY
             mResults.put((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (final InterruptedException mExp) {
+            mExp.printStackTrace();
         }
 
     }

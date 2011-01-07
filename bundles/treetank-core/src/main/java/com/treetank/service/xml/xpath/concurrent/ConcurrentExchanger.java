@@ -23,7 +23,7 @@ import java.util.concurrent.Exchanger;
 /**
  * <h1>ConcurrentExchanger</h1>
  * <p>
- * This class is a singleton for an Exchanger to exchange content of threads.
+ * This class is a Exchanger singleton to exchange content of threads.
  * </p>
  * 
  * @author Patrick Lang, Konstanz University

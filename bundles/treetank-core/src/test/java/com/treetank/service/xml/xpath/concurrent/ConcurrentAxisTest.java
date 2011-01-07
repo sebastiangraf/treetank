@@ -14,14 +14,13 @@ import com.treetank.axis.FilterAxis;
 import com.treetank.axis.NestedAxis;
 import com.treetank.axis.filter.NameFilter;
 import com.treetank.axis.filter.TextFilter;
-import com.treetank.exception.TTException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.service.xml.xpath.XPathStringChecker;
 import com.treetank.service.xml.xpath.comparators.CompKind;
 import com.treetank.service.xml.xpath.comparators.GeneralComp;
+import com.treetank.service.xml.xpath.concurrent.ConcurrentAxis;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.filter.PredicateFilterAxis;
 import com.treetank.utils.TypedValue;
@@ -33,18 +32,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Test normal and concurrent axis.
- * 
- * @author Patrick Lang
- */
 public class ConcurrentAxisTest {
 
     /** XML file name to test. */
     private static final String XMLFILE = "10mb.xml";
     /** Path to XML file. */
-    private static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + XMLFILE;
+    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + XMLFILE;
     /** IDatabase instance. */
     private IDatabase mDatabase;
     /** ISession instance. */
@@ -79,45 +73,64 @@ public class ConcurrentAxisTest {
     /**
      * Test seriell.
      */
+    @Ignore
     @Test
     public final void testSeriellOld() {
-        final String query = "fn:string(//people/person[@id=\"person3\"]/name)";
-        final String result = "Limor Simone";
+        // final String query = "//people/person[@id=\"person3\"]/name";
+        // final String query = "count(//location[text() = \"United States\"])";
+        final String query = "//regions/africa//location";
+        // final String result = "<name>Limor Simone</name>";
+        final int resultNumber = 55;
+        // try {
+        // XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+        // result
+        // });
+        // } catch (final TTXPathException e) {
+        // e.printStackTrace();
+        // }
+        AbsAxis axis = null;
         try {
-            XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
-                result
-            });
-        } catch (final TTXPathException mExp) {
-            mExp.printStackTrace();
+            axis = new XPathAxis(mRtx, query);
+        } catch (final TTXPathException ttExp) {
+            ttExp.printStackTrace();
         }
+        for (int i = 0; i < resultNumber; i++) {
+            assertEquals(true, axis.hasNext());
+        }
+        assertEquals(axis.hasNext(), false);
+
     }
 
     /**
      * Test seriell.
      */
-    @Ignore
     @Test
     public final void testSeriellNew() {
-        // final String result = "<name>Limor Simone</name>";
 
-        final long mPerson3 =
-            mRtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("person3"), mRtx.keyForName("xs:string")));
-
-        final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(mRtx, true),
-                new NameFilter(mRtx, "people")), new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx,
-                "person"))), new PredicateFilterAxis(mRtx, new NestedAxis(new FilterAxis(new ChildAxis(mRtx),
-                new NameFilter(mRtx, "id")), new GeneralComp(mRtx, new FilterAxis(new ChildAxis(mRtx),
-                new TextFilter(mRtx)), new LiteralExpr(mRtx, mPerson3), CompKind.EQ)))), new FilterAxis(
-                new ChildAxis(mRtx), new NameFilter(mRtx, "name")));
-
+        // final long person3 =
+        // mRtx.getItemList().addItem(
+        // new AtomicValue(TypedValue.getBytes("person3"), mRtx.keyForName("xs:string")));
+        //
+        // final AbsAxis axis =
+        // new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(mRtx, true),
+        // new NameFilter(mRtx, "people")), new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx,
+        // "person"))), new PredicateFilterAxis(mRtx, new NestedAxis(new FilterAxis(new ChildAxis(mRtx),
+        // new NameFilter(mRtx, "id")), new GeneralComp(mRtx, new FilterAxis(new ChildAxis(mRtx),
+        // new TextFilter(mRtx)), new LiteralExpr(mRtx, person3), CompKind.EQ)))), new FilterAxis(
+        // new ChildAxis(mRtx), new NameFilter(mRtx, "name")));
+        //
         // XPathStringChecker.testIAxisConventions(axis, new String[] {
         // result
         // });
 
-        // TODO: bekommt hier kein Ergbnis zurueck, NULL. Nachschauen ob Anfrage stimmt.
-        for (int i = 0; i < 1; i++) {
+        /* query: //regions/africa//location */
+        final int resultNumber = 55;
+        final AbsAxis axis =
+            new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(mRtx, true), new NameFilter(mRtx,
+                "regions")), new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx, "africa"))),
+                new FilterAxis(new DescendantAxis(mRtx, true), new NameFilter(mRtx, "location")));
+
+        for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
         }
         assertEquals(axis.hasNext(), false);
@@ -126,29 +139,35 @@ public class ConcurrentAxisTest {
     /**
      * Test concurrent.
      */
-    @Ignore
     @Test
     public final void testConcurrent() {
-        // final String result = "<name>Limor Simone</name>";
 
-        final long mPerson3 =
-            mRtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("person3"), mRtx.keyForName("xs:string")));
-
-        final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(mRtx, new FilterAxis(
-                new DescendantAxis(mRtx, true), new NameFilter(mRtx, "people"))), new ConcurrentAxis(mRtx,
-                new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx, "person")))),
-                new PredicateFilterAxis(mRtx, new NestedAxis(new FilterAxis(new ChildAxis(mRtx),
-                    new NameFilter(mRtx, "id")), new GeneralComp(mRtx, new FilterAxis(new ChildAxis(mRtx),
-                    new TextFilter(mRtx)), new LiteralExpr(mRtx, mPerson3), CompKind.EQ)))),
-                new ConcurrentAxis(mRtx, new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx, "name"))));
+        // final long person3 =
+        // mRtx.getItemList().addItem(
+        // new AtomicValue(TypedValue.getBytes("person3"), mRtx.keyForName("xs:string")));
+        //
+        // final AbsAxis axis =
+        // new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(mRtx, new FilterAxis(
+        // new DescendantAxis(mRtx, true), new NameFilter(mRtx, "people"))), new ConcurrentAxis(mRtx,
+        // new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx, "person")))),
+        // new PredicateFilterAxis(mRtx, new NestedAxis(new FilterAxis(new ChildAxis(mRtx),
+        // new NameFilter(mRtx, "id")), new GeneralComp(mRtx, new FilterAxis(new ChildAxis(mRtx),
+        // new TextFilter(mRtx)), new LiteralExpr(mRtx, person3), CompKind.EQ)))),
+        // new ConcurrentAxis(mRtx, new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx, "name"))));
 
         // XPathStringChecker.testIAxisConventions(axis, new String[] {
         // result
         // });
 
-        for (int i = 0; i < 1; i++) {
+        /* query: //regions/africa//location */
+        final int resultNumber = 55;
+        final AbsAxis axis =
+            new NestedAxis(new NestedAxis(new ConcurrentAxis(mRtx, new FilterAxis(new DescendantAxis(mRtx,
+                true), new NameFilter(mRtx, "regions"))), new ConcurrentAxis(mRtx, new FilterAxis(
+                new ChildAxis(mRtx), new NameFilter(mRtx, "africa")))), new ConcurrentAxis(mRtx,
+                new FilterAxis(new DescendantAxis(mRtx, true), new NameFilter(mRtx, "name"))));
+
+        for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
         }
         assertEquals(axis.hasNext(), false);
@@ -165,7 +184,7 @@ public class ConcurrentAxisTest {
             mSession.close();
             mDatabase.close();
             TestHelper.closeEverything();
-        } catch (final TTException mExe) {
+        } catch (final Exception mExe) {
             mExe.printStackTrace();
         }
 
