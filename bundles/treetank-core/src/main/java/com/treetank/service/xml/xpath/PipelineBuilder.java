@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.treetank.api.ForAxis;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -36,7 +37,6 @@ import com.treetank.service.xml.xpath.expr.CastExpr;
 import com.treetank.service.xml.xpath.expr.CastableExpr;
 import com.treetank.service.xml.xpath.expr.EveryExpr;
 import com.treetank.service.xml.xpath.expr.ExceptAxis;
-import com.treetank.service.xml.xpath.expr.ForAxis;
 import com.treetank.service.xml.xpath.expr.IfAxis;
 import com.treetank.service.xml.xpath.expr.InstanceOfExpr;
 import com.treetank.service.xml.xpath.expr.IntersectAxis;
@@ -74,8 +74,8 @@ public final class PipelineBuilder {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(PipelineBuilder.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(PipelineBuilder.class));
 
     /** Stack of pipeline builder which stores expressions. */
     private final FastStack<FastStack<ExpressionSingle>> mExprStack;
@@ -225,11 +225,10 @@ public final class PipelineBuilder {
         assert getPipeStack().size() >= (mForConditionNum + 1);
 
         AbsAxis forAxis = (AbsAxis)(getPipeStack().pop().getExpr());
-        final IReadTransaction rtx = forAxis.getTransaction();
         int num = mForConditionNum;
 
         while (num-- > 0) {
-            forAxis = new ForAxis(rtx, getPipeStack().pop().getExpr(), forAxis);
+            forAxis = new ForAxis(getPipeStack().pop().getExpr(), forAxis);
         }
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {

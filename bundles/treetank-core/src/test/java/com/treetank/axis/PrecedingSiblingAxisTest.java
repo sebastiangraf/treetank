@@ -45,26 +45,26 @@ public class PrecedingSiblingAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveTo(12L);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
             11L
         });
 
         wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
             4L
         });
 
         wtx.moveTo(13L);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
             9L, 8L, 5L, 4L
         });
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {});
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {});
 
         wtx.moveTo(9L);
         wtx.moveToAttribute(0);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {});
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {});
 
         wtx.abort();
         wtx.close();

@@ -28,7 +28,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.IAxisTest;
+import com.treetank.axis.AbsAxisTest;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.utils.DocumentCreater;
@@ -64,17 +64,17 @@ public class IfAxisTest {
 
         rtx.moveTo(1L);
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "if (text()) then . else child::node()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "if (text()) then . else child::node()"),
             new long[] {
                 1L
             });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "if (node()) then . else child::node()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "if (node()) then . else child::node()"),
             new long[] {
                 1L
             });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx,
             "if (processing-instruction()) then . else child::node()"), new long[] {
             4L, 5L, 8L, 9L, 13L
         });

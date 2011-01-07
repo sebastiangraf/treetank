@@ -45,17 +45,17 @@ public class ParentAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
             1L
         });
 
         wtx.moveTo(8L);
-        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
             1L
         });
 
         wtx.moveTo(10L);
-        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
             9L
         });
 

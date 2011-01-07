@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 
 /**
@@ -26,7 +25,7 @@ import com.treetank.api.IReadTransaction;
  * Expression that holds a literal.
  * </p>
  */
-public class LiteralExpr extends AbsExpression implements IAxis {
+public class LiteralExpr extends AbsExpression {
 
     private final long mLiteralKey;
 

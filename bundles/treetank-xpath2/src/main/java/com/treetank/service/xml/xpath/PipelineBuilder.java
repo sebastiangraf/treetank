@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.treetank.api.ForAxis;
 import com.treetank.api.IAxis;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
@@ -38,7 +39,6 @@ import com.treetank.service.xml.xpath.expr.CastExpr;
 import com.treetank.service.xml.xpath.expr.CastableExpr;
 import com.treetank.service.xml.xpath.expr.EveryExpr;
 import com.treetank.service.xml.xpath.expr.ExceptAxis;
-import com.treetank.service.xml.xpath.expr.ForAxis;
 import com.treetank.service.xml.xpath.expr.IfAxis;
 import com.treetank.service.xml.xpath.expr.InstanceOfExpr;
 import com.treetank.service.xml.xpath.expr.IntersectAxis;

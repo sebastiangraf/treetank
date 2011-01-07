@@ -27,7 +27,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.IAxisTest;
+import com.treetank.axis.AbsAxisTest;
 import com.treetank.exception.TTException;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.DocumentCreater;
@@ -52,28 +52,28 @@ public class DocumentNodeAxisTest {
         DocumentCreater.create(wtx);
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
         wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
         wtx.moveTo(9L);
-        IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
         wtx.moveTo(9L);
         wtx.moveToAttribute(0);
-        IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
         wtx.moveTo(13L);
-        IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 

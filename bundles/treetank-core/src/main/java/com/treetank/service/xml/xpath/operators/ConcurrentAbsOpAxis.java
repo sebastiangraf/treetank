@@ -22,16 +22,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import com.treetank.access.ReadTransaction;
-import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.functions.Function;
-import com.treetank.service.xml.xpath.parser.TokenType;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.settings.EFixed;
 
@@ -43,13 +39,13 @@ import static com.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
  * Abstract axis for all operators performing an arithmetic operation.
  * </p>
  */
-public abstract class ConcurrentAbsOpAxis extends AbsAxis implements IAxis {
+public abstract class ConcurrentAbsOpAxis extends AbsAxis {
 
     /** First arithmetic operand. */
-    private final IAxis mOperand1;
+    private final AbsAxis mOperand1;
 
     /** Second arithmetic operand. */
-    private final IAxis mOperand2;
+    private final AbsAxis mOperand2;
 
     /** True, if axis has not been evaluated yet. */
     private boolean mIsFirst;
@@ -64,7 +60,7 @@ public abstract class ConcurrentAbsOpAxis extends AbsAxis implements IAxis {
      * @param op2
      *            Second value of the operation
      */
-    public ConcurrentAbsOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
+    public ConcurrentAbsOpAxis(final IReadTransaction rtx, final AbsAxis op1, final AbsAxis op2) {
 
         super(rtx);
         mOperand1 = op1;
@@ -184,11 +180,11 @@ public abstract class ConcurrentAbsOpAxis extends AbsAxis implements IAxis {
 
 class Atomize implements Callable<Integer> {
 
-    final IAxis mAxis;
+    final AbsAxis mAxis;
 
     final IReadTransaction mRtx;
 
-    Atomize(final IReadTransaction rtx, final IAxis axis) {
+    Atomize(final IReadTransaction rtx, final AbsAxis axis) {
         mRtx = new ReadTransaction((ReadTransaction)rtx);
         mAxis = axis;
         mAxis.setTransaction(mRtx);

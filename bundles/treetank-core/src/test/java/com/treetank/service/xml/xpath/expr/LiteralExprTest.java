@@ -18,25 +18,25 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AbsAxis;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit-test class to test the functionality of the LiteralExpr.
@@ -79,14 +79,14 @@ public class LiteralExprTest {
         key1 = rtx.getItemList().addItem(item1);
         key2 = rtx.getItemList().addItem(item2);
 
-        final IAxis axis1 = new LiteralExpr(rtx, key1);
+        final AbsAxis axis1 = new LiteralExpr(rtx, key1);
         assertEquals(true, axis1.hasNext());
         assertEquals(key1, rtx.getNode().getNodeKey());
         assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
         assertEquals(false, TypedValue.parseBoolean((rtx.getNode().getRawValue())));
         assertEquals(false, axis1.hasNext());
 
-        final IAxis axis2 = new LiteralExpr(rtx, key2);
+        final AbsAxis axis2 = new LiteralExpr(rtx, key2);
         assertEquals(true, axis2.hasNext());
         assertEquals(key2, rtx.getNode().getNodeKey());
         assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());

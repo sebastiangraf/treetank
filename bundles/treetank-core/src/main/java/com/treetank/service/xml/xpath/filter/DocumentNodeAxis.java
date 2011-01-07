@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.filter;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 
@@ -27,7 +26,7 @@ import com.treetank.axis.AbsAxis;
  * Iterate to document node starting at a given node.
  * </p>
  */
-public class DocumentNodeAxis extends AbsAxis implements IAxis {
+public class DocumentNodeAxis extends AbsAxis {
 
     /** Track number of calls of next. */
     private boolean mFirst;
