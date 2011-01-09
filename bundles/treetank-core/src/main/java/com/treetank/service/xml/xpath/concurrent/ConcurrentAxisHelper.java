@@ -93,7 +93,6 @@ public class ConcurrentAxisHelper implements Runnable {
     }
 
     public void run() {
-        System.out.println("hier bin ich");
         // Compute all results of the given axis and store the results in the queue.
         while (mAxis.hasNext()) {
             // for some axis next(( has to be called here

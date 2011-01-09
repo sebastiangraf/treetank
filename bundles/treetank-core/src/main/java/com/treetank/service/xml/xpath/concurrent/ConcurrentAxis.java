@@ -117,7 +117,7 @@ public class ConcurrentAxis extends AbsAxis {
         // start producer on first call
         if (mFirst) {
             mFirst = false;
-            XPathAxis.EXECUTOR.submit(task);
+            AbsAxis.EXECUTOR.submit(task);
         }
 
         if (mFinished) {

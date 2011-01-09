@@ -18,6 +18,8 @@
 package com.treetank.axis;
 
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.treetank.api.IExpression;
 import com.treetank.api.IReadTransaction;
@@ -54,7 +56,13 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
 
     /** Include self? */
     private final boolean mIncludeSelf;
-
+    
+    /** Size of thread pool for executor service. */
+    private static int THREADPOOLSIZE = 2;
+    
+    /** Executor Service holding the execution plan for future tasks. */
+    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(THREADPOOLSIZE);
+   
     /**
      * Bind axis step to transaction.
      * 
