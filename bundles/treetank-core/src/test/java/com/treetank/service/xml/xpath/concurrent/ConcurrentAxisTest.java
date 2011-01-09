@@ -17,6 +17,11 @@ import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 
+import org.perfidix.annotation.AfterEachRun;
+import org.perfidix.annotation.BeforeEachRun;
+import org.perfidix.annotation.Bench;
+import org.perfidix.annotation.SkipBench;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -49,6 +54,7 @@ public class ConcurrentAxisTest {
      * Method is called once before each test. It deletes all states, shreds XML file to database and
      * initializes the required variables.
      */
+    @BeforeEachRun
     @Before
     public final void setUp() {
         try {
@@ -66,6 +72,8 @@ public class ConcurrentAxisTest {
      * Test seriell.
      */
     @Ignore
+    @SkipBench
+    @Bench
     @Test
     public final void testSeriellOld() {
         // final String query = "//people/person[@id=\"person3\"]/name";
@@ -73,13 +81,6 @@ public class ConcurrentAxisTest {
         final String query = "//regions/africa//location";
         // final String result = "<name>Limor Simone</name>";
         final int resultNumber = 55;
-        // try {
-        // XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
-        // result
-        // });
-        // } catch (final TTXPathException e) {
-        // e.printStackTrace();
-        // }
         AbsAxis axis = null;
         try {
             axis = new XPathAxis(mRtx, query);
@@ -96,24 +97,9 @@ public class ConcurrentAxisTest {
     /**
      * Test seriell.
      */
+    @Bench
     @Test
     public final void testSeriellNew() {
-
-        // final long person3 =
-        // mRtx.getItemList().addItem(
-        // new AtomicValue(TypedValue.getBytes("person3"), mRtx.keyForName("xs:string")));
-        //
-        // final AbsAxis axis =
-        // new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(mRtx, true),
-        // new NameFilter(mRtx, "people")), new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx,
-        // "person"))), new PredicateFilterAxis(mRtx, new NestedAxis(new FilterAxis(new ChildAxis(mRtx),
-        // new NameFilter(mRtx, "id")), new GeneralComp(mRtx, new FilterAxis(new ChildAxis(mRtx),
-        // new TextFilter(mRtx)), new LiteralExpr(mRtx, person3), CompKind.EQ)))), new FilterAxis(
-        // new ChildAxis(mRtx), new NameFilter(mRtx, "name")));
-        //
-        // XPathStringChecker.testIAxisConventions(axis, new String[] {
-        // result
-        // });
 
         /* query: //regions/africa//location */
         final int resultNumber = 55;
@@ -130,28 +116,13 @@ public class ConcurrentAxisTest {
 
     /**
      * Test concurrent.
+     * 
+     * @throws TTXPathException
      */
+    @Bench
     @Test
     @Ignore
     public final void testConcurrent() {
-
-        // final long person3 =
-        // mRtx.getItemList().addItem(
-        // new AtomicValue(TypedValue.getBytes("person3"), mRtx.keyForName("xs:string")));
-        //
-        // final AbsAxis axis =
-        // new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(mRtx, new FilterAxis(
-        // new DescendantAxis(mRtx, true), new NameFilter(mRtx, "people"))), new ConcurrentAxis(mRtx,
-        // new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx, "person")))),
-        // new PredicateFilterAxis(mRtx, new NestedAxis(new FilterAxis(new ChildAxis(mRtx),
-        // new NameFilter(mRtx, "id")), new GeneralComp(mRtx, new FilterAxis(new ChildAxis(mRtx),
-        // new TextFilter(mRtx)), new LiteralExpr(mRtx, person3), CompKind.EQ)))),
-        // new ConcurrentAxis(mRtx, new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx, "name"))));
-
-        // XPathStringChecker.testIAxisConventions(axis, new String[] {
-        // result
-        // });
-
         /* query: //regions/africa//location */
         final int resultNumber = 55;
         final AbsAxis axis =
@@ -170,6 +141,7 @@ public class ConcurrentAxisTest {
     /**
      * Close all connections.
      */
+    @AfterEachRun
     @After
     public final void tearDown() {
         try {

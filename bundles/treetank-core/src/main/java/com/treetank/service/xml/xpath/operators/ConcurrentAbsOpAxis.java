@@ -26,7 +26,6 @@ import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.functions.Function;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.settings.EFixed;
@@ -60,8 +59,8 @@ public abstract class ConcurrentAbsOpAxis extends AbsAxis {
      * @param op2
      *            Second value of the operation
      */
-    public ConcurrentAbsOpAxis(final IReadTransaction rtx, final AbsAxis op1, final AbsAxis op2) {
 
+    public ConcurrentAbsOpAxis(final IReadTransaction rtx, final AbsAxis op1, final AbsAxis op2) {
         super(rtx);
         mOperand1 = op1;
         mOperand2 = op2;
@@ -97,11 +96,9 @@ public abstract class ConcurrentAbsOpAxis extends AbsAxis {
         if (mIsFirst) {
             mIsFirst = false;
 
-            final Future<Integer> itemF1 =
-                XPathAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand1));
+            final Future<Integer> itemF1 = AbsAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand1));
 
-            final Future<Integer> itemF2 =
-                XPathAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand2));
+            final Future<Integer> itemF2 = AbsAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand2));
 
             try {
                 Integer item1 = itemF1.get();
@@ -120,10 +117,10 @@ public abstract class ConcurrentAbsOpAxis extends AbsAxis {
                     }
                 }
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            } catch (final InterruptedException mExp) {
+                mExp.printStackTrace();
+            } catch (final ExecutionException mExp) {
+                mExp.printStackTrace();
             }
 
             if (XPATH_10_COMP) { // and empty sequence, return NaN

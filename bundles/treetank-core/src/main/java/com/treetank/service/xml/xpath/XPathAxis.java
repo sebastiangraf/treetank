@@ -74,12 +74,6 @@ public final class XPathAxis extends AbsAxis {
     /** Declares if the evaluation is compatible to XPath 1.0 or not. */
     public static final boolean XPATH_10_COMP = true;
 
-    /** Size of thread pool for executor service. */
-    private static int THREADPOOLSIZE = 2;
-
-    /** Executor Service holding the execution plan for future tasks. */
-    public static ExecutorService EXECUTOR;
-
     /** Axis holding the consecutive query execution plans of the query. */
     private AbsAxis mPipeline;
 
@@ -102,8 +96,8 @@ public final class XPathAxis extends AbsAxis {
 
         super(rtx);
 
-        /** Initializing executor service with fixed thread pool. */
-        EXECUTOR = Executors.newFixedThreadPool(THREADPOOLSIZE);
+//        /** Initializing executor service with fixed thread pool. */
+//        EXECUTOR = Executors.newFixedThreadPool(THREADPOOLSIZE);
 
         // start parsing and get execution plans
         final XPathParser parser = new XPathParser(getTransaction(), mQuery);
