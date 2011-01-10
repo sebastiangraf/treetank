@@ -82,26 +82,26 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * Constructor.
      * 
-     * @param paramTransactionState
+     * @param paramRtx
      *            Transaction state to work with.
      */
-    public ReadTransaction(final ReadTransaction paramTransactionState) {
-        mTransactionID = paramTransactionState.getTransactionID();
-        Class c = paramTransactionState.getClass();
+    public ReadTransaction(final ReadTransaction paramRtx) {
+        mTransactionID = paramRtx.getTransactionID();
+        Class c = paramRtx.getClass();
         Field[] fields = c.getDeclaredFields();
         try {
             for (int i = 0; i < fields.length; i++) {
                 if (fields[i].getName().equals("mSessionState")) {
-                    mSessionState = (SessionState)(fields[i].get(paramTransactionState));
+                    mSessionState = (SessionState)(fields[i].get(paramRtx));
                 } else if (fields[i].getName().equals("mTransactionState")) {
-                    mTransactionState = (ReadTransactionState)fields[i].get(paramTransactionState);
+                    mTransactionState = (ReadTransactionState)fields[i].get(paramRtx);
                 }
             }
 
             assert mSessionState != null;
             assert mTransactionState != null;
-            assert paramTransactionState.getNode().getNodeKey() >= 0; // has to be node
-            mCurrentNode = getTransactionState().getNode(paramTransactionState.getNode().getNodeKey());
+            assert paramRtx.getNode().getNodeKey() >= 0; // has to be node
+            mCurrentNode = getTransactionState().getNode(paramRtx.getNode().getNodeKey());
             mClosed = false;
 
         } catch (final TTIOException mExp) {
