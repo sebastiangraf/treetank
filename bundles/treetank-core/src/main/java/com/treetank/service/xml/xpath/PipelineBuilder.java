@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.treetank.api.ForAxis;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.FilterAxis;
+import com.treetank.axis.ForAxis;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.comparators.AbsComparator;
 import com.treetank.service.xml.xpath.comparators.CompKind;

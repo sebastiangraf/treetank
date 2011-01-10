@@ -15,9 +15,9 @@
  * 
  */
 
-package com.treetank.api;
+package com.treetank.axis;
 
-import com.treetank.axis.AbsAxis;
+import com.treetank.api.IReadTransaction;
 
 /**
  * <h1>ForAxis</h1>
