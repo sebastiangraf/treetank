@@ -1,21 +1,22 @@
 package com.treetank.saxon.wrapper;
 
+import com.treetank.TestHelper;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TTException;
+import com.treetank.saxon.evaluator.XPathEvaluator;
+import com.treetank.utils.DocumentCreater;
+
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.saxon.evaluator.XPathEvaluator;
-import com.treetank.utils.DocumentCreater;
 
 /**
  * Test XPath S9Api.
@@ -25,14 +26,14 @@ import com.treetank.utils.DocumentCreater;
  */
 public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
-    /** 
-     * Treetank database on Treetank test document {@link IDatabase}. 
+    /**
+     * Treetank database on Treetank test document {@link IDatabase}.
      */
     private static transient IDatabase databaseTest;
 
     @Override
     @BeforeClass
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = databaseTest.getSession().beginWriteTransaction();
@@ -45,7 +46,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Override
     @AfterClass
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
@@ -117,7 +118,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
         assertXMLEqual("expected pieces to be similar",
             "<result><b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/></b><b xmlns:p=\"ns\" p:x=\"y\">"
-            + "<c xmlns:p=\"ns\"/>bar</b></result>", strBuilder.toString());
+                + "<c xmlns:p=\"ns\"/>bar</b></result>", strBuilder.toString());
     }
 
     @Test

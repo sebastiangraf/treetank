@@ -18,6 +18,25 @@ package com.treetank.saxon.wrapper;
 
 import javax.xml.namespace.QName;
 
+import com.treetank.api.IDatabase;
+import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
+import com.treetank.axis.AncestorAxis;
+import com.treetank.axis.AttributeAxis;
+import com.treetank.axis.ChildAxis;
+import com.treetank.axis.DescendantAxis;
+import com.treetank.axis.FilterAxis;
+import com.treetank.axis.FollowingAxis;
+import com.treetank.axis.FollowingSiblingAxis;
+import com.treetank.axis.ParentAxis;
+import com.treetank.axis.PrecedingAxis;
+import com.treetank.axis.PrecedingSiblingAxis;
+import com.treetank.axis.filter.TextFilter;
+import com.treetank.exception.TTException;
+import com.treetank.node.ENodes;
+import com.treetank.node.ElementNode;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.om.Axis;
@@ -44,30 +63,8 @@ import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.treetank.api.IAxis;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AncestorAxis;
-import com.treetank.axis.AttributeAxis;
-import com.treetank.axis.ChildAxis;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.axis.FilterAxis;
-import com.treetank.axis.FollowingAxis;
-import com.treetank.axis.FollowingSiblingAxis;
-import com.treetank.axis.ParentAxis;
-import com.treetank.axis.PrecedingAxis;
-import com.treetank.axis.PrecedingSiblingAxis;
-import com.treetank.axis.TextFilter;
-import com.treetank.exception.TreetankException;
-import com.treetank.node.ElementNode;
-import com.treetank.saxon.evaluator.XSLTEvaluator;
-import com.treetank.settings.ENodes;
 
 /**
  * <h1>NodeWrapper</h1>
@@ -143,7 +140,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 mRTX = mDatabase.getSession().beginReadTransaction();
             }
             mRTX.moveTo(nodekeyToStart);
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             LOGGER.error("TreetankException: " + e.getMessage(), e);
         }
 
@@ -660,7 +657,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
     public boolean hasChildNodes() {
         boolean hasChildNodes = false;
-        if (mRTX.getNode().getChildCount() > 0) {
+        if (mRTX.getNodeIfStructural().getChildCount() > 0) {
             hasChildNodes = true;
         }
         return hasChildNodes;
@@ -863,7 +860,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         mRTX.moveTo(mKey);
         int index = 0;
 
-        while (mRTX.getNode().hasLeftSibling()) {
+        while (mRTX.getNodeIfStructural().hasLeftSibling()) {
             mRTX.moveToLeftSibling();
             index++;
         }
@@ -882,7 +879,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     public final class Enumeration extends Navigator.BaseEnumeration {
 
         /** Treetank axis iterator. */
-        private final IAxis mAxis;
+        private final AbsAxis mAxis;
 
         /**
          * Constructor.
@@ -890,7 +887,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
          * @param axis
          *            TreeTank axis iterator.
          */
-        public Enumeration(final IAxis axis) {
+        public Enumeration(final AbsAxis axis) {
             mAxis = axis;
         }
 
