@@ -1,8 +1,5 @@
 package com.treetank.saxon.wrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -15,6 +12,16 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
 
+import com.treetank.TestHelper;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
+import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TTException;
+import com.treetank.node.ENodes;
+import com.treetank.utils.DocumentCreater;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.xpath.XPathFactoryImpl;
@@ -24,15 +31,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.settings.ENodes;
-import com.treetank.utils.DocumentCreater;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test XPath Java API.
@@ -52,7 +52,7 @@ public final class TestNodeWrapperXPath {
     private static transient Configuration config;
 
     @Before
-    public void setUp() throws TreetankException, XPathFactoryConfigurationException {
+    public void setUp() throws TTException, XPathFactoryConfigurationException {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();

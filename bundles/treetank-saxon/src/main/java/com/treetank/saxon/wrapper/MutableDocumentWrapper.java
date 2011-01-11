@@ -16,11 +16,11 @@
  */
 package com.treetank.saxon.wrapper;
 
-import net.sf.saxon.om.MutableDocumentInfo;
-
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+
+import net.sf.saxon.om.MutableDocumentInfo;
 
 /**
  * <h1>MutableDocumentWrapper</h1>
@@ -40,7 +40,7 @@ import com.treetank.exception.TreetankException;
  */
 public class MutableDocumentWrapper extends MutableNodeWrapper implements MutableDocumentInfo {
 
-    protected MutableDocumentWrapper(IDatabase database, IWriteTransaction wtx) throws TreetankException {
+    protected MutableDocumentWrapper(IDatabase database, IWriteTransaction wtx) throws TTException {
         super(database, wtx);
     }
 

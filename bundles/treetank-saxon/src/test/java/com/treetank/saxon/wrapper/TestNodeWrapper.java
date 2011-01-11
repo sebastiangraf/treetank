@@ -1,19 +1,24 @@
 package com.treetank.saxon.wrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
 
+import com.treetank.TestHelper;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
+import com.treetank.api.ISession;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TTException;
+import com.treetank.service.xml.shredder.EShredderInsert;
+import com.treetank.service.xml.shredder.XMLShredder;
+import com.treetank.utils.DocumentCreater;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.Axis;
 import net.sf.saxon.om.AxisIterator;
-import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.NamespaceIterator.NamespaceNodeImpl;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.trans.XPathException;
@@ -25,14 +30,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.service.xml.XMLShredder;
-import com.treetank.utils.DocumentCreater;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test implemented methods in NodeWrapper.
@@ -49,7 +50,7 @@ public class TestNodeWrapper {
     private transient NodeWrapper node;
 
     @Before
-    public void beforeMethod() throws TreetankException {
+    public void beforeMethod() throws TTException {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
         databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -65,7 +66,7 @@ public class TestNodeWrapper {
     }
 
     @After
-    public void afterMethod() throws TreetankException {
+    public void afterMethod() throws TTException {
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
         Database.forceCloseDatabase(TestHelper.PATHS.PATH2.getFile());
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -81,7 +82,7 @@ public class TestNodeWrapper {
     }
 
     @Test
-    public void testCompareOrder() throws XPathException, TreetankException {
+    public void testCompareOrder() throws XPathException, TTException {
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 
@@ -134,7 +135,7 @@ public class TestNodeWrapper {
         // Test with xml:base specified.
         final File source =
             new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "data"
-            + File.separator + "testBaseURI.xml");
+                + File.separator + "testBaseURI.xml");
 
         Database.truncateDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
         final IDatabase database =
@@ -142,7 +143,7 @@ public class TestNodeWrapper {
         final ISession mSession = database.getSession();
         final IWriteTransaction mWTX = mSession.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(source);
-        final XMLShredder shredder = new XMLShredder(mWTX, reader, true);
+        final XMLShredder shredder = new XMLShredder(mWTX, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         mWTX.close();
 
@@ -209,7 +210,7 @@ public class TestNodeWrapper {
          * (order unpredictable because it's implemented with a HashMap
          * internally).
          */
-        while(!"ns".equals(namespace.getStringValueCS()) && namespace != null) {
+        while (!"ns".equals(namespace.getStringValueCS()) && namespace != null) {
             namespace = (NamespaceNodeImpl)iterator.next();
         }
 

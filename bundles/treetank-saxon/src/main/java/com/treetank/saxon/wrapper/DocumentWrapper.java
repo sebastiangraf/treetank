@@ -19,16 +19,16 @@ package com.treetank.saxon.wrapper;
 import java.util.Collections;
 import java.util.Iterator;
 
+import com.treetank.api.IDatabase;
+import com.treetank.axis.AbsAxis;
+import com.treetank.axis.DescendantAxis;
+import com.treetank.node.ENodes;
+import com.treetank.node.ElementNode;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NodeInfo;
-
-import com.treetank.api.IAxis;
-import com.treetank.api.IDatabase;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.node.ElementNode;
-import com.treetank.settings.ENodes;
 
 /**
  * <h1>DocumentWrapper</h1>
@@ -114,8 +114,8 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
      * No check if the attribute is unique among all nodes and on the element.
      */
     public NodeInfo selectID(final String ID, final boolean getParent) {
-        final IAxis axis = new DescendantAxis(mRTX, true);
-        while(axis.hasNext()) {
+        final AbsAxis axis = new DescendantAxis(mRTX, true);
+        while (axis.hasNext()) {
             if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
                 final int attCount = ((ElementNode)mRTX.getNode()).getAttributeCount();
 
@@ -126,7 +126,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
                         mRTX.moveToAttribute(index);
 
                         if ("xml:id".equalsIgnoreCase(mRTX.getQNameOfCurrentNode().getLocalPart())
-                        && ID.equals(mRTX.getValueOfCurrentNode())) {
+                            && ID.equals(mRTX.getValueOfCurrentNode())) {
                             if (getParent) {
                                 mRTX.moveToParent();
                                 return wrap(mRTX.getNode().getNodeKey());

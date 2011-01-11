@@ -1,10 +1,18 @@
 package com.treetank.saxon.wrapper;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
+
+import com.treetank.TestHelper;
+import com.treetank.access.Database;
+import com.treetank.access.DatabaseConfiguration;
+import com.treetank.api.IDatabase;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TTException;
+import com.treetank.saxon.evaluator.XQueryEvaluator;
+import com.treetank.service.xml.shredder.EShredderInsert;
+import com.treetank.service.xml.shredder.XMLShredder;
 
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
@@ -13,14 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.access.DatabaseConfiguration;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.saxon.evaluator.XQueryEvaluator;
-import com.treetank.service.xml.XMLShredder;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test XQuery S9Api.
@@ -34,10 +35,9 @@ public final class TestNodeWrapperS9ApiXQuery {
     private static transient IDatabase databaseBooks;
 
     /** Path to books file. */
-    private static final File BOOKSXML =
-        new File(new StringBuilder("src").append(File.separator).append("test").append(File.separator)
-            .append("resources").append(File.separator).append("data").append(File.separator).append(
-                "my-books.xml").toString());
+    private static final File BOOKSXML = new File(new StringBuilder("src").append(File.separator).append(
+        "test").append(File.separator).append("resources").append(File.separator).append("data").append(
+        File.separator).append("my-books.xml").toString());
 
     @Before
     public void setUp() throws Exception {
@@ -47,13 +47,13 @@ public final class TestNodeWrapperS9ApiXQuery {
         databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction mWTX = databaseBooks.getSession().beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
-        final XMLShredder shredder = new XMLShredder(mWTX, reader, true);
+        final XMLShredder shredder = new XMLShredder(mWTX, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         mWTX.close();
     }
 
     @AfterClass
-    public static void tearDown() throws TreetankException {
+    public static void tearDown() throws TTException {
         databaseBooks.close();
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
     }
