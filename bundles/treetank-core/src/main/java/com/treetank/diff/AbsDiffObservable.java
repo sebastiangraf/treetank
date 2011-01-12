@@ -26,7 +26,7 @@ import java.util.Set;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-class AbsDiffObservable implements IDiffObservable {
+public class AbsDiffObservable implements IDiffObservable {
     /** {@link Set} of observers, which want to be notified of the encountered differences. */
     private transient Set<IDiffObserver> mDiffObservers;
 
@@ -39,7 +39,7 @@ class AbsDiffObservable implements IDiffObservable {
 
     /** {@inheritDoc} */
     @Override
-    public void fireDiff(final EDiff paramDiff) {
+    public final void fireDiff(final EDiff paramDiff) {
         for (final IDiffObserver observer : mDiffObservers) {
             observer.diffListener(paramDiff);
         }
@@ -47,13 +47,13 @@ class AbsDiffObservable implements IDiffObservable {
 
     /** {@inheritDoc} */
     @Override
-    public void addObserver(final IDiffObserver paramObserver) {
+    public final void addObserver(final IDiffObserver paramObserver) {
         mDiffObservers.add(paramObserver);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void removeObserver(final IDiffObserver paramObserver) {
+    public final void removeObserver(final IDiffObserver paramObserver) {
         mDiffObservers.remove(paramObserver);
     }
 }
