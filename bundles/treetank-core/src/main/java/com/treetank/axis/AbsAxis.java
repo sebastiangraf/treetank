@@ -129,7 +129,9 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     }
 
     /**
-     * {@inheritDoc}
+     * Get current {@link IReadTransaction}.
+     * 
+     * @return the {@link IReadTransaction} used
      */
     public final IReadTransaction getTransaction() {
         return mRTX;

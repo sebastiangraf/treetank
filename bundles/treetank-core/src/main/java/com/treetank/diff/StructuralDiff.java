@@ -16,6 +16,8 @@
  */
 package com.treetank.diff;
 
+import java.util.Set;
+
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.exception.TTException;
@@ -25,7 +27,8 @@ import com.treetank.utils.LogWrapper;
 import org.slf4j.LoggerFactory;
 
 /**
- * Structural diff, thus no attributes and namespace nodes are taken into account.
+ * Structural diff, thus no attributes and namespace nodes are taken into account. Note that this class is
+ * thread safe.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -35,7 +38,7 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
     /** Logger. */
     private static final LogWrapper LOGWRAPPER =
         new LogWrapper(LoggerFactory.getLogger(StructuralDiff.class));
-    
+
     /**
      * Constructor.
      * 
@@ -47,11 +50,11 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
      *            new revision key
      * @param paramOldRev
      *            old revision key
-     * @param paramObserver
-     *            observes the kind of diff between two nodes
+     * @param paramObservers
+     *            {@link Set} of observes
      */
     public StructuralDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-        final long paramOldRev, final IDiffObserver paramObserver) {
+        final long paramOldRev, final Set<IDiffObserver> paramObservers) {
         assert paramDb != null;
         assert paramKey > -2;
         assert paramNewRev >= 0;
@@ -65,8 +68,10 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
         } catch (final TTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        
-        addObserver(paramObserver);
+
+        for (final IDiffObserver observer : paramObservers) {
+            addObserver(observer);
+        }
     }
 
     /** {@inheritDoc} */
@@ -98,9 +103,9 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
                 } while (((AbsStructNode)paramFirstRtx.getNode()).hasRightSibling()
                     && paramFirstRtx.moveToRightSibling() && found == FoundEqualNode.FALSE);
                 paramFirstRtx.moveTo(key);
-
                 diff = found.kindOfDiff(rightSiblings);
             }
+            
             break;
         default:
             // Do nothing.
