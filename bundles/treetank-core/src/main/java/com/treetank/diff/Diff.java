@@ -21,7 +21,9 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IExpression;
 import com.treetank.api.IReadTransaction;
 import com.treetank.node.AbsStructNode;
+import com.treetank.node.ENodes;
 import com.treetank.settings.EDatabaseSetting;
+import com.treetank.settings.EFixed;
 
 /**
  * Main diff class.
@@ -54,6 +56,9 @@ final class Diff implements IExpression {
      */
     private final HashKind mHashKind;
 
+    /** Diff kind. */
+    private final EDiffKind mDiffKind;
+
     /**
      * Constructor.
      * 
@@ -65,9 +70,11 @@ final class Diff implements IExpression {
      *            second {@link IReadTransaction}, on the old revision
      * @param paramDiffImpl
      *            diff implementation of {@link IDiff}
+     * @param paramDiffKind
+     *            kind of diff (optimized or not)
      */
     Diff(final IDatabase paramDb, final IReadTransaction paramFirstRtx,
-        final IReadTransaction paramSecondRtx, final IDiff paramDiffImpl) {
+        final IReadTransaction paramSecondRtx, final EDiffKind paramDiffKind, final IDiff paramDiffImpl) {
         if (paramDb == null || paramFirstRtx == null || paramFirstRtx == null || paramDiffImpl == null) {
             throw new IllegalArgumentException();
         }
@@ -79,6 +86,7 @@ final class Diff implements IExpression {
         mFirstRtx = paramFirstRtx;
         mSecondRtx = paramSecondRtx;
         mDiff = EDiff.SAME;
+        mDiffKind = paramDiffKind;
         mDiffImpl = paramDiffImpl;
     }
 
@@ -87,11 +95,11 @@ final class Diff implements IExpression {
     public void evaluate() {
         // Iterate over new revision.
         while (moveCursor(mFirstRtx)) {
-            if (mDiff != EDiff.DELETED) {
+            if (mDiff == EDiff.SAME) {
                 moveCursor(mSecondRtx);
             }
 
-            if (mHashKind == HashKind.None) {
+            if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
                 mDiff = mDiffImpl.diff(mFirstRtx, mSecondRtx);
             } else {
                 mDiff = mDiffImpl.optimizedDiff(mFirstRtx, mSecondRtx);
@@ -100,12 +108,14 @@ final class Diff implements IExpression {
 
         // Nodes deleted in old rev (secondRtx) at the end of the tree.
         while (moveCursor(mSecondRtx)) {
-            if (mHashKind == HashKind.None) {
+            if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
                 mDiff = mDiffImpl.diff(mFirstRtx, mSecondRtx);
             } else {
                 mDiff = mDiffImpl.optimizedDiff(mFirstRtx, mSecondRtx);
             }
         }
+
+        mDiffImpl.done();
     }
 
     /**
@@ -120,9 +130,9 @@ final class Diff implements IExpression {
 
         boolean moved = false;
         final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
-        
+
         if (node.hasFirstChild()) {
-            if (mHashKind != HashKind.None && mDiff == EDiff.SAME) {
+            if (mDiffKind == EDiffKind.OPTIMIZED && mHashKind != HashKind.None && mDiff == EDiff.SAME) {
                 moved = paramRtx.moveToRightSibling();
             } else {
                 moved = paramRtx.moveToFirstChild();
@@ -131,9 +141,15 @@ final class Diff implements IExpression {
             moved = paramRtx.moveToRightSibling();
         } else {
             do {
+                if (paramRtx.getNode().getNodeKey() == (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
+                    moved = false;
+                    break;
+                }
                 moved = paramRtx.moveToParent();
             } while (!((AbsStructNode)paramRtx.getNode()).hasRightSibling()
                 && ((AbsStructNode)paramRtx.getNode()).hasParent());
+            
+            moved = paramRtx.moveToRightSibling(); 
         }
 
         return moved;

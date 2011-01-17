@@ -50,11 +50,13 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
      *            new revision key
      * @param paramOldRev
      *            old revision key
+     * @param paramDiffKind
+     *            kind of diff (optimized or not)
      * @param paramObservers
      *            {@link Set} of observes
      */
     public StructuralDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-        final long paramOldRev, final Set<IDiffObserver> paramObservers) {
+        final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
         assert paramDb != null;
         assert paramKey > -2;
         assert paramNewRev >= 0;
@@ -64,13 +66,12 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
             final IReadTransaction oldRev = paramDb.getSession().beginReadTransaction(paramOldRev);
             newRev.moveTo(paramKey);
             oldRev.moveTo(paramKey);
-            new Diff(paramDb, newRev, oldRev, this).evaluate();
+            for (final IDiffObserver observer : paramObservers) {
+                addObserver(observer);
+            }
+            new Diff(paramDb, newRev, oldRev, paramDiffKind, this).evaluate();
         } catch (final TTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
-        }
-
-        for (final IDiffObserver observer : paramObservers) {
-            addObserver(observer);
         }
     }
 
@@ -91,18 +92,18 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
                 int rightSiblings = 0;
 
                 // See if one of the right sibling matches.
-                final long key = paramFirstRtx.getNode().getNodeKey();
+                final long key = paramSecondRtx.getNode().getNodeKey();
                 do {
                     if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
                         found = FoundEqualNode.TRUE;
                     }
 
-                    if (paramFirstRtx.getNode().getNodeKey() != key) {
+                    if (paramSecondRtx.getNode().getNodeKey() != key) {
                         rightSiblings++;
                     }
-                } while (((AbsStructNode)paramFirstRtx.getNode()).hasRightSibling()
-                    && paramFirstRtx.moveToRightSibling() && found == FoundEqualNode.FALSE);
-                paramFirstRtx.moveTo(key);
+                } while (((AbsStructNode)paramSecondRtx.getNode()).hasRightSibling()
+                    && paramSecondRtx.moveToRightSibling() && found == FoundEqualNode.FALSE);
+                paramSecondRtx.moveTo(key);
                 diff = found.kindOfDiff(rightSiblings);
             }
             
@@ -154,5 +155,10 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
 
         fireDiff(diff);
         return diff;
+    }
+
+    @Override
+    public void done() {
+        fireDiff(EDiff.DONE);
     }
 }

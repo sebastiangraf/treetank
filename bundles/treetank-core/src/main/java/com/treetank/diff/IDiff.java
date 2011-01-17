@@ -46,4 +46,9 @@ interface IDiff {
      * @return kind of difference
      */
     EDiff optimizedDiff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx);
+    
+    /**
+     * Diff computation done, thus inform listeners.
+     */
+    void done();
 }

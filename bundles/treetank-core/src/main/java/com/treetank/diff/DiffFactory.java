@@ -45,13 +45,15 @@ public final class DiffFactory {
      *            new revision to compare
      * @param paramOldRev
      *            old revision to compare
+     * @param paramDiffKind
+     *            kind of diff (optimized or not)
      * @param paramObservers
      *            observes differences
      */
     public static void invokeFullDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-        final long paramOldRev, final Set<IDiffObserver> paramObservers) {
-        checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramObservers);
-        new FullDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramObservers);
+        final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+        checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
+        new FullDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
     }
 
     /**
@@ -65,13 +67,16 @@ public final class DiffFactory {
      *            new revision to compare
      * @param paramOldRev
      *            old revision to compare
+     * @param paramDiffKind
+     *            kind of diff (optimized or not)
      * @param paramObservers
      *            observe differences
      */
     public static void invokeStructuralDiff(final IDatabase paramDb, final long paramKey,
-        final long paramNewRev, final long paramOldRev, final Set<IDiffObserver> paramObservers) {
-        checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramObservers);
-        new StructuralDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramObservers);
+        final long paramNewRev, final long paramOldRev, final EDiffKind paramDiffKind,
+        final Set<IDiffObserver> paramObservers) {
+        checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
+        new StructuralDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
     }
 
     /**
@@ -85,15 +90,18 @@ public final class DiffFactory {
      *            new revision to compare
      * @param paramOldRev
      *            old revision to compare
+     * @param paramDiffKind
+     *            kind of diff (optimized or not)
      * @param paramObservers
      *            {@link Set} of observers
      */
     private static void checkParams(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-        final long paramOldRev, final Set<IDiffObserver> paramObservers) {
-        if (paramDb == null || paramKey < -1L || paramNewRev < 0 || paramOldRev < 0 || paramObservers == null) {
+        final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+        if (paramDb == null || paramKey < -1L || paramNewRev < 0 || paramOldRev < 0 || paramObservers == null
+            || paramDiffKind == null) {
             throw new IllegalArgumentException();
         }
-        if (paramNewRev == paramOldRev || paramNewRev > paramOldRev) {
+        if (paramNewRev == paramOldRev || paramNewRev < paramOldRev) {
             throw new IllegalArgumentException(
                 "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
         }
