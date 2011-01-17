@@ -50,11 +50,13 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
      *            new revision key
      * @param paramOldRev
      *            old revision key
+     * @param paramDiffKind
+     *            kind of diff (optimized or not)
      * @param paramObservers
      *            {@link Set} of Observers, which listen for the kinds of diff between two nodes
      */
     FullDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
-        final Set<IDiffObserver> paramObservers) {
+        final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
         assert paramDb != null;
         assert paramKey > -2;
         assert paramNewRev >= 0;
@@ -65,13 +67,12 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
             final IReadTransaction oldRev = paramDb.getSession().beginReadTransaction(paramOldRev);
             newRev.moveTo(paramKey);
             oldRev.moveTo(paramKey);
-            new Diff(paramDb, newRev, oldRev, this).evaluate();
+            for (final IDiffObserver observer : paramObservers) {
+                addObserver(observer);
+            }
+            new Diff(paramDb, newRev, oldRev, paramDiffKind, this).evaluate();
         } catch (final TTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
-        }
-
-        for (final IDiffObserver observer : paramObservers) {
-            addObserver(observer);
         }
     }
 
@@ -89,6 +90,7 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
         case ELEMENT_KIND:
             if (!paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
                 || paramFirstRtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                assert paramSecondRtx.getNode().getKind() == ENodes.ELEMENT_KIND;
                 FoundEqualNode found = FoundEqualNode.FALSE;
                 int rightSiblings = 0;
 
@@ -157,7 +159,7 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
                 paramFirstRtx.moveTo(nodeKey);
                 paramSecondRtx.moveTo(nodeKey);
             }
-            
+
             for (int i = 0; i < ((ElementNode)paramFirstRtx.getNode()).getChildCount(); i++) {
                 found = FoundEqualNode.FALSE;
                 paramFirstRtx.moveTo(i);
@@ -185,5 +187,10 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
     public EDiff optimizedDiff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void done() {
+        fireDiff(EDiff.DONE);
     }
 }

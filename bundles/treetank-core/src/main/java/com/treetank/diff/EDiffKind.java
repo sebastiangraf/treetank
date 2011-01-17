@@ -17,24 +17,14 @@
 package com.treetank.diff;
 
 /**
- * Possible kinds of differences between two nodes.
+ * Kind of diff.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
  */
-public enum EDiff {
-    /** Nodes are the same. */
-    SAME,
-    
-    /** Node has been inserted. */
-    INSERTED,
-    
-    /** Node has been deleted. */
-    DELETED,
-    
-    /** Node has been renamed. */
-    RENAMED,
-    
-    /** Diff computation done. */
-    DONE;
+public enum EDiffKind {
+    /** Normal diff. */
+    NORMAL,
+
+    /** Optimized diff. */
+    OPTIMIZED;
 }
