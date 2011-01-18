@@ -50,7 +50,20 @@ enum FoundEqualNode {
         /** {@inheritDoc} */
         @Override
         EDiff kindOfDiff(final int paramRightSibls) {
-            return EDiff.INSERTED;
+            EDiff mod = EDiff.SAME;
+            switch (paramRightSibls) {
+            case 0:
+                mod = EDiff.INSERTED;
+                break;
+            case 1:
+                mod = EDiff.RENAMED;
+                break;
+            default:
+                mod = EDiff.INSERTED;     
+            }
+            
+            assert mod != EDiff.SAME;
+            return mod;
         }
     };
 
