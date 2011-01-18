@@ -91,6 +91,18 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
                 FoundEqualNode found = FoundEqualNode.FALSE;
                 int rightSiblings = 0;
 
+                // Check if node has been renamed.
+                final long firstKey = paramFirstRtx.getNode().getNodeKey();
+                paramFirstRtx.moveToRightSibling();
+                final long secondKey = paramSecondRtx.getNode().getNodeKey();
+                paramSecondRtx.moveToRightSibling();
+                if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+                    diff = found.kindOfDiff(++rightSiblings);
+                    paramFirstRtx.moveTo(firstKey);
+                    paramSecondRtx.moveTo(secondKey);
+                    break;
+                }
+
                 // See if one of the right sibling matches.
                 final long key = paramSecondRtx.getNode().getNodeKey();
                 do {
@@ -106,7 +118,7 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
                 paramSecondRtx.moveTo(key);
                 diff = found.kindOfDiff(rightSiblings);
             }
-            
+
             break;
         default:
             // Do nothing.

@@ -21,7 +21,6 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IExpression;
 import com.treetank.api.IReadTransaction;
 import com.treetank.node.AbsStructNode;
-import com.treetank.node.ENodes;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EFixed;
 

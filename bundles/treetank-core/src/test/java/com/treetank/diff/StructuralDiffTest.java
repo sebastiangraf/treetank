@@ -115,10 +115,48 @@ public final class StructuralDiffTest implements IDiffObserver {
                 assertEquals(mDiff, EDiff.SAME);
                 break;
             case 3:
-                assertEquals(mDiff, EDiff.INSERTED);
+                assertEquals(mDiff, EDiff.RENAMED);
+                break;
+            default:
+                assertEquals(mDiff, EDiff.SAME);
+                break;
+            }
+        }
+    }
+    
+    @Test
+    public void testStructuralDiffThird() throws TTException, IOException, XMLStreamException {
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll3"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+        
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(this);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        while (mDiff != EDiff.DONE) {
+            switch (mCounter) {
+            case 1:
+                assertEquals(mDiff, EDiff.SAME);
+                break;
+            case 2:
+                assertEquals(mDiff, EDiff.SAME);
+                break;
+            case 3:
+                assertEquals(mDiff, EDiff.SAME);
                 break;
             case 4:
-                assertEquals(mDiff, EDiff.DELETED);
+                assertEquals(mDiff, EDiff.INSERTED);
                 break;
             default:
                 assertEquals(mDiff, EDiff.SAME);
