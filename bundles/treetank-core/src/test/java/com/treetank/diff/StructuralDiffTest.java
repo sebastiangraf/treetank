@@ -21,7 +21,12 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -40,6 +45,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * Test StructuralDiff.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
@@ -48,16 +55,22 @@ public final class StructuralDiffTest implements IDiffObserver {
 
     private transient EDiff mDiff;
 
+    private transient List<EDiff> mList;
+
     private transient int mCounter;
+
+    private transient CountDownLatch mStart;
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
     @Before
     public void setUp() throws TTException {
+        mList = new LinkedList<EDiff>();
+        mStart = new CountDownLatch(1);
+        mDiff = EDiff.SAME;
         TestHelper.deleteEverything();
         mDatabase = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         DocumentCreater.createVersioned(mDatabase.getSession().beginWriteTransaction());
-        mDiff = EDiff.SAME;
     }
 
     @After
@@ -66,28 +79,34 @@ public final class StructuralDiffTest implements IDiffObserver {
     }
 
     @Test
-    public void testStructuralDiffFirst() {
+    public void testStructuralDiffFirst() throws InterruptedException {
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(this);
+
         DiffFactory.invokeStructuralDiff(mDatabase, 0, 1, 0, EDiffKind.NORMAL, observer);
 
-        while (mDiff != EDiff.DONE) {
+        mStart.await();
+
+        while (!mList.isEmpty()) {
+            mDiff = mList.remove(0);
+            mCounter++;
             switch (mCounter) {
             case 1:
-                assertEquals(mDiff, EDiff.INSERTED);
+                assertEquals(EDiff.INSERTED, mDiff);
                 break;
             case 2:
-                assertEquals(mDiff, EDiff.INSERTED);
+                assertEquals(EDiff.INSERTED, mDiff);
                 break;
             default:
-                assertEquals(mDiff, EDiff.SAME);
+                assertEquals(EDiff.SAME, mDiff);
                 break;
             }
         }
     }
 
     @Test
-    public void testStructuralDiffSecond() throws TTException, IOException, XMLStreamException {
+    public void testStructuralDiffSecond() throws TTException, IOException, XMLStreamException,
+        InterruptedException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -101,31 +120,36 @@ public final class StructuralDiffTest implements IDiffObserver {
             new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
                 EShredderCommit.COMMIT);
         shredder.call();
-        
+
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(this);
         DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
 
-        while (mDiff != EDiff.DONE) {
+        mStart.await();
+
+        while (!mList.isEmpty()) {
+            mDiff = mList.remove(0);
+            mCounter++;
             switch (mCounter) {
             case 1:
-                assertEquals(mDiff, EDiff.SAME);
+                assertEquals(EDiff.SAME, mDiff);
                 break;
             case 2:
-                assertEquals(mDiff, EDiff.SAME);
+                assertEquals(EDiff.SAME, mDiff);
                 break;
             case 3:
-                assertEquals(mDiff, EDiff.RENAMED);
+                assertEquals(EDiff.RENAMED, mDiff);
                 break;
             default:
-                assertEquals(mDiff, EDiff.SAME);
+                assertEquals(EDiff.SAME, mDiff);
                 break;
             }
         }
     }
-    
+
     @Test
-    public void testStructuralDiffThird() throws TTException, IOException, XMLStreamException {
+    public void testStructuralDiffThird() throws TTException, IOException, XMLStreamException,
+        InterruptedException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -139,12 +163,16 @@ public final class StructuralDiffTest implements IDiffObserver {
             new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
                 EShredderCommit.COMMIT);
         shredder.call();
-        
+
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(this);
         DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
 
-        while (mDiff != EDiff.DONE) {
+        mStart.await();
+
+        while (!mList.isEmpty()) {
+            mDiff = mList.remove(0);
+            mCounter++;
             switch (mCounter) {
             case 1:
                 assertEquals(mDiff, EDiff.SAME);
@@ -165,9 +193,55 @@ public final class StructuralDiffTest implements IDiffObserver {
         }
     }
 
+    @Test
+    public void testStructuralDiffFourth() throws TTException, IOException, XMLStreamException,
+        InterruptedException {
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll2"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(this);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await();
+
+        while (!mList.isEmpty()) {
+            mDiff = mList.remove(0);
+            mCounter++;
+            switch (mCounter) {
+            case 1:
+                assertEquals(mDiff, EDiff.SAME);
+                break;
+            case 2:
+                assertEquals(mDiff, EDiff.RENAMED);
+                break;
+            case 3:
+                assertEquals(mDiff, EDiff.SAME);
+                break;
+            default:
+                fail("Parsing should be ended already!");
+                break;
+            }
+        }
+    }
+
     @Override
     public void diffListener(final EDiff paramDiff) {
-        mDiff = paramDiff;
-        mCounter++;
+        if (paramDiff == EDiff.DONE) {
+            mStart.countDown();
+        } else {
+            mList.add(paramDiff);
+        }
     }
 }
