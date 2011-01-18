@@ -94,7 +94,7 @@ final class Diff implements IExpression {
     public void evaluate() {
         // Iterate over new revision.
         while (moveCursor(mFirstRtx)) {
-            if (mDiff == EDiff.SAME) {
+            if (mDiff == EDiff.SAME || mDiff == EDiff.RENAMED) {
                 moveCursor(mSecondRtx);
             }
 

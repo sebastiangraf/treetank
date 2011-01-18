@@ -93,15 +93,28 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
 
                 // Check if node has been renamed.
                 final long firstKey = paramFirstRtx.getNode().getNodeKey();
-                paramFirstRtx.moveToRightSibling();
+                final boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
                 final long secondKey = paramSecondRtx.getNode().getNodeKey();
-                paramSecondRtx.moveToRightSibling();
-                if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+                final boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
+                if (movedFirstRtx && movedSecondRtx
+                    && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
                     diff = found.kindOfDiff(++rightSiblings);
                     paramFirstRtx.moveTo(firstKey);
                     paramSecondRtx.moveTo(secondKey);
                     break;
+                } else if (!movedFirstRtx && !movedSecondRtx) {
+                    final boolean movedFirst = paramFirstRtx.moveToParent();
+                    final boolean movedSecond = paramSecondRtx.moveToParent();
+
+                    if (movedFirst && movedSecond && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+                        diff = found.kindOfDiff(++rightSiblings);
+                        paramFirstRtx.moveTo(firstKey);
+                        paramSecondRtx.moveTo(secondKey);
+                        break;
+                    }
                 }
+                paramFirstRtx.moveTo(firstKey);
+                paramSecondRtx.moveTo(secondKey);
 
                 // See if one of the right sibling matches.
                 final long key = paramSecondRtx.getNode().getNodeKey();
