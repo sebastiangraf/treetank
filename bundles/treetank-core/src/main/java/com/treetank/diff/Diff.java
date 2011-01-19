@@ -21,6 +21,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IExpression;
 import com.treetank.api.IReadTransaction;
 import com.treetank.node.AbsStructNode;
+import com.treetank.node.ENodes;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EFixed;
 
@@ -131,7 +132,8 @@ final class Diff implements IExpression {
         final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
 
         if (node.hasFirstChild()) {
-            if (mDiffKind == EDiffKind.OPTIMIZED && mHashKind != HashKind.None && mDiff == EDiff.SAME) {
+            if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffKind.OPTIMIZED
+                && mHashKind != HashKind.None && mDiff == EDiff.SAME) {
                 moved = paramRtx.moveToRightSibling();
             } else {
                 moved = paramRtx.moveToFirstChild();
@@ -147,8 +149,8 @@ final class Diff implements IExpression {
                 moved = paramRtx.moveToParent();
             } while (!((AbsStructNode)paramRtx.getNode()).hasRightSibling()
                 && ((AbsStructNode)paramRtx.getNode()).hasParent());
-            
-            moved = paramRtx.moveToRightSibling(); 
+
+            moved = paramRtx.moveToRightSibling();
         }
 
         return moved;
