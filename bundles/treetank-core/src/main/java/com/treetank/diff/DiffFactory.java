@@ -37,7 +37,6 @@ public final class DiffFactory {
             protected void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
                 final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
                 new FullDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
-
             }
         },
 

@@ -88,35 +88,15 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
         case TEXT_KIND:
         case ELEMENT_KIND:
             if (!paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-                FoundEqualNode found = FoundEqualNode.FALSE;
-                int rightSiblings = 0;
-
                 // Check if node has been renamed.
-                final long firstKey = paramFirstRtx.getNode().getNodeKey();
-                final boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
-                final long secondKey = paramSecondRtx.getNode().getNodeKey();
-                final boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
-                if (movedFirstRtx && movedSecondRtx
-                    && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-                    diff = found.kindOfDiff(++rightSiblings);
-                    paramFirstRtx.moveTo(firstKey);
-                    paramSecondRtx.moveTo(secondKey);
+                if (checkRename(paramFirstRtx, paramSecondRtx) == EDiff.RENAMED) {
+                    diff = EDiff.RENAMED;
                     break;
-                } else if (!movedFirstRtx && !movedSecondRtx) {
-                    final boolean movedFirst = paramFirstRtx.moveToParent();
-                    final boolean movedSecond = paramSecondRtx.moveToParent();
-
-                    if (movedFirst && movedSecond && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-                        diff = found.kindOfDiff(++rightSiblings);
-                        paramFirstRtx.moveTo(firstKey);
-                        paramSecondRtx.moveTo(secondKey);
-                        break;
-                    }
                 }
-                paramFirstRtx.moveTo(firstKey);
-                paramSecondRtx.moveTo(secondKey);
 
                 // See if one of the right sibling matches.
+                FoundEqualNode found = FoundEqualNode.FALSE;
+                int rightSiblings = 0;
                 final long key = paramSecondRtx.getNode().getNodeKey();
                 do {
                     if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
@@ -154,22 +134,28 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
         case TEXT_KIND:
         case ELEMENT_KIND:
             if (paramFirstRtx.getNode().getHash() != paramSecondRtx.getNode().getHash()) {
-                FoundEqualNode found = FoundEqualNode.FALSE;
-                int rightSiblings = 0;
+                // Check if node has been renamed.
+                if (checkRename(paramFirstRtx, paramSecondRtx) == EDiff.RENAMED) {
+                    diff = EDiff.RENAMED;
+                    break;
+                }
 
                 // See if one of the right sibling matches.
-                final long key = paramFirstRtx.getNode().getNodeKey();
+
+                FoundEqualNode found = FoundEqualNode.FALSE;
+                int rightSiblings = 0;
+                final long key = paramSecondRtx.getNode().getNodeKey();
                 do {
                     if (paramFirstRtx.getNode().getHash() == paramSecondRtx.getNode().getHash()) {
                         found = FoundEqualNode.TRUE;
                     }
 
-                    if (paramFirstRtx.getNode().getNodeKey() != key) {
+                    if (paramSecondRtx.getNode().getNodeKey() != key) {
                         rightSiblings++;
                     }
-                } while (((AbsStructNode)paramFirstRtx.getNode()).hasRightSibling()
-                    && paramFirstRtx.moveToRightSibling() && found == FoundEqualNode.FALSE);
-                paramFirstRtx.moveTo(key);
+                } while (((AbsStructNode)paramSecondRtx.getNode()).hasRightSibling()
+                    && paramSecondRtx.moveToRightSibling() && found == FoundEqualNode.FALSE);
+                paramSecondRtx.moveTo(key);
 
                 diff = found.kindOfDiff(rightSiblings);
             }
@@ -185,5 +171,68 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
     @Override
     public void done() {
         fireDiff(EDiff.DONE);
+    }
+
+    /**
+     * Check for a rename of a node.
+     * 
+     * @param paramFirstRtx
+     *            first {@link IReadTransaction} instance
+     * @param paramSecondRtx
+     *            second {@link IReadTransaction} instance
+     * @return kind of diff
+     */
+    private EDiff checkRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+        EDiff diff = EDiff.SAME;
+        final long firstKey = paramFirstRtx.getNode().getNodeKey();
+        boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
+        final long secondKey = paramSecondRtx.getNode().getNodeKey();
+        boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
+        if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+            diff = FoundEqualNode.FALSE.kindOfDiff(1);
+        } else if (!movedFirstRtx && !movedSecondRtx) {
+            movedFirstRtx = paramFirstRtx.moveToParent();
+            movedSecondRtx = paramSecondRtx.moveToParent();
+
+            if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+                diff = FoundEqualNode.FALSE.kindOfDiff(1);
+            }
+        }
+        paramFirstRtx.moveTo(firstKey);
+        paramSecondRtx.moveTo(secondKey);
+        return diff;
+    }
+
+    /**
+     * Check for a rename of a node.
+     * 
+     * @param paramFirstRtx
+     *            first {@link IReadTransaction} instance
+     * @param paramSecondRtx
+     *            second {@link IReadTransaction} instance
+     * @return kind of diff
+     */
+    private EDiff checkRenameOptimized(final IReadTransaction paramFirstRtx,
+        final IReadTransaction paramSecondRtx) {
+        EDiff diff = EDiff.SAME;
+        final long firstKey = paramFirstRtx.getNode().getNodeKey();
+        boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
+        final long secondKey = paramSecondRtx.getNode().getNodeKey();
+        boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
+        if (movedFirstRtx && movedSecondRtx
+            && paramFirstRtx.getNode().getHash() == paramSecondRtx.getNode().getHash()) {
+            diff = FoundEqualNode.FALSE.kindOfDiff(1);
+        } else if (!movedFirstRtx && !movedSecondRtx) {
+            movedFirstRtx = paramFirstRtx.moveToParent();
+            movedSecondRtx = paramSecondRtx.moveToParent();
+
+            if (movedFirstRtx && movedSecondRtx
+                && paramFirstRtx.getNode().getHash() == paramSecondRtx.getNode().getHash()) {
+                diff = FoundEqualNode.FALSE.kindOfDiff(1);
+            }
+        }
+        paramFirstRtx.moveTo(firstKey);
+        paramSecondRtx.moveTo(secondKey);
+        return diff;
     }
 }
