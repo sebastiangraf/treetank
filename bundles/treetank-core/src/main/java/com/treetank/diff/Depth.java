@@ -16,39 +16,36 @@
  */
 package com.treetank.diff;
 
-import com.treetank.api.IReadTransaction;
-
 /**
- * Diff interface.
- * 
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-interface IDiff {
-    /**
-     * Diff of nodes.
-     * 
-     * @param paramFirstRtx
-     *            first {@link IReadTransaction}
-     * @param paramSecondRtx
-     *            second {@link IReadTransaction}
-     * @return kind of difference
-     */
-    EDiff diff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx, final Depth paramRev);
+public final class Depth {
+    private transient int mNewDepth;
     
-    /**
-     * Optimized diff, which skips unnecessary comparsions.
-     * 
-     * @param paramFirstRtx
-     *            first {@link IReadTransaction}
-     * @param paramSecondRtx
-     *            second {@link IReadTransaction}
-     * @return kind of difference
-     */
-    EDiff optimizedDiff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx);
+    private transient int mOldDepth;
     
-    /**
-     * Diff computation done, thus inform listeners.
-     */
-    void done();
+    void incrementNewDepth() {
+        mNewDepth++;
+    }
+    
+    void decrementNewDepth() {
+        mNewDepth--;
+    }
+    
+    void incrementOldDepth() {
+        mOldDepth++;
+    }
+    
+    void decrementOldDepth() {
+        mOldDepth--;
+    }
+    
+    int getNewDepth() {
+        return mNewDepth;
+    }
+    
+    int getOldDepth() {
+        return mOldDepth;
+    }
 }
