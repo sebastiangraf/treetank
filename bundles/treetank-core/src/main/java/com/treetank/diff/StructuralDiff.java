@@ -86,6 +86,7 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
 
         // Check for modifications.
         switch (paramFirstRtx.getNode().getKind()) {
+        case ROOT_KIND:
         case TEXT_KIND:
         case ELEMENT_KIND:
             if (!paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
