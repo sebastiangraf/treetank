@@ -77,7 +77,8 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
 
     /** {@inheritDoc} */
     @Override
-    public EDiff diff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+    public EDiff diff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx,
+        final Depth paramDepth) {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
 
@@ -88,6 +89,11 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
         case TEXT_KIND:
         case ELEMENT_KIND:
             if (!paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+                if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
+                    diff = EDiff.DELETED;
+                    break;
+                }
+
                 // Check if node has been renamed.
                 if (checkRename(paramFirstRtx, paramSecondRtx) == EDiff.RENAMED) {
                     diff = EDiff.RENAMED;

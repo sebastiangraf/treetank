@@ -100,7 +100,7 @@ public final class DiffFactory {
         checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
         mDiffKind = DiffKind.FULL;
         final ExecutorService exes = Executors.newSingleThreadExecutor();
-        exes.submit(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
+        exes.execute(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
         exes.shutdown();
     }
 
@@ -126,7 +126,7 @@ public final class DiffFactory {
         checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
         mDiffKind = DiffKind.STRUCTURAL;
         final ExecutorService exes = Executors.newSingleThreadExecutor();
-        exes.submit(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
+        exes.execute(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
         exes.shutdown();
     }
 

@@ -78,7 +78,8 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
 
     /** {@inheritDoc} */
     @Override
-    public EDiff diff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+    public EDiff diff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx,
+        final Depth paramDepth) {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
 

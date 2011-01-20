@@ -32,10 +32,6 @@ enum FoundEqualNode {
             switch (paramRightSibls) {
             case 0:
                 throw new AssertionError("May not happen!");
-//            case 1:
-//                // It has been modified.
-//                mod = EDiff.RENAMED;
-//                break;
             default:
                 // It has been deleted.
                 mod = EDiff.DELETED;

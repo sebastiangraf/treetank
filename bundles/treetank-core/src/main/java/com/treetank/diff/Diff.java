@@ -33,11 +33,63 @@ import com.treetank.settings.EFixed;
  */
 final class Diff implements IExpression {
 
+    /** Determines the current revision. */
+    private enum ERevision {
+        /** Old revision. */
+        OLD {
+            /** {@inheritDoc} */
+            @Override
+            void incrementDepth(final Depth paramDepth) {
+                paramDepth.incrementOldDepth();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            void decrementDepth(final Depth paramDepth) {
+                paramDepth.decrementOldDepth();
+            }
+        },
+
+        /** New revision. */
+        NEW {
+            /** {@inheritDoc} */
+            @Override
+            void incrementDepth(final Depth paramDepth) {
+                paramDepth.incrementNewDepth();
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            void decrementDepth(final Depth paramDepth) {
+                paramDepth.decrementNewDepth();
+            }
+        };
+
+        /**
+         * Increment depth.
+         * 
+         * @param paramDepth
+         *            {@link Depth} instance
+         */
+        abstract void incrementDepth(final Depth paramDepth);
+
+        /**
+         * Decrement depth.
+         * 
+         * @param paramDepth
+         *            {@link Depth} instance
+         */
+        abstract void decrementDepth(final Depth paramDepth);
+    }
+
+    /** {@link Depth} container for depths in both revisions. */
+    private final Depth mDepth;
+
     /** First {@link IReadTransaction}. */
-    private final IReadTransaction mFirstRtx;
+    private final IReadTransaction mNewRtx;
 
     /** Second {@link IReadTransaction}. */
-    private final IReadTransaction mSecondRtx;
+    private final IReadTransaction mOldRtx;
 
     /**
      * Kind of difference.
@@ -64,18 +116,18 @@ final class Diff implements IExpression {
      * 
      * @param paramDb
      *            {@link IDatabase} instance
-     * @param paramFirstRtx
+     * @param paramNewRtx
      *            first {@link IReadTransaction}, on the new revision
-     * @param paramSecondRtx
+     * @param paramOldRtx
      *            second {@link IReadTransaction}, on the old revision
      * @param paramDiffImpl
      *            diff implementation of {@link IDiff}
      * @param paramDiffKind
      *            kind of diff (optimized or not)
      */
-    Diff(final IDatabase paramDb, final IReadTransaction paramFirstRtx,
-        final IReadTransaction paramSecondRtx, final EDiffKind paramDiffKind, final IDiff paramDiffImpl) {
-        if (paramDb == null || paramFirstRtx == null || paramFirstRtx == null || paramDiffImpl == null) {
+    Diff(final IDatabase paramDb, final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+        final EDiffKind paramDiffKind, final IDiff paramDiffImpl) {
+        if (paramDb == null || paramNewRtx == null || paramNewRtx == null || paramDiffImpl == null) {
             throw new IllegalArgumentException();
         }
 
@@ -83,35 +135,36 @@ final class Diff implements IExpression {
             HashKind.valueOf(paramDb.getDatabaseConf().getProps()
                 .getProperty(EDatabaseSetting.HASHKIND_TYPE.name()));
 
-        mFirstRtx = paramFirstRtx;
-        mSecondRtx = paramSecondRtx;
+        mNewRtx = paramNewRtx;
+        mOldRtx = paramOldRtx;
         mDiff = EDiff.SAME;
         mDiffKind = paramDiffKind;
         mDiffImpl = paramDiffImpl;
+        mDepth = new Depth();
     }
 
     /** {@inheritDoc} */
     @Override
     public void evaluate() {
         // Iterate over new revision.
-        while (moveCursor(mFirstRtx)) {
-            if (mDiff == EDiff.SAME || mDiff == EDiff.RENAMED) {
-                moveCursor(mSecondRtx);
+        while (mDiff == EDiff.DELETED || moveCursor(mNewRtx, ERevision.NEW)) {
+            if (mDiff != EDiff.INSERTED) {
+                moveCursor(mOldRtx, ERevision.OLD);
             }
 
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                mDiff = mDiffImpl.diff(mFirstRtx, mSecondRtx);
+                mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
             } else {
-                mDiff = mDiffImpl.optimizedDiff(mFirstRtx, mSecondRtx);
+                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx);
             }
         }
 
         // Nodes deleted in old rev (secondRtx) at the end of the tree.
-        while (moveCursor(mSecondRtx)) {
+        while (moveCursor(mOldRtx, ERevision.OLD)) {
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                mDiff = mDiffImpl.diff(mFirstRtx, mSecondRtx);
+                mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
             } else {
-                mDiff = mDiffImpl.optimizedDiff(mFirstRtx, mSecondRtx);
+                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx);
             }
         }
 
@@ -123,9 +176,11 @@ final class Diff implements IExpression {
      * 
      * @param paramRtx
      *            the {@link IReadTransaction} to use
+     * @param paramRevision
+     *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
      */
-    private boolean moveCursor(final IReadTransaction paramRtx) {
+    private boolean moveCursor(final IReadTransaction paramRtx, final ERevision paramRevision) {
         assert paramRtx != null;
 
         boolean moved = false;
@@ -137,6 +192,9 @@ final class Diff implements IExpression {
                 moved = paramRtx.moveToRightSibling();
             } else {
                 moved = paramRtx.moveToFirstChild();
+                if (moved) {
+                    paramRevision.incrementDepth(mDepth);
+                }
             }
         } else if (node.hasRightSibling()) {
             moved = paramRtx.moveToRightSibling();
@@ -147,6 +205,9 @@ final class Diff implements IExpression {
                     break;
                 }
                 moved = paramRtx.moveToParent();
+                if (moved) {
+                    paramRevision.decrementDepth(mDepth);
+                }
             } while (!((AbsStructNode)paramRtx.getNode()).hasRightSibling()
                 && ((AbsStructNode)paramRtx.getNode()).hasParent());
 
