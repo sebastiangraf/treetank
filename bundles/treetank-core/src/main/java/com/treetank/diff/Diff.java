@@ -23,7 +23,6 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.settings.EDatabaseSetting;
-import com.treetank.settings.EFixed;
 
 /**
  * Main diff class.
@@ -155,7 +154,7 @@ final class Diff implements IExpression {
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
                 mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
             } else {
-                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx);
+                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx, mDepth);
             }
         }
 
@@ -164,7 +163,7 @@ final class Diff implements IExpression {
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
                 mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
             } else {
-                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx);
+                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx, mDepth);
             }
         }
 
@@ -200,10 +199,10 @@ final class Diff implements IExpression {
             moved = paramRtx.moveToRightSibling();
         } else {
             do {
-                if (paramRtx.getNode().getNodeKey() == (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
-                    moved = false;
-                    break;
-                }
+//                if (paramRtx.getNode().getNodeKey() == (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
+//                    moved = false;
+//                    break;
+//                }
                 moved = paramRtx.moveToParent();
                 if (moved) {
                     paramRevision.decrementDepth(mDepth);

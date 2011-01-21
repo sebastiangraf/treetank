@@ -55,12 +55,6 @@ import org.junit.Test;
 public final class StructuralDiffTest {
     private transient IDatabase mDatabase;
 
-    private transient EDiff mDiff;
-
-    private transient List<EDiff> mList;
-
-    private transient int mCounter;
-
     private transient CountDownLatch mStart;
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
@@ -69,9 +63,7 @@ public final class StructuralDiffTest {
 
     @Before
     public void setUp() throws TTException {
-        mList = new LinkedList<EDiff>();
         mStart = new CountDownLatch(1);
-        mDiff = EDiff.SAME;
         TestHelper.deleteEverything();
         mDatabase = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         DocumentCreater.createVersioned(mDatabase.getSession().beginWriteTransaction());

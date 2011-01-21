@@ -22,7 +22,7 @@ package com.treetank.diff;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-enum FoundEqualNode {
+enum EFoundEqualNode {
     /** Node found. */
     TRUE {
         /** {@inheritDoc} */
@@ -30,8 +30,11 @@ enum FoundEqualNode {
         EDiff kindOfDiff(final int paramRightSibls) {
             EDiff mod = EDiff.SAME;
             switch (paramRightSibls) {
+            case -1:
+                mod = EDiff.RENAMED;
+                break;
             case 0:
-                throw new AssertionError("May not happen!");
+                break;
             default:
                 // It has been deleted.
                 mod = EDiff.DELETED;
@@ -51,9 +54,9 @@ enum FoundEqualNode {
             case 0:
                 mod = EDiff.INSERTED;
                 break;
-            case 1:
-                mod = EDiff.RENAMED;
-                break;
+//            case 1:
+//                mod = EDiff.RENAMED;
+//                break;
             default:
                 mod = EDiff.INSERTED;     
             }

@@ -22,31 +22,37 @@ import com.treetank.api.IReadTransaction;
  * Diff interface.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 interface IDiff {
     /**
      * Diff of nodes.
      * 
-     * @param paramFirstRtx
-     *            first {@link IReadTransaction}
-     * @param paramSecondRtx
-     *            second {@link IReadTransaction}
+     * @param paramNewRtx
+     *            {@link IReadTransaction} on new revision
+     * @param paramOldRtx
+     *            {@link IReadTransaction} on old revision
+     * @param paramDepth
+     *            {@link Depth} container for current depths of both transaction cursors. 
      * @return kind of difference
      */
-    EDiff diff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx, final Depth paramRev);
-    
+    EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+        final Depth paramDepth);
+
     /**
      * Optimized diff, which skips unnecessary comparsions.
      * 
-     * @param paramFirstRtx
-     *            first {@link IReadTransaction}
-     * @param paramSecondRtx
-     *            second {@link IReadTransaction}
+     * @param paramNewRtx
+     *            {@link IReadTransaction} on new revision
+     * @param paramOldRtx
+     *            {@link IReadTransaction} on old revision
+     * @param paramDepth
+     *            {@link Depth} container for current depths of both transaction cursors. 
      * @return kind of difference
      */
-    EDiff optimizedDiff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx);
-    
+    EDiff optimizedDiff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+        final Depth paramDepth);
+
     /**
      * Diff computation done, thus inform listeners.
      */
