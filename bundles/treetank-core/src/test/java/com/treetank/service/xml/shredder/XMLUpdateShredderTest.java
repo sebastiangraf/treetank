@@ -58,6 +58,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     private static final String XMLALLFIFTH = RESOURCES + File.separator + "revXMLsAll4";
     
     private static final String XMLALLSIXTH = RESOURCES + File.separator + "revXMLsAll5";
+    
+    private static final String XMLALLSEVENTH = RESOURCES + File.separator + "revXMLsAll6";
 
     @Override
     @Before
@@ -139,6 +141,11 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     @Test
     public void testAllSixth() throws Exception {
         test(XMLALLSIXTH);
+    }
+    
+    @Test
+    public void testAllSeventh() throws Exception {
+        test(XMLALLSEVENTH);
     }
 
     private void test(final String FOLDER) throws Exception {
