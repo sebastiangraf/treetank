@@ -105,17 +105,18 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
                 }
 
                 // See if one of the right sibling matches.
-
                 EFoundEqualNode found = EFoundEqualNode.FALSE;
                 int rightSiblings = 0;
                 final long key = paramOldRtx.getNode().getNodeKey();
                 do {
                     if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
-                        if (paramOldRtx.getNode().getKind() == ENodes.TEXT_KIND) {
-                            found = EFoundEqualNode.TRUE;
-                        } else {
-                            found = checkNodes(paramNewRtx, paramOldRtx);
-                        }
+                        // if (paramOldRtx.getNode().getKind() == ENodes.TEXT_KIND) {
+                        // found = EFoundEqualNode.TRUE;
+                        // } else {
+                        // found = checkNodes(paramNewRtx, paramOldRtx);
+                        // }
+                        assert paramOldRtx.getNode().getKind() != ENodes.TEXT_KIND;
+                        found = checkNodes(paramNewRtx, paramOldRtx);
                     }
 
                     if (paramOldRtx.getNode().getNodeKey() != key) {
@@ -163,18 +164,22 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
                     && ((ElementNode)paramSecondRtx.getNode()).getNamespaceCount() == 0) {
                     found = EFoundEqualNode.TRUE;
                 } else {
-                    for (int i = 0; i < ((ElementNode)paramFirstRtx.getNode()).getNamespaceCount(); i++) {
-                        paramFirstRtx.moveToNamespace(i);
-                        for (int j = 0; j < ((ElementNode)paramSecondRtx.getNode()).getNamespaceCount(); j++) {
-                            paramSecondRtx.moveToNamespace(i);
+                    if (((ElementNode)paramFirstRtx.getNode()).getNamespaceCount() == 0) {
+                        found = EFoundEqualNode.TRUE;
+                    } else {
+                        for (int i = 0; i < ((ElementNode)paramFirstRtx.getNode()).getNamespaceCount(); i++) {
+                            paramFirstRtx.moveToNamespace(i);
+                            for (int j = 0; j < ((ElementNode)paramSecondRtx.getNode()).getNamespaceCount(); j++) {
+                                paramSecondRtx.moveToNamespace(i);
 
-                            if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-                                found = EFoundEqualNode.TRUE;
-                                break;
+                                if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+                                    found = EFoundEqualNode.TRUE;
+                                    break;
+                                }
                             }
+                            paramFirstRtx.moveTo(nodeKey);
+                            paramSecondRtx.moveTo(nodeKey);
                         }
-                        paramFirstRtx.moveTo(nodeKey);
-                        paramSecondRtx.moveTo(nodeKey);
                     }
 
                     if (found == EFoundEqualNode.TRUE) {
