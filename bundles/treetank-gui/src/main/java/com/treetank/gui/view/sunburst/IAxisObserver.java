@@ -16,32 +16,10 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import com.treetank.api.IItem;
-import com.treetank.gui.view.sunburst.SunburstCompareModel.Modification;
-
 /**
- * Modifications container.
- * 
  * @author Johannes Lichtenberger, University of Konstanz
- * 
+ *
  */
-final class NodeModifications {
-    /** Treetank {@link IItem}. */
-    transient IItem mNode;
-
-    /** */
-    transient Modification mMod;
-
-    /**
-     * Constructor.
-     * 
-     * @param paramNode
-     *            Treetank {@link IItem}.
-     * @param paramMod
-     *            Kind of modification to the node.
-     */
-    NodeModifications(final IItem paramNode, final Modification paramMod) {
-        mNode = paramNode;
-        mMod = paramMod;
-    }
+public interface IAxisObserver {
+    void axisChangeListener(final Item paramItem, final int paramDepth, final int paramIndex);
 }

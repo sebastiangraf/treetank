@@ -16,8 +16,6 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
 import com.treetank.api.IItem;
@@ -135,13 +133,16 @@ final class SunburstItem {
     /** Text. */
     private final String mText;
 
+    /** Parent processing applet. */
+    private final PApplet mParent;
+
     /** Builder to setup the Items. */
     static final class Builder {
         /** {@link PApplet} representing the core processing library. */
         private final PApplet mParent;
 
-        /** {@link SunburstModel}. */
-        private final SunburstModel mModel;
+        /** {@link AbsModel}. */
+        private final AbsModel mModel;
 
         /** Current {@link IItem} in Treetank. */
         private transient IItem mNode;
@@ -174,7 +175,7 @@ final class SunburstItem {
          * @param paramApplet
          *            the processing core library @see PApplet
          * @param paramModel
-         *            the {@link SunburstModel}
+         *            the {@link AbsModel}
          * @param paramAngleStart
          *            the start degree
          * @param paramExtension
@@ -184,7 +185,7 @@ final class SunburstItem {
          * @param paramReadDB
          *            read database
          */
-        Builder(final PApplet paramApplet, final SunburstModel paramModel, final float paramAngleStart,
+        Builder(final PApplet paramApplet, final AbsModel paramModel, final float paramAngleStart,
             final float paramExtension, final NodeRelations paramRelations, final ReadDB paramReadDB) {
             mParent = paramApplet;
             mModel = paramModel;
@@ -259,6 +260,7 @@ final class SunburstItem {
         mNode = paramBuilder.mNode;
         mQName = paramBuilder.mQName;
         mText = paramBuilder.mText;
+        mParent = paramBuilder.mParent;
         mStructKind = paramBuilder.mRelations.mStructKind;
         mDescendantCount = paramBuilder.mRelations.mDescendantCount;
         mMinDescendantCount = paramBuilder.mRelations.mMinDescendantCount;
@@ -320,22 +322,36 @@ final class SunburstItem {
             // Colors for element and other nodes.
             switch (mNode.getKind()) {
             case ELEMENT_KIND:
-                float bright = 0;
-                bright =
+                float bright =
                     PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, 1 - percent);
-                mCol = paramBuffer.color(0, 0, bright);
+                if (paramBuffer == null) {
+                    mCol = mParent.color(0, 0, bright);
+                } else {
+                    mCol = paramBuffer.color(0, 0, bright);
+                }
                 bright =
                     PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
                         percent);
-                mLineCol = paramBuffer.color(0, 0, bright);
+                if (paramBuffer == null) {
+                    mLineCol = mParent.color(0, 0, bright);
+                } else {
+                    mLineCol = paramBuffer.color(0, 0, bright);
+                }
                 break;
             case TEXT_KIND:
             case COMMENT_KIND:
             case PROCESSING_KIND:
-                final int from =
-                    paramBuffer.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
-                final int to = paramBuffer.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
-                mCol = paramBuffer.lerpColor(from, to, 1 - percent);
+                if (paramBuffer == null) {
+                    final int from =
+                        mParent.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
+                    final int to = mParent.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
+                    mCol = mParent.lerpColor(from, to, 1 - percent);
+                } else {
+                    final int from =
+                        paramBuffer.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
+                    final int to = paramBuffer.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
+                    mCol = paramBuffer.lerpColor(from, to, 1 - percent);
+                }
                 mLineCol = mCol;
                 break;
             default:
@@ -373,11 +389,10 @@ final class SunburstItem {
             mC1X = PApplet.cos(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
             mC1Y = PApplet.sin(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
 
-            final List<SunburstItem> items = mGUI.mItems;
-            mC2X = PApplet.cos(items.get(mIndexToParent).mAngleCenter);
+            mC2X = PApplet.cos(mGUI.mModel.getItem(mIndexToParent).mAngleCenter);
             mC2X *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
 
-            mC2Y = PApplet.sin(items.get(mIndexToParent).mAngleCenter);
+            mC2Y = PApplet.sin(mGUI.mModel.getItem(mIndexToParent).mAngleCenter);
             mC2Y *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
         }
     }
@@ -390,10 +405,152 @@ final class SunburstItem {
      *            scale of inner nodes
      * @param paramLeafScale
      *            scale of leaf nodes
+     */
+    void drawArc(final float paramInnerNodeScale, final float paramLeafScale) {
+        float arcRadius = 0;
+        if (mDepth >= 0) {
+            switch (mStructKind) {
+            case ISLEAFNODE:
+                mParent.strokeWeight(mDepthWeight * paramLeafScale);
+                arcRadius = mRadius + mDepthWeight * paramLeafScale / 2;
+                break;
+            case ISINNERNODE:
+                mParent.strokeWeight(mDepthWeight * paramInnerNodeScale);
+                arcRadius = mRadius + mDepthWeight * paramInnerNodeScale / 2;
+                break;
+            default:
+                throw new AssertionError("Structural kind not known!");
+            }
+
+            mXPathState.setStroke(mParent, mCol);
+
+            // mParent.arc(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd);
+            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should // work
+        }
+    }
+
+    /**
+     * Fix for arc it seems that the arc functions has a problem with very tiny angles ...
+     * arcWrap is a quick hack to get rid of this problem.
+     * 
+     * @param paramX
+     *            X position of middle point
+     * @param paramY
+     *            Y position of middle point
+     * @param paramW
+     *            width of ellipse
+     * @param paramH
+     *            height of ellipse
+     * @param paramA1
+     *            angle to start from
+     * @param paramA2
+     *            angle to end
+     */
+    void arcWrap(final float paramX, final float paramY, final float paramW, final float paramH,
+        final float paramA1, final float paramA2) {
+        if (mArcLength > 2.5) {
+            mParent.arc(paramX, paramY, paramW, paramH, paramA1, paramA2);
+        } else {
+            mParent.strokeWeight(mArcLength);
+            mParent.pushMatrix();
+            mParent.rotate(mAngleCenter);
+            mParent.translate(mRadius, 0);
+            mParent.line(0, 0, (paramW - mRadius) * 2, 0);
+            mParent.popMatrix();
+        }
+    }
+
+    /**
+     * Draw current sunburst item as a rectangle.
+     * 
+     * @param paramInnerNodeScale
+     *            scale of a non leaf node
+     * @param paramLeafScale
+     *            scale of a leaf node
+     */
+    void drawRect(final float paramInnerNodeScale, final float paramLeafScale) {
+        float rectWidth;
+        if (mDepth >= 0) {
+            switch (mStructKind) {
+            case ISLEAFNODE:
+                rectWidth = mRadius + mDepthWeight * paramLeafScale / 2;
+                break;
+            case ISINNERNODE:
+                rectWidth = mRadius + mDepthWeight * paramInnerNodeScale / 2;
+                break;
+            default:
+                throw new AssertionError("Structural kind not known!");
+            }
+
+            mParent.stroke(mCol);
+            mParent.strokeWeight(mArcLength);
+            mParent.pushMatrix();
+            mParent.rotate(mAngleCenter);
+            mParent.translate(mRadius, 0);
+            mParent.line(0, 0, (rectWidth - mRadius) * 2, 0);
+            mParent.popMatrix();
+        }
+    }
+
+    /**
+     * Draw a dot which are the bezier-curve anchors.
+     */
+    void drawDot() {
+        if (mDepth >= 0) {
+            float diameter = mGUI.mDotSize;
+            if (mArcLength < diameter) {
+                diameter = mArcLength * 0.95f;
+            }
+            if (mDepth == 0) {
+                diameter = 3f;
+            }
+            mParent.fill(0, 0, mGUI.mDotBrightness);
+            mParent.noStroke();
+            mParent.ellipse(mX, mY, diameter, diameter);
+            mParent.noFill();
+        }
+    }
+
+    /**
+     * Draw a straight line from child to parent.
+     */
+    void drawRelationLine() {
+        if (mDepth > 0) {
+            mParent.stroke(mLineCol);
+            mParent.strokeWeight(mLineWeight);
+            mParent.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
+                mGUI.mModel.getItem(mIndexToParent).mY);
+        }
+    }
+
+    /**
+     * Draw a bezier curve from child to parent.
+     */
+    void drawRelationBezier() {
+        if (mDepth > 0) {
+            assert mIndexToParent >= 0;
+            mParent.stroke(mLineCol);
+            if (mLineWeight < 0) {
+                mLineWeight *= -1;
+            }
+            mParent.strokeWeight(mLineWeight);
+            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
+                mGUI.mModel.getItem(mIndexToParent).mY);
+        }
+    }
+
+    /**
+     * Draw an arc.
+     * 
+     * @param paramInnerNodeScale
+     *            scale of inner nodes
+     * @param paramLeafScale
+     *            scale of leaf nodes
      * @param paramBuffer
      *            offline buffer to draw to
      */
-    void drawArc(final float paramInnerNodeScale, final float paramLeafScale, final PGraphics paramBuffer) {
+    void drawArcBuffer(final float paramInnerNodeScale, final float paramLeafScale,
+        final PGraphics paramBuffer) {
         float arcRadius = 0;
         if (mDepth >= 0) {
             switch (mStructKind) {
@@ -409,11 +566,11 @@ final class SunburstItem {
                 throw new AssertionError("Structural kind not known!");
             }
 
-            mXPathState.setStroke(paramBuffer, mCol);
+            mXPathState.setStrokeBuffer(paramBuffer, mCol);
 
             // mParent.arc(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd);
-            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd, paramBuffer); // normaly arc should
-                                                                                      // work
+            arcWrapBuffer(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd, paramBuffer); // normaly arc //
+                                                                                            // should // work
         }
     }
 
@@ -436,7 +593,7 @@ final class SunburstItem {
      * @param paramBuffer
      *            offline buffer to draw to
      */
-    void arcWrap(final float paramX, final float paramY, final float paramW, final float paramH,
+    void arcWrapBuffer(final float paramX, final float paramY, final float paramW, final float paramH,
         final float paramA1, final float paramA2, final PGraphics paramBuffer) {
         if (mArcLength > 2.5) {
             paramBuffer.arc(paramX, paramY, paramW, paramH, paramA1, paramA2);
@@ -460,7 +617,8 @@ final class SunburstItem {
      * @param paramBuffer
      *            offline buffer to draw to
      */
-    void drawRect(final float paramInnerNodeScale, final float paramLeafScale, final PGraphics paramBuffer) {
+    void drawRectBuffer(final float paramInnerNodeScale, final float paramLeafScale,
+        final PGraphics paramBuffer) {
         float rectWidth;
         if (mDepth >= 0) {
             switch (mStructKind) {
@@ -490,7 +648,7 @@ final class SunburstItem {
      * @param paramBuffer
      *            offline buffer to draw to
      */
-    void drawDot(final PGraphics paramBuffer) {
+    void drawDotBuffer(final PGraphics paramBuffer) {
         if (mDepth >= 0) {
             float diameter = mGUI.mDotSize;
             if (mArcLength < diameter) {
@@ -512,12 +670,12 @@ final class SunburstItem {
      * @param paramBuffer
      *            offline buffer to draw to
      */
-    void drawRelationLine(final PGraphics paramBuffer) {
+    void drawRelationLineBuffer(final PGraphics paramBuffer) {
         if (mDepth > 0) {
             paramBuffer.stroke(mLineCol);
             paramBuffer.strokeWeight(mLineWeight);
-            final List<SunburstItem> items = mGUI.mItems;
-            paramBuffer.line(mX, mY, items.get(mIndexToParent).mX, items.get(mIndexToParent).mY);
+            paramBuffer.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
+                mGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -527,7 +685,7 @@ final class SunburstItem {
      * @param paramBuffer
      *            offline buffer to draw to
      */
-    void drawRelationBezier(final PGraphics paramBuffer) {
+    void drawRelationBezierBuffer(final PGraphics paramBuffer) {
         if (mDepth > 0) {
             assert mIndexToParent >= 0;
             paramBuffer.stroke(mLineCol);
@@ -535,9 +693,8 @@ final class SunburstItem {
                 mLineWeight *= -1;
             }
             paramBuffer.strokeWeight(mLineWeight);
-            final List<SunburstItem> items = mGUI.mItems;
-            paramBuffer.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, items.get(mIndexToParent).mX,
-                items.get(mIndexToParent).mY);
+            paramBuffer.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
+                mGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
