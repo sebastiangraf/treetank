@@ -113,7 +113,7 @@ public final class TreeView extends JScrollPane implements IView {
      *            {@link ViewNotifier} to notify views of changes etc.pp.
      * @return {@link TreeView} instance.
      */
-    public synchronized static TreeView getInstance(final ViewNotifier paramNotifier) {
+    public static synchronized TreeView getInstance(final ViewNotifier paramNotifier) {
         if (mView == null) {
             mView = new TreeView(paramNotifier);
         }

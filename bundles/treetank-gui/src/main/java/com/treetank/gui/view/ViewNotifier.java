@@ -36,7 +36,7 @@ public final class ViewNotifier {
     private final GUI mGUI;
 
     /** Attached views. */
-    private Set<IView> mViews;
+    private final Set<IView> mViews;
 
     /**
      * Constructor.

@@ -22,18 +22,13 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
-import com.treetank.exception.TTIOException;
-import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewContainer;
 import com.treetank.gui.view.ViewNotifier;
 import com.treetank.gui.view.sunburst.SunburstView;
+import com.treetank.gui.view.text.TextView;
+import com.treetank.gui.view.tree.TreeView;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -118,7 +113,8 @@ public final class GUI extends JFrame {
 
         // Create views.
         mNotifier = new ViewNotifier(this);
-        mContainer = ViewContainer.getInstance(this, SunburstView.getInstance(mNotifier));
+        mContainer =
+            ViewContainer.getInstance(this, SunburstView.getInstance(mNotifier));//TreeView.getInstance(mNotifier));////, TextView.getInstance(mNotifier));
         mContainer.layoutViews();
         top.add(mContainer, BorderLayout.CENTER);
         getContentPane().add(top);

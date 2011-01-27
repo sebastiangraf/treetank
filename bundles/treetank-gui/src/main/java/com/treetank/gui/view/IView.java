@@ -42,7 +42,7 @@ public interface IView {
     void refreshInit();
 
     /**
-     * Called when updates have been done in the data structure.
+     * Called when updates have been done regarding to the data structure.
      */
     void refreshUpdate();
 

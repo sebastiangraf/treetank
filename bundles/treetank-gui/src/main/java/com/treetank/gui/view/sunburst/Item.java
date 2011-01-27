@@ -48,6 +48,9 @@ public final class Item {
     /** Modification count on a node (counts subtree modifications). */
     transient int mModificationCount;
 
+    /** Parent descendant count. */
+    transient long mParentDescendantCount;
+
     /** Builder to simplify item constructor. */
     static final class Builder {
 
@@ -62,6 +65,9 @@ public final class Item {
 
         /** Child count per depth. */
         transient long mDescendantCount = -1L;
+        
+        /** Parent descendant count. */
+        transient long mParentDescendantCount;
 
         /** Index to the parent item. */
         transient int mIndexToParent;
@@ -74,7 +80,6 @@ public final class Item {
          * Builder instance. 
          */
         private Builder() {
-            
         }
 
         /**
@@ -90,7 +95,7 @@ public final class Item {
          */
         Builder set(final float paramAngle, final float paramExtension, final int paramIndexToParent) {
             assert paramAngle >= 0f;
-            assert paramExtension > 0f;
+            assert paramExtension >= 0f;
             assert paramIndexToParent >= -1;
             mAngle = paramAngle;
             mExtension = paramExtension;
@@ -133,6 +138,18 @@ public final class Item {
             mModificationCount = paramModificationCount;
             return this;
         }
+        
+        /**
+         * Set parent descendant count.
+         * 
+         * @param paramParentDescCount
+         *            parent descendant count
+         * @return this builder
+         */
+        Builder setParentDescendantCount(final int paramParentDescCount) {
+            mParentDescendantCount = paramParentDescCount;
+            return this;
+        }
 
         /**
          * Setup item.
@@ -148,7 +165,6 @@ public final class Item {
      * Item instance. 
      */
     private Item() {
-        
     }
 
     /**
@@ -163,5 +179,7 @@ public final class Item {
         mIndexToParent = paramBuilder.mIndexToParent;
         mChildCountPerDepth = paramBuilder.mChildCountPerDepth;
         mModificationCount = paramBuilder.mModificationCount;
+        mDescendantCount = paramBuilder.mDescendantCount;
+        mParentDescendantCount = paramBuilder.mParentDescendantCount;
     }
 }
