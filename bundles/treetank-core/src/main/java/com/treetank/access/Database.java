@@ -210,7 +210,7 @@ public final class Database implements IDatabase {
         if (mDatabaseConfiguration != null) {
             DATABASEMAP.remove(getFile(), this);
         }
-        this.mDatabaseConfiguration = null;
+        mDatabaseConfiguration = null;
     }
 
     /**

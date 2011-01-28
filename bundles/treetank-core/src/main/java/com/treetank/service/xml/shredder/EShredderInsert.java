@@ -17,6 +17,8 @@
 package com.treetank.service.xml.shredder;
 
 /**
+ * Determines how to insert at subtree.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */

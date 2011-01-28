@@ -431,7 +431,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final IItem getNode() {
-        return this.mCurrentNode;
+        return mCurrentNode;
     }
 
     /**

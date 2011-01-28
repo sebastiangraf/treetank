@@ -174,7 +174,6 @@ public final class FileWriter implements IWriter {
     public void writeFirstReference(final PageReference pageReference) throws TTIOException {
         final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
         try {
-
             // Check to writer ensure writing after the Beacon_Start
             if (mFile.getFilePointer() < IConstants.BEACON_START + IConstants.BEACON_LENGTH) {
                 mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);

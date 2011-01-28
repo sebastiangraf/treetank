@@ -53,8 +53,6 @@ import org.junit.Test;
  * 
  */
 public final class StructuralDiffTest {
-    private transient IDatabase mDatabase;
-
     private transient CountDownLatch mStart;
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
@@ -65,8 +63,6 @@ public final class StructuralDiffTest {
     public void setUp() throws TTException {
         mStart = new CountDownLatch(1);
         TestHelper.deleteEverything();
-        mDatabase = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        DocumentCreater.createVersioned(mDatabase.getSession().beginWriteTransaction());
     }
 
     @After
@@ -75,7 +71,7 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    public void testStructuralDiffFirst() throws InterruptedException {
+    public void testStructuralDiffFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.INSERTED);
         listener.diffListener(EDiff.INSERTED);
@@ -100,31 +96,21 @@ public final class StructuralDiffTest {
         });
         replay(listener);
 
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        DocumentCreater.createVersioned(wtx);
+        wtx.close();
+        
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(mDatabase, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
-
-        // while (!mList.isEmpty()) {
-        // mDiff = mList.remove(0);
-        // mCounter++;
-        // switch (mCounter) {
-        // case 1:
-        // assertEquals(EDiff.INSERTED, mDiff);
-        // break;
-        // case 2:
-        // assertEquals(EDiff.INSERTED, mDiff);
-        // break;
-        // default:
-        // assertEquals(EDiff.SAME, mDiff);
-        // }
-        // }
     }
 
     @Test
-    public void testStructuralDiffOptimizedFirst() throws InterruptedException {
+    public void testStructuralDiffOptimizedFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.INSERTED);
         listener.diffListener(EDiff.INSERTED);
@@ -140,9 +126,14 @@ public final class StructuralDiffTest {
         });
         replay(listener);
 
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        DocumentCreater.createVersioned(wtx);
+        wtx.close();
+        
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(mDatabase, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -237,27 +228,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-//
-//    //
-//    // while (!mList.isEmpty()) {
-//    // mDiff = mList.remove(0);
-//    // mCounter++;
-//    // switch (mCounter) {
-//    // case 1:
-//    // assertEquals(EDiff.SAME, mDiff);
-//    // break;
-//    // case 2:
-//    // assertEquals(EDiff.SAME, mDiff);
-//    // break;
-//    // case 3:
-//    // assertEquals(EDiff.RENAMED, mDiff);
-//    // break;
-//    // default:
-//    // assertEquals(EDiff.SAME, mDiff);
-//    // }
-//    // }
-//    // }
-//    //
+
     @Test
     public void testStructuralDiffFourth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -359,26 +330,6 @@ public final class StructuralDiffTest {
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
-
-        // mStart.await();
-        //
-        // while (!mList.isEmpty()) {
-        // mDiff = mList.remove(0);
-        // mCounter++;
-        // switch (mCounter) {
-        // case 1:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // case 2:
-        // assertEquals(mDiff, EDiff.RENAMED);
-        // break;
-        // case 3:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // default:
-        // fail("Parsing should be ended already!");
-        // }
-        // }
     }
     
     @Test
@@ -421,13 +372,4 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-    //
-    // @Override
-    // public void diffListener(final EDiff paramDiff) {
-    // if (paramDiff == EDiff.DONE) {
-    // mStart.countDown();
-    // } else {
-    // mList.add(paramDiff);
-    // }
-    // }
 }

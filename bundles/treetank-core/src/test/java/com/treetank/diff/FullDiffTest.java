@@ -52,8 +52,6 @@ import org.junit.Test;
  * 
  */
 public class FullDiffTest {
-    private transient IDatabase mDatabase;
-
     private transient CountDownLatch mStart;
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
@@ -64,8 +62,6 @@ public class FullDiffTest {
     public void setUp() throws TTException {
         mStart = new CountDownLatch(1);
         TestHelper.deleteEverything();
-        mDatabase = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        DocumentCreater.createVersioned(mDatabase.getSession().beginWriteTransaction());
     }
 
     @After
@@ -74,7 +70,7 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testFullDiffFirst() throws InterruptedException {
+    public void testFullDiffFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.INSERTED);
         listener.diffListener(EDiff.INSERTED);
@@ -98,10 +94,15 @@ public class FullDiffTest {
             }
         });
         replay(listener);
+        
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        DocumentCreater.createVersioned(wtx);
+        wtx.close();
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(mDatabase, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeFullDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -154,8 +155,6 @@ public class FullDiffTest {
         });
         replay(listener);
 
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
@@ -199,9 +198,7 @@ public class FullDiffTest {
             }
         });
         replay(listener);
-
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
+        
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
@@ -221,27 +218,7 @@ public class FullDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-//
-//    //
-//    // while (!mList.isEmpty()) {
-//    // mDiff = mList.remove(0);
-//    // mCounter++;
-//    // switch (mCounter) {
-//    // case 1:
-//    // assertEquals(EDiff.SAME, mDiff);
-//    // break;
-//    // case 2:
-//    // assertEquals(EDiff.SAME, mDiff);
-//    // break;
-//    // case 3:
-//    // assertEquals(EDiff.RENAMED, mDiff);
-//    // break;
-//    // default:
-//    // assertEquals(EDiff.SAME, mDiff);
-//    // }
-//    // }
-//    // }
-//    //
+
     @Test
     public void testFullDiffFourth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -262,8 +239,6 @@ public class FullDiffTest {
         });
         replay(listener);
 
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
@@ -282,29 +257,6 @@ public class FullDiffTest {
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
-
-        // mStart.await();
-        //
-        // while (!mList.isEmpty()) {
-        // mDiff = mList.remove(0);
-        // mCounter++;
-        // switch (mCounter) {
-        // case 1:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // case 2:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // case 3:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // case 4:
-        // assertEquals(mDiff, EDiff.INSERTED);
-        // break;
-        // default:
-        // assertEquals(mDiff, EDiff.SAME);
-        // }
-        // }
     }
 
     @Test
@@ -323,8 +275,6 @@ public class FullDiffTest {
         });
         replay(listener);
 
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
@@ -343,26 +293,6 @@ public class FullDiffTest {
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
-
-        // mStart.await();
-        //
-        // while (!mList.isEmpty()) {
-        // mDiff = mList.remove(0);
-        // mCounter++;
-        // switch (mCounter) {
-        // case 1:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // case 2:
-        // assertEquals(mDiff, EDiff.RENAMED);
-        // break;
-        // case 3:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // default:
-        // fail("Parsing should be ended already!");
-        // }
-        // }
     }
     
     @Test
@@ -384,8 +314,6 @@ public class FullDiffTest {
         });
         replay(listener);
 
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
@@ -431,8 +359,6 @@ public class FullDiffTest {
         });
         replay(listener);
 
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
@@ -478,8 +404,6 @@ public class FullDiffTest {
         });
         replay(listener);
 
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =

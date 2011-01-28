@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class FullDiff extends AbsDiffObservable implements IDiff {
+final class FullDiff extends AbsDiff implements IDiff {
 
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(FullDiff.class));
@@ -57,23 +57,7 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
      */
     FullDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
         final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
-        assert paramDb != null;
-        assert paramKey > -2;
-        assert paramNewRev >= 0;
-        assert paramOldRev >= 0;
-        assert paramObservers != null;
-        try {
-            final IReadTransaction newRev = paramDb.getSession().beginReadTransaction(paramNewRev);
-            final IReadTransaction oldRev = paramDb.getSession().beginReadTransaction(paramOldRev);
-            newRev.moveTo(paramKey);
-            oldRev.moveTo(paramKey);
-            for (final IDiffObserver observer : paramObservers) {
-                addObserver(observer);
-            }
-            new Diff(paramDb, newRev, oldRev, paramDiffKind, this).evaluate();
-        } catch (final TTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
+        super(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
     }
 
     /** {@inheritDoc} */
@@ -244,10 +228,5 @@ final class FullDiff extends AbsDiffObservable implements IDiff {
         final Depth paramDepth) {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    @Override
-    public void done() {
-        fireDiff(EDiff.DONE);
     }
 }
