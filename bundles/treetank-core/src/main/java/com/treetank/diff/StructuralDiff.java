@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class StructuralDiff extends AbsDiffObservable implements IDiff {
+final class StructuralDiff extends AbsDiff implements IDiff {
 
     /** Logger. */
     private static final LogWrapper LOGWRAPPER =
@@ -57,22 +57,7 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
      */
     public StructuralDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev,
         final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
-        assert paramDb != null;
-        assert paramKey > -2;
-        assert paramNewRev >= 0;
-        assert paramOldRev >= 0;
-        try {
-            final IReadTransaction newRev = paramDb.getSession().beginReadTransaction(paramNewRev);
-            final IReadTransaction oldRev = paramDb.getSession().beginReadTransaction(paramOldRev);
-            newRev.moveTo(paramKey);
-            oldRev.moveTo(paramKey);
-            for (final IDiffObserver observer : paramObservers) {
-                addObserver(observer);
-            }
-            new Diff(paramDb, newRev, oldRev, paramDiffKind, this).evaluate();
-        } catch (final TTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
+        super(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
     }
 
     /** {@inheritDoc} */
@@ -181,11 +166,6 @@ final class StructuralDiff extends AbsDiffObservable implements IDiff {
 
         fireDiff(diff);
         return diff;
-    }
-
-    @Override
-    public void done() {
-        fireDiff(EDiff.DONE);
     }
 
     /**

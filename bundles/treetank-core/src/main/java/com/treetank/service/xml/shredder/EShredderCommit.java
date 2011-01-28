@@ -17,6 +17,8 @@
 package com.treetank.service.xml.shredder;
 
 /**
+ * Determines if it should be comitted right after shredding or not.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */

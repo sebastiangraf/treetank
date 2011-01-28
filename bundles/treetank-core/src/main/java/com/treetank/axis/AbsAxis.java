@@ -66,27 +66,27 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     /**
      * Bind axis step to transaction.
      * 
-     * @param rtx
-     *            Transaction to operate with.
+     * @param paramRtx
+     *            transaction to operate with
      */
-    public AbsAxis(final IReadTransaction rtx) {
-        mRTX = rtx;
+    public AbsAxis(final IReadTransaction paramRtx) {
+        mRTX = paramRtx;
         mIncludeSelf = false;
-        reset(rtx.getNode().getNodeKey());
+        reset(paramRtx.getNode().getNodeKey());
     }
 
     /**
      * Bind axis step to transaction.
      * 
-     * @param rtx
-     *            Transaction to operate with.
-     * @param mIncludeSelf
-     *            Is self included?
+     * @param paramRtx
+     *            transaction to operate with
+     * @param paramIncludeSelf
+     *            determines if self is included
      */
-    public AbsAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
-        this.mRTX = rtx;
-        this.mIncludeSelf = mIncludeSelf;
-        reset(rtx.getNode().getNodeKey());
+    public AbsAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf) {
+        mRTX = paramRtx;
+        mIncludeSelf = paramIncludeSelf;
+        reset(paramRtx.getNode().getNodeKey());
     }
 
     /**
