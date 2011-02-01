@@ -23,7 +23,7 @@ import com.treetank.node.ENodes;
 import com.treetank.utils.DocumentCreater;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.om.NamespaceConstant;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
 import org.junit.AfterClass;
