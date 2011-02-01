@@ -40,19 +40,19 @@ import com.treetank.node.ElementNode;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.om.Axis;
-import net.sf.saxon.om.AxisIterator;
+import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.om.DocumentInfo;
-import net.sf.saxon.om.EmptyIterator;
-import net.sf.saxon.om.FastStringBuffer;
+import net.sf.saxon.tree.iter.EmptyIterator;
+import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.om.NamePool;
-import net.sf.saxon.om.NamespaceIterator;
-import net.sf.saxon.om.Navigator;
+import net.sf.saxon.tree.iter.NamespaceIterator;
+import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.SiblingCountingNode;
-import net.sf.saxon.om.SingletonIterator;
+import net.sf.saxon.tree.wrapper.SiblingCountingNode;
+import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.om.StandardNames;
-import net.sf.saxon.om.VirtualNode;
+import net.sf.saxon.tree.wrapper.VirtualNode;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.pattern.NodeTest;
@@ -234,9 +234,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * 
      * @see net.sf.saxon.om.NodeInfo#copy(Receiver, int, boolean, int)
      */
-    public void copy(final Receiver out, final int whichNamespaces, final boolean copyAnnotations,
-        final int locationId) throws XPathException {
-        Navigator.copy(this, out, mDocWrapper.getNamePool(), whichNamespaces, copyAnnotations, locationId);
+    public void copy(final Receiver out, final int copyOption, final int locationId) throws XPathException {
+        Navigator.copy(this, out, mDocWrapper.getNamePool(), copyOption, locationId);
     }
 
     /**

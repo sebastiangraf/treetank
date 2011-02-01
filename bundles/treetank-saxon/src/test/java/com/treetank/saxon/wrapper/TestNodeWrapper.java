@@ -16,8 +16,8 @@ import com.treetank.utils.DocumentCreater;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.Axis;
-import net.sf.saxon.om.AxisIterator;
-import net.sf.saxon.om.NamespaceIterator.NamespaceNodeImpl;
+import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.iter.NamespaceIterator.NamespaceNodeImpl;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.s9api.Processor;

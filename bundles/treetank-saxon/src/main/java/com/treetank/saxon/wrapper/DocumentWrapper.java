@@ -51,7 +51,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
     protected transient Configuration mConfig;
 
     /** Unique document number. */
-    protected static int documentNumber;
+    protected static long documentNumber;
 
     /**
      * Wrap a Treetank document.
@@ -198,5 +198,17 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
      */
     protected void setBaseURI(final String baseURI) {
         mBaseURI = baseURI;
+    }
+
+    @Override
+    public Object getUserData(String arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setUserData(String arg0, Object arg1) {
+        // TODO Auto-generated method stub
+        
     }
 }
