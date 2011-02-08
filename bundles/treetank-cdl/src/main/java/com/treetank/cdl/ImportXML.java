@@ -27,6 +27,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.saxon.evaluator.XSLTEvaluator;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
@@ -43,6 +44,8 @@ public final class ImportXML {
             System.out.println("Usage: java -jar CDL \"XMLToImport.xml\" \"TTToStore.tnk\"");
             System.exit(-1);
         }
+        System.out.print("Shredding '" + args[0] + "' to '" + args[1] + "' ... ");
+        final long time = System.currentTimeMillis();
 
         // File setup
         final File importFile = new File(args[0]);
@@ -59,10 +62,15 @@ public final class ImportXML {
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
 
+        // final XSLTEvaluator test = new XSLTEvaluator(db, stylesheet, out, serializer)
+
         wtx.commit();
         wtx.close();
         session.close();
         db.close();
+
+        System.out.println(" done [" + (System.currentTimeMillis() - time) + "ms].");
+
     }
 
 }

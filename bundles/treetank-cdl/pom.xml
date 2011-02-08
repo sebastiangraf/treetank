@@ -40,6 +40,18 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>saxon</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>saxon</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>saxon</groupId>
 			<artifactId>saxon</artifactId>
 			<version>9.3</version>
