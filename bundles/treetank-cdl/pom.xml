@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>treetank</groupId>
+		<artifactId>pom</artifactId>
+		<version>1.0.1-SNAPSHOT</version>
+		<relativePath>../../parent/pom.xml</relativePath>
+	</parent>
+
+	<groupId>treetank</groupId>
+	<artifactId>cdl</artifactId>
+	<packaging>jar</packaging>
+	<name>treetank-cdl</name>
+	<version>1.0.0-SNAPSHOT</version>
+	<description>CDL applied on Treetank</description>
+	<repositories>
+		<repository>
+			<id>javamaven2</id>
+			<name>Repository for Maven2</name>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+	</repositories>
+	<scm>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+	</scm>
+	<dependencies>
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>core</artifactId>
+			<version>5.3.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>core</artifactId>
+			<version>5.3.4-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>saxon</groupId>
+			<artifactId>saxon</artifactId>
+			<version>9.3</version>
+		</dependency>
+		<dependency>
+			<groupId>jtidy</groupId>
+			<artifactId>jtidy</artifactId>
+			<version>4aug2000r7-dev</version>
+		</dependency>
+		<!-- <dependency> <groupId>net.sourceforge.htmlunit</groupId> <artifactId>htmlunit</artifactId> 
+			<version>2.7</version> </dependency> -->
+	</dependencies>
+</project>
