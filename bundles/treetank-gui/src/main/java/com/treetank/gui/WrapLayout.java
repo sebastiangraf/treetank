@@ -16,19 +16,23 @@
  */
 package com.treetank.gui;
 
-/**
- * @author Johannes Lichtenberger, University of Konstanz
- * 
- */
 import java.awt.*;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 /**
  * FlowLayout subclass that fully supports wrapping of components.
+ * 
+ * @author Johannes Lichtenberger, University of Konstanz
  */
 public class WrapLayout extends FlowLayout {
-    private Dimension preferredLayoutSize;
+    /**
+     * Default Serial UID.
+     */
+    private static final long serialVersionUID = 1L;
+    
+    /** Preferred layout size. */
+    private transient Dimension mPreferredLayoutSize;
 
     /**
      * Constructs a new <code>WrapLayout</code> with a left
@@ -44,11 +48,11 @@ public class WrapLayout extends FlowLayout {
      * The value of the alignment argument must be one of <code>WrapLayout</code>, <code>WrapLayout</code>,
      * or <code>WrapLayout</code>.
      * 
-     * @param align
+     * @param paramAlign
      *            the alignment value
      */
-    public WrapLayout(int align) {
-        super(align);
+    public WrapLayout(final int paramAlign) {
+        super(paramAlign);
     }
 
     /**
@@ -58,29 +62,29 @@ public class WrapLayout extends FlowLayout {
      * The value of the alignment argument must be one of <code>WrapLayout</code>, <code>WrapLayout</code>, or
      * <code>WrapLayout</code>.
      * 
-     * @param align
+     * @param paramAlign
      *            the alignment value
-     * @param hgap
+     * @param paramHgap
      *            the horizontal gap between components
-     * @param vgap
+     * @param paramVgap
      *            the vertical gap between components
      */
-    public WrapLayout(int align, int hgap, int vgap) {
-        super(align, hgap, vgap);
+    public WrapLayout(final int paramAlign, final int paramHgap, final int paramVgap) {
+        super(paramAlign, paramHgap, paramVgap);
     }
 
     /**
      * Returns the preferred dimensions for this layout given the
      * <i>visible</i> components in the specified target container.
      * 
-     * @param target
+     * @param paramTarget
      *            the component which needs to be laid out
      * @return the preferred dimensions to lay out the
      *         subcomponents of the specified container
      */
     @Override
-    public final Dimension preferredLayoutSize(Container target) {
-        return layoutSize(target, true);
+    public final Dimension preferredLayoutSize(final Container paramTarget) {
+        return layoutSize(paramTarget, true);
     }
 
     /**
@@ -196,10 +200,10 @@ public class WrapLayout extends FlowLayout {
         // validate() to make sure that space, if available, is allocated to
         // the panel using a WrapLayout.
 
-        if (size.equals(preferredLayoutSize)) {
+        if (size.equals(mPreferredLayoutSize)) {
             super.layoutContainer(paramTarget);
         } else {
-            preferredLayoutSize = size;
+            mPreferredLayoutSize = size;
             Container top = paramTarget;
 
             while (!(top instanceof Window) && top.getParent() != null) {

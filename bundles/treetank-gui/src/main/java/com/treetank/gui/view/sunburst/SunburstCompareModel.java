@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -32,7 +34,7 @@ import com.treetank.diff.IDiffObserver;
 import com.treetank.exception.TTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.gui.ReadDB;
-import com.treetank.gui.view.sunburst.SunburstItem.StructType;
+import com.treetank.gui.view.sunburst.SunburstItem.EStructType;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.LogWrapper;
@@ -45,26 +47,14 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class SunburstCompareModel extends AbsModel implements IModel, Iterator<SunburstItem> {
+public final class SunburstCompareModel extends AbsModel implements IModel, Iterator<SunburstItem> {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(
         LoggerFactory.getLogger(SunburstCompareModel.class));
 
-    /** Determines the modification. */
-    enum Modification {
-        /** Node has been deleted. */
-        DELETED,
-
-        /** Node has been inserted. */
-        INSERTED,
-
-        /** Node hasn't been modified. */
-        NONE
-    };
-
     /** Modification of current node. */
-    private transient Modification mMod = Modification.NONE;
+    private transient EDiff mDiff;
 
     /** Maximum descendant count in tree. */
     private transient long mMaxDescendantCount;
@@ -74,7 +64,7 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
 
     /** Node relations used for simplyfing the SunburstItem constructor. */
     private transient NodeRelations mRelations;
-    
+
     /** Weighting of modifications. */
     private transient float mModWeight;
 
@@ -114,7 +104,9 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
      * @return maximum depth
      */
     private int getDepthMax(final IReadTransaction paramRtx) {
-        assert paramRtx != null && !paramRtx.isClosed();
+        assert paramRtx != null;
+        assert !paramRtx.isClosed();
+
         int depthMax = 0;
         int depth = 0;
         final long nodeKey = paramRtx.getNode().getNodeKey();
@@ -149,12 +141,11 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
         assert paramContainer.mKey >= 0;
         assert paramContainer.mDepth >= 0;
         assert paramContainer.mModWeight >= 0;
-        assert paramContainer.mTextWeight >= 0;
 
         try {
             mLock.acquire();
             new Thread(new TraverseCompareTree(paramContainer.mRevision, paramContainer.mKey,
-                paramContainer.mDepth, paramContainer.mModWeight, paramContainer.mTextWeight, this)).start();
+                paramContainer.mDepth, paramContainer.mModWeight, this)).start();
         } catch (final Exception e) {
             LOGWRAPPER.warn(e.getMessage(), e);
         } finally {
@@ -165,14 +156,17 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
     /** Traverse and compare trees. */
     private final class TraverseCompareTree implements Runnable, IDiffObserver {
 
+        /** Timeout for {@link CountDownLatch}. */
+        private static final long TIMEOUT_S = 2;
+
+        /** {@link CountDownLatch} to wait until {@link List} of {@link EDiff}s has been created. */
+        private final CountDownLatch mStart;
+
         /** Revision to compare. */
         private final long mRevision;
 
         /** Key from which to start traversal. */
         private final long mKey;
-
-        /** Weighting of textnode length. */
-        private final float mTextWeight;
 
         /** {@link SunburstModel}. */
         private final SunburstCompareModel mModel;
@@ -189,19 +183,15 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
          * @param paramModificationWeight
          *            determines how much modifications are weighted to compute the extension angle of each
          *            {@link SunburstItem}
-         * @param paramTextWeight
-         *            determines how much text is weighted to compute the extension angle of each
-         *            {@link SunburstItem}
          * @param paramModel
          *            the {@link SunburstModel}
          */
         private TraverseCompareTree(final long paramRevision, final long paramKey, final long paramDepth,
-            final float paramModificationWeight, final float paramTextWeight, final AbsModel paramModel) {
+            final float paramModificationWeight, final AbsModel paramModel) {
             assert paramRevision >= 0;
             assert paramKey > -1 && mRtx != null && !mRtx.isClosed();
             assert paramDepth >= 0;
             assert paramModificationWeight >= 0;
-            assert paramTextWeight >= 0;
             assert paramModel != null;
 
             try {
@@ -216,9 +206,10 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
             mRevision = paramRevision;
             mKey = paramKey;
             mModWeight = paramModificationWeight;
-            mTextWeight = paramTextWeight;
             mModel = (SunburstCompareModel)paramModel;
             mRelations = new NodeRelations();
+            mDiff = EDiff.SAME;
+            mStart = new CountDownLatch(1);
 
             mRtx.moveTo(mKey);
             if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
@@ -240,42 +231,29 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
                 // Get min and max textLength of the new revision.
                 getMinMaxTextLength(mRtx);
 
-                // Get list of descendants per node on the new revision.
-                final long nodeKey = mRtx.getNode().getNodeKey();
-                final IReadTransaction newRtx = mSession.beginReadTransaction(mRevision);
-                newRtx.moveTo(nodeKey);
-                final IReadTransaction oldRtx = mSession.beginReadTransaction(mRtx.getRevisionNumber());
-                oldRtx.moveTo(nodeKey);
+                // Invoke diff.
                 final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
                 observer.add(this);
-                DiffFactory.invokeStructuralDiff(mDb.getDatabase(), nodeKey, newRtx.getNode().getNodeKey(),
-                    oldRtx.getNode().getNodeKey(), EDiffKind.NORMAL, observer);
+                DiffFactory.invokeStructuralDiff(mDb.getDatabase(), mRtx.getNode().getNodeKey(), mRevision,
+                    mRtx.getRevisionNumber(), EDiffKind.NORMAL, observer);
 
-//                mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+                // Wait for diff list to complete.
+                mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
 
                 // Maximum depth in old revision.
-                mDepthMax = getDepthMax(oldRtx);
+                mDepthMax = getDepthMax(mDb.getSession().beginReadTransaction(mRtx.getRevisionNumber()));
 
-                for (final AbsAxis axis = new SunburstCompareDescendantAxis(mRtx, true, mModel); axis
+                for (final AbsAxis axis = new SunburstCompareDescendantAxis(mRtx, true, mModel, mDiffs); axis
                     .hasNext(); axis.next()) {
-
                 }
-//            } catch (final InterruptedException e) {
-//                LOGWRAPPER.error(e.getMessage(), e);
-//            } catch (final ExecutionException e) {
-//                LOGWRAPPER.error(e.getMessage(), e);
             } catch (final TTException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final InterruptedException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
 
-            // Copy list and fire changes with unmodifiable lists.
-            // mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
-            // Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
-            // mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
             mModel.firePropertyChange("done", null, true);
-
             mRtx.moveTo(mKey);
-
             LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
         }
 
@@ -291,47 +269,39 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
     public float createSunburstItem(final Item paramItem, final int paramDepth, final int paramIndex) {
         // Initialize variables.
         final float angle = paramItem.mAngle;
-        final long childCountPerDepth = paramItem.mChildCountPerDepth;
-        final float extension = paramItem.mExtension;
+        final float parExtension = paramItem.mExtension;
         final int indexToParent = paramItem.mIndexToParent;
         final long descendantCount = paramItem.mDescendantCount;
         final long parentDescCount = paramItem.mParentDescendantCount;
+        final long modificationCount = paramItem.mModificationCount;
+        final long parentModificationCount = paramItem.mParentModificationCount;
         final int depth = paramDepth;
-        final int index = paramIndex;
 
         // Add a sunburst item.
         final AbsStructNode node = (AbsStructNode)mRtx.getNode();
-        final StructType structKind = node.hasFirstChild() ? StructType.ISINNERNODE : StructType.ISLEAFNODE;
+        final EStructType structKind =
+            node.hasFirstChild() ? EStructType.ISINNERNODE : EStructType.ISLEAFNODE;
 
         // Calculate extension.
-        float childExtension = 0f;
-//        if (descendantCount == 0) {
-//            final long key = mRtx.getNode().getNodeKey();
-//            mRtx.moveToParent();
-//            childExtension = extension / ((AbsStructNode)mRtx.getNode()).getChildCount();
-//            mRtx.moveTo(key);
-//        } else {
-//            long parentDescCount = 0;
-//            int parentModCount = 0;
-//
-//            try {
-//                parentDescCount = descendantsStack.peek();
-//                parentModCount = modificationStack.peek();
-//            } catch (final EmptyStackException e) {
-//                parentDescCount = descendantCount;
-//                parentModCount = modificationCount;
-//            }
-//
-//            childExtension =
-//                mModWeight * (extension * (float)descendantCount / (float)parentDescCount) + (1 - mModWeight)
-//                    * (extension * (float)modificationCount / (float)parentModCount);
-//        }
+        float extension = 0f;
+        if (descendantCount == 0) {
+            extension = parExtension;
+        } else if (modificationCount == 0f || parentModificationCount == 0f) {
+            extension =
+                mModWeight * parExtension * (float)descendantCount / (float)parentDescCount
+                    + (1 - mModWeight);
+        } else {
+            extension =
+                mModWeight * (parExtension * (float)descendantCount / (float)parentDescCount)
+                    + (1 - mModWeight)
+                    * (parExtension * (float)modificationCount / (float)parentModificationCount);
+        }
 
         LOGWRAPPER.debug("indexToParent: " + indexToParent);
 
         // Set node relations.
         int actualDepth = depth;
-        if (mMod != Modification.NONE && depth < mDepthMax) {
+        if (mDiff != EDiff.SAME && mDiff != EDiff.DONE && depth < mDepthMax) {
             actualDepth = mDepthMax + 1;
         }
         String text = null;
@@ -340,21 +310,22 @@ public class SunburstCompareModel extends AbsModel implements IModel, Iterator<S
                 mMaxTextLength, indexToParent);
             text = mRtx.getValueOfCurrentNode();
         } else {
-            mRelations.setAll(actualDepth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
+            mRelations
+                .setAll(actualDepth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
         }
 
         // Build item.
         if (text != null) {
-            mItems.add(new SunburstItem.Builder(mParent, this, angle, childExtension, mRelations, mDb)
+            mItems.add(new SunburstItem.Builder(mParent, this, angle, extension, mRelations, mDb)
                 .setNode(node).setText(text).build());
         } else {
-            mItems.add(new SunburstItem.Builder(mParent, this, angle, childExtension, mRelations, mDb)
+            mItems.add(new SunburstItem.Builder(mParent, this, angle, extension, mRelations, mDb)
                 .setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
         }
 
         // Set depth max.
         mDepthMax = Math.max(depth, mDepthMax);
 
-        return childExtension;
+        return extension;
     }
 }

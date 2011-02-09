@@ -16,10 +16,13 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import java.util.List;
 import java.util.Stack;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
+import com.treetank.axis.DescendantAxis;
+import com.treetank.diff.EDiff;
 import com.treetank.gui.view.sunburst.Item.Builder;
 import com.treetank.node.AbsStructNode;
 import com.treetank.settings.EFixed;
@@ -29,20 +32,23 @@ import processing.core.PConstants;
 
 /**
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** Extension stack. */
     private transient Stack<Float> mExtensionStack;
 
     /** Children per depth. */
-    private transient Stack<Long> mChildrenPerDepth;
+    private transient Stack<Integer> mDescendantsStack;
 
     /** Angle stack. */
     private transient Stack<Float> mAngleStack;
 
     /** Parent stack. */
     private transient Stack<Integer> mParentStack;
+
+    /** Diff stack. */
+    private transient Stack<Integer> mDiffStack;
 
     /** Determines movement of transaction. */
     private transient EMoved mMoved;
@@ -62,10 +68,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** Start angle. */
     private transient float mAngle;
 
-    /** Child count per depth. */
-    private transient long mChildCountPerDepth;
-
-    /** Current item indes. */
+    /** Current item index. */
     private transient int mIndex;
 
     /** Current item. */
@@ -80,11 +83,23 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** The nodeKey of the next node to visit. */
     private transient long mNextKey;
 
-    /** Key of start node. */
-    private transient long mStartKey;
-
     /** Model which implements the method createSunburstItem(...) defined by {@link IModel}. */
     private transient IModel mModel;
+
+    /** {@link List} of {@link EDiff}s. */
+    private transient List<EDiff> mDiffs;
+
+    /** Modification count. */
+    private transient int mModificationCount;
+
+    /** Parent modification count. */
+    private transient int mParentModificationCount;
+
+    /** Descendant count. */
+    private transient int mDescendantCount;
+
+    /** Parent descendant count. */
+    private transient int mParentDescendantCount;
 
     /**
      * Constructor initializing internal state.
@@ -92,11 +107,15 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * @param paramRtx
      *            exclusive (immutable) trx to iterate with
      * @param paramModel
-     *            model which observes axis changes
+     *            {@link IModel} implementation which observes axis changes
+     * @param paramDiffs
+     *            {@link List} of {@link EDiff}s
      */
-    public SunburstCompareDescendantAxis(final IReadTransaction paramRtx, final AbsModel paramModel) {
+    public SunburstCompareDescendantAxis(final IReadTransaction paramRtx, final IModel paramModel,
+        final List<EDiff> paramDiffs) {
         super(paramRtx);
         mModel = paramModel;
+        mDiffs = paramDiffs;
     }
 
     /**
@@ -107,12 +126,15 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * @param mIncludeSelf
      *            determines if self is included
      * @param paramModel
-     *            model which observes axis changes
+     *            {@link IModel} implementation which observes axis changes
+     * @param paramDiffs
+     *            {@link List} of {@link EDiff}s
      */
     public SunburstCompareDescendantAxis(final IReadTransaction paramRtx, final boolean mIncludeSelf,
-        final AbsModel paramModel) {
+        final IModel paramModel, final List<EDiff> paramDiffs) {
         super(paramRtx, mIncludeSelf);
         mModel = paramModel;
+        mDiffs = paramDiffs;
     }
 
     /**
@@ -127,14 +149,17 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         } else {
             mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
         }
-        mStartKey = mNextKey;
         mExtensionStack = new Stack<Float>();
-        mChildrenPerDepth = new Stack<Long>();
+        mDescendantsStack = new Stack<Integer>();
         mAngleStack = new Stack<Float>();
         mParentStack = new Stack<Integer>();
+        mDiffStack = new Stack<Integer>();
         mAngle = 0F;
         mDepth = 0;
-        mChildCountPerDepth = ((AbsStructNode)getTransaction().getNode()).getChildCount();
+        mModificationCount = 0;
+        mParentModificationCount = 0;
+        mDescendantCount = 0;
+        mParentDescendantCount = 0;
         mMoved = EMoved.STARTRIGHTSIBL;
         mIndexToParent = -1;
         mExtension = PConstants.TWO_PI;
@@ -150,6 +175,12 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     @Override
     public boolean hasNext() {
         resetToLastKey();
+
+        // Check for deletions.
+        final EDiff diff = mDiffs.remove(0);
+        if (diff == EDiff.DELETED) {
+            return true;
+        }
 
         // Fail if there is no node anymore.
         if (mNextKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
@@ -175,10 +206,23 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             processMove();
             mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
+            int index = 0;
+            int diffCounts = 0;
+            for (final AbsAxis axis = new DescendantAxis(getTransaction(), true); axis.hasNext(); axis.next()) {
+                final EDiff intermDiff = mDiffs.get(index);
+                if (intermDiff == EDiff.DELETED || intermDiff == EDiff.INSERTED
+                    || intermDiff == EDiff.DELETED) {
+                    diffCounts++;
+                }
+                index++;
+            }
+
+            mDiffStack.push(diffCounts);
             mAngleStack.push(mAngle);
             mExtensionStack.push(mChildExtension);
             mParentStack.push(mIndex);
-            mChildrenPerDepth.push(mChildCountPerDepth);
+            mDescendantsStack.push(mDescendantCount);
+
             mDepth++;
             mMoved = EMoved.CHILD;
 
@@ -216,10 +260,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         // Do not pop from stack if it's a leaf node.
                         first = false;
                     } else {
+                        mDiffStack.pop();
                         mAngleStack.pop();
                         mExtensionStack.pop();
-                        mChildrenPerDepth.pop();
                         mParentStack.pop();
+                        mDescendantsStack.pop();
                     }
 
                     getTransaction().moveToParent();
@@ -240,12 +285,17 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
     /** Process movement. */
     private void processMove() {
-        mBuilder.set(mAngle, mExtension, mIndexToParent).setChildCountPerDepth(mChildCountPerDepth).set();
-        mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mChildrenPerDepth,
-            mParentStack);
+        mBuilder.set(mAngle, mExtension, mIndexToParent).setDescendantCount(mDescendantCount)
+            .setParentDescendantCount(mParentDescendantCount).setModificationCount(mModificationCount)
+            .setParentModificationCount(mParentModificationCount).set();
+        mMoved.processCompareMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mParentStack,
+            mParentStack, mDiffStack);
+        mModificationCount = mItem.mModificationCount;
+        mParentModificationCount = mItem.mParentModificationCount;
+        mDescendantCount = mItem.mDescendantCount;
+        mParentDescendantCount = mItem.mParentDescendantCount;
         mAngle = mItem.mAngle;
         mExtension = mItem.mExtension;
-        mChildCountPerDepth = mItem.mChildCountPerDepth;
         mIndexToParent = mItem.mIndexToParent;
         mIndex++;
     }

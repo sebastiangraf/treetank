@@ -47,7 +47,7 @@ enum EMoved {
         @Override
         void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramDescendants, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramDescendants, final Stack<Integer> paramParentStack,
             final Stack<Integer> paramModificationStack) {
             // Do nothing.
         }
@@ -78,7 +78,7 @@ enum EMoved {
         @Override
         void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramDescendants, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramDescendants, final Stack<Integer> paramParentStack,
             final Stack<Integer> paramModificationStack) {
             assert !paramAngleStack.empty();
             paramItem.mAngle = paramAngleStack.peek();
@@ -122,7 +122,7 @@ enum EMoved {
         @Override
         void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramDescendants, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramDescendants, final Stack<Integer> paramParentStack,
             final Stack<Integer> paramModificationStack) {
             assert !paramAngleStack.empty();
             paramItem.mAngle = paramAngleStack.pop();
@@ -181,7 +181,7 @@ enum EMoved {
      */
     abstract void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
         final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-        final Stack<Long> paramDescendants, final Stack<Integer> paramParentStack,
+        final Stack<Integer> paramDescendants, final Stack<Integer> paramParentStack,
         final Stack<Integer> paramModificationStack);
 
     /**

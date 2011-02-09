@@ -237,6 +237,8 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
         // Then end.
         mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        processMove();
+        mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
         return true;
     }
 

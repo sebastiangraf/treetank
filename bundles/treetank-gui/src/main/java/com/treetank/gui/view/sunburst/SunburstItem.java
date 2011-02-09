@@ -19,6 +19,7 @@ package com.treetank.gui.view.sunburst;
 import javax.xml.namespace.QName;
 
 import com.treetank.api.IItem;
+import com.treetank.diff.EDiff;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.ViewUtilities;
 
@@ -113,7 +114,7 @@ final class SunburstItem {
     private final long mMaxDescendantCount;
 
     /** Structural kind of node. */
-    enum StructType {
+    enum EStructType {
         /** Node is a leaf node. */
         ISLEAFNODE,
 
@@ -122,7 +123,7 @@ final class SunburstItem {
     }
 
     /** Structural kind of node. */
-    private final StructType mStructKind;
+    private final EStructType mStructKind;
 
     /** State which determines if current item is found by an XPath expression or not. */
     private transient EXPathState mXPathState = EXPathState.ISNOTFOUND;
@@ -135,6 +136,9 @@ final class SunburstItem {
 
     /** Parent processing applet. */
     private final PApplet mParent;
+    
+    /** Kind of diff. */
+    private transient EDiff mDiff;
 
     /** Builder to setup the Items. */
     static final class Builder {
@@ -161,6 +165,9 @@ final class SunburstItem {
 
         /** Text string. */
         private transient String mText;
+        
+        /** Kind of diff. */
+        private transient EDiff mDiff;
 
         /**
          * Read database.
@@ -225,13 +232,25 @@ final class SunburstItem {
          * Set character content.
          * 
          * @param paramText
-         * 
          *            text string in case of a text node
          * @return this builder
          */
         Builder setText(final String paramText) {
             assert paramText != null;
             mText = paramText;
+            return this;
+        }
+        
+        /**
+         * Set kind of diff.
+         * 
+         * @param paramDiff
+         *            {@link EDiff}
+         * @return this builder
+         */
+        Builder setDiff(final EDiff paramDiff) {
+            assert paramDiff != null;
+            mDiff = paramDiff;
             return this;
         }
 
@@ -265,12 +284,13 @@ final class SunburstItem {
         mDescendantCount = paramBuilder.mRelations.mDescendantCount;
         mMinDescendantCount = paramBuilder.mRelations.mMinDescendantCount;
         mMaxDescendantCount = paramBuilder.mRelations.mMaxDescendantCount;
-        mAngleStart = paramBuilder.mAngleStart;
-        mExtension = paramBuilder.mExtension;
-        mAngleCenter = mAngleStart + mExtension / 2;
-        mAngleEnd = mAngleStart + mExtension;
         mIndexToParent = paramBuilder.mRelations.mIndexToParent;
         mDepth = paramBuilder.mRelations.mDepth;
+        mAngleStart = paramBuilder.mAngleStart;
+        mExtension = paramBuilder.mExtension;
+        mDiff = paramBuilder.mDiff;
+        mAngleCenter = mAngleStart + mExtension / 2;
+        mAngleEnd = mAngleStart + mExtension;
     }
 
     /**
@@ -355,6 +375,7 @@ final class SunburstItem {
                 mLineCol = mCol;
                 break;
             default:
+                throw new IllegalStateException("Node type currently not supported!");
             }
 
             // // Colors for leaf nodes and inner nodes.
@@ -498,11 +519,8 @@ final class SunburstItem {
     void drawDot() {
         if (mDepth >= 0) {
             float diameter = mGUI.mDotSize;
-            if (mArcLength < diameter) {
+            if (mDepth > 0 && mArcLength < diameter) {
                 diameter = mArcLength * 0.95f;
-            }
-            if (mDepth == 0) {
-                diameter = 3f;
             }
             mParent.fill(0, 0, mGUI.mDotBrightness);
             mParent.noStroke();
@@ -651,11 +669,8 @@ final class SunburstItem {
     void drawDotBuffer(final PGraphics paramBuffer) {
         if (mDepth >= 0) {
             float diameter = mGUI.mDotSize;
-            if (mArcLength < diameter) {
+            if (mDepth > 0 && mArcLength < diameter) {
                 diameter = mArcLength * 0.95f;
-            }
-            if (mDepth == 0) {
-                diameter = 3f;
             }
             paramBuffer.fill(0, 0, mGUI.mDotBrightness);
             paramBuffer.noStroke();
