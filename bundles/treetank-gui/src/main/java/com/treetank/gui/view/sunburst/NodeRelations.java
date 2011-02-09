@@ -16,7 +16,7 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import com.treetank.gui.view.sunburst.SunburstItem.StructType;
+import com.treetank.gui.view.sunburst.SunburstItem.EStructType;
 
 /**
  * <h1>NodeRelations</h1>
@@ -34,7 +34,7 @@ final class NodeRelations {
     transient int mDepth;
 
     /** Determines the structural kind of the node. */
-    transient StructType mStructKind;
+    transient EStructType mStructKind;
 
     /** Descendant count of the node. */
     transient long mDescendantCount;
@@ -65,7 +65,7 @@ final class NodeRelations {
      *            Index to the parent item.
      * @return NodeRelations instance.
      */
-    NodeRelations setAll(final int paramDepth, final StructType paramStructKind,
+    NodeRelations setAll(final int paramDepth, final EStructType paramStructKind,
         final long paramDescendantCount, final long paramMinDescendantCount,
         final long paramMaxDescendantCount, final int paramIndexToParent) {
         assert paramDepth >= 0;

@@ -17,27 +17,26 @@
 package com.treetank.gui.view.sunburst;
 
 /**
+ * Contains settings used for updating the model.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 final class SunburstContainer {
-    
+
     /** Revision to compare. */
     transient long mRevision;
-    
+
     /** Max depth in the tree. */
     transient int mDepth;
-    
+
     /** Modification weight. */
     transient float mModWeight;
-    
-    /** Text weight. */
-    transient float mTextWeight;
-    
+
     /** Node key to start from. */
     transient long mKey;
-    
-    /** 
+
+    /**
      * Set start key.
      * 
      * @param paramKey
@@ -48,7 +47,31 @@ final class SunburstContainer {
         mKey = paramKey;
         return this;
     }
-    
+
+    /**
+     * Set revision to compare.
+     * 
+     * @param paramRevision
+     *            the Revision to set
+     * @return this
+     */
+    SunburstContainer setRevision(final long paramRevision) {
+        mRevision = paramRevision;
+        return this;
+    }
+
+    /**
+     * Set modification weight.
+     * 
+     * @param paramModWeight
+     *            the modWeight to set
+     * @return this
+     */
+    SunburstContainer setModWeight(final float paramModWeight) {
+        mModWeight = paramModWeight;
+        return this;
+    }
+
     /**
      * Set all remaining member variables.
      * 
@@ -58,16 +81,13 @@ final class SunburstContainer {
      *            Depth in the tree
      * @param paramModificationWeight
      *            weighting of modifications
-     * @param paramTextWeight
-     *            weighting of text length
      * @return this
      */
     SunburstContainer setAll(final long paramRevision, final int paramDepth,
-        final float paramModificationWeight, final float paramTextWeight) {
+        final float paramModificationWeight) {
         mRevision = paramRevision;
         mDepth = paramDepth;
         mModWeight = paramModificationWeight;
-        mTextWeight = paramTextWeight;
         return this;
     }
 }

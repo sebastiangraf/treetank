@@ -68,9 +68,9 @@ interface IModel extends Iterable<SunburstItem> {
      *          {@link Item} reference
      * @param paramDepth
      *          current depth in the tree
-     * @param paramIndex
+     * @param mIndex
      *          index of the current item
      * @return child extension
      */
-    float createSunburstItem(final Item paramItem, final int paramDepth, final int paramIndex);
+    float createSunburstItem(final Item paramItem, final int paramDepth, final int mIndex);
 }

@@ -43,13 +43,16 @@ public final class Item {
     transient long mChildCountPerDepth;
 
     /** Descendant count. */
-    transient long mDescendantCount;
+    transient int mDescendantCount;
+    
+    /** Parent descendant count. */
+    transient int mParentDescendantCount;
     
     /** Modification count on a node (counts subtree modifications). */
     transient int mModificationCount;
-
-    /** Parent descendant count. */
-    transient long mParentDescendantCount;
+    
+    /** Modification count on the parent node (counts subtree modifications). */
+    transient int mParentModificationCount;
 
     /** Builder to simplify item constructor. */
     static final class Builder {
@@ -64,16 +67,19 @@ public final class Item {
         transient long mChildCountPerDepth = -1L;
 
         /** Child count per depth. */
-        transient long mDescendantCount = -1L;
+        transient int mDescendantCount = -1;
         
         /** Parent descendant count. */
-        transient long mParentDescendantCount;
+        transient int mParentDescendantCount;
 
         /** Index to the parent item. */
         transient int mIndexToParent;
         
         /** Modification count on a node (counts subtree modifications). */
         transient int mModificationCount;
+        
+        /** Modification count on the parent node (counts subtree modifications). */
+        transient int mParentModificationCount;
         
         /** 
          * Private constructor to prevent instantiation other then via the public
@@ -122,8 +128,20 @@ public final class Item {
          *            descendant count
          * @return this builder
          */
-        Builder setDescendantCount(final long paramDescendantCount) {
+        Builder setDescendantCount(final int paramDescendantCount) {
             mDescendantCount = paramDescendantCount;
+            return this;
+        }
+        
+        /**
+         * Set parent descendant count.
+         * 
+         * @param paramParentDescCount
+         *            parent descendant count
+         * @return this builder
+         */
+        Builder setParentDescendantCount(final int paramParentDescCount) {
+            mParentDescendantCount = paramParentDescCount;
             return this;
         }
         
@@ -140,14 +158,14 @@ public final class Item {
         }
         
         /**
-         * Set parent descendant count.
+         * Set parent modification count.
          * 
-         * @param paramParentDescCount
-         *            parent descendant count
+         * @param paramParentModificationCount
+         *            parent modification count
          * @return this builder
          */
-        Builder setParentDescendantCount(final int paramParentDescCount) {
-            mParentDescendantCount = paramParentDescCount;
+        Builder setParentModificationCount(final int paramParentModificationCount) {
+            mParentModificationCount = paramParentModificationCount;
             return this;
         }
 
@@ -155,7 +173,7 @@ public final class Item {
          * Setup item.
          */
         void set() {
-            assert mChildCountPerDepth != -1L || mDescendantCount != -1L;
+            assert mChildCountPerDepth != -1L || mDescendantCount != -1;
             ITEM.setAll(this);
         }
     }
@@ -171,7 +189,7 @@ public final class Item {
      * Constructor.
      * 
      * @param paramBuilder
-     *            builder
+     *            the builder
      */
     void setAll(final Builder paramBuilder) {
         mAngle = paramBuilder.mAngle;
@@ -179,6 +197,7 @@ public final class Item {
         mIndexToParent = paramBuilder.mIndexToParent;
         mChildCountPerDepth = paramBuilder.mChildCountPerDepth;
         mModificationCount = paramBuilder.mModificationCount;
+        mParentModificationCount = paramBuilder.mParentModificationCount;
         mDescendantCount = paramBuilder.mDescendantCount;
         mParentDescendantCount = paramBuilder.mParentDescendantCount;
     }

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -33,7 +34,6 @@ import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.gui.ReadDB;
-import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 import com.treetank.node.ENodes;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.utils.LogWrapper;
@@ -372,6 +372,42 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                     }
                 }
             }
+        }
+    }
+    
+    /** Counts descendants. */
+    final class Descendants implements Callable<Long> {
+        /** Treetank {@link IReadTransaction}. */
+        private transient IReadTransaction mRTX;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramNodeKey
+         *            Node key to which the current transaction should move.
+         */
+        Descendants(final long paramNodeKey) {
+            assert mRtx != null;
+            assert !mRtx.isClosed();
+            assert paramNodeKey >= 0;
+            try {
+                mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
+            } catch (final TTException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            }
+            mRTX.moveTo(paramNodeKey);
+        }
+
+        @Override
+        public Long call() throws Exception {
+            long retVal = 0;
+
+            for (final AbsAxis axis = new DescendantAxis(mRTX, false); axis.hasNext(); axis.next()) {
+                retVal++;
+            }
+
+            mRTX.close();
+            return retVal;
         }
     }
 }

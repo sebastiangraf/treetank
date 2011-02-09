@@ -28,6 +28,7 @@ import java.util.concurrent.Semaphore;
 
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 import com.treetank.utils.LogWrapper;
@@ -106,6 +107,9 @@ final class SunburstGUI implements PropertyChangeListener {
     /** Inner node arc scale. */
     transient float mInnerNodeArcScale = 0.7f;
 
+    /** Modification weight. */
+    transient float mModificationWeight = 0.7f;
+
     /** Stroke weight start. */
     transient float mStrokeWeightStart = 0.5f;
 
@@ -130,6 +134,9 @@ final class SunburstGUI implements PropertyChangeListener {
     /** Determines if arcs should be used (Default: true). */
     transient boolean mUseArc = true;
 
+    /** Determines if diff view is used. */
+    transient boolean mUseDiffView;
+
     /** Determines if bezier lines for connections between parent/child should be used (Default: true). */
     transient boolean mUseBezierLine = true;
 
@@ -143,7 +150,7 @@ final class SunburstGUI implements PropertyChangeListener {
     transient float mLeafArcScale = 1.0f;
 
     /** {@link AbsModel}. */
-    final AbsModel mModel;
+    transient AbsModel mModel;
 
     /** Current angle of the mouse cursor to y axis. */
     transient float mAngle;
@@ -154,7 +161,7 @@ final class SunburstGUI implements PropertyChangeListener {
     /** {@link Sempahore} to block re-initializing sunburst item list until draw() is finished(). */
     private transient Semaphore mLock = new Semaphore(1);
 
-    /** Determines if zooming or panning ended. */
+    /** Determines if zooming or panning endefinald. */
     private transient boolean mZoomPanEnded;
 
     /** Image to draw. */
@@ -224,8 +231,12 @@ final class SunburstGUI implements PropertyChangeListener {
 
     /** {@link ReadDB} reference. */
     private transient ReadDB mDb;
-    
+
     private transient IWriteTransaction mWtx;
+
+    private transient DropdownList mRevisions;
+
+    private transient int mSelectedRev;
 
     /**
      * Private constructor.
@@ -258,13 +269,14 @@ final class SunburstGUI implements PropertyChangeListener {
      *            read database
      * @return a GUI singleton
      */
-    static synchronized SunburstGUI getInstance(final PApplet paramParentApplet, final AbsModel paramModel,
+    static SunburstGUI getInstance(final PApplet paramParentApplet, final AbsModel paramModel,
         final ReadDB paramReadDB) {
         if (mGUI == null) {
             synchronized (SunburstGUI.class) {
                 if (mGUI == null) {
                     mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
                     mGUI.mDone = false;
+                    mGUI.mUseDiffView = false;
                 }
             }
         }
@@ -320,6 +332,10 @@ final class SunburstGUI implements PropertyChangeListener {
             mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
         mSliders.get(si++).setLabel("leafNodeArcScale");
         posY += 50;
+        mSliders.add(si, mControlP5.addSlider("mModificationWeight", 0, 1, mModificationWeight, left, top
+            + posY + 0, len, 15));
+        mSliders.get(si++).setLabel("modification weight");
+        posY += 50;
 
         mRanges.add(
             ri++,
@@ -355,10 +371,13 @@ final class SunburstGUI implements PropertyChangeListener {
         mToggles.get(ti++).setLabel("Arc / Rect");
         mToggles.add(ti, mControlP5.addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
         mToggles.get(ti++).setLabel("Fisheye lense");
+        mToggles.add(ti,
+            mControlP5.addToggle("mUseDiffView", mUseDiffView, left + 0, top + posY + 100, 15, 15));
+        mToggles.get(ti++).setLabel("Diff view");
 
-        mXPathField = mControlP5.addTextfield("xpath", left + 800, top + 20, 200, 20);
+        mXPathField = mControlP5.addTextfield("xpath", mParent.width - 250, top + 20, 200, 20);
         mXPathField.setLabel("XPath expression");
-        mXPathField.setFocus(true);
+        mXPathField.setFocus(false);
         mXPathField.setAutoClear(false);
         mXPathField.plugTo(this);
 
@@ -438,36 +457,43 @@ final class SunburstGUI implements PropertyChangeListener {
      *            the {@link ControlEvent}
      */
     public void controlEvent(final ControlEvent paramControlEvent) {
-        // println("got a control event from controller with id "+theControlEvent.controller().id());
-        if (paramControlEvent.controller().name().equals("leaf node hue range")) {
-            final float[] f = paramControlEvent.controller().arrayValue();
-            mHueStart = f[0];
-            mHueEnd = f[1];
-        }
-        if (paramControlEvent.controller().name().equals("leaf node saturation range")) {
-            final float[] f = paramControlEvent.controller().arrayValue();
-            mSaturationStart = f[0];
-            mSaturationEnd = f[1];
-        }
-        if (paramControlEvent.controller().name().equals("leaf node brightness range")) {
-            final float[] f = paramControlEvent.controller().arrayValue();
-            mBrightnessStart = f[0];
-            mBrightnessEnd = f[1];
-        }
-        if (paramControlEvent.controller().name().equals("inner node brightness range")) {
-            final float[] f = paramControlEvent.controller().arrayValue();
-            mInnerNodeBrightnessStart = f[0];
-            mInnerNodeBrightnessEnd = f[1];
-        }
-        if (paramControlEvent.controller().name().equals("inner node stroke brightness range")) {
-            final float[] f = paramControlEvent.controller().arrayValue();
-            mInnerNodeStrokeBrightnessStart = f[0];
-            mInnerNodeStrokeBrightnessEnd = f[1];
-        }
-        if (paramControlEvent.controller().name().equals("stroke weight range")) {
-            final float[] f = paramControlEvent.controller().arrayValue();
-            mStrokeWeightStart = f[0];
-            mStrokeWeightEnd = f[1];
+        if (paramControlEvent.isController()) {
+            if (paramControlEvent.controller().name().equals("leaf node hue range")) {
+                final float[] f = paramControlEvent.controller().arrayValue();
+                mHueStart = f[0];
+                mHueEnd = f[1];
+            }
+            if (paramControlEvent.controller().name().equals("leaf node saturation range")) {
+                final float[] f = paramControlEvent.controller().arrayValue();
+                mSaturationStart = f[0];
+                mSaturationEnd = f[1];
+            }
+            if (paramControlEvent.controller().name().equals("leaf node brightness range")) {
+                final float[] f = paramControlEvent.controller().arrayValue();
+                mBrightnessStart = f[0];
+                mBrightnessEnd = f[1];
+            }
+            if (paramControlEvent.controller().name().equals("inner node brightness range")) {
+                final float[] f = paramControlEvent.controller().arrayValue();
+                mInnerNodeBrightnessStart = f[0];
+                mInnerNodeBrightnessEnd = f[1];
+            }
+            if (paramControlEvent.controller().name().equals("inner node stroke brightness range")) {
+                final float[] f = paramControlEvent.controller().arrayValue();
+                mInnerNodeStrokeBrightnessStart = f[0];
+                mInnerNodeStrokeBrightnessEnd = f[1];
+            }
+            if (paramControlEvent.controller().name().equals("stroke weight range")) {
+                final float[] f = paramControlEvent.controller().arrayValue();
+                mStrokeWeightStart = f[0];
+                mStrokeWeightEnd = f[1];
+            }
+        } else if (paramControlEvent.isGroup()) {
+            if (paramControlEvent.group().name().equals("Compare revision")) {
+                mSelectedRev = (int)paramControlEvent.group().value();
+                mModel.update(new SunburstContainer().setRevision(mSelectedRev).setModWeight(
+                    mModificationWeight));
+            }
         }
 
         update();
@@ -701,6 +727,25 @@ final class SunburstGUI implements PropertyChangeListener {
             case '3':
                 mMappingMode = 3;
                 break;
+            case 'o':
+            case 'O':
+                mModel = new SunburstCompareModel(mParent, mDb);
+                mUseDiffView = true;
+
+                mRevisions = mControlP5.addDropdownList("mSelectedRev", mParent.width - 250, 100, 100, 120);
+                mRevisions.setLabel("Compare revision");
+                // mRevisions.plugTo(this);
+                try {
+                    for (long i = mDb.getRevisionNumber() + 1, newestRev =
+                        mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
+                        mRevisions.addItem("Revision " + i, (int)i);
+                    }
+                } catch (final TTIOException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                } catch (final TTException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                }
+                break;
             default:
                 break;
             }
@@ -795,7 +840,7 @@ final class SunburstGUI implements PropertyChangeListener {
                                 mWtx.close();
                             }
                             mWtx = mDb.getSession().beginWriteTransaction();
-//                            wtx.revertTo(..getRevisionNumber());
+                            // wtx.revertTo(..getRevisionNumber());
                             mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
                             final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, mWtx, mDb);
                             menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
@@ -1012,27 +1057,27 @@ final class SunburstGUI implements PropertyChangeListener {
         }
     }
 
-    /** Update buffer concurrently. */
-    private final class UpdateBuffer implements Runnable {
-        /** @see SunburstItem */
-        private final SunburstItem mItem;
-
-        /**
-         * Constructor.
-         * 
-         * @param paramItem
-         *            {@link SunburstItem}
-         */
-        private UpdateBuffer(final SunburstItem paramItem) {
-            mItem = paramItem;
-        }
-
-        @Override
-        public void run() {
-            mItem.update(mGUI.getMappingMode(), mBuffer);
-            mDraw.drawStrategy(mGUI, mItem);
-        }
-    }
+//    /** Update buffer concurrently. */
+//    private final class UpdateBuffer implements Runnable {
+//        /** @see SunburstItem */
+//        private final SunburstItem mItem;
+//
+//        /**
+//         * Constructor.
+//         * 
+//         * @param paramItem
+//         *            {@link SunburstItem}
+//         */
+//        private UpdateBuffer(final SunburstItem paramItem) {
+//            mItem = paramItem;
+//        }
+//
+//        @Override
+//        public void run() {
+//            mItem.update(mGUI.getMappingMode(), mBuffer);
+//            mDraw.drawStrategy(mGUI, mItem);
+//        }
+//    }
 
     /** {@inheritDoc} */
     @Override
