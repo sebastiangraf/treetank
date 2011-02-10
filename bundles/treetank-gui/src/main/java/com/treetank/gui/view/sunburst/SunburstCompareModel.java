@@ -16,11 +16,7 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -60,9 +56,6 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
     /** Maximum descendant count in tree. */
     private transient long mMaxDescendantCount;
-
-    /** {@link List} of {@link EDiff} constants. */
-    private transient List<EDiff> mDiffs;
 
     /** Node relations used for simplyfing the SunburstItem constructor. */
     private transient NodeRelations mRelations;
@@ -172,6 +165,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
         /** {@link SunburstModel}. */
         private final SunburstCompareModel mModel;
+        
+        /** {@link List} of {@link EDiff} constants. */
+        private transient List<EDiff> mDiffs;
 
         /**
          * Constructor.
@@ -211,6 +207,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             mModel = (SunburstCompareModel)paramModel;
             mRelations = new NodeRelations();
             mDiff = EDiff.SAME;
+            mDiffs = new LinkedList<EDiff>();
             mStart = new CountDownLatch(1);
 
             mRtx.moveTo(mKey);

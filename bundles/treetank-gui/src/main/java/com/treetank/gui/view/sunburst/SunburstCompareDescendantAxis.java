@@ -16,6 +16,7 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -177,9 +178,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         resetToLastKey();
 
         // Check for deletions.
-        final EDiff diff = mDiffs.remove(0);
-        if (diff == EDiff.DELETED) {
-            return true;
+        if (!mDiffs.isEmpty()) {
+            final EDiff diff = mDiffs.remove(0);
+            if (diff == EDiff.DELETED) {
+                return true;
+            }
         }
 
         // Fail if there is no node anymore.
@@ -208,14 +211,44 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
             int index = 0;
             int diffCounts = 0;
-            for (final AbsAxis axis = new DescendantAxis(getTransaction(), true); axis.hasNext(); axis.next()) {
-                final EDiff intermDiff = mDiffs.get(index);
-                if (intermDiff == EDiff.DELETED || intermDiff == EDiff.INSERTED
-                    || intermDiff == EDiff.DELETED) {
-                    diffCounts++;
+            final long nodeKey = getTransaction().getNode().getNodeKey();
+            do {
+                boolean done = false;
+                if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
+                    getTransaction().moveToFirstChild();
+                    final EDiff intermDiff = mDiffs.get(index);
+                    if (intermDiff != EDiff.SAME && intermDiff != EDiff.DONE) {
+                        diffCounts++;
+                    }
+                    index++;
+                } else if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
+                    getTransaction().moveToRightSibling();
+                    final EDiff intermDiff = mDiffs.get(index);
+                    if (intermDiff != EDiff.SAME && intermDiff != EDiff.DONE) {
+                        diffCounts++;
+                    }
+                    index++;
+                } else {
+                    do {
+                        if (((AbsStructNode)getTransaction().getNode()).hasParent()
+                            && getTransaction().getNode().getNodeKey() != nodeKey) {
+                            getTransaction().moveToParent();
+                        } else {
+                            done = true;
+                            break;
+                        }
+                    } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
+                    if (!done) {
+                        getTransaction().moveToRightSibling();
+                        final EDiff intermDiff = mDiffs.get(index);
+                        if (intermDiff != EDiff.SAME && intermDiff != EDiff.DONE) {
+                            diffCounts++;
+                        }
+                        index++;
+                    }
                 }
-                index++;
-            }
+            } while (getTransaction().getNode().getNodeKey() != nodeKey);
+            getTransaction().moveTo(nodeKey);
 
             mDiffStack.push(diffCounts);
             mAngleStack.push(mAngle);
