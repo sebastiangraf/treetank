@@ -55,7 +55,7 @@ import processing.core.PVector;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstGUI implements PropertyChangeListener {
+final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /**
      * Serial version UID.
@@ -288,6 +288,7 @@ final class SunburstGUI implements PropertyChangeListener {
         mParent.noLoop();
         final int activeColor = mParent.color(0, 130, 164);
         mControlP5 = new ControlP5(mParent);
+        mControlP5.addListener(this);
         mControlP5.setColorActive(activeColor);
         mControlP5.setColorBackground(mParent.color(170));
         mControlP5.setColorForeground(mParent.color(50));
@@ -456,6 +457,7 @@ final class SunburstGUI implements PropertyChangeListener {
      * @param paramControlEvent
      *            the {@link ControlEvent}
      */
+    @Override
     public void controlEvent(final ControlEvent paramControlEvent) {
         if (paramControlEvent.isController()) {
             if (paramControlEvent.controller().name().equals("leaf node hue range")) {
@@ -491,7 +493,8 @@ final class SunburstGUI implements PropertyChangeListener {
         } else if (paramControlEvent.isGroup()) {
             if (paramControlEvent.group().name().equals("Compare revision")) {
                 mSelectedRev = (int)paramControlEvent.group().value();
-                mModel.update(new SunburstContainer().setRevision(mSelectedRev).setModWeight(
+                mModel = new SunburstCompareModel(mParent, mDb);
+                mModel.traverseTree(new SunburstContainer().setRevision(mSelectedRev).setModWeight(
                     mModificationWeight));
             }
         }
@@ -729,12 +732,10 @@ final class SunburstGUI implements PropertyChangeListener {
                 break;
             case 'o':
             case 'O':
-                mModel = new SunburstCompareModel(mParent, mDb);
                 mUseDiffView = true;
 
-                mRevisions = mControlP5.addDropdownList("mSelectedRev", mParent.width - 250, 100, 100, 120);
-                mRevisions.setLabel("Compare revision");
-                // mRevisions.plugTo(this);
+                mRevisions =
+                    mControlP5.addDropdownList("Compare revision", mParent.width - 250, 100, 100, 120);
                 try {
                     for (long i = mDb.getRevisionNumber() + 1, newestRev =
                         mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
@@ -1057,27 +1058,27 @@ final class SunburstGUI implements PropertyChangeListener {
         }
     }
 
-//    /** Update buffer concurrently. */
-//    private final class UpdateBuffer implements Runnable {
-//        /** @see SunburstItem */
-//        private final SunburstItem mItem;
-//
-//        /**
-//         * Constructor.
-//         * 
-//         * @param paramItem
-//         *            {@link SunburstItem}
-//         */
-//        private UpdateBuffer(final SunburstItem paramItem) {
-//            mItem = paramItem;
-//        }
-//
-//        @Override
-//        public void run() {
-//            mItem.update(mGUI.getMappingMode(), mBuffer);
-//            mDraw.drawStrategy(mGUI, mItem);
-//        }
-//    }
+    // /** Update buffer concurrently. */
+    // private final class UpdateBuffer implements Runnable {
+    // /** @see SunburstItem */
+    // private final SunburstItem mItem;
+    //
+    // /**
+    // * Constructor.
+    // *
+    // * @param paramItem
+    // * {@link SunburstItem}
+    // */
+    // private UpdateBuffer(final SunburstItem paramItem) {
+    // mItem = paramItem;
+    // }
+    //
+    // @Override
+    // public void run() {
+    // mItem.update(mGUI.getMappingMode(), mBuffer);
+    // mDraw.drawStrategy(mGUI, mItem);
+    // }
+    // }
 
     /** {@inheritDoc} */
     @Override

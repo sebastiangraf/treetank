@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 import processing.core.PApplet;
 
 /**
+ * Model to compare revisions.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
@@ -157,7 +159,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
     private final class TraverseCompareTree implements Runnable, IDiffObserver {
 
         /** Timeout for {@link CountDownLatch}. */
-        private static final long TIMEOUT_S = 2;
+        private static final long TIMEOUT_S = 200000;
 
         /** {@link CountDownLatch} to wait until {@link List} of {@link EDiff}s has been created. */
         private final CountDownLatch mStart;
@@ -229,7 +231,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
             try {
                 // Get min and max textLength of the new revision.
-                getMinMaxTextLength(mRtx);
+                final IReadTransaction rtx = mDb.getSession().beginReadTransaction(mRevision);
+                getMinMaxTextLength(rtx);
+                rtx.close();
 
                 // Invoke diff.
                 final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
@@ -241,7 +245,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
 
                 // Maximum depth in old revision.
-                mDepthMax = getDepthMax(mDb.getSession().beginReadTransaction(mRtx.getRevisionNumber()));
+                mDepthMax = getDepthMax(mRtx);
 
                 for (final AbsAxis axis = new SunburstCompareDescendantAxis(mRtx, true, mModel, mDiffs); axis
                     .hasNext(); axis.next()) {
@@ -260,7 +264,11 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         /** {@inheritDoc} */
         @Override
         public void diffListener(final EDiff paramDiff) {
-            mDiffs.add(paramDiff);
+            if (paramDiff == EDiff.DONE) {
+                mStart.countDown();
+            } else {
+                mDiffs.add(paramDiff);
+            }
         }
     }
 
