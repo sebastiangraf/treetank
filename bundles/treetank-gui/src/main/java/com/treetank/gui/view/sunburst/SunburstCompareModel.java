@@ -165,7 +165,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
         /** {@link SunburstModel}. */
         private final SunburstCompareModel mModel;
-        
+
         /** {@link List} of {@link EDiff} constants. */
         private transient List<EDiff> mDiffs;
 
@@ -244,8 +244,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 // Maximum depth in old revision.
                 mDepthMax = getDepthMax(mRtx);
 
-                for (final AbsAxis axis = new SunburstCompareDescendantAxis(mRtx, true, mModel, mDiffs); axis
-                    .hasNext(); axis.next()) {
+                for (final AbsAxis axis =
+                    new SunburstCompareDescendantAxis(true, mModel, mDb.getSession().beginReadTransaction(
+                        mRevision), mRtx, mDiffs); axis.hasNext(); axis.next()) {
                 }
             } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
@@ -328,8 +329,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 .setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
         }
 
-        // Set depth max.
-        mDepthMax = Math.max(depth, mDepthMax);
+//        // Set depth max.
+//        mDepthMax = Math.max(depth, mDepthMax);
 
         return extension;
     }

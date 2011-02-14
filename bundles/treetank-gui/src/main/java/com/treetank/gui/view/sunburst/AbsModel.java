@@ -21,11 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -53,6 +49,12 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsModel.class));
 
+    /** Maximum descendant count in tree. */
+    transient long mMaxDescendantCount;
+
+    /** {@link List} of descendants of every node. */
+    transient List<Future<Integer>> mDescendants;
+    
     /** Semaphore to guarantee mutual exclusion for all methods. */
     transient Semaphore mLock = new Semaphore(1);
 
@@ -375,8 +377,43 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         }
     }
     
+    /**
+     * Get a list of descendants per node.
+     * 
+     * @param paramRtx
+     *            Treetank {@link IReadTransaction} over which to iterate.
+     * @return List of {@link Future}s.
+     * @throws ExecutionException
+     *             if execution fails
+     * @throws InterruptedException
+     *             if task gets interrupted
+     */
+    @Override
+    public List<Future<Integer>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
+        ExecutionException {
+        assert paramRtx != null;
+
+        // Get descendants for every node and save it to a list.
+        final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
+        final ExecutorService executor =
+            Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        boolean firstNode = true;
+        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+            final Future<Integer> submit = executor.submit(new Descendants(paramRtx.getNode().getNodeKey()));
+
+            if (firstNode) {
+                firstNode = false;
+                mMaxDescendantCount = submit.get();
+            }
+            descendants.add(submit);
+        }
+        executor.shutdown();
+
+        return descendants;
+    }
+    
     /** Counts descendants. */
-    final class Descendants implements Callable<Long> {
+    final class Descendants implements Callable<Integer> {
         /** Treetank {@link IReadTransaction}. */
         private transient IReadTransaction mRTX;
 
@@ -399,8 +436,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         }
 
         @Override
-        public Long call() throws Exception {
-            long retVal = 0;
+        public Integer call() throws Exception {
+            int retVal = 0;
 
             for (final AbsAxis axis = new DescendantAxis(mRTX, false); axis.hasNext(); axis.next()) {
                 retVal++;

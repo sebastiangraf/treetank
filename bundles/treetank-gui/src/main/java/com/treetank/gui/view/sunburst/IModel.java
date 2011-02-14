@@ -16,6 +16,12 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import com.treetank.api.IReadTransaction;
+
 /**
  * Interface which models of the {@link SunburstView} have to implement.
  * 
@@ -23,6 +29,21 @@ package com.treetank.gui.view.sunburst;
  * 
  */
 interface IModel extends Iterable<SunburstItem> {
+    
+    /**
+     * Get a list of descendants per node.
+     * 
+     * @param paramRtx
+     *            Treetank {@link IReadTransaction} over which to iterate.
+     * @return List of {@link Future}s.
+     * @throws ExecutionException
+     *             if execution fails
+     * @throws InterruptedException
+     *             if task gets interrupted
+     */
+    List<Future<Integer>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
+        ExecutionException;
+
     /**
      * Get the {@link SunburstItem} at the specified index.
      * 
