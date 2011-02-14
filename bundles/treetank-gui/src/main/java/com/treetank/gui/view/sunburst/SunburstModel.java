@@ -55,12 +55,6 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));
 
-    /** Maximum descendant count in tree. */
-    private transient long mMaxDescendantCount;
-
-    /** {@link List} of descendants of every node. */
-    private transient List<Future<Long>> mDescendants;
-
     /** Node relations used for simplyfing the SunburstItem constructor. */
     private transient NodeRelations mRelations;
 
@@ -107,40 +101,6 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
         } finally {
             mLock.release();
         }
-    }
-
-    /**
-     * Get a list of descendants per node.
-     * 
-     * @param paramRtx
-     *            Treetank {@link IReadTransaction} over which to iterate.
-     * @return List of {@link Future}s.
-     * @throws ExecutionException
-     *             if execution fails
-     * @throws InterruptedException
-     *             if task gets interrupted
-     */
-    private List<Future<Long>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
-        ExecutionException {
-        assert paramRtx != null;
-
-        // Get descendants for every node and save it to a list.
-        final List<Future<Long>> descendants = new LinkedList<Future<Long>>();
-        final ExecutorService executor =
-            Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        boolean firstNode = true;
-        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-            final Future<Long> submit = executor.submit(new Descendants(paramRtx.getNode().getNodeKey()));
-
-            if (firstNode) {
-                firstNode = false;
-                mMaxDescendantCount = submit.get();
-            }
-            descendants.add(submit);
-        }
-        executor.shutdown();
-
-        return descendants;
     }
 
     /** Traverse a tree (single revision). */

@@ -18,6 +18,8 @@ package com.treetank.gui.view.sunburst;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -26,14 +28,24 @@ import com.treetank.gui.view.sunburst.Item.Builder;
 import com.treetank.node.AbsStructNode;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 import processing.core.PConstants;
 
 /**
+ * Compare descendant axis.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 public final class SunburstCompareDescendantAxis extends AbsAxis {
+
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(SunburstCompareDescendantAxis.class));
+
     /** Extension stack. */
     private transient Stack<Float> mExtensionStack;
 
@@ -100,6 +112,12 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** Parent descendant count. */
     private transient int mParentDescendantCount;
 
+    /** {@link IReadTransaction} on old revision. */
+    private transient IReadTransaction mOldRtx;
+
+    /** {@link List} of {@link Future}s which hold the number of descendants. */
+    private transient List<Future<Integer>> mDescendants;
+
     /**
      * Constructor initializing internal state.
      * 
@@ -120,20 +138,23 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /**
      * Constructor initializing internal state.
      * 
-     * @param paramRtx
-     *            exclusive (immutable) trx to iterate with
      * @param mIncludeSelf
      *            determines if self is included
      * @param paramModel
      *            {@link IModel} implementation which observes axis changes
+     * @param paramNewRtx
+     *            {@link IReadTransaction} on new revision
+     * @param paramOldRtx
+     *            {@link IReadTransaction} on old revision
      * @param paramDiffs
      *            {@link List} of {@link EDiff}s
      */
-    public SunburstCompareDescendantAxis(final IReadTransaction paramRtx, final boolean mIncludeSelf,
-        final IModel paramModel, final List<EDiff> paramDiffs) {
-        super(paramRtx, mIncludeSelf);
+    public SunburstCompareDescendantAxis(final boolean mIncludeSelf, final IModel paramModel,
+        final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx, final List<EDiff> paramDiffs) {
+        super(paramNewRtx, mIncludeSelf);
         mModel = paramModel;
         mDiffs = paramDiffs;
+        mOldRtx = paramOldRtx;
     }
 
     /**
@@ -166,6 +187,13 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         mIndex = -1;
         mItem = Item.ITEM;
         mBuilder = Item.BUILDER;
+        try {
+            mDescendants = mModel.getDescendants(getTransaction());
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final ExecutionException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
     }
 
     /**
@@ -180,6 +208,26 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             final EDiff diff = mDiffs.remove(0);
             if (diff == EDiff.DELETED) {
                 // FIXME
+                mOldRtx.moveTo(diff.getNode().getNodeKey());
+                if (getTransaction().getNode().getNodeKey() == mOldRtx.getNode().getParentKey()) {
+                    mModificationCount = countDiffs();
+                    mParentModificationCount = mDiffStack.peek();
+                    try {
+                        mDescendantCount = mModel.getDescendants(mOldRtx).get(0).get();
+                    } catch (final InterruptedException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final ExecutionException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    }
+                    mParentDescendantCount = mDescendantsStack.peek();
+                    mAngle = mAngleStack.peek();
+                    mParExtension = mExtensionStack.peek();
+                    mIndexToParent = mParentStack.peek();
+                    mIndex++;
+                } else if (getTransaction().getNode().getNodeKey() == ((AbsStructNode)mOldRtx.getNode())
+                    .getLeftSiblingKey()) {
+                    
+                }
                 mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
                 return true;
             }
@@ -214,7 +262,13 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mAngleStack.push(mAngle);
             mExtensionStack.push(mExtension);
             mParentStack.push(mIndex);
-            mDescendantsStack.push(mDescendantCount);
+            try {
+                mDescendantsStack.push(mDescendants.get(mIndex).get());
+            } catch (final InterruptedException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final ExecutionException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            }
 
             mDepth++;
             mMoved = EMoved.CHILD;
