@@ -158,20 +158,43 @@ public final class DiffFactory {
         }
     }
 
+    /** Invoke diff. */
     private static class Invoke implements Runnable {
 
+        /** {@link IDatabase} reference. */
         private final IDatabase mDb;
 
+        /** Start key. */
         private final long mKey;
 
+        /** New revision. */
         private final long mNewRev;
 
+        /** Old revision. */
         private final long mOldRev;
 
+        /** Diff kind. */
         private final EDiffKind mKind;
 
+        /** {@link Set} of {@link IDiffObserver}s. */
         private final Set<IDiffObserver> mObservers;
 
+        /**
+         * Constructor.
+         * 
+         * @param paramDb
+         *            {@link IDatabase} reference
+         * @param paramKey
+         *            start key
+         * @param paramNewRev
+         *            new revision
+         * @param paramOldRev
+         *            old revision
+         * @param paramDiffKind
+         *            diff kind
+         * @param paramObservers
+         *            {@link Set} of {@link IDiffObserver}s
+         */
         Invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
             final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
             mDb = paramDb;

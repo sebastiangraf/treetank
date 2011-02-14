@@ -158,7 +158,7 @@ final class Diff implements IExpression {
             }
         }
 
-        // Nodes deleted in old rev (secondRtx) at the end of the tree.
+        // Nodes deleted in old rev at the end of the tree.
         while (moveCursor(mOldRtx, ERevision.OLD)) {
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
                 mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
