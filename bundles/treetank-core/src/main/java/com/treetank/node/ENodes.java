@@ -210,17 +210,17 @@ public enum ENodes {
     /**
      * Constructor.
      * 
-     * @param mKind
+     * @param paramKind
      *            the identifier
-     * @param mLongSize
+     * @param paramLongSize
      *            the identifier
-     * @param mIntSize
+     * @param paramIntSize
      *            the identifier
      */
-    private ENodes(final int mKind, final int mLongSize, final int mIntSize) {
-        this.mKind = mKind;
-        this.mLongSize = mLongSize;
-        this.mIntSize = mIntSize;
+    private ENodes(final int paramKind, final int paramLongSize, final int paramIntSize) {
+        mKind = paramKind;
+        mLongSize = paramLongSize;
+        mIntSize = paramIntSize;
     }
 
     /**

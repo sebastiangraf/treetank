@@ -80,12 +80,12 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
     
     @Override
     public void done() {
+        try {
+            mNewRev.close();
+            mOldRev.close();
+        } catch (final TTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
         fireDiff(EDiff.DONE);
-//        try {
-//            mNewRev.close();
-//            mOldRev.close();
-//        } catch (final TTException e) {
-//            LOGWRAPPER.error(e.getMessage(), e);
-//        }
     }
 }

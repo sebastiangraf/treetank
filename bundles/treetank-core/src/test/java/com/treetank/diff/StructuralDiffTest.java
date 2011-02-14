@@ -57,7 +57,7 @@ public final class StructuralDiffTest {
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
-    private transient long TIMEOUT_S = 200000;
+    private static final long TIMEOUT_S = 2;
 
     @Before
     public void setUp() throws TTException {

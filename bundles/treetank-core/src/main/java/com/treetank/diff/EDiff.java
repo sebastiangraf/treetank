@@ -16,25 +16,50 @@
  */
 package com.treetank.diff;
 
+import com.treetank.api.IItem;
+
 /**
  * Possible kinds of differences between two nodes.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public enum EDiff {
     /** Nodes are the same. */
     SAME,
-    
+
     /** Node has been inserted. */
     INSERTED,
-    
+
     /** Node has been deleted. */
     DELETED,
-    
+
     /** Node has been renamed. */
     RENAMED,
-    
+
     /** Diff computation done. */
     DONE;
+
+    /** Item node. */
+    private transient IItem mNode;
+
+    /**
+     * Set node.
+     * 
+     * @param paramNode
+     *            {@link IItem} to set
+     */
+    void setNode(final IItem paramNode) {
+        assert paramNode != null;
+        mNode = paramNode;
+    }
+    
+    /**
+     * Get node.
+     * 
+     * @return the node
+     */
+    public IItem getNode() {
+        return mNode;
+    }
 }
