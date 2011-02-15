@@ -77,7 +77,8 @@ public final class GUIConstants {
         {
             OPEN, SHREDDER, SHREDDER_UPDATE, SERIALIZE, SEPARATOR, QUIT
         }, {
-            TREE, TEXT, TREEMAP, SUNBURST
+//            TREE, TEXT, TREEMAP, SUNBURST
+            SUNBURST
         }
     };
 

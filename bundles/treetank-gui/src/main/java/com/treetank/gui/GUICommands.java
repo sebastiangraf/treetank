@@ -17,7 +17,6 @@
 package com.treetank.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -29,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -73,12 +71,13 @@ public enum GUICommands implements IGUICommand {
 
             // Create new panel etc.pp. for choosing the revision at the bottom of the frame.
             final JPanel panel = new JPanel();
-            final BoxLayout box = new BoxLayout(panel, BoxLayout.Y_AXIS);
-            panel.setLayout(box);
-//            final BorderLayout layout = (BorderLayout)fc.getLayout();
-//            final Component comp = layout.getLayoutComponent(BorderLayout.SOUTH);
-            
-            panel.add(fc);
+            panel.setLayout(new BorderLayout());
+            // final BoxLayout box = new BoxLayout(panel, BoxLayout.Y_AXIS);
+            // panel.setLayout(box);
+            // final BorderLayout layout = (BorderLayout)fc.getLayout();
+            // final Component comp = layout.getLayoutComponent(BorderLayout.SOUTH);
+
+            // panel.add(fc);
             final JComboBox cb = new JComboBox();
 
             cb.addActionListener(new ActionListener() {
@@ -91,8 +90,10 @@ public enum GUICommands implements IGUICommand {
                 };
             });
 
-            panel.add(cb);
-//            fc.add(panel, BorderLayout.SOUTH);
+            // panel.add(fc, BorderLayout.CENTER);
+            panel.add(cb, BorderLayout.SOUTH);
+            fc.setAccessory(panel);
+            // fc.add(panel, BorderLayout.SOUTH);
 
             final PropertyChangeListener changeListener = new PropertyChangeListener() {
                 @Override
@@ -358,6 +359,19 @@ public enum GUICommands implements IGUICommand {
                 final File target = fc.getSelectedFile();
 
                 paramShredding.shred(source, target);
+
+                try {
+                    final IDatabase database = Database.openDatabase(target);
+                    final ISession session = database.getSession();
+                    final IReadTransaction rtx = session.beginReadTransaction();
+                    final long rev = rtx.getRevisionNumber();
+                    rtx.close();
+                    session.close();
+                    database.close();
+                    paramGUI.execute(target, rev);
+                } catch (final TTException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                }
             }
         }
     }

@@ -150,7 +150,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     transient float mLeafArcScale = 1.0f;
 
     /** {@link AbsModel}. */
-    transient AbsModel mModel;
+    transient static AbsModel mModel;
 
     /** Current angle of the mouse cursor to y axis. */
     transient float mAngle;
@@ -271,12 +271,14 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     static SunburstGUI getInstance(final PApplet paramParentApplet, final AbsModel paramModel,
         final ReadDB paramReadDB) {
-        if (mGUI == null) {
+        if (mGUI == null || !paramModel.equals(mModel)) {
             synchronized (SunburstGUI.class) {
-                if (mGUI == null) {
+                if (mGUI == null || !paramReadDB.equals(mModel)) {
+//                    final boolean init = mGUI == null ? true : false;
                     mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
-                    mGUI.mDone = false;
-                    mGUI.mUseDiffView = false;
+//                    if (init) {
+                        mGUI.setupGUI();
+//                    }
                 }
             }
         }
@@ -284,7 +286,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     }
 
     /** Initial setup of the GUI. */
-    public void setupGUI() {
+    private void setupGUI() {
         mParent.noLoop();
         final int activeColor = mParent.color(0, 130, 164);
         mControlP5 = new ControlP5(mParent);

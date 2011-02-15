@@ -18,17 +18,10 @@ package com.treetank.gui.view.sunburst;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstItem.EStructType;

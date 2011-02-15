@@ -102,6 +102,8 @@ enum EShredder {
                 executor.shutdown();
                 executor.awaitTermination(5, TimeUnit.SECONDS);
                 wtx.close();
+                
+                
                 session.close();
                 database.close();
             } catch (final InterruptedException e) {
@@ -129,9 +131,9 @@ enum EShredder {
      * Shred XML file.
      * 
      * @param paramSource
-     *            Source XML file.
+     *            source XML file
      * @param paramTarget
-     *            Target folder.
+     *            target folder
      * @return true if successfully shreddered, false otherwise
      */
     abstract boolean shred(final File paramSource, final File paramTarget);

@@ -22,8 +22,6 @@ import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.concurrent.Semaphore;
 
 import javax.swing.JComponent;
@@ -133,7 +131,7 @@ public final class SunburstView extends JScrollPane implements IView {
      * 
      * @param paramNotifier
      *            {@link ViewNotifier} to notify views of changes etc.pp.
-     * @return {@link SunburstView} instance.
+     * @return {@link SunburstView} instance
      */
     public static synchronized SunburstView getInstance(final ViewNotifier paramNotifier) {
         if (mView == null) {
@@ -241,6 +239,7 @@ public final class SunburstView extends JScrollPane implements IView {
         @Override
         public void setup() {
             if (mGUI != null) {
+//                mGUI.setupGUI();
                 mGUI.mDone = false;
             }
             size(1280, 900);
@@ -262,7 +261,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void mouseEntered(final MouseEvent paramEvent) {
-            if (mGUI != null) {
+            if (mGUI != null && mGUI.mDone) {
                 mLock.tryAcquire();
                 mGUI.mouseEntered(paramEvent);
                 handleHLWeight();
@@ -273,7 +272,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void mouseExited(final MouseEvent paramEvent) {
-            if (mGUI != null) {
+            if (mGUI != null && mGUI.mDone) {
                 mLock.tryAcquire();
                 mGUI.mouseExited(paramEvent);
                 handleHLWeight();
@@ -328,7 +327,8 @@ public final class SunburstView extends JScrollPane implements IView {
 
                 // Create GUI.
                 mGUI = SunburstGUI.getInstance(this, mModel, mDB);
-                mGUI.setupGUI();
+                mGUI.mDone = false;
+                mGUI.mUseDiffView = false;
 
                 // Traverse.
                 handleHLWeight();
