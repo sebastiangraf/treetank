@@ -95,6 +95,7 @@ public final class ReadDB {
                 mRtx = mDatabase.getSession().beginReadTransaction(paramRevision);
             }
             mRtx.moveTo(paramNodekeyToStart);
+            mRevision = mRtx.getRevisionNumber();
         } catch (final TTException e) {
             LOGWRAPPER.error("TreetankException: " + e.getMessage(), e);
         }
@@ -132,13 +133,7 @@ public final class ReadDB {
      * @return current revision number or 0 if a TreetankIOException occured
      */
     public long getRevisionNumber() {
-        long retVal = 0;
-        try {
-            retVal = mRtx.getRevisionNumber();
-        } catch (final TTIOException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
-        return retVal;
+        return mRevision;
     }
 
     /**
