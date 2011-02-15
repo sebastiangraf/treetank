@@ -75,9 +75,10 @@ public enum GUICommands implements IGUICommand {
             final JPanel panel = new JPanel();
             final BoxLayout box = new BoxLayout(panel, BoxLayout.Y_AXIS);
             panel.setLayout(box);
-            final BorderLayout layout = (BorderLayout)fc.getLayout();
-            final Component comp = layout.getLayoutComponent(BorderLayout.SOUTH);
-            panel.add(comp);
+//            final BorderLayout layout = (BorderLayout)fc.getLayout();
+//            final Component comp = layout.getLayoutComponent(BorderLayout.SOUTH);
+            
+            panel.add(fc);
             final JComboBox cb = new JComboBox();
 
             cb.addActionListener(new ActionListener() {
@@ -91,7 +92,7 @@ public enum GUICommands implements IGUICommand {
             });
 
             panel.add(cb);
-            fc.add(panel, BorderLayout.SOUTH);
+//            fc.add(panel, BorderLayout.SOUTH);
 
             final PropertyChangeListener changeListener = new PropertyChangeListener() {
                 @Override
