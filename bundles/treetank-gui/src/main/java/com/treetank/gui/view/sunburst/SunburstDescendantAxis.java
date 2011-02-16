@@ -82,9 +82,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
     /** The nodeKey of the next node to visit. */
     private transient long mNextKey;
 
-    /** Key of start node. */
-    private transient long mStartKey;
-
     /** Model which implements the method createSunburstItem(...) defined by {@link IModel}. */
     private transient IModel mModel;
 
@@ -129,7 +126,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
         } else {
             mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
         }
-        mStartKey = mNextKey;
         mExtensionStack = new Stack<Float>();
         mChildrenPerDepth = new Stack<Long>();
         mAngleStack = new Stack<Float>();

@@ -179,16 +179,17 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
         final AbsStructNode node = (AbsStructNode)mRtx.getNode();
         final EStructType structKind =
             node.hasFirstChild() ? EStructType.ISINNERNODE : EStructType.ISLEAFNODE;
-        long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
+        final long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
 
         // Calculate extension.
         float childExtension = 0f;
         if (childCountPerDepth == 0) {
-            final long key = mRtx.getNode().getNodeKey();
-            mRtx.moveToParent();
-            childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
-            childExtension = extension / (float)childCount;
-            mRtx.moveTo(key);
+//            final long key = mRtx.getNode().getNodeKey();
+//            mRtx.moveToParent();
+//            childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
+//            childExtension = extension / (float)childCount;
+//            mRtx.moveTo(key);
+            childExtension = extension;
         } else {
             childExtension = extension * (float)childCount / (float)childCountPerDepth;
         }
