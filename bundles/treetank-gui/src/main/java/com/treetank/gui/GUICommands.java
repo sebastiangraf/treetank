@@ -98,6 +98,9 @@ public enum GUICommands implements IGUICommand {
             final PropertyChangeListener changeListener = new PropertyChangeListener() {
                 @Override
                 public void propertyChange(final PropertyChangeEvent paramEvent) {
+                    // Clearing up the combobox
+                    cb.removeAllItems();
+                    
                     // Get last revision number from TT-storage.
                     final JFileChooser fileChooser = (JFileChooser)paramEvent.getSource();
                     final File tmpDir = fileChooser.getSelectedFile();
@@ -116,7 +119,6 @@ public enum GUICommands implements IGUICommand {
                         } catch (final TTException e) {
                             // Selected directory is not a Treetank storage.
                             error = true;
-                            cb.removeAllItems();
                         }
 
                         if (!error) {
