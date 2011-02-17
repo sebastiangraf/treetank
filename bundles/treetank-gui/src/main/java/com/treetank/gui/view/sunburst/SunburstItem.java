@@ -30,9 +30,9 @@ import processing.core.PGraphics;
  * <h1>SunburstItem</h1>
  * 
  * <p>
- * Represents the view and exactly one item in the Sunburst diagram. Note that this class is not immutable
- * (notably because {@link AbsNodes} and all subclasses can be modified), but since it's package private it
- * should be used in a convenient way.
+ * Represents one item in the Sunburst diagram. Note that this class is not immutable (notably because
+ * {@link AbsNodes} and all subclasses can be modified), but since it's package private it should be used in a
+ * convenient way.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
@@ -136,7 +136,7 @@ final class SunburstItem {
 
     /** Parent processing applet. */
     private final PApplet mParent;
-    
+
     /** Kind of diff. */
     private transient EDiff mDiff;
 
@@ -165,7 +165,7 @@ final class SunburstItem {
 
         /** Text string. */
         private transient String mText;
-        
+
         /** Kind of diff. */
         private transient EDiff mDiff;
 
@@ -240,7 +240,7 @@ final class SunburstItem {
             mText = paramText;
             return this;
         }
-        
+
         /**
          * Set kind of diff.
          * 
@@ -410,10 +410,10 @@ final class SunburstItem {
             mC1X = PApplet.cos(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
             mC1Y = PApplet.sin(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
 
-            mC2X = PApplet.cos(mGUI.mModel.getItem(mIndexToParent).mAngleCenter);
+            mC2X = PApplet.cos(SunburstGUI.mModel.getItem(mIndexToParent).mAngleCenter);
             mC2X *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
 
-            mC2Y = PApplet.sin(mGUI.mModel.getItem(mIndexToParent).mAngleCenter);
+            mC2Y = PApplet.sin(SunburstGUI.mModel.getItem(mIndexToParent).mAngleCenter);
             mC2Y *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
         }
     }
@@ -536,8 +536,8 @@ final class SunburstItem {
         if (mDepth > 0) {
             mParent.stroke(mLineCol);
             mParent.strokeWeight(mLineWeight);
-            mParent.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
-                mGUI.mModel.getItem(mIndexToParent).mY);
+            mParent.line(mX, mY, SunburstGUI.mModel.getItem(mIndexToParent).mX,
+                SunburstGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -552,8 +552,8 @@ final class SunburstItem {
                 mLineWeight *= -1;
             }
             mParent.strokeWeight(mLineWeight);
-            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
-                mGUI.mModel.getItem(mIndexToParent).mY);
+            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, SunburstGUI.mModel.getItem(mIndexToParent).mX,
+                SunburstGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -689,8 +689,8 @@ final class SunburstItem {
         if (mDepth > 0) {
             paramBuffer.stroke(mLineCol);
             paramBuffer.strokeWeight(mLineWeight);
-            paramBuffer.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
-                mGUI.mModel.getItem(mIndexToParent).mY);
+            paramBuffer.line(mX, mY, SunburstGUI.mModel.getItem(mIndexToParent).mX,
+                SunburstGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -708,8 +708,8 @@ final class SunburstItem {
                 mLineWeight *= -1;
             }
             paramBuffer.strokeWeight(mLineWeight);
-            paramBuffer.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
-                mGUI.mModel.getItem(mIndexToParent).mY);
+            paramBuffer.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, SunburstGUI.mModel.getItem(mIndexToParent).mX,
+                SunburstGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 

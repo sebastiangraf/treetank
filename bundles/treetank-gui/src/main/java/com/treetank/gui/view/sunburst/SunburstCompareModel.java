@@ -308,7 +308,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         // Set node relations.
         int actualDepth = depth;
         if (mDiff != EDiff.SAME && mDiff != EDiff.DONE && depth < mDepthMax) {
-            actualDepth = mDepthMax + 1;
+            actualDepth = mDepthMax + 2;
         }
         String text = null;
         if (mRtx.getNode().getKind() == ENodes.TEXT_KIND) {
