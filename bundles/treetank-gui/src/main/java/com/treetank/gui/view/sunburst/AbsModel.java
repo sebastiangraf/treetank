@@ -16,11 +16,7 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.*;
 
 import com.treetank.api.IReadTransaction;
@@ -298,12 +294,18 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         @Override
         public void run() {
             try {
-                final List<Long> nodeKeys = new LinkedList<Long>();
-                final AbsAxis axis = new XPathAxis(mRTX, mQuery);
+                final Set<Long> nodeKeys = new HashSet<Long>();
+                final XPathAxis axis = new XPathAxis(mRTX, mQuery);
 
+                // Save found node keys with descendants.
                 while (axis.hasNext()) {
                     axis.next();
-                    nodeKeys.add(mRTX.getNode().getNodeKey());
+                    final long key = axis.getTransaction().getNode().getNodeKey();
+                    nodeKeys.add(key);
+//                    for (final AbsAxis desc = new DescendantAxis(axis.getTransaction()); desc.hasNext(); desc.next()) {
+//                        nodeKeys.add(desc.getTransaction().getNode().getNodeKey());
+//                    }
+//                    axis.getTransaction().moveTo(key);
                 }
 
                 // Do the work.
@@ -343,7 +345,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         private final List<SunburstItem> mSunburstItems;
 
         /** {@link List} of node keys which are in the result. */
-        private final List<Long> mKeys;
+        private final Set<Long> mKeys;
 
         /**
          * Constructor.
@@ -353,7 +355,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
          * @param paramSublist
          *            Sublist which has to be searched for matches
          */
-        private XPathSublistEvaluation(final List<Long> paramNodeKeys, final List<SunburstItem> paramSublist) {
+        private XPathSublistEvaluation(final Set<Long> paramNodeKeys, final List<SunburstItem> paramSublist) {
             assert paramNodeKeys != null && paramSublist != null;
             mKeys = paramNodeKeys;
             mSunburstItems = paramSublist;
@@ -439,7 +441,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         public Integer call() throws Exception {
             int retVal = 0;
 
-            for (final AbsAxis axis = new DescendantAxis(mRTX, false); axis.hasNext(); axis.next()) {
+            for (final AbsAxis axis = new DescendantAxis(mRTX, true); axis.hasNext(); axis.next()) {
                 retVal++;
             }
 

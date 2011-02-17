@@ -69,16 +69,13 @@ public final class GUIConstants {
         MENUFILE, MENUVIEWS
     };
 
-//    /** Separator. */
-//    static final String SEPARATOR = "-";
-
     /** Two-dimensional Menu entries, containing the menu item commands. */
     static final Object[][] MENUITEMS = {
         {
             OPEN, SHREDDER, SHREDDER_UPDATE, SERIALIZE, SEPARATOR, QUIT
         }, {
-//            TREE, TEXT, TREEMAP, SUNBURST
-            SUNBURST
+            TREE, TEXT, TREEMAP, SUNBURST
+//            SUNBURST
         }
     };
 

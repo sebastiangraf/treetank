@@ -16,7 +16,10 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -24,6 +27,9 @@ import com.treetank.gui.view.sunburst.Item.Builder;
 import com.treetank.node.AbsStructNode;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 import processing.core.PConstants;
 
@@ -34,6 +40,11 @@ import processing.core.PConstants;
  * 
  */
 public final class SunburstDescendantAxis extends AbsAxis {
+
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(SunburstDescendantAxis.class));
+
     /** Extension stack. */
     private transient Stack<Float> mExtensionStack;
 
@@ -45,6 +56,9 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** Parent stack. */
     private transient Stack<Integer> mParentStack;
+
+    /** Descendants stack. */
+    private transient Stack<Integer> mDescendantsStack;
 
     /** Determines movement of transaction. */
     private transient EMoved mMoved;
@@ -60,6 +74,12 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** Depth in the tree starting at 0. */
     private transient int mDepth;
+
+    /** Parent descendant count. */
+    private transient int mParDescendantCount;
+
+    /** Descendant count. */
+    private transient int mDescendantCount;
 
     /** Start angle. */
     private transient float mAngle;
@@ -84,6 +104,9 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** Model which implements the method createSunburstItem(...) defined by {@link IModel}. */
     private transient IModel mModel;
+
+    /** {@link List} of {@link Future}s which hold the number of descendants. */
+    private transient List<Future<Integer>> mDescendants;
 
     /**
      * Constructor initializing internal state.
@@ -112,6 +135,15 @@ public final class SunburstDescendantAxis extends AbsAxis {
         final AbsModel paramModel) {
         super(paramRtx, mIncludeSelf);
         mModel = paramModel;
+        try {
+            mDescendants = mModel.getDescendants(getTransaction());
+            mParDescendantCount = mDescendants.get(mIndex + 1).get();
+            mDescendantCount = mParDescendantCount;
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final ExecutionException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
     }
 
     /**
@@ -130,6 +162,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
         mChildrenPerDepth = new Stack<Long>();
         mAngleStack = new Stack<Float>();
         mParentStack = new Stack<Integer>();
+        mDescendantsStack = new Stack<Integer>();
         mAngle = 0F;
         mDepth = 0;
         mChildCountPerDepth = ((AbsStructNode)getTransaction().getNode()).getChildCount();
@@ -177,6 +210,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
             mExtensionStack.push(mChildExtension);
             mParentStack.push(mIndex);
             mChildrenPerDepth.push(mChildCountPerDepth);
+            mDescendantsStack.push(mDescendantCount);
             mDepth++;
             mMoved = EMoved.CHILD;
 
@@ -218,6 +252,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
                         mExtensionStack.pop();
                         mChildrenPerDepth.pop();
                         mParentStack.pop();
+                        mDescendantsStack.pop();
                     }
 
                     getTransaction().moveToParent();
@@ -240,13 +275,23 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** Process movement. */
     private void processMove() {
-        mBuilder.set(mAngle, mExtension, mIndexToParent).setChildCountPerDepth(mChildCountPerDepth).set();
-        mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mChildrenPerDepth,
-            mParentStack);
-        mAngle = mItem.mAngle;
-        mExtension = mItem.mExtension;
-        mChildCountPerDepth = mItem.mChildCountPerDepth;
-        mIndexToParent = mItem.mIndexToParent;
+        try {
+            mBuilder.set(mAngle, mExtension, mIndexToParent).setChildCountPerDepth(mChildCountPerDepth)
+                .setParentDescendantCount(mParDescendantCount)
+                .setDescendantCount(mDescendants.get(mIndex + 1).get()).set();
+            mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mChildrenPerDepth,
+                mParentStack, mDescendantsStack);
+            mAngle = mItem.mAngle;
+            mExtension = mItem.mExtension;
+            mChildCountPerDepth = mItem.mChildCountPerDepth;
+            mIndexToParent = mItem.mIndexToParent;
+            mParDescendantCount = mItem.mParentDescendantCount;
+            mDescendantCount = mItem.mDescendantCount;
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final ExecutionException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
         mIndex++;
     }
 }

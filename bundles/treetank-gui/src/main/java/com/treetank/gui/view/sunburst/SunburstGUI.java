@@ -848,7 +848,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                             final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, mWtx, mDb);
                             menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
                         } catch (final TTException e) {
-                            // TODO
+                            LOGWRAPPER.error(e.getMessage(), e);
                         }
 
                         break;

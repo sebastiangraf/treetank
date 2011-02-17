@@ -18,11 +18,8 @@ package com.treetank.gui.view.sunburst;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstItem.EStructType;
 import com.treetank.node.AbsStructNode;
@@ -136,28 +133,28 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
             // Remove all elements from item list.
             mItems.clear();
 
-            try {
-                // Get min and max textLength.
-                getMinMaxTextLength(mRtx);
+            // try {
+            // Get min and max textLength.
+            getMinMaxTextLength(mRtx);
 
-                // Get list of descendants per node.
-                final IReadTransaction rtx = mSession.beginReadTransaction(mRtx.getRevisionNumber());
-                rtx.moveTo(mRtx.getNode().getNodeKey());
-                mDescendants = getDescendants(rtx);
+            // // Get list of descendants per node.
+            // final IReadTransaction rtx = mSession.beginReadTransaction(mRtx.getRevisionNumber());
+            // rtx.moveTo(mRtx.getNode().getNodeKey());
+            // mDescendants = getDescendants(rtx);
 
-                // Iterate over nodes and perform appropriate stack actions internally.
-                for (final AbsAxis axis = new SunburstDescendantAxis(mRtx, true, mModel); axis.hasNext(); axis
-                    .next()) {
-                }
-
-                rtx.close();
-            } catch (final InterruptedException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final ExecutionException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final TTException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
+            // Iterate over nodes and perform appropriate stack actions internally.
+            for (final AbsAxis axis = new SunburstDescendantAxis(mRtx, true, mModel); axis.hasNext(); axis
+                .next()) {
             }
+
+            // rtx.close();
+            // } catch (final InterruptedException e) {
+            // LOGWRAPPER.error(e.getMessage(), e);
+            // } catch (final ExecutionException e) {
+            // LOGWRAPPER.error(e.getMessage(), e);
+            // } catch (final TTException e) {
+            // LOGWRAPPER.error(e.getMessage(), e);
+            // }
 
             firePropertyChange("maxDepth", null, mDepthMax);
             firePropertyChange("done", null, true);
@@ -169,31 +166,40 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
     public float createSunburstItem(final Item paramItem, final int paramDepth, final int paramIndex) {
         // Initialize variables.
         final float angle = paramItem.mAngle;
-        final long childCountPerDepth = paramItem.mChildCountPerDepth;
+//        final long childCountPerDepth = paramItem.mChildCountPerDepth;
         final float extension = paramItem.mExtension;
         final int indexToParent = paramItem.mIndexToParent;
+        final int descendantCount = paramItem.mDescendantCount;
+        final int parDescendantCount = paramItem.mParentDescendantCount;
         final int depth = paramDepth;
-        final int index = paramIndex;
+//        final int index = paramIndex;
 
         // Add a sunburst item.
         final AbsStructNode node = (AbsStructNode)mRtx.getNode();
         final EStructType structKind =
             node.hasFirstChild() ? EStructType.ISINNERNODE : EStructType.ISLEAFNODE;
-        final long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
+//        final long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
 
         // Calculate extension.
+        // float childExtension = 0f;
+        // if (childCountPerDepth == 0) {
+        // // final long key = mRtx.getNode().getNodeKey();
+        // // mRtx.moveToParent();
+        // // childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
+        // // childExtension = extension / (float)childCount;
+        // // mRtx.moveTo(key);
+        // childExtension = extension;
+        // } else {
+        // childExtension = extension * (float)childCount / (float)childCountPerDepth;
+        // }
+        
+        // Calculate extension. 
         float childExtension = 0f;
-        if (childCountPerDepth == 0) {
-//            final long key = mRtx.getNode().getNodeKey();
-//            mRtx.moveToParent();
-//            childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
-//            childExtension = extension / (float)childCount;
-//            mRtx.moveTo(key);
-            childExtension = extension;
+        if (depth > 0) {
+            childExtension = extension * (float)descendantCount / ((float)parDescendantCount - 1f);
         } else {
-            childExtension = extension * (float)childCount / (float)childCountPerDepth;
+            childExtension = extension * (float)descendantCount / (float)parDescendantCount;
         }
-
         LOGWRAPPER.debug("indexToParent: " + indexToParent);
 
         // Set node relations.
@@ -203,14 +209,7 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
                 mMaxTextLength, indexToParent);
             text = mRtx.getValueOfCurrentNode();
         } else {
-            try {
-                mRelations.setAll(depth, structKind, mDescendants.get(index).get(), 0, mMaxDescendantCount,
-                    indexToParent);
-            } catch (final InterruptedException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final ExecutionException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-            }
+            mRelations.setAll(depth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
         }
 
         // Build item.

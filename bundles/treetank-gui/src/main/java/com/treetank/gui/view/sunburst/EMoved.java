@@ -37,7 +37,8 @@ enum EMoved {
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack) {
+            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramDescendantsStack) {
             // Do nothing.
         }
 
@@ -61,7 +62,8 @@ enum EMoved {
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack) {
+            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramDescendantsStack) {
             assert !paramAngleStack.empty();
             paramItem.mAngle = paramAngleStack.peek();
             assert !paramExtensionStack.empty();
@@ -70,6 +72,8 @@ enum EMoved {
             paramItem.mChildCountPerDepth = childCountPerDepth(paramRtx);
             assert !paramParentStack.empty();
             paramItem.mIndexToParent = paramParentStack.peek();
+            assert !paramDescendantsStack.empty();
+            paramItem.mParentDescendantCount = paramDescendantsStack.peek();
         }
 
         /**
@@ -101,7 +105,8 @@ enum EMoved {
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack) {
+            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramDescendantsStack) {
             assert !paramAngleStack.empty();
             paramItem.mAngle = paramAngleStack.pop();
             assert !paramExtensionStack.empty();
@@ -114,6 +119,10 @@ enum EMoved {
             paramItem.mIndexToParent = paramParentStack.peek();
             assert !paramChildrenPerDepth.empty();
             paramItem.mChildCountPerDepth = paramChildrenPerDepth.pop();
+            assert !paramDescendantsStack.empty();
+            paramDescendantsStack.pop();
+            assert !paramDescendantsStack.empty();
+            paramItem.mParentDescendantCount = paramDescendantsStack.peek();
         }
 
         /**
@@ -156,10 +165,13 @@ enum EMoved {
      *            stack for children per depth
      * @param paramParentStack
      *            stack for parent indexes
+     * @param paramDescendantsStack
+     *            stack for descendants
      */
     abstract void processMove(final IReadTransaction paramRtx, final Item paramItem,
         final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-        final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack);
+        final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack,
+        final Stack<Integer> paramDescendantsStack);
 
     /**
      * Process movement of Treetank {@link IReadTransaction}, while comparing revisions.
@@ -189,7 +201,7 @@ enum EMoved {
      * is that it must be called on the first child node.
      * 
      * @param paramRtx
-     *            Treetank {@link IReadTransaction}.
+     *            Treetank {@link IReadTransaction}
      * @return child count per depth
      */
     private static long childCountPerDepth(final IReadTransaction paramRtx) {

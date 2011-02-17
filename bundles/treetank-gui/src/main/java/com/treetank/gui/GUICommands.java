@@ -98,9 +98,9 @@ public enum GUICommands implements IGUICommand {
             final PropertyChangeListener changeListener = new PropertyChangeListener() {
                 @Override
                 public void propertyChange(final PropertyChangeEvent paramEvent) {
-                    // Clearing up the combobox
+                    // Remove items first.
                     cb.removeAllItems();
-                    
+
                     // Get last revision number from TT-storage.
                     final JFileChooser fileChooser = (JFileChooser)paramEvent.getSource();
                     final File tmpDir = fileChooser.getSelectedFile();
