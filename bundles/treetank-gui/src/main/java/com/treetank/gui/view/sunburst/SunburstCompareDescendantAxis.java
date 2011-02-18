@@ -461,7 +461,23 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             getTransaction().moveTo(nodeKey);
         }
 
-        // This means that if no differences are encountered 1 is returned.
-        return diffCounts + 1;
+        boolean moved = false;
+        if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND
+            && ((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
+            moved = getTransaction().moveToFirstChild();
+        }
+
+        int retVal;
+        final AbsStructNode node = (AbsStructNode)getTransaction().getNode();
+        if (node.hasFirstChild() && node.getKind() != ENodes.ROOT_KIND) {
+            retVal = diffCounts + (int)node.getChildCount();
+        } else {
+            retVal = diffCounts + 1;
+        }
+
+        if (moved) {
+            getTransaction().moveToParent();
+        }
+        return retVal;
     }
 }
