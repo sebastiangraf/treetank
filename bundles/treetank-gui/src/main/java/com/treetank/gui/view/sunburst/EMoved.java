@@ -82,18 +82,18 @@ enum EMoved {
         @Override
         void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Integer> paramDescendants, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramDescendantsStack, final Stack<Integer> paramParentStack,
             final Stack<Integer> paramModificationStack) {
             assert !paramAngleStack.empty();
             paramItem.mAngle = paramAngleStack.peek();
             assert !paramExtensionStack.empty();
             paramItem.mExtension = paramExtensionStack.peek();
-            assert !paramDescendants.empty();
-            paramItem.mDescendantCount = paramDescendants.peek();
+            assert !paramDescendantsStack.empty();
+            paramItem.mParentDescendantCount = paramDescendantsStack.peek();
             assert !paramParentStack.empty();
             paramItem.mIndexToParent = paramParentStack.peek();
             assert !paramModificationStack.empty();
-            paramItem.mModificationCount = paramModificationStack.peek();
+            paramItem.mParentModificationCount = paramModificationStack.peek();
         }
     },
 
@@ -131,7 +131,7 @@ enum EMoved {
         @Override
         void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Integer> paramDescendants, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramDescendantsStack, final Stack<Integer> paramParentStack,
             final Stack<Integer> paramModificationStack) {
             assert !paramAngleStack.empty();
             paramItem.mAngle = paramAngleStack.pop();
@@ -143,10 +143,14 @@ enum EMoved {
             paramParentStack.pop();
             assert !paramParentStack.empty();
             paramItem.mIndexToParent = paramParentStack.peek();
-            assert !paramDescendants.empty();
-            paramItem.mDescendantCount = paramDescendants.pop();
+            assert !paramDescendantsStack.empty();
+            paramDescendantsStack.pop();
+            assert !paramDescendantsStack.empty();
+            paramItem.mParentDescendantCount = paramDescendantsStack.peek();
             assert !paramModificationStack.empty();
-            paramItem.mModificationCount = paramModificationStack.pop();
+            paramModificationStack.pop();
+            assert !paramModificationStack.empty();
+            paramItem.mModificationCount = paramModificationStack.peek();
         }
     };
 
@@ -184,7 +188,7 @@ enum EMoved {
      *            stack for angles
      * @param paramExtensionStack
      *            stack for extensions
-     * @param paramDescendants
+     * @param paramDescendantsStack
      *            stack for descendants
      * @param paramParentStack
      *            stack for parent indexes
@@ -193,7 +197,7 @@ enum EMoved {
      */
     abstract void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
         final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-        final Stack<Integer> paramDescendants, final Stack<Integer> paramParentStack,
+        final Stack<Integer> paramDescendantsStack, final Stack<Integer> paramParentStack,
         final Stack<Integer> paramModificationStack);
 
     /**

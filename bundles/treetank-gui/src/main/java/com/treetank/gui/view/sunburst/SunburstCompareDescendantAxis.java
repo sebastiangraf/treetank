@@ -26,6 +26,7 @@ import com.treetank.axis.AbsAxis;
 import com.treetank.diff.EDiff;
 import com.treetank.gui.view.sunburst.Item.Builder;
 import com.treetank.node.AbsStructNode;
+import com.treetank.node.ENodes;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.LogWrapper;
@@ -118,6 +119,18 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** {@link List} of {@link Future}s which hold the number of descendants. */
     private transient List<Future<Integer>> mDescendants;
 
+    /** Maximum depth in old revision. */
+    private transient int mMaxDepth;
+
+    /** Temporal depth. */
+    private transient int mTempDepth;
+
+    /** Current diff. */
+    private transient EDiff mDiff;
+
+    /** Last diff. */
+    private transient EDiff mLastDiff;
+
     /**
      * Constructor initializing internal state.
      * 
@@ -148,13 +161,29 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      *            {@link IReadTransaction} on old revision
      * @param paramDiffs
      *            {@link List} of {@link EDiff}s
+     * @param paramMaxDepth
+     *            maximum depth in old revision
      */
     public SunburstCompareDescendantAxis(final boolean mIncludeSelf, final IModel paramModel,
-        final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx, final List<EDiff> paramDiffs) {
+        final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx, final List<EDiff> paramDiffs,
+        final int paramMaxDepth) {
         super(paramNewRtx, mIncludeSelf);
         mModel = paramModel;
         mDiffs = paramDiffs;
         mOldRtx = paramOldRtx;
+        try {
+            mDescendants = mModel.getDescendants(getTransaction());
+            mParentDescendantCount = mDescendants.get(mIndex + 1).get();
+            mDescendantCount = mParentDescendantCount;
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final ExecutionException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
+
+        mParentModificationCount = countDiffs();
+        mModificationCount = mParentModificationCount;
+        mMaxDepth = paramMaxDepth;
     }
 
     /**
@@ -176,8 +205,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         mDiffStack = new Stack<Integer>();
         mAngle = 0F;
         mDepth = 0;
-        mModificationCount = 0;
-        mParentModificationCount = 0;
         mDescendantCount = 0;
         mParentDescendantCount = 0;
         mMoved = EMoved.STARTRIGHTSIBL;
@@ -187,13 +214,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         mIndex = -1;
         mItem = Item.ITEM;
         mBuilder = Item.BUILDER;
-        try {
-            mDescendants = mModel.getDescendants(getTransaction());
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final ExecutionException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
     }
 
     /**
@@ -204,11 +224,15 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         resetToLastKey();
 
         // Check for deletions.
-        if (!mDiffs.isEmpty()) {
-            final EDiff diff = mDiffs.remove(0);
-            if (diff == EDiff.DELETED) {
+        if (!mDiffs.isEmpty() && mNextKey != 0) {
+            mDiff = mDiffs.remove(0);
+            if (mDiff == EDiff.DELETED) {
+                if (mLastDiff == EDiff.SAME) {
+                    mTempDepth = mDepth;
+                    mDepth = mMaxDepth + 2;
+                }
                 // FIXME
-                mOldRtx.moveTo(diff.getNode().getNodeKey());
+                mOldRtx.moveTo(mDiff.getNode().getNodeKey());
                 if (getTransaction().getNode().getNodeKey() == mOldRtx.getNode().getParentKey()) {
                     mModificationCount = countDiffs();
                     mParentModificationCount = mDiffStack.peek();
@@ -226,7 +250,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                     mIndex++;
                 } else if (getTransaction().getNode().getNodeKey() == ((AbsStructNode)mOldRtx.getNode())
                     .getLeftSiblingKey()) {
-                    
+
                 }
                 mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
                 return true;
@@ -254,24 +278,20 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mRightSiblingKeyStack.push(((AbsStructNode)getTransaction().getNode()).getRightSiblingKey());
             }
 
-            processMove();
-            mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+            if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
+                processMove();
+                mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
-            final int diffCounts = countDiffs();
-            mDiffStack.push(diffCounts);
-            mAngleStack.push(mAngle);
-            mExtensionStack.push(mExtension);
-            mParentStack.push(mIndex);
-            try {
-                mDescendantsStack.push(mDescendants.get(mIndex).get());
-            } catch (final InterruptedException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final ExecutionException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
+                mDiffStack.push(mModificationCount);
+                mAngleStack.push(mAngle);
+                mExtensionStack.push(mExtension);
+                mParentStack.push(mIndex);
+                mDescendantsStack.push(mDescendantCount);
+
+                calculateDepth();
+                mDepth++;
+                mMoved = EMoved.CHILD;
             }
-
-            mDepth++;
-            mMoved = EMoved.CHILD;
 
             return true;
         }
@@ -284,6 +304,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
             mAngle += mExtension;
+            calculateDepth();
             mMoved = EMoved.STARTRIGHTSIBL;
 
             return true;
@@ -330,12 +351,32 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         return true;
     }
 
+    /**
+     * Calculates new depth when same nodes have been encountered before and now an insert or rename occurs.
+     */
+    private void calculateDepth() {
+        if ((mDiff == EDiff.INSERTED || mDiff == EDiff.RENAMED) && mLastDiff == EDiff.SAME) {
+            mTempDepth = mDepth;
+            mDepth = mMaxDepth + 2;
+        } else if (mDiff == EDiff.SAME
+            && (mLastDiff == EDiff.INSERTED || mLastDiff == EDiff.RENAMED || mLastDiff == EDiff.DELETED)) {
+            mDepth = mTempDepth;
+        }
+    }
+
     /** Process movement. */
     private void processMove() {
-        mBuilder.set(mAngle, mParExtension, mIndexToParent).setDescendantCount(mDescendantCount)
-            .setParentDescendantCount(mParentDescendantCount).setModificationCount(mModificationCount)
-            .setParentModificationCount(mParentModificationCount).set();
-        mMoved.processCompareMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mParentStack,
+        try {
+            mBuilder.set(mAngle, mParExtension, mIndexToParent)
+                .setDescendantCount(mDescendants.get(mIndex + 1).get())
+                .setParentDescendantCount(mParentDescendantCount).setModificationCount(countDiffs())
+                .setParentModificationCount(mParentModificationCount).set();
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final ExecutionException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
+        mMoved.processCompareMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mDescendantsStack,
             mParentStack, mDiffStack);
         mModificationCount = mItem.mModificationCount;
         mParentModificationCount = mItem.mParentModificationCount;
@@ -357,7 +398,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * @return modified diff counter
      */
     private int incrDiffCounter(final int paramIndex, int paramDiffCounts) {
-        final EDiff intermDiff = mDiffs.get(paramIndex);
+        final EDiff intermDiff =
+            paramIndex == 0 ? (mDiff == null ? mDiffs.get(paramIndex) : mDiff) : mDiffs.get(paramIndex);
         if (intermDiff != EDiff.SAME && intermDiff != EDiff.DONE) {
             paramDiffCounts++;
         }
@@ -367,38 +409,59 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /**
      * Count how many differences in the subtree exists.
      * 
-     * @return number of differences
+     * @return number of differences plus one
      */
     private int countDiffs() {
         int index = 0;
         int diffCounts = 0;
         final long nodeKey = getTransaction().getNode().getNodeKey();
-        do {
-            boolean done = false;
-            diffCounts = incrDiffCounter(index++, diffCounts);
-            if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
-                getTransaction().moveToFirstChild();
-                diffCounts = incrDiffCounter(index++, diffCounts);
-            } else if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
-                getTransaction().moveToRightSibling();
-                diffCounts = incrDiffCounter(index++, diffCounts);
-            } else {
-                do {
-                    if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                        && getTransaction().getNode().getNodeKey() != nodeKey) {
-                        getTransaction().moveToParent();
-                    } else {
-                        done = true;
-                        break;
-                    }
-                } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
-                if (!done) {
+        if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND) {
+            getTransaction().moveToFirstChild();
+        }
+
+        diffCounts = incrDiffCounter(index, diffCounts);
+        if (mDiff == null) {
+            index++;
+        }
+        boolean done = false;
+
+        if (index < mDiffs.size()) {
+            do {
+                if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
+                    getTransaction().moveToFirstChild();
+                    diffCounts = incrDiffCounter(index, diffCounts);
+                    index++;
+                } else if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
                     getTransaction().moveToRightSibling();
-                    diffCounts = incrDiffCounter(index++, diffCounts);
+                    diffCounts = incrDiffCounter(index, diffCounts);
+                    index++;
+                } else {
+                    boolean first = true;
+                    do {
+                        if (((AbsStructNode)getTransaction().getNode()).hasParent()
+                            && getTransaction().getNode().getNodeKey() != nodeKey) {
+                            if (first) {
+                                // Do not pop from stack if it's a leaf node.
+                                first = false;
+                            } else {
+                                getTransaction().moveToParent();
+                            }
+                        } else {
+                            done = true;
+                            break;
+                        }
+                    } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
+                    if (!done) {
+                        getTransaction().moveToRightSibling();
+                        diffCounts = incrDiffCounter(index, diffCounts);
+                        index++;
+                    }
                 }
-            }
-        } while (getTransaction().getNode().getNodeKey() != nodeKey);
-        getTransaction().moveTo(nodeKey);
-        return diffCounts;
+            } while (getTransaction().getNode().getNodeKey() != nodeKey && !done);
+            getTransaction().moveTo(nodeKey);
+        }
+
+        // This means that if no differences are encountered 1 is returned.
+        return diffCounts + 1;
     }
 }
