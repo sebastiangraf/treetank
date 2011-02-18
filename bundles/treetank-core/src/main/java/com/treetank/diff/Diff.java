@@ -145,6 +145,15 @@ final class Diff implements IExpression {
     /** {@inheritDoc} */
     @Override
     public void evaluate() {
+        // Check first nodes.
+        if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND) {
+            if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
+                mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
+            } else {
+                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx, mDepth);
+            }
+        }
+
         // Iterate over new revision.
         while (mDiff == EDiff.DELETED || moveCursor(mNewRtx, ERevision.NEW)) {
             if (mDiff != EDiff.INSERTED) {
@@ -159,11 +168,13 @@ final class Diff implements IExpression {
         }
 
         // Nodes deleted in old rev at the end of the tree.
-        while (moveCursor(mOldRtx, ERevision.OLD)) {
-            if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
-            } else {
-                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx, mDepth);
+        if (mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
+            while (moveCursor(mOldRtx, ERevision.OLD)) {
+                if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
+                    mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
+                } else {
+                    mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx, mDepth);
+                }
             }
         }
 
@@ -199,10 +210,10 @@ final class Diff implements IExpression {
             moved = paramRtx.moveToRightSibling();
         } else {
             do {
-//                if (paramRtx.getNode().getNodeKey() == (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
-//                    moved = false;
-//                    break;
-//                }
+                // if (paramRtx.getNode().getNodeKey() == (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
+                // moved = false;
+                // break;
+                // }
                 moved = paramRtx.moveToParent();
                 if (moved) {
                     paramRevision.decrementDepth(mDepth);

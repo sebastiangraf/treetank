@@ -20,11 +20,7 @@ import java.util.Set;
 
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
-import com.treetank.exception.TTException;
 import com.treetank.node.AbsStructNode;
-import com.treetank.utils.LogWrapper;
-
-import org.slf4j.LoggerFactory;
 
 /**
  * Structural diff, thus no attributes and namespace nodes are taken into account. Note that this class is
@@ -34,10 +30,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 final class StructuralDiff extends AbsDiff implements IDiff {
-
-    /** Logger. */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(StructuralDiff.class));
 
     /**
      * Constructor.
