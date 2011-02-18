@@ -51,7 +51,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
 
     /** {@link List} of descendants of every node. */
     transient List<Future<Integer>> mDescendants;
-    
+
     /** Semaphore to guarantee mutual exclusion for all methods. */
     transient Semaphore mLock = new Semaphore(1);
 
@@ -84,13 +84,13 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
 
     /** Get maximum depth in the (sub)tree. */
     transient int mDepthMax;
-    
+
     /** Minimum text length. */
     transient int mMinTextLength = Integer.MAX_VALUE;
 
     /** Maximum text length. */
     transient int mMaxTextLength = Integer.MIN_VALUE;
-    
+
     /** Index of the current {@link SunburstItem} for the iterator. */
     private transient int mIndex;
 
@@ -173,7 +173,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     public SunburstItem getItem(final int paramIndex) throws IndexOutOfBoundsException {
         return mItems.get(paramIndex);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public boolean hasNext() {
@@ -216,13 +216,13 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         throw new UnsupportedOperationException("Remove operation not supported!");
 
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Iterator<SunburstItem> iterator() {
         return mItems.iterator();
     }
-    
+
     /**
      * Get minimum and maximum global text length.
      * 
@@ -303,10 +303,11 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                     axis.next();
                     final long key = axis.getTransaction().getNode().getNodeKey();
                     nodeKeys.add(key);
-//                    for (final AbsAxis desc = new DescendantAxis(axis.getTransaction()); desc.hasNext(); desc.next()) {
-//                        nodeKeys.add(desc.getTransaction().getNode().getNodeKey());
-//                    }
-//                    axis.getTransaction().moveTo(key);
+                    // for (final AbsAxis desc = new DescendantAxis(axis.getTransaction()); desc.hasNext();
+                    // desc.next()) {
+                    // nodeKeys.add(desc.getTransaction().getNode().getNodeKey());
+                    // }
+                    // axis.getTransaction().moveTo(key);
                 }
 
                 // Do the work.
@@ -379,7 +380,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             }
         }
     }
-    
+
     /**
      * Get a list of descendants per node.
      * 
@@ -402,19 +403,21 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         boolean firstNode = true;
         for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-            final Future<Integer> submit = executor.submit(new Descendants(paramRtx));
+            if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
+                final Future<Integer> submit = executor.submit(new Descendants(paramRtx));
 
-            if (firstNode) {
-                firstNode = false;
-                mMaxDescendantCount = submit.get();
+                if (firstNode) {
+                    firstNode = false;
+                    mMaxDescendantCount = submit.get();
+                }
+                descendants.add(submit);
             }
-            descendants.add(submit);
         }
         executor.shutdown();
 
         return descendants;
     }
-    
+
     /** Counts descendants. */
     final class Descendants implements Callable<Integer> {
         /** Treetank {@link IReadTransaction}. */

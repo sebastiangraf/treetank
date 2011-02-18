@@ -300,14 +300,19 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             extension =
                 mModWeight * (parExtension * (float)descendantCount / ((float)parentDescCount - 1f))
                     + (1 - mModWeight)
-                    * (parExtension * (float)modificationCount / (float)parentModificationCount - 1f);
+                    * (parExtension * (float)modificationCount / (float)parentModificationCount);
         } else {
             extension =
                 mModWeight * (parExtension * (float)descendantCount / (float)parentDescCount)
                     + (1 - mModWeight)
                     * (parExtension * (float)modificationCount / (float)parentModificationCount);
         }
+        LOGWRAPPER.debug("modificationCount: " + modificationCount);
+        LOGWRAPPER.debug("parentModificationCount: " + parentModificationCount);
+        LOGWRAPPER.debug("descendantCount: " + descendantCount);
+        LOGWRAPPER.debug("parentDescCount: " + parentDescCount);
         LOGWRAPPER.debug("indexToParent: " + indexToParent);
+        LOGWRAPPER.debug("extension: " + extension);
 
         // Set node relations.
         String text = null;
