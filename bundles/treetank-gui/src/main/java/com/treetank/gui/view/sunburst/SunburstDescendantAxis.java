@@ -279,19 +279,19 @@ public final class SunburstDescendantAxis extends AbsAxis {
             mBuilder.set(mAngle, mExtension, mIndexToParent).setChildCountPerDepth(mChildCountPerDepth)
                 .setParentDescendantCount(mParDescendantCount)
                 .setDescendantCount(mDescendants.get(mIndex + 1).get()).set();
-            mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mChildrenPerDepth,
-                mParentStack, mDescendantsStack);
-            mAngle = mItem.mAngle;
-            mExtension = mItem.mExtension;
-            mChildCountPerDepth = mItem.mChildCountPerDepth;
-            mIndexToParent = mItem.mIndexToParent;
-            mParDescendantCount = mItem.mParentDescendantCount;
-            mDescendantCount = mItem.mDescendantCount;
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final ExecutionException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
+        mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mChildrenPerDepth,
+            mParentStack, mDescendantsStack);
+        mAngle = mItem.mAngle;
+        mExtension = mItem.mExtension;
+        mChildCountPerDepth = mItem.mChildCountPerDepth;
+        mIndexToParent = mItem.mIndexToParent;
+        mParDescendantCount = mItem.mParentDescendantCount;
+        mDescendantCount = mItem.mDescendantCount;
         mIndex++;
     }
 }

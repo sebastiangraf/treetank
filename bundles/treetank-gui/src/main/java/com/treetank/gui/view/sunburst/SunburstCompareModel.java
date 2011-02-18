@@ -62,6 +62,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
     /** Weighting of modifications. */
     private transient float mModWeight;
+    
+    /** Maximum depth in new revision. */
+    private transient int mNewDepthMax;
 
     /**
      * Constructor.
@@ -187,7 +190,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         private TraverseCompareTree(final long paramRevision, final long paramKey, final long paramDepth,
             final float paramModificationWeight, final AbsModel paramModel) {
             assert paramRevision >= 0;
-            assert paramKey > -1 && mRtx != null && !mRtx.isClosed();
+            assert paramKey >= 0;
+            assert mRtx != null;
+            assert !mRtx.isClosed();
             assert paramDepth >= 0;
             assert paramModificationWeight >= 0;
             assert paramModel != null;
@@ -246,7 +251,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
                 for (final AbsAxis axis =
                     new SunburstCompareDescendantAxis(true, mModel, mDb.getSession().beginReadTransaction(
-                        mRevision), mRtx, mDiffs); axis.hasNext(); axis.next()) {
+                        mRevision), mRtx, mDiffs, mDepthMax); axis.hasNext(); axis.next()) {
                 }
             } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
@@ -254,7 +259,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 LOGWRAPPER.error(e.getMessage(), e);
             }
 
-            mModel.firePropertyChange("done", null, true);
+            firePropertyChange("maxDepth", null, mNewDepthMax);
+            firePropertyChange("done", null, true);
             mRtx.moveTo(mKey);
             LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
         }
@@ -290,34 +296,27 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
         // Calculate extension.
         float extension = 0f;
-        if (descendantCount == 0) {
-            extension = parExtension;
-        } else if (modificationCount == 0f || parentModificationCount == 0f) {
+        if (depth > 0) {
             extension =
-                mModWeight * parExtension * (float)descendantCount / (float)parentDescCount
-                    + (1 - mModWeight);
+                mModWeight * (parExtension * (float)descendantCount / ((float)parentDescCount - 1f))
+                    + (1 - mModWeight)
+                    * (parExtension * (float)modificationCount / (float)parentModificationCount - 1f);
         } else {
             extension =
                 mModWeight * (parExtension * (float)descendantCount / (float)parentDescCount)
                     + (1 - mModWeight)
                     * (parExtension * (float)modificationCount / (float)parentModificationCount);
         }
-
         LOGWRAPPER.debug("indexToParent: " + indexToParent);
 
         // Set node relations.
-        int actualDepth = depth;
-        if (mDiff != EDiff.SAME && mDiff != EDiff.DONE && depth < mDepthMax) {
-            actualDepth = mDepthMax + 2;
-        }
         String text = null;
         if (mRtx.getNode().getKind() == ENodes.TEXT_KIND) {
-            mRelations.setAll(actualDepth, structKind, mRtx.getValueOfCurrentNode().length(), mMinTextLength,
+            mRelations.setAll(depth, structKind, mRtx.getValueOfCurrentNode().length(), mMinTextLength,
                 mMaxTextLength, indexToParent);
             text = mRtx.getValueOfCurrentNode();
         } else {
-            mRelations
-                .setAll(actualDepth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
+            mRelations.setAll(depth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
         }
 
         // Build item.
@@ -328,9 +327,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             mItems.add(new SunburstItem.Builder(mParent, this, angle, extension, mRelations, mDb)
                 .setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
         }
-
-//        // Set depth max.
-//        mDepthMax = Math.max(depth, mDepthMax);
+        
+        // Set depth max.
+        mNewDepthMax = Math.max(depth, mNewDepthMax);
 
         return extension;
     }

@@ -24,6 +24,7 @@ import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.gui.ReadDB;
 import com.treetank.node.ENodes;
@@ -401,7 +402,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         boolean firstNode = true;
         for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-            final Future<Integer> submit = executor.submit(new Descendants(paramRtx.getNode().getNodeKey()));
+            final Future<Integer> submit = executor.submit(new Descendants(paramRtx));
 
             if (firstNode) {
                 firstNode = false;
@@ -417,35 +418,36 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** Counts descendants. */
     final class Descendants implements Callable<Integer> {
         /** Treetank {@link IReadTransaction}. */
-        private transient IReadTransaction mRTX;
+        private transient IReadTransaction mRtx;
 
         /**
          * Constructor.
          * 
-         * @param paramNodeKey
-         *            Node key to which the current transaction should move.
+         * @param paramRtx
+         *            {@link IReadTransaction} over which to iterate
          */
-        Descendants(final long paramNodeKey) {
-            assert mRtx != null;
-            assert !mRtx.isClosed();
-            assert paramNodeKey >= 0;
+        Descendants(final IReadTransaction paramRtx) {
+            assert paramRtx != null;
+            assert !paramRtx.isClosed();
             try {
-                mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
+                mRtx = mSession.beginReadTransaction(paramRtx.getRevisionNumber());
+            } catch (final TTIOException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
             } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
-            mRTX.moveTo(paramNodeKey);
+            mRtx.moveTo(paramRtx.getNode().getNodeKey());
         }
 
         @Override
         public Integer call() throws Exception {
             int retVal = 0;
 
-            for (final AbsAxis axis = new DescendantAxis(mRTX, true); axis.hasNext(); axis.next()) {
+            for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
                 retVal++;
             }
 
-            mRTX.close();
+            mRtx.close();
             return retVal;
         }
     }
