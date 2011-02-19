@@ -348,6 +348,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
         // Then end.
         mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        processMove();
+        mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
         return true;
     }
 
@@ -467,16 +469,33 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             moved = getTransaction().moveToFirstChild();
         }
 
-        int retVal;
-        final AbsStructNode node = (AbsStructNode)getTransaction().getNode();
-        if (node.hasFirstChild() && node.getKind() != ENodes.ROOT_KIND) {
-            retVal = diffCounts + (int)node.getChildCount();
-        } else {
-            retVal = diffCounts + 1;
-        }
+        final int retVal =
+            ((AbsStructNode)getTransaction().getNode()).hasFirstChild() ? diffCounts
+                + childCount(getTransaction()) : diffCounts + 1;
 
         if (moved) {
             getTransaction().moveToParent();
+        }
+        return retVal;
+    }
+
+    /**
+     * Count children which have no first child.
+     * 
+     * @param paramRtx
+     *            Treetank {@link IReadTransaction}
+     * @return children which have no first child
+     */
+    private int childCount(final IReadTransaction paramRtx) {
+        int retVal = 0;
+        if (((AbsStructNode)paramRtx.getNode()).hasFirstChild()) {
+            final long key = paramRtx.getNode().getNodeKey();
+            paramRtx.moveToFirstChild();
+            do {
+                final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
+                retVal += node.hasFirstChild() ? 0 : 1;
+            } while (((AbsStructNode)paramRtx.getNode()).hasRightSibling() && paramRtx.moveToRightSibling());
+            paramRtx.moveTo(key);
         }
         return retVal;
     }
