@@ -131,6 +131,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** Last diff. */
     private transient EDiff mLastDiff;
 
+    /** Determines if one must be subtracted. */
+    private transient boolean mSubtract;
+
     /**
      * Constructor initializing internal state.
      * 
@@ -280,6 +283,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
             if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
                 processMove();
+                calculateDepth();
                 mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
                 mDiffStack.push(mModificationCount);
@@ -288,7 +292,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mParentStack.push(mIndex);
                 mDescendantsStack.push(mDescendantCount);
 
-                calculateDepth();
                 mDepth++;
                 mMoved = EMoved.CHILD;
             }
@@ -301,10 +304,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
 
             processMove();
+            calculateDepth();
             mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
             mAngle += mExtension;
-            calculateDepth();
             mMoved = EMoved.STARTRIGHTSIBL;
 
             return true;
@@ -315,6 +318,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mNextKey = mRightSiblingKeyStack.pop();
 
             processMove();
+            calculateDepth();
             mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
             // Next node will be a right sibling of an anchestor node or the traversal ends.
@@ -349,6 +353,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         // Then end.
         mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         processMove();
+        calculateDepth();
         mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
         return true;
     }
@@ -372,7 +377,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mBuilder.set(mAngle, mParExtension, mIndexToParent)
                 .setDescendantCount(mDescendants.get(mIndex + 1).get())
                 .setParentDescendantCount(mParentDescendantCount).setModificationCount(countDiffs())
-                .setParentModificationCount(mParentModificationCount).set();
+                .setParentModificationCount(mParentModificationCount).setSubtract(mSubtract).setDiff(mDiff)
+                .set();
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final ExecutionException e) {
@@ -416,6 +422,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     private int countDiffs() {
         int index = 0;
         int diffCounts = 0;
+        mSubtract = false;
         final long nodeKey = getTransaction().getNode().getNodeKey();
         if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND) {
             getTransaction().moveToFirstChild();
@@ -425,7 +432,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         if (mDiff == null) {
             index++;
         }
-        boolean done = false;
+        if (diffCounts == 1) {
+            mSubtract = true;
+        }
 
         if (index < mDiffs.size()) {
             do {
@@ -438,28 +447,21 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                     diffCounts = incrDiffCounter(index, diffCounts);
                     index++;
                 } else {
-                    boolean first = true;
-                    do {
+                    while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
                         if (((AbsStructNode)getTransaction().getNode()).hasParent()
                             && getTransaction().getNode().getNodeKey() != nodeKey) {
-                            if (first) {
-                                // Do not pop from stack if it's a leaf node.
-                                first = false;
-                            } else {
-                                getTransaction().moveToParent();
-                            }
+                            getTransaction().moveToParent();
                         } else {
-                            done = true;
                             break;
                         }
-                    } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
-                    if (!done) {
+                    }
+                    if (getTransaction().getNode().getNodeKey() != nodeKey) {
                         getTransaction().moveToRightSibling();
                         diffCounts = incrDiffCounter(index, diffCounts);
                         index++;
                     }
                 }
-            } while (getTransaction().getNode().getNodeKey() != nodeKey && !done);
+            } while (getTransaction().getNode().getNodeKey() != nodeKey);
             getTransaction().moveTo(nodeKey);
         }
 
@@ -492,8 +494,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             final long key = paramRtx.getNode().getNodeKey();
             paramRtx.moveToFirstChild();
             do {
-                final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
-                retVal += node.hasFirstChild() ? 0 : 1;
+                // final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
+                // retVal += node.hasFirstChild() ? 0 : 1;
+                retVal += 1;
             } while (((AbsStructNode)paramRtx.getNode()).hasRightSibling() && paramRtx.moveToRightSibling());
             paramRtx.moveTo(key);
         }

@@ -140,6 +140,9 @@ final class SunburstItem {
     /** Kind of diff. */
     private transient EDiff mDiff;
 
+    /** Determines if one must be subtracted. */
+    private transient boolean mSubtract;
+
     /** Builder to setup the Items. */
     static final class Builder {
         /** {@link PApplet} representing the core processing library. */
@@ -176,6 +179,9 @@ final class SunburstItem {
          */
         private final ReadDB mReadDB;
 
+        /** Determines if one must be subtracted. */
+        private transient boolean mSubtract;
+
         /**
          * Constructor.
          * 
@@ -200,6 +206,18 @@ final class SunburstItem {
             mExtension = paramExtension;
             mRelations = paramRelations;
             mReadDB = paramReadDB;
+        }
+
+        /**
+         * Set subtract.
+         * 
+         * @param paramSubtract
+         *            determines if one must be subtracted
+         * @return this builder
+         */
+        Builder setSubtract(final boolean paramSubtract) {
+            mSubtract = paramSubtract;
+            return this;
         }
 
         /**
@@ -291,6 +309,7 @@ final class SunburstItem {
         mDiff = paramBuilder.mDiff;
         mAngleCenter = mAngleStart + mExtension / 2;
         mAngleEnd = mAngleStart + mExtension;
+        mSubtract = paramBuilder.mSubtract;
     }
 
     /**
@@ -768,6 +787,15 @@ final class SunburstItem {
      */
     int getDepth() {
         return mDepth;
+    }
+    
+    /**
+     * Get subtract.
+     * 
+     * @return subtract
+     */
+    boolean getSubtract() {
+        return mSubtract;
     }
 
     /**

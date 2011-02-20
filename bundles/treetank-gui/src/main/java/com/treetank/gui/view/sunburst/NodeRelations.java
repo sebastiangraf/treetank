@@ -47,22 +47,25 @@ final class NodeRelations {
 
     /** Index to the parent item. */
     transient int mIndexToParent;
+    
+    /** Determines if one must be subtracted. */
+    transient boolean mSubtract;
 
     /**
      * Set all fields.
      * 
      * @param paramDepth
-     *            Depth in the tree.
+     *            depth in the tree
      * @param paramStructKind
-     *            Determines the structural kind of the node.
+     *            determines the structural kind of the node
      * @param paramDescendantCount
-     *            The descendant count of the node.
+     *            the descendant count of the node
      * @param paramMinDescendantCount
-     *            Global minimum descendant count.
+     *            global minimum descendant count
      * @param paramMaxDescendantCount
-     *            Global maximum descendant count.
+     *            global maximum descendant count
      * @param paramIndexToParent
-     *            Index to the parent item.
+     *            index to the parent item
      * @return NodeRelations instance.
      */
     NodeRelations setAll(final int paramDepth, final EStructType paramStructKind,
@@ -80,6 +83,18 @@ final class NodeRelations {
         mMinDescendantCount = paramMinDescendantCount;
         mMaxDescendantCount = paramMaxDescendantCount;
         mIndexToParent = paramIndexToParent;
+        return this;
+    }
+
+    /**
+     * Set subtract.
+     * 
+     * @param paramSubtract
+     *            determines if one must be subtracted
+     * @return this relation
+     */
+    NodeRelations setSubtract(final boolean paramSubtract) {
+        mSubtract = paramSubtract;
         return this;
     }
 }
