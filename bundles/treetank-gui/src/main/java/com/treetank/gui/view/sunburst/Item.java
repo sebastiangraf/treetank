@@ -16,6 +16,8 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import com.treetank.diff.EDiff;
+
 /**
  * Item container to simplify {@link EMoved} enum.
  * 
@@ -44,15 +46,21 @@ public final class Item {
 
     /** Descendant count. */
     transient int mDescendantCount;
-    
+
     /** Parent descendant count. */
     transient int mParentDescendantCount;
-    
+
     /** Modification count on a node (counts subtree modifications). */
     transient int mModificationCount;
-    
+
     /** Modification count on the parent node (counts subtree modifications). */
     transient int mParentModificationCount;
+
+    /** Determines if 1 must be subtracted. */
+    transient boolean mSubtract;
+    
+    /** Kind of diff of the current node. */
+    transient EDiff mDiff;
 
     /** Builder to simplify item constructor. */
     static final class Builder {
@@ -68,22 +76,28 @@ public final class Item {
 
         /** Child count per depth. */
         transient int mDescendantCount = -1;
-        
+
         /** Parent descendant count. */
         transient int mParentDescendantCount;
 
         /** Index to the parent item. */
         transient int mIndexToParent;
-        
+
         /** Modification count on a node (counts subtree modifications). */
         transient int mModificationCount;
-        
+
         /** Modification count on the parent node (counts subtree modifications). */
         transient int mParentModificationCount;
-        
-        /** 
+
+        /** Determines if 1 must be subtracted. */
+        transient boolean mSubtract;
+
+        /** Kind of diff of the current node. */
+        transient EDiff mDiff;
+
+        /**
          * Private constructor to prevent instantiation other then via the public
-         * Builder instance. 
+         * Builder instance.
          */
         private Builder() {
         }
@@ -110,6 +124,18 @@ public final class Item {
         }
 
         /**
+         * Set subtract.
+         * 
+         * @param paramSubtract
+         *            determines if one must be subtracted
+         * @return this builder
+         */
+        Builder setSubtract(final boolean paramSubtract) {
+            mSubtract = paramSubtract;
+            return this;
+        }
+
+        /**
          * Set child count per depth.
          * 
          * @param paramChildCountPerDepth
@@ -132,7 +158,7 @@ public final class Item {
             mDescendantCount = paramDescendantCount;
             return this;
         }
-        
+
         /**
          * Set parent descendant count.
          * 
@@ -144,7 +170,7 @@ public final class Item {
             mParentDescendantCount = paramParentDescCount;
             return this;
         }
-        
+
         /**
          * Set modification count.
          * 
@@ -156,7 +182,7 @@ public final class Item {
             mModificationCount = paramModificationCount;
             return this;
         }
-        
+
         /**
          * Set parent modification count.
          * 
@@ -170,6 +196,18 @@ public final class Item {
         }
 
         /**
+         * Set kind of diff.
+         * 
+         * @param paramDiff
+         *            {@link EDiff} -- kind of diff
+         * @return this builder
+         */
+        Builder setDiff(final EDiff paramDiff) {
+            mDiff = paramDiff;
+            return this;
+        }
+
+        /**
          * Setup item.
          */
         void set() {
@@ -177,10 +215,10 @@ public final class Item {
             ITEM.setAll(this);
         }
     }
-    
-    /** 
+
+    /**
      * Private constructor to prevent instantiation other then via the public
-     * Item instance. 
+     * Item instance.
      */
     private Item() {
     }
@@ -200,5 +238,7 @@ public final class Item {
         mParentModificationCount = paramBuilder.mParentModificationCount;
         mDescendantCount = paramBuilder.mDescendantCount;
         mParentDescendantCount = paramBuilder.mParentDescendantCount;
+        mSubtract = paramBuilder.mSubtract;
+        mDiff = paramBuilder.mDiff;
     }
 }

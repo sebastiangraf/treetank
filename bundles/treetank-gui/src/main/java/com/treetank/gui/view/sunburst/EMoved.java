@@ -150,7 +150,7 @@ enum EMoved {
             assert !paramModificationStack.empty();
             paramModificationStack.pop();
             assert !paramModificationStack.empty();
-            paramItem.mModificationCount = paramModificationStack.peek();
+            paramItem.mParentModificationCount = paramModificationStack.peek();
         }
     };
 

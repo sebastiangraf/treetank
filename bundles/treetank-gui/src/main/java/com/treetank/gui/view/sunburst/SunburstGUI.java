@@ -492,16 +492,17 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 mStrokeWeightStart = f[0];
                 mStrokeWeightEnd = f[1];
             }
+            
+            update();
         } else if (paramControlEvent.isGroup()) {
             if (paramControlEvent.group().name().equals("Compare revision")) {
                 mSelectedRev = (int)paramControlEvent.group().value();
+                mDone = false;
                 mModel = new SunburstCompareModel(mParent, mDb);
                 mModel.traverseTree(new SunburstContainer().setRevision(mSelectedRev).setModWeight(
                     mModificationWeight));
             }
         }
-
-        update();
     }
 
     /**
