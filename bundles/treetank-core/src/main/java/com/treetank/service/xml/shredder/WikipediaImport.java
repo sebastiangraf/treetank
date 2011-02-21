@@ -88,9 +88,6 @@ public final class WikipediaImport implements IImport<StartElement> {
     /** Timestamp of each revision as a simple String. */
     private transient String mTimestamp;
 
-    /** File to shredder. */
-    private final transient File mFile;
-
     /**
      * Constructor.
      * 
@@ -101,7 +98,6 @@ public final class WikipediaImport implements IImport<StartElement> {
      * 
      */
     public WikipediaImport(final File paramXMLFile, final File paramTTDir) {
-        mFile = paramXMLFile;
         mPageEvents = new LinkedList<XMLEvent>();
         final XMLInputFactory xmlif = XMLInputFactory.newInstance();
         try {
@@ -156,6 +152,7 @@ public final class WikipediaImport implements IImport<StartElement> {
      *            <dd>Revision text start tag {@link StartElement}.</dd>
      *            </dl>
      */
+    @Override
     public void importData(final char paramDateRange, final List<StartElement> paramData) {
         // Some checks.
         switch (paramDateRange) {
@@ -179,7 +176,7 @@ public final class WikipediaImport implements IImport<StartElement> {
         final StartElement page = paramData.get(1);
         final StartElement rev = paramData.get(2);
         final StartElement id = paramData.get(3);
-        final StartElement text = paramData.get(4);
+//        final StartElement text = paramData.get(4);
 
         // Initialize variables.
         mFound = false;
@@ -195,9 +192,7 @@ public final class WikipediaImport implements IImport<StartElement> {
                 }
 
                 // Add event to page or revision metadata list if it's not a whitespace.
-                if (!isWhitespace(event)) {
-                    mPageEvents.add(event);
-                }
+                mPageEvents.add(event);   
 
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
