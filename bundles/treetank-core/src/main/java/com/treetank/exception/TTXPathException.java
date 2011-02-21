@@ -1,9 +1,9 @@
 package com.treetank.exception;
 
 /**
- * Static class for handling the Enum as an {@link TTException}
+ * Static class for handling the Enum as an {@link AbsTTException}.
  */
-public class TTXPathException extends TTException {
+public class TTXPathException extends AbsTTException {
 
     /**
      * Constructor.

@@ -14,25 +14,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package com.treetank.exception;
 
 /**
- * Exception throw when an incorrect usage of Treetank occur.
+ * <h1>Exception Layer</h1>
+ * <p>
+ * All exceptions thrown by Treetank are instance of these classes.
+ * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
- * 
  */
-public class TTUsageException extends AbsTTException {
+package com.treetank.exception;
 
-    /**
-     * Constructor.
-     * 
-     * @param message
-     *            message as string, they are concatenated with spaces in
-     *            between
-     */
-    public TTUsageException(final String... message) {
-        super(message);
-    }
-
-}
