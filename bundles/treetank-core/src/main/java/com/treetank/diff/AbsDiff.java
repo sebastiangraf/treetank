@@ -21,25 +21,27 @@ import java.util.Set;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.exception.TTException;
+import com.treetank.node.AbsStructNode;
+import com.treetank.node.ENodes;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
 
 /**
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 abstract class AbsDiff extends AbsDiffObservable implements IDiff {
-    
+
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsDiff.class));
-    
+
     /** {@link IReadTransaction} on new revision. */
     private transient IReadTransaction mNewRev;
 
     /** {@link IReadTransaction} on old revision. */
     private transient IReadTransaction mOldRev;
-    
+
     /**
      * Constructor.
      * 
@@ -77,7 +79,67 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
             LOGWRAPPER.error(e.getMessage(), e);
         }
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public EDiff optimizedDiff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+        final Depth paramDepth) {
+        assert paramNewRtx != null;
+        assert paramOldRtx != null;
+        assert paramDepth != null;
+
+        EDiff diff = EDiff.SAME;
+
+        // Check for modifications.
+        switch (paramNewRtx.getNode().getKind()) {
+        case ROOT_KIND:
+        case TEXT_KIND:
+        case ELEMENT_KIND:
+            if (paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
+                // Check if node has been deleted.
+                if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
+                    diff = EDiff.DELETED;
+                    diff.setNode(paramOldRtx.getNode());
+                    break;
+                }
+
+                // Check if node has been renamed.
+                if (checkOptimizedRename(paramNewRtx, paramOldRtx) == EDiff.RENAMED) {
+                    diff = EDiff.RENAMED;
+                    break;
+                }
+
+                // See if one of the right sibling matches.
+                EFoundEqualNode found = EFoundEqualNode.FALSE;
+                int rightSiblings = 0;
+                final long key = paramOldRtx.getNode().getNodeKey();
+                do {
+                    if (paramNewRtx.getNode().getHash() == paramOldRtx.getNode().getHash()) {
+                        assert paramOldRtx.getNode().getKind() != ENodes.TEXT_KIND;
+                        found = EFoundEqualNode.TRUE;
+                    }
+
+                    if (paramOldRtx.getNode().getNodeKey() != key) {
+                        rightSiblings++;
+                    }
+                } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
+                    && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
+                paramOldRtx.moveTo(key);
+
+                diff = found.kindOfDiff(rightSiblings);
+                if (diff == EDiff.DELETED) {
+                    diff.setNode(paramOldRtx.getNode());
+                }
+            }
+            break;
+        default:
+            // Do nothing.
+        }
+
+        fireDiff(diff);
+        return diff;
+    }
+
     @Override
     public void done() {
         try {
@@ -88,4 +150,15 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         }
         fireDiff(EDiff.DONE);
     }
+
+    /**
+     * Check for a rename of a node.
+     * 
+     * @param paramNewRtx
+     *            first {@link IReadTransaction} instance
+     * @param paramOldRtx
+     *            second {@link IReadTransaction} instance
+     * @return kind of diff
+     */
+    abstract EDiff checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
 }
