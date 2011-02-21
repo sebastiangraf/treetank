@@ -17,6 +17,7 @@
 package com.treetank.diff;
 
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,8 +35,10 @@ public final class DiffFactory {
         /** Full diff. */
         FULL {
             @Override
-            protected void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-                final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+            protected void
+                invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
+                    final long paramOldRev, final EDiffKind paramDiffKind,
+                    final Set<IDiffObserver> paramObservers) {
                 new FullDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
             }
         },
@@ -43,8 +46,10 @@ public final class DiffFactory {
         /** Structural diff (doesn't recognize differences in namespace and attribute nodes. */
         STRUCTURAL {
             @Override
-            protected void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-                final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+            protected void
+                invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
+                    final long paramOldRev, final EDiffKind paramDiffKind,
+                    final Set<IDiffObserver> paramObservers) {
                 new StructuralDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
             }
         };
@@ -100,7 +105,7 @@ public final class DiffFactory {
         checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
         mDiffKind = DiffKind.FULL;
         final ExecutorService exes = Executors.newSingleThreadExecutor();
-        exes.execute(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
+        exes.submit(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
         exes.shutdown();
     }
 
@@ -126,7 +131,7 @@ public final class DiffFactory {
         checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
         mDiffKind = DiffKind.STRUCTURAL;
         final ExecutorService exes = Executors.newSingleThreadExecutor();
-        exes.execute(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
+        exes.submit(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
         exes.shutdown();
     }
 
@@ -159,7 +164,7 @@ public final class DiffFactory {
     }
 
     /** Invoke diff. */
-    private static class Invoke implements Runnable {
+    private static class Invoke implements Callable<Void> {
 
         /** {@link IDatabase} reference. */
         private final IDatabase mDb;
@@ -206,8 +211,9 @@ public final class DiffFactory {
         }
 
         @Override
-        public void run() {
+        public Void call() throws Exception {
             mDiffKind.invoke(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
+            return null;
         }
     }
 

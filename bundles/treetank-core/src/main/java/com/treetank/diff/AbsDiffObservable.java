@@ -26,7 +26,7 @@ import java.util.Set;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class AbsDiffObservable implements IDiffObservable {
+public abstract class AbsDiffObservable implements IDiffObservable {
     /** {@link Set} of observers, which want to be notified of the encountered differences. */
     private transient Set<IDiffObserver> mDiffObservers;
 
