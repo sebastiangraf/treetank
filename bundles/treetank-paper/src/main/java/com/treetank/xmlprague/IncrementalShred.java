@@ -7,7 +7,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 

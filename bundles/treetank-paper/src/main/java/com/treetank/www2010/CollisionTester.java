@@ -15,7 +15,7 @@ import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
@@ -124,7 +124,7 @@ public class CollisionTester {
     public void tearDown() {
         try {
             Database.forceCloseDatabase(TNKFILE);
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
         nodeCounter.reset();

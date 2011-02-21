@@ -8,7 +8,7 @@ import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
@@ -76,7 +76,7 @@ public class ShredBench {
     public void benchPostorder() {
         try {
             shredderNone.call();
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
     }
@@ -85,7 +85,7 @@ public class ShredBench {
     public void benchRolling() {
         try {
             shredderNone.call();
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
     }
@@ -94,7 +94,7 @@ public class ShredBench {
     public void benchNone() {
         try {
             shredderNone.call();
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
     }

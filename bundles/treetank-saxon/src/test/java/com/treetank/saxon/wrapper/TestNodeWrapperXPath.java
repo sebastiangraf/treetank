@@ -18,7 +18,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.ENodes;
 import com.treetank.utils.DocumentCreater;
 
@@ -52,7 +52,7 @@ public final class TestNodeWrapperXPath {
     private static transient Configuration config;
 
     @Before
-    public void setUp() throws TTException, XPathFactoryConfigurationException {
+    public void setUp() throws AbsTTException, XPathFactoryConfigurationException {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();

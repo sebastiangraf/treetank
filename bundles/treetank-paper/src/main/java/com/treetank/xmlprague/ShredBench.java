@@ -10,7 +10,7 @@ import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
@@ -64,7 +64,7 @@ public class ShredBench {
     public void benchInsert() {
         try {
             shredderNone.call();
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
     }
@@ -74,7 +74,7 @@ public class ShredBench {
             System.out.println("Finished Shredding Version " + counter);
             counter++;
             Database.forceCloseDatabase(new File(TNKFolder, XMLFile.getName() + ".tnk"));
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

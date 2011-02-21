@@ -4,7 +4,7 @@ import com.treetank.TestHelper;
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.saxon.evaluator.XPathEvaluator;
 import com.treetank.utils.DocumentCreater;
 
@@ -33,7 +33,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Override
     @BeforeClass
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = databaseTest.getSession().beginWriteTransaction();
@@ -46,7 +46,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Override
     @AfterClass
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
