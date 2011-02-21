@@ -23,9 +23,6 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
-import com.treetank.utils.LogWrapper;
-
-import org.slf4j.LoggerFactory;
 
 /**
  * Full diff including attributes and namespaces. Note that this class is thread safe.
@@ -34,9 +31,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 final class FullDiff extends AbsDiff implements IDiff {
-
-    /** Logger. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(FullDiff.class));
 
     /**
      * Constructor.
@@ -65,6 +59,7 @@ final class FullDiff extends AbsDiff implements IDiff {
         final Depth paramDepth) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
+        assert paramDepth != null;
 
         EDiff diff = EDiff.SAME;
 
@@ -203,6 +198,9 @@ final class FullDiff extends AbsDiff implements IDiff {
      * @return kind of diff
      */
     private EDiff checkRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+        assert paramFirstRtx != null;
+        assert paramSecondRtx != null;
+
         EDiff diff = EDiff.SAME;
         final long firstKey = paramFirstRtx.getNode().getNodeKey();
         boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
@@ -225,11 +223,31 @@ final class FullDiff extends AbsDiff implements IDiff {
         return diff;
     }
 
-    /** {@inheritDoc} */
     @Override
-    public EDiff optimizedDiff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx,
-        final Depth paramDepth) {
-        // TODO Auto-generated method stub
-        return null;
+    EDiff checkOptimizedRename(final IReadTransaction paramNewRtx,
+        final IReadTransaction paramOldRtx) {
+        assert paramNewRtx != null;
+        assert paramOldRtx != null;
+
+        EDiff diff = EDiff.SAME;
+        final long firstKey = paramNewRtx.getNode().getNodeKey();
+        boolean movedFirstRtx = paramNewRtx.moveToRightSibling();
+        final long secondKey = paramOldRtx.getNode().getNodeKey();
+        boolean movedSecondRtx = paramOldRtx.moveToRightSibling();
+        if (movedFirstRtx && movedSecondRtx
+            && paramNewRtx.getNode().getHash() == paramOldRtx.getNode().getHash()) {
+            diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
+        } else if (!movedFirstRtx && !movedSecondRtx) {
+            movedFirstRtx = paramNewRtx.moveToParent();
+            movedSecondRtx = paramOldRtx.moveToParent();
+
+            if (movedFirstRtx && movedSecondRtx
+                && paramNewRtx.getNode().getHash() == paramOldRtx.getNode().getHash()) {
+                diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
+            }
+        }
+        paramNewRtx.moveTo(firstKey);
+        paramOldRtx.moveTo(secondKey);
+        return diff;
     }
 }

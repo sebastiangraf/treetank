@@ -94,7 +94,7 @@ public class FullDiffTest {
             }
         });
         replay(listener);
-        
+
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         DocumentCreater.createVersioned(wtx);
@@ -107,31 +107,36 @@ public class FullDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-    
-//    @Test
-//    public void testStructuralDiffOptimizedFirst() throws InterruptedException {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(EDiff.INSERTED);
-//        listener.diffListener(EDiff.INSERTED);
-//        listener.diffListener(EDiff.SAME);
-//        listener.diffListener(EDiff.DONE);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeFullDiff(mDatabase, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
+
+    @Test
+    public void testFullDiffOptimizedFirst() throws InterruptedException, TTException {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(EDiff.INSERTED);
+        listener.diffListener(EDiff.INSERTED);
+        listener.diffListener(EDiff.SAME);
+        listener.diffListener(EDiff.DONE);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        DocumentCreater.createVersioned(wtx);
+        wtx.close();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeFullDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
 
     @Test
     public void testFullDiffSecond() throws TTException, IOException, XMLStreamException,
@@ -176,8 +181,7 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testFullDiffThird() throws TTException, IOException, XMLStreamException,
-        InterruptedException {
+    public void testFullDiffThird() throws TTException, IOException, XMLStreamException, InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.SAME);
         listener.diffListener(EDiff.DELETED);
@@ -198,7 +202,7 @@ public class FullDiffTest {
             }
         });
         replay(listener);
-        
+
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
@@ -294,7 +298,7 @@ public class FullDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-    
+
     @Test
     public void testFullDiffSixth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -333,7 +337,7 @@ public class FullDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-    
+
     @Test
     public void testFullDiffSeventh() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -362,8 +366,8 @@ public class FullDiffTest {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
-            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-                + "revXMLsAll5" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll5"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
         init.call();
         final File file = new File(RESOURCES + File.separator + "revXMLsAll5" + File.separator + "2.xml");
         final XMLShredder shredder =
@@ -378,7 +382,7 @@ public class FullDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-    
+
     @Test
     public void testFullDiffEighth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -407,8 +411,8 @@ public class FullDiffTest {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         final XMLShredder init =
-            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-                + "revXMLsAll6" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll6"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
         init.call();
         final File file = new File(RESOURCES + File.separator + "revXMLsAll6" + File.separator + "2.xml");
         final XMLShredder shredder =
