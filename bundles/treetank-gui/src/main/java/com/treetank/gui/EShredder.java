@@ -64,6 +64,7 @@ enum EShredder {
                 executor.submit(new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD));
                 executor.shutdown();
                 executor.awaitTermination(5, TimeUnit.SECONDS);
+                
                 wtx.close();
                 session.close();
                 database.close();
@@ -101,9 +102,8 @@ enum EShredder {
                     paramSource, EShredderCommit.COMMIT));
                 executor.shutdown();
                 executor.awaitTermination(5, TimeUnit.SECONDS);
-                wtx.close();
                 
-                
+                wtx.close();  
                 session.close();
                 database.close();
             } catch (final InterruptedException e) {
