@@ -14,7 +14,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.utils.DocumentCreater;
 
 /**
@@ -26,13 +26,13 @@ import com.treetank.utils.DocumentCreater;
 public class SAXSerializerTest extends XMLTestCase {
     @Override
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @Override
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
@@ -86,7 +86,7 @@ public class SAXSerializerTest extends XMLTestCase {
             serializer.call();
 
             assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             fail("Treetank exception occured!");
         } catch (final Exception e) {
             e.printStackTrace();

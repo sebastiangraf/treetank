@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.TestHelper;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 
 import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
@@ -25,12 +25,12 @@ import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDE
 public class XMLSerializerPropertiesTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 

@@ -27,7 +27,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class RevIndexTest {
     }
 
     @Test
-    public void testTrie() throws TTException {
+    public void testTrie() throws AbsTTException {
         TrieNavigator.adaptTrie((IWriteTransaction)index.getTrans(), "bla");
         TrieNavigator.adaptTrie((IWriteTransaction)index.getTrans(), "blubb");
         ((IWriteTransaction)index.getTrans()).commit();
@@ -121,7 +121,7 @@ public class RevIndexTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testDocument() throws TTException {
+    public void testDocument() throws AbsTTException {
         final Stack<String> uuids1 = new Stack<String>();
         uuids1.push("bla");
         uuids1.push("bl");
@@ -207,7 +207,7 @@ public class RevIndexTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
