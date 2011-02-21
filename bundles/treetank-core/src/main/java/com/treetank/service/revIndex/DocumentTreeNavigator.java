@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.NamePageHash;
@@ -31,7 +31,7 @@ import com.treetank.utils.NamePageHash;
 public final class DocumentTreeNavigator {
 
     static long adaptDocTree(final IWriteTransaction mWtx, final Stack<String> mNames)
-        throws TTException {
+        throws AbsTTException {
         moveToDocumentStructureRoot(mWtx);
         long currentDocKey = ENodes.UNKOWN_KIND.getNodeIdentifier();
         // iterating over all names in hierarchical order
@@ -97,10 +97,10 @@ public final class DocumentTreeNavigator {
      * 
      * @param mRtx
      *            Read Transaction session.
-     * @throws TTException
+     * @throws AbsTTException
      *             If can't move to Root of document.
      */
-    private static void moveToDocumentStructureRoot(final IReadTransaction mRtx) throws TTException {
+    private static void moveToDocumentStructureRoot(final IReadTransaction mRtx) throws AbsTTException {
         mRtx.moveToDocumentRoot();
         if (!((AbsStructNode)mRtx.getNode()).hasFirstChild()) {
             RevIndex.initialiseBasicStructure(mRtx);

@@ -28,7 +28,7 @@ import com.treetank.api.IStructuralItem;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.node.AbsNode;
@@ -104,13 +104,13 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      *            Maximum number of node modifications before auto commit.
      * @param maxTime
      *            Maximum number of seconds before auto commit.
-     * @throws TTException
+     * @throws AbsTTException
      *             if the reading of the props is failing or properties are not
      *             valid
      */
     protected WriteTransaction(final long mTransactionID, final SessionState mSessionState,
         final WriteTransactionState mTransactionState, final int maxNodeCount, final int maxTime)
-        throws TTException {
+        throws AbsTTException {
         super(mTransactionID, mSessionState, mTransactionState);
 
         // Do not accept negative values.
@@ -131,7 +131,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                     if (mModificationCount > 0) {
                         try {
                             commit();
-                        } catch (final TTException exc) {
+                        } catch (final AbsTTException exc) {
                             LOGWRAPPER.error(exc);
                             throw new IllegalStateException(exc);
                         }
@@ -150,7 +150,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsFirstChild(final QName mQname) throws TTException {
+    public synchronized long insertElementAsFirstChild(final QName mQname) throws AbsTTException {
         if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
 
             checkAccessAndCommit();
@@ -175,7 +175,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsRightSibling(final QName mQname) throws TTException {
+    public synchronized long insertElementAsRightSibling(final QName mQname) throws AbsTTException {
         if (getCurrentNode() instanceof AbsStructNode) {
 
             checkAccessAndCommit();
@@ -201,7 +201,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsFirstChild(final String mValueAsString) throws TTException {
+    public synchronized long insertTextAsFirstChild(final String mValueAsString) throws AbsTTException {
         if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
 
             checkAccessAndCommit();
@@ -227,7 +227,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsRightSibling(final String mValueAsString) throws TTException {
+    public synchronized long insertTextAsRightSibling(final String mValueAsString) throws AbsTTException {
         if (getCurrentNode() instanceof AbsStructNode) {
 
             checkAccessAndCommit();
@@ -256,7 +256,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      */
     @Override
     public synchronized long insertAttribute(final QName mQname, final String mValueAsString)
-        throws TTException {
+        throws AbsTTException {
         if (getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
@@ -284,7 +284,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertNamespace(final String mUri, final String mPrefix) throws TTException {
+    public synchronized long insertNamespace(final String mUri, final String mPrefix) throws AbsTTException {
         if (getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
@@ -314,7 +314,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void remove() throws TTException {
+    public synchronized void remove() throws AbsTTException {
         checkAccessAndCommit();
         if (getCurrentNode().getKind() == ENodes.ROOT_KIND) {
             throw new TTUsageException("Root node can not be removed.");
@@ -442,7 +442,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public void revertTo(final long revision) throws TTException {
+    public void revertTo(final long revision) throws AbsTTException {
         assertNotClosed();
         getSessionState().assertValidRevision(revision);
         getTransactionState().close();
@@ -459,7 +459,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void commit() throws TTException {
+    public synchronized void commit() throws AbsTTException {
 
         assertNotClosed();
 
@@ -506,7 +506,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void close() throws TTException {
+    public synchronized void close() throws AbsTTException {
         if (!isClosed()) {
             // Make sure to commit all dirty data.
             if (mModificationCount > 0) {
@@ -531,10 +531,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Checking write access and intermediate commit.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             if anything weird happens.
      */
-    private void checkAccessAndCommit() throws TTException {
+    private void checkAccessAndCommit() throws AbsTTException {
         assertNotClosed();
         mModificationCount++;
         intermediateCommitIfRequired();
@@ -767,10 +767,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Making an intermediate commit based on set attributes.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             if commit fails.
      */
-    private void intermediateCommitIfRequired() throws TTException {
+    private void intermediateCommitIfRequired() throws AbsTTException {
         assertNotClosed();
         if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
             commit();

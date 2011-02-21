@@ -33,7 +33,7 @@ import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.filter.TextFilter;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
@@ -181,7 +181,7 @@ public final class StAXSerializer implements XMLEventReader {
         if (mCloseRtx) {
             try {
                 mAxis.getTransaction().close();
-            } catch (final TTException e) {
+            } catch (final AbsTTException e) {
                 LOGWRAPPER.error(e);
             }
         }

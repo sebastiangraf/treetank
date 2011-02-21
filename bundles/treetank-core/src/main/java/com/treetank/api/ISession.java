@@ -17,7 +17,7 @@
 
 package com.treetank.api;
 
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 
 /**
  * <h1>ISession</h1>
@@ -57,31 +57,31 @@ public interface ISession {
     /**
      * Begin a read-only transaction on the latest committed revision key.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             If can't begin Read Transaction.
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction() throws TTException;
+    IReadTransaction beginReadTransaction() throws AbsTTException;
 
     /**
      * Begin a read-only transaction on the given revision key.
      * 
      * @param revisionKey
      *            Revision key to read from.
-     * @throws TTException
+     * @throws AbsTTException
      *             If can't begin Read Transaction.
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction(final long revisionKey) throws TTException;
+    IReadTransaction beginReadTransaction(final long revisionKey) throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction() throws TTException;
+    IWriteTransaction beginWriteTransaction() throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction with auto commit.
@@ -90,12 +90,12 @@ public interface ISession {
      *            Count of node modifications after which a commit is issued.
      * @param maxTime
      *            Time in seconds after which a commit is issued.
-     * @throws TTException
+     * @throws AbsTTException
      *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
     IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime)
-        throws TTException;
+        throws AbsTTException;
 
     /**
      * Get number of running read transactions.
@@ -118,10 +118,10 @@ public interface ISession {
      * This is an idempotent operation and does nothing if the session is
      * already closed.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             If can't close session.
      */
-    void close() throws TTException;
+    void close() throws AbsTTException;
 
     /**
      * Test if session is closed. Needed for check against database for creation

@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.NamePageHash;
@@ -37,10 +37,10 @@ final class TrieNavigator {
      *            at the beginning
      * @param mTerm
      *            to be inserted
-     * @throws TTException
+     * @throws AbsTTException
      *             handling treetank exception
      */
-    static void adaptTrie(final IWriteTransaction mWtx, final String mTerm) throws TTException {
+    static void adaptTrie(final IWriteTransaction mWtx, final String mTerm) throws AbsTTException {
         moveToTrieRoot(mWtx);
         int endIndexOfTerm = 1;
         String current = "";
@@ -85,7 +85,7 @@ final class TrieNavigator {
         }
     }
 
-    static long getDocRootInTrie(final IReadTransaction mRtx, final String mTerm) throws TTException {
+    static long getDocRootInTrie(final IReadTransaction mRtx, final String mTerm) throws AbsTTException {
         moveToTrieRoot(mRtx);
         long returnVal = ENodes.UNKOWN_KIND.getNodeIdentifier();
         final StringBuilder toSearch = new StringBuilder();
@@ -133,10 +133,10 @@ final class TrieNavigator {
      * 
      * @param mRtx
      *            Read Transaction
-     * @throws TTException
+     * @throws AbsTTException
      *             handling treetank exception
      */
-    private static void moveToTrieRoot(final IReadTransaction mRtx) throws TTException {
+    private static void moveToTrieRoot(final IReadTransaction mRtx) throws AbsTTException {
         mRtx.moveToDocumentRoot();
         if (!((AbsStructNode)mRtx.getNode()).hasFirstChild()) {
             RevIndex.initialiseBasicStructure(mRtx);

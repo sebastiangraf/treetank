@@ -35,7 +35,7 @@ import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.cache.NodePageContainer;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTThreadedException;
 import com.treetank.exception.TTUsageException;
@@ -103,11 +103,11 @@ public final class SessionState {
      *            Session configuration for the TreeTank.
      * @param paramDBConfig
      *            Database configuration for the TreeTank.
-     * @throws TTException
+     * @throws AbsTTException
      *             if Session state error
      */
     protected SessionState(final DatabaseConfiguration paramDBConfig,
-        final SessionConfiguration paramSessionConfig) throws TTException {
+        final SessionConfiguration paramSessionConfig) throws AbsTTException {
         mDatabaseConfiguration = paramDBConfig;
         mSessionConfiguration = paramSessionConfig;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
@@ -154,23 +154,23 @@ public final class SessionState {
             - mWriteSemaphore.availablePermits();
     }
 
-    protected IReadTransaction beginReadTransaction() throws TTException {
+    protected IReadTransaction beginReadTransaction() throws AbsTTException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), null);
     }
 
-    protected IReadTransaction beginReadTransaction(final IItemList mItemList) throws TTException {
+    protected IReadTransaction beginReadTransaction(final IItemList mItemList) throws AbsTTException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), mItemList);
     }
 
     protected IReadTransaction beginReadTransaction(final long mRevisionNumber, final IItemList mItemList)
-        throws TTException {
+        throws AbsTTException {
 
         // Make sure not to exceed available number of read transactions.
         try {
             mReadSemaphore.acquire();
         } catch (final InterruptedException exc) {
             LOGWRAPPER.error(exc);
-            throw new TTException(exc) {
+            throw new AbsTTException(exc) {
                 private static final long serialVersionUID = 1L;
             };
         }
@@ -189,7 +189,7 @@ public final class SessionState {
     }
 
     protected IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime)
-        throws TTException {
+        throws AbsTTException {
 
         // Make sure not to exceed available number of write transactions.
         if (mWriteSemaphore.availablePermits() == 0) {
@@ -292,7 +292,7 @@ public final class SessionState {
         mReadSemaphore.release();
     }
 
-    protected void close() throws TTException {
+    protected void close() throws AbsTTException {
         // Forcibly close all open transactions.
         for (final IReadTransaction rtx : mTransactionMap.values()) {
             if (rtx instanceof IWriteTransaction) {

@@ -22,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.settings.EDatabaseSetting;
@@ -57,11 +57,11 @@ public class DatabaseConfiguration {
      * 
      * @param paramFile
      *            the path to the database
-     * @throws TTException
+     * @throws AbsTTException
      *             if the reading of the props is failing or properties are not
      *             valid
      */
-    public DatabaseConfiguration(final File paramFile) throws TTException {
+    public DatabaseConfiguration(final File paramFile) throws AbsTTException {
         this(paramFile, new File(paramFile, EStoragePaths.DBSETTINGS.getFile().getName()));
     }
 
@@ -90,11 +90,11 @@ public class DatabaseConfiguration {
      *            the path to the database
      * @param paramProp
      *            properties to be set
-     * @throws TTException
+     * @throws AbsTTException
      *             if the reading of the props is failing or properties are not
      *             valid
      */
-    public DatabaseConfiguration(final File paramFile, final File paramProp) throws TTException {
+    public DatabaseConfiguration(final File paramFile, final File paramProp) throws AbsTTException {
         mFile = paramFile;
         mProps = new Properties();
         final Properties loadProps = new Properties();
