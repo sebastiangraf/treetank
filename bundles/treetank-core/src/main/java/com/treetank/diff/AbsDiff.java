@@ -20,7 +20,7 @@ import java.util.Set;
 
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.LogWrapper;
@@ -61,21 +61,23 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
     AbsDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
         final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
         assert paramDb != null;
-        assert paramKey > -2;
+        assert paramKey >= 0;
         assert paramNewRev >= 0;
         assert paramOldRev >= 0;
         assert paramNewRev > paramOldRev;
         assert paramObservers != null;
         try {
-            mNewRev = paramDb.getSession().beginReadTransaction(paramNewRev);
-            mOldRev = paramDb.getSession().beginReadTransaction(paramOldRev);
+            synchronized (paramDb) {
+                mNewRev = paramDb.getSession().beginReadTransaction(paramNewRev);
+                mOldRev = paramDb.getSession().beginReadTransaction(paramOldRev);
+            }
             mNewRev.moveTo(paramKey);
             mOldRev.moveTo(paramKey);
             for (final IDiffObserver observer : paramObservers) {
                 addObserver(observer);
             }
             new Diff(paramDb, mNewRev, mOldRev, paramDiffKind, this).evaluate();
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
     }
@@ -145,7 +147,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         try {
             mNewRev.close();
             mOldRev.close();
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         fireDiff(EDiff.DONE);
@@ -160,5 +162,6 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
      *            second {@link IReadTransaction} instance
      * @return kind of diff
      */
-    abstract EDiff checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
+    abstract EDiff
+        checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
 }
