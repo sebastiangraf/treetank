@@ -34,7 +34,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.utils.DocumentCreater;
@@ -43,17 +43,17 @@ import com.treetank.utils.TypedValue;
 public class UpdateTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testInsertChild() throws TTException {
+    public void testInsertChild() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -94,7 +94,7 @@ public class UpdateTest {
     }
 
     @Test
-    public void testInsertPath() throws TTException {
+    public void testInsertPath() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -130,7 +130,7 @@ public class UpdateTest {
     }
 
     @Test
-    public void testPageBoundary() throws TTException {
+    public void testPageBoundary() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -151,7 +151,7 @@ public class UpdateTest {
     }
 
     @Test(expected = TTUsageException.class)
-    public void testRemoveDocument() throws TTException {
+    public void testRemoveDocument() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -175,7 +175,7 @@ public class UpdateTest {
     }
 
     @Test
-    public void testRemoveDescendant() throws TTException {
+    public void testRemoveDescendant() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

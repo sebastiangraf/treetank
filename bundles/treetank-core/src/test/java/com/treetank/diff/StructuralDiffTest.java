@@ -34,7 +34,7 @@ import javax.xml.stream.XMLStreamException;
 import com.treetank.TestHelper;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderCommit;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
@@ -60,7 +60,7 @@ public final class StructuralDiffTest {
     private static final long TIMEOUT_S = 200000;
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         mStart = new CountDownLatch(1);
         TestHelper.deleteEverything();
     }
@@ -140,7 +140,7 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    public void testStructuralDiffSecond() throws TTException, IOException, XMLStreamException,
+    public void testStructuralDiffSecond() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.SAME);
@@ -184,7 +184,7 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    public void testStructuralDiffThird() throws TTException, IOException, XMLStreamException,
+    public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.SAME);

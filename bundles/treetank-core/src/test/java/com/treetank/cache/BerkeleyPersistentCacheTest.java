@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.treetank.TestHelper;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.page.NodePage;
 import com.treetank.settings.EDatabaseSetting;
 
@@ -20,7 +20,7 @@ public class BerkeleyPersistentCacheTest {
     private ICache cache;
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         cache = new BerkeleyPersistenceCache(new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile()), 1);
         for (int i = 0; i < pages.length; i++) {
@@ -50,7 +50,7 @@ public class BerkeleyPersistentCacheTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 }

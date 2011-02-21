@@ -9,7 +9,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 
 import org.junit.After;
 import org.junit.Ignore;
@@ -20,11 +20,11 @@ public class LockManagerTest {
     private static Long[] nodes;
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
-    public static void setUp() throws TTException {
+    public static void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
 
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -78,7 +78,7 @@ public class LockManagerTest {
     /**
      * Simply locking an available subtree without interference
      */
-    public void basicLockingTest() throws TTException {
+    public void basicLockingTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -97,7 +97,7 @@ public class LockManagerTest {
     /**
      * Locking an available subtree with other wtx holding locks on different subtrees
      */
-    public void permitLockingInFreeSubtreeTest() throws TTException {
+    public void permitLockingInFreeSubtreeTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -117,7 +117,7 @@ public class LockManagerTest {
     /**
      * Trying to lock a subtree blocked by a foreign transaction root node has to fail
      */
-    public void denyLockingOnForeignTrnTest() throws TTException {
+    public void denyLockingOnForeignTrnTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -139,7 +139,7 @@ public class LockManagerTest {
      * Trying to lock a subtree which is part of a blocked subtree (has parent which is trn 
      * of a foreign transaction) has to fail
      */
-    public void denyLockingUnderForeignTrnTest() throws TTException {
+    public void denyLockingUnderForeignTrnTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -160,7 +160,7 @@ public class LockManagerTest {
      * Trying to lock a subtree which would contain a blocked subtree (has ancestor which is trn
      * of a foreign transaction) has to fail
      */
-    public void denyLockingAboveForeignTrnTest() throws TTException {
+    public void denyLockingAboveForeignTrnTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -182,7 +182,7 @@ public class LockManagerTest {
      * Locking a subtree which would contain one or more subtrees previously locked by the same
      * transaction is permitted
      */
-    public void permitLockingAboveMultipleOwnTrnTest() throws TTException {
+    public void permitLockingAboveMultipleOwnTrnTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -203,7 +203,7 @@ public class LockManagerTest {
      * Locking a subtree which has been blocked and afterwards released by a foreign
      * transaction is possible
      */
-    public void conquerReleasedSubtreeTest() throws TTException {
+    public void conquerReleasedSubtreeTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

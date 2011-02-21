@@ -33,7 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import com.treetank.TestHelper;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderCommit;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
@@ -59,7 +59,7 @@ public class FullDiffTest {
     private static final long TIMEOUT_S = 2;
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         mStart = new CountDownLatch(1);
         TestHelper.deleteEverything();
     }
@@ -109,7 +109,7 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testFullDiffOptimizedFirst() throws InterruptedException, TTException {
+    public void testFullDiffOptimizedFirst() throws InterruptedException, AbsTTException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.INSERTED);
         listener.diffListener(EDiff.INSERTED);
@@ -139,7 +139,7 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testFullDiffSecond() throws TTException, IOException, XMLStreamException,
+    public void testFullDiffSecond() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.SAME);
@@ -181,7 +181,7 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testFullDiffThird() throws TTException, IOException, XMLStreamException, InterruptedException {
+    public void testFullDiffThird() throws AbsTTException, IOException, XMLStreamException, InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.SAME);
         listener.diffListener(EDiff.DELETED);
