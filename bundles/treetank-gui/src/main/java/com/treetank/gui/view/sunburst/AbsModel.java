@@ -23,7 +23,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.gui.ReadDB;
@@ -109,7 +109,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             mSession = paramDb.getSession();
             mRtx = mSession.beginReadTransaction(paramDb.getRevisionNumber());
             mRtx.moveTo(paramDb.getNodeKey());
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         mItems = new ArrayList<SunburstItem>();
@@ -287,7 +287,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                 if (mRTX.getNode().getKind() == ENodes.ROOT_KIND) {
                     mRTX.moveToFirstChild();
                 }
-            } catch (final TTException e) {
+            } catch (final AbsTTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
         }
@@ -364,7 +364,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             try {
                 mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
                 mRTX.moveTo(mRtx.getNode().getNodeKey());
-            } catch (final TTException e) {
+            } catch (final AbsTTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
         }
@@ -436,7 +436,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                 mRtx = mSession.beginReadTransaction(paramRtx.getRevisionNumber());
             } catch (final TTIOException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final TTException e) {
+            } catch (final AbsTTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
             mRtx.moveTo(paramRtx.getNode().getNodeKey());

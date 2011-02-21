@@ -36,7 +36,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
@@ -116,7 +116,7 @@ public enum GUICommands implements IGUICommand {
                             revNumber = rtx.getRevisionNumber();
                             rtx.close();
                             db.close();
-                        } catch (final TTException e) {
+                        } catch (final AbsTTException e) {
                             // Selected directory is not a Treetank storage.
                             error = true;
                         }
@@ -199,7 +199,7 @@ public enum GUICommands implements IGUICommand {
                         session.close();
                         db.close();
                         outputStream.close();
-                    } catch (final TTException e) {
+                    } catch (final AbsTTException e) {
                         LOGWRAPPER.error(e.getMessage(), e);
                     } catch (final IOException e) {
                         LOGWRAPPER.error(e.getMessage(), e);
@@ -371,7 +371,7 @@ public enum GUICommands implements IGUICommand {
                     session.close();
                     database.close();
                     paramGUI.execute(target, rev);
-                } catch (final TTException e) {
+                } catch (final AbsTTException e) {
                     LOGWRAPPER.error(e.getMessage(), e);
                 }
             }

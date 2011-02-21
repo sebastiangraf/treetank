@@ -18,7 +18,7 @@ package com.treetank.gui.view.tree;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.gui.ReadDB;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.DocumentRootNode;
@@ -57,7 +57,7 @@ public final class TreeModel extends AbsTreeModel {
     public TreeModel(final ReadDB paramDB) {
         try {
             mRTX = paramDB.getSession().beginReadTransaction(paramDB.getRevisionNumber());
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
     }

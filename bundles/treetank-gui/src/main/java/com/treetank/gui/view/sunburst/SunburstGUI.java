@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
@@ -746,7 +746,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     }
                 } catch (final TTIOException e) {
                     LOGWRAPPER.error(e.getMessage(), e);
-                } catch (final TTException e) {
+                } catch (final AbsTTException e) {
                     LOGWRAPPER.error(e.getMessage(), e);
                 }
                 break;
@@ -848,7 +848,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                             mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
                             final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, mWtx, mDb);
                             menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-                        } catch (final TTException e) {
+                        } catch (final AbsTTException e) {
                             LOGWRAPPER.error(e.getMessage(), e);
                         }
 

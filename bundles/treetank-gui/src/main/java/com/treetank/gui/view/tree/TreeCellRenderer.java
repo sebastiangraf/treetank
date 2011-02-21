@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.text.TextView;
 import com.treetank.node.ElementNode;
@@ -79,7 +79,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
 
         try {
             mRTX = paramReadDB.getSession().beginReadTransaction(paramReadDB.getNodeKey());
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         mPATH = paramReadDB.getDatabase().getFile().getName();
