@@ -31,7 +31,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.PostOrderAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.utils.DocumentCreater;
@@ -45,17 +45,17 @@ import static org.junit.Assert.assertEquals;
 public class MultipleCommitTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void test() throws TTException {
+    public void test() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -78,7 +78,7 @@ public class MultipleCommitTest {
     }
 
     @Test
-    public void testAutoCommit() throws TTException {
+    public void testAutoCommit() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
@@ -93,7 +93,7 @@ public class MultipleCommitTest {
     }
 
     @Test
-    public void testRemove() throws TTException {
+    public void testRemove() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -114,7 +114,7 @@ public class MultipleCommitTest {
     }
 
     @Test
-    public void testAttributeRemove() throws TTException {
+    public void testAttributeRemove() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

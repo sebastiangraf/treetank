@@ -36,7 +36,7 @@ import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.ENodes;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;
@@ -45,17 +45,17 @@ import com.treetank.utils.TypedValue;
 public class SessionTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testClosed() throws TTException {
+    public void testClosed() throws AbsTTException {
 
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.close();
@@ -82,7 +82,7 @@ public class SessionTest {
 
     @Test
     @Ignore
-    public void testNoWritesBeforeFirstCommit() throws TTException {
+    public void testNoWritesBeforeFirstCommit() throws AbsTTException {
         // ISession session = Session
         // .beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
         // assertEquals(0L, new File(ITestConstants.TEST_INSERT_CHILD_PATH
@@ -113,7 +113,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testNonExisting() throws TTException, InterruptedException {
+    public void testNonExisting() throws AbsTTException, InterruptedException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
         assertTrue(database == database2);
@@ -121,7 +121,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testInsertChild() throws TTException {
+    public void testInsertChild() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 
         final ISession session = database.getSession();
@@ -144,7 +144,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testRevision() throws TTException {
+    public void testRevision() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -171,7 +171,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testShreddedRevision() throws TTException {
+    public void testShreddedRevision() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -208,7 +208,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testExisting() throws TTException {
+    public void testExisting() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session1 = database.getSession();
 
@@ -253,7 +253,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testIdempotentClose() throws TTException {
+    public void testIdempotentClose() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -275,7 +275,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testAutoCommit() throws TTException {
+    public void testAutoCommit() throws AbsTTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -288,7 +288,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testAutoClose() throws TTException {
+    public void testAutoClose() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -301,7 +301,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testTransactionCount() throws TTException {
+    public void testTransactionCount() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 

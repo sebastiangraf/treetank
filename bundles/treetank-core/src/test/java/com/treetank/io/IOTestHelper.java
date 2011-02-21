@@ -10,7 +10,7 @@ import java.util.Properties;
 import com.treetank.TestHelper;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.io.AbsIOFactory.StorageType;
 import com.treetank.page.PageReference;
@@ -55,7 +55,7 @@ public final class IOTestHelper {
     /**
      * Tear down for all tests related to the io layer.
      */
-    public static void clean() throws TTException {
+    public static void clean() throws AbsTTException {
 
         final Map<SessionConfiguration, AbsIOFactory> mapping = AbsIOFactory.getActiveFactories();
         for (final SessionConfiguration conf : mapping.keySet()) {
@@ -77,7 +77,7 @@ public final class IOTestHelper {
      *            to be tested
      */
     public static void testFactory(final DatabaseConfiguration dbConf, final SessionConfiguration sessionConf)
-        throws TTException {
+        throws AbsTTException {
         final AbsIOFactory fac1 = AbsIOFactory.getInstance(dbConf, sessionConf);
         final AbsIOFactory fac2 = AbsIOFactory.getInstance(dbConf, sessionConf);
         assertSame(fac1, fac2);
@@ -88,7 +88,7 @@ public final class IOTestHelper {
     }
 
     public static void testReadWriteFirstRef(final DatabaseConfiguration dbConf,
-        final SessionConfiguration sessionConf) throws TTException {
+        final SessionConfiguration sessionConf) throws AbsTTException {
         final AbsIOFactory fac = AbsIOFactory.getInstance(dbConf, sessionConf);
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();

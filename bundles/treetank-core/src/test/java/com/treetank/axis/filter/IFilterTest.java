@@ -22,7 +22,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.filter.AbsFilter;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 public class IFilterTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
@@ -57,7 +57,7 @@ public class IFilterTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 }

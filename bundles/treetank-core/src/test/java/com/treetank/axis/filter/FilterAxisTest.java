@@ -33,17 +33,17 @@ import com.treetank.axis.FilterAxis;
 import com.treetank.axis.AbsAxisTest;
 import com.treetank.axis.filter.NameFilter;
 import com.treetank.axis.filter.ValueFilter;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.utils.DocumentCreater;
 
 public class FilterAxisTest {
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testNameAxisTest() throws TTException {
+    public void testNameAxisTest() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -63,7 +63,7 @@ public class FilterAxisTest {
     }
 
     @Test
-    public void testValueAxisTest() throws TTException {
+    public void testValueAxisTest() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -83,7 +83,7 @@ public class FilterAxisTest {
     }
 
     @Test
-    public void testValueAndNameAxisTest() throws TTException {
+    public void testValueAndNameAxisTest() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -107,7 +107,7 @@ public class FilterAxisTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 }

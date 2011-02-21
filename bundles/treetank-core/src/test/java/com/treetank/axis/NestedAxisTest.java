@@ -26,7 +26,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.filter.NameFilter;
 import com.treetank.axis.filter.NodeFilter;
 import com.treetank.axis.filter.TextFilter;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.utils.DocumentCreater;
 
 import org.junit.After;
@@ -36,12 +36,12 @@ import org.junit.Test;
 public class NestedAxisTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testNestedAxisTest() throws TTException {
+    public void testNestedAxisTest() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -72,7 +72,7 @@ public class NestedAxisTest {
     }
 
     @Test
-    public void testNestedAxisTest2() throws TTException {
+    public void testNestedAxisTest2() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -103,7 +103,7 @@ public class NestedAxisTest {
     }
 
     @Test
-    public void testNestedAxisTest3() throws TTException {
+    public void testNestedAxisTest3() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -134,7 +134,7 @@ public class NestedAxisTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 }

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.io.IOTestHelper;
 import com.treetank.io.AbsIOFactory.StorageType;
 
@@ -16,24 +16,24 @@ public class BerkeleyTest {
     private SessionConfiguration sessionConf;
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         dbConf = IOTestHelper.createDBConf(StorageType.Berkeley);
         sessionConf = IOTestHelper.createSessionConf();
         IOTestHelper.clean();
     }
 
     @Test
-    public void testFactory() throws TTException {
+    public void testFactory() throws AbsTTException {
         IOTestHelper.testFactory(dbConf, sessionConf);
     }
 
     @Test
-    public void testFirstRef() throws TTException {
+    public void testFirstRef() throws AbsTTException {
         IOTestHelper.testReadWriteFirstRef(dbConf, sessionConf);
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         IOTestHelper.clean();
     }
 

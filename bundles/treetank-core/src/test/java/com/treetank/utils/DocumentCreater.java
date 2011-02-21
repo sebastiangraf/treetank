@@ -20,7 +20,7 @@ package com.treetank.utils;
 import javax.xml.namespace.QName;
 
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 
 import static org.junit.Assert.assertTrue;
 
@@ -112,10 +112,10 @@ public final class DocumentCreater {
      * 
      * @param paramWtx
      *            IWriteTransaction to write to.
-     * @throws TTException
+     * @throws AbsTTException
      *             if any weird happens
      */
-    public static void create(final IWriteTransaction paramWtx) throws TTException {
+    public static void create(final IWriteTransaction paramWtx) throws AbsTTException {
         assertTrue(paramWtx.moveToDocumentRoot());
 
         paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
@@ -153,7 +153,7 @@ public final class DocumentCreater {
      * @param wtx
      *            IWriteTransaction to write to.
      */
-    public static void createVersioned(final IWriteTransaction wtx) throws TTException {
+    public static void createVersioned(final IWriteTransaction wtx) throws AbsTTException {
         create(wtx);
         wtx.commit();
         for (int i = 0; i <= 1; i++) {
@@ -206,7 +206,7 @@ public final class DocumentCreater {
      * @param wtx
      *            IWriteTransaction to write to.
      */
-    public static void createWithoutNamespace(final IWriteTransaction wtx) throws TTException {
+    public static void createWithoutNamespace(final IWriteTransaction wtx) throws AbsTTException {
         wtx.moveToDocumentRoot();
 
         wtx.insertElementAsFirstChild(new QName("a"));

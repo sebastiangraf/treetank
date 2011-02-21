@@ -20,7 +20,7 @@ import com.treetank.access.Session;
 import com.treetank.access.WriteTransaction;
 import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.io.AbsIOFactory.StorageType;
 import com.treetank.node.AttributeNode;
@@ -84,7 +84,7 @@ public final class TestHelper {
                 Database.createDatabase(config);
             }
             return Database.openDatabase(file);
-        } catch (final TTException exc) {
+        } catch (final AbsTTException exc) {
             fail(exc.toString());
             return null;
         }
@@ -130,7 +130,7 @@ public final class TestHelper {
         try {
             Database.forceCloseDatabase(PATHS.PATH1.getFile());
             Database.forceCloseDatabase(PATHS.PATH2.getFile());
-        } catch (final TTException exc) {
+        } catch (final AbsTTException exc) {
             fail(exc.toString());
         }
     }

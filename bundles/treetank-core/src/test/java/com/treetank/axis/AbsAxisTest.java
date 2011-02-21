@@ -24,7 +24,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.utils.DocumentCreater;
 
 import org.junit.After;
@@ -40,7 +40,7 @@ import static org.junit.Assert.fail;
 public class AbsAxisTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
@@ -81,7 +81,7 @@ public class AbsAxisTest {
     }
 
     @Test
-    public void testIAxisUserExample() throws TTException {
+    public void testIAxisUserExample() throws AbsTTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -103,7 +103,7 @@ public class AbsAxisTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 }
