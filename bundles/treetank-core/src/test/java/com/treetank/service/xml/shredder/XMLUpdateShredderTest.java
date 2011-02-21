@@ -163,6 +163,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
         // Sort files array according to file names.
         Collections.sort(list, new Comparator<Object>() {
+            @Override
             public int compare(final Object paramFirst, final Object paramSecond) {
                 final String firstName =
                     ((File)paramFirst).getName().toString()
