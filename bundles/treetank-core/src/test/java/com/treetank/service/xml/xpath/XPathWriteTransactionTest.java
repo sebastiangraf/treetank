@@ -13,7 +13,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.shredder.XMLShredder;
 
@@ -61,7 +61,7 @@ public final class XPathWriteTransactionTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         // wtx.abort();
         wtx.close();
         session.close();

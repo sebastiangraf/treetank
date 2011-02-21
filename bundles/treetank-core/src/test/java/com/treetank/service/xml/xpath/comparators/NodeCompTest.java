@@ -26,7 +26,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
@@ -53,7 +53,7 @@ public class NodeCompTest {
     private IReadTransaction rtx;
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
 
         // Build simple test tree.
@@ -71,7 +71,7 @@ public class NodeCompTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         rtx.close();
         wtx.abort();
         wtx.close();

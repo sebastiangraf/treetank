@@ -22,7 +22,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.utils.DocumentCreater;
 
@@ -513,7 +513,7 @@ public class FunctionsTest {
         try {
             mRtx.close();
             TestHelper.closeEverything();
-        } catch (final TTException mExe) {
+        } catch (final AbsTTException mExe) {
             mExe.printStackTrace();
         }
 

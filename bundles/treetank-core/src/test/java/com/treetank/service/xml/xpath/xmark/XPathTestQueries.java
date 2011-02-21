@@ -17,7 +17,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
@@ -55,7 +55,7 @@ public class XPathTestQueries {
             session.close();
             db.close();
 
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
 

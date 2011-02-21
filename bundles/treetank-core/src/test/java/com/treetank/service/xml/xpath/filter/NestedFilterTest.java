@@ -35,23 +35,23 @@ import com.treetank.axis.filter.NameFilter;
 import com.treetank.axis.filter.NestedFilter;
 import com.treetank.axis.filter.NodeFilter;
 import com.treetank.axis.filter.TextFilter;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.utils.DocumentCreater;
 
 public class NestedFilterTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testIFilterConvetions() throws TTException {
+    public void testIFilterConvetions() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

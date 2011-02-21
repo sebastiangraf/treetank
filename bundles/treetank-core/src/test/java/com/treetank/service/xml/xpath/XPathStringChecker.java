@@ -21,7 +21,7 @@ package com.treetank.service.xml.xpath;
 import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.utils.TypedValue;
 
 import org.junit.After;
@@ -34,12 +34,12 @@ import static org.junit.Assert.fail;
 public class XPathStringChecker {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 

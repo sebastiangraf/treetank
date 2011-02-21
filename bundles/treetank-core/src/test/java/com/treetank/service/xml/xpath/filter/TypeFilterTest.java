@@ -28,7 +28,7 @@ import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.filter.IFilterTest;
 import com.treetank.axis.filter.TypeFilter;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 
@@ -42,12 +42,12 @@ public class TypeFilterTest {
         "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 

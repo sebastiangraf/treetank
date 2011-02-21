@@ -25,7 +25,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.utils.DocumentCreater;
 
@@ -43,13 +43,13 @@ import static org.junit.Assert.assertEquals;
 public class VarRefExprTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
 
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testEveryExpr() throws TTException {
+    public void testEveryExpr() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -94,7 +94,7 @@ public class VarRefExprTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
