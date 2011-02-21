@@ -22,7 +22,7 @@ package com.treetank.exception;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public abstract class TTException extends Exception {
+public abstract class AbsTTException extends Exception {
 
     /** General ID. */
     private static final long serialVersionUID = 1L;
@@ -33,7 +33,7 @@ public abstract class TTException extends Exception {
      * @param mExc
      *            to encapsulate
      */
-    public TTException(final Exception mExc) {
+    public AbsTTException(final Exception mExc) {
         super(mExc);
     }
 
@@ -43,7 +43,7 @@ public abstract class TTException extends Exception {
      * @param message
      *            , convinience for super-constructor
      */
-    private TTException(final StringBuilder message) {
+    private AbsTTException(final StringBuilder message) {
         super(message.toString());
     }
 
@@ -54,7 +54,7 @@ public abstract class TTException extends Exception {
      *            message as string, they are concatenated with spaces in
      *            between
      */
-    public TTException(final String... message) {
+    public AbsTTException(final String... message) {
         this(concat(message));
     }
 
