@@ -9,7 +9,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 
 import org.perfidix.AbstractConfig;
 import org.perfidix.Benchmark;
@@ -45,7 +45,7 @@ public class RandomInsert {
             final ISession session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(name);
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -69,7 +69,7 @@ public class RandomInsert {
             }
             wtx.commit();
             System.out.println(counter++);
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
     }
@@ -78,7 +78,7 @@ public class RandomInsert {
     public void last() {
         try {
             Database.forceCloseDatabase(TNKFile);
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

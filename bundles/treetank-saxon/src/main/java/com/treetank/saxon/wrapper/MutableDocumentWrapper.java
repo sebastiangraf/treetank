@@ -18,7 +18,7 @@ package com.treetank.saxon.wrapper;
 
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 
 import net.sf.saxon.om.MutableDocumentInfo;
 
@@ -40,7 +40,7 @@ import net.sf.saxon.om.MutableDocumentInfo;
  */
 public class MutableDocumentWrapper extends MutableNodeWrapper implements MutableDocumentInfo {
 
-    protected MutableDocumentWrapper(IDatabase database, IWriteTransaction wtx) throws TTException {
+    protected MutableDocumentWrapper(IDatabase database, IWriteTransaction wtx) throws AbsTTException {
         super(database, wtx);
     }
 

@@ -22,7 +22,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.ChildAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 
@@ -63,7 +63,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
      * @throws TreetankException
      *             in case of something went wrong.
      */
-    protected MutableNodeWrapper(final IDatabase database, final IWriteTransaction wtx) throws TTException {
+    protected MutableNodeWrapper(final IDatabase database, final IWriteTransaction wtx) throws AbsTTException {
         super(database, 0);
         mWTX = database.getSession().beginWriteTransaction();
     }
@@ -95,7 +95,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
 
             try {
                 mWTX.insertAttribute(mWTX.getQNameOfCurrentNode(), (String)value);
-            } catch (TTException e) {
+            } catch (AbsTTException e) {
                 LOGGER.error("Couldn't insert Attribute: " + e.getMessage(), e);
             }
         }
@@ -130,7 +130,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
                         axis.next();
                     }
                 }
-            } catch (TTException e) {
+            } catch (AbsTTException e) {
                 LOGGER.error("Insert Namespace failed: " + e.getMessage(), e);
             }
             // Already bound.
@@ -148,7 +148,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
     public void delete() {
         try {
             mWTX.remove();
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             LOGGER.error("Removing current node failed: " + e.getMessage(), e);
         }
     }
@@ -172,7 +172,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
                         mWTX.insertElementAsRightSibling(new QName(node.getURI(), node.getLocalPart(), node
                             .getPrefix()));
                     }
-                } catch (TTException e) {
+                } catch (AbsTTException e) {
                     LOGGER.error("Insertion of element failed: " + e.getMessage(), e);
                 }
             }
@@ -205,7 +205,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
                     }
 
                     mWTX.moveToParent();
-                } catch (TTException e) {
+                } catch (AbsTTException e) {
                     LOGGER.error("Inserting element failed: " + e.getMessage(), e);
                 }
             }
@@ -226,7 +226,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
                     if (inherit) {
                         mWTX.insertNamespace(uri, prefix);
                     }
-                } catch (TTException e) {
+                } catch (AbsTTException e) {
                     LOGGER.error("Inserting element failed: " + e.getMessage(), e);
                 }
             }
@@ -256,7 +256,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
                     if (mWTX.getQNameOfCurrentNode().equals(attribute.getDisplayName())) {
                         mWTX.remove();
                     }
-                } catch (TTException e) {
+                } catch (AbsTTException e) {
                     LOGGER.error("Removing attribute failed: " + e.getMessage(), e);
                 }
                 mWTX.moveTo(mKey);

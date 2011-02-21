@@ -9,7 +9,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.utils.DocumentCreater;
@@ -50,7 +50,7 @@ public class TestNodeWrapper {
     private transient NodeWrapper node;
 
     @Before
-    public void beforeMethod() throws TTException {
+    public void beforeMethod() throws AbsTTException {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
         databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -66,7 +66,7 @@ public class TestNodeWrapper {
     }
 
     @After
-    public void afterMethod() throws TTException {
+    public void afterMethod() throws AbsTTException {
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
         Database.forceCloseDatabase(TestHelper.PATHS.PATH2.getFile());
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -82,7 +82,7 @@ public class TestNodeWrapper {
     }
 
     @Test
-    public void testCompareOrder() throws XPathException, TTException {
+    public void testCompareOrder() throws XPathException, AbsTTException {
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 

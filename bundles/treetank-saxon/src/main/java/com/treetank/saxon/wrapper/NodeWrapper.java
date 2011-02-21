@@ -33,7 +33,7 @@ import com.treetank.axis.ParentAxis;
 import com.treetank.axis.PrecedingAxis;
 import com.treetank.axis.PrecedingSiblingAxis;
 import com.treetank.axis.filter.TextFilter;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 
@@ -140,7 +140,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 mRTX = mDatabase.getSession().beginReadTransaction();
             }
             mRTX.moveTo(nodekeyToStart);
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGGER.error("TreetankException: " + e.getMessage(), e);
         }
 

@@ -9,7 +9,7 @@ import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.saxon.evaluator.XQueryEvaluator;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
@@ -53,7 +53,7 @@ public final class TestNodeWrapperS9ApiXQuery {
     }
 
     @AfterClass
-    public static void tearDown() throws TTException {
+    public static void tearDown() throws AbsTTException {
         databaseBooks.close();
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
     }

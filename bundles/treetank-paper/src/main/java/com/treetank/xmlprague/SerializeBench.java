@@ -5,7 +5,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
@@ -47,7 +47,7 @@ public class SerializeBench {
     public void benchInsert() {
         try {
             serializer.call();
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
     }
@@ -55,7 +55,7 @@ public class SerializeBench {
     public void tearDown() {
         try {
             Database.forceCloseDatabase(TNKFILE);
-        } catch (TTException e) {
+        } catch (AbsTTException e) {
             e.printStackTrace();
         }
         System.out.println(revisionKey++);
@@ -101,7 +101,7 @@ public class SerializeBench {
             final long returnVal = rtx.getRevisionNumber();
             Database.forceCloseDatabase(tnks);
             return returnVal;
-        } catch (TTException exc) {
+        } catch (AbsTTException exc) {
             exc.printStackTrace();
             return 0;
         }
