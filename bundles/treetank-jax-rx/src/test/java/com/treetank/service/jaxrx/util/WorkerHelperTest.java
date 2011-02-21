@@ -13,7 +13,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import com.treetank.service.xml.shredder.EShredderInsert;
 
@@ -61,7 +61,7 @@ public class WorkerHelperTest {
      * @throws FileNotFoundException
      */
     @Before
-    public void setUp() throws FileNotFoundException, TTException {
+    public void setUp() throws FileNotFoundException, AbsTTException {
         workerHelper = WorkerHelper.getInstance();
         treeTank = new DatabaseRepresentation();
         treeTank.shred(INPUTFILE, RESOURCENAME);
@@ -103,7 +103,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#serializeXML(IReadTransaction, OutputStream, boolean, boolean)}
      */
     @Test
-    public void testSerializeXML() throws TTException, IOException {
+    public void testSerializeXML() throws AbsTTException, IOException {
         final IDatabase database = Database.openDatabase(DBFILE);
         final ISession session = database.getSession();
         final OutputStream out = new ByteArrayOutputStream();
@@ -118,7 +118,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#shredInputStream(IWriteTransaction, InputStream, boolean)}
      */
     @Test
-    public void testShredInputStream() throws TTException, IOException {
+    public void testShredInputStream() throws AbsTTException, IOException {
 
         long lastRevision = treeTank.getLastRevision(RESOURCENAME);
 
@@ -141,7 +141,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#close(IWriteTransaction, IReadTransaction, ISession, IDatabase)}
      */
     @Test(expected = IllegalStateException.class)
-    public void testClose() throws TTException {
+    public void testClose() throws AbsTTException {
         IDatabase database = Database.openDatabase(DBFILE);
         ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

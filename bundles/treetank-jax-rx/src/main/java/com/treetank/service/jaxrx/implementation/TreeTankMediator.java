@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.StreamingOutput;
 
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.jaxrx.enums.EIdAccessType;
 import com.treetank.service.jaxrx.util.WorkerHelper;
 
@@ -71,7 +71,7 @@ public final class TreeTankMediator implements JaxRx {
                     return null;
                 } catch (final NumberFormatException exce) {
                     throw new JaxRxException(400, "False value for REVISION paramter: " + exce.getMessage());
-                } catch (final TTException exce) {
+                } catch (final AbsTTException exce) {
                     throw new JaxRxException(exce);
                 }
             }

@@ -27,7 +27,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.jaxrx.util.RESTProps;
 import com.treetank.service.jaxrx.util.RESTResponseHelper;
 import com.treetank.service.jaxrx.util.RESTXMLShredder;
@@ -87,7 +87,7 @@ public class DatabaseRepresentation {
             } else {
                 try {
                     shred(inputStream, resourceName);
-                } catch (final TTException exce) {
+                } catch (final AbsTTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -134,7 +134,7 @@ public class DatabaseRepresentation {
                     }
                 } catch (final NumberFormatException exce) {
                     throw new JaxRxException(400, exce.getMessage());
-                } catch (final TTException exce) {
+                } catch (final AbsTTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -169,7 +169,7 @@ public class DatabaseRepresentation {
                 final RestXPathProcessor xpathProcessor = new RestXPathProcessor();
                 try {
                     xpathProcessor.getXpathResource(resource, query, nodeid, rev, output, wrapResult);
-                } catch (final TTException exce) {
+                } catch (final AbsTTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -235,7 +235,7 @@ public class DatabaseRepresentation {
                         shred(input, saveName);
                     }
                 }
-            } catch (final TTException exce) {
+            } catch (final AbsTTException exce) {
                 throw new JaxRxException(exce);
             }
         }
@@ -281,9 +281,9 @@ public class DatabaseRepresentation {
      * @param resource
      *            The name of the resource.
      * @return <code>true</code> when the shredding process has been successful. <code>false</code> otherwise.
-     * @throws TTException
+     * @throws AbsTTException
      */
-    public final boolean shred(final InputStream xmlInput, final String resource) throws TTException {
+    public final boolean shred(final InputStream xmlInput, final String resource) throws AbsTTException {
         boolean allOk;
         IWriteTransaction wtx = null;
         IDatabase database = null;
@@ -337,11 +337,11 @@ public class DatabaseRepresentation {
      *            than response the latest revision.
      * @return The {@link OutputStream} containing the serialized XML file.
      * @throws IOException
-     * @throws TTException
+     * @throws AbsTTException
      * @throws WebApplicationException
      */
     private final OutputStream serialize(final String resource, final Long revision, final boolean nodeid,
-        final OutputStream output, final boolean wrapResult) throws IOException, JaxRxException, TTException {
+        final OutputStream output, final boolean wrapResult) throws IOException, JaxRxException, AbsTTException {
 
         if (resource.endsWith(RESTProps.COLEND)) {
             final List<File> tnks = checkColForTnks(resource);
@@ -414,9 +414,9 @@ public class DatabaseRepresentation {
      * @return The {@link OutputStream} containing the result
      * @throws WebApplicationException
      *             The Exception occurred.
-     * @throws TTException
+     * @throws AbsTTException
      */
-    public long getLastRevision(final String resourceName) throws JaxRxException, TTException {
+    public long getLastRevision(final String resourceName) throws JaxRxException, AbsTTException {
         final String tnkFile = RESTProps.STOREDBPATH + File.separatorChar + resourceName + RESTProps.TNKEND;
         final File dbFile = new File(tnkFile);
         long lastRevision;
@@ -460,14 +460,14 @@ public class DatabaseRepresentation {
      * @param wrap
      *            <code>true</code> if the results have to be wrapped. <code>false</code> otherwise.
      * @return The {@link OutputStream} containing the result
-     * @throws TTException
+     * @throws AbsTTException
      * @throws WebApplicationException
      *             The Exception occurred.
      */
     public OutputStream getModificHistory(final String resourceName, // NOPMD this method needs alls these
         // functions
         final String revisionRange, final boolean nodeid, final OutputStream output, final boolean wrap)
-        throws JaxRxException, TTException {
+        throws JaxRxException, AbsTTException {
 
         // extract both revision from given String value
         final StringTokenizer tokenizer = new StringTokenizer(revisionRange, "-");
@@ -639,10 +639,10 @@ public class DatabaseRepresentation {
      *            id's. <code>false</code> otherwise.
      * @throws WebApplicationException
      *             The exception occurred.
-     * @throws TTException
+     * @throws AbsTTException
      */
     private void serializIt(final File aTNK, final Long revision, final OutputStream output,
-        final boolean nodeid) throws JaxRxException, TTException {
+        final boolean nodeid) throws JaxRxException, AbsTTException {
         // Connection to treetank, creating a session
         IDatabase database = null;
         ISession session = null;
@@ -682,10 +682,10 @@ public class DatabaseRepresentation {
      * @param backToRevision
      *            The revision value, which has to be set as the latest.
      * @throws WebApplicationException
-     * @throws TTException
+     * @throws AbsTTException
      */
     public void revertToRevision(final String resourceName, final long backToRevision) throws JaxRxException,
-        TTException {
+        AbsTTException {
         final StringBuilder tnkFileName =
             new StringBuilder(RESTProps.STOREDBPATH + File.separatorChar + resourceName);
         tnkFileName.append(RESTProps.TNKEND);
@@ -700,7 +700,7 @@ public class DatabaseRepresentation {
             wtx = session.beginWriteTransaction();
             wtx.revertTo(backToRevision);
             wtx.commit();
-        } catch (final TTException exce) {
+        } catch (final AbsTTException exce) {
             abort = true;
             throw new JaxRxException(exce);
         } finally {
