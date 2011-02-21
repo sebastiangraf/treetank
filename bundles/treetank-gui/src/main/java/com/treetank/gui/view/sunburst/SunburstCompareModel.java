@@ -27,7 +27,7 @@ import com.treetank.diff.DiffFactory;
 import com.treetank.diff.EDiff;
 import com.treetank.diff.EDiffKind;
 import com.treetank.diff.IDiffObserver;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstItem.EStructType;
@@ -257,7 +257,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                     new SunburstCompareDescendantAxis(true, mModel, mNewRtx, mRtx, mDiffs, mDepthMax); axis
                     .hasNext(); axis.next()) {
                 }
-            } catch (final TTException e) {
+            } catch (final AbsTTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             } catch (final InterruptedException e) {
                 LOGWRAPPER.error(e.getMessage(), e);

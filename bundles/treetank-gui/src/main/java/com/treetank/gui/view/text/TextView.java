@@ -42,7 +42,7 @@ import javax.xml.stream.events.XMLEvent;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.gui.GUI;
 import com.treetank.gui.GUIProp;
 import com.treetank.gui.ReadDB;
@@ -277,7 +277,7 @@ public final class TextView extends JScrollPane implements IView {
 
             serialize(rtx, node);
             mText.setCaretPosition(0);
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
 

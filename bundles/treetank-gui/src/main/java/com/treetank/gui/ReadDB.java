@@ -22,7 +22,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.utils.LogWrapper;
 
@@ -96,7 +96,7 @@ public final class ReadDB {
             }
             mRtx.moveTo(paramNodekeyToStart);
             mRevision = mRtx.getRevisionNumber();
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error("TreetankException: " + e.getMessage(), e);
         }
     }
@@ -163,7 +163,7 @@ public final class ReadDB {
             mRtx.close();
             mSession.close();
             mDatabase.close();
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
     }

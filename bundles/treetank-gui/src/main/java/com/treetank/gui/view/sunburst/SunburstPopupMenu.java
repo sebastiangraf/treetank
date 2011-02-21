@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 
@@ -130,7 +130,7 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void insertElementAsFirstChild(final QName paramName) {
         try {
             mWtx.insertElementAsFirstChild(paramName);
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
         }
 
@@ -146,7 +146,7 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void insertElementAsRightSibling(final QName paramName) {
         try {
             mWtx.insertElementAsRightSibling(paramName);
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
         }
 
@@ -162,7 +162,7 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void insertTextAsFirstChild(final String paramText) {
         try {
             mWtx.insertTextAsFirstChild(paramText);
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
         }
 
@@ -178,7 +178,7 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void insertTextAsRightSibling(final String paramText) {
         try {
             mWtx.insertTextAsRightSibling(paramText);
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
         }
 
@@ -189,7 +189,7 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void delete() {
         try {
             mWtx.remove();
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to delete node: " + e.getMessage());
         }
 
@@ -206,7 +206,7 @@ final class SunburstPopupMenu extends JPopupMenu {
             final IReadTransaction rtx = mDb.getSession().beginReadTransaction();
             mDb = new ReadDB(mDb.getDatabase().getFile(), rtx.getRevisionNumber());
             rtx.close();
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to commit change: " + e.getMessage());
         }
         mParent.refreshInit();
