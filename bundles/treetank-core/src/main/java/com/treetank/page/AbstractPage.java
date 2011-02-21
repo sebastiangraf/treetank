@@ -18,7 +18,7 @@
 package com.treetank.page;
 
 import com.treetank.access.WriteTransactionState;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 
@@ -124,11 +124,11 @@ public abstract class AbstractPage {
      * 
      * @param mState
      *            IWriteTransaction state.
-     * @throws TTException
+     * @throws AbsTTException
      *             thorw when write error
      */
 
-    public final void commit(final WriteTransactionState mState) throws TTException {
+    public final void commit(final WriteTransactionState mState) throws AbsTTException {
         for (final PageReference reference : getReferences()) {
             mState.commit(reference);
         }

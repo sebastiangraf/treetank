@@ -22,7 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.settings.ESessionSetting;
@@ -86,10 +86,10 @@ public final class SessionConfiguration {
      * 
      * @param propFile
      *            to be specified
-     * @throws TTException
+     * @throws AbsTTException
      *             if session could not be established
      */
-    public SessionConfiguration(final File propFile) throws TTException {
+    public SessionConfiguration(final File propFile) throws AbsTTException {
         this(new Properties());
         try {
             getProps().load(new FileInputStream(propFile));

@@ -29,7 +29,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.utils.LogWrapper;
 import com.treetank.utils.NamePageHash;
@@ -103,10 +103,10 @@ public final class RevIndex {
      *            folder to be access.
      * @param mRev
      *            revision to be accessed
-     * @throws TTException
+     * @throws AbsTTException
      *             if any access to Treetank fails
      */
-    public RevIndex(final File mIndex, final long mRev) throws TTException {
+    public RevIndex(final File mIndex, final long mRev) throws AbsTTException {
         final IDatabase db = Database.openDatabase(mIndex);
         mIndexSession = db.getSession();
         if (mRev < 0) {
@@ -125,10 +125,10 @@ public final class RevIndex {
      * 
      * @param mDocs
      *            stack with order to be inserted.
-     * @throws TTException
+     * @throws AbsTTException
      *             if can't insert next node.
      */
-    public void insertNextNode(final Stack<String> mDocs) throws TTException {
+    public void insertNextNode(final Stack<String> mDocs) throws AbsTTException {
         if (mRtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction)mRtx;
             mCurrentDocKey = DocumentTreeNavigator.adaptDocTree(wtx, mDocs);
@@ -141,10 +141,10 @@ public final class RevIndex {
      * 
      * @param mTerm
      *            the term to be indexed.
-     * @throws TTException
+     * @throws AbsTTException
      *             if can't insert next term in current node.
      */
-    public void insertNextTermForCurrentNode(final String mTerm) throws TTException {
+    public void insertNextTermForCurrentNode(final String mTerm) throws AbsTTException {
         // check if rtx is instance of WriteTransaction
         if (mRtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction)mRtx;
@@ -200,11 +200,11 @@ public final class RevIndex {
      * the identifier stored with every field in the structure to provide an
      * unique identifier.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             if can't finish index input.
      * @return the index revision number.
      */
-    public long finishIndexInput() throws TTException {
+    public long finishIndexInput() throws AbsTTException {
         if (mRtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction)mRtx;
             try {
@@ -229,7 +229,7 @@ public final class RevIndex {
                 ((IWriteTransaction)mRtx).commit();
                 mRtx.close();
                 mIndexSession.close();
-            } catch (final TTException exc) {
+            } catch (final AbsTTException exc) {
                 LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
@@ -278,10 +278,10 @@ public final class RevIndex {
      * @param mTerm
      *            to be searched in the trie structure
      * @return the root for the document key
-     * @throws TTException
+     * @throws AbsTTException
      *             for handling treetank errors
      */
-    public long getDocRootForTerm(final String mTerm) throws TTException {
+    public long getDocRootForTerm(final String mTerm) throws AbsTTException {
         return TrieNavigator.getDocRootInTrie(mRtx, mTerm);
 
     }
@@ -331,10 +331,10 @@ public final class RevIndex {
      * 
      * @param mRtx
      *            Read transaction.
-     * @throws TTException
+     * @throws AbsTTException
      *             for handling treetank errors.
      */
-    static void initialiseBasicStructure(final IReadTransaction mRtx) throws TTException {
+    static void initialiseBasicStructure(final IReadTransaction mRtx) throws AbsTTException {
         if (mRtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction)mRtx;
             wtx.moveToDocumentRoot();

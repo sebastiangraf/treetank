@@ -24,7 +24,7 @@ import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IStructuralItem;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
@@ -301,7 +301,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws TTException {
+    public void close() throws AbsTTException {
         if (!mClosed) {
             // Close own state.
             mTransactionState.close();

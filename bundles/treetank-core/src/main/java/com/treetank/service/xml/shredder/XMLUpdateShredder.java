@@ -39,7 +39,7 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.node.AbsStructNode;
@@ -243,12 +243,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Invoking the shredder.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             if Treetank encounters something went wrong
      * @return revision of last revision (before commit)
      */
     @Override
-    public Long call() throws TTException {
+    public Long call() throws AbsTTException {
         final long revision = mWtx.getRevisionNumber();
         updateOnly();
         if (mCommit == EShredderCommit.COMMIT) {
@@ -260,10 +260,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Update a shreddered file.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             if Treetank encounters something went wrong
      */
-    private void updateOnly() throws TTException {
+    private void updateOnly() throws AbsTTException {
         try {
             // Initialize variables.
             mLevelInToShredder = 0;
@@ -401,11 +401,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *             In case of any StAX parsing error.
      * @throws IOException
      *             In case of any I/O error.
-     * @throws TTException
+     * @throws AbsTTException
      *             In case of any Treetank error.
      */
     private void processStartTag(final StartElement paramElem) throws IOException, XMLStreamException,
-        TTException {
+        AbsTTException {
         assert paramElem != null;
         // Log debugging messages.
         LOGWRAPPER.debug("TO SHREDDER: " + paramElem.getName());
@@ -448,11 +448,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *             In case of any StAX parsing error.
      * @throws IOException
      *             In case of any I/O error.
-     * @throws TTException
+     * @throws AbsTTException
      *             In case of any Treetank error.
      */
     private void processCharacters(final Characters paramText) throws IOException, XMLStreamException,
-        TTException {
+        AbsTTException {
         assert paramText != null;
         // Initialize variables.
         initializeVars();
@@ -483,10 +483,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @throws XMLStreamException
      *             In case of any parsing error.
-     * @throws TTException
+     * @throws AbsTTException
      *             In case anything went wrong while moving/deleting nodes in Treetank.
      */
-    private void processEndTag() throws XMLStreamException, TTException {
+    private void processEndTag() throws XMLStreamException, AbsTTException {
         mLevelInToShredder--;
 
         if (mInserted) {
@@ -698,10 +698,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
-     * @throws TTException
+     * @throws AbsTTException
      *             In case anything went wrong while moving the Treetank transaction.
      */
-    private void sameElementNode() throws XMLStreamException, TTException {
+    private void sameElementNode() throws XMLStreamException, AbsTTException {
         // Update variables.
         mInsert = EInsert.NOINSERT;
         mDelete = EDelete.NODELETE;
@@ -778,13 +778,13 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @param paramElement
      *            {@link StartElement}, which is going to be inserted.
-     * @throws TTException
+     * @throws AbsTTException
      *             In case any exception occurs while moving the cursor or
      *             deleting nodes in Treetank.
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
      */
-    private void insertElementNode(final StartElement paramElement) throws TTException,
+    private void insertElementNode(final StartElement paramElement) throws AbsTTException,
         XMLStreamException {
         assert paramElement != null;
         /*
@@ -856,13 +856,13 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @param paramText
      *            {@link Characters}, which is going to be inserted.
-     * @throws TTException
+     * @throws AbsTTException
      *             In case any exception occurs while moving the cursor or
      *             deleting nodes in Treetank.
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
      */
-    private void insertTextNode(final Characters paramText) throws TTException, XMLStreamException {
+    private void insertTextNode(final Characters paramText) throws AbsTTException, XMLStreamException {
         assert paramText != null;
         /*
          * Add node if it's either not found among right siblings (and the
@@ -953,11 +953,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Delete node.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             In case any exception occurs while moving the cursor or
      *             deleting nodes in Treetank.
      */
-    private void deleteNode() throws TTException {
+    private void deleteNode() throws AbsTTException {
         /*
          * If found in one of the rightsiblings in the current shreddered
          * structure remove all nodes until the transaction points to the found
@@ -1060,10 +1060,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *            determines how to add the node
      * @param paramTextEvent
      *            the current {@link Character} event from the StAX parser.
-     * @throws TTException
+     * @throws AbsTTException
      *             if adding text node fails
      */
-    private void addNewText(final EAdd paramAdd, final Characters paramTextEvent) throws TTException {
+    private void addNewText(final EAdd paramAdd, final Characters paramTextEvent) throws AbsTTException {
         assert paramTextEvent != null;
         final String text = paramTextEvent.getData().trim();
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
@@ -1083,11 +1083,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *            determines wether node is added as first child or right sibling
      * @param paramStartElement
      *            the current {@link StartElement}
-     * @throws TTException
+     * @throws AbsTTException
      *             if inserting node fails
      */
     private void addNewElement(final EAdd paramAdd, final StartElement paramStartElement)
-        throws TTException {
+        throws AbsTTException {
         assert paramStartElement != null;
         final QName name = paramStartElement.getName();
         long key;
@@ -1363,7 +1363,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             wtx.close();
             session.close();
             db.close();
-        } catch (final TTException e) {
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e);
         } catch (final IOException e) {
             LOGWRAPPER.error(e);

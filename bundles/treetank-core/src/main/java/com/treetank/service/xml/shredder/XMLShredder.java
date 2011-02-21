@@ -41,7 +41,7 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.node.ENodes;
@@ -132,12 +132,12 @@ public class XMLShredder implements Callable<Long> {
     /**
      * Invoking the shredder.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             if any kind of Treetank exception which has occured
      * @return revision of file
      */
     @Override
-    public Long call() throws TTException {
+    public Long call() throws AbsTTException {
         final long revision = mWtx.getRevisionNumber();
         insertNewContent();
 
@@ -150,10 +150,10 @@ public class XMLShredder implements Callable<Long> {
     /**
      * Insert new content based on a StAX parser {@link XMLStreamReader}.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             if something went wrong while inserting
      */
-    protected final void insertNewContent() throws TTException {
+    protected final void insertNewContent() throws AbsTTException {
         try {
             FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
@@ -215,11 +215,11 @@ public class XMLShredder implements Callable<Long> {
      * @param paramEvent
      *            the current event from the StAX parser
      * @return the modified stack
-     * @throws TTException
+     * @throws AbsTTException
      *             if adding {@link ElementNode} fails
      */
     protected final FastStack<Long> addNewElement(final FastStack<Long> paramLeftSiblingKeyStack,
-        final StartElement paramEvent) throws TTException {
+        final StartElement paramEvent) throws AbsTTException {
         assert paramLeftSiblingKeyStack != null && paramEvent != null;
         long key;
 
@@ -269,11 +269,11 @@ public class XMLShredder implements Callable<Long> {
      * @param paramText
      *            the text string to add
      * @return the modified stack
-     * @throws TTException
+     * @throws AbsTTException
      *             if adding text fails
      */
     protected final FastStack<Long> addNewText(final FastStack<Long> paramLeftSiblingKeyStack,
-        final String paramText) throws TTException {
+        final String paramText) throws AbsTTException {
         assert paramLeftSiblingKeyStack != null;
         final String text = paramText;
         long key;

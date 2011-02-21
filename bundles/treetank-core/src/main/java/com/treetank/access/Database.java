@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.settings.EDatabaseSetting;
@@ -64,11 +64,11 @@ public final class Database implements IDatabase {
      *            conf for Database
      * @param paramSessionConf
      *            conf for session
-     * @throws TTException
+     * @throws AbsTTException
      *             Exception if something weird happens
      */
     private Database(final DatabaseConfiguration paramDBConf, final SessionConfiguration paramSessionConf)
-        throws TTException {
+        throws AbsTTException {
         this.mDatabaseConfiguration = paramDBConf;
         this.mSessionConfiguration = paramSessionConf;
         this.checkStorage();
@@ -146,10 +146,10 @@ public final class Database implements IDatabase {
      * @param paramFile
      *            where the database is located
      * @return {@link IDatabase} instance.
-     * @throws TTException
+     * @throws AbsTTException
      *             if something odd happens
      */
-    public static synchronized IDatabase openDatabase(final File paramFile) throws TTException {
+    public static synchronized IDatabase openDatabase(final File paramFile) throws AbsTTException {
         return openDatabase(paramFile, new SessionConfiguration());
     }
 
@@ -164,11 +164,11 @@ public final class Database implements IDatabase {
      * @param paramSessionConf
      *            session conf for the new session
      * @return {@link IDatabase} instance.
-     * @throws TTException
+     * @throws AbsTTException
      *             if something odd happens
      */
     public static synchronized IDatabase openDatabase(final File paramFile,
-        final SessionConfiguration paramSessionConf) throws TTException {
+        final SessionConfiguration paramSessionConf) throws AbsTTException {
         if (!paramFile.exists() && !createDatabase(new DatabaseConfiguration(paramFile))) {
             throw new TTUsageException("DB could not be created at location", paramFile.toString());
         }
@@ -186,10 +186,10 @@ public final class Database implements IDatabase {
      * 
      * @param paramFile
      *            where the database should be closed
-     * @throws TTException
+     * @throws AbsTTException
      *             if something weird happens while closing
      */
-    public static synchronized void forceCloseDatabase(final File paramFile) throws TTException {
+    public static synchronized void forceCloseDatabase(final File paramFile) throws AbsTTException {
         final IDatabase database = DATABASEMAP.remove(paramFile);
         if (database != null) {
             database.close();
@@ -200,10 +200,10 @@ public final class Database implements IDatabase {
      * Closing a database. All {@link ISession} instances within this database
      * are closed.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             if close is not successful.
      */
-    public synchronized void close() throws TTException {
+    public synchronized void close() throws AbsTTException {
         if (mSession != null) {
             mSession.close();
         }
@@ -216,10 +216,10 @@ public final class Database implements IDatabase {
     /**
      * {@inheritDoc}
      * 
-     * @throws TTException
+     * @throws AbsTTException
      */
     @Override
-    public synchronized ISession getSession() throws TTException {
+    public synchronized ISession getSession() throws AbsTTException {
         if (mSession == null || mSession.isClosed()) {
             mSession = new Session(this.mDatabaseConfiguration, this.mSessionConfiguration);
         }

@@ -19,7 +19,7 @@ package com.treetank.api;
 
 import javax.xml.namespace.QName;
 
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 
 /**
@@ -290,10 +290,10 @@ public interface IReadTransaction {
      * This is an idempotent operation and does nothing if the transaction is
      * already closed.
      * 
-     * @throws TTException
+     * @throws AbsTTException
      *             If can't close Read Transaction.
      */
-    void close() throws TTException;
+    void close() throws AbsTTException;
 
     /**
      * Is this transaction closed?

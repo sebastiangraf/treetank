@@ -7,7 +7,7 @@ import javax.xml.namespace.QName;
 import com.treetank.api.IItem;
 import com.treetank.api.IStructuralItem;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTUsageException;
 import com.treetank.node.AbsNode;
@@ -26,7 +26,7 @@ public class SynchWriteTransaction extends WriteTransaction {
 
     private LockManager lock;
     protected SynchWriteTransaction(long mTransactionID, SessionState mSessionState,
-        WriteTransactionState mTransactionState, int maxNodeCount, int maxTime) throws TTException {
+        WriteTransactionState mTransactionState, int maxNodeCount, int maxTime) throws AbsTTException {
         super(mTransactionID, mSessionState, mTransactionState, maxNodeCount, maxTime);
        lock = LockManager.getLockManager();
     }
@@ -35,7 +35,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsFirstChild(final QName mQname) throws TTException {
+    public synchronized long insertElementAsFirstChild(final QName mQname) throws AbsTTException {
        lock.getWritePermission(getCurrentNode().getNodeKey(), this);
        return super.insertElementAsFirstChild(mQname);
     }
@@ -44,7 +44,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsRightSibling(final QName mQname) throws TTException {
+    public synchronized long insertElementAsRightSibling(final QName mQname) throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         return super.insertElementAsRightSibling(mQname);
     }
@@ -53,7 +53,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsFirstChild(final String mValueAsString) throws TTException {
+    public synchronized long insertTextAsFirstChild(final String mValueAsString) throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         return super.insertTextAsFirstChild(mValueAsString);
     }
@@ -62,7 +62,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsRightSibling(final String mValueAsString) throws TTException {
+    public synchronized long insertTextAsRightSibling(final String mValueAsString) throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         return insertTextAsRightSibling(mValueAsString);
     }
@@ -72,7 +72,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      */
     @Override
     public synchronized long insertAttribute(final QName mQname, final String mValueAsString)
-        throws TTException {
+        throws AbsTTException {
         if (getCurrentNode() instanceof ElementNode) {
             lock.getWritePermission(getCurrentNode().getNodeKey(), this);
             return super.insertAttribute(mQname, mValueAsString);
@@ -86,7 +86,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      */
     @Override
     public synchronized long insertNamespace(final String mUri, final String mPrefix)
-        throws TTException {
+        throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         return super.insertNamespace(mUri, mPrefix);
     }
@@ -95,7 +95,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void remove() throws TTException {
+    public synchronized void remove() throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.remove();
     }
