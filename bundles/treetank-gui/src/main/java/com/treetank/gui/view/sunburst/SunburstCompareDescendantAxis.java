@@ -494,9 +494,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             final long key = paramRtx.getNode().getNodeKey();
             paramRtx.moveToFirstChild();
             do {
-                // final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
-                // retVal += node.hasFirstChild() ? 0 : 1;
-                retVal += 1;
+                final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
+                retVal += node.hasFirstChild() ? 0 : 1;
+                // retVal += 1;
             } while (((AbsStructNode)paramRtx.getNode()).hasRightSibling() && paramRtx.moveToRightSibling());
             paramRtx.moveTo(key);
         }
