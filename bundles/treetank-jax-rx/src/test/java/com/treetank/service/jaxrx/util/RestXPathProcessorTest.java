@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 
 import org.junit.BeforeClass;
@@ -63,7 +63,7 @@ public class RestXPathProcessorTest {
     public static final transient String PARAMJRESTSEQ = "rest:sequence";
 
     @BeforeClass
-    public static void setUpGlobal() throws TTException {
+    public static void setUpGlobal() throws AbsTTException {
         final File dir = new File(RESTProps.STOREDBPATH);
         deleteDirectory(dir);
         final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
@@ -93,7 +93,7 @@ public class RestXPathProcessorTest {
      */
     @Test
     public final void testGetXpathResourceStringStringBooleanLongOutputStreamBoolean() throws IOException,
-        SAXException, ParserConfigurationException, TTException {
+        SAXException, ParserConfigurationException, AbsTTException {
         String xPath = "//book";
         boolean withNodeIds = true;
         OutputStream output = new ByteArrayOutputStream();
@@ -137,7 +137,7 @@ public class RestXPathProcessorTest {
      */
     @Test
     public final void testGetXpathResourceFileLongStringBooleanLongOutputStreamBoolean() throws SAXException,
-        IOException, ParserConfigurationException, TTException {
+        IOException, ParserConfigurationException, AbsTTException {
         String xPath = "//author";
         boolean withNodeIds = true;
         OutputStream output = new ByteArrayOutputStream();
