@@ -27,7 +27,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.AbsAxisTest;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.After;
@@ -45,12 +45,12 @@ public class XPathAxisWideTest {
         "src" + File.separator + "test" + File.separator + "resources" + File.separator + "shakespeare.xml";
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 

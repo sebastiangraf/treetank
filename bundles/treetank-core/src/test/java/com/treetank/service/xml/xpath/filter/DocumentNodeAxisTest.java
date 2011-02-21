@@ -28,24 +28,24 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxisTest;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.DocumentCreater;
 
 public class DocumentNodeAxisTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testIterate() throws TTException {
+    public void testIterate() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

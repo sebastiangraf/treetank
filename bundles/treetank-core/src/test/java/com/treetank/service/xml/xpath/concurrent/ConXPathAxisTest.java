@@ -9,7 +9,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxisTest;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.XPathStringChecker;
@@ -36,7 +36,7 @@ public class ConXPathAxisTest {
     private IReadTransaction rtx;
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
 
         // Build simple test tree.
@@ -51,7 +51,7 @@ public class ConXPathAxisTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
 
         rtx.close();
         session.close();

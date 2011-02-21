@@ -28,7 +28,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxisTest;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.utils.DocumentCreater;
 
@@ -41,18 +41,18 @@ import com.treetank.utils.DocumentCreater;
 public class IntersectAxisTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
 
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testIntersect() throws TTException {
+    public void testIntersect() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

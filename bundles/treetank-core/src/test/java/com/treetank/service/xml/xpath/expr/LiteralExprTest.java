@@ -26,7 +26,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.DocumentCreater;
@@ -54,7 +54,7 @@ public class LiteralExprTest {
     private int key2;
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         item1 = new AtomicValue(false);
         item2 = new AtomicValue(14, Type.INTEGER);
@@ -62,12 +62,12 @@ public class LiteralExprTest {
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testLiteralExpr() throws TTException {
+    public void testLiteralExpr() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

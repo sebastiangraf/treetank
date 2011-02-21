@@ -29,23 +29,23 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.filter.IFilterTest;
 import com.treetank.axis.filter.ItemFilter;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.utils.DocumentCreater;
 
 public class ItemFilterTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testIFilterConvetions() throws TTException {
+    public void testIFilterConvetions() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

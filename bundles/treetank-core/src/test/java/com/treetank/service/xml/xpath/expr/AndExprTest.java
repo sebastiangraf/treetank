@@ -25,7 +25,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.XPathError;
@@ -48,17 +48,17 @@ import static org.junit.Assert.fail;
 public class AndExprTest {
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testAnd() throws TTException {
+    public void testAnd() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction rtx = session.beginWriteTransaction();
@@ -97,7 +97,7 @@ public class AndExprTest {
     }
 
     @Test
-    public void testAndQuery() throws TTException {
+    public void testAndQuery() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

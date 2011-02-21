@@ -24,7 +24,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
-import com.treetank.exception.TTException;
+import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.utils.TypedValue;
 
@@ -39,17 +39,17 @@ public class XPathParserTest {
     private XPathParser parser;
 
     @Before
-    public void setUp() throws TTException {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TTException {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testLiterals() throws TTException {
+    public void testLiterals() throws AbsTTException {
 
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -102,7 +102,7 @@ public class XPathParserTest {
     }
 
     @Test
-    public void testEBNF() throws TTException {
+    public void testEBNF() throws AbsTTException {
 
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
