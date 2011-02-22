@@ -16,6 +16,8 @@
  */
 package com.treetank.diff;
 
+import com.treetank.diff.DiffFactory.EDiff;
+
 /**
  * Observable class to fire diffs for interested observers, which implement the {@link IDiffObserver}
  * interface.

@@ -21,6 +21,7 @@ import java.util.Set;
 import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
@@ -114,7 +115,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
                 // Check if node has been deleted.
                 if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
                     diff = EDiff.DELETED;
-                    diff.setNode(paramOldRtx.getNode());
+                    // diff.setNode(paramOldRtx.getNode());
                     break;
                 }
 
@@ -142,7 +143,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
 
                 diff = found.kindOfDiff(rightSiblings);
                 if (diff == EDiff.DELETED) {
-                    diff.setNode(paramOldRtx.getNode());
+                    // diff.setNode(paramOldRtx.getNode());
                 }
             }
             break;
@@ -174,15 +175,14 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
      *            {@link IReadTransaction} instance on old revision
      * @return kind of diff
      */
-    abstract EDiff
-        checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
+    abstract EDiff checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
 
     /**
      * Check if nodes are equal.
      * 
-     * @param paramFirstRtx
+     * @param paramNewRtx
      *            {@link IReadTransaction} on new revision
-     * @param paramSecondRtx
+     * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      * 
      * @return if nodes are equal or not

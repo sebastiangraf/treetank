@@ -25,7 +25,7 @@ import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.diff.DiffFactory;
 import com.treetank.diff.DiffFactory.EDiffKind;
-import com.treetank.diff.EDiff;
+import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.diff.IDiffObserver;
 import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;

@@ -16,6 +16,8 @@
  */
 package com.treetank.diff;
 
+import com.treetank.diff.DiffFactory.EDiff;
+
 /**
  * Determines if an equal node is found.
  * 

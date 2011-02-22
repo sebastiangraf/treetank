@@ -19,7 +19,7 @@ package com.treetank.gui.view.sunburst;
 import javax.xml.namespace.QName;
 
 import com.treetank.api.IItem;
-import com.treetank.diff.EDiff;
+import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.ViewUtilities;
 

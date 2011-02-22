@@ -33,6 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import com.treetank.TestHelper;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderCommit;

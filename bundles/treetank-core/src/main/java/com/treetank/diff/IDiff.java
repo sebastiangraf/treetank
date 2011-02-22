@@ -17,6 +17,7 @@
 package com.treetank.diff;
 
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.DiffFactory.EDiff;
 
 /**
  * Diff interface.

@@ -20,12 +20,12 @@ import java.util.Set;
 
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.DiffFactory.EDiff;
+import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
-
-import static com.treetank.diff.DiffFactory.EDiffKind;
 
 /**
  * Full diff including attributes and namespaces. Note that this class is thread safe.
@@ -77,7 +77,7 @@ final class FullDiff extends AbsDiff implements IDiff {
                 // Check if node has been deleted.
                 if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
                     diff = EDiff.DELETED;
-                    diff.setNode(paramOldRtx.getNode());
+//                    diff.setNode(paramOldRtx.getNode());
                     break;
                 }
 
@@ -111,7 +111,7 @@ final class FullDiff extends AbsDiff implements IDiff {
 
                 diff = found.kindOfDiff(rightSiblings);
                 if (diff == EDiff.DELETED) {
-                    diff.setNode(paramOldRtx.getNode());
+//                    diff.setNode(paramOldRtx.getNode());
                 }
             }
             break;
