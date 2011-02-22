@@ -235,7 +235,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                     mDepth = mMaxDepth + 2;
                 }
                 // FIXME
-                mOldRtx.moveTo(mDiff.getNode().getNodeKey());
+//                mOldRtx.moveTo(mDiff.getNode().getNodeKey());
                 if (getTransaction().getNode().getNodeKey() == mOldRtx.getNode().getParentKey()) {
                     mModificationCount = countDiffs();
                     mParentModificationCount = mDiffStack.peek();
