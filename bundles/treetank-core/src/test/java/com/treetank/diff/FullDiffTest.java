@@ -33,6 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import com.treetank.TestHelper;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderCommit;
 import com.treetank.service.xml.shredder.EShredderInsert;
@@ -56,7 +57,7 @@ public class FullDiffTest {
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
-    private static final long TIMEOUT_S = 2;
+    private static final long TIMEOUT_S = 200000;
 
     @Before
     public void setUp() throws AbsTTException {
@@ -113,7 +114,7 @@ public class FullDiffTest {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.INSERTED);
         listener.diffListener(EDiff.INSERTED);
-        listener.diffListener(EDiff.SAME);
+        listener.diffListener(EDiff.SAMEHASH);
         listener.diffListener(EDiff.DONE);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {

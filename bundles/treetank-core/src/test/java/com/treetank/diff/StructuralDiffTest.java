@@ -16,16 +16,15 @@
  */
 package com.treetank.diff;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.Set;                                                       
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import com.treetank.TestHelper;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
 import com.treetank.service.xml.shredder.EShredderCommit;
 import com.treetank.service.xml.shredder.EShredderInsert;
@@ -114,7 +114,7 @@ public final class StructuralDiffTest {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(EDiff.INSERTED);
         listener.diffListener(EDiff.INSERTED);
-        listener.diffListener(EDiff.SAME);
+        listener.diffListener(EDiff.SAMEHASH);
         listener.diffListener(EDiff.DONE);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -269,29 +269,6 @@ public final class StructuralDiffTest {
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
-
-        // mStart.await();
-        //
-        // while (!mList.isEmpty()) {
-        // mDiff = mList.remove(0);
-        // mCounter++;
-        // switch (mCounter) {
-        // case 1:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // case 2:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // case 3:
-        // assertEquals(mDiff, EDiff.SAME);
-        // break;
-        // case 4:
-        // assertEquals(mDiff, EDiff.INSERTED);
-        // break;
-        // default:
-        // assertEquals(mDiff, EDiff.SAME);
-        // }
-        // }
     }
 
     @Test

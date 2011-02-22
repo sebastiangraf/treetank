@@ -20,6 +20,8 @@ import java.util.Set;
 
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.DiffFactory.EDiffKind;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
 
 /**
@@ -29,7 +31,7 @@ import com.treetank.node.AbsStructNode;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class StructuralDiff extends AbsDiff implements IDiff {
+final class StructuralDiff extends AbsDiff {
 
     /**
      * Constructor.
@@ -46,9 +48,12 @@ final class StructuralDiff extends AbsDiff implements IDiff {
      *            kind of diff (optimized or not)
      * @param paramObservers
      *            {@link Set} of observes
+     * @throws AbsTTException
+     *             if retrieving the session fails
      */
     public StructuralDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-        final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+        final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers)
+        throws AbsTTException {
         super(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
     }
 
@@ -106,60 +111,6 @@ final class StructuralDiff extends AbsDiff implements IDiff {
         return diff;
     }
 
-//    /** {@inheritDoc} */
-//    @Override
-//    public EDiff optimizedDiff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx,
-//        final Depth paramDepth) {
-//        assert paramFirstRtx != null;
-//        assert paramSecondRtx != null;
-//
-//        EDiff diff = EDiff.SAME;
-//
-//        // Check for modifications.
-//        switch (paramFirstRtx.getNode().getKind()) {
-//        case TEXT_KIND:
-//        case ELEMENT_KIND:
-//            if (paramFirstRtx.getNode().getHash() != paramSecondRtx.getNode().getHash()) {
-//                // Check if node has been deleted.
-//                if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
-//                    diff = EDiff.DELETED;
-//                    break;
-//                }
-//
-//                // Check if node has been renamed.
-//                if (checkRenameOptimized(paramFirstRtx, paramSecondRtx) == EDiff.RENAMED) {
-//                    diff = EDiff.RENAMED;
-//                    break;
-//                }
-//
-//                // See if one of the right sibling matches.
-//
-//                EFoundEqualNode found = EFoundEqualNode.FALSE;
-//                int rightSiblings = 0;
-//                final long key = paramSecondRtx.getNode().getNodeKey();
-//                do {
-//                    if (paramFirstRtx.getNode().getHash() == paramSecondRtx.getNode().getHash()) {
-//                        found = EFoundEqualNode.TRUE;
-//                    }
-//
-//                    if (paramSecondRtx.getNode().getNodeKey() != key) {
-//                        rightSiblings++;
-//                    }
-//                } while (((AbsStructNode)paramSecondRtx.getNode()).hasRightSibling()
-//                    && paramSecondRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
-//                paramSecondRtx.moveTo(key);
-//
-//                diff = found.kindOfDiff(rightSiblings);
-//            }
-//            break;
-//        default:
-//            // Do nothing.
-//        }
-//
-//        fireDiff(diff);
-//        return diff;
-//    }
-
     /**
      * Check for a rename of a node.
      * 
@@ -192,8 +143,7 @@ final class StructuralDiff extends AbsDiff implements IDiff {
 
     /** {@inheritDoc} */
     @Override
-    EDiff checkOptimizedRename(final IReadTransaction paramFirstRtx,
-        final IReadTransaction paramSecondRtx) {
+    EDiff checkOptimizedRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
         EDiff diff = EDiff.SAME;
         final long firstKey = paramFirstRtx.getNode().getNodeKey();
         boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
@@ -214,5 +164,15 @@ final class StructuralDiff extends AbsDiff implements IDiff {
         paramFirstRtx.moveTo(firstKey);
         paramSecondRtx.moveTo(secondKey);
         return diff;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    EFoundEqualNode checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+        EFoundEqualNode found = EFoundEqualNode.FALSE;
+        if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
+            found = EFoundEqualNode.TRUE;
+        }
+        return found;
     }
 }

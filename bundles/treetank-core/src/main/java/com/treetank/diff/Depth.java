@@ -21,30 +21,46 @@ package com.treetank.diff;
  *
  */
 public final class Depth {
+    /** Depth in new revision. */
     private transient int mNewDepth;
     
+    /** Depth in old revision. */
     private transient int mOldDepth;
     
+    /** Increment depth in new revision. */
     void incrementNewDepth() {
         mNewDepth++;
     }
     
+    /** Decrement depth in new revision. */
     void decrementNewDepth() {
         mNewDepth--;
     }
     
+    /** Increment depth in old revision. */
     void incrementOldDepth() {
         mOldDepth++;
     }
     
+    /** Decrement depth in old revision. */
     void decrementOldDepth() {
         mOldDepth--;
     }
     
+    /** 
+     * Get depth in new revision.
+     * 
+     * @return depth in new revision
+     */
     int getNewDepth() {
         return mNewDepth;
     }
     
+    /** 
+     * Get depth in old revision.
+     * 
+     * @return depth in old revision
+     */
     int getOldDepth() {
         return mOldDepth;
     }

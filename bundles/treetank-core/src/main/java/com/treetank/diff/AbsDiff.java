@@ -18,11 +18,13 @@ package com.treetank.diff;
 
 import java.util.Set;
 
+import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
-import com.treetank.node.ENodes;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -67,16 +69,21 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         assert paramNewRev > paramOldRev;
         assert paramObservers != null;
         try {
+            HashKind hashKind = null;
             synchronized (paramDb) {
                 mNewRev = paramDb.getSession().beginReadTransaction(paramNewRev);
                 mOldRev = paramDb.getSession().beginReadTransaction(paramOldRev);
+                hashKind =
+                    HashKind.valueOf(paramDb.getDatabaseConf().getProps()
+                        .getProperty(EDatabaseSetting.HASHKIND_TYPE.name()));
             }
             mNewRev.moveTo(paramKey);
             mOldRev.moveTo(paramKey);
             for (final IDiffObserver observer : paramObservers) {
                 addObserver(observer);
             }
-            new Diff(paramDb, mNewRev, mOldRev, paramDiffKind, this).evaluate();
+            initialize(hashKind, mNewRev, mOldRev, paramDiffKind);
+            diff();
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
@@ -90,7 +97,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         assert paramOldRtx != null;
         assert paramDepth != null;
 
-        EDiff diff = EDiff.SAME;
+        EDiff diff = EDiff.SAMEHASH;
 
         // Check for modifications.
         switch (paramNewRtx.getNode().getKind()) {
@@ -98,6 +105,12 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         case TEXT_KIND:
         case ELEMENT_KIND:
             if (paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
+                // Check if nodes are the same (even if subtrees may vary).
+                if (checkNodes(paramNewRtx, paramOldRtx) == EFoundEqualNode.TRUE) {
+                    diff = EDiff.SAME;
+                    break;
+                }
+
                 // Check if node has been deleted.
                 if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
                     diff = EDiff.DELETED;
@@ -117,7 +130,6 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
                 final long key = paramOldRtx.getNode().getNodeKey();
                 do {
                     if (paramNewRtx.getNode().getHash() == paramOldRtx.getNode().getHash()) {
-                        assert paramOldRtx.getNode().getKind() != ENodes.TEXT_KIND;
                         found = EFoundEqualNode.TRUE;
                     }
 
@@ -157,11 +169,23 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
      * Check for a rename of a node.
      * 
      * @param paramNewRtx
-     *            first {@link IReadTransaction} instance
+     *            {@link IReadTransaction} instance on new revision
      * @param paramOldRtx
-     *            second {@link IReadTransaction} instance
+     *            {@link IReadTransaction} instance on old revision
      * @return kind of diff
      */
     abstract EDiff
         checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
+
+    /**
+     * Check if nodes are equal.
+     * 
+     * @param paramFirstRtx
+     *            {@link IReadTransaction} on new revision
+     * @param paramSecondRtx
+     *            {@link IReadTransaction} on old revision
+     * 
+     * @return if nodes are equal or not
+     */
+    abstract EFoundEqualNode checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
 }
