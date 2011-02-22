@@ -16,10 +16,7 @@
  */
 package com.treetank.diff;
 
-import static org.easymock.EasyMock.createStrictMock;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +29,7 @@ import javax.xml.stream.XMLStreamException;
 
 import com.treetank.TestHelper;
 import com.treetank.api.IDatabase;
+import com.treetank.api.IItem;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.diff.DiffFactory.EDiffKind;
@@ -74,19 +72,19 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(EDiff.INSERTED);
-        listener.diffListener(EDiff.INSERTED);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DONE);
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -113,10 +111,10 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffOptimizedFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(EDiff.INSERTED);
-        listener.diffListener(EDiff.INSERTED);
-        listener.diffListener(EDiff.SAMEHASH);
-        listener.diffListener(EDiff.DONE);
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -144,14 +142,14 @@ public final class StructuralDiffTest {
     public void testStructuralDiffSecond() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.RENAMED);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DONE);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -188,16 +186,16 @@ public final class StructuralDiffTest {
     public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DELETED);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DELETED);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DELETED);
-        listener.diffListener(EDiff.DELETED);
-        listener.diffListener(EDiff.DELETED);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DONE);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -233,13 +231,13 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffFourth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.INSERTED);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DONE);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -275,9 +273,9 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffFifth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.RENAMED);
-        listener.diffListener(EDiff.DONE);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -313,12 +311,12 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffSixth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DELETED);
-        listener.diffListener(EDiff.SAME);
-        listener.diffListener(EDiff.DELETED);
-        listener.diffListener(EDiff.DONE);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override

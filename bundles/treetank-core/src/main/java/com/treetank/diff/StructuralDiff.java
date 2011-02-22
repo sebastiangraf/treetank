@@ -60,19 +60,19 @@ final class StructuralDiff extends AbsDiff {
 
     /** {@inheritDoc} */
     @Override
-    public EDiff diff(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx,
+    public EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
         final Depth paramDepth) {
-        assert paramFirstRtx != null;
-        assert paramSecondRtx != null;
+        assert paramNewRtx != null;
+        assert paramOldRtx != null;
 
         EDiff diff = EDiff.SAME;
 
         // Check for modifications.
-        switch (paramFirstRtx.getNode().getKind()) {
+        switch (paramNewRtx.getNode().getKind()) {
         case ROOT_KIND:
         case TEXT_KIND:
         case ELEMENT_KIND:
-            if (!paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+            if (!paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
                 // Check if node has been deleted.
                 if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
                     diff = EDiff.DELETED;
@@ -80,7 +80,7 @@ final class StructuralDiff extends AbsDiff {
                 }
 
                 // Check if node has been renamed.
-                if (checkRename(paramFirstRtx, paramSecondRtx) == EDiff.RENAMED) {
+                if (checkRename(paramNewRtx, paramOldRtx) == EDiff.RENAMED) {
                     diff = EDiff.RENAMED;
                     break;
                 }
@@ -88,18 +88,18 @@ final class StructuralDiff extends AbsDiff {
                 // See if current node or one of the right siblings matches.
                 EFoundEqualNode found = EFoundEqualNode.FALSE;
                 int rightSiblings = 0;
-                final long key = paramSecondRtx.getNode().getNodeKey();
+                final long key = paramOldRtx.getNode().getNodeKey();
                 do {
-                    if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+                    if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
                         found = EFoundEqualNode.TRUE;
                     }
 
-                    if (paramSecondRtx.getNode().getNodeKey() != key) {
+                    if (paramOldRtx.getNode().getNodeKey() != key) {
                         rightSiblings++;
                     }
-                } while (((AbsStructNode)paramSecondRtx.getNode()).hasRightSibling()
-                    && paramSecondRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
-                paramSecondRtx.moveTo(key);
+                } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
+                    && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
+                paramOldRtx.moveTo(key);
                 diff = found.kindOfDiff(rightSiblings);
             }
 
@@ -108,7 +108,7 @@ final class StructuralDiff extends AbsDiff {
             // Do nothing.
         }
 
-        fireDiff(diff);
+        fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
         return diff;
     }
 

@@ -151,7 +151,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
             // Do nothing.
         }
 
-        fireDiff(diff);
+        fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
         return diff;
     }
 
@@ -163,7 +163,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        fireDiff(EDiff.DONE);
+        fireDiff(EDiff.DONE, null, null);
     }
 
     /**
