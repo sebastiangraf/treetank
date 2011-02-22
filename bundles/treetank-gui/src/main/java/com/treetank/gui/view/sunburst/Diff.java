@@ -14,27 +14,71 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package com.treetank.diff;
+package com.treetank.gui.view.sunburst;
 
 import com.treetank.api.IItem;
 import com.treetank.diff.DiffFactory.EDiff;
 
 /**
- * Observers listening for diffs.
+ * Container for diffs.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public interface IDiffObserver {
+class Diff {
+    /** {@link EDiff} which specifies the kind of diff between two nodes. */
+    private transient EDiff mDiff;
+
+    /** {@link IItem} in new revision. */
+    private transient IItem mNewNode;
+
+    /** {@link IItem} in old revision. */
+    private transient IItem mOldNode;
+    
     /**
-     * Called for every node comparsion.
+     * Constructor.
      * 
      * @param paramDiff
-     *            the {@link EDiff} type
+     *            {@link EDiff} which specifies the kind of diff between two nodes
      * @param paramNewNode
      *            {@link IItem} in new revision
      * @param paramOldNode
      *            {@link IItem} in old revision
      */
-    void diffListener(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode);
+    public Diff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode) {
+        assert paramDiff != null;
+        assert paramNewNode != null;
+        assert paramOldNode != null;
+
+        mDiff = paramDiff;
+        mNewNode = paramNewNode;
+        mOldNode = paramOldNode;
+    }
+    
+    /**
+     * Get diff.
+     * 
+     * @return the kind of diff
+     */
+    EDiff getDiff() {
+        return mDiff;
+    }
+    
+    /**
+     * Get new node.
+     * 
+     * @return the new node
+     */
+    IItem getNewNode() {
+        return mNewNode;
+    }
+    
+    /**
+     * Get old node.
+     * 
+     * @return the old node
+     */
+    public IItem getOldNode() {
+        return mOldNode;
+    }
 }

@@ -19,6 +19,7 @@ package com.treetank.diff;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.treetank.api.IItem;
 import com.treetank.diff.DiffFactory.EDiff;
 
 /**
@@ -41,9 +42,9 @@ abstract class AbsDiffObservable extends AbsDiffMovement implements IDiffObserva
 
     /** {@inheritDoc} */
     @Override
-    public final void fireDiff(final EDiff paramDiff) {
+    public final void fireDiff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode) {
         for (final IDiffObserver observer : mDiffObservers) {
-            observer.diffListener(paramDiff);
+            observer.diffListener(paramDiff, paramNewNode, paramOldNode);
         }
     }
 

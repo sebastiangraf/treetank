@@ -99,7 +99,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     private transient IModel mModel;
 
     /** {@link List} of {@link EDiff}s. */
-    private transient List<EDiff> mDiffs;
+    private transient List<Diff> mDiffs;
 
     /** Modification count. */
     private transient int mModificationCount;
@@ -142,10 +142,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * @param paramModel
      *            {@link IModel} implementation which observes axis changes
      * @param paramDiffs
-     *            {@link List} of {@link EDiff}s
+     *            {@link List} of {@link Diff}s
      */
     public SunburstCompareDescendantAxis(final IReadTransaction paramRtx, final IModel paramModel,
-        final List<EDiff> paramDiffs) {
+        final List<Diff> paramDiffs) {
         super(paramRtx);
         mModel = paramModel;
         mDiffs = paramDiffs;
@@ -168,7 +168,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      *            maximum depth in old revision
      */
     public SunburstCompareDescendantAxis(final boolean mIncludeSelf, final IModel paramModel,
-        final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx, final List<EDiff> paramDiffs,
+        final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx, final List<Diff> paramDiffs,
         final int paramMaxDepth) {
         super(paramNewRtx, mIncludeSelf);
         mModel = paramModel;
@@ -228,14 +228,14 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
         // Check for deletions.
         if (!mDiffs.isEmpty() && mNextKey != 0) {
-            mDiff = mDiffs.remove(0);
+            mDiff = mDiffs.remove(0).getDiff();
             if (mDiff == EDiff.DELETED) {
                 if (mLastDiff == EDiff.SAME) {
                     mTempDepth = mDepth;
                     mDepth = mMaxDepth + 2;
                 }
                 // FIXME
-//                mOldRtx.moveTo(mDiff.getNode().getNodeKey());
+                // mOldRtx.moveTo(mDiff.getNode().getNodeKey());
                 if (getTransaction().getNode().getNodeKey() == mOldRtx.getNode().getParentKey()) {
                     mModificationCount = countDiffs();
                     mParentModificationCount = mDiffStack.peek();
@@ -407,7 +407,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      */
     private int incrDiffCounter(final int paramIndex, int paramDiffCounts) {
         final EDiff intermDiff =
-            paramIndex == 0 ? (mDiff == null ? mDiffs.get(paramIndex) : mDiff) : mDiffs.get(paramIndex);
+            paramIndex == 0 ? (mDiff == null ? mDiffs.get(paramIndex).getDiff() : mDiff) : mDiffs.get(
+                paramIndex).getDiff();
         if (intermDiff != EDiff.SAME && intermDiff != EDiff.DONE) {
             paramDiffCounts++;
         }

@@ -16,6 +16,7 @@
  */
 package com.treetank.diff;
 
+import com.treetank.api.IItem;
 import com.treetank.diff.DiffFactory.EDiff;
 
 /**
@@ -32,8 +33,12 @@ interface IDiffObservable {
      * 
      * @param paramDiff
      *            the encountered diff
+     * @param paramNewNode
+     *            current {@link IItem} in new revision
+     * @param paramOldNode
+     *            current {@link IItem} in old revision
      */
-    void fireDiff(final EDiff paramDiff);
+    void fireDiff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode);
 
     /**
      * Add an observer. This means add an instance of a class which implements the {@link IDiffObserver}

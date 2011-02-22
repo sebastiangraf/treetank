@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
@@ -170,7 +171,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         private final SunburstCompareModel mModel;
 
         /** {@link List} of {@link EDiff} constants. */
-        private transient List<EDiff> mDiffs;
+        private transient List<Diff> mDiffs;
 
         /**
          * Constructor.
@@ -211,7 +212,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             mModWeight = paramModificationWeight;
             mModel = (SunburstCompareModel)paramModel;
             mRelations = new NodeRelations();
-            mDiffs = new LinkedList<EDiff>();
+            mDiffs = new LinkedList<Diff>();
             mStart = new CountDownLatch(1);
 
             mRtx.moveTo(mKey);
@@ -267,11 +268,11 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
         /** {@inheritDoc} */
         @Override
-        public void diffListener(final EDiff paramDiff) {
+        public void diffListener(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode) {
             if (paramDiff == EDiff.DONE) {
                 mStart.countDown();
             } else {
-                mDiffs.add(paramDiff);
+                mDiffs.add(new Diff(paramDiff, paramNewNode, paramOldNode));
             }
         }
     }

@@ -119,7 +119,7 @@ final class FullDiff extends AbsDiff implements IDiff {
             // Do nothing.
         }
 
-        fireDiff(diff);
+        fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
         return diff;
     }
 
