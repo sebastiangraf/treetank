@@ -17,12 +17,11 @@
 package com.treetank.diff;
 
 import com.treetank.access.WriteTransaction.HashKind;
-import com.treetank.api.IDatabase;
 import com.treetank.api.IExpression;
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
-import com.treetank.settings.EDatabaseSetting;
 
 /**
  * Main diff class.
@@ -30,7 +29,7 @@ import com.treetank.settings.EDatabaseSetting;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class Diff implements IExpression {
+abstract class AbsDiffMovement implements IDiff {
 
     /** Determines the current revision. */
     private enum ERevision {
@@ -82,13 +81,13 @@ final class Diff implements IExpression {
     }
 
     /** {@link Depth} container for depths in both revisions. */
-    private final Depth mDepth;
+    private transient Depth mDepth;
 
     /** First {@link IReadTransaction}. */
-    private final IReadTransaction mNewRtx;
+    private transient IReadTransaction mNewRtx;
 
     /** Second {@link IReadTransaction}. */
-    private final IReadTransaction mOldRtx;
+    private transient IReadTransaction mOldRtx;
 
     /**
      * Kind of difference.
@@ -97,60 +96,57 @@ final class Diff implements IExpression {
      */
     private transient EDiff mDiff;
 
-    /** Diff implementation of the {@link IDiff} interface. */
-    private final IDiff mDiffImpl;
-
     /**
      * Kind of hash method.
      * 
      * @see HashKind
      */
-    private final HashKind mHashKind;
+    private transient HashKind mHashKind;
 
     /** Diff kind. */
-    private final EDiffKind mDiffKind;
+    private transient EDiffKind mDiffKind;
 
     /**
-     * Constructor.
+     * Initialize.
      * 
-     * @param paramDb
-     *            {@link IDatabase} instance
+     * @param paramHashKind
+     *            {@link HashKind} instance
      * @param paramNewRtx
      *            first {@link IReadTransaction}, on the new revision
      * @param paramOldRtx
      *            second {@link IReadTransaction}, on the old revision
-     * @param paramDiffImpl
-     *            diff implementation of {@link IDiff}
      * @param paramDiffKind
      *            kind of diff (optimized or not)
      */
-    Diff(final IDatabase paramDb, final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final EDiffKind paramDiffKind, final IDiff paramDiffImpl) {
-        if (paramDb == null || paramNewRtx == null || paramNewRtx == null || paramDiffImpl == null) {
+    void initialize(final HashKind paramHashKind, final IReadTransaction paramNewRtx,
+        final IReadTransaction paramOldRtx, final EDiffKind paramDiffKind) {
+        if (paramNewRtx == null || paramNewRtx == null) {
             throw new IllegalArgumentException();
         }
 
-        mHashKind =
-            HashKind.valueOf(paramDb.getDatabaseConf().getProps()
-                .getProperty(EDatabaseSetting.HASHKIND_TYPE.name()));
-
+        mHashKind = paramHashKind;
         mNewRtx = paramNewRtx;
         mOldRtx = paramOldRtx;
         mDiff = EDiff.SAME;
         mDiffKind = paramDiffKind;
-        mDiffImpl = paramDiffImpl;
         mDepth = new Depth();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void evaluate() {
+    /** Do the diff. */
+    public void diff() {
+        assert mHashKind != null;
+        assert mNewRtx != null;
+        assert mOldRtx != null;
+        assert mDiff != null;
+        assert mDiffKind != null;
+        assert mDepth != null;
+
         // Check first nodes.
         if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND) {
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
+                mDiff = diff(mNewRtx, mOldRtx, mDepth);
             } else {
-                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx, mDepth);
+                mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth);
             }
         }
 
@@ -161,9 +157,9 @@ final class Diff implements IExpression {
             }
 
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
+                mDiff = diff(mNewRtx, mOldRtx, mDepth);
             } else {
-                mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx, mDepth);
+                mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth);
             }
         }
 
@@ -171,14 +167,14 @@ final class Diff implements IExpression {
         if (mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
             while (moveCursor(mOldRtx, ERevision.OLD)) {
                 if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                    mDiff = mDiffImpl.diff(mNewRtx, mOldRtx, mDepth);
+                    mDiff = diff(mNewRtx, mOldRtx, mDepth);
                 } else {
-                    mDiff = mDiffImpl.optimizedDiff(mNewRtx, mOldRtx, mDepth);
+                    mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth);
                 }
             }
         }
 
-        mDiffImpl.done();
+        done();
     }
 
     /**
@@ -198,7 +194,7 @@ final class Diff implements IExpression {
 
         if (node.hasFirstChild()) {
             if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffKind.OPTIMIZED
-                && mHashKind != HashKind.None && mDiff == EDiff.SAME) {
+                && mHashKind != HashKind.None && mDiff == EDiff.SAMEHASH) {
                 moved = paramRtx.moveToRightSibling();
             } else {
                 moved = paramRtx.moveToFirstChild();
@@ -210,10 +206,6 @@ final class Diff implements IExpression {
             moved = paramRtx.moveToRightSibling();
         } else {
             do {
-                // if (paramRtx.getNode().getNodeKey() == (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
-                // moved = false;
-                // break;
-                // }
                 moved = paramRtx.moveToParent();
                 if (moved) {
                     paramRevision.decrementDepth(mDepth);

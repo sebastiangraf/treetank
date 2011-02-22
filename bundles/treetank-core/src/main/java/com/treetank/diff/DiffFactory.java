@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.treetank.api.IDatabase;
+import com.treetank.exception.AbsTTException;
 
 /**
  * Wrapper for public access.
@@ -30,15 +31,26 @@ import com.treetank.api.IDatabase;
  * 
  */
 public final class DiffFactory {
-    /** Determines the kind of diff. */
+
+    /**
+     * Kind of diff.
+     */
+    public enum EDiffKind {
+        /** Normal diff. */
+        NORMAL,
+
+        /** Optimized diff. */
+        OPTIMIZED;
+    }
+
+    /** Determines the kind of diff to invoke. */
     private enum DiffKind {
         /** Full diff. */
         FULL {
             @Override
-            protected void
-                invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-                    final long paramOldRev, final EDiffKind paramDiffKind,
-                    final Set<IDiffObserver> paramObservers) {
+            protected void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
+                final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers)
+                throws AbsTTException {
                 new FullDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
             }
         },
@@ -46,10 +58,9 @@ public final class DiffFactory {
         /** Structural diff (doesn't recognize differences in namespace and attribute nodes. */
         STRUCTURAL {
             @Override
-            protected void
-                invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-                    final long paramOldRev, final EDiffKind paramDiffKind,
-                    final Set<IDiffObserver> paramObservers) {
+            protected void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
+                final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers)
+                throws AbsTTException {
                 new StructuralDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
             }
         };
@@ -69,9 +80,12 @@ public final class DiffFactory {
          *            kind of diff (optimized or not)
          * @param paramObservers
          *            observes differences
+         * @throws AbsTTException
+         *             if retrieving session from database fails
          */
         protected abstract void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-            final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers);
+            final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers)
+            throws AbsTTException;
     }
 
     /** Kind of diff to invoke. */

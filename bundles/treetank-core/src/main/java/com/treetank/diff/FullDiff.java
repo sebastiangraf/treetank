@@ -20,9 +20,12 @@ import java.util.Set;
 
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.AbsTTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
+
+import static com.treetank.diff.DiffFactory.EDiffKind;
 
 /**
  * Full diff including attributes and namespaces. Note that this class is thread safe.
@@ -47,9 +50,11 @@ final class FullDiff extends AbsDiff implements IDiff {
      *            kind of diff (optimized or not)
      * @param paramObservers
      *            {@link Set} of Observers, which listen for the kinds of diff between two nodes
+     * @throws AbsTTException
+     *             if retrieving session fails
      */
     FullDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
-        final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+        final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) throws AbsTTException {
         super(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
     }
 
@@ -68,8 +73,7 @@ final class FullDiff extends AbsDiff implements IDiff {
         case ROOT_KIND:
         case TEXT_KIND:
         case ELEMENT_KIND:
-            if (!paramNewRtx.getNode().equals(paramOldRtx.getNode())
-                && checkNodes(paramNewRtx, paramOldRtx) == EFoundEqualNode.FALSE) {
+            if (checkNodes(paramNewRtx, paramOldRtx) == EFoundEqualNode.FALSE) {
                 // Check if node has been deleted.
                 if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
                     diff = EDiff.DELETED;
@@ -119,18 +123,8 @@ final class FullDiff extends AbsDiff implements IDiff {
         return diff;
     }
 
-    /**
-     * Check if nodes are equal.
-     * 
-     * @param paramFirstRtx
-     *            {@link IReadTransaction} on new revision
-     * @param paramSecondRtx
-     *            {@link IReadTransaction} on old revision
-     * 
-     * @return if nodes are equal or not
-     */
-    private EFoundEqualNode checkNodes(final IReadTransaction paramFirstRtx,
-        final IReadTransaction paramSecondRtx) {
+    @Override
+    EFoundEqualNode checkNodes(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
 
@@ -224,8 +218,7 @@ final class FullDiff extends AbsDiff implements IDiff {
     }
 
     @Override
-    EDiff checkOptimizedRename(final IReadTransaction paramNewRtx,
-        final IReadTransaction paramOldRtx) {
+    EDiff checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
 

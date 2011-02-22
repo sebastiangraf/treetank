@@ -16,6 +16,9 @@
  */
 package com.treetank.diff;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.treetank.api.IItem;
 
 /**
@@ -27,6 +30,9 @@ import com.treetank.api.IItem;
 public enum EDiff {
     /** Nodes are the same. */
     SAME,
+
+    /** Nodes are the same (including subtrees). */
+    SAMEHASH,
 
     /** Node has been inserted. */
     INSERTED,
@@ -41,7 +47,12 @@ public enum EDiff {
     DONE;
 
     /** Item node. */
-    private transient IItem mNode;
+    private transient List<IItem> mContainer;
+    
+    /** Constructor. */
+    EDiff() {
+        mContainer = new ArrayList<IItem>();
+    }
 
     /**
      * Set node.
@@ -51,15 +62,18 @@ public enum EDiff {
      */
     void setNode(final IItem paramNode) {
         assert paramNode != null;
-        mNode = paramNode;
+        mContainer.add(paramNode);
     }
-    
+
     /**
      * Get node.
      * 
+     * @param paramIndex
+     *            index of item to chose
+     * 
      * @return the node
      */
-    public IItem getNode() {
-        return mNode;
+    public IItem getNode(final int paramIndex) {
+        return mContainer.get(paramIndex);
     }
 }
