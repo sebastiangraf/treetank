@@ -24,8 +24,8 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.diff.DiffFactory;
+import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.diff.EDiff;
-import com.treetank.diff.EDiffKind;
 import com.treetank.diff.IDiffObserver;
 import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
@@ -50,9 +50,6 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(
         LoggerFactory.getLogger(SunburstCompareModel.class));
-
-    /** Modification of current node. */
-    private transient EDiff mDiff;
 
     /** Maximum descendant count in tree. */
     private transient long mMaxDescendantCount;
@@ -214,7 +211,6 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             mModWeight = paramModificationWeight;
             mModel = (SunburstCompareModel)paramModel;
             mRelations = new NodeRelations();
-            mDiff = EDiff.SAME;
             mDiffs = new LinkedList<EDiff>();
             mStart = new CountDownLatch(1);
 
