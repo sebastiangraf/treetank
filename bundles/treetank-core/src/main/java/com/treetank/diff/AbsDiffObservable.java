@@ -19,6 +19,8 @@ package com.treetank.diff;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.treetank.diff.DiffFactory.EDiff;
+
 /**
  * Implements {@link IDiffObservable}, which can be used for all classes, which implement the {@link IDiff}
  * interface.

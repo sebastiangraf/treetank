@@ -16,7 +16,7 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import com.treetank.diff.EDiff;
+import com.treetank.diff.DiffFactory.EDiff;
 
 /**
  * Item container to simplify {@link EMoved} enum.

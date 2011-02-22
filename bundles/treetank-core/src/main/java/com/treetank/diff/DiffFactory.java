@@ -33,6 +33,32 @@ import com.treetank.exception.AbsTTException;
 public final class DiffFactory {
 
     /**
+     * Possible kinds of differences between two nodes.
+     * 
+     * @author Johannes Lichtenberger, University of Konstanz
+     * 
+     */
+    public enum EDiff {
+        /** Nodes are the same. */
+        SAME,
+
+        /** Nodes are the same (including subtrees). */
+        SAMEHASH,
+
+        /** Node has been inserted. */
+        INSERTED,
+
+        /** Node has been deleted. */
+        DELETED,
+
+        /** Node has been renamed. */
+        RENAMED,
+
+        /** Diff computation done. */
+        DONE;
+    }
+    
+    /**
      * Kind of diff.
      */
     public enum EDiffKind {

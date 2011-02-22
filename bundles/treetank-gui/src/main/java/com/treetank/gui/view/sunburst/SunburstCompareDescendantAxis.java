@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.diff.EDiff;
+import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.gui.view.sunburst.Item.Builder;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;

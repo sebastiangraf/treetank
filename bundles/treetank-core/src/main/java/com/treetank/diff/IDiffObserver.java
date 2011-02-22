@@ -16,6 +16,8 @@
  */
 package com.treetank.diff;
 
+import com.treetank.diff.DiffFactory.EDiff;
+
 /**
  * Observers listening for diffs.
  * 
