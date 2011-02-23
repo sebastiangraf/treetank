@@ -31,6 +31,8 @@ import com.treetank.utils.LogWrapper;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Abstract diff class which implements common functionality.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
@@ -38,6 +40,9 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
 
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsDiff.class));
+    
+    /** Kind of diff. */
+    transient EDiffKind mDiffKind;
 
     /** {@link IReadTransaction} on new revision. */
     private transient IReadTransaction mNewRev;
@@ -68,8 +73,10 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         assert paramNewRev >= 0;
         assert paramOldRev >= 0;
         assert paramNewRev > paramOldRev;
+        assert paramDiffKind != null;
         assert paramObservers != null;
         try {
+            mDiffKind = paramDiffKind;
             HashKind hashKind = null;
             synchronized (paramDb) {
                 mNewRev = paramDb.getSession().beginReadTransaction(paramNewRev);
@@ -80,8 +87,11 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
             }
             mNewRev.moveTo(paramKey);
             mOldRev.moveTo(paramKey);
-            for (final IDiffObserver observer : paramObservers) {
-                addObserver(observer);
+            
+            synchronized (paramObservers) {
+                for (final IDiffObserver observer : paramObservers) {
+                    addObserver(observer);
+                }
             }
             initialize(hashKind, mNewRev, mOldRev, paramDiffKind);
             diff();
@@ -115,12 +125,11 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
                 // Check if node has been deleted.
                 if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
                     diff = EDiff.DELETED;
-                    // diff.setNode(paramOldRtx.getNode());
                     break;
                 }
 
                 // Check if node has been renamed.
-                if (checkOptimizedRename(paramNewRtx, paramOldRtx) == EDiff.RENAMED) {
+                if (checkRename(paramNewRtx, paramOldRtx)) {
                     diff = EDiff.RENAMED;
                     break;
                 }
@@ -130,7 +139,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
                 int rightSiblings = 0;
                 final long key = paramOldRtx.getNode().getNodeKey();
                 do {
-                    if (paramNewRtx.getNode().getHash() == paramOldRtx.getNode().getHash()) {
+                    if (checkNodes(paramNewRtx, paramOldRtx) == EFoundEqualNode.TRUE) {
                         found = EFoundEqualNode.TRUE;
                     }
 
@@ -142,9 +151,6 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
                 paramOldRtx.moveTo(key);
 
                 diff = found.kindOfDiff(rightSiblings);
-                if (diff == EDiff.DELETED) {
-                    // diff.setNode(paramOldRtx.getNode());
-                }
             }
             break;
         default:
@@ -167,17 +173,6 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
     }
 
     /**
-     * Check for a rename of a node.
-     * 
-     * @param paramNewRtx
-     *            {@link IReadTransaction} instance on new revision
-     * @param paramOldRtx
-     *            {@link IReadTransaction} instance on old revision
-     * @return kind of diff
-     */
-    abstract EDiff checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
-
-    /**
      * Check if nodes are equal.
      * 
      * @param paramNewRtx
@@ -188,4 +183,15 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
      * @return if nodes are equal or not
      */
     abstract EFoundEqualNode checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
+    
+    /**
+     * Check if a rename occured.
+     * 
+     * @param paramNewRtx
+     *            {@link IReadTransaction} on new revision
+     * @param paramOldRtx
+     *            {@link IReadTransaction} on old revision
+     * @return true if node has been renamed, otherwise false
+     */
+    abstract boolean checkRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
 }

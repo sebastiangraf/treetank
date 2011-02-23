@@ -80,7 +80,7 @@ final class StructuralDiff extends AbsDiff {
                 }
 
                 // Check if node has been renamed.
-                if (checkRename(paramNewRtx, paramOldRtx) == EDiff.RENAMED) {
+                if (checkRename(paramNewRtx, paramOldRtx)) {
                     diff = EDiff.RENAMED;
                     break;
                 }
@@ -121,50 +121,26 @@ final class StructuralDiff extends AbsDiff {
      *            second {@link IReadTransaction} instance
      * @return kind of diff
      */
-    private EDiff checkRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
-        EDiff diff = EDiff.SAME;
+    @Override
+    boolean checkRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+        boolean renamed = false;
         final long firstKey = paramFirstRtx.getNode().getNodeKey();
         boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
         final long secondKey = paramSecondRtx.getNode().getNodeKey();
         boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
         if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-            diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
+            renamed = true;
         } else if (!movedFirstRtx && !movedSecondRtx) {
             movedFirstRtx = paramFirstRtx.moveToParent();
             movedSecondRtx = paramSecondRtx.moveToParent();
 
             if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-                diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
+                renamed = true;
             }
         }
         paramFirstRtx.moveTo(firstKey);
         paramSecondRtx.moveTo(secondKey);
-        return diff;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    EDiff checkOptimizedRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
-        EDiff diff = EDiff.SAME;
-        final long firstKey = paramFirstRtx.getNode().getNodeKey();
-        boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
-        final long secondKey = paramSecondRtx.getNode().getNodeKey();
-        boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
-        if (movedFirstRtx && movedSecondRtx
-            && paramFirstRtx.getNode().getHash() == paramSecondRtx.getNode().getHash()) {
-            diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
-        } else if (!movedFirstRtx && !movedSecondRtx) {
-            movedFirstRtx = paramFirstRtx.moveToParent();
-            movedSecondRtx = paramSecondRtx.moveToParent();
-
-            if (movedFirstRtx && movedSecondRtx
-                && paramFirstRtx.getNode().getHash() == paramSecondRtx.getNode().getHash()) {
-                diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
-            }
-        }
-        paramFirstRtx.moveTo(firstKey);
-        paramSecondRtx.moveTo(secondKey);
-        return diff;
+        return renamed;
     }
 
     /** {@inheritDoc} */

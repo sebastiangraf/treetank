@@ -33,7 +33,7 @@ import com.treetank.node.ElementNode;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class FullDiff extends AbsDiff implements IDiff {
+final class FullDiff extends AbsDiff {
 
     /**
      * Constructor.
@@ -77,12 +77,11 @@ final class FullDiff extends AbsDiff implements IDiff {
                 // Check if node has been deleted.
                 if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
                     diff = EDiff.DELETED;
-//                    diff.setNode(paramOldRtx.getNode());
                     break;
                 }
 
                 // Check if node has been renamed.
-                if (checkRename(paramNewRtx, paramOldRtx) == EDiff.RENAMED) {
+                if (checkRename(paramNewRtx, paramOldRtx)) {
                     diff = EDiff.RENAMED;
                     break;
                 }
@@ -93,12 +92,6 @@ final class FullDiff extends AbsDiff implements IDiff {
                 final long key = paramOldRtx.getNode().getNodeKey();
                 do {
                     if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
-                        // if (paramOldRtx.getNode().getKind() == ENodes.TEXT_KIND) {
-                        // found = EFoundEqualNode.TRUE;
-                        // } else {
-                        // found = checkNodes(paramNewRtx, paramOldRtx);
-                        // }
-                        assert paramOldRtx.getNode().getKind() != ENodes.TEXT_KIND;
                         found = checkNodes(paramNewRtx, paramOldRtx);
                     }
 
@@ -110,9 +103,6 @@ final class FullDiff extends AbsDiff implements IDiff {
                 paramOldRtx.moveTo(key);
 
                 diff = found.kindOfDiff(rightSiblings);
-                if (diff == EDiff.DELETED) {
-//                    diff.setNode(paramOldRtx.getNode());
-                }
             }
             break;
         default:
@@ -123,6 +113,7 @@ final class FullDiff extends AbsDiff implements IDiff {
         return diff;
     }
 
+    /** {@inheritDoc} */
     @Override
     EFoundEqualNode checkNodes(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
         assert paramFirstRtx != null;
@@ -182,65 +173,31 @@ final class FullDiff extends AbsDiff implements IDiff {
         return found;
     }
 
-    /**
-     * Check for a rename of a node.
-     * 
-     * @param paramFirstRtx
-     *            first {@link IReadTransaction} instance
-     * @param paramSecondRtx
-     *            second {@link IReadTransaction} instance
-     * @return kind of diff
-     */
-    private EDiff checkRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+    /** {@inheritDoc} */
+    @Override
+    boolean checkRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
 
-        EDiff diff = EDiff.SAME;
+        boolean renamed = false;
         final long firstKey = paramFirstRtx.getNode().getNodeKey();
         boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
         final long secondKey = paramSecondRtx.getNode().getNodeKey();
         boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
         if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
             && checkNodes(paramFirstRtx, paramSecondRtx) == EFoundEqualNode.TRUE) {
-            diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
+            renamed = true;
         } else if (!movedFirstRtx && !movedSecondRtx) {
             movedFirstRtx = paramFirstRtx.moveToParent();
             movedSecondRtx = paramSecondRtx.moveToParent();
 
             if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
                 && checkNodes(paramFirstRtx, paramSecondRtx) == EFoundEqualNode.TRUE) {
-                diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
+                renamed = true;
             }
         }
         paramFirstRtx.moveTo(firstKey);
         paramSecondRtx.moveTo(secondKey);
-        return diff;
-    }
-
-    @Override
-    EDiff checkOptimizedRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
-        assert paramNewRtx != null;
-        assert paramOldRtx != null;
-
-        EDiff diff = EDiff.SAME;
-        final long firstKey = paramNewRtx.getNode().getNodeKey();
-        boolean movedFirstRtx = paramNewRtx.moveToRightSibling();
-        final long secondKey = paramOldRtx.getNode().getNodeKey();
-        boolean movedSecondRtx = paramOldRtx.moveToRightSibling();
-        if (movedFirstRtx && movedSecondRtx
-            && paramNewRtx.getNode().getHash() == paramOldRtx.getNode().getHash()) {
-            diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
-        } else if (!movedFirstRtx && !movedSecondRtx) {
-            movedFirstRtx = paramNewRtx.moveToParent();
-            movedSecondRtx = paramOldRtx.moveToParent();
-
-            if (movedFirstRtx && movedSecondRtx
-                && paramNewRtx.getNode().getHash() == paramOldRtx.getNode().getHash()) {
-                diff = EFoundEqualNode.TRUE.kindOfDiff(-1);
-            }
-        }
-        paramNewRtx.moveTo(firstKey);
-        paramOldRtx.moveTo(secondKey);
-        return diff;
+        return renamed;
     }
 }

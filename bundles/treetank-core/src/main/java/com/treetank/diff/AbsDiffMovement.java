@@ -151,7 +151,7 @@ abstract class AbsDiffMovement implements IDiff {
         }
 
         // Iterate over new revision.
-        while (mDiff == EDiff.DELETED || moveCursor(mNewRtx, ERevision.NEW)) {
+        while (mDiff == EDiff.DELETED || mDiff == EDiff.DELETEDHASH || moveCursor(mNewRtx, ERevision.NEW)) {
             if (mDiff != EDiff.INSERTED) {
                 moveCursor(mOldRtx, ERevision.OLD);
             }
@@ -194,7 +194,7 @@ abstract class AbsDiffMovement implements IDiff {
 
         if (node.hasFirstChild()) {
             if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffKind.OPTIMIZED
-                && mHashKind != HashKind.None && mDiff == EDiff.SAMEHASH) {
+                && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
                 moved = paramRtx.moveToRightSibling();
             } else {
                 moved = paramRtx.moveToFirstChild();
