@@ -32,9 +32,6 @@ enum EFoundEqualNode {
         EDiff kindOfDiff(final int paramRightSibls) {
             EDiff mod = EDiff.SAME;
             switch (paramRightSibls) {
-            case -1:
-                mod = EDiff.RENAMED;
-                break;
             case 0:
                 break;
             default:

@@ -50,6 +50,9 @@ public final class DiffFactory {
 
         /** Node has been deleted. */
         DELETED,
+        
+        /** Node has been deleted (including subtrees). */
+        DELETEDHASH,
 
         /** Node has been renamed. */
         RENAMED,
@@ -66,7 +69,7 @@ public final class DiffFactory {
         NORMAL,
 
         /** Optimized diff. */
-        OPTIMIZED;
+        OPTIMIZED
     }
 
     /** Determines the kind of diff to invoke. */
