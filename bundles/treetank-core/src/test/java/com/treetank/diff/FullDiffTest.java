@@ -118,7 +118,6 @@ public class FullDiffTest {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(EDiff.DONE, null, null);
 
