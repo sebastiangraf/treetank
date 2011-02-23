@@ -21,6 +21,8 @@ import java.util.Set;
 import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.AbsDiffMovement.EFireDiff;
+import com.treetank.diff.AbsDiffMovement.ERevision;
 import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
@@ -99,11 +101,11 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
             LOGWRAPPER.error(e.getMessage(), e);
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth) {
+        final Depth paramDepth, final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         assert paramDepth != null;
@@ -116,49 +118,23 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         case TEXT_KIND:
         case ELEMENT_KIND:
             if (!checkNodes(paramNewRtx, paramOldRtx)) {
-                // Check if node has been deleted.
-                if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
-                    diff = EDiff.DELETED;
-                    break;
-                }
-
-                // Check if node has been renamed.
-                if (checkRename(paramNewRtx, paramOldRtx)) {
-                    diff = EDiff.RENAMED;
-                    break;
-                }
-
-                // See if one of the right sibling matches.
-                EFoundEqualNode found = EFoundEqualNode.FALSE;
-                int rightSiblings = 0;
-                final long key = paramOldRtx.getNode().getNodeKey();
-                do {
-                    if (checkNodes(paramNewRtx, paramOldRtx)) {
-                        found = EFoundEqualNode.TRUE;
-                    }
-
-                    if (paramOldRtx.getNode().getNodeKey() != key) {
-                        rightSiblings++;
-                    }
-                } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
-                    && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
-                paramOldRtx.moveTo(key);
-
-                diff = found.kindOfDiff(rightSiblings);
+                diff = algorithm(paramNewRtx, paramOldRtx, paramDepth);
             }
             break;
         default:
             // Do nothing.
         }
 
-        fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+        if (paramFireDiff == EFireDiff.TRUE) {
+            fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+        }
         return diff;
     }
 
     /** {@inheritDoc} */
     @Override
     public EDiff optimizedDiff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth) {
+        final Depth paramDepth, final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         assert paramDepth != null;
@@ -177,47 +153,114 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
                     break;
                 }
 
-                // Check if node has been deleted.
-                if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
-                    diff = EDiff.DELETED;
-                    break;
-                }
-
-                // Check if node has been renamed.
-                if (checkRename(paramNewRtx, paramOldRtx)) {
-                    diff = EDiff.RENAMED;
-                    break;
-                }
-
-                // See if one of the right sibling matches.
-                EFoundEqualNode found = EFoundEqualNode.FALSE;
-                int rightSiblings = 0;
-                final long key = paramOldRtx.getNode().getNodeKey();
-                do {
-                    if (checkNodes(paramNewRtx, paramOldRtx)) {
-                        found = EFoundEqualNode.TRUE;
-                    }
-
-                    if (paramOldRtx.getNode().getNodeKey() != key) {
-                        rightSiblings++;
-                    }
-                } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
-                    && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
-                paramOldRtx.moveTo(key);
-
-                diff = found.kindOfDiff(rightSiblings);
+                diff = algorithm(paramNewRtx, paramOldRtx, paramDepth);
             }
             break;
         default:
             // Do nothing.
         }
 
-        if (diff == EDiff.SAMEHASH) {
-            fireDiff(EDiff.SAME, paramNewRtx.getNode(), paramOldRtx.getNode());
-        } else {
-            fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+        if (paramFireDiff == EFireDiff.TRUE) {
+            if (diff == EDiff.SAMEHASH) {
+                fireDiff(EDiff.SAME, paramNewRtx.getNode(), paramOldRtx.getNode());
+            } else {
+                fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+            }
         }
         return diff;
+    }
+
+    /**
+     * Main algorithm to compute diffs between two nodes.
+     * 
+     * @param paramNewRtx
+     *            {@link IReadTransaction} on new revision
+     * @param paramOldRtx
+     *            {@link IReadTransaction} on old revision
+     * @param paramDepth
+     *            {@link Depth} container for current depths of both transaction cursors
+     * @return kind of diff
+     */
+    private EDiff algorithm(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+        final Depth paramDepth) {
+        EDiff diff = null;
+
+        // Check if node has been deleted.
+        if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
+            diff = EDiff.DELETED;
+        }
+
+        // Check if node has been renamed.
+        else if (checkRename(paramNewRtx, paramOldRtx)) {
+            diff = EDiff.RENAMED;
+        } else {
+            // See if one of the right sibling matches.
+            EFoundEqualNode found = EFoundEqualNode.FALSE;
+            int rightSiblings = 0;
+            final long key = paramOldRtx.getNode().getNodeKey();
+            do {
+                if (checkSubtreeNodes(paramNewRtx, paramOldRtx)) {
+                    found = EFoundEqualNode.TRUE;
+                }
+
+                if (paramOldRtx.getNode().getNodeKey() != key) {
+                    rightSiblings++;
+                }
+            } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
+                && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
+            paramOldRtx.moveTo(key);
+
+            diff = found.kindOfDiff(rightSiblings);
+        }
+
+        assert diff != null;
+        return diff;
+    }
+
+    /**
+     * Check if nodes are equal or only deletions have been made in the subtrees.
+     * 
+     * @param paramNewRtx
+     *            {@link IReadTransaction} on new revision
+     * @param paramOldRtx
+     *            {@link IReadTransaction} on old revision
+     * 
+     * @return true if nodes are "equal", otherwise false
+     */
+    boolean checkSubtreeNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+        assert paramNewRtx != null;
+        assert paramOldRtx != null;
+        boolean retVal = checkNodes(paramNewRtx, paramOldRtx);
+
+        if (retVal && ((AbsStructNode)paramNewRtx.getNode()).hasFirstChild()) {
+            EDiff diff = EDiff.SAME;
+            final Depth depth = new Depth();
+            final long newKey = paramNewRtx.getNode().getNodeKey();
+            final long oldKey = paramOldRtx.getNode().getNodeKey();
+            while (diff == EDiff.DELETED || moveCursor(paramNewRtx, ERevision.NEW)) {
+                if (diff != EDiff.INSERTED) {
+                    moveCursor(paramOldRtx, ERevision.OLD);
+                }
+
+                if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
+                    diff = diff(paramNewRtx, paramOldRtx, depth, EFireDiff.FALSE);
+                    if (diff != EDiff.SAME && diff != EDiff.DELETED) {
+                        retVal = false;
+                        break;
+                    }
+                } else {
+                    diff = optimizedDiff(paramNewRtx, paramOldRtx, depth, EFireDiff.FALSE);
+                    if (diff != EDiff.SAME && diff != EDiff.DELETED) {
+                        retVal = false;
+                        break;
+                    }
+                }
+            }
+            paramNewRtx.moveTo(newKey);
+            paramOldRtx.moveTo(oldKey);
+        }
+
+        return retVal;
     }
 
     @Override
@@ -232,7 +275,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
     }
 
     /**
-     * Check if nodes are equal.
+     * Check if nodes are equal excluding subtrees.
      * 
      * @param paramNewRtx
      *            {@link IReadTransaction} on new revision
