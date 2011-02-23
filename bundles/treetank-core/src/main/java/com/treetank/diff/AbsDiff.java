@@ -40,7 +40,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
 
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsDiff.class));
-    
+
     /** Kind of diff. */
     transient EDiffKind mDiffKind;
 
@@ -87,7 +87,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
             }
             mNewRev.moveTo(paramKey);
             mOldRev.moveTo(paramKey);
-            
+
             synchronized (paramObservers) {
                 for (final IDiffObserver observer : paramObservers) {
                     addObserver(observer);
@@ -98,6 +98,61 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+        final Depth paramDepth) {
+        assert paramNewRtx != null;
+        assert paramOldRtx != null;
+        assert paramDepth != null;
+
+        EDiff diff = EDiff.SAME;
+
+        // Check for modifications.
+        switch (paramNewRtx.getNode().getKind()) {
+        case ROOT_KIND:
+        case TEXT_KIND:
+        case ELEMENT_KIND:
+            if (!checkNodes(paramNewRtx, paramOldRtx)) {
+                // Check if node has been deleted.
+                if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
+                    diff = EDiff.DELETED;
+                    break;
+                }
+
+                // Check if node has been renamed.
+                if (checkRename(paramNewRtx, paramOldRtx)) {
+                    diff = EDiff.RENAMED;
+                    break;
+                }
+
+                // See if one of the right sibling matches.
+                EFoundEqualNode found = EFoundEqualNode.FALSE;
+                int rightSiblings = 0;
+                final long key = paramOldRtx.getNode().getNodeKey();
+                do {
+                    if (checkNodes(paramNewRtx, paramOldRtx)) {
+                        found = EFoundEqualNode.TRUE;
+                    }
+
+                    if (paramOldRtx.getNode().getNodeKey() != key) {
+                        rightSiblings++;
+                    }
+                } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
+                    && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
+                paramOldRtx.moveTo(key);
+
+                diff = found.kindOfDiff(rightSiblings);
+            }
+            break;
+        default:
+            // Do nothing.
+        }
+
+        fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+        return diff;
     }
 
     /** {@inheritDoc} */
@@ -117,7 +172,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         case ELEMENT_KIND:
             if (paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
                 // Check if nodes are the same (even if subtrees may vary).
-                if (checkNodes(paramNewRtx, paramOldRtx) == EFoundEqualNode.TRUE) {
+                if (checkNodes(paramNewRtx, paramOldRtx)) {
                     diff = EDiff.SAME;
                     break;
                 }
@@ -139,7 +194,7 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
                 int rightSiblings = 0;
                 final long key = paramOldRtx.getNode().getNodeKey();
                 do {
-                    if (checkNodes(paramNewRtx, paramOldRtx) == EFoundEqualNode.TRUE) {
+                    if (checkNodes(paramNewRtx, paramOldRtx)) {
                         found = EFoundEqualNode.TRUE;
                     }
 
@@ -157,7 +212,11 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
             // Do nothing.
         }
 
-        fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+        if (diff == EDiff.SAMEHASH) {
+            fireDiff(EDiff.SAME, paramNewRtx.getNode(), paramOldRtx.getNode());
+        } else {
+            fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+        }
         return diff;
     }
 
@@ -180,10 +239,10 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      * 
-     * @return if nodes are equal or not
+     * @return true if nodes are "equal", otherwise false
      */
-    abstract EFoundEqualNode checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
-    
+    abstract boolean checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
+
     /**
      * Check if a rename occured.
      * 

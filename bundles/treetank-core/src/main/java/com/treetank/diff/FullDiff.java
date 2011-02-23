@@ -60,66 +60,11 @@ final class FullDiff extends AbsDiff {
 
     /** {@inheritDoc} */
     @Override
-    public EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth) {
-        assert paramNewRtx != null;
-        assert paramOldRtx != null;
-        assert paramDepth != null;
-
-        EDiff diff = EDiff.SAME;
-
-        // Check for modifications.
-        switch (paramNewRtx.getNode().getKind()) {
-        case ROOT_KIND:
-        case TEXT_KIND:
-        case ELEMENT_KIND:
-            if (checkNodes(paramNewRtx, paramOldRtx) == EFoundEqualNode.FALSE) {
-                // Check if node has been deleted.
-                if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
-                    diff = EDiff.DELETED;
-                    break;
-                }
-
-                // Check if node has been renamed.
-                if (checkRename(paramNewRtx, paramOldRtx)) {
-                    diff = EDiff.RENAMED;
-                    break;
-                }
-
-                // See if one of the right sibling matches.
-                EFoundEqualNode found = EFoundEqualNode.FALSE;
-                int rightSiblings = 0;
-                final long key = paramOldRtx.getNode().getNodeKey();
-                do {
-                    if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
-                        found = checkNodes(paramNewRtx, paramOldRtx);
-                    }
-
-                    if (paramOldRtx.getNode().getNodeKey() != key) {
-                        rightSiblings++;
-                    }
-                } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
-                    && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
-                paramOldRtx.moveTo(key);
-
-                diff = found.kindOfDiff(rightSiblings);
-            }
-            break;
-        default:
-            // Do nothing.
-        }
-
-        fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
-        return diff;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    EFoundEqualNode checkNodes(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+    boolean checkNodes(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
 
-        EFoundEqualNode found = EFoundEqualNode.FALSE;
+        boolean found = false;
 
         if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
             final long nodeKey = paramFirstRtx.getNode().getNodeKey();
@@ -129,10 +74,10 @@ final class FullDiff extends AbsDiff {
                     && ((ElementNode)paramFirstRtx.getNode()).getAttributeCount() == 0
                     && ((ElementNode)paramSecondRtx.getNode()).getAttributeCount() == 0
                     && ((ElementNode)paramSecondRtx.getNode()).getNamespaceCount() == 0) {
-                    found = EFoundEqualNode.TRUE;
+                    found = true;
                 } else {
                     if (((ElementNode)paramFirstRtx.getNode()).getNamespaceCount() == 0) {
-                        found = EFoundEqualNode.TRUE;
+                        found = true;
                     } else {
                         for (int i = 0; i < ((ElementNode)paramFirstRtx.getNode()).getNamespaceCount(); i++) {
                             paramFirstRtx.moveToNamespace(i);
@@ -140,7 +85,7 @@ final class FullDiff extends AbsDiff {
                                 paramSecondRtx.moveToNamespace(i);
 
                                 if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-                                    found = EFoundEqualNode.TRUE;
+                                    found = true;
                                     break;
                                 }
                             }
@@ -149,14 +94,14 @@ final class FullDiff extends AbsDiff {
                         }
                     }
 
-                    if (found == EFoundEqualNode.TRUE) {
+                    if (found) {
                         for (int i = 0; i < ((ElementNode)paramFirstRtx.getNode()).getAttributeCount(); i++) {
                             paramFirstRtx.moveToAttribute(i);
                             for (int j = 0; j < ((ElementNode)paramSecondRtx.getNode()).getAttributeCount(); j++) {
                                 paramSecondRtx.moveToAttribute(i);
 
                                 if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-                                    found = EFoundEqualNode.TRUE;
+                                    found = true;
                                     break;
                                 }
                             }
@@ -166,7 +111,7 @@ final class FullDiff extends AbsDiff {
                     }
                 }
             } else {
-                found = EFoundEqualNode.TRUE;
+                found = true;
             }
         }
 
@@ -185,14 +130,14 @@ final class FullDiff extends AbsDiff {
         final long secondKey = paramSecondRtx.getNode().getNodeKey();
         boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
         if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
-            && checkNodes(paramFirstRtx, paramSecondRtx) == EFoundEqualNode.TRUE) {
+            && checkNodes(paramFirstRtx, paramSecondRtx)) {
             renamed = true;
         } else if (!movedFirstRtx && !movedSecondRtx) {
             movedFirstRtx = paramFirstRtx.moveToParent();
             movedSecondRtx = paramSecondRtx.moveToParent();
 
             if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
-                && checkNodes(paramFirstRtx, paramSecondRtx) == EFoundEqualNode.TRUE) {
+                && checkNodes(paramFirstRtx, paramSecondRtx)) {
                 renamed = true;
             }
         }

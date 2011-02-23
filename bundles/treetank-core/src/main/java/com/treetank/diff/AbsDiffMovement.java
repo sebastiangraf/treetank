@@ -151,7 +151,7 @@ abstract class AbsDiffMovement implements IDiff {
         }
 
         // Iterate over new revision.
-        while (mDiff == EDiff.DELETED || mDiff == EDiff.DELETEDHASH || moveCursor(mNewRtx, ERevision.NEW)) {
+        while (mDiff == EDiff.DELETED || moveCursor(mNewRtx, ERevision.NEW)) {
             if (mDiff != EDiff.INSERTED) {
                 moveCursor(mOldRtx, ERevision.OLD);
             }
