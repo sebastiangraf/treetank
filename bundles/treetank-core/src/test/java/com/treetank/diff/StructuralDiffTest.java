@@ -189,9 +189,6 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
@@ -282,13 +279,11 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
         listener.diffListener(EDiff.DONE, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -371,8 +366,6 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAMEHASH), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
         listener.diffListener(EDiff.DONE, null, null);
