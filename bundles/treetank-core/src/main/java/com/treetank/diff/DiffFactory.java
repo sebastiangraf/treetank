@@ -42,7 +42,7 @@ public final class DiffFactory {
         /** Nodes are the same. */
         SAME,
 
-        /** Nodes are the same (including subtrees). */
+        /** Nodes are the same (including subtrees), internally used for optimizations. */
         SAMEHASH,
 
         /** Node has been inserted. */
@@ -50,9 +50,6 @@ public final class DiffFactory {
 
         /** Node has been deleted. */
         DELETED,
-        
-        /** Node has been deleted (including subtrees). */
-        DELETEDHASH,
 
         /** Node has been renamed. */
         RENAMED,
@@ -60,7 +57,7 @@ public final class DiffFactory {
         /** Diff computation done. */
         DONE;
     }
-    
+
     /**
      * Kind of diff.
      */

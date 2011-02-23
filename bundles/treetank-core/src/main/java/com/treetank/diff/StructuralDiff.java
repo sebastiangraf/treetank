@@ -58,60 +58,6 @@ final class StructuralDiff extends AbsDiff {
         super(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth) {
-        assert paramNewRtx != null;
-        assert paramOldRtx != null;
-
-        EDiff diff = EDiff.SAME;
-
-        // Check for modifications.
-        switch (paramNewRtx.getNode().getKind()) {
-        case ROOT_KIND:
-        case TEXT_KIND:
-        case ELEMENT_KIND:
-            if (!paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
-                // Check if node has been deleted.
-                if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
-                    diff = EDiff.DELETED;
-                    break;
-                }
-
-                // Check if node has been renamed.
-                if (checkRename(paramNewRtx, paramOldRtx)) {
-                    diff = EDiff.RENAMED;
-                    break;
-                }
-
-                // See if current node or one of the right siblings matches.
-                EFoundEqualNode found = EFoundEqualNode.FALSE;
-                int rightSiblings = 0;
-                final long key = paramOldRtx.getNode().getNodeKey();
-                do {
-                    if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
-                        found = EFoundEqualNode.TRUE;
-                    }
-
-                    if (paramOldRtx.getNode().getNodeKey() != key) {
-                        rightSiblings++;
-                    }
-                } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
-                    && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
-                paramOldRtx.moveTo(key);
-                diff = found.kindOfDiff(rightSiblings);
-            }
-
-            break;
-        default:
-            // Do nothing.
-        }
-
-        fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
-        return diff;
-    }
-
     /**
      * Check for a rename of a node.
      * 
@@ -145,10 +91,10 @@ final class StructuralDiff extends AbsDiff {
 
     /** {@inheritDoc} */
     @Override
-    EFoundEqualNode checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
-        EFoundEqualNode found = EFoundEqualNode.FALSE;
+    boolean checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+        boolean found = false;
         if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
-            found = EFoundEqualNode.TRUE;
+            found = true;
         }
         return found;
     }
