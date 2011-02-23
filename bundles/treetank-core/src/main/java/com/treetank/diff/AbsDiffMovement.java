@@ -31,8 +31,17 @@ import com.treetank.node.ENodes;
  */
 abstract class AbsDiffMovement implements IDiff {
 
+    /** Determines if a diff should be fired or not. */
+    enum EFireDiff {
+        /** Yes, it should be fired. */
+        TRUE,
+        
+        /** No, it shouldn't be fired. */
+        FALSE
+    }
+    
     /** Determines the current revision. */
-    private enum ERevision {
+    enum ERevision {
         /** Old revision. */
         OLD {
             /** {@inheritDoc} */
@@ -96,15 +105,15 @@ abstract class AbsDiffMovement implements IDiff {
      */
     private transient EDiff mDiff;
 
+    /** Diff kind. */
+    private transient EDiffKind mDiffKind;
+    
     /**
      * Kind of hash method.
      * 
      * @see HashKind
      */
-    private transient HashKind mHashKind;
-
-    /** Diff kind. */
-    private transient EDiffKind mDiffKind;
+    transient HashKind mHashKind;
 
     /**
      * Initialize.
@@ -133,7 +142,7 @@ abstract class AbsDiffMovement implements IDiff {
     }
 
     /** Do the diff. */
-    public void diff() {
+    void diff() {
         assert mHashKind != null;
         assert mNewRtx != null;
         assert mOldRtx != null;
@@ -144,9 +153,9 @@ abstract class AbsDiffMovement implements IDiff {
         // Check first nodes.
         if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND) {
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                mDiff = diff(mNewRtx, mOldRtx, mDepth);
+                mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
             } else {
-                mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth);
+                mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
             }
         }
 
@@ -157,9 +166,9 @@ abstract class AbsDiffMovement implements IDiff {
             }
 
             if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                mDiff = diff(mNewRtx, mOldRtx, mDepth);
+                mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
             } else {
-                mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth);
+                mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
             }
         }
 
@@ -167,9 +176,9 @@ abstract class AbsDiffMovement implements IDiff {
         if (mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
             while (moveCursor(mOldRtx, ERevision.OLD)) {
                 if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                    mDiff = diff(mNewRtx, mOldRtx, mDepth);
+                    mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
                 } else {
-                    mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth);
+                    mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
                 }
             }
         }
@@ -186,7 +195,7 @@ abstract class AbsDiffMovement implements IDiff {
      *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
      */
-    private boolean moveCursor(final IReadTransaction paramRtx, final ERevision paramRevision) {
+    boolean moveCursor(final IReadTransaction paramRtx, final ERevision paramRevision) {
         assert paramRtx != null;
 
         boolean moved = false;
@@ -196,6 +205,10 @@ abstract class AbsDiffMovement implements IDiff {
             if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffKind.OPTIMIZED
                 && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
                 moved = paramRtx.moveToRightSibling();
+
+                if (!moved) {
+                    moved = moveToNextNode(paramRtx, paramRevision);
+                }
             } else {
                 moved = paramRtx.moveToFirstChild();
                 if (moved) {
@@ -205,17 +218,32 @@ abstract class AbsDiffMovement implements IDiff {
         } else if (node.hasRightSibling()) {
             moved = paramRtx.moveToRightSibling();
         } else {
-            do {
-                moved = paramRtx.moveToParent();
-                if (moved) {
-                    paramRevision.decrementDepth(mDepth);
-                }
-            } while (!((AbsStructNode)paramRtx.getNode()).hasRightSibling()
-                && ((AbsStructNode)paramRtx.getNode()).hasParent());
-
-            moved = paramRtx.moveToRightSibling();
+            moved = moveToNextNode(paramRtx, paramRevision);
         }
 
+        return moved;
+    }
+
+    /**
+     * Move to next sibling node.
+     * 
+     * @param paramRtx
+     *            the {@link IReadTransaction} to use
+     * @param paramRevision
+     *            the {@link ERevision} constant
+     * @return true, if cursor moved, false otherwise
+     */
+    private boolean moveToNextNode(final IReadTransaction paramRtx, final ERevision paramRevision) {
+        boolean moved = false;
+        do {
+            moved = paramRtx.moveToParent();
+            if (moved) {
+                paramRevision.decrementDepth(mDepth);
+            }
+        } while (!((AbsStructNode)paramRtx.getNode()).hasRightSibling()
+            && ((AbsStructNode)paramRtx.getNode()).hasParent());
+
+        moved = paramRtx.moveToRightSibling();
         return moved;
     }
 }

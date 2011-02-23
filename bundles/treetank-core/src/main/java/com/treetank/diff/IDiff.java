@@ -17,6 +17,7 @@
 package com.treetank.diff;
 
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.AbsDiffMovement.EFireDiff;
 import com.treetank.diff.DiffFactory.EDiff;
 
 /**
@@ -34,11 +35,13 @@ interface IDiff {
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      * @param paramDepth
-     *            {@link Depth} container for current depths of both transaction cursors. 
+     *            {@link Depth} container for current depths of both transaction cursors
+     * @param paramFireDiff
+     *            determines if a diff should be fired
      * @return kind of difference
      */
     EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth);
+        final Depth paramDepth, final EFireDiff paramFireDiff);
 
     /**
      * Optimized diff, which skips unnecessary comparsions.
@@ -48,11 +51,13 @@ interface IDiff {
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      * @param paramDepth
-     *            {@link Depth} container for current depths of both transaction cursors. 
+     *            {@link Depth} container for current depths of both transaction cursors
+     * @param paramFireDiff
+     *            determines if a diff should be fired
      * @return kind of difference
      */
     EDiff optimizedDiff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth);
+        final Depth paramDepth, final EFireDiff paramFireDiff);
 
     /**
      * Diff computation done, thus inform listeners.

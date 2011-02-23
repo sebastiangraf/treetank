@@ -18,12 +18,13 @@ package com.treetank.diff;
 
 import java.util.Set;
 
+import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.diff.AbsDiffMovement.ERevision;
 import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
-import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 
@@ -125,24 +126,27 @@ final class FullDiff extends AbsDiff {
         assert paramSecondRtx != null;
 
         boolean renamed = false;
-        final long firstKey = paramFirstRtx.getNode().getNodeKey();
-        boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
-        final long secondKey = paramSecondRtx.getNode().getNodeKey();
-        boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
-        if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
-            && checkNodes(paramFirstRtx, paramSecondRtx)) {
-            renamed = true;
-        } else if (!movedFirstRtx && !movedSecondRtx) {
-            movedFirstRtx = paramFirstRtx.moveToParent();
-            movedSecondRtx = paramSecondRtx.moveToParent();
-
+        if (paramFirstRtx.getNode().getKind() == paramSecondRtx.getNode().getKind()) {
+            final long firstKey = paramFirstRtx.getNode().getNodeKey();
+            boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
+            final long secondKey = paramSecondRtx.getNode().getNodeKey();
+            boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
             if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
                 && checkNodes(paramFirstRtx, paramSecondRtx)) {
                 renamed = true;
+            } else if (!movedFirstRtx && !movedSecondRtx) {
+                movedFirstRtx = paramFirstRtx.moveToParent();
+                movedSecondRtx = paramSecondRtx.moveToParent();
+
+                if (movedFirstRtx && movedSecondRtx
+                    && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
+                    && checkNodes(paramFirstRtx, paramSecondRtx)) {
+                    renamed = true;
+                }
             }
+            paramFirstRtx.moveTo(firstKey);
+            paramSecondRtx.moveTo(secondKey);
         }
-        paramFirstRtx.moveTo(firstKey);
-        paramSecondRtx.moveTo(secondKey);
         return renamed;
     }
 }
