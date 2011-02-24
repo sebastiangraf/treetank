@@ -22,7 +22,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
-import com.treetank.node.AbsStructNode;
+import com.treetank.node.ENodes;
 
 /**
  * Structural diff, thus no attributes and namespace nodes are taken into account. Note that this class is
@@ -60,31 +60,31 @@ final class StructuralDiff extends AbsDiff {
     /**
      * Check for a rename of a node.
      * 
-     * @param paramFirstRtx
+     * @param paramNewRtx
      *            first {@link IReadTransaction} instance
-     * @param paramSecondRtx
+     * @param paramOldRtx
      *            second {@link IReadTransaction} instance
      * @return kind of diff
      */
     @Override
-    boolean checkRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+    boolean checkRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         boolean renamed = false;
-        final long firstKey = paramFirstRtx.getNode().getNodeKey();
-        boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
-        final long secondKey = paramSecondRtx.getNode().getNodeKey();
-        boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
-        if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+        final long newKey = paramNewRtx.getNode().getNodeKey();
+        boolean movedNewRtx = paramNewRtx.moveToRightSibling();
+        final long oldKey = paramOldRtx.getNode().getNodeKey();
+        boolean movedOldRtx = paramOldRtx.moveToRightSibling();
+        if (movedNewRtx && movedOldRtx && checkNodes(paramNewRtx, paramOldRtx)) {
             renamed = true;
-        } else if (!movedFirstRtx && !movedSecondRtx) {
-            movedFirstRtx = paramFirstRtx.moveToParent();
-            movedSecondRtx = paramSecondRtx.moveToParent();
+        } else if (!movedNewRtx && !movedOldRtx) {
+            movedNewRtx = paramNewRtx.moveToParent();
+            movedOldRtx = paramOldRtx.moveToParent();
 
-            if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+            if (movedNewRtx && movedOldRtx && paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
                 renamed = true;
             }
         }
-        paramFirstRtx.moveTo(firstKey);
-        paramSecondRtx.moveTo(secondKey);
+        paramNewRtx.moveTo(newKey);
+        paramOldRtx.moveTo(oldKey);
         return renamed;
     }
 
@@ -92,8 +92,20 @@ final class StructuralDiff extends AbsDiff {
     @Override
     boolean checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         boolean found = false;
-        if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
-            found = true;
+        if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
+            switch (paramNewRtx.getNode().getKind()) {
+            case ELEMENT_KIND:
+                if (paramNewRtx.getQNameOfCurrentNode().equals(paramOldRtx.getQNameOfCurrentNode())) {
+                    found = true;
+                }
+                break;
+            case TEXT_KIND:
+                if (paramNewRtx.getValueOfCurrentNode().equals(paramOldRtx.getValueOfCurrentNode())) {
+                    found = true;
+                }
+                break;
+            default:
+            }
         }
         return found;
     }

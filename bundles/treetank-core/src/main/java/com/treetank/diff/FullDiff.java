@@ -18,11 +18,8 @@ package com.treetank.diff;
 
 import java.util.Set;
 
-import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
-import com.treetank.diff.AbsDiffMovement.ERevision;
-import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
 import com.treetank.node.ENodes;

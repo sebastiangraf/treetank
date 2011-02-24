@@ -341,9 +341,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                         processStartTag(event.asStartElement());
                         break;
                     case XMLStreamConstants.CHARACTERS:
-                        sBuilder.append(event.asCharacters().getData().trim());
+                        sBuilder.append(event.asCharacters().getData());
                         while (mReader.peek().getEventType() == XMLStreamConstants.CHARACTERS) {
-                            sBuilder.append(mReader.nextEvent().asCharacters().getData().trim());
+                            sBuilder.append(mReader.nextEvent().asCharacters().getData());
                         }
                         final Characters text = fac.createCharacters(sBuilder.toString());
                         processCharacters(text);
@@ -517,6 +517,16 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                     // checkIfLastNode(true);
                     // }
                 } else if (((AbsStructNode)mWtx.getNode()).hasParent()) {
+                    if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
+                        mWtx.moveToRightSibling();
+                        /*
+                         * Means next event is an end tag in StAX reader, but something different where the
+                         * Treetank transaction points to, which also means it has to be deleted.
+                         */
+                        mKeyMatches = -1;
+                        mDelete = EDelete.ATBOTTOM;
+                        deleteNode();
+                    }
                     mWtx.moveToParent();
                 }
 
@@ -574,26 +584,27 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             }
 
             mKeyMatches = mWtx.getNode().getNodeKey();
-
-            if (mFound && mIsRightSibling) {
-                /*
-                 * Root element of next subtree in shreddered file matches
-                 * so check all descendants. If they match the node must be
-                 * inserted.
-                 */
-                switch (paramEvent.getEventType()) {
-                case XMLStreamConstants.START_ELEMENT:
-                    mMoved = EMoved.FIRSTNODE;
-                    mFound = checkDescendants(paramEvent.asStartElement());
-                    break;
-                case XMLStreamConstants.CHARACTERS:
-                    mFound = checkText(paramEvent.asCharacters());
-                    break;
-                default:
-                    // throw new AssertionError("Node type not known or not implemented!");
-                }
-                mWtx.moveTo(mKeyMatches);
-            }
+            //
+            // if (mFound && mIsRightSibling) {
+            // /*
+            // * Root element of next subtree in shreddered file matches
+            // * so check all descendants. If they match the node must be
+            // * inserted.
+            // */
+            // switch (paramEvent.getEventType()) {
+            // case XMLStreamConstants.START_ELEMENT:
+            // mMoved = EMoved.FIRSTNODE;
+            // //mFound = checkDescendants(paramEvent.asStartElement());
+            // mFound = checkDescendants(paramEvent.asStartElement());
+            // break;
+            // case XMLStreamConstants.CHARACTERS:
+            // mFound = checkText(paramEvent.asCharacters());
+            // break;
+            // default:
+            // // throw new AssertionError("Node type not known or not implemented!");
+            // }
+            // mWtx.moveTo(mKeyMatches);
+            // }
         } while (!mFound && mWtx.moveToRightSibling());
         mWtx.moveTo(mNodeKey);
     }
@@ -784,8 +795,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
      */
-    private void insertElementNode(final StartElement paramElement) throws AbsTTException,
-        XMLStreamException {
+    private void insertElementNode(final StartElement paramElement) throws AbsTTException, XMLStreamException {
         assert paramElement != null;
         /*
          * Add node if it's either not found among right siblings (and the
@@ -977,7 +987,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         // Determines if transaction has moved to the parent node after a delete operation.
         boolean movedToParent = false;
 
-        // Determines if last node in a subtree is going to be deleted.
+        // Determines if ldeleteNodeast node in a subtree is going to be deleted.
         boolean isLast = false;
 
         do {
@@ -1293,7 +1303,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                     break;
                 }
             }
-            if (!hasAtts) {
+            if (!hasAtts && ((ElementNode) mWtx.getNode()).getAttributeCount() == 0) {
                 foundAtts = true;
             }
 
@@ -1318,7 +1328,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                     break;
                 }
             }
-            if (!hasNamesps) {
+            if (!hasNamesps && ((ElementNode) mWtx.getNode()).getNamespaceCount() == 0) {
                 foundNamesps = true;
             }
 

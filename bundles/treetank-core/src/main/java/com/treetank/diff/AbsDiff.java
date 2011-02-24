@@ -21,8 +21,6 @@ import java.util.Set;
 import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
-import com.treetank.diff.AbsDiffMovement.EFireDiff;
-import com.treetank.diff.AbsDiffMovement.ERevision;
 import com.treetank.diff.DiffFactory.EDiff;
 import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
@@ -38,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-abstract class AbsDiff extends AbsDiffObservable implements IDiff {
+abstract class AbsDiff extends AbsDiffObservable {
 
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsDiff.class));
@@ -188,80 +186,73 @@ abstract class AbsDiff extends AbsDiffObservable implements IDiff {
         // Check if node has been deleted.
         if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
             diff = EDiff.DELETED;
-        }
-
-        // Check if node has been renamed.
-        else if (checkRename(paramNewRtx, paramOldRtx)) {
+        } else if (checkRename(paramNewRtx, paramOldRtx)) { // Check if node has been renamed.
             diff = EDiff.RENAMED;
         } else {
             // See if one of the right sibling matches.
             EFoundEqualNode found = EFoundEqualNode.FALSE;
-            int rightSiblings = 0;
             final long key = paramOldRtx.getNode().getNodeKey();
-            do {
-                if (checkSubtreeNodes(paramNewRtx, paramOldRtx)) {
+
+            while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
+                && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE) {
+                if (checkNodes(paramNewRtx, paramOldRtx)) {
                     found = EFoundEqualNode.TRUE;
                 }
+            }
 
-                if (paramOldRtx.getNode().getNodeKey() != key) {
-                    rightSiblings++;
-                }
-            } while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
-                && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE);
             paramOldRtx.moveTo(key);
-
-            diff = found.kindOfDiff(rightSiblings);
+            diff = found.kindOfDiff();
         }
 
         assert diff != null;
         return diff;
     }
 
-    /**
-     * Check if nodes are equal or only deletions have been made in the subtrees.
-     * 
-     * @param paramNewRtx
-     *            {@link IReadTransaction} on new revision
-     * @param paramOldRtx
-     *            {@link IReadTransaction} on old revision
-     * 
-     * @return true if nodes are "equal", otherwise false
-     */
-    boolean checkSubtreeNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
-        assert paramNewRtx != null;
-        assert paramOldRtx != null;
-        boolean retVal = checkNodes(paramNewRtx, paramOldRtx);
-
-        if (retVal && ((AbsStructNode)paramNewRtx.getNode()).hasFirstChild()) {
-            EDiff diff = EDiff.SAME;
-            final Depth depth = new Depth();
-            final long newKey = paramNewRtx.getNode().getNodeKey();
-            final long oldKey = paramOldRtx.getNode().getNodeKey();
-            while (diff == EDiff.DELETED || moveCursor(paramNewRtx, ERevision.NEW)) {
-                if (diff != EDiff.INSERTED) {
-                    moveCursor(paramOldRtx, ERevision.OLD);
-                }
-
-                if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                    diff = diff(paramNewRtx, paramOldRtx, depth, EFireDiff.FALSE);
-                    if (diff != EDiff.SAME && diff != EDiff.DELETED) {
-                        retVal = false;
-                        break;
-                    }
-                } else {
-                    diff = optimizedDiff(paramNewRtx, paramOldRtx, depth, EFireDiff.FALSE);
-                    if (diff != EDiff.SAME && diff != EDiff.DELETED) {
-                        retVal = false;
-                        break;
-                    }
-                }
-            }
-            paramNewRtx.moveTo(newKey);
-            paramOldRtx.moveTo(oldKey);
-        }
-
-        return retVal;
-    }
+    // /**
+    // * Check if nodes are equal or only deletions have been made in the subtrees.
+    // *
+    // * @param paramNewRtx
+    // * {@link IReadTransaction} on new revision
+    // * @param paramOldRtx
+    // * {@link IReadTransaction} on old revision
+    // *
+    // * @return true if nodes are "equal", otherwise false
+    // */
+    // boolean checkSubtreeNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+    // assert paramNewRtx != null;
+    // assert paramOldRtx != null;
+    // boolean retVal = checkNodes(paramNewRtx, paramOldRtx);
+    //
+    // if (retVal && ((AbsStructNode)paramNewRtx.getNode()).hasFirstChild()) {
+    // EDiff diff = EDiff.SAME;
+    // final Depth depth = new Depth();
+    // final long newKey = paramNewRtx.getNode().getNodeKey();
+    // final long oldKey = paramOldRtx.getNode().getNodeKey();
+    // while (diff == EDiff.DELETED || moveCursor(paramNewRtx, ERevision.NEW)) {
+    // if (diff != EDiff.INSERTED) {
+    // moveCursor(paramOldRtx, ERevision.OLD);
+    // }
+    //
+    // if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
+    // diff = diff(paramNewRtx, paramOldRtx, depth, EFireDiff.FALSE);
+    // if (diff != EDiff.SAME) {
+    // retVal = false;
+    // break;
+    // }
+    // } else {
+    // diff = optimizedDiff(paramNewRtx, paramOldRtx, depth, EFireDiff.FALSE);
+    // if (diff != EDiff.SAME) {
+    // retVal = false;
+    // break;
+    // }
+    // }
+    // }
+    // paramNewRtx.moveTo(newKey);
+    // paramOldRtx.moveTo(oldKey);
+    // }
+    //
+    // return retVal;
+    // }
 
     @Override
     public void done() {

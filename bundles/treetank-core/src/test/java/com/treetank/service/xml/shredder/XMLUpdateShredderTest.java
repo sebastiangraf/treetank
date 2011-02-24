@@ -61,6 +61,10 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     
     private static final String XMLALLSEVENTH = RESOURCES + File.separator + "revXMLsAll6";
 
+    private static final String XMLALLEIGHTH = RESOURCES + File.separator + "revXMLsAll7";
+    
+    private static final String XMLALLNINETH = RESOURCES + File.separator + "revXMLsAll8";
+    
     @Override
     @Before
     public void setUp() throws AbsTTException {
@@ -147,6 +151,16 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     public void testAllSeventh() throws Exception {
         test(XMLALLSEVENTH);
     }
+    
+    @Test
+    public void testAllEighth() throws Exception {
+        test(XMLALLEIGHTH);
+    }
+    
+//    @Test
+//    public void testAllNineth() throws Exception {
+//        test(XMLALLNINETH);
+//    }
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -207,7 +221,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
 
-                // System.out.println(out.toString());
+                System.out.println(out.toString());
 
                 final Diff myDiff = new Diff(sBuilder.toString(), out.toString());
                 assertTrue("pieces of XML are similar " + myDiff, myDiff.similar());

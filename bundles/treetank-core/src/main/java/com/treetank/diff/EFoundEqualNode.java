@@ -29,17 +29,8 @@ enum EFoundEqualNode {
     TRUE {
         /** {@inheritDoc} */
         @Override
-        EDiff kindOfDiff(final int paramRightSibls) {
-            EDiff mod = EDiff.SAME;
-            switch (paramRightSibls) {
-            case 0:
-                break;
-            default:
-                // It has been deleted.
-                mod = EDiff.DELETED;
-                break;
-            }
-            return mod;
+        EDiff kindOfDiff() {
+            return EDiff.DELETED;
         }
     },
 
@@ -47,7 +38,7 @@ enum EFoundEqualNode {
     FALSE {
         /** {@inheritDoc} */
         @Override
-        EDiff kindOfDiff(final int paramRightSibls) {
+        EDiff kindOfDiff() {
             return EDiff.INSERTED;
         }
     };
@@ -55,9 +46,7 @@ enum EFoundEqualNode {
     /**
      * Kind of difference between two nodes.
      * 
-     * @param paramRightSibls
-     *            counts right siblings
      * @return kind of difference
      */
-    abstract EDiff kindOfDiff(final int paramRightSibls);
+    abstract EDiff kindOfDiff();
 }
