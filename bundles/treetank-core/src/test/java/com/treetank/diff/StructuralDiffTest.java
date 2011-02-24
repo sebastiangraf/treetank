@@ -69,44 +69,44 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
     }
 
-//    @Test
-//    public void testStructuralDiffFirst() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        DocumentCreater.createVersioned(wtx);
-//        wtx.close();
-//        
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
+    @Test
+    public void testStructuralDiffFirst() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        DocumentCreater.createVersioned(wtx);
+        wtx.close();
+        
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
 //
 //    @Test
 //    public void testStructuralDiffOptimizedFirst() throws Exception {

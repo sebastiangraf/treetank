@@ -60,6 +60,8 @@ public class WikipediaImportTest extends TestCase {
 
         final StringBuilder actual = TestHelper.readFile(PATHS.PATH1.getFile().getAbsoluteFile(), false);
         final StringBuilder expected = TestHelper.readFile(new File(EXPECTED), false);
+        System.out.println(actual);
+        System.out.println(expected);
         assertEquals("XML files match", expected.toString(), actual.toString());
     }
 }

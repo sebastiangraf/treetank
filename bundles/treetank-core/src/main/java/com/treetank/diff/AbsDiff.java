@@ -195,7 +195,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
             while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
                 && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE) {
-                if (checkNodes(paramNewRtx, paramOldRtx)) {
+                if (checkRightSiblingNodes(paramNewRtx, paramOldRtx)) {
                     found = EFoundEqualNode.TRUE;
                 }
             }
@@ -253,6 +253,13 @@ abstract class AbsDiff extends AbsDiffObservable {
     //
     // return retVal;
     // }
+
+    /**
+     * @param paramNewRtx
+     * @param paramOldRtx
+     * @return
+     */
+    abstract boolean checkRightSiblingNodes(IReadTransaction paramNewRtx, IReadTransaction paramOldRtx);
 
     @Override
     public void done() {

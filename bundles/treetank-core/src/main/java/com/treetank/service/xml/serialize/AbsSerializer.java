@@ -133,19 +133,19 @@ abstract class AbsSerializer implements Callable<Void> {
                     while (!mStack.empty()
                         && mStack.peek() != ((AbsStructNode)rtx.getNode()).getLeftSiblingKey()) {
                         rtx.moveTo(mStack.pop());
-                        emitStartElement(rtx);
+                        emitEndElement(rtx);
                         rtx.moveTo(key);
                     }
                     if (!mStack.empty()) {
                         rtx.moveTo(mStack.pop());
-                        emitStartElement(rtx);
+                        emitEndElement(rtx);
                     }
                     rtx.moveTo(key);
                     closeElements = false;
                 }
 
                 // Emit node.
-                emitEndElement(rtx);
+                emitStartElement(rtx);
 
                 // Push end element to stack if we are a start element with
                 // children.
@@ -166,7 +166,7 @@ abstract class AbsSerializer implements Callable<Void> {
             // Finally emit all pending end elements.
             while (!mStack.empty()) {
                 rtx.moveTo(mStack.pop());
-                emitStartElement(rtx);
+                emitEndElement(rtx);
             }
 
             if (versionsToUse == null || mVersions.length > 1) {

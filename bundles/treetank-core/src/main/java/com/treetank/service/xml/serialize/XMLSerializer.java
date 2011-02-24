@@ -22,26 +22,20 @@ import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_INDEN
 import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
 import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.concurrent.ConcurrentMap;
-
-import org.slf4j.LoggerFactory;
 
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.node.AbsStructNode;
-import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.settings.ECharsForSerializing;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>XMLSerializer</h1>
@@ -117,7 +111,7 @@ public final class XMLSerializer extends AbsSerializer {
      * @throws IOException
      */
     @Override
-    protected void emitEndElement(final IReadTransaction paramRTX) {
+    protected void emitStartElement(final IReadTransaction paramRTX) {
         try {
             switch (paramRTX.getNode().getKind()) {
             case ROOT_KIND:
@@ -201,7 +195,7 @@ public final class XMLSerializer extends AbsSerializer {
      * @throws IOException
      */
     @Override
-    protected void emitStartElement(final IReadTransaction paramRTX) {
+    protected void emitEndElement(final IReadTransaction paramRTX) {
         try {
             indent();
             mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
