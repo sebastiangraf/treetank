@@ -81,17 +81,6 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     @Override
     protected void emitStartElement(final IReadTransaction rtx) {
-        final String mURI = rtx.nameForKey(rtx.getNode().getURIKey());
-        final QName qName = rtx.getQNameOfCurrentNode();
-        try {
-            mContHandler.endElement(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName));
-        } catch (final SAXException e) {
-            LOGWRAPPER.error(e);
-        }
-    }
-
-    @Override
-    protected void emitEndElement(final IReadTransaction rtx) {
         switch (rtx.getNode().getKind()) {
         case ROOT_KIND:
             break;
@@ -102,7 +91,18 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
             generateText(rtx);
             break;
         default:
-            throw new UnsupportedOperationException("Kind not supported by Treetank!");
+            throw new UnsupportedOperationException("Node kind not supported by Treetank!");
+        }
+    }
+
+    @Override
+    protected void emitEndElement(final IReadTransaction rtx) {
+        final String mURI = rtx.nameForKey(rtx.getNode().getURIKey());
+        final QName qName = rtx.getQNameOfCurrentNode();
+        try {
+            mContHandler.endElement(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName));
+        } catch (final SAXException e) {
+            LOGWRAPPER.error(e);
         }
     }
 

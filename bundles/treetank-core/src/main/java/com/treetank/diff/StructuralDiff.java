@@ -92,6 +92,18 @@ final class StructuralDiff extends AbsDiff {
     @Override
     boolean checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         boolean found = false;
+        if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
+            found = true;
+        }
+        return found;
+    }
+
+    /* (non-Javadoc)
+     * @see com.treetank.diff.AbsDiff#checkRightSiblingNodes(com.treetank.api.IReadTransaction, com.treetank.api.IReadTransaction)
+     */
+    @Override
+    boolean checkRightSiblingNodes(IReadTransaction paramNewRtx, IReadTransaction paramOldRtx) {
+        boolean found = false;
         if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
             switch (paramNewRtx.getNode().getKind()) {
             case ELEMENT_KIND:

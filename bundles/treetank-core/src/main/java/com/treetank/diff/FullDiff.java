@@ -146,4 +146,9 @@ final class FullDiff extends AbsDiff {
         }
         return renamed;
     }
+
+    @Override
+    boolean checkRightSiblingNodes(IReadTransaction paramNewRtx, IReadTransaction paramOldRtx) {
+        return checkNodes(paramNewRtx, paramOldRtx);
+    }
 }
