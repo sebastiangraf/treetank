@@ -334,7 +334,6 @@ public final class WikipediaImport implements IImport<StartElement> {
             final QName id = paramID.getName();
             final String query =
                 "//" + qNameToString(page) + "[fn:string(" + qNameToString(id) + ") = '" + mIdText + "']";
-//            System.out.println(query);
             mWTX.moveToDocumentRoot();
             final XPathAxis axis = new XPathAxis(mWTX, query);
 
