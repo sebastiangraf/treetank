@@ -76,8 +76,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -417,6 +417,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         mModificationCount++;
 
         final AbsNode oldNode = (AbsNode)getCurrentNode();
+//        oldNode.setValue(mValueType, mValue);
         final AbsNode newNode = createNodeToModify(oldNode);
 
         if (oldNode instanceof AbsStructNode) {
@@ -427,7 +428,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         setCurrentNode(newNode);
 
         adaptHashedWithUpdate(oldNode.getHash());
-
     }
 
     /**

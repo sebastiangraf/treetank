@@ -17,10 +17,7 @@
 
 package com.treetank.service.xml.shredder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
@@ -342,6 +339,25 @@ public class XMLShredder implements Callable<Long> {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         final InputStream in = new FileInputStream(paramFile);
+        return factory.createXMLEventReader(in);
+    }
+    
+    /**
+     * Create a new StAX reader on a string.
+     * 
+     * @param paramString
+     *            the XML file as a string to parse
+     * @return an {@link XMLEventReader}
+     * @throws IOException
+     *             if I/O operation fails
+     * @throws XMLStreamException
+     *             if any parsing error occurs
+     */
+    public static synchronized XMLEventReader createStringReader(final String paramString) throws IOException,
+        XMLStreamException {
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        final InputStream in = new ByteArrayInputStream(paramString.getBytes());
         return factory.createXMLEventReader(in);
     }
 

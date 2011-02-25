@@ -64,7 +64,8 @@ final class FullDiff extends AbsDiff {
 
         boolean found = false;
 
-        if (paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
+        if (paramFirstRtx.getNode().getNodeKey() == paramSecondRtx.getNode().getNodeKey()
+            && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
             final long nodeKey = paramFirstRtx.getNode().getNodeKey();
 
             if (paramFirstRtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
@@ -114,41 +115,5 @@ final class FullDiff extends AbsDiff {
         }
 
         return found;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    boolean checkRename(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
-        assert paramFirstRtx != null;
-        assert paramSecondRtx != null;
-
-        boolean renamed = false;
-        if (paramFirstRtx.getNode().getKind() == paramSecondRtx.getNode().getKind()) {
-            final long firstKey = paramFirstRtx.getNode().getNodeKey();
-            boolean movedFirstRtx = paramFirstRtx.moveToRightSibling();
-            final long secondKey = paramSecondRtx.getNode().getNodeKey();
-            boolean movedSecondRtx = paramSecondRtx.moveToRightSibling();
-            if (movedFirstRtx && movedSecondRtx && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
-                && checkNodes(paramFirstRtx, paramSecondRtx)) {
-                renamed = true;
-            } else if (!movedFirstRtx && !movedSecondRtx) {
-                movedFirstRtx = paramFirstRtx.moveToParent();
-                movedSecondRtx = paramSecondRtx.moveToParent();
-
-                if (movedFirstRtx && movedSecondRtx
-                    && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())
-                    && checkNodes(paramFirstRtx, paramSecondRtx)) {
-                    renamed = true;
-                }
-            }
-            paramFirstRtx.moveTo(firstKey);
-            paramSecondRtx.moveTo(secondKey);
-        }
-        return renamed;
-    }
-
-    @Override
-    boolean checkRightSiblingNodes(IReadTransaction paramNewRtx, IReadTransaction paramOldRtx) {
-        return checkNodes(paramNewRtx, paramOldRtx);
     }
 }

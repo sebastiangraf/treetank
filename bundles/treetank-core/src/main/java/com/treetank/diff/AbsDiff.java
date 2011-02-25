@@ -195,7 +195,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
             while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
                 && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE) {
-                if (checkRightSiblingNodes(paramNewRtx, paramOldRtx)) {
+                if (checkNodes(paramNewRtx, paramOldRtx)) {
                     found = EFoundEqualNode.TRUE;
                 }
             }
@@ -254,13 +254,6 @@ abstract class AbsDiff extends AbsDiffObservable {
     // return retVal;
     // }
 
-    /**
-     * @param paramNewRtx
-     * @param paramOldRtx
-     * @return
-     */
-    abstract boolean checkRightSiblingNodes(IReadTransaction paramNewRtx, IReadTransaction paramOldRtx);
-
     @Override
     public void done() {
         try {
@@ -273,25 +266,77 @@ abstract class AbsDiff extends AbsDiffObservable {
     }
 
     /**
+     * Check {@link QName} of nodes.
+     * 
+     * @param paramNewRtx
+     *            {@link IReadTransaction} on new revision
+     * @param paramOldRtx
+     *            {@link IReadTransaction} on old revision
+     * @return true if nodes are "equal" according to their {@link QName}s, otherwise false
+     */
+    boolean checkName(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+        boolean found = false;
+        if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
+            switch (paramNewRtx.getNode().getKind()) {
+            case ELEMENT_KIND:
+                if (paramNewRtx.getQNameOfCurrentNode().equals(paramOldRtx.getQNameOfCurrentNode())) {
+                    found = true;
+                }
+                break;
+            case TEXT_KIND:
+                if (paramNewRtx.getValueOfCurrentNode().equals(paramOldRtx.getValueOfCurrentNode())) {
+                    found = true;
+                }
+                break;
+            default:
+            }
+        }
+        return found;
+    }
+
+    /**
      * Check if nodes are equal excluding subtrees.
      * 
      * @param paramNewRtx
      *            {@link IReadTransaction} on new revision
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
-     * 
      * @return true if nodes are "equal", otherwise false
      */
     abstract boolean checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
 
     /**
-     * Check if a rename occured.
+     * Check for a rename of a node.
      * 
      * @param paramNewRtx
-     *            {@link IReadTransaction} on new revision
+     *            first {@link IReadTransaction} instance
      * @param paramOldRtx
-     *            {@link IReadTransaction} on old revision
-     * @return true if node has been renamed, otherwise false
+     *            second {@link IReadTransaction} instance
+     * @return kind of diff
      */
-    abstract boolean checkRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
+    boolean checkRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+        assert paramNewRtx != null;
+        assert paramOldRtx != null;
+        boolean renamed = false;
+        final long newKey = paramNewRtx.getNode().getNodeKey();
+        boolean movedNewRtx = paramNewRtx.moveToRightSibling();
+        final long oldKey = paramOldRtx.getNode().getNodeKey();
+        boolean movedOldRtx = paramOldRtx.moveToRightSibling();
+        if (movedNewRtx && movedOldRtx && checkNodes(paramNewRtx, paramOldRtx)) {
+            renamed = true;
+        } else if (!movedNewRtx && !movedOldRtx) {
+            movedNewRtx = paramNewRtx.moveToParent();
+            movedOldRtx = paramOldRtx.moveToParent();
+
+            if (movedNewRtx && movedOldRtx && checkNodes(paramNewRtx, paramOldRtx)) {
+                renamed = true;
+            }
+        }
+        paramNewRtx.moveTo(newKey);
+        paramOldRtx.moveTo(oldKey);
+        if (!renamed) {
+            renamed = paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey();
+        }
+        return renamed;
+    }
 }
