@@ -22,7 +22,6 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
-import com.treetank.node.ENodes;
 
 /**
  * Structural diff, thus no attributes and namespace nodes are taken into account. Note that this class is
@@ -57,67 +56,12 @@ final class StructuralDiff extends AbsDiff {
         super(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
     }
 
-    /**
-     * Check for a rename of a node.
-     * 
-     * @param paramNewRtx
-     *            first {@link IReadTransaction} instance
-     * @param paramOldRtx
-     *            second {@link IReadTransaction} instance
-     * @return kind of diff
-     */
-    @Override
-    boolean checkRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
-        boolean renamed = false;
-        final long newKey = paramNewRtx.getNode().getNodeKey();
-        boolean movedNewRtx = paramNewRtx.moveToRightSibling();
-        final long oldKey = paramOldRtx.getNode().getNodeKey();
-        boolean movedOldRtx = paramOldRtx.moveToRightSibling();
-        if (movedNewRtx && movedOldRtx && checkNodes(paramNewRtx, paramOldRtx)) {
-            renamed = true;
-        } else if (!movedNewRtx && !movedOldRtx) {
-            movedNewRtx = paramNewRtx.moveToParent();
-            movedOldRtx = paramOldRtx.moveToParent();
-
-            if (movedNewRtx && movedOldRtx && paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
-                renamed = true;
-            }
-        }
-        paramNewRtx.moveTo(newKey);
-        paramOldRtx.moveTo(oldKey);
-        return renamed;
-    }
-
     /** {@inheritDoc} */
     @Override
     boolean checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         boolean found = false;
-        if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
+        if (paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey()) {
             found = true;
-        }
-        return found;
-    }
-
-    /* (non-Javadoc)
-     * @see com.treetank.diff.AbsDiff#checkRightSiblingNodes(com.treetank.api.IReadTransaction, com.treetank.api.IReadTransaction)
-     */
-    @Override
-    boolean checkRightSiblingNodes(IReadTransaction paramNewRtx, IReadTransaction paramOldRtx) {
-        boolean found = false;
-        if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
-            switch (paramNewRtx.getNode().getKind()) {
-            case ELEMENT_KIND:
-                if (paramNewRtx.getQNameOfCurrentNode().equals(paramOldRtx.getQNameOfCurrentNode())) {
-                    found = true;
-                }
-                break;
-            case TEXT_KIND:
-                if (paramNewRtx.getValueOfCurrentNode().equals(paramOldRtx.getValueOfCurrentNode())) {
-                    found = true;
-                }
-                break;
-            default:
-            }
         }
         return found;
     }

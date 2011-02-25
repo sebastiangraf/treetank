@@ -21,7 +21,7 @@ import static org.easymock.EasyMock.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Set;                                                       
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -99,7 +99,7 @@ public final class StructuralDiffTest {
         final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
         DocumentCreater.createVersioned(wtx);
         wtx.close();
-        
+
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
         DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
@@ -107,773 +107,832 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-//
-//    @Test
-//    public void testStructuralDiffOptimizedFirst() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        DocumentCreater.createVersioned(wtx);
-//        wtx.close();
-//        
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//
-//    @Test
-//    public void testStructuralDiffSecond() throws AbsTTException, IOException, XMLStreamException,
-//        InterruptedException {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll4"
-//                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffOptimizedSecond() throws AbsTTException, IOException, XMLStreamException,
-//        InterruptedException {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll4"
-//                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//
-//
-//    @Test
-//    public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
-//        InterruptedException {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffOptimizedThird() throws AbsTTException, IOException, XMLStreamException,
-//        InterruptedException {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//
-//    @Test
-//    public void testStructuralDiffFourth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll3"
-//                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffOptimizedFourth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll3"
-//                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//
-//    @Test
-//    public void testStructuralDiffFifth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll2"
-//                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffOptimizedFifth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll2"
-//                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffSixth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsDelete2" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffOptimizedSixth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsDelete2" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffSeventh() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "3.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffOptimizedSeventh() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "3.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffEighth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsDelete4" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsDelete4" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffOptimizedEighth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsDelete4" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsDelete4" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffNeinth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsAll7" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll7" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffOptimizedNeinth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsAll7" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll7" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
-//    
-//    @Test
-//    public void testStructuralDiffTenth() throws Exception {
-//        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-//        listener.diffListener(EDiff.DONE, null, null);
-//
-//        expectLastCall().andAnswer(new IAnswer<Void>() {
-//            @Override
-//            public Void answer() throws Throwable {
-//                mStart.countDown();
-//                return null;
-//            }
-//        });
-//        replay(listener);
-//
-//        TestHelper.closeEverything();
-//        TestHelper.deleteEverything();
-//        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-//        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
-//        final XMLShredder init =
-//            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
-//                + "revXMLsAll8" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-//        init.call();
-//        final File file = new File(RESOURCES + File.separator + "revXMLsAll8" + File.separator + "2.xml");
-//        final XMLShredder shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
-//                EShredderCommit.COMMIT);
-//        shredder.call();
-//
-//        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-//        observer.add(listener);
-//        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
-//
-//        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-//        verify(listener);
-//    }
+
+    @Test
+    public void testStructuralDiffOptimizedFirst() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        DocumentCreater.createVersioned(wtx);
+        wtx.close();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffSecond() throws AbsTTException, IOException, XMLStreamException,
+        InterruptedException {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll4"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffOptimizedSecond() throws AbsTTException, IOException, XMLStreamException,
+        InterruptedException {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll4"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
+        InterruptedException {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+                + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffOptimizedThird() throws AbsTTException, IOException, XMLStreamException,
+        InterruptedException {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+                + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffFourth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll3"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffOptimizedFourth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll3"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffFifth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll2"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffOptimizedFifth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll2"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffSixth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+                + "revXMLsDelete2" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffOptimizedSixth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+                + "revXMLsDelete2" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffSeventh() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+                + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "3.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffOptimizedSeventh() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+                + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "3.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffEighth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+                + "revXMLsDelete4" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsDelete4" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffOptimizedEighth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+                + "revXMLsDelete4" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsDelete4" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffNeinth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll7"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll7" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+
+    @Test
+    public void testStructuralDiffOptimizedNeinth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        final XMLShredder init =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll7"
+                + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+        init.call();
+        final File file = new File(RESOURCES + File.separator + "revXMLsAll7" + File.separator + "2.xml");
+        final XMLShredder shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+                EShredderCommit.COMMIT);
+        shredder.call();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+    //
+    // @Test
+    // public void testStructuralDiffTenth() throws Exception {
+    // final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+    // listener.diffListener(EDiff.DONE, null, null);
+    //
+    // expectLastCall().andAnswer(new IAnswer<Void>() {
+    // @Override
+    // public Void answer() throws Throwable {
+    // mStart.countDown();
+    // return null;
+    // }
+    // });
+    // replay(listener);
+    //
+    // TestHelper.closeEverything();
+    // TestHelper.deleteEverything();
+    // final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+    // final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+    // final XMLShredder init =
+    // new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
+    // + "revXMLsAll8" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
+    // init.call();
+    // final File file = new File(RESOURCES + File.separator + "revXMLsAll8" + File.separator + "2.xml");
+    // final XMLShredder shredder =
+    // new XMLUpdateShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD, file,
+    // EShredderCommit.COMMIT);
+    // shredder.call();
+    //
+    // final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+    // observer.add(listener);
+    // DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+    //
+    // mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+    // verify(listener);
+    // }
+
+    @Test
+    public void testStructuralDiffTenth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        DocumentCreater.createRevisioned();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
 }

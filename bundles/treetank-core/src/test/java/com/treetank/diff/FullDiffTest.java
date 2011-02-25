@@ -17,11 +17,6 @@
 package com.treetank.diff;
 
 import static org.easymock.EasyMock.*;
-import static org.easymock.EasyMock.createMockBuilder;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,13 +59,13 @@ public class FullDiffTest {
     private static final long TIMEOUT_S = 200000;
 
     @Before
-    public void setUp() throws AbsTTException {
+    public final void setUp() throws AbsTTException {
         mStart = new CountDownLatch(1);
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public final void tearDown() {
         TestHelper.closeEverything();
     }
 
@@ -427,6 +422,61 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
+        DiffFactory.invokeFullDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+
+        mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+        verify(listener);
+    }
+    
+    @Test
+    public final void testFullDiffTenth() throws Exception {
+        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
+        listener.diffListener(EDiff.DONE, null, null);
+
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                mStart.countDown();
+                return null;
+            }
+        });
+        replay(listener);
+
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        DocumentCreater.createRevisioned();
+
+        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
+        observer.add(listener);
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         DiffFactory.invokeFullDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);

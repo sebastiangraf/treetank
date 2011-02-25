@@ -17,10 +17,18 @@
 
 package com.treetank.utils;
 
-import javax.xml.namespace.QName;
+import java.io.File;
+import java.io.IOException;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import com.treetank.TestHelper;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.AbsTTException;
+import com.treetank.service.xml.shredder.EShredderInsert;
+import com.treetank.service.xml.shredder.XMLShredder;
 
 import static org.junit.Assert.assertTrue;
 
@@ -61,6 +69,14 @@ import static org.junit.Assert.assertTrue;
  * </p>
  */
 public final class DocumentCreater {
+
+    /** String representation of revisioned xml file. */
+    public static final String REVXML =
+        "<article><title>A Test Document</title><para>This is para 1.</para><para>This is para 2<emphasis>"
+            + "with emphasis</emphasis>in it.</para><para>This is para 3.</para><para id=\"p4\">This is "
+            + "para 4.</para><para id=\"p5\">This is para 5.</para><para>This is para 6."
+            + "</para><para>This is para 7.</para><para>This is para 8.</para><para>This is para 9."
+            + "</para></article>";
 
     /** String representation of ID. */
     public static final String ID =
@@ -110,41 +126,41 @@ public final class DocumentCreater {
     /**
      * Create simple test document containing all supported node kinds.
      * 
-     * @param paramWtx
+     * @param secondWtx
      *            IWriteTransaction to write to.
      * @throws AbsTTException
      *             if any weird happens
      */
-    public static void create(final IWriteTransaction paramWtx) throws AbsTTException {
-        assertTrue(paramWtx.moveToDocumentRoot());
+    public static void create(final IWriteTransaction secondWtx) throws AbsTTException {
+        assertTrue(secondWtx.moveToDocumentRoot());
 
-        paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
-        paramWtx.insertAttribute(new QName("i"), "j");
-        assertTrue(paramWtx.moveToParent());
-        paramWtx.insertNamespace("ns", "p");
-        assertTrue(paramWtx.moveToParent());
+        secondWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
+        secondWtx.insertAttribute(new QName("i"), "j");
+        assertTrue(secondWtx.moveToParent());
+        secondWtx.insertNamespace("ns", "p");
+        assertTrue(secondWtx.moveToParent());
 
-        paramWtx.insertTextAsFirstChild("oops1");
+        secondWtx.insertTextAsFirstChild("oops1");
 
-        paramWtx.insertElementAsRightSibling(new QName("b"));
+        secondWtx.insertElementAsRightSibling(new QName("b"));
 
-        paramWtx.insertTextAsFirstChild("foo");
-        paramWtx.insertElementAsRightSibling(new QName("c"));
-        assertTrue(paramWtx.moveToParent());
+        secondWtx.insertTextAsFirstChild("foo");
+        secondWtx.insertElementAsRightSibling(new QName("c"));
+        assertTrue(secondWtx.moveToParent());
 
-        paramWtx.insertTextAsRightSibling("oops2");
+        secondWtx.insertTextAsRightSibling("oops2");
 
-        paramWtx.insertElementAsRightSibling(new QName("b"));
-        paramWtx.insertAttribute(new QName("ns", "x", "p"), "y");
-        assertTrue(paramWtx.moveToParent());
+        secondWtx.insertElementAsRightSibling(new QName("b"));
+        secondWtx.insertAttribute(new QName("ns", "x", "p"), "y");
+        assertTrue(secondWtx.moveToParent());
 
-        paramWtx.insertElementAsFirstChild(new QName("c"));
-        paramWtx.insertTextAsRightSibling("bar");
-        assertTrue(paramWtx.moveToParent());
+        secondWtx.insertElementAsFirstChild(new QName("c"));
+        secondWtx.insertTextAsRightSibling("bar");
+        assertTrue(secondWtx.moveToParent());
 
-        paramWtx.insertTextAsRightSibling("oops3");
+        secondWtx.insertTextAsRightSibling("oops3");
 
-        paramWtx.moveToDocumentRoot();
+        secondWtx.moveToDocumentRoot();
     }
 
     /**
@@ -234,5 +250,60 @@ public final class DocumentCreater {
         wtx.insertTextAsRightSibling("oops3");
 
         wtx.moveToDocumentRoot();
+    }
+
+    /**
+     * Create revisioned document.
+     * 
+     * @param secondWtx
+     *            {@link IWriteTransaction} to create the new revision
+     * @throws AbsTTException
+     *             if shredding fails
+     * @throws XMLStreamException
+     *             if StAX reader couldn't be created
+     * @throws IOException
+     *             if reading XML string fails
+     */
+    public static void createRevisioned() throws AbsTTException, IOException,
+        XMLStreamException {
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction firstWtx = database.getSession().beginWriteTransaction();
+        final XMLShredder shredder =
+            new XMLShredder(firstWtx, XMLShredder.createStringReader(REVXML), EShredderInsert.ADDASFIRSTCHILD);
+        shredder.call();
+        firstWtx.close();
+        final IWriteTransaction secondWtx = database.getSession().beginWriteTransaction();
+        secondWtx.moveToFirstChild();
+        secondWtx.moveToFirstChild();
+        secondWtx.moveToFirstChild();
+        secondWtx.setValue("A Contrived Test Document");
+        secondWtx.moveToParent();
+        secondWtx.moveToRightSibling();
+        secondWtx.moveToRightSibling();
+        secondWtx.moveToFirstChild();
+        secondWtx.moveToRightSibling();
+        final long key = secondWtx.getNode().getNodeKey();
+        secondWtx.insertAttribute(new QName("role"), "bold");
+        secondWtx.moveTo(key);
+        secondWtx.moveToRightSibling();
+        secondWtx.setValue("changed in it.");
+        secondWtx.moveToParent();
+        secondWtx.insertElementAsRightSibling(new QName("para"));
+        secondWtx.insertTextAsFirstChild("This is a new para 2b.");
+        secondWtx.moveToParent();
+        secondWtx.moveToRightSibling();
+        secondWtx.moveToRightSibling();
+        secondWtx.moveToFirstChild();
+        secondWtx.setValue("This is a different para 4.");
+        secondWtx.moveToParent();
+        secondWtx.insertElementAsRightSibling(new QName("para"));
+        secondWtx.insertTextAsFirstChild("This is a new para 4b.");
+        secondWtx.moveToParent();
+        secondWtx.moveToRightSibling();
+        secondWtx.moveToRightSibling();
+        secondWtx.remove();
+        secondWtx.remove();
+        secondWtx.commit(); 
+        secondWtx.close();
     }
 }
