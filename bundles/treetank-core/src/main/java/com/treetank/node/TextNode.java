@@ -19,6 +19,8 @@ package com.treetank.node;
 
 import java.util.Arrays;
 
+import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.settings.EFixed;
 
@@ -163,5 +165,10 @@ public final class TextNode extends AbsStructNode {
             mIntData[VALUE_LENGTH]).append("\n\tvalue:").append(new String(mValue)).toString();
         return returnVal.toString();
     }
-
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
+        return (T)paramTransaction.getNode(this);
+    }
 }

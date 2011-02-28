@@ -32,10 +32,24 @@ import com.treetank.io.ITTSource;
  */
 public enum ENodes {
 
+    /** Dummy kind. */
+    DUMMY_KIND(-1, 7, 0) {
+        @Override
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+            return null;
+        }
+
+        @Override
+        public AbsNode createNodeFromScratch(final long[] paramLongData, final int[] paramIntData,
+            final byte[] mValue) {
+            return new DummyNode(paramLongData, paramIntData);
+        }
+    },
+
     /** Unknown kind. */
     UNKOWN_KIND(0, 0, 0) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -47,20 +61,20 @@ public enum ENodes {
     /** Node kind is element. */
     ELEMENT_KIND(1, 7, 5) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
-            final long[] longData = readLongData(mSource);
-            final int[] intData = readIntData(mSource);
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+            final long[] longData = readLongData(paramSource);
+            final int[] intData = readIntData(paramSource);
 
             final List<Long> attrKeys = new ArrayList<Long>();
             final List<Long> namespKeys = new ArrayList<Long>();
             if (intData[ElementNode.ATTRIBUTE_COUNT] > 0) {
                 for (int i = 0; i < intData[ElementNode.ATTRIBUTE_COUNT]; i++) {
-                    attrKeys.add(mSource.readLong());
+                    attrKeys.add(paramSource.readLong());
                 }
             }
             if (intData[ElementNode.NAMESPACE_COUNT] > 0) {
                 for (int i = 0; i < intData[ElementNode.NAMESPACE_COUNT]; i++) {
-                    namespKeys.add(mSource.readLong());
+                    namespKeys.add(paramSource.readLong());
                 }
             }
             return new ElementNode(longData, intData, attrKeys, namespKeys);
@@ -74,38 +88,36 @@ public enum ENodes {
     /** Node kind is attribute. */
     ATTRIBUTE_KIND(2, 3, 4) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
-            final long[] longData = readLongData(mSource);
-            final int[] intData = readIntData(mSource);
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+            final long[] longData = readLongData(paramSource);
+            final int[] intData = readIntData(paramSource);
             final byte[] value = new byte[intData[AttributeNode.VALUE_LENGTH]];
             for (int i = 0; i < value.length; i++) {
-                value[i] = mSource.readByte();
+                value[i] = paramSource.readByte();
             }
             return new AttributeNode(longData, intData, value);
         }
 
         @Override
-        public AbsNode
-            createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
+        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
             return new AttributeNode(mLongData, mIntData, mValue);
         }
     },
     /** Node kind is text. */
     TEXT_KIND(3, 7, 2) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
-            final long[] longData = readLongData(mSource);
-            final int[] intData = readIntData(mSource);
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+            final long[] longData = readLongData(paramSource);
+            final int[] intData = readIntData(paramSource);
             final byte[] value = new byte[intData[TextNode.VALUE_LENGTH]];
             for (int i = 0; i < value.length; i++) {
-                value[i] = mSource.readByte();
+                value[i] = paramSource.readByte();
             }
             return new TextNode(longData, intData, value);
         }
 
         @Override
-        public AbsNode
-            createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
+        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
             return new TextNode(mLongData, mIntData, mValue);
         }
     },
@@ -113,9 +125,9 @@ public enum ENodes {
     NAMESPACE_KIND(13, 3, 3) {
 
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
-            final long[] data = readLongData(mSource);
-            final int[] intData = readIntData(mSource);
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+            final long[] data = readLongData(paramSource);
+            final int[] intData = readIntData(paramSource);
             return new NamespaceNode(data, intData);
         }
 
@@ -127,7 +139,7 @@ public enum ENodes {
     /** Node kind is processing instruction. */
     PROCESSING_KIND(7, 0, 0) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -139,7 +151,7 @@ public enum ENodes {
     /** Node kind is comment. */
     COMMENT_KIND(8, 0, 0) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -151,9 +163,9 @@ public enum ENodes {
     /** Node kind is document root. */
     ROOT_KIND(9, 7, 1) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
-            final long[] data = readLongData(mSource);
-            final int[] intData = readIntData(mSource);
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+            final long[] data = readLongData(paramSource);
+            final int[] intData = readIntData(paramSource);
             return new DocumentRootNode(data, intData);
         }
 
@@ -165,7 +177,7 @@ public enum ENodes {
     /** Whitespace text. */
     WHITESPACE_KIND(4, 0, 0) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -177,15 +189,14 @@ public enum ENodes {
     /** Node kind is deleted node. */
     DELETE_KIND(5, 3, 1) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource mSource) {
-            final long[] longData = readLongData(mSource);
-            final int[] intData = readIntData(mSource);
+        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+            final long[] longData = readLongData(paramSource);
+            final int[] intData = readIntData(paramSource);
             return new DeletedNode(longData, intData);
         }
 
         @Override
-        public AbsNode
-            createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
+        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
             return new DeletedNode(mLongData, mIntData);
         }
     };
@@ -232,9 +243,9 @@ public enum ENodes {
         return mKind;
     }
 
-    public abstract AbsNode createNodeFromPersistence(final ITTSource mSource);
+    public abstract AbsNode createNodeFromPersistence(final ITTSource paramSource);
 
-    public abstract AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData,
+    public abstract AbsNode createNodeFromScratch(final long[] paramLongData, final int[] paramIntData,
         final byte[] mValue);
 
     /**

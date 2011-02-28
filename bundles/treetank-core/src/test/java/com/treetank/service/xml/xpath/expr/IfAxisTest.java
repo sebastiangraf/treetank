@@ -60,7 +60,7 @@ public class IfAxisTest {
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = session.beginReadTransaction();
 
         rtx.moveTo(1L);
 

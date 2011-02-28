@@ -17,6 +17,7 @@
 
 package com.treetank.api;
 
+import com.treetank.node.AbsNode;
 import com.treetank.node.ENodes;
 
 /**
@@ -110,4 +111,14 @@ public interface IItem {
      */
     int getTypeKey();
 
+    /**
+     * Accepts a visitor which is a {@link IReadTransaction}.
+     * 
+     * @param <T>
+     *            type which extends {@link IItem}
+     * @param paramTransaction
+     *            {@link IReadTransaction}
+     * @return instance of a type which extends {@link IItem}
+     */
+    <T extends IItem> T accept(final IReadTransaction paramTransaction);
 }

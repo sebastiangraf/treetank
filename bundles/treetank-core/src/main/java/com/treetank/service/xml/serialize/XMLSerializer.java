@@ -383,11 +383,11 @@ public final class XMLSerializer extends AbsSerializer {
          * Constructor, setting the necessary stuff.
          * 
          * @param paramSession
-         *            {@link ISession} to Serialize.
+         *            {@link ISession} to Serialize
          * @param paramStream
-         *            {@link OutputStream}.
+         *            {@link OutputStream}
          * @param paramVersions
-         *            Version to Serialize.
+         *            version(s) to Serialize
          */
         public XMLSerializerBuilder(final ISession paramSession, final OutputStream paramStream,
             final long... paramVersions) {
@@ -401,15 +401,15 @@ public final class XMLSerializer extends AbsSerializer {
          * Constructor.
          * 
          * @param paramSession
-         *            {@link ISession}.
+         *            {@link ISession}
          * @param paramNodeKey
-         *            Root node key of subtree to shredder.
+         *            root node key of subtree to shredder
          * @param paramStream
-         *            {@link OutputStream}.
+         *            {@link OutputStream} 
          * @param paramProperties
-         *            {@link XMLSerializerProperties}.
+         *            {@link XMLSerializerProperties}
          * @param paramVersions
-         *            Versions to serialize.
+         *            version(s) to serialize
          */
         public XMLSerializerBuilder(final ISession paramSession, final long paramNodeKey,
             final OutputStream paramStream, final XMLSerializerProperties paramProperties,

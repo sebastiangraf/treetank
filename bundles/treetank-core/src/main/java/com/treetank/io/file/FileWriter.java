@@ -25,7 +25,7 @@ import java.io.RandomAccessFile;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TTIOException;
 import com.treetank.io.IWriter;
-import com.treetank.page.AbstractPage;
+import com.treetank.page.AbsStractPage;
 import com.treetank.page.PagePersistenter;
 import com.treetank.page.PageReference;
 import com.treetank.utils.CryptoJavaImpl;
@@ -99,7 +99,7 @@ public final class FileWriter implements IWriter {
 
         // Serialise page.
         mBuffer.position(24);
-        final AbstractPage page = pageReference.getPage();
+        final AbsStractPage page = pageReference.getPage();
         PagePersistenter.serializePage(mBuffer, page);
         final int inputLength = mBuffer.position();
 
@@ -196,7 +196,7 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public AbstractPage read(final PageReference pageReference) throws TTIOException {
+    public AbsStractPage read(final PageReference pageReference) throws TTIOException {
         return reader.read(pageReference);
     }
 

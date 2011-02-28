@@ -255,5 +255,4 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
         System.arraycopy(mInput, 0, value, 0, value.length);
         return value;
     }
-
 }

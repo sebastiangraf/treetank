@@ -17,6 +17,8 @@
 
 package com.treetank.node;
 
+import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 
 /**
@@ -64,5 +66,11 @@ public final class DeletedNode extends AbsNode {
     @Override
     public int hashCode() {
         return 0;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
+        return (T)paramTransaction.getNode(this);
     }
 }

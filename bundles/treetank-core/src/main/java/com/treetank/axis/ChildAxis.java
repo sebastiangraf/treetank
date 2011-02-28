@@ -57,10 +57,10 @@ public class ChildAxis extends AbsAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (!mFirst && ((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+        if (!mFirst && getTransaction().getStructuralNode().hasRightSibling()) {
             getTransaction().moveToRightSibling();
             return true;
-        } else if (mFirst && ((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
+        } else if (mFirst && getTransaction().getStructuralNode().hasFirstChild()) {
             mFirst = false;
             getTransaction().moveToFirstChild();
             return true;

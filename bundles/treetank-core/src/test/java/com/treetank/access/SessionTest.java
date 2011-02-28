@@ -19,6 +19,7 @@
 package com.treetank.access;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -37,7 +38,11 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.AbsTTException;
+import com.treetank.node.DocumentRootNode;
+import com.treetank.node.DummyNode;
 import com.treetank.node.ENodes;
+import com.treetank.node.ElementNode;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.TypedValue;
@@ -271,6 +276,44 @@ public class SessionTest {
         session.close();
 
         database.close();
+        database.close();
+    }
+
+    @Test
+    public void testGetStructuralNode() throws AbsTTException {
+
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+
+        DocumentCreater.create(wtx);
+        wtx.moveToDocumentRoot();
+        assertEquals(DocumentRootNode.class, wtx.getStructuralNode().getClass());
+        wtx.moveToFirstChild();
+        assertEquals(ElementNode.class, wtx.getStructuralNode().getClass());
+        wtx.moveToAttribute(0);
+        assertEquals(DummyNode.class, wtx.getStructuralNode().getClass());
+        assertFalse(wtx.getStructuralNode().hasLeftSibling());
+        assertFalse(wtx.getStructuralNode().hasRightSibling());
+        assertFalse(wtx.getStructuralNode().hasFirstChild());
+        assertEquals(((Long)EFixed.NULL_NODE_KEY.getStandardProperty()).longValue(), wtx.getStructuralNode()
+            .getRightSiblingKey());
+        assertEquals(((Long)EFixed.NULL_NODE_KEY.getStandardProperty()).longValue(), wtx.getStructuralNode()
+            .getRightSiblingKey());
+        wtx.moveToParent();
+        wtx.moveToNamespace(0);
+        assertEquals(DummyNode.class, wtx.getStructuralNode().getClass());
+        assertFalse(wtx.getStructuralNode().hasLeftSibling());
+        assertFalse(wtx.getStructuralNode().hasRightSibling());
+        assertFalse(wtx.getStructuralNode().hasFirstChild());
+        assertEquals(((Long)EFixed.NULL_NODE_KEY.getStandardProperty()).longValue(), wtx.getStructuralNode()
+            .getRightSiblingKey());
+        assertEquals(((Long)EFixed.NULL_NODE_KEY.getStandardProperty()).longValue(), wtx.getStructuralNode()
+            .getRightSiblingKey());
+        wtx.abort();
+        wtx.close();
+        session.close();
         database.close();
     }
 

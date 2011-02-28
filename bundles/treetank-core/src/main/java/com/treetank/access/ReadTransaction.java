@@ -26,9 +26,8 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.IStructuralItem;
 import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
-import com.treetank.node.AbsStructNode;
-import com.treetank.node.ENodes;
-import com.treetank.node.ElementNode;
+import com.treetank.node.*;
+import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
@@ -426,13 +425,13 @@ public class ReadTransaction implements IReadTransaction {
         mCurrentNode = paramCurrentNode;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final IItem getNode() {
-        return mCurrentNode;
-    }
+    // /**
+    // * {@inheritDoc}
+    // */
+    // @Override
+    // public final IItem getNode() {
+    // return mCurrentNode;
+    // }
 
     /**
      * {@inheritDoc}
@@ -473,5 +472,64 @@ public class ReadTransaction implements IReadTransaction {
             return null;
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final IStructuralItem getStructuralNode() {
+        if (mCurrentNode instanceof AbsStructNode) {
+            return (IStructuralItem)mCurrentNode;
+        } else {
+            return DummyNode.createData(mCurrentNode.getNodeKey(), mCurrentNode.getParentKey());
+        }
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    public TextNode getNode(final TextNode paramNode) {
+        return paramNode;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ElementNode getNode(final ElementNode paramNode) {
+        return paramNode;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AttributeNode getNode(final AttributeNode paramNode) {
+        return paramNode;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public NamespaceNode getNode(final NamespaceNode paramNode) {
+        return paramNode;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DeletedNode getNode(final DeletedNode paramNode) {
+        return paramNode;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DocumentRootNode getNode(final DocumentRootNode paramNode) {
+        return paramNode;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public IItem getNode(final AtomicValue paramNode) {
+        return paramNode;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <T extends IItem> T getNode() {
+        return mCurrentNode.accept(this);
+    }
 }

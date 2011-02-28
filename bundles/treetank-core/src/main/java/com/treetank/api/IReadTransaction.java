@@ -21,6 +21,8 @@ import javax.xml.namespace.QName;
 
 import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
+import com.treetank.node.*;
+import com.treetank.service.xml.xpath.AtomicValue;
 
 /**
  * <h1>IReadTransaction</h1>
@@ -269,12 +271,84 @@ public interface IReadTransaction {
      */
     IItemList getItemList();
 
+    // /**
+    // * Getting the current node.
+    // *
+    // * @return the node
+    // */
+    // IItem getNode();
+
     /**
      * Getting the current node.
      * 
+     * @param paramNode
+     *            {@link TextNode} instance
      * @return the node
      */
-    IItem getNode();
+    TextNode getNode(final TextNode paramNode);
+
+    /**
+     * Getting the current node.
+     * 
+     * @param paramNode
+     *            {@link AtomicValue} instance
+     * @return the node
+     */
+    IItem getNode(final AtomicValue paramNode);
+
+    /**
+     * Getting the current node.
+     * 
+     * @param paramNode
+     *            {@link ElementNode} instance
+     * @return the node
+     */
+    ElementNode getNode(final ElementNode paramNode);
+
+    /**
+     * Getting the current node.
+     * 
+     * @param paramNode
+     *            {@link AttributeNode} instance
+     * @return the node
+     */
+    AttributeNode getNode(final AttributeNode paramNode);
+
+    /**
+     * Getting the current node.
+     * 
+     * @param paramNode
+     *            {@link NamespaceNode} instance
+     * @return the node
+     */
+    NamespaceNode getNode(final NamespaceNode paramNode);
+
+    /**
+     * Getting the current node.
+     * 
+     * @param paramNode
+     *            {@link DeletedNode} instance
+     * @return the node
+     */
+    DeletedNode getNode(final DeletedNode paramNode);
+
+    /**
+     * Getting the current node.
+     * 
+     * @param paramNode
+     *            {@link DocumentRootNode} instance
+     * @return the node
+     */
+    DocumentRootNode getNode(final DocumentRootNode paramNode);
+
+    /**
+     * Get the current node.
+     * 
+     * @param <T>
+     *            node which implements {@link IItem}
+     * @return current node which implements {@link IItem}
+     */
+    <T extends IItem> T getNode();
 
     /**
      * This method returns the current {@link IItem} as a {@link IStructuralItem} if and only if it is a
@@ -282,6 +356,7 @@ public interface IReadTransaction {
      * 
      * @return the current node as {@link IStructuralItem} if possible, null otherwise
      */
+    @Deprecated
     IStructuralItem getNodeIfStructural();
 
     /**
@@ -301,4 +376,12 @@ public interface IReadTransaction {
      * @return true if closed, false otherwise
      */
     boolean isClosed();
+
+    /**
+     * This method returns the current {@link IItem} as a {@link IStructuralItem}.
+     * 
+     * @return the current node as {@link IStructuralItem} if possible, otherwise wrap the {@link AbsNode} in
+     *         a {@link IStructuralItem}
+     */
+    IStructuralItem getStructuralNode();
 }

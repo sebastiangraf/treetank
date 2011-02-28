@@ -18,7 +18,7 @@
 package com.treetank.io;
 
 import com.treetank.exception.TTIOException;
-import com.treetank.page.AbstractPage;
+import com.treetank.page.AbsStractPage;
 import com.treetank.page.PageReference;
 
 /**
@@ -43,11 +43,11 @@ public interface IReader {
      * 
      * @param pageReference
      *            the reference for the page to be determined
-     * @return a {@link AbstractPage} as the base for a page
+     * @return a {@link AbsStractPage} as the base for a page
      * @throws TTIOException
      *             if something bad happens during read
      */
-    AbstractPage read(final PageReference pageReference) throws TTIOException;
+    AbsStractPage read(final PageReference pageReference) throws TTIOException;
 
     /**
      * Closing the storage.

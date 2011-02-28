@@ -29,7 +29,7 @@ import com.treetank.cache.RAMCache;
 import com.treetank.exception.TTIOException;
 import com.treetank.io.IReader;
 import com.treetank.node.DeletedNode;
-import com.treetank.page.AbstractPage;
+import com.treetank.page.AbsStractPage;
 import com.treetank.page.IndirectPage;
 import com.treetank.page.NamePage;
 import com.treetank.page.NodePage;
@@ -343,7 +343,7 @@ public class ReadTransactionState {
         for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            final AbstractPage page = dereferenceIndirectPage(reference);
+            final AbsStractPage page = dereferenceIndirectPage(reference);
             if (page == null) {
                 reference = null;
                 break;
@@ -405,6 +405,7 @@ public class ReadTransactionState {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return new StringBuilder("DatabaseConfiguration: ").append(mDatabaseConfiguration.toString()).append(
             "\nPageReader: ").append(mPageReader.toString()).append("\nUberPage: ").append(

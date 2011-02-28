@@ -38,12 +38,12 @@ public final class LRUCache implements ICache {
     /**
      * The collection to hold the maps.
      */
-    private final transient Map<Long, NodePageContainer> map;
+    private final Map<Long, NodePageContainer> map;
 
     /**
      * The reference to the second cache.
      */
-    private final transient ICache mSecondCache;
+    private final ICache mSecondCache;
 
     /**
      * Creates a new LRU cache.

@@ -34,9 +34,9 @@ public final class PagePersistenter {
         // Not needed over here
     }
 
-    public static AbstractPage createPage(final ITTSource mSource) {
+    public static AbsStractPage createPage(final ITTSource mSource) {
         final int kind = mSource.readInt();
-        AbstractPage returnVal = null;
+        AbsStractPage returnVal = null;
         switch (kind) {
         case NODEPAGE:
             returnVal = new NodePage(mSource);
@@ -60,7 +60,7 @@ public final class PagePersistenter {
         return returnVal;
     }
 
-    public static void serializePage(final ITTSink mSink, final AbstractPage mPage) {
+    public static void serializePage(final ITTSink mSink, final AbsStractPage mPage) {
 
         if (mPage instanceof NodePage) {
             mSink.writeInt(PagePersistenter.NODEPAGE);
