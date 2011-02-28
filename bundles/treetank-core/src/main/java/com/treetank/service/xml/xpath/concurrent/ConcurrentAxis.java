@@ -67,8 +67,7 @@ public class ConcurrentAxis extends AbsAxis {
 
     /** Is axis already finished and has no results left? */
     private boolean mFinished;
-    
-    private DeleteMe d;
+   
     
     
     /** Size of thread pool for executor service. */
@@ -90,8 +89,6 @@ public class ConcurrentAxis extends AbsAxis {
         super(rtx);
         mResults = new ArrayBlockingQueue<Long>(M_CAPACITY);
         mFirst = true;
-        DeleteMe2.incrCounter();
-        d = new DeleteMe(DeleteMe2.getCounter());
         mProducer = mChildAxis;
         task = new ConcurrentAxisHelper(getTransaction(), mProducer, mResults);
         mFinished = false;
