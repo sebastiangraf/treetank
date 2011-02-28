@@ -62,13 +62,14 @@ public class ConcurrentAxisHelper implements Runnable {
      * result sequence is marked by the NULL_NODE_KEY. This is used for
      * communication with the consumer.
      */
-    private final BlockingQueue<Long> mResults;
+    private BlockingQueue<Long> mResults;
 
     /**
      * True, if next() has to be called for the given axis after calling
      * hasNext().
      */
     private final boolean callNext;
+    
 
     /**
      * Bind axis step to transaction.
@@ -101,9 +102,9 @@ public class ConcurrentAxisHelper implements Runnable {
             }
             try {
                 // store result in queue as soon as there is space left
+               //System.out.println("put: " + mAxis.getTransaction().getNode().getNodeKey());
                 mResults.put(mAxis.getTransaction().getNode().getNodeKey());
                 // wait until next thread arrives and exchange blocking queue
-                //ConcurrentExchanger.getInstance().exchange(mResults);
             } catch (final InterruptedException mExp) {
                 mExp.printStackTrace();
 

@@ -26,6 +26,7 @@ import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
+import com.treetank.service.xml.xpath.concurrent.ConcurrentAxis;
 import com.treetank.service.xml.xpath.functions.Function;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.settings.EFixed;
@@ -96,9 +97,9 @@ public abstract class ConcurrentAbsOpAxis extends AbsAxis {
         if (mIsFirst) {
             mIsFirst = false;
 
-            final Future<Integer> itemF1 = AbsAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand1));
+            final Future<Integer> itemF1 = ConcurrentAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand1));
 
-            final Future<Integer> itemF2 = AbsAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand2));
+            final Future<Integer> itemF2 = ConcurrentAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand2));
 
             try {
                 Integer item1 = itemF1.get();
