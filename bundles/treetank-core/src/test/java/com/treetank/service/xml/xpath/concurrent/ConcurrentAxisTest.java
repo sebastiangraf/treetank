@@ -12,13 +12,12 @@ import com.treetank.axis.ChildAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.NestedAxis;
-import com.treetank.axis.TotalAxis;
 import com.treetank.axis.filter.NameFilter;
 import com.treetank.axis.filter.TextFilter;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.ParallelAxis;
+import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.comparators.CompKind;
 import com.treetank.service.xml.xpath.comparators.GeneralComp;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
@@ -91,7 +90,7 @@ public class ConcurrentAxisTest {
         final int resultNumber = 550;
         AbsAxis axis = null;
         try {
-            axis = new ParallelAxis(mRtx, query);
+            axis = new XPathAxis(mRtx, query);
         } catch (final TTXPathException ttExp) {
             ttExp.printStackTrace();
         }
@@ -114,9 +113,9 @@ public class ConcurrentAxisTest {
         /* query: //regions/africa//location */
         final int resultNumber = 550;
         final AbsAxis axis =
-            new TotalAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(mRtx, true), new NameFilter(mRtx,
+            new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(mRtx, true), new NameFilter(mRtx,
                 "regions")), new FilterAxis(new ChildAxis(mRtx), new NameFilter(mRtx, "africa"))),
-                new FilterAxis(new DescendantAxis(mRtx, true), new NameFilter(mRtx, "location"))));
+                new FilterAxis(new DescendantAxis(mRtx, true), new NameFilter(mRtx, "location")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -129,9 +128,9 @@ public class ConcurrentAxisTest {
      * 
      * @throws TTXPathException
      */
-    @Bench
-    @SkipBench
     @Ignore
+    @SkipBench
+    @Bench
     @Test
     public final void testConcurrent() {
         /* query: //regions/africa//location */
