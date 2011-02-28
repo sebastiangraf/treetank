@@ -19,6 +19,8 @@ package com.treetank.node;
 
 import java.util.Arrays;
 
+import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 
 /**
@@ -40,7 +42,7 @@ public final class AttributeNode extends AbsNode {
     private byte[] mValue;
 
     /**
-     * Creating an attributes.
+     * Creating an attribute.
      * 
      * @param mLongBuilder
      *            long array with data
@@ -173,5 +175,11 @@ public final class AttributeNode extends AbsNode {
         result = prime * result + Arrays.hashCode(mValue);
         return result;
     }
+    
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
+        return (T)paramTransaction.getNode(this);
+    }
 }

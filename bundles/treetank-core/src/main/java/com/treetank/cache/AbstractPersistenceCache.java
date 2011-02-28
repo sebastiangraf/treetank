@@ -43,7 +43,7 @@ public abstract class AbstractPersistenceCache implements ICache {
     /**
      * Place to store the data.
      */
-    protected transient final File place;
+    protected final File place;
 
     /**
      * Counter to give every instance a different place.
@@ -61,7 +61,9 @@ public abstract class AbstractPersistenceCache implements ICache {
         place =
             new File(paramConfig.getFile(), new StringBuilder(EStoragePaths.TRANSACTIONLOG.getFile()
                 .getName()).append(File.separator).append(counter).toString());
-        place.mkdirs();
+        if (!place.mkdirs()) {
+            LOGWRAPPER.error("Couldn't create directory for " + place);
+        }
         counter++;
     }
 
@@ -83,10 +85,14 @@ public abstract class AbstractPersistenceCache implements ICache {
     public final void clear() {
         try {
             clearPersistent();
-            for (final File files : place.listFiles()) {
-                files.delete();
+            for (final File file : place.listFiles()) {
+                if (!file.delete()) {
+                    throw new TTIOException("Couldn't delete!");
+                }
             }
-            place.delete();
+            if (!place.delete()) {
+                throw new TTIOException("Couldn't delete!");
+            }
         } catch (final TTIOException exc) {
             LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);

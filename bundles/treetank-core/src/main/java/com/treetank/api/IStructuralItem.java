@@ -17,7 +17,7 @@
 package com.treetank.api;
 
 /**
- * Class to denote that an {@link IItem} has structural attributes. That means that a class can have pointer
+ * Class to denote that an {@link IItem} has structural attributes. That means that a class can have pointers
  * to neighbours.
  */
 public interface IStructuralItem extends IItem {
@@ -25,21 +25,21 @@ public interface IStructuralItem extends IItem {
     /**
      * Declares, whether the item has a first child.
      * 
-     * @return true, if item has a first child
+     * @return true, if item has a first child, otherwise false
      */
     boolean hasFirstChild();
 
     /**
      * Declares, whether the item has a left sibling.
      * 
-     * @return true, if item has a left sibling
+     * @return true, if item has a left sibling, otherwise false
      */
     boolean hasLeftSibling();
 
     /**
      * Declares, whether the item has a right sibling.
      * 
-     * @return true, if item has a right sibling
+     * @return true, if item has a right sibling, otherwise false
      */
     boolean hasRightSibling();
 

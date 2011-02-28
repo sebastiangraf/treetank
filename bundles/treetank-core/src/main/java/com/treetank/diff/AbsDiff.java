@@ -148,10 +148,9 @@ abstract class AbsDiff extends AbsDiffObservable {
                 // Check if nodes are the same (even if subtrees may vary).
                 if (checkNodes(paramNewRtx, paramOldRtx)) {
                     diff = EDiff.SAME;
-                    break;
+                } else {
+                    diff = algorithm(paramNewRtx, paramOldRtx, paramDepth);
                 }
-
-                diff = algorithm(paramNewRtx, paramOldRtx, paramDepth);
             }
             break;
         default:
@@ -207,53 +206,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         assert diff != null;
         return diff;
     }
-
-    // /**
-    // * Check if nodes are equal or only deletions have been made in the subtrees.
-    // *
-    // * @param paramNewRtx
-    // * {@link IReadTransaction} on new revision
-    // * @param paramOldRtx
-    // * {@link IReadTransaction} on old revision
-    // *
-    // * @return true if nodes are "equal", otherwise false
-    // */
-    // boolean checkSubtreeNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
-    // assert paramNewRtx != null;
-    // assert paramOldRtx != null;
-    // boolean retVal = checkNodes(paramNewRtx, paramOldRtx);
-    //
-    // if (retVal && ((AbsStructNode)paramNewRtx.getNode()).hasFirstChild()) {
-    // EDiff diff = EDiff.SAME;
-    // final Depth depth = new Depth();
-    // final long newKey = paramNewRtx.getNode().getNodeKey();
-    // final long oldKey = paramOldRtx.getNode().getNodeKey();
-    // while (diff == EDiff.DELETED || moveCursor(paramNewRtx, ERevision.NEW)) {
-    // if (diff != EDiff.INSERTED) {
-    // moveCursor(paramOldRtx, ERevision.OLD);
-    // }
-    //
-    // if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-    // diff = diff(paramNewRtx, paramOldRtx, depth, EFireDiff.FALSE);
-    // if (diff != EDiff.SAME) {
-    // retVal = false;
-    // break;
-    // }
-    // } else {
-    // diff = optimizedDiff(paramNewRtx, paramOldRtx, depth, EFireDiff.FALSE);
-    // if (diff != EDiff.SAME) {
-    // retVal = false;
-    // break;
-    // }
-    // }
-    // }
-    // paramNewRtx.moveTo(newKey);
-    // paramOldRtx.moveTo(oldKey);
-    // }
-    //
-    // return retVal;
-    // }
-
+    
     @Override
     public void done() {
         try {

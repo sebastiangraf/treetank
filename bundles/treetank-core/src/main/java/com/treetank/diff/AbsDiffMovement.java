@@ -129,7 +129,7 @@ abstract class AbsDiffMovement implements IDiff {
      */
     void initialize(final HashKind paramHashKind, final IReadTransaction paramNewRtx,
         final IReadTransaction paramOldRtx, final EDiffKind paramDiffKind) {
-        if (paramNewRtx == null || paramNewRtx == null) {
+        if (paramNewRtx == null || paramOldRtx == null) {
             throw new IllegalArgumentException();
         }
 
@@ -199,7 +199,7 @@ abstract class AbsDiffMovement implements IDiff {
         assert paramRtx != null;
 
         boolean moved = false;
-        final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
+        final AbsStructNode node = paramRtx.getNode();
 
         if (node.hasFirstChild()) {
             if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffKind.OPTIMIZED

@@ -18,6 +18,8 @@
 package com.treetank.service.xml.xpath;
 
 import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
+import com.treetank.node.AbsNode;
 import com.treetank.node.ENodes;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.settings.EFixed;
@@ -382,4 +384,9 @@ public class AtomicValue implements IItem {
         return 0;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
+        return (T)paramTransaction.getNode(this);
+    }
 }

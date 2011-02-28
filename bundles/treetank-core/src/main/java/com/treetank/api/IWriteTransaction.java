@@ -276,6 +276,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws AbsTTException
      *             If can't close Write Transaction.
      */
+    @Override
     void close() throws AbsTTException;
 
 }

@@ -251,7 +251,7 @@ public final class DiffFactory {
         }
 
         @Override
-        public Void call() throws Exception {
+        public Void call() throws AbsTTException {
             mDiffKind.invoke(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
             return null;
         }

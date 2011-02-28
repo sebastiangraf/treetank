@@ -19,6 +19,9 @@ package com.treetank.node;
 
 import java.util.Arrays;
 
+import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
+
 /**
  * <h1>NamespaceNode</h1>
  * 
@@ -119,5 +122,10 @@ public final class NamespaceNode extends AbsNode {
         result = prime * result + Arrays.hashCode(mIntData);
         return result;
     }
-
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
+        return (T)paramTransaction.getNode(this);
+    }
 }

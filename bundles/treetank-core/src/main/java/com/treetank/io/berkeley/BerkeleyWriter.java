@@ -26,7 +26,7 @@ import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 import com.treetank.exception.TTIOException;
 import com.treetank.io.IWriter;
-import com.treetank.page.AbstractPage;
+import com.treetank.page.AbsStractPage;
 import com.treetank.page.PageReference;
 import com.treetank.utils.LogWrapper;
 
@@ -100,7 +100,7 @@ public class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     public void write(final PageReference pageReference) throws TTIOException {
-        final AbstractPage page = pageReference.getPage();
+        final AbsStractPage page = pageReference.getPage();
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -204,7 +204,7 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public AbstractPage read(final PageReference pageReference) throws TTIOException {
+    public AbsStractPage read(final PageReference pageReference) throws TTIOException {
         return mReader.read(pageReference);
     }
 
