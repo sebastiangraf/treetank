@@ -21,6 +21,8 @@ package com.treetank.service.xml.xpath.concurrent;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
@@ -65,6 +67,16 @@ public class ConcurrentAxis extends AbsAxis {
 
     /** Is axis already finished and has no results left? */
     private boolean mFinished;
+    
+    private DeleteMe d;
+    
+    
+    /** Size of thread pool for executor service. */
+    private static int THREADPOOLSIZE = 2;
+    
+    /** Executor Service holding the execution plan for future tasks. */
+    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(THREADPOOLSIZE);
+ 
 
     /**
      * Constructor. Initializes the internal state.
@@ -78,7 +90,8 @@ public class ConcurrentAxis extends AbsAxis {
         super(rtx);
         mResults = new ArrayBlockingQueue<Long>(M_CAPACITY);
         mFirst = true;
-
+        DeleteMe2.incrCounter();
+        d = new DeleteMe(DeleteMe2.getCounter());
         mProducer = mChildAxis;
         task = new ConcurrentAxisHelper(getTransaction(), mProducer, mResults);
         mFinished = false;
@@ -117,7 +130,7 @@ public class ConcurrentAxis extends AbsAxis {
         // start producer on first call
         if (mFirst) {
             mFirst = false;
-            AbsAxis.EXECUTOR.submit(task);
+            ConcurrentAxis.EXECUTOR.submit(task);
         }
 
         if (mFinished) {
@@ -131,7 +144,8 @@ public class ConcurrentAxis extends AbsAxis {
         try {
             // get result from producer as soon as it is available
             result = mResults.take();
-        } catch (InterruptedException e) {
+            //System.out.println("get: " + d.getC() +" "+ result );
+        } catch (final InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -143,6 +157,7 @@ public class ConcurrentAxis extends AbsAxis {
 
         mFinished = true;
         resetToStartKey();
+        //EXECUTOR.shutdown();
         return false;
 
     }
