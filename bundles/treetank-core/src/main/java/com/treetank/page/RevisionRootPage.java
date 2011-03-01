@@ -28,7 +28,7 @@ import com.treetank.utils.IConstants;
  * Revision root page holds a reference to the name page as well as the static node page tree.
  * </p>
  */
-public final class RevisionRootPage extends AbsStractPage {
+public final class RevisionRootPage extends AbsPage {
 
     /** Offset of name page reference. */
     private static final int NAME_REFERENCE_OFFSET = 0;

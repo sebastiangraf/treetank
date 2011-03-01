@@ -532,4 +532,10 @@ public class ReadTransaction implements IReadTransaction {
     public <T extends IItem> T getNode() {
         return mCurrentNode.accept(this);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public DummyNode getNode(final DummyNode paramNode) {
+        return paramNode;
+    }
 }

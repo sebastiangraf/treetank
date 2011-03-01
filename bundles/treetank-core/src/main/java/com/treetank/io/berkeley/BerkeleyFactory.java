@@ -38,7 +38,7 @@ import com.treetank.io.IWriter;
 import com.treetank.io.berkeley.binding.AbstractPageBinding;
 import com.treetank.io.berkeley.binding.KeyBinding;
 import com.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
-import com.treetank.page.AbsStractPage;
+import com.treetank.page.AbsPage;
 import com.treetank.page.PageReference;
 import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.LogWrapper;
@@ -66,8 +66,8 @@ public final class BerkeleyFactory extends AbsIOFactory {
     /** Binding for {@link AbsKey}. */
     public static final TupleBinding<AbsKey> KEY = new KeyBinding();
 
-    /** Binding for {@link AbsStractPage}. */
-    public static final TupleBinding<AbsStractPage> PAGE_VAL_B = new AbstractPageBinding();
+    /** Binding for {@link AbsPage}. */
+    public static final TupleBinding<AbsPage> PAGE_VAL_B = new AbstractPageBinding();
 
     /** Binding for {@link PageReference}. */
     public static final TupleBinding<PageReference> FIRST_REV_VAL_B = new PageReferenceUberPageBinding();

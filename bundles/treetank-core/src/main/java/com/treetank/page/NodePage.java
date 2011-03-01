@@ -32,7 +32,7 @@ import com.treetank.utils.IConstants;
  * A node page stores a set of nodes.
  * </p>
  */
-public class NodePage extends AbsStractPage {
+public class NodePage extends AbsPage {
 
     /** Key of node page. This is the base key of all contained nodes. */
     private final long mNodePageKey;

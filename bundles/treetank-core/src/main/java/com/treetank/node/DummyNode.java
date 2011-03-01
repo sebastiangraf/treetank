@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.IVisitor;
 import com.treetank.settings.EFixed;
 
 /**
@@ -40,12 +41,6 @@ public final class DummyNode extends AbsStructNode {
      */
     public DummyNode(final long[] paramLongBuilder, final int[] paramIntBuilder) {
         super(paramLongBuilder, paramIntBuilder);
-    }
-
-    @Override
-    public <T extends IItem> T accept(IReadTransaction paramTransaction) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
@@ -105,6 +100,19 @@ public final class DummyNode extends AbsStructNode {
         longData[AbsStructNode.RIGHT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         longData[AbsStructNode.FIRST_CHILD_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         return (DummyNode)ENodes.DUMMY_KIND.createNodeFromScratch(longData, intData, null);
+    }
+    
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
+        return (T)paramTransaction.getNode(this);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void acceptVisitor(final IVisitor paramVisitor) {
+        paramVisitor.visit(this);
     }
 
 }

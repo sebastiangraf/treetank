@@ -29,7 +29,7 @@ import com.treetank.io.ITTSource;
  * Class to provide basic reference handling functionality.
  * </p>
  */
-public abstract class AbsStractPage {
+public abstract class AbsPage {
 
     /** Page references. */
     private final PageReference[] mReferences;
@@ -45,7 +45,7 @@ public abstract class AbsStractPage {
      * @param revision
      *            Revision Number.
      */
-    protected AbsStractPage(final int referenceCount, final long revision) {
+    protected AbsPage(final int referenceCount, final long revision) {
 
         mReferences = new PageReference[referenceCount];
         mRevision = revision;
@@ -59,7 +59,7 @@ public abstract class AbsStractPage {
      * @param mIn
      *            Input reader to read from.
      */
-    protected AbsStractPage(final int referenceCount, final ITTSource mIn) {
+    protected AbsPage(final int referenceCount, final ITTSource mIn) {
         this(referenceCount, mIn.readLong());
         final int[] values = new int[referenceCount];
         for (int i = 0; i < values.length; i++) {
@@ -82,7 +82,7 @@ public abstract class AbsStractPage {
      * @param revision
      *            Number of Revision.
      */
-    protected AbsStractPage(final int referenceCount, final AbsStractPage mCommittedPage, final long revision) {
+    protected AbsPage(final int referenceCount, final AbsPage mCommittedPage, final long revision) {
 
         this(referenceCount, revision);
         for (int offset = 0; offset < referenceCount; offset++) {

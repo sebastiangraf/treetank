@@ -31,7 +31,7 @@ import com.treetank.utils.TypedValue;
  * Name page holds all names and their keys for a revision.
  * </p>
  */
-public final class NamePage extends AbsStractPage {
+public final class NamePage extends AbsPage {
 
     /** Map the hash of a name to its name. */
     private final Map<Integer, String> mNameMap;

@@ -282,6 +282,15 @@ public interface IReadTransaction {
      * Getting the current node.
      * 
      * @param paramNode
+     *            {@link DummyNode} instance
+     * @return the node
+     */
+    DummyNode getNode(final DummyNode paramNode);
+    
+    /**
+     * Getting the current node.
+     * 
+     * @param paramNode
      *            {@link TextNode} instance
      * @return the node
      */

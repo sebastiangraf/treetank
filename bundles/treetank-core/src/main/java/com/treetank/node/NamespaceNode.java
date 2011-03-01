@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.IVisitor;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -86,6 +87,7 @@ public final class NamespaceNode extends AbsNode {
         mIntData[URI_KEY] = mUriKey;
     }
 
+    /** {@inheritDoc} */
     @Override
     public AbsNode clone() {
         final AbsNode toClone = new NamespaceNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData));
@@ -107,6 +109,7 @@ public final class NamespaceNode extends AbsNode {
         return createData(mNodeKey, mNode.getParentKey(), mNode.getURIKey(), mNode.getNameKey());
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
@@ -115,6 +118,7 @@ public final class NamespaceNode extends AbsNode {
         return returnVal.toString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         final int prime = 98807;
@@ -123,9 +127,16 @@ public final class NamespaceNode extends AbsNode {
         return result;
     }
     
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
         return (T)paramTransaction.getNode(this);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void acceptVisitor(final IVisitor paramVisitor) {
+        paramVisitor.visit(this);    
     }
 }

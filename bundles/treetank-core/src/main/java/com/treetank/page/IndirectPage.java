@@ -28,7 +28,7 @@ import com.treetank.utils.IConstants;
  * Indirect page holds a set of references to build a reference tree.
  * </p>
  */
-public final class IndirectPage extends AbsStractPage {
+public final class IndirectPage extends AbsPage {
 
     /**
      * Create indirect page.

@@ -22,22 +22,22 @@ import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.io.berkeley.TupleInputSource;
 import com.treetank.io.berkeley.TupleOutputSink;
-import com.treetank.page.AbsStractPage;
+import com.treetank.page.AbsPage;
 import com.treetank.page.PagePersistenter;
 
 /**
- * Binding for storing {@link AbsStractPage} objects within the Berkeley DB.
+ * Binding for storing {@link AbsPage} objects within the Berkeley DB.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class AbstractPageBinding extends TupleBinding<AbsStractPage> {
+public final class AbstractPageBinding extends TupleBinding<AbsPage> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AbsStractPage entryToObject(final TupleInput arg0) {
+    public AbsPage entryToObject(final TupleInput arg0) {
         return PagePersistenter.createPage(new TupleInputSource(arg0));
     }
 
@@ -45,7 +45,7 @@ public final class AbstractPageBinding extends TupleBinding<AbsStractPage> {
      * {@inheritDoc}
      */
     @Override
-    public void objectToEntry(final AbsStractPage arg0, final TupleOutput arg1) {
+    public void objectToEntry(final AbsPage arg0, final TupleOutput arg1) {
         PagePersistenter.serializePage(new TupleOutputSink(arg1), arg0);
     }
 

@@ -31,7 +31,7 @@ import com.treetank.node.DeletedNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.node.TextNode;
-import com.treetank.page.AbsStractPage;
+import com.treetank.page.AbsPage;
 import com.treetank.page.IndirectPage;
 import com.treetank.page.NamePage;
 import com.treetank.page.NodePage;
@@ -328,7 +328,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      *             if the write fails
      */
     public void commit(final PageReference reference) throws AbsTTException {
-        AbsStractPage page = null;
+        AbsPage page = null;
 
         // if reference is not null, get one from the persistent storage.
         if (reference != null) {

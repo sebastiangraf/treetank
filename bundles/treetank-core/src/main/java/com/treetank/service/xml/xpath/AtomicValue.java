@@ -19,6 +19,7 @@ package com.treetank.service.xml.xpath;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.IVisitor;
 import com.treetank.node.AbsNode;
 import com.treetank.node.ENodes;
 import com.treetank.service.xml.xpath.types.Type;
@@ -388,5 +389,11 @@ public class AtomicValue implements IItem {
     @Override
     public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
         return (T)paramTransaction.getNode(this);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void acceptVisitor(final IVisitor paramVisitor) {
+        // Do nothing.
     }
 }

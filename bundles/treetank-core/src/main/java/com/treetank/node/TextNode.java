@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.IVisitor;
 import com.treetank.io.ITTSink;
 import com.treetank.settings.EFixed;
 
@@ -99,26 +100,31 @@ public final class TextNode extends AbsStructNode {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public long getFirstChildKey() {
         return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setFirstChildKey(final long mFirstChildKey) {
         throw new UnsupportedOperationException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void decrementChildCount() {
         throw new UnsupportedOperationException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void incrementChildCount() {
         throw new UnsupportedOperationException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setChildCount(final long paramChildCount) {
         throw new UnsupportedOperationException();
@@ -133,6 +139,7 @@ public final class TextNode extends AbsStructNode {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public AbsNode clone() {
         final AbsNode toClone =
@@ -154,21 +161,29 @@ public final class TextNode extends AbsStructNode {
     }
 
     public static AbsNode createData(final long mNodeKey, final TextNode mNode) {
-        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(), mNode
-            .getRightSiblingKey(), mNode.getTypeKey(), mNode.getRawValue());
+        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(),
+            mNode.getRightSiblingKey(), mNode.getTypeKey(), mNode.getRawValue());
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tvalueLength: ").append(
-            mIntData[VALUE_LENGTH]).append("\n\tvalue:").append(new String(mValue)).toString();
+        returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tvalueLength: ")
+            .append(mIntData[VALUE_LENGTH]).append("\n\tvalue:").append(new String(mValue)).toString();
         return returnVal.toString();
     }
-    
+
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
         return (T)paramTransaction.getNode(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void acceptVisitor(final IVisitor paramVisitor) {
+        paramVisitor.visit(this);
     }
 }
