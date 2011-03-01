@@ -528,9 +528,10 @@ public class ReadTransaction implements IReadTransaction {
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends IItem> T getNode() {
-        return mCurrentNode.accept(this);
+        return (T)mCurrentNode.accept(this);
     }
 
     /** {@inheritDoc} */
