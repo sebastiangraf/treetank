@@ -30,7 +30,7 @@ import com.treetank.utils.IConstants;
  * Uber page holds a reference to the static revision root page tree.
  * </p>
  */
-public final class UberPage extends AbsStractPage {
+public final class UberPage extends AbsPage {
 
     /** Offset of indirect page reference. */
     private static final int INDIRECT_REFERENCE_OFFSET = 0;
@@ -54,7 +54,7 @@ public final class UberPage extends AbsStractPage {
 
         // Initialize revision tree to guarantee that there is a revision root
         // page.
-        AbsStractPage page = null;
+        AbsPage page = null;
         PageReference reference = getReference(INDIRECT_REFERENCE_OFFSET);
 
         // Remaining levels.

@@ -26,7 +26,7 @@ import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 import com.treetank.exception.TTIOException;
 import com.treetank.io.IReader;
-import com.treetank.page.AbsStractPage;
+import com.treetank.page.AbsPage;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.utils.LogWrapper;
@@ -85,13 +85,13 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
-    public AbsStractPage read(final PageReference pageReference) throws TTIOException {
+    public AbsPage read(final PageReference pageReference) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
         BerkeleyFactory.KEY.objectToEntry(pageReference.getKey(), keyEntry);
 
-        AbsStractPage page = null;
+        AbsPage page = null;
         try {
             final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             if (status == OperationStatus.SUCCESS) {

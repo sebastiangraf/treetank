@@ -37,7 +37,7 @@ import com.treetank.utils.IConstants;
 public final class PageReference {
 
     /** In-memory deserialized page instance. */
-    private AbsStractPage mPage;
+    private AbsPage mPage;
 
     /** Corresponding mKey of the related node page. */
     private long mNodePageKey = -1;
@@ -76,7 +76,7 @@ public final class PageReference {
      * @param checksum
      *            Checksum of serialized page.
      */
-    public PageReference(final AbsStractPage page, final AbsKey key, final byte[] checksum) {
+    public PageReference(final AbsPage page, final AbsKey key, final byte[] checksum) {
         mPage = page;
         mKey = key;
         System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
@@ -140,7 +140,7 @@ public final class PageReference {
      * 
      * @return In-memory instance of deserialized page.
      */
-    public AbsStractPage getPage() {
+    public AbsPage getPage() {
         return mPage;
     }
 
@@ -150,7 +150,7 @@ public final class PageReference {
      * @param page
      *            Deserialized page.
      */
-    public void setPage(final AbsStractPage page) {
+    public void setPage(final AbsPage page) {
         mPage = page;
     }
 

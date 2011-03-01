@@ -121,4 +121,12 @@ public interface IItem {
      * @return instance of a type which extends {@link IItem}
      */
     <T extends IItem> T accept(final IReadTransaction paramTransaction);
+
+    /**
+     * Accept a visitor and use double dispatching to invoke the visitor method.
+     * 
+     * @param paramVisitor
+     *            implementation of the {@link IVisitor} interface
+     */
+    void acceptVisitor(final IVisitor paramVisitor);
 }

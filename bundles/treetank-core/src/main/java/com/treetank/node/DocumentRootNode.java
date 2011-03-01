@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.IVisitor;
 import com.treetank.settings.EFixed;
 
 /**
@@ -89,9 +90,16 @@ public final class DocumentRootNode extends AbsStructNode {
         return result;
     }
 
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
         return (T)paramTransaction.getNode(this);
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void acceptVisitor(final IVisitor paramVisitor) {
+        paramVisitor.visit(this);
     }
 }

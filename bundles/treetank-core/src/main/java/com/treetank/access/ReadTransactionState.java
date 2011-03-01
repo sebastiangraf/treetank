@@ -29,7 +29,7 @@ import com.treetank.cache.RAMCache;
 import com.treetank.exception.TTIOException;
 import com.treetank.io.IReader;
 import com.treetank.node.DeletedNode;
-import com.treetank.page.AbsStractPage;
+import com.treetank.page.AbsPage;
 import com.treetank.page.IndirectPage;
 import com.treetank.page.NamePage;
 import com.treetank.page.NodePage;
@@ -343,7 +343,7 @@ public class ReadTransactionState {
         for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            final AbsStractPage page = dereferenceIndirectPage(reference);
+            final AbsPage page = dereferenceIndirectPage(reference);
             if (page == null) {
                 reference = null;
                 break;
