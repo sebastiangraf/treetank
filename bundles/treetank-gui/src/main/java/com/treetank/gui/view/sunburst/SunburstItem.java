@@ -429,10 +429,10 @@ final class SunburstItem {
             mC1X = PApplet.cos(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
             mC1Y = PApplet.sin(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
 
-            mC2X = PApplet.cos(SunburstGUI.mModel.getItem(mIndexToParent).mAngleCenter);
+            mC2X = PApplet.cos(mGUI.mModel.getItem(mIndexToParent).mAngleCenter);
             mC2X *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
 
-            mC2Y = PApplet.sin(SunburstGUI.mModel.getItem(mIndexToParent).mAngleCenter);
+            mC2Y = PApplet.sin(mGUI.mModel.getItem(mIndexToParent).mAngleCenter);
             mC2Y *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
         }
     }
@@ -555,8 +555,8 @@ final class SunburstItem {
         if (mDepth > 0) {
             mParent.stroke(mLineCol);
             mParent.strokeWeight(mLineWeight);
-            mParent.line(mX, mY, SunburstGUI.mModel.getItem(mIndexToParent).mX,
-                SunburstGUI.mModel.getItem(mIndexToParent).mY);
+            mParent.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
+                mGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -571,8 +571,8 @@ final class SunburstItem {
                 mLineWeight *= -1;
             }
             mParent.strokeWeight(mLineWeight);
-            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, SunburstGUI.mModel.getItem(mIndexToParent).mX,
-                SunburstGUI.mModel.getItem(mIndexToParent).mY);
+            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
+                mGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -708,8 +708,8 @@ final class SunburstItem {
         if (mDepth > 0) {
             paramBuffer.stroke(mLineCol);
             paramBuffer.strokeWeight(mLineWeight);
-            paramBuffer.line(mX, mY, SunburstGUI.mModel.getItem(mIndexToParent).mX,
-                SunburstGUI.mModel.getItem(mIndexToParent).mY);
+            paramBuffer.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
+                mGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -727,8 +727,8 @@ final class SunburstItem {
                 mLineWeight *= -1;
             }
             paramBuffer.strokeWeight(mLineWeight);
-            paramBuffer.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, SunburstGUI.mModel.getItem(mIndexToParent).mX,
-                SunburstGUI.mModel.getItem(mIndexToParent).mY);
+            paramBuffer.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
+                mGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -792,7 +792,7 @@ final class SunburstItem {
     /**
      * Get subtract.
      * 
-     * @return subtract
+     * @return true if one has to be subtracted
      */
     boolean getSubtract() {
         return mSubtract;

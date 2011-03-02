@@ -207,6 +207,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         } finally {
             mLock.release();
         }
+        assert item != null;
         return item;
     }
 

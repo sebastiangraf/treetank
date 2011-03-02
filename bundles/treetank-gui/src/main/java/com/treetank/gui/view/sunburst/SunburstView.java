@@ -238,10 +238,10 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void setup() {
-            if (mGUI != null) {
-//                mGUI.setupGUI();
-                mGUI.mDone = false;
-            }
+            // if (mGUI != null) {
+            // // mGUI.setupGUI();
+            // mGUI.mDone = false;
+            // }
             size(1280, 900);
             noLoop();
         }
@@ -249,8 +249,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void draw() {
-            if (mGUI != null && mGUI.mDone) {
-                mLock.tryAcquire();
+            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
                 LOGWRAPPER.debug("drawing");
                 mGUI.draw();
                 handleHLWeight();
@@ -261,8 +260,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void mouseEntered(final MouseEvent paramEvent) {
-            if (mGUI != null && mGUI.mDone) {
-                mLock.tryAcquire();
+            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
                 mGUI.mouseEntered(paramEvent);
                 handleHLWeight();
                 mLock.release();
@@ -272,8 +270,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void mouseExited(final MouseEvent paramEvent) {
-            if (mGUI != null && mGUI.mDone) {
-                mLock.tryAcquire();
+            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
                 mGUI.mouseExited(paramEvent);
                 handleHLWeight();
                 mLock.release();
@@ -295,8 +292,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void keyReleased() {
-            if (mGUI != null && mGUI.mDone) {
-                mLock.tryAcquire();
+            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
                 mGUI.keyReleased();
                 handleHLWeight();
                 mLock.release();
@@ -306,8 +302,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void mousePressed(final MouseEvent paramEvent) {
-            if (mGUI != null && mGUI.mDone) {
-                mLock.tryAcquire();
+            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
                 mGUI.mousePressed(paramEvent);
                 handleHLWeight();
                 mLock.release();

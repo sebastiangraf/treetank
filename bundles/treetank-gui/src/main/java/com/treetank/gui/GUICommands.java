@@ -177,32 +177,35 @@ public enum GUICommands implements IGUICommand {
                 fc.setAcceptAllFileFilterUsed(true);
                 if (fc.showSaveDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
                     final File target = fc.getSelectedFile();
-                    target.delete();
-                    try {
-                        final FileOutputStream outputStream = new FileOutputStream(target);
-
-                        final IDatabase db = Database.openDatabase(source);
-                        final ISession session = db.getSession();
-
-                        final ExecutorService executor = Executors.newSingleThreadExecutor();
-                        final XMLSerializer serializer =
-                            new XMLSerializerBuilder(session, outputStream).build();
-                        executor.submit(serializer);
-                        executor.shutdown();
+                    if (target.delete()) {
                         try {
-                            executor.awaitTermination(5, TimeUnit.SECONDS);
-                        } catch (final InterruptedException e) {
-                            LOGWRAPPER.error(e.getMessage(), e);
-                            return;
-                        }
+                            final FileOutputStream outputStream = new FileOutputStream(target);
 
-                        session.close();
-                        db.close();
-                        outputStream.close();
-                    } catch (final AbsTTException e) {
-                        LOGWRAPPER.error(e.getMessage(), e);
-                    } catch (final IOException e) {
-                        LOGWRAPPER.error(e.getMessage(), e);
+                            final IDatabase db = Database.openDatabase(source);
+                            final ISession session = db.getSession();
+
+                            final ExecutorService executor = Executors.newSingleThreadExecutor();
+                            final XMLSerializer serializer =
+                                new XMLSerializerBuilder(session, outputStream).build();
+                            executor.submit(serializer);
+                            executor.shutdown();
+                            try {
+                                executor.awaitTermination(5, TimeUnit.SECONDS);
+                            } catch (final InterruptedException e) {
+                                LOGWRAPPER.error(e.getMessage(), e);
+                                return;
+                            }
+
+                            session.close();
+                            db.close();
+                            outputStream.close();
+                        } catch (final AbsTTException e) {
+                            LOGWRAPPER.error(e.getMessage(), e);
+                        } catch (final IOException e) {
+                            LOGWRAPPER.error(e.getMessage(), e);
+                        }
+                    } else {
+                        // FIXME ERROR
                     }
                 }
             }

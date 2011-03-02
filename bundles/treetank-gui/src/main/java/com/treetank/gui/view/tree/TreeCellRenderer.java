@@ -88,7 +88,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
     @Override
     public Component getTreeCellRendererComponent(final JTree paramTree, Object paramValue,
         final boolean paramSel, final boolean paramExpanded, final boolean paramLeaf, final int paramRow,
-        final boolean paramHasFocus) {
+        final boolean paramHasFocus) throws IllegalStateException {
         final IItem node = (IItem)paramValue;
 
         final long key = node.getNodeKey();
@@ -175,7 +175,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
         case WHITESPACE_KIND:
             break;
         default:
-            new IllegalStateException("Node kind not known!");
+            throw new IllegalStateException("Node kind not known!");
         }
 
         paramValue = paramValue + " [" + key + "]";

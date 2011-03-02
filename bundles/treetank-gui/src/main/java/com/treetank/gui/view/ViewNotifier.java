@@ -16,6 +16,7 @@
  */
 package com.treetank.gui.view;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,7 +32,12 @@ import com.treetank.gui.GUI;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class ViewNotifier {
+public final class ViewNotifier implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     /** Reference to main window. */
     private final GUI mGUI;
 
