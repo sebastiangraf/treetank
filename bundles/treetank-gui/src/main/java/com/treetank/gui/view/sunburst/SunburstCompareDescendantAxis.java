@@ -96,10 +96,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     private transient long mNextKey;
 
     /** Model which implements the method createSunburstItem(...) defined by {@link IModel}. */
-    private transient IModel mModel;
+    private final IModel mModel;
 
     /** {@link List} of {@link EDiff}s. */
-    private transient List<Diff> mDiffs;
+    private final List<Diff> mDiffs;
 
     /** Modification count. */
     private transient int mModificationCount;
@@ -256,6 +256,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
                 }
                 mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+                mLastDiff = mDiff;
                 return true;
             }
         }
@@ -296,6 +297,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mMoved = EMoved.CHILD;
             }
 
+            mLastDiff = mDiff;
             return true;
         }
 
@@ -310,6 +312,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mAngle += mExtension;
             mMoved = EMoved.STARTRIGHTSIBL;
 
+            mLastDiff = mDiff;
             return true;
         }
 
@@ -347,6 +350,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
             getTransaction().moveTo(currNodeKey);
 
+            mLastDiff = mDiff;
             return true;
         }
 
@@ -355,6 +359,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         processMove();
         calculateDepth();
         mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+        mLastDiff = mDiff;
         return true;
     }
 
@@ -405,14 +410,15 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      *            diff counter
      * @return modified diff counter
      */
-    private int incrDiffCounter(final int paramIndex, int paramDiffCounts) {
+    private int incrDiffCounter(final int paramIndex, final int paramDiffCounts) {
+        int diffCounts = paramDiffCounts;
         final EDiff intermDiff =
             paramIndex == 0 ? (mDiff == null ? mDiffs.get(paramIndex).getDiff() : mDiff) : mDiffs.get(
                 paramIndex).getDiff();
         if (intermDiff != EDiff.SAME && intermDiff != EDiff.DONE) {
-            paramDiffCounts++;
+            diffCounts++;
         }
-        return paramDiffCounts;
+        return diffCounts;
     }
 
     /**

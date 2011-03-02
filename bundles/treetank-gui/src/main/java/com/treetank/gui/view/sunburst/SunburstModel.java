@@ -82,9 +82,9 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
         assert paramContainer.mKey >= 0;
         try {
             mLock.acquire();
-            // final ExecutorService executor = Executors.newSingleThreadExecutor();
-            // executor.submit(new TraverseTree(paramContainer.mKey, this));
-            // executor.shutdown();
+//             final ExecutorService executor = Executors.newSingleThreadExecutor();
+//             executor.submit(new TraverseTree(paramContainer.mKey, this));
+//             executor.shutdown();
             new TraverseTree(paramContainer.mKey, this).run();
         } catch (final Exception e) {
             LOGWRAPPER.warn(e.getMessage(), e);

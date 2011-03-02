@@ -75,7 +75,7 @@ public final class GUIProp {
     private transient int mIndentSpaces = 2;
 
     /**
-     * Constructor.
+     * Default constructor.
      */
     public GUIProp() {
 
@@ -87,7 +87,7 @@ public final class GUIProp {
      * Set how many spaces should be used per level to indent.
      * 
      * @param paramIndentSpaces
-     *            Spaces to indent.
+     *            spaces to indent
      */
     public void setIndentSpaces(final int paramIndentSpaces) {
         mIndentSpaces = paramIndentSpaces;

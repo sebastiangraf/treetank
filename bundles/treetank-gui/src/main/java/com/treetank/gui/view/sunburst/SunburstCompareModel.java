@@ -143,8 +143,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
         try {
             mLock.acquire();
-            new Thread(new TraverseCompareTree(paramContainer.mRevision, paramContainer.mKey,
-                paramContainer.mDepth, paramContainer.mModWeight, this)).start();
+            new TraverseCompareTree(paramContainer.mRevision, paramContainer.mKey,
+                paramContainer.mDepth, paramContainer.mModWeight, this).run();
         } catch (final Exception e) {
             LOGWRAPPER.warn(e.getMessage(), e);
         } finally {
