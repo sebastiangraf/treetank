@@ -92,6 +92,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** Stack for remembering next nodeKey in document order. */
     private transient FastStack<Long> mRightSiblingKeyStack;
 
+    /** Temporal stack for remembering next nodeKey in document order. */
+    private transient FastStack<Long> mTempRightSiblingKeyStack;
+
     /** The nodeKey of the next node to visit. */
     private transient long mNextKey;
 
@@ -112,6 +115,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
     /** Parent descendant count. */
     private transient int mParentDescendantCount;
+
+    /** {@link IReadTransaction} on new revision. */
+    private transient IReadTransaction mNewRtx;
 
     /** {@link IReadTransaction} on old revision. */
     private transient IReadTransaction mOldRtx;
@@ -173,6 +179,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         super(paramNewRtx, mIncludeSelf);
         mModel = paramModel;
         mDiffs = paramDiffs;
+        mNewRtx = paramNewRtx;
         mOldRtx = paramOldRtx;
         try {
             mDescendants = mModel.getDescendants(getTransaction());
@@ -228,36 +235,74 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
         // Check for deletions.
         if (!mDiffs.isEmpty() && mNextKey != 0) {
-            mDiff = mDiffs.remove(0).getDiff();
-            if (mDiff == EDiff.DELETED) {
-                if (mLastDiff == EDiff.SAME) {
-                    mTempDepth = mDepth;
-                    mDepth = mMaxDepth + 2;
-                }
-                // FIXME
-                // mOldRtx.moveTo(mDiff.getNode().getNodeKey());
-                if (getTransaction().getNode().getNodeKey() == mOldRtx.getNode().getParentKey()) {
-                    mModificationCount = countDiffs();
-                    mParentModificationCount = mDiffStack.peek();
+            final Diff diff = mDiffs.remove(0);
+            mDiff = diff.getDiff();
+            if (mDiff == EDiff.DELETED && mLastDiff != EDiff.DELETED) {
+                mNewRtx = getTransaction();
+                mOldRtx.moveTo(diff.getOldNode().getNodeKey());
+                setTransaction(mOldRtx);
+                mTempRightSiblingKeyStack = mRightSiblingKeyStack;
+                mRightSiblingKeyStack = new FastStack<Long>();
+
+                if (mNewRtx.getNode().getNodeKey() == mOldRtx.getNode().getParentKey()) {
+                    // Removed as first child.
+                    mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
+                    processMove();
+                    calculateDepth();
+                    mOldRtx.moveToParent();
                     try {
-                        mDescendantCount = mModel.getDescendants(mOldRtx).get(0).get();
+                        final List<Future<Integer>> descendants = mModel.getDescendants(mOldRtx);
+                        mParentDescendantCount = descendants.get(0).get();
+                        mDescendantCount = descendants.get(1).get();
+                        mBuilder.setDescendantCount(mDescendantCount)
+                            .setParentDescendantCount(mParentDescendantCount).set();
                     } catch (final InterruptedException e) {
                         LOGWRAPPER.error(e.getMessage(), e);
                     } catch (final ExecutionException e) {
                         LOGWRAPPER.error(e.getMessage(), e);
                     }
-                    mParentDescendantCount = mDescendantsStack.peek();
-                    mAngle = mAngleStack.peek();
-                    mParExtension = mExtensionStack.peek();
-                    mIndexToParent = mParentStack.peek();
-                    mIndex++;
-                } else if (getTransaction().getNode().getNodeKey() == ((AbsStructNode)mOldRtx.getNode())
-                    .getLeftSiblingKey()) {
+                    mOldRtx.moveToFirstChild();
+                    mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
+                    mDiffStack.push(mModificationCount);
+                    mAngleStack.push(mAngle);
+                    mExtensionStack.push(mExtension);
+                    mParentStack.push(mIndex);
+                    mDescendantsStack.pop();
+                    mDescendantsStack.push(mParentDescendantCount);
+                    mDescendantsStack.push(mDescendantCount);
+
+                    mDepth++;
+                    mMoved = EMoved.CHILD;
+                } else if (mNewRtx.getNode().getNodeKey() == mOldRtx.getStructuralNode().getLeftSiblingKey()) {
+                    // Removed as right sibling.
+                    mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
+                    processMove();
+                    calculateDepth();
+                    mOldRtx.moveToParent();
+                    try {
+                        final List<Future<Integer>> descendants = mModel.getDescendants(mOldRtx);
+                        mParentDescendantCount = descendants.get(0).get();
+                        mDescendantCount = descendants.get(1).get();
+                        mBuilder.setDescendantCount(mDescendantCount)
+                            .setParentDescendantCount(mParentDescendantCount).set();
+                    } catch (final InterruptedException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final ExecutionException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    }
+                    mOldRtx.moveToFirstChild();
+                    mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+
+                    mAngle += mExtension;
+                    mMoved = EMoved.STARTRIGHTSIBL;
                 }
-                mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+
                 mLastDiff = mDiff;
                 return true;
+            } else if (mDiff != EDiff.DELETED && mLastDiff == EDiff.DELETED) {
+                setTransaction(mNewRtx);
+                mRightSiblingKeyStack = mTempRightSiblingKeyStack;
             }
         }
 
@@ -439,7 +484,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         if (mDiff == null) {
             index++;
         }
-        if (diffCounts == 1) {
+        if (diffCounts == 1 && getTransaction().getStructuralNode().hasFirstChild()) { // && checkLeaf()) {
             mSubtract = true;
         }
 
@@ -479,8 +524,13 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         }
 
         final int retVal =
+        // getTransaction().getStructuralNode().hasFirstChild() ? diffCounts + childCount(getTransaction())
+        // : (diffCounts == 0 ? diffCounts + 1 : diffCounts);
             ((AbsStructNode)getTransaction().getNode()).hasFirstChild() ? diffCounts
                 + childCount(getTransaction()) : diffCounts + 1;
+        // final int retVal =
+        // getTransaction().getStructuralNode().hasFirstChild() ? (int)getTransaction().getStructuralNode()
+        // .getChildCount() + diffCounts : diffCounts + 1;
 
         if (moved) {
             getTransaction().moveToParent();
@@ -488,22 +538,49 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         return retVal;
     }
 
+    // /**
+    // * @return
+    // */
+    // private boolean checkLeaf() {
+    // boolean retVal = true;
+    // if (!getTransaction().getStructuralNode().hasFirstChild()) {
+    // retVal = false;
+    // } else {
+    // final long key = getTransaction().getNode().getNodeKey();
+    // getTransaction().moveToFirstChild();
+    // do {
+    // if (getTransaction().getStructuralNode().hasFirstChild()) {
+    // retVal = false;
+    // break;
+    // }
+    // } while (getTransaction().getStructuralNode().hasRightSibling()
+    // && getTransaction().moveToRightSibling());
+    // getTransaction().moveTo(key);
+    // }
+    // return retVal;
+    // }
+
     /**
-     * Count children which have no first child.
+     * Count children which have no modification.
      * 
      * @param paramRtx
      *            Treetank {@link IReadTransaction}
-     * @return children which have no first child
+     * @return children which have no modification
      */
     private int childCount(final IReadTransaction paramRtx) {
         int retVal = 0;
         if (((AbsStructNode)paramRtx.getNode()).hasFirstChild()) {
             final long key = paramRtx.getNode().getNodeKey();
             paramRtx.moveToFirstChild();
+            // int index = 0;
             do {
-                final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
-                retVal += node.hasFirstChild() ? 0 : 1;
+                // if (mDiffs.get(index).getDiff() == EDiff.SAME) {
                 // retVal += 1;
+                // }
+                // index++;
+                final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
+                retVal += node.hasFirstChild() ? node.getChildCount() : 1;
+//                retVal += 1;
             } while (((AbsStructNode)paramRtx.getNode()).hasRightSibling() && paramRtx.moveToRightSibling());
             paramRtx.moveTo(key);
         }

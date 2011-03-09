@@ -79,21 +79,9 @@ public final class ReadDB {
     public ReadDB(final File paramFile, final long paramRevision, final long paramNodekeyToStart) {
         try {
             // Initialize database.
-            final IDatabase database = Database.openDatabase(paramFile);
-            mSession = database.getSession();
-
-            if (mDatabase == null || mDatabase.getFile() == null
-                || !(mDatabase.getFile().equals(database.getFile()))) {
-                mDatabase = database;
-
-                if (mRtx != null && !mRtx.isClosed()) {
-                    mRtx.close();
-                }
-            }
-
-            if (mRtx == null || mRtx.isClosed() || mRevision != paramRevision) {
-                mRtx = mDatabase.getSession().beginReadTransaction(paramRevision);
-            }
+            mDatabase = Database.openDatabase(paramFile);
+            mSession = mDatabase.getSession();
+            mRtx = mDatabase.getSession().beginReadTransaction(paramRevision);
             mRtx.moveTo(paramNodekeyToStart);
             mRevision = mRtx.getRevisionNumber();
         } catch (final AbsTTException e) {

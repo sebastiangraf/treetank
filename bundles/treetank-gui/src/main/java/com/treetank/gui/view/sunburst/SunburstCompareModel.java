@@ -83,15 +83,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
     @Override
     public void update(final SunburstContainer paramContainer) {
         long nodeKey = 0;
-        try {
-            mLock.acquire();
-            mLastItems.add(new ArrayList<SunburstItem>(mItems));
-            nodeKey = mItems.get(mGUI.mHitTestIndex).mNode.getNodeKey();
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.warn(e.getMessage(), e);
-        } finally {
-            mLock.release();
-        }
+        mLastItems.add(new ArrayList<SunburstItem>(mItems));
+        nodeKey = mItems.get(mGUI.mHitTestIndex).mNode.getNodeKey();
         traverseTree(paramContainer.setKey(nodeKey));
     }
 
@@ -141,15 +134,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         assert paramContainer.mDepth >= 0;
         assert paramContainer.mModWeight >= 0;
 
-        try {
-            mLock.acquire();
-            new TraverseCompareTree(paramContainer.mRevision, paramContainer.mKey,
-                paramContainer.mDepth, paramContainer.mModWeight, this).run();
-        } catch (final Exception e) {
-            LOGWRAPPER.warn(e.getMessage(), e);
-        } finally {
-            mLock.release();
-        }
+        new TraverseCompareTree(paramContainer.mRevision, paramContainer.mKey, paramContainer.mDepth,
+            paramContainer.mModWeight, this).run();
     }
 
     /** Traverse and compare trees. */
@@ -262,6 +248,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
             mRtx.moveTo(mKey);
             LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
+            LOGWRAPPER.debug("oldMaxDepth: " + mDepthMax);
+            firePropertyChange("oldMaxDepth", null, mDepthMax);
             firePropertyChange("maxDepth", null, mNewDepthMax);
             firePropertyChange("done", null, true);
         }
@@ -320,6 +308,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         LOGWRAPPER.debug("parentDescCount: " + parentDescCount);
         LOGWRAPPER.debug("indexToParent: " + indexToParent);
         LOGWRAPPER.debug("extension: " + extension);
+        
 
         // Set node relations.
         String text = null;

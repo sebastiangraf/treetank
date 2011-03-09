@@ -180,14 +180,7 @@ public final class SunburstView extends JScrollPane implements IView {
      */
     @Override
     public void refreshInit() {
-        setViewportView(mEmbed);
 
-        /*
-         * Important to call this whenever embedding a PApplet.
-         * It ensures that the animation thread is started and
-         * that other internal variables are properly set.
-         */
-        mEmbed.init();
     }
 
     /**
@@ -196,6 +189,14 @@ public final class SunburstView extends JScrollPane implements IView {
     @Override
     public void refreshUpdate() {
         mDB = mNotifier.getGUI().getReadDB();
+        setViewportView(mEmbed);
+
+        /*
+         * Important to call this whenever embedding a PApplet.
+         * It ensures that the animation thread is started and
+         * that other internal variables are properly set.
+         */
+        mEmbed.init();
         mEmbed.refreshUpdate();
     }
 
@@ -215,7 +216,7 @@ public final class SunburstView extends JScrollPane implements IView {
     @Override
     public Dimension getPreferredSize() {
         final Dimension parentFrame = mGUI.getSize();
-        return new Dimension(1280, 900);
+        return new Dimension(parentFrame.width, parentFrame.height);
         // return new Dimension((int)(parentFrame.width - 300), parentFrame.height - 200);
     }
 
@@ -227,7 +228,7 @@ public final class SunburstView extends JScrollPane implements IView {
         private static final long serialVersionUID = 1L;
 
         /** {@link SunburstGUI} which represents the GUI interface of the Sunburst view. */
-        private transient SunburstGUI mGUI;
+        private transient SunburstGUI mSunburstGUI;
 
         /** The Treetank {@link SunburstModel}. */
         private transient SunburstModel mModel;
@@ -238,20 +239,15 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void setup() {
-            // if (mGUI != null) {
-            // // mGUI.setupGUI();
-            // mGUI.mDone = false;
-            // }
-            size(1280, 900);
-            noLoop();
+            size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight());
         }
 
         /** {@inheritDoc} */
         @Override
         public void draw() {
-            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
+            if (mSunburstGUI != null && mSunburstGUI.mDone && mLock.tryAcquire()) {
                 LOGWRAPPER.debug("drawing");
-                mGUI.draw();
+                mSunburstGUI.draw();
                 handleHLWeight();
                 mLock.release();
             }
@@ -260,52 +256,43 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void mouseEntered(final MouseEvent paramEvent) {
-            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
-                mGUI.mouseEntered(paramEvent);
+            if (mSunburstGUI != null && mSunburstGUI.mDone) {
+                mSunburstGUI.mouseEntered(paramEvent);
                 handleHLWeight();
-                mLock.release();
             }
         }
 
         /** {@inheritDoc} */
         @Override
         public void mouseExited(final MouseEvent paramEvent) {
-            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
-                mGUI.mouseExited(paramEvent);
+            if (mSunburstGUI != null && mSunburstGUI.mDone) {
+                mSunburstGUI.mouseExited(paramEvent);
                 handleHLWeight();
-                mLock.release();
             }
         }
-
-        // /** {@inheritDoc} */
-        // @Override
-        // public void mouseMoved(final MouseEvent paramEvent) {
-        // // draw();
-        // if (mGUI != null && mDone) {
-        // mLock.tryAcquire();
-        // mGUI.mouseMoved(paramEvent);
-        // handleHLWeight();
-        // mLock.release();
-        // }
-        // }
 
         /** {@inheritDoc} */
         @Override
         public void keyReleased() {
-            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
-                mGUI.keyReleased();
+            if (mSunburstGUI != null && mSunburstGUI.mDone) {
+                mSunburstGUI.keyReleased();
                 handleHLWeight();
-                mLock.release();
             }
         }
 
         /** {@inheritDoc} */
         @Override
         public void mousePressed(final MouseEvent paramEvent) {
-            if (mGUI != null && mGUI.mDone && mLock.tryAcquire()) {
-                mGUI.mousePressed(paramEvent);
-                handleHLWeight();
-                mLock.release();
+            if (mSunburstGUI != null && mSunburstGUI.mDone) {
+                try {
+                    mLock.acquire();
+                    mSunburstGUI.mousePressed(paramEvent);
+                    handleHLWeight();
+                } catch (final InterruptedException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                } finally {
+                    mLock.release();
+                }
             }
         }
 
@@ -315,19 +302,26 @@ public final class SunburstView extends JScrollPane implements IView {
                 noLoop();
                 mLock.acquire();
 
-                frameRate(30);
+                if (mModel == null || mSunburstGUI == null) {
+                    frameRate(30);
 
-                // Create Model.
-                mModel = new SunburstModel(this, mDB);
+                    // Create Model.
+                    mModel = new SunburstModel(this, mDB);
 
-                // Create GUI.
-                mGUI = SunburstGUI.getInstance(this, mModel, mDB);
-                mGUI.mDone = false;
-                mGUI.mUseDiffView = false;
+                    // Create GUI.
+                    mSunburstGUI = SunburstGUI.getInstance(this, mModel, mDB);
+                    mSunburstGUI.mDone = false;
+                    mSunburstGUI.mUseDiffView = false;
+                    
+                    // Traverse.
+                    mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()));
+                } else {
+                    mSunburstGUI.mDone = false;
+                    mSunburstGUI.mUseDiffView = false;
+                    mModel.updateDb(mDB);
+                }
 
-                // Traverse.
                 handleHLWeight();
-                mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()));
             } catch (final InterruptedException e) {
                 LOGWRAPPER.warn(e.getMessage(), e);
             } finally {
@@ -336,10 +330,10 @@ public final class SunburstView extends JScrollPane implements IView {
             }
         }
 
-        /** Refresh initialization. Thus Treetank storage has been updated to a new revision. */
-        void refreshInit() {
-            mNotifier.init();
-        }
+        // /** Refresh initialization. Thus Treetank storage has been updated to a new revision. */
+        // void refreshInit() {
+        // mNotifier.init();
+        // }
 
         /** Handle mix of heavyweight ({@link PApplet}) and leightweight ({@link JMenuBar}) components. */
         private void handleHLWeight() {

@@ -213,7 +213,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private transient Textfield mXPathField;
 
     /** Parent {@link PApplet}. */
-    private final Embedded mParent;
+    final Embedded mParent;
 
     /** {@link ExecutorService} to parallelize painting. */
     private transient ExecutorService mService;
@@ -236,7 +236,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     private volatile DropdownList mRevisions;
 
-    private volatile int mSelectedRev;
+    volatile int mSelectedRev;
+
+    volatile int mOldDepthMax;
 
     /**
      * Private constructor.
@@ -269,15 +271,11 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      *            read database
      * @return a {@link SunburstGUI} singleton
      */
-    static SunburstGUI getInstance(final PApplet paramParentApplet, final AbsModel paramModel,
+    static synchronized SunburstGUI getInstance(final PApplet paramParentApplet, final AbsModel paramModel,
         final ReadDB paramReadDB) {
-        if (mGUI == null || !paramReadDB.equals(mGUI.mDb)) {
-            synchronized (SunburstGUI.class) {
-                if (mGUI == null || !paramReadDB.equals(mGUI.mDb)) {
-                    mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
-                    mGUI.setupGUI();
-                }
-            }
+        if (mGUI == null) {
+            mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
+            mGUI.setupGUI();
         }
         return mGUI;
     }
@@ -487,7 +485,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 mStrokeWeightStart = f[0];
                 mStrokeWeightEnd = f[1];
             }
-            
+
             update();
         } else if (paramControlEvent.isGroup()) {
             if (paramControlEvent.group().name().equals("Compare revision")) {
@@ -520,7 +518,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             if (mFirst) {
                 mFirst = false;
             } else {
-//                mZoomer.transform();
+                mZoomer.transform();
             }
 
             mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -531,25 +529,25 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             mParent.textAlign(PConstants.LEFT, PConstants.TOP);
             mParent.smooth();
 
-//            if (mZoomer.isZooming() || mZoomer.isPanning() || (mSavePDF && !mZoomPanEnded) || mFisheye) {
+            if (mZoomer.isZooming() || mZoomer.isPanning() || (mSavePDF && !mZoomPanEnded) || mFisheye) {
                 LOGWRAPPER.debug("Without buffered image!");
                 mParent.background(0, 0, mBackgroundBrightness);
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
                 mDraw = EDraw.DRAW;
                 drawItems();
-//            } else {
-//                LOGWRAPPER.debug("Buffered image!");
-//                try {
-//                    mLock.acquire();
-//                    mParent.image(mImg, 0, 0);
-//                } catch (final InterruptedException e) {
-//                    LOGWRAPPER.error(e.getMessage(), e);
-//                } finally {
-//                    mLock.release();
-//                    LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
-//                }
-//                mParent.translate(mParent.width / 2, mParent.height / 2);
-//            }
+            } else {
+                LOGWRAPPER.debug("Buffered image!");
+                try {
+                    mLock.acquire();
+                    mParent.image(mImg, 0, 0);
+                } catch (final InterruptedException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                } finally {
+                    mLock.release();
+                    LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
+                }
+                mParent.translate(mParent.width / 2, mParent.height / 2);
+            }
 
             // Mouse rollover, arc hittest vars.
             rollover();
@@ -612,15 +610,15 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Initialize rollover method. */
     private void rolloverInit() {
         mHitTestIndex = -1;
-//        if (mZoomer.isZooming() || mZoomer.isPanning() || mZoomPanEnded) {
-//            final PVector mousePosition = mZoomer.getMouseCoord();
-//            mX = mousePosition.x - mParent.width / 2;
-//            mY = mousePosition.y - (mParent.height / 2);
-//
-//        } else {
+        if (mZoomer.isZooming() || mZoomer.isPanning() || mZoomPanEnded) {
+            final PVector mousePosition = mZoomer.getMouseCoord();
+            mX = mousePosition.x - mParent.width / 2;
+            mY = mousePosition.y - mParent.height / 2;
+
+        } else {
             mX = mParent.mouseX - mParent.width / 2;
-            mY = mParent.mouseY - (mParent.height / 2);
-//        }
+            mY = mParent.mouseY - mParent.height / 2;
+        }
         mAngle = PApplet.atan2(mY - 0, mX - 0);
         final float radius = PApplet.dist(0, 0, mX, mY);
 
@@ -819,48 +817,34 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mControlP5.controlWindow.mouseEvent(paramEvent);
         mZoomer.mouseEvent(paramEvent);
 
+        mShowGUI = mControlP5.group("menu").isOpen();
+
         // Mouse rollover.
         if (!mParent.keyPressed) {
             rollover();
 
             if (!mShowGUI && mHitTestIndex != -1) {
-                switch (paramEvent.getClickCount()) {
-                case 1:
-                    System.out.println("SINGLE CLICK");
-                    switch (mParent.mouseButton) {
-                    case PConstants.LEFT:
-                        System.out.println("LEFT");
-                        break;
-                    case PConstants.RIGHT:
-                        System.out.println("RIGHT");
-                        try {
-                            if (mWtx != null && !mWtx.isClosed()) {
-                                mWtx.close();
-                            }
-                            mWtx = mDb.getSession().beginWriteTransaction();
-                            // wtx.revertTo(..getRevisionNumber());
-                            mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
-                            final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, mWtx, mDb);
-                            menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-                        } catch (final AbsTTException e) {
-                            LOGWRAPPER.error(e.getMessage(), e);
-                        }
-
-                        break;
-                    default:
-                        // Take no action.
-                    }
+                switch (mParent.mouseButton) {
+                case PConstants.LEFT:
+                    System.out.println("LEFT");
+                    mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex).getNode()
+                        .getNodeKey()));
                     break;
-                case 2:
-                    switch (mParent.mouseButton) {
-                    case PConstants.LEFT:
-                        mModel.update(new SunburstContainer());
-                        break;
-                    case PConstants.RIGHT:
-                        break;
-                    default:
-                        // Take no action.
+                case PConstants.RIGHT:
+                    System.out.println("RIGHT");
+                    try {
+                        if (mWtx != null && !mWtx.isClosed()) {
+                            mWtx.close();
+                        }
+                        mWtx = mDb.getSession().beginWriteTransaction();
+                        // wtx.revertTo(..getRevisionNumber());
+                        mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
+                        final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, mWtx, mDb);
+                        menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
+                    } catch (final AbsTTException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
                     }
+
                     break;
                 default:
                     // Take no action.
@@ -1082,18 +1066,13 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     public void propertyChange(final PropertyChangeEvent paramEvent) {
         if (paramEvent.getPropertyName().equals("maxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
-            try {
-                mParent.noLoop();
-                mLock.acquire();
-                mDepthMax = (Integer)paramEvent.getNewValue();
-            } catch (final InterruptedException e) {
-                LOGWRAPPER.warn(e.getMessage(), e);
-            } finally {
-                mLock.release();
-                mParent.loop();
-            }
+            mDepthMax = (Integer)paramEvent.getNewValue();
+        } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
+            assert paramEvent.getNewValue() instanceof Integer;
+            mOldDepthMax = (Integer)paramEvent.getNewValue();
         } else if (paramEvent.getPropertyName().equals("done")) {
             update();
+            assert paramEvent.getNewValue() instanceof Boolean;
             mDone = true;
         }
     }
@@ -1126,6 +1105,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * Draw items.
      */
     private void drawItems() {
+        if (mUseDiffView) {
+            mDraw.drawRevision(this);
+        }
+
         for (final SunburstItem item : mModel) {
             item.update(getMappingMode(), null);
             mDraw.drawStrategy(this, item);
