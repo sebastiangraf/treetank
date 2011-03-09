@@ -209,6 +209,6 @@ final class SunburstPopupMenu extends JPopupMenu {
         } catch (final AbsTTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to commit change: " + e.getMessage());
         }
-        mParent.refreshInit();
+        mParent.refreshUpdate();
     }
 }

@@ -53,7 +53,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     transient List<Future<Integer>> mDescendants;
 
     /** Semaphore to guarantee mutual exclusion for all methods. */
-    transient Semaphore mLock = new Semaphore(1);
+    // transient Semaphore mLock = new Semaphore(1);
 
     /** {@link List} of {@link SunburstItem}s. */
     transient List<SunburstItem> mItems;
@@ -80,7 +80,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
      * 
      * @see ReadDB
      */
-    final ReadDB mDb;
+    transient ReadDB mDb;
 
     /** Get maximum depth in the (sub)tree. */
     transient int mDepthMax;
@@ -119,6 +119,24 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         addPropertyChangeListener(mGUI);
     }
 
+    /**
+     * Update {@link IDatabase} instance.
+     * 
+     * @param paramDb
+     *            {@link IDatabase} instance
+     */
+    void updateDb(final ReadDB paramDb) {
+        mDb = paramDb;
+        try {
+            mSession = paramDb.getSession();
+            mRtx = mSession.beginReadTransaction(paramDb.getRevisionNumber());
+            mRtx.moveTo(paramDb.getNodeKey());
+        } catch (final AbsTTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
+        traverseTree(new SunburstContainer().setKey(mDb.getNodeKey()));
+    }
+
     /** {@inheritDoc} */
     @Override
     public void evaluateXPath(final String paramXPathExpression) {
@@ -131,14 +149,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         }
 
         if (!paramXPathExpression.isEmpty()) {
-            try {
-                mLock.acquire();
-                new Thread(new XPathEvaluation(paramXPathExpression)).start();
-            } catch (final InterruptedException e) {
-                LOGWRAPPER.warn(e.getMessage(), e);
-            } finally {
-                mLock.release();
-            }
+            new Thread(new XPathEvaluation(paramXPathExpression)).start();
         }
     }
 
@@ -148,15 +159,9 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         if (!mLastItems.isEmpty()) {
             // Go back one index in history list.
             final int lastItemIndex = mLastItems.size() - 1;
-            try {
-                mLock.acquire();
-                mItems = mLastItems.get(lastItemIndex);
-                mLastItems.remove(lastItemIndex);
-            } catch (final InterruptedException e) {
-                LOGWRAPPER.warn(e.getMessage(), e);
-            } finally {
-                mLock.release();
-            }
+            mItems = mLastItems.get(lastItemIndex);
+            mLastItems.remove(lastItemIndex);
+            firePropertyChange("done", null, true);
         }
     }
 
@@ -178,15 +183,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     @Override
     public boolean hasNext() {
         boolean retVal = false;
-        try {
-            mLock.acquire();
-            if (mIndex < mItems.size() - 1) {
-                retVal = true;
-            }
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.warn(e.getMessage(), e);
-        } finally {
-            mLock.release();
+        if (mIndex < mItems.size() - 1) {
+            retVal = true;
         }
         return retVal;
     }
@@ -198,15 +196,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         if (mIndex > mItems.size()) {
             throw new NoSuchElementException();
         }
-        try {
-            mLock.acquire();
-            item = mItems.get(mIndex);
-            mIndex++;
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.warn(e.getMessage(), e);
-        } finally {
-            mLock.release();
-        }
+        item = mItems.get(mIndex);
+        mIndex++;
         assert item != null;
         return item;
     }

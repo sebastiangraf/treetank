@@ -24,6 +24,7 @@ import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.ViewUtilities;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 
 /**
@@ -63,9 +64,6 @@ final class SunburstItem {
     // Angle variables. ======================================
     /** The start of the angle in radians. */
     private final float mAngleStart;
-
-    /** The extension of the angle. */
-    private final float mExtension;
 
     /** The center of the angle in radians. */
     private final float mAngleCenter;
@@ -179,9 +177,6 @@ final class SunburstItem {
          */
         private final ReadDB mReadDB;
 
-        /** Determines if one must be subtracted. */
-        private transient boolean mSubtract;
-
         /**
          * Constructor.
          * 
@@ -206,18 +201,6 @@ final class SunburstItem {
             mExtension = paramExtension;
             mRelations = paramRelations;
             mReadDB = paramReadDB;
-        }
-
-        /**
-         * Set subtract.
-         * 
-         * @param paramSubtract
-         *            determines if one must be subtracted
-         * @return this builder
-         */
-        Builder setSubtract(final boolean paramSubtract) {
-            mSubtract = paramSubtract;
-            return this;
         }
 
         /**
@@ -304,12 +287,11 @@ final class SunburstItem {
         mMaxDescendantCount = paramBuilder.mRelations.mMaxDescendantCount;
         mIndexToParent = paramBuilder.mRelations.mIndexToParent;
         mDepth = paramBuilder.mRelations.mDepth;
+        mSubtract = paramBuilder.mRelations.mSubtract;
         mAngleStart = paramBuilder.mAngleStart;
-        mExtension = paramBuilder.mExtension;
         mDiff = paramBuilder.mDiff;
-        mAngleCenter = mAngleStart + mExtension / 2;
-        mAngleEnd = mAngleStart + mExtension;
-        mSubtract = paramBuilder.mSubtract;
+        mAngleCenter = mAngleStart + paramBuilder.mExtension / 2;
+        mAngleEnd = mAngleStart + paramBuilder.mExtension;
     }
 
     /**
@@ -343,7 +325,6 @@ final class SunburstItem {
                 percent =
                     (float)(mDescendantCount - mMinDescendantCount)
                         / (float)(mMaxDescendantCount - mMinDescendantCount);
-                // percent = PApplet.norm(mDescendantCount, mMinDescendantCount, mMaxDescendantCount);
                 break;
             case 2:
                 percent =
@@ -368,13 +349,13 @@ final class SunburstItem {
                 } else {
                     mCol = paramBuffer.color(0, 0, bright);
                 }
-                bright =
-                    PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
-                        percent);
+                // bright =
+                // PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
+                // percent);
                 if (paramBuffer == null) {
-                    mLineCol = mParent.color(0, 0, bright);
+                    mLineCol = mParent.color(0, 0, 10);
                 } else {
-                    mLineCol = paramBuffer.color(0, 0, bright);
+                    mLineCol = paramBuffer.color(0, 0, 10);
                 }
                 break;
             case TEXT_KIND:
@@ -465,7 +446,7 @@ final class SunburstItem {
             mXPathState.setStroke(mParent, mCol);
 
             // mParent.arc(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd);
-            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should // work
+            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should work
         }
     }
 
@@ -541,8 +522,28 @@ final class SunburstItem {
             if (mDepth > 0 && mArcLength < diameter) {
                 diameter = mArcLength * 0.95f;
             }
-            mParent.fill(0, 0, mGUI.mDotBrightness);
             mParent.noStroke();
+            if (mGUI.mUseDiffView) {
+                mParent.colorMode(PConstants.RGB);
+                switch (mDiff) {
+                case INSERTED:
+                    mParent.fill(255, 0, 0);
+                    break;
+                case DELETED:
+                    mParent.fill(0, 255, 0);
+                    break;
+                case RENAMED:
+                    mParent.fill(0, 0, 255);
+                    break;
+                default:
+                }
+
+                if (mDiff != EDiff.SAME) {
+                    mParent.ellipse(mX, mY, diameter * 2f, diameter * 2f);
+                }
+            }
+            mParent.colorMode(PConstants.HSB);
+            mParent.fill(0, 0, mGUI.mDotBrightness);
             mParent.ellipse(mX, mY, diameter, diameter);
             mParent.noFill();
         }
@@ -691,9 +692,31 @@ final class SunburstItem {
             if (mDepth > 0 && mArcLength < diameter) {
                 diameter = mArcLength * 0.95f;
             }
-            paramBuffer.fill(0, 0, mGUI.mDotBrightness);
             paramBuffer.noStroke();
-            paramBuffer.ellipse(mX, mY, diameter, diameter);
+            if (mGUI.mUseDiffView) {
+                paramBuffer.colorMode(PConstants.RGB);
+                switch (mDiff) {
+                case INSERTED:
+                    paramBuffer.fill(255, 0, 0);
+                    break;
+                case DELETED:
+                    paramBuffer.fill(0, 255, 0);
+                    break;
+                case RENAMED:
+                    paramBuffer.fill(0, 0, 255);
+                    break;
+                default:
+                    paramBuffer.colorMode(PConstants.HSB);
+                    paramBuffer.colorMode(PConstants.HSB);
+                    paramBuffer.fill(0, 0, mGUI.mDotBrightness);
+                }
+            
+                paramBuffer.ellipse(mX, mY, diameter, diameter);
+            } else {
+                paramBuffer.colorMode(PConstants.HSB);
+                paramBuffer.fill(0, 0, mGUI.mDotBrightness);
+                paramBuffer.ellipse(mX, mY, diameter, diameter);
+            }
             paramBuffer.noFill();
         }
     }
@@ -788,7 +811,7 @@ final class SunburstItem {
     int getDepth() {
         return mDepth;
     }
-    
+
     /**
      * Get subtract.
      * 

@@ -24,6 +24,7 @@ import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstItem.EStructType;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstItem> {
+final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));
@@ -64,15 +65,8 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
     @Override
     public void update(final SunburstContainer paramContainer) {
         long nodeKey = 0;
-        try {
-            mLock.acquire();
             mLastItems.add(new ArrayList<SunburstItem>(mItems));
             nodeKey = mItems.get(mGUI.mHitTestIndex).mNode.getNodeKey();
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.warn(e.getMessage(), e);
-        } finally {
-            mLock.release();
-        }
         traverseTree(paramContainer.setKey(nodeKey));
     }
 
@@ -80,17 +74,10 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
     @Override
     public void traverseTree(final SunburstContainer paramContainer) {
         assert paramContainer.mKey >= 0;
-        try {
-            mLock.acquire();
 //             final ExecutorService executor = Executors.newSingleThreadExecutor();
 //             executor.submit(new TraverseTree(paramContainer.mKey, this));
 //             executor.shutdown();
             new TraverseTree(paramContainer.mKey, this).run();
-        } catch (final Exception e) {
-            LOGWRAPPER.warn(e.getMessage(), e);
-        } finally {
-            mLock.release();
-        }
     }
 
     /** Traverse a tree (single revision). */
@@ -110,7 +97,7 @@ final class SunburstModel extends AbsModel implements IModel, Iterator<SunburstI
          *            The {@link SunburstModel}.
          */
         private TraverseTree(final long paramKey, final SunburstModel paramModel) {
-            assert paramKey > -1;
+            assert paramKey >= (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
             assert mRtx != null;
             assert !mRtx.isClosed();
             mKey = paramKey;
