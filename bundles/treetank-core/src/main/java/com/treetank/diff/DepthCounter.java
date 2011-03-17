@@ -20,7 +20,7 @@ package com.treetank.diff;
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public final class Depth {
+public final class DepthCounter {
     /** Depth in new revision. */
     private transient int mNewDepth;
     
