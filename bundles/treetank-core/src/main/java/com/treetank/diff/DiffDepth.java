@@ -16,28 +16,49 @@
  */
 package com.treetank.diff;
 
-import com.treetank.api.IItem;
-import com.treetank.diff.DiffFactory.EDiff;
-
 /**
- * Observers listening for diffs.
+ * Immutable diff container class.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public interface IDiffObserver {
+public final class DiffDepth {
+    /** Depth in new revision. */
+    private final int mNewDepth;
+
+    /** Depth in old revision. */
+    private final int mOldDepth;
+
     /**
-     * Called for every node comparsion.
+     * Constructor.
      * 
-     * @param paramDiff
-     *            the {@link EDiff} type
-     * @param paramNewNode
-     *            {@link IItem} in new revision
-     * @param paramOldNode
-     *            {@link IItem} in old revision
-     * @param paramDepth
-     *            current {@link DiffDepth} instance
+     * @param paramNewDepth
+     *            current depth in new revision
+     * @param paramOldDepth
+     *            current depth in old revision
      */
-    void diffListener(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode,
-        final DiffDepth paramDepth);
+    DiffDepth(final int paramNewDepth, final int paramOldDepth) {
+        assert paramNewDepth >= -1;
+        assert paramOldDepth >= -1;
+        mNewDepth = paramNewDepth;
+        mOldDepth = paramOldDepth;
+    }
+
+    /**
+     * Get depth in new revision.
+     * 
+     * @return depth in new revision
+     */
+    public int getNewDepth() {
+        return mNewDepth;
+    }
+
+    /**
+     * Get depth in old revision.
+     * 
+     * @return depth in old revision
+     */
+    public int getOldDepth() {
+        return mOldDepth;
+    }
 }

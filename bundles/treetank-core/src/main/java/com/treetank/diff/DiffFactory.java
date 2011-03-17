@@ -51,8 +51,8 @@ public final class DiffFactory {
         /** Node has been deleted. */
         DELETED,
 
-        /** Node has been renamed. */
-        RENAMED,
+        /** Node has been updated. */
+        UPDATED,
 
         /** Diff computation done. */
         DONE;

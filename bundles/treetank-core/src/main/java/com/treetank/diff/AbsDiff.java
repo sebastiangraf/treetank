@@ -124,7 +124,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         if (paramFireDiff == EFireDiff.TRUE) {
-            fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+            fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode(),
+                new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
         }
         return diff;
     }
@@ -159,9 +160,11 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         if (paramFireDiff == EFireDiff.TRUE) {
             if (diff == EDiff.SAMEHASH) {
-                fireDiff(EDiff.SAME, paramNewRtx.getNode(), paramOldRtx.getNode());
+                fireDiff(EDiff.SAME, paramNewRtx.getNode(), paramOldRtx.getNode(),
+                    new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
             } else {
-                fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode());
+                fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode(),
+                    new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
             }
         }
         return diff;
@@ -185,8 +188,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         // Check if node has been deleted.
         if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
             diff = EDiff.DELETED;
-        } else if (checkRename(paramNewRtx, paramOldRtx)) { // Check if node has been renamed.
-            diff = EDiff.RENAMED;
+        } else if (checkUpdate(paramNewRtx, paramOldRtx)) { // Check if node has been renamed.
+            diff = EDiff.UPDATED;
         } else {
             // See if one of the right sibling matches.
             EFoundEqualNode found = EFoundEqualNode.FALSE;
@@ -206,7 +209,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         assert diff != null;
         return diff;
     }
-    
+
     @Override
     public void done() {
         try {
@@ -215,7 +218,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        fireDiff(EDiff.DONE, null, null);
+        fireDiff(EDiff.DONE, null, null, null);
     }
 
     /**
@@ -267,29 +270,29 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            second {@link IReadTransaction} instance
      * @return kind of diff
      */
-    boolean checkRename(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+    boolean checkUpdate(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
-        boolean renamed = false;
+        boolean updated = false;
         final long newKey = paramNewRtx.getNode().getNodeKey();
         boolean movedNewRtx = paramNewRtx.moveToRightSibling();
         final long oldKey = paramOldRtx.getNode().getNodeKey();
         boolean movedOldRtx = paramOldRtx.moveToRightSibling();
         if (movedNewRtx && movedOldRtx && checkNodes(paramNewRtx, paramOldRtx)) {
-            renamed = true;
+            updated = true;
         } else if (!movedNewRtx && !movedOldRtx) {
             movedNewRtx = paramNewRtx.moveToParent();
             movedOldRtx = paramOldRtx.moveToParent();
 
             if (movedNewRtx && movedOldRtx && checkNodes(paramNewRtx, paramOldRtx)) {
-                renamed = true;
+                updated = true;
             }
         }
         paramNewRtx.moveTo(newKey);
         paramOldRtx.moveTo(oldKey);
-        if (!renamed) {
-            renamed = paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey();
+        if (!updated) {
+            updated = paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey();
         }
-        return renamed;
+        return updated;
     }
 }
