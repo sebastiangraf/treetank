@@ -103,7 +103,7 @@ abstract class AbsDiff extends AbsDiffObservable {
     /** {@inheritDoc} */
     @Override
     public EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth, final EFireDiff paramFireDiff) {
+        final DepthCounter paramDepth, final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         assert paramDepth != null;
@@ -133,7 +133,7 @@ abstract class AbsDiff extends AbsDiffObservable {
     /** {@inheritDoc} */
     @Override
     public EDiff optimizedDiff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth, final EFireDiff paramFireDiff) {
+        final DepthCounter paramDepth, final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         assert paramDepth != null;
@@ -178,11 +178,11 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      * @param paramDepth
-     *            {@link Depth} container for current depths of both transaction cursors
+     *            {@link DepthCounter} container for current depths of both transaction cursors
      * @return kind of diff
      */
     private EDiff algorithm(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final Depth paramDepth) {
+        final DepthCounter paramDepth) {
         EDiff diff = null;
 
         // Check if node has been deleted.

@@ -35,62 +35,20 @@ abstract class AbsDiffMovement implements IDiff {
     enum EFireDiff {
         /** Yes, it should be fired. */
         TRUE,
-        
+
         /** No, it shouldn't be fired. */
         FALSE
     }
-    
+
     /** Determines the current revision. */
     enum ERevision {
-        /** Old revision. */
-        OLD {
-            /** {@inheritDoc} */
-            @Override
-            void incrementDepth(final Depth paramDepth) {
-                paramDepth.incrementOldDepth();
-            }
 
-            /** {@inheritDoc} */
-            @Override
-            void decrementDepth(final Depth paramDepth) {
-                paramDepth.decrementOldDepth();
-            }
-        },
+        /** Old revision. */
+        OLD,
 
         /** New revision. */
-        NEW {
-            /** {@inheritDoc} */
-            @Override
-            void incrementDepth(final Depth paramDepth) {
-                paramDepth.incrementNewDepth();
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            void decrementDepth(final Depth paramDepth) {
-                paramDepth.decrementNewDepth();
-            }
-        };
-
-        /**
-         * Increment depth.
-         * 
-         * @param paramDepth
-         *            {@link Depth} instance
-         */
-        abstract void incrementDepth(final Depth paramDepth);
-
-        /**
-         * Decrement depth.
-         * 
-         * @param paramDepth
-         *            {@link Depth} instance
-         */
-        abstract void decrementDepth(final Depth paramDepth);
+        NEW;
     }
-
-    /** {@link Depth} container for depths in both revisions. */
-    private transient Depth mDepth;
 
     /** First {@link IReadTransaction}. */
     private transient IReadTransaction mNewRtx;
@@ -107,7 +65,9 @@ abstract class AbsDiffMovement implements IDiff {
 
     /** Diff kind. */
     private transient EDiffKind mDiffKind;
-    
+
+    private transient DepthCounter mDepth;
+
     /**
      * Kind of hash method.
      * 
@@ -138,7 +98,7 @@ abstract class AbsDiffMovement implements IDiff {
         mOldRtx = paramOldRtx;
         mDiff = EDiff.SAME;
         mDiffKind = paramDiffKind;
-        mDepth = new Depth();
+        mDepth = new DepthCounter();
     }
 
     /** Do the diff. */
@@ -148,7 +108,6 @@ abstract class AbsDiffMovement implements IDiff {
         assert mOldRtx != null;
         assert mDiff != null;
         assert mDiffKind != null;
-        assert mDepth != null;
 
         // Check first nodes.
         if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND) {
@@ -212,7 +171,14 @@ abstract class AbsDiffMovement implements IDiff {
             } else {
                 moved = paramRtx.moveToFirstChild();
                 if (moved) {
-                    paramRevision.incrementDepth(mDepth);
+                    switch (paramRevision) {
+                    case NEW:
+                        mDepth.incrementNewDepth();
+                        break;
+                    case OLD:
+                        mDepth.incrementOldDepth();
+                        break;
+                    }
                 }
             }
         } else if (node.hasRightSibling()) {
@@ -238,7 +204,14 @@ abstract class AbsDiffMovement implements IDiff {
         do {
             moved = paramRtx.moveToParent();
             if (moved) {
-                paramRevision.decrementDepth(mDepth);
+                switch (paramRevision) {
+                case NEW:
+                    mDepth.decrementNewDepth();
+                    break;
+                case OLD:
+                    mDepth.decrementOldDepth();
+                    break;
+                }
             }
         } while (!((AbsStructNode)paramRtx.getNode()).hasRightSibling()
             && ((AbsStructNode)paramRtx.getNode()).hasParent());
