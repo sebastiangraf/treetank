@@ -444,7 +444,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mTempDepth = mDepth;
             mDepth = mMaxDepth + 2;
         } else if (mDiff == EDiff.SAME && mLastDiff != EDiff.SAME) {
-            mDepth = mTempDepth;
+            mDepth = mDiffCont.getDepth().getNewDepth();
         }
     }
 
