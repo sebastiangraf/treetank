@@ -17,9 +17,10 @@
 package com.treetank.gui.view.sunburst;
 
 import com.treetank.api.IItem;
-import com.treetank.diff.Depth;
 import com.treetank.diff.DiffDepth;
 import com.treetank.diff.DiffFactory.EDiff;
+
+import sun.awt.X11.Depth;
 
 /**
  * Container for diffs.
