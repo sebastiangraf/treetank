@@ -73,7 +73,7 @@
 			<artifactId>pdf</artifactId>
 			<version>1.0</version>
 		</dependency>
-	  <dependency>
+		<dependency>
 			<groupId>processing</groupId>
 			<artifactId>itext</artifactId>
 			<version>1.0</version>
@@ -83,10 +83,16 @@
 			<artifactId>core</artifactId>
 			<version>0.5.4.1</version>
 		</dependency>
-	  <dependency>
+		<dependency>
 			<groupId>gicentre</groupId>
 			<artifactId>utils</artifactId>
 			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
