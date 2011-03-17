@@ -24,11 +24,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.Semaphore;
 
-import javax.swing.JComponent;
-import javax.swing.JMenuBar;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import com.treetank.gui.GUI;
 import com.treetank.gui.GUIProp;
@@ -51,7 +47,7 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SunburstView extends JScrollPane implements IView {
+public final class SunburstView extends JPanel implements IView {
 
     /**
      * 
@@ -98,7 +94,7 @@ public final class SunburstView extends JScrollPane implements IView {
         mGUI = mNotifier.getGUI();
 
         // Simple scroll mode, because we are adding a heavyweight component (PApplet to the JScrollPane).
-        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+//        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
         // Create instance of processing innerclass.
         mEmbed = new Embedded();
@@ -141,15 +137,15 @@ public final class SunburstView extends JScrollPane implements IView {
         return mView;
     }
 
-    /**
-     * Not supported.
-     * 
-     * @see Object#clone()
-     */
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        throw new CloneNotSupportedException();
-    }
+//    /**
+//     * Not supported.
+//     * 
+//     * @see Object#clone()
+//     */
+//    @Override
+//    public Object clone() throws CloneNotSupportedException {
+//        throw new CloneNotSupportedException();
+//    }
 
     /**
      * {@inheritDoc}
@@ -189,7 +185,8 @@ public final class SunburstView extends JScrollPane implements IView {
     @Override
     public void refreshUpdate() {
         mDB = mNotifier.getGUI().getReadDB();
-        setViewportView(mEmbed);
+//        setViewportView(mEmbed);
+        add(mEmbed);
 
         /*
          * Important to call this whenever embedding a PApplet.
@@ -216,7 +213,7 @@ public final class SunburstView extends JScrollPane implements IView {
     @Override
     public Dimension getPreferredSize() {
         final Dimension parentFrame = mGUI.getSize();
-        return new Dimension(parentFrame.width, parentFrame.height);
+        return new Dimension(parentFrame.width, parentFrame.height - 21);
         // return new Dimension((int)(parentFrame.width - 300), parentFrame.height - 200);
     }
 
@@ -236,11 +233,11 @@ public final class SunburstView extends JScrollPane implements IView {
         /** Lock while initially querying model, thus draw() doesn't have to be invoked. */
         private transient Semaphore mLock = new Semaphore(1);
 
-        /** {@inheritDoc} */
-        @Override
-        public void setup() {
-            size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight());
-        }
+//        /** {@inheritDoc} */
+//        @Override
+//        public void setup() {
+//            size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight() - 42);
+//        }
 
         /** {@inheritDoc} */
         @Override
@@ -301,6 +298,8 @@ public final class SunburstView extends JScrollPane implements IView {
             try {
                 noLoop();
                 mLock.acquire();
+                
+                size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight() - 42);
 
                 if (mModel == null || mSunburstGUI == null) {
                     frameRate(30);
@@ -320,7 +319,7 @@ public final class SunburstView extends JScrollPane implements IView {
                     mSunburstGUI.mUseDiffView = false;
                     mModel.updateDb(mDB);
                 }
-
+                
                 handleHLWeight();
             } catch (final InterruptedException e) {
                 LOGWRAPPER.warn(e.getMessage(), e);

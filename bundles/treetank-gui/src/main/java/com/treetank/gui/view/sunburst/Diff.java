@@ -17,6 +17,8 @@
 package com.treetank.gui.view.sunburst;
 
 import com.treetank.api.IItem;
+import com.treetank.diff.Depth;
+import com.treetank.diff.DiffDepth;
 import com.treetank.diff.DiffFactory.EDiff;
 
 /**
@@ -35,6 +37,9 @@ class Diff {
     /** {@link IItem} in old revision. */
     private transient IItem mOldNode;
     
+    /** {@link DiffDepth} instance. */
+    private transient DiffDepth mDepth;
+
     /**
      * Constructor.
      * 
@@ -44,8 +49,10 @@ class Diff {
      *            {@link IItem} in new revision
      * @param paramOldNode
      *            {@link IItem} in old revision
+     * @param paramDepth
+     *            current {@link Depth}
      */
-    public Diff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode) {
+    public Diff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode, final DiffDepth paramDepth) {
         assert paramDiff != null;
         assert paramNewNode != null;
         assert paramOldNode != null;
@@ -53,8 +60,9 @@ class Diff {
         mDiff = paramDiff;
         mNewNode = paramNewNode;
         mOldNode = paramOldNode;
+        mDepth = paramDepth;
     }
-    
+
     /**
      * Get diff.
      * 
@@ -63,7 +71,7 @@ class Diff {
     EDiff getDiff() {
         return mDiff;
     }
-    
+
     /**
      * Get new node.
      * 
@@ -72,13 +80,28 @@ class Diff {
     IItem getNewNode() {
         return mNewNode;
     }
-    
+
     /**
      * Get old node.
      * 
      * @return the old node
      */
-    public IItem getOldNode() {
+    IItem getOldNode() {
         return mOldNode;
+    }
+    
+    /**
+     * Get depth.
+     * 
+     * @return the depth
+     */
+    DiffDepth getDepth() {
+        return mDepth;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder("diff: ").append(mDiff).append(" new node: ").append(mNewNode)
+            .append(" old node: ").append(mOldNode).toString();
     }
 }

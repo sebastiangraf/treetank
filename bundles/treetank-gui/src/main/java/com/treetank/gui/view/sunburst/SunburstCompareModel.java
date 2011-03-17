@@ -17,17 +17,19 @@
 package com.treetank.gui.view.sunburst;
 
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+
+import javax.xml.namespace.QName;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
+import com.treetank.api.IStructuralItem;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.diff.DiffFactory;
-import com.treetank.diff.DiffFactory.EDiffKind;
+import com.treetank.diff.*;
 import com.treetank.diff.DiffFactory.EDiff;
-import com.treetank.diff.IDiffObserver;
+import com.treetank.diff.DiffFactory.EDiffKind;
 import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.gui.ReadDB;
@@ -39,6 +41,7 @@ import com.treetank.utils.LogWrapper;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 
 /**
  * Model to compare revisions.
@@ -66,6 +69,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
     /** {@link IReadTransaction} on the revision to compare. */
     private transient IReadTransaction mNewRtx;
+
+    /** {@link List} of {@link EDiff} constants. */
+    private transient List<Diff> mDiffs;
 
     /**
      * Constructor.
@@ -126,6 +132,55 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         return depthMax;
     }
 
+    /**
+     * Get minimum and maximum global text length.
+     * 
+     * @param paramRtx
+     *            Treetank {@link IReadTransaction}
+     */
+    void getMinMaxTextLength(final IReadTransaction paramRtx) {
+        assert paramRtx != null;
+        assert !paramRtx.isClosed();
+
+        mMinTextLength = Integer.MAX_VALUE;
+        mMaxTextLength = Integer.MIN_VALUE;
+        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+            if (paramRtx.getNode().getKind() == ENodes.TEXT_KIND) {
+                final int length = paramRtx.getValueOfCurrentNode().length();
+                if (length < mMinTextLength) {
+                    mMinTextLength = length;
+                }
+
+                if (length > mMaxTextLength) {
+                    mMaxTextLength = length;
+                }
+            }
+        }
+
+        for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
+            if (mRtx.getNode().getKind() == ENodes.TEXT_KIND) {
+                final int length = mRtx.getValueOfCurrentNode().length();
+                if (length < mMinTextLength) {
+                    mMinTextLength = length;
+                }
+
+                if (length > mMaxTextLength) {
+                    mMaxTextLength = length;
+                }
+            }
+        }
+
+        if (mMinTextLength == Integer.MAX_VALUE) {
+            mMinTextLength = 0;
+        }
+        if (mMaxTextLength == Integer.MIN_VALUE) {
+            mMaxTextLength = 0;
+        }
+
+        LOGWRAPPER.debug("MINIMUM text length: " + mMinTextLength);
+        LOGWRAPPER.debug("MAXIMUM text length: " + mMaxTextLength);
+    }
+
     /** {@inheritDoc} */
     @Override
     public void traverseTree(final SunburstContainer paramContainer) {
@@ -155,9 +210,6 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
         /** {@link SunburstModel}. */
         private final SunburstCompareModel mModel;
-
-        /** {@link List} of {@link EDiff} constants. */
-        private transient List<Diff> mDiffs;
 
         /**
          * Constructor.
@@ -218,7 +270,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             mItems.clear();
 
             try {
-                // Get min and max textLength of the new revision.
+                // GET MIN-MAX TEXTLENGTH =======================
+                // Get min and max textLength of bothe revisions.
                 final IReadTransaction rtx = mDb.getSession().beginReadTransaction(mRevision);
                 getMinMaxTextLength(rtx);
                 rtx.close();
@@ -232,6 +285,10 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 // Wait for diff list to complete.
                 mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
 
+                for (final Diff diff : mDiffs) {
+                    System.out.println(diff.getDiff());
+                }
+                
                 // Maximum depth in old revision.
                 mDepthMax = getDepthMax(mRtx);
 
@@ -256,11 +313,12 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
         /** {@inheritDoc} */
         @Override
-        public void diffListener(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode) {
+        public void diffListener(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode,
+            final DiffDepth paramDepth) {
             if (paramDiff == EDiff.DONE) {
                 mStart.countDown();
             } else {
-                mDiffs.add(new Diff(paramDiff, paramNewNode, paramOldNode));
+                mDiffs.add(new Diff(paramDiff, paramNewNode, paramOldNode, paramDepth));
             }
         }
     }
@@ -281,26 +339,27 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         final int depth = paramDepth;
 
         // Add a sunburst item.
-        final AbsStructNode node = (AbsStructNode)mNewRtx.getNode();
+        IStructuralItem node = null;
+        if (diff == EDiff.DELETED) {
+            node = mRtx.getStructuralNode();
+        } else {
+            node = mNewRtx.getStructuralNode();
+        }
         final EStructType structKind =
             node.hasFirstChild() ? EStructType.ISINNERNODE : EStructType.ISLEAFNODE;
 
         // Calculate extension.
-        float extension = 0f;
+        float extension = 2 * PConstants.PI;
         if (depth > 0) {
             if (mItems.get(indexToParent).getSubtract()) {
                 parentModificationCount -= 1;
             }
             extension =
-                mModWeight * (parExtension * (float)descendantCount / ((float)parentDescCount - 1f))
-                    + (1 - mModWeight)
-                    * (parExtension * (float)modificationCount / (float)parentModificationCount);
-        } else {
-            extension =
-                mModWeight * (parExtension * (float)descendantCount / (float)parentDescCount)
-                    + (1 - mModWeight)
-                    * (parExtension * (float)modificationCount / (float)parentModificationCount);
+                (1 - mModWeight) * (parExtension * (float)descendantCount / ((float)parentDescCount - 1f))
+                    + mModWeight
+                    * (parExtension * (float)modificationCount / ((float)parentModificationCount - 1f));
         }
+
         LOGWRAPPER.debug("ITEM: " + paramIndex);
         LOGWRAPPER.debug("modificationCount: " + modificationCount);
         LOGWRAPPER.debug("parentModificationCount: " + parentModificationCount);
@@ -308,14 +367,19 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         LOGWRAPPER.debug("parentDescCount: " + parentDescCount);
         LOGWRAPPER.debug("indexToParent: " + indexToParent);
         LOGWRAPPER.debug("extension: " + extension);
-        
+        LOGWRAPPER.debug("depth: " + depth);
+        LOGWRAPPER.debug("angle: " + angle);
 
         // Set node relations.
         String text = null;
-        if (mNewRtx.getNode().getKind() == ENodes.TEXT_KIND) {
-            mRelations.setSubtract(subtract).setAll(depth, structKind,
-                mNewRtx.getValueOfCurrentNode().length(), mMinTextLength, mMaxTextLength, indexToParent);
-            text = mNewRtx.getValueOfCurrentNode();
+        if (node.getKind() == ENodes.TEXT_KIND) {
+            if (diff == EDiff.DELETED) {
+                text = mRtx.getValueOfCurrentNode();
+            } else {
+                text = mNewRtx.getValueOfCurrentNode();
+            }
+            mRelations.setSubtract(subtract).setAll(depth, structKind, text.length(), mMinTextLength,
+                mMaxTextLength, indexToParent);
         } else {
             mRelations.setSubtract(subtract).setAll(depth, structKind, descendantCount, 0,
                 mMaxDescendantCount, indexToParent);
@@ -323,16 +387,215 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
         // Build item.
         if (text != null) {
+            LOGWRAPPER.debug("text: " + text);
             mItems.add(new SunburstItem.Builder(mParent, this, angle, extension, mRelations, mDb)
                 .setNode(node).setText(text).setDiff(diff).build());
         } else {
+            QName name = null;
+            if (diff == EDiff.DELETED) {
+                name = mRtx.getQNameOfCurrentNode();
+            } else {
+                name = mNewRtx.getQNameOfCurrentNode();
+            }
+            LOGWRAPPER.debug("name: " + name.getLocalPart());
             mItems.add(new SunburstItem.Builder(mParent, this, angle, extension, mRelations, mDb)
-                .setNode(node).setQName(mNewRtx.getQNameOfCurrentNode()).setDiff(diff).build());
+                .setNode(node).setQName(name).setDiff(diff).build());
         }
 
         // Set depth max.
         mNewDepthMax = Math.max(depth, mNewDepthMax);
 
         return extension;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Future<Integer>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
+        ExecutionException {
+        assert paramRtx != null;
+
+        // Get descendants for every node and save it to a list.
+        final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
+        final ExecutorService executor =
+            Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        final List<Diff> diffs = new LinkedList<Diff>(mDiffs);
+        boolean firstNode = true;
+        int index = 0;
+
+        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); index < mDiffs.size()
+            && mDiffs.get(index).getDiff() == EDiff.DELETED || axis.hasNext();) {
+            if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
+                if (mDiffs.get(index).getDiff() != EDiff.DELETED) {
+                    axis.next();
+                }
+                
+                final Future<Integer> submit =
+                    executor.submit(new Descendants(paramRtx, mRtx, mSession, index, diffs));
+
+                if (firstNode && mDiffs.get(0).getDiff() != EDiff.DELETED) {
+                    firstNode = false;
+                    mMaxDescendantCount = submit.get();
+                }
+                System.out.println(submit.get());
+                if (axis.getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
+                    System.out.println(axis.getTransaction().getQNameOfCurrentNode());
+                }
+                descendants.add(submit);
+                index++;
+                diffs.remove(0);
+            }
+        }
+        executor.shutdown();
+
+        return descendants;
+    }
+
+    /** Counts descendants. */
+    private static final class Descendants implements Callable<Integer> {
+        /** Treetank {@link IReadTransaction} on new revision. */
+        private transient IReadTransaction mNewRtx;
+
+        /** Treetank {@link IReadTransaction} on old revision. */
+        private transient IReadTransaction mOldRtx;
+
+        /** Index of current diff. */
+        private int mIndex;
+
+        /** {@List} of {@Diff}s. */
+        private final List<Diff> mDiffs;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramNewRtx
+         *            {@link IReadTransaction} on new revision
+         * @param paramOldRtx
+         *            {@link IReadTransaction} on old revision
+         * @param paramSession
+         *            {@link ISession} instance
+         * @param paramIndex
+         *            current index in diff list
+         * @param paramDiffs
+         *            {@link List} of {@link Diff}s
+         */
+        Descendants(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+            final ISession paramSession, final int paramIndex, final List<Diff> paramDiffs) {
+            assert paramNewRtx != null;
+            assert !paramNewRtx.isClosed();
+            assert paramOldRtx != null;
+            assert !paramOldRtx.isClosed();
+            assert paramSession != null;
+            assert paramIndex > -1;
+            assert paramDiffs != null;
+            try {
+                mNewRtx = paramSession.beginReadTransaction(paramNewRtx.getRevisionNumber());
+                mOldRtx = paramSession.beginReadTransaction(paramOldRtx.getRevisionNumber());
+            } catch (final TTIOException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final AbsTTException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            }
+            mNewRtx.moveTo(paramNewRtx.getNode().getNodeKey());
+            mIndex = 0;
+            mDiffs = new LinkedList<Diff>(paramDiffs);
+        }
+
+        @Override
+        public Integer call() throws Exception {
+            int retVal = 0;
+
+            final Diff diff = mDiffs.get(mIndex);
+            if (diff.getDiff() == EDiff.DELETED) {
+                mOldRtx.moveTo(diff.getOldNode().getNodeKey());
+
+                for (final AbsAxis axis = new DescendantAxis(mOldRtx, true); axis.hasNext(); axis.next()) {
+                    retVal++;
+                }
+            } else {
+                final long nodeKey = mNewRtx.getNode().getNodeKey();
+
+                // Be sure we are on the root node.
+                if (mNewRtx.getNode().getKind() == ENodes.ROOT_KIND) {
+                    mNewRtx.moveToFirstChild();
+                }
+
+                // Root node has been deleted.
+                if (retVal < mDiffs.size() && mDiffs.get(retVal).getDiff() == EDiff.DELETED) {
+                    retVal++;
+                }
+
+                // Root node.
+                retVal++;
+
+                do {
+                    if (((AbsStructNode)mNewRtx.getNode()).hasFirstChild()) {
+                        mNewRtx.moveToFirstChild();
+                        retVal = countDeletes(retVal);
+                        retVal++;
+                    } else {
+                        while (!((AbsStructNode)mNewRtx.getNode()).hasRightSibling()) {
+                            if (((AbsStructNode)mNewRtx.getNode()).hasParent()
+                                && mNewRtx.getNode().getNodeKey() != nodeKey) {
+                                mNewRtx.moveToParent();
+                            } else {
+                                break;
+                            }
+                        }
+                        if (mNewRtx.getNode().getNodeKey() != nodeKey) {
+                            mNewRtx.moveToRightSibling();
+                            retVal = countDeletes(retVal);
+                            retVal++;
+                        }
+                    }
+                } while (mNewRtx.getNode().getNodeKey() != nodeKey);
+                mNewRtx.moveTo(nodeKey);
+
+                // Remember deleted subtrees of the current node.
+                if (mIndex + 1 < mDiffs.size() && retVal == 1
+                    && mDiffs.get(mIndex + 1).getDiff() == EDiff.DELETED) {
+                    mOldRtx.moveTo(mDiffs.get(mIndex + 1).getOldNode().getNodeKey());
+
+                    int diffIndex = mIndex;
+                    do {
+                        final long key = mOldRtx.getStructuralNode().getNodeKey();
+
+                        if (diffIndex + 1 < mDiffs.size()
+                            && mDiffs.get(mIndex).getDepth().getNewDepth() == (mDiffs.get(diffIndex + 1)
+                                .getDepth().getOldDepth() - 1)) {
+                            for (final AbsAxis axis = new DescendantAxis(mOldRtx, true); axis.hasNext(); axis
+                                .next()) {
+                                diffIndex++;
+                                retVal++;
+                            }
+                        } else {
+                            break;
+                        }
+
+                        mOldRtx.moveTo(key);
+                    } while (mOldRtx.getStructuralNode().hasRightSibling() && mOldRtx.moveToRightSibling());
+
+                    mIndex++;
+                }
+                mNewRtx.close();
+            }
+            return retVal;
+        }
+
+        /**
+         * Count subsequent deletes.
+         * 
+         * @param paramCount
+         *            current count of descendants
+         * @return counter
+         */
+        private int countDeletes(final int paramCount) {
+            int retVal = paramCount;
+            while (retVal < mDiffs.size() && mDiffs.get(retVal).getDiff() == EDiff.DELETED) {
+                retVal++;
+            }
+            return retVal;
+        }
     }
 }

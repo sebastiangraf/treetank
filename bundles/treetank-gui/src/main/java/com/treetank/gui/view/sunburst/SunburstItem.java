@@ -532,20 +532,21 @@ final class SunburstItem {
                 case DELETED:
                     mParent.fill(0, 255, 0);
                     break;
-                case RENAMED:
+                case UPDATED:
                     mParent.fill(0, 0, 255);
                     break;
                 default:
+                    mParent.colorMode(PConstants.HSB);
+                    mParent.colorMode(PConstants.HSB);
+                    mParent.fill(0, 0, mGUI.mDotBrightness);
                 }
-
-                if (mDiff != EDiff.SAME) {
-                    mParent.ellipse(mX, mY, diameter * 2f, diameter * 2f);
-                }
+            
+                mParent.ellipse(mX, mY, diameter, diameter);
+            } else {
+                mParent.colorMode(PConstants.HSB);
+                mParent.fill(0, 0, mGUI.mDotBrightness);
+                mParent.ellipse(mX, mY, diameter, diameter);
             }
-            mParent.colorMode(PConstants.HSB);
-            mParent.fill(0, 0, mGUI.mDotBrightness);
-            mParent.ellipse(mX, mY, diameter, diameter);
-            mParent.noFill();
         }
     }
 
@@ -702,7 +703,7 @@ final class SunburstItem {
                 case DELETED:
                     paramBuffer.fill(0, 255, 0);
                     break;
-                case RENAMED:
+                case UPDATED:
                     paramBuffer.fill(0, 0, 255);
                     break;
                 default:

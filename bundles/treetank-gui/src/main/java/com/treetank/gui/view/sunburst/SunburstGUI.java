@@ -30,6 +30,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.AbsTTException;
 import com.treetank.exception.TTIOException;
 import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 import com.treetank.utils.LogWrapper;
 
@@ -39,11 +40,8 @@ import org.gicentre.utils.move.ZoomPan;
 import org.gicentre.utils.move.ZoomPanListener;
 import org.slf4j.LoggerFactory;
 
-import processing.core.PApplet;
-import processing.core.PConstants;
-import processing.core.PGraphics;
-import processing.core.PImage;
-import processing.core.PVector;
+import processing.core.*;
+import processing.pdf.PGraphicsPDF;
 
 /**
  * <h1>SunburstGUI</h1>
@@ -206,9 +204,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Drawing strategy. */
     private volatile EDraw mDraw;
 
-    // /** {@link ControlP5} listboxes. */
-    // private transient List<ListBox> mBoxes;
-
     /** {@link ControlP5} text field. */
     private transient Textfield mXPathField;
 
@@ -230,7 +225,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     transient int mHitTestIndex = -1;
 
     /** {@link ReadDB} reference. */
-    private volatile ReadDB mDb;
+    volatile ReadDB mDb;
 
     private volatile IWriteTransaction mWtx;
 
@@ -596,13 +591,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 mParent.endRecord();
                 PApplet.println("saving to pdf – done");
             }
-            // } finally {
-            // if (acquired) {
-            // mLock.release();
-            // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
-            // }
-            // }
-
             drawGUI();
         }
     }
@@ -683,7 +671,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @return initial radius
      */
     private float getInitialRadius() {
-        return mParent.height / 2f;
+        return mParent.height / 2.2f;
     }
 
     /**
@@ -710,6 +698,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 mSavePDF = true;
                 PApplet.println("\n" + "saving to pdf – starting");
                 mParent.beginRecord(PConstants.PDF, SAVEPATH + timestamp() + ".pdf");
+                mParent.textFont(mParent.createFont(PGraphicsPDF.listFonts()[0], 12));
                 break;
             case '\b':
                 // Backspace.
@@ -743,7 +732,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 }
                 break;
             default:
-                break;
+                // Do nothing.
             }
 
             switch (mParent.key) {
@@ -826,12 +815,16 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             if (!mShowGUI && mHitTestIndex != -1) {
                 switch (mParent.mouseButton) {
                 case PConstants.LEFT:
-                    System.out.println("LEFT");
-                    mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex).getNode()
-                        .getNodeKey()));
+                    if (mUseDiffView) {
+                        mModel.update(new SunburstContainer()
+                            .setKey(mModel.getItem(mHitTestIndex).getNode().getNodeKey())
+                            .setRevision(mSelectedRev).setModWeight(mModificationWeight));
+                    } else {
+                        mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex).getNode()
+                            .getNodeKey()));
+                    }
                     break;
                 case PConstants.RIGHT:
-                    System.out.println("RIGHT");
                     try {
                         if (mWtx != null && !mWtx.isClosed()) {
                             mWtx.close();
@@ -867,7 +860,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
         if (paramDepth == 0) {
             retVal = PApplet.sqrt(PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
-            // System.out.println("LAAAAAAAAA: " + retVal);
         } else {
             retVal = PApplet.sqrt(paramDepth * PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
         }
@@ -885,7 +877,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @return calculated area
      */
     float calcAreaRadius(final int paramDepth, final int paramDepthMax) {
-        return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, getInitialRadius());
+        return PApplet.map(paramDepth, 0, paramDepthMax + 3, 0, getInitialRadius());
     }
 
     /**
@@ -1066,7 +1058,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     public void propertyChange(final PropertyChangeEvent paramEvent) {
         if (paramEvent.getPropertyName().equals("maxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
-            mDepthMax = (Integer)paramEvent.getNewValue();
+            mDepthMax = (Integer)paramEvent.getNewValue() + 2;
         } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
             mOldDepthMax = (Integer)paramEvent.getNewValue();
@@ -1105,13 +1097,22 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * Draw items.
      */
     private void drawItems() {
-        if (mUseDiffView) {
-            mDraw.drawRevision(this);
-        }
-
         for (final SunburstItem item : mModel) {
             item.update(getMappingMode(), null);
-            mDraw.drawStrategy(this, item);
+            if (mUseDiffView) {
+                mDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
+            } else {
+                mDraw.drawStrategy(this, item, EDrawSunburst.NORMAL);
+            }
+        }
+
+        if (mUseDiffView) {
+            mDraw.drawNewRevision(this);
+            mDraw.drawOldRevision(this);
+
+            for (final SunburstItem item : mModel) {
+                EDrawSunburst.COMPARE.draw(this, item, mDraw);
+            }
         }
     }
 }

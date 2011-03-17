@@ -17,14 +17,17 @@
 package com.treetank.gui.view.sunburst;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.AbsTTException;
-import com.treetank.exception.TTIOException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.gui.ReadDB;
 import com.treetank.node.ENodes;
@@ -86,10 +89,10 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     transient int mDepthMax;
 
     /** Minimum text length. */
-    transient int mMinTextLength = Integer.MAX_VALUE;
+    transient int mMinTextLength;
 
     /** Maximum text length. */
-    transient int mMaxTextLength = Integer.MIN_VALUE;
+    transient int mMaxTextLength;
 
     /** Index of the current {@link SunburstItem} for the iterator. */
     private transient int mIndex;
@@ -103,7 +106,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
      *            {@link ReadDB} reference
      */
     AbsModel(final PApplet paramApplet, final ReadDB paramDb) {
-        assert paramApplet != null && paramDb != null;
+        assert paramApplet != null;
+        assert paramDb != null;
         mParent = paramApplet;
         try {
             mSession = paramDb.getSession();
@@ -213,30 +217,6 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     @Override
     public Iterator<SunburstItem> iterator() {
         return mItems.iterator();
-    }
-
-    /**
-     * Get minimum and maximum global text length.
-     * 
-     * @param paramRtx
-     *            Treetank {@link IReadTransaction}
-     */
-    void getMinMaxTextLength(final IReadTransaction paramRtx) {
-        assert paramRtx != null && !paramRtx.isClosed();
-        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-            if (paramRtx.getNode().getKind() == ENodes.TEXT_KIND) {
-                final int length = paramRtx.getValueOfCurrentNode().length();
-                if (length < mMinTextLength) {
-                    mMinTextLength = length;
-                }
-
-                if (length > mMaxTextLength) {
-                    mMaxTextLength = length;
-                }
-            }
-        }
-        LOGWRAPPER.debug("MINIMUM text length: " + mMinTextLength);
-        LOGWRAPPER.debug("MAXIMUM text length: " + mMaxTextLength);
     }
 
     /** Traverse a tree (single revision). */
@@ -370,80 +350,6 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Get a list of descendants per node.
-     * 
-     * @param paramRtx
-     *            Treetank {@link IReadTransaction} over which to iterate.
-     * @return List of {@link Future}s.
-     * @throws ExecutionException
-     *             if execution fails
-     * @throws InterruptedException
-     *             if task gets interrupted
-     */
-    @Override
-    public List<Future<Integer>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
-        ExecutionException {
-        assert paramRtx != null;
-
-        // Get descendants for every node and save it to a list.
-        final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
-        final ExecutorService executor =
-            Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        boolean firstNode = true;
-        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-            if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
-                final Future<Integer> submit = executor.submit(new Descendants(paramRtx));
-
-                if (firstNode) {
-                    firstNode = false;
-                    mMaxDescendantCount = submit.get();
-                }
-                descendants.add(submit);
-            }
-        }
-        executor.shutdown();
-
-        return descendants;
-    }
-
-    /** Counts descendants. */
-    final class Descendants implements Callable<Integer> {
-        /** Treetank {@link IReadTransaction}. */
-        private transient IReadTransaction mRtx;
-
-        /**
-         * Constructor.
-         * 
-         * @param paramRtx
-         *            {@link IReadTransaction} over which to iterate
-         */
-        Descendants(final IReadTransaction paramRtx) {
-            assert paramRtx != null;
-            assert !paramRtx.isClosed();
-            try {
-                mRtx = mSession.beginReadTransaction(paramRtx.getRevisionNumber());
-            } catch (final TTIOException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final AbsTTException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-            }
-            mRtx.moveTo(paramRtx.getNode().getNodeKey());
-        }
-
-        @Override
-        public Integer call() throws Exception {
-            int retVal = 0;
-
-            for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
-                retVal++;
-            }
-
-            mRtx.close();
-            return retVal;
         }
     }
 }
