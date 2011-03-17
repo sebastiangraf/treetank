@@ -42,9 +42,9 @@ abstract class AbsDiffObservable extends AbsDiffMovement implements IDiffObserva
 
     /** {@inheritDoc} */
     @Override
-    public final void fireDiff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode) {
+    public final void fireDiff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode, final DiffDepth paramDepth) {
         for (final IDiffObserver observer : mDiffObservers) {
-            observer.diffListener(paramDiff, paramNewNode, paramOldNode);
+            observer.diffListener(paramDiff, paramNewNode, paramOldNode, paramDepth);
         }
     }
 

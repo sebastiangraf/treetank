@@ -12,6 +12,11 @@
 	<blubb>text</blubb>
 	<tzdsa></tzdsa>
 	<bdsahj/>
-	<blablabla><gdddd/>test<bla>teeeeeest</bla></blablabla>
-	test<super><tjaja/></super>
+	<blablabla>
+	  <gdddd/>
+	  test
+	  <bla>teeeeeest</bla>
+	</blablabla>
+	test
+	<super><tjaja/></super>
 </root>

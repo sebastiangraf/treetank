@@ -37,8 +37,11 @@ interface IDiffObservable {
      *            current {@link IItem} in new revision
      * @param paramOldNode
      *            current {@link IItem} in old revision
+     * @param paramDepth
+     *            current {@link DiffDepth} instance
      */
-    void fireDiff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode);
+    void fireDiff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode,
+        final DiffDepth paramDepth);
 
     /**
      * Add an observer. This means add an instance of a class which implements the {@link IDiffObserver}

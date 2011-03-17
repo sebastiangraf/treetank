@@ -72,19 +72,19 @@ public class FullDiffTest {
     @Test
     public void testFullDiffFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -111,10 +111,10 @@ public class FullDiffTest {
     @Test
     public void testFullDiffOptimizedFirst() throws InterruptedException, AbsTTException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -142,14 +142,14 @@ public class FullDiffTest {
     public void testFullDiffSecond() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -183,16 +183,16 @@ public class FullDiffTest {
     @Test
     public void testFullDiffThird() throws AbsTTException, IOException, XMLStreamException, InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -226,13 +226,13 @@ public class FullDiffTest {
     @Test
     public void testFullDiffFourth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -266,9 +266,9 @@ public class FullDiffTest {
     @Test
     public void testFullDiffFifth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -302,12 +302,12 @@ public class FullDiffTest {
     @Test
     public void testFullDiffSixth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -341,18 +341,18 @@ public class FullDiffTest {
     @Test
     public void testFullDiffSeventh() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -386,18 +386,18 @@ public class FullDiffTest {
     @Test
     public void testFullDiffEighth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -431,35 +431,35 @@ public class FullDiffTest {
     @Test
     public final void testFullDiffTenth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.RENAMED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class));
-        listener.diffListener(EDiff.DONE, null, null);
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
+        listener.diffListener(EDiff.DONE, null, null, null);
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
