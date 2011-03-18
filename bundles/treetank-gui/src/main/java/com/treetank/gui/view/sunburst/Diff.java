@@ -20,7 +20,6 @@ import com.treetank.api.IItem;
 import com.treetank.diff.DiffDepth;
 import com.treetank.diff.DiffFactory.EDiff;
 
-import sun.awt.X11.Depth;
 
 /**
  * Container for diffs.
@@ -37,7 +36,7 @@ class Diff {
 
     /** {@link IItem} in old revision. */
     private transient IItem mOldNode;
-    
+
     /** {@link DiffDepth} instance. */
     private transient DiffDepth mDepth;
 
@@ -53,7 +52,8 @@ class Diff {
      * @param paramDepth
      *            current {@link Depth}
      */
-    public Diff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode, final DiffDepth paramDepth) {
+    public Diff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode,
+        final DiffDepth paramDepth) {
         assert paramDiff != null;
         assert paramNewNode != null;
         assert paramOldNode != null;
@@ -90,7 +90,7 @@ class Diff {
     IItem getOldNode() {
         return mOldNode;
     }
-    
+
     /**
      * Get depth.
      * 
@@ -102,7 +102,7 @@ class Diff {
 
     @Override
     public String toString() {
-        return new StringBuilder("diff: ").append(mDiff).append(" new node: ").append(mNewNode)
-            .append(" old node: ").append(mOldNode).toString();
+        return new StringBuilder("diff: ").append(mDiff).append(" new node: ").append(mNewNode).append(
+            " old node: ").append(mOldNode).toString();
     }
 }
