@@ -4,7 +4,6 @@
 		<groupId>treetank</groupId>
 		<artifactId>pom</artifactId>
 		<version>1.0.1</version>
-		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
 	<groupId>treetank</groupId>
