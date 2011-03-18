@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>treetank</groupId>
 	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
 	<name>treetank-pom</name>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/
 	</url>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.1</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.1</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.1</url>
 	</scm>
 	<issueManagement>
 		<system>Redmine</system>
@@ -205,7 +204,7 @@
 		<dependency>
 			<groupId>perfidix</groupId>
 			<artifactId>perfidix</artifactId>
-			<version>3.6.3-SNAPSHOT</version>
+			<version>3.6.3</version>
 		</dependency>
 		<dependency>
 			<groupId>xmlunit</groupId>
