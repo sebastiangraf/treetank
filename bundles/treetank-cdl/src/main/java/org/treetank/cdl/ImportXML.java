@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.treetank.cdl;
+package org.treetank.cdl;
 
 import java.io.File;
 
