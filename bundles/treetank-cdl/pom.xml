@@ -18,7 +18,30 @@
 			<name>Repository for Maven2</name>
 			<url>http://download.java.net/maven/2</url>
 		</repository>
+		<repository>
+			<id>disyInternal</id>
+			<name>Internal Repository for the Distributed System Group</name>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>disyInternalSnapshot</id>
+			<name>Internal Snapshot Repository for the Distributed System Group</name>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
+
 	<scm>
 		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
 		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
