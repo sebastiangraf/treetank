@@ -64,7 +64,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>com.treetank.utils.TreeTankCommandoLineExplorer</mainClass>
+							<mainClass>org.treetank.utils.TreeTankCommandoLineExplorer</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

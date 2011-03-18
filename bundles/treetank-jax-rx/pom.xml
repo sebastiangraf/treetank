@@ -105,7 +105,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>com.treetank.service.jaxrx.server.StartServer</mainClass>
+							<mainClass>org.treetank.service.jaxrx.server.StartServer</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

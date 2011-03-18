@@ -32,7 +32,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>com.treetank.xmlprague.IncrementalShred</mainClass>
+							<mainClass>org.treetank.xmlprague.IncrementalShred</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
