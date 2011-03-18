@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>treetank</groupId>
 		<artifactId>pom</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.1</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
@@ -12,7 +11,7 @@
 	<artifactId>saxon</artifactId>
 	<packaging>jar</packaging>
 	<name>treetank-saxon</name>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<description>Saxon binding.</description>
 	<repositories>
 		<repository>
@@ -22,20 +21,20 @@
 		</repository>
 	</repositories>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.1</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.1</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.1</url>
 	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.3.4-SNAPSHOT</version>
+			<version>5.3.4</version>
 		</dependency>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.3.4-SNAPSHOT</version>
+			<version>5.3.4</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
