@@ -21,15 +21,14 @@ import java.util.Stack;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbsAxis;
-import com.treetank.node.AbsStructNode;
-import com.treetank.settings.EFixed;
-import com.treetank.utils.FastStack;
-import com.treetank.utils.LogWrapper;
-
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IReadTransaction;
+import org.treetank.axis.AbsAxis;
 import org.treetank.gui.view.sunburst.Item.Builder;
+import org.treetank.node.AbsStructNode;
+import org.treetank.settings.EFixed;
+import org.treetank.utils.FastStack;
+import org.treetank.utils.LogWrapper;
 
 import processing.core.PConstants;
 

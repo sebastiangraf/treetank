@@ -16,8 +16,6 @@
  */
 package org.treetank.gui.view.sunburst;
 
-import java.awt.Color;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 
@@ -333,6 +331,9 @@ public enum EDraw {
             }
         },
 
+        /**
+         * püpü
+         */
         COMPARE {
             @Override
             void drawStrategy(final SunburstGUI paramGUI, final SunburstItem paramItem, final EDraw paramDraw) {

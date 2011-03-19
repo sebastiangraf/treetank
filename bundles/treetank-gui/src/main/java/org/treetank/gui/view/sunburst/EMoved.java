@@ -18,8 +18,8 @@ package org.treetank.gui.view.sunburst;
 
 import java.util.Stack;
 
-import com.treetank.api.IReadTransaction;
-import com.treetank.node.AbsStructNode;
+import org.treetank.api.IReadTransaction;
+import org.treetank.node.AbsStructNode;
 
 /**
  * Determines movement of transaction and updates stacks accordingly.

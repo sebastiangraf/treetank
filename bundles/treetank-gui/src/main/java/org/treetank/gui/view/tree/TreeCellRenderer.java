@@ -16,6 +16,10 @@
  */
 package org.treetank.gui.view.tree;
 
+import static org.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
+import static org.treetank.gui.GUIConstants.DOC_COLOR;
+import static org.treetank.gui.GUIConstants.ELEMENT_COLOR;
+
 import java.awt.Color;
 import java.awt.Component;
 
@@ -23,19 +27,13 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.xml.namespace.QName;
 
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.node.ElementNode;
-import com.treetank.utils.LogWrapper;
-
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
-import org.treetank.gui.view.text.TextView;
-
-import static org.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
-import static org.treetank.gui.GUIConstants.DOC_COLOR;
-import static org.treetank.gui.GUIConstants.ELEMENT_COLOR;
+import org.treetank.node.ElementNode;
+import org.treetank.utils.LogWrapper;
 
 
 /**

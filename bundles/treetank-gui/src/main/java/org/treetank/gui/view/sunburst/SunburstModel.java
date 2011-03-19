@@ -26,19 +26,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbsAxis;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.AbsTTException;
-import com.treetank.exception.TTIOException;
-import com.treetank.node.AbsStructNode;
-import com.treetank.node.ENodes;
-import com.treetank.settings.EFixed;
-import com.treetank.utils.LogWrapper;
-
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IReadTransaction;
+import org.treetank.axis.AbsAxis;
+import org.treetank.axis.DescendantAxis;
+import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
+import org.treetank.node.AbsStructNode;
+import org.treetank.node.ENodes;
+import org.treetank.settings.EFixed;
+import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 
@@ -164,32 +163,16 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
     public float createSunburstItem(final Item paramItem, final int paramDepth, final int paramIndex) {
         // Initialize variables.
         final float angle = paramItem.mAngle;
-//        final long childCountPerDepth = paramItem.mChildCountPerDepth;
         final float extension = paramItem.mExtension;
         final int indexToParent = paramItem.mIndexToParent;
         final int descendantCount = paramItem.mDescendantCount;
         final int parDescendantCount = paramItem.mParentDescendantCount;
         final int depth = paramDepth;
-//        final int index = paramIndex;
 
         // Add a sunburst item.
         final AbsStructNode node = (AbsStructNode)mRtx.getNode();
         final EStructType structKind =
             node.hasFirstChild() ? EStructType.ISINNERNODE : EStructType.ISLEAFNODE;
-//        final long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
-
-        // Calculate extension.
-        // float childExtension = 0f;
-        // if (childCountPerDepth == 0) {
-        // // final long key = mRtx.getNode().getNodeKey();
-        // // mRtx.moveToParent();
-        // // childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
-        // // childExtension = extension / (float)childCount;
-        // // mRtx.moveTo(key);
-        // childExtension = extension;
-        // } else {
-        // childExtension = extension * (float)childCount / (float)childCountPerDepth;
-        // }
         
         // Calculate extension. 
         float childExtension = 0f;
@@ -325,177 +308,4 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             return retVal;
         }
     }
-
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @Override
-    // public void run() {
-    // LOGWRAPPER.debug("Build sunburst items.");
-    //
-    // // Initialize variables. =============================
-    // // final List<SunburstItem> itemList = new ArrayList<SunburstItem>(mItems);
-    // // final int maxDepth = mDepthMax;
-    //
-    // // Remove all elements from item list.
-    // mItems.clear();
-    //
-    // // Initial extension and childExtension.
-    // float extension = PConstants.TWO_PI;
-    // float childExtension = 0f;
-    //
-    // // Node relations used for simplyfing the SunburstItem constructor.
-    // final NodeRelations relations = new NodeRelations();
-    //
-    // // Depth in the tree starting at 0.
-    // int depth = 0;
-    //
-    // // Start angle.
-    // float angle = 0f;
-    //
-    // // Child count per depth.
-    // long childCountPerDepth = ((AbsStructNode)mRtx.getNode()).getChildCount();
-    //
-    // try {
-    // // Get min and max textLength.
-    // getMinMaxTextLength(mRtx);
-    //
-    // // Get list of descendants per node.
-    // final IReadTransaction rtx = mSession.beginReadTransaction(mRtx.getRevisionNumber());
-    // rtx.moveTo(mRtx.getNode().getNodeKey());
-    // final List<Future<Long>> descendants = getDescendants(rtx);
-    //
-    // // Determines movement of transaction.
-    // EMoved moved = EMoved.STARTRIGHTSIBL;
-    //
-    // // Index to parent node.
-    // int indexToParent = -1;
-    // int index = -1;
-    //
-    // // Setting up stacks.
-    // final Stack<Float> extensionStack = new Stack<Float>();
-    // final Stack<Long> childrenPerDepth = new Stack<Long>();
-    // final Stack<Float> angleStack = new Stack<Float>();
-    // final Stack<Integer> parentStack = new Stack<Integer>();
-    //
-    // final Item item = Item.ITEM;
-    // final Builder builder = Item.BUILDER;
-    //
-    // for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
-    // builder.set(angle, extension, indexToParent).setChildCountPerDepth(childCountPerDepth)
-    // .set();
-    // moved.processMove(mRtx, item, angleStack, extensionStack, childrenPerDepth, parentStack);
-    // angle = item.mAngle;
-    // extension = item.mExtension;
-    // childCountPerDepth = item.mChildCountPerDepth;
-    // indexToParent = item.mIndexToParent;
-    //
-    // // Add a sunburst item.
-    // final AbsStructNode node = (AbsStructNode)mRtx.getNode();
-    // // if (depth < 3) {
-    // final StructType structKind =
-    // node.hasFirstChild() ? StructType.ISINNERNODE : StructType.ISLEAFNODE;
-    // long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
-    //
-    // // Calculate extension.
-    // if (childCountPerDepth == 0) {
-    // final long key = mRtx.getNode().getNodeKey();
-    // mRtx.moveToParent();
-    // childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
-    // childExtension = extension / (float)childCount;
-    // mRtx.moveTo(key);
-    // } else {
-    // childExtension = extension * (float)childCount / (float)childCountPerDepth;
-    // }
-    //
-    // LOGWRAPPER.debug("indexToParent: " + indexToParent);
-    //
-    // // Set node relations.
-    // String text = null;
-    // if (mRtx.getNode().getKind() == ENodes.TEXT_KIND) {
-    // relations.setAll(depth, structKind, mRtx.getValueOfCurrentNode().length(),
-    // mMinTextLength, mMaxTextLength, indexToParent);
-    // text = mRtx.getValueOfCurrentNode();
-    // } else {
-    // relations.setAll(depth, structKind, descendants.get(index + 1).get(), 0,
-    // mMaxDescendantCount, indexToParent);
-    // }
-    //
-    // // Build item.
-    // if (text != null) {
-    // mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension,
-    // relations, mDb).setNode(node).setText(text).build());
-    // } else {
-    // mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension,
-    // relations, mDb).setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
-    // }
-    // // }
-    //
-    // // Set depth max.
-    // mDepthMax = Math.max(depth, mDepthMax);
-    //
-    // index++;
-    //
-    // if (node.hasFirstChild()) {
-    // // Next node will be a child node.
-    // angleStack.push(angle);
-    // extensionStack.push(childExtension);
-    // parentStack.push(index);
-    // depth++;
-    // moved = EMoved.CHILD;
-    //
-    // // Children per depth.
-    // childrenPerDepth.push(childCountPerDepth);
-    // } else if (node.hasRightSibling()) {
-    // // Next node will be a right sibling node.
-    // angle += childExtension;
-    // moved = EMoved.STARTRIGHTSIBL;
-    // } else if (!node.hasRightSibling()) {
-    // // Next node will be a right sibling of an anchestor node or the traversal ends.
-    // moved = EMoved.ANCHESTSIBL;
-    // final long currNodeKey = mRtx.getNode().getNodeKey();
-    // boolean first = true;
-    // do {
-    // if (((AbsStructNode)mRtx.getNode()).hasParent()
-    // && mRtx.getNode().getNodeKey() != mKey) {
-    // if (first) {
-    // // Do not pop from stack if it's a leaf node.
-    // first = false;
-    // } else {
-    // angleStack.pop();
-    // extensionStack.pop();
-    // childrenPerDepth.pop();
-    // parentStack.pop();
-    // }
-    //
-    // mRtx.moveToParent();
-    // depth--;
-    // } else {
-    // break;
-    // }
-    // } while (!((AbsStructNode)mRtx.getNode()).hasRightSibling());
-    // mRtx.moveTo(currNodeKey);
-    // }
-    // }
-    //
-    // rtx.close();
-    // } catch (final InterruptedException e) {
-    // LOGWRAPPER.error(e.getMessage(), e);
-    // } catch (final ExecutionException e) {
-    // LOGWRAPPER.error(e.getMessage(), e);
-    // } catch (final TTException e) {
-    // LOGWRAPPER.error(e.getMessage(), e);
-    // }
-    //
-    // // Copy list and fire changes with unmodifiable lists.
-    // // mModel.firePropertyChange("items", null,
-    // // Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
-    // mModel.firePropertyChange("maxDepth", null, mDepthMax);
-    // mModel.firePropertyChange("done", null, true);
-    //
-    // mRtx.moveTo(mKey);
-    //
-    // LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
-    // }
-    // }
 }

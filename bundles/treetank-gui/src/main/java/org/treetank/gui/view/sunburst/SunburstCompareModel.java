@@ -21,20 +21,22 @@ import java.util.concurrent.*;
 
 import javax.xml.namespace.QName;
 
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.api.IStructuralItem;
-import com.treetank.axis.AbsAxis;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.diff.*;
-import com.treetank.diff.DiffFactory.EDiff;
-import com.treetank.diff.DiffFactory.EDiffKind;
-import com.treetank.exception.AbsTTException;
-import com.treetank.exception.TTIOException;
-import com.treetank.node.AbsStructNode;
-import com.treetank.node.ENodes;
-import com.treetank.utils.LogWrapper;
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.api.IStructuralItem;
+import org.treetank.axis.AbsAxis;
+import org.treetank.axis.DescendantAxis;
+import org.treetank.diff.DiffDepth;
+import org.treetank.diff.DiffFactory;
+import org.treetank.diff.DiffFactory.EDiff;
+import org.treetank.diff.DiffFactory.EDiffKind;
+import org.treetank.diff.IDiffObserver;
+import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTIOException;
+import org.treetank.node.AbsStructNode;
+import org.treetank.node.ENodes;
+import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.gui.ReadDB;
@@ -190,11 +192,11 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         assert paramContainer.mModWeight >= 0;
 
         new TraverseCompareTree(paramContainer.mRevision, paramContainer.mKey, paramContainer.mDepth,
-            paramContainer.mModWeight, this).run();
+            paramContainer.mModWeight, this).call();
     }
 
     /** Traverse and compare trees. */
-    private final class TraverseCompareTree implements Runnable, IDiffObserver {
+    private final class TraverseCompareTree implements Callable<Void>, IDiffObserver {
 
         /** Timeout for {@link CountDownLatch}. */
         private static final long TIMEOUT_S = 200000;
@@ -263,7 +265,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
          * {@inheritDoc}
          */
         @Override
-        public void run() {
+        public Void call() {
             LOGWRAPPER.debug("Build sunburst items.");
 
             // Remove all elements from item list.
@@ -288,7 +290,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 for (final Diff diff : mDiffs) {
                     System.out.println(diff.getDiff());
                 }
-                
+
                 // Maximum depth in old revision.
                 mDepthMax = getDepthMax(mRtx);
 
@@ -309,17 +311,20 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             firePropertyChange("oldMaxDepth", null, mDepthMax);
             firePropertyChange("maxDepth", null, mNewDepthMax);
             firePropertyChange("done", null, true);
+            return null;
         }
 
         /** {@inheritDoc} */
         @Override
         public void diffListener(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode,
             final DiffDepth paramDepth) {
-            if (paramDiff == EDiff.DONE) {
-                mStart.countDown();
-            } else {
-                mDiffs.add(new Diff(paramDiff, paramNewNode, paramOldNode, paramDepth));
-            }
+            mDiffs.add(new Diff(paramDiff, paramNewNode, paramOldNode, paramDepth));
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void diffDone() {
+            mStart.countDown();
         }
     }
 
@@ -430,7 +435,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 if (mDiffs.get(index).getDiff() != EDiff.DELETED) {
                     axis.next();
                 }
-                
+
                 final Future<Integer> submit =
                     executor.submit(new Descendants(paramRtx, mRtx, mSession, index, diffs));
 
@@ -514,6 +519,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                     retVal++;
                 }
             } else {
+                final int depth = diff.getDepth().getNewDepth();
                 final long nodeKey = mNewRtx.getNode().getNodeKey();
 
                 // Be sure we are on the root node.
@@ -532,20 +538,21 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 do {
                     if (((AbsStructNode)mNewRtx.getNode()).hasFirstChild()) {
                         mNewRtx.moveToFirstChild();
-                        retVal = countDeletes(retVal);
+                        retVal = countDeletes(retVal, depth);
                         retVal++;
                     } else {
                         while (!((AbsStructNode)mNewRtx.getNode()).hasRightSibling()) {
                             if (((AbsStructNode)mNewRtx.getNode()).hasParent()
                                 && mNewRtx.getNode().getNodeKey() != nodeKey) {
                                 mNewRtx.moveToParent();
+                                retVal = countDeletes(retVal, depth);
                             } else {
                                 break;
                             }
                         }
                         if (mNewRtx.getNode().getNodeKey() != nodeKey) {
                             mNewRtx.moveToRightSibling();
-                            retVal = countDeletes(retVal);
+                            retVal = countDeletes(retVal, depth);
                             retVal++;
                         }
                     }
@@ -588,11 +595,14 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
          * 
          * @param paramCount
          *            current count of descendants
+         * @param paramDepth
+         *            depth of node in new revision
          * @return counter
          */
-        private int countDeletes(final int paramCount) {
+        private int countDeletes(final int paramCount, final int paramDepth) {
             int retVal = paramCount;
-            while (retVal < mDiffs.size() && mDiffs.get(retVal).getDiff() == EDiff.DELETED) {
+            while (retVal < mDiffs.size() && mDiffs.get(retVal).getDiff() == EDiff.DELETED
+                && paramDepth < mDiffs.get(retVal).getDepth().getOldDepth()) {
                 retVal++;
             }
             return retVal;

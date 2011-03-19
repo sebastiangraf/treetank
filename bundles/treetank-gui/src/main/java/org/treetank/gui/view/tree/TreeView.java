@@ -27,9 +27,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
 import org.treetank.gui.GUI;
 import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;

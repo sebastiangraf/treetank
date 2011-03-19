@@ -16,31 +16,12 @@
  */
 package org.treetank.gui.view.sunburst;
 
-import static org.easymock.EasyMock.*;
-
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import javax.xml.stream.XMLStreamException;
 
 import junit.framework.Assert;
 
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.service.xml.shredder.EShredderCommit;
-import com.treetank.service.xml.shredder.EShredderInsert;
-import com.treetank.service.xml.shredder.XMLShredder;
-import com.treetank.service.xml.shredder.XMLUpdateShredder;
-
-import org.treetank.gui.ReadDB;
+import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
 
 import org.junit.After;
 import org.junit.Before;

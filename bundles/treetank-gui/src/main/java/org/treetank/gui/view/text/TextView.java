@@ -16,6 +16,12 @@
  */
 package org.treetank.gui.view.text;
 
+import static org.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
+import static org.treetank.gui.GUIConstants.ELEMENT_COLOR;
+import static org.treetank.gui.GUIConstants.NAMESPACE_COLOR;
+import static org.treetank.gui.GUIConstants.NEWLINE;
+import static org.treetank.gui.GUIConstants.TEXT_COLOR;
+
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -39,28 +45,20 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.AbsTTException;
-import com.treetank.node.ElementNode;
-import com.treetank.service.xml.serialize.StAXSerializer;
-import com.treetank.utils.LogWrapper;
-
-
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
+import org.treetank.axis.DescendantAxis;
+import org.treetank.exception.AbsTTException;
 import org.treetank.gui.GUI;
 import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
 import org.treetank.gui.view.ViewNotifier;
 import org.treetank.gui.view.ViewUtilities;
-
-import static org.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
-import static org.treetank.gui.GUIConstants.ELEMENT_COLOR;
-import static org.treetank.gui.GUIConstants.NAMESPACE_COLOR;
-import static org.treetank.gui.GUIConstants.NEWLINE;
-import static org.treetank.gui.GUIConstants.TEXT_COLOR;
+import org.treetank.node.ElementNode;
+import org.treetank.service.xml.serialize.StAXSerializer;
+import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>TextView</h1>
