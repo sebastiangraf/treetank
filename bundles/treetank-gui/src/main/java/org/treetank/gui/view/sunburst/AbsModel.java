@@ -22,19 +22,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.axis.AbsAxis;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.AbsTTException;
-import com.treetank.exception.TTXPathException;
-import com.treetank.node.ENodes;
-import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.utils.LogWrapper;
-
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTXPathException;
 import org.treetank.gui.ReadDB;
+import org.treetank.node.ENodes;
+import org.treetank.service.xml.xpath.XPathAxis;
+import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 

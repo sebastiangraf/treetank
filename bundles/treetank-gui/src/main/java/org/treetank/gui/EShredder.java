@@ -25,19 +25,18 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 
-import com.treetank.access.Database;
-import com.treetank.access.DatabaseConfiguration;
-import com.treetank.api.IDatabase;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.service.xml.shredder.EShredderCommit;
-import com.treetank.service.xml.shredder.EShredderInsert;
-import com.treetank.service.xml.shredder.XMLShredder;
-import com.treetank.service.xml.shredder.XMLUpdateShredder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.access.Database;
+import org.treetank.access.DatabaseConfiguration;
+import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.service.xml.shredder.EShredderCommit;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
+import org.treetank.service.xml.shredder.XMLUpdateShredder;
 
 /**
  * Determines how to shred.

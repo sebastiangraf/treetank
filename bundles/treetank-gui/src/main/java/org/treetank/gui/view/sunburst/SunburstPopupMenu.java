@@ -24,10 +24,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.xml.namespace.QName;
 
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
 

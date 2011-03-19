@@ -16,17 +16,16 @@
  */
 package org.treetank.gui.view.tree;
 
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.node.AbsStructNode;
-import com.treetank.node.DocumentRootNode;
-import com.treetank.node.ENodes;
-import com.treetank.node.ElementNode;
-import com.treetank.utils.LogWrapper;
-
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
+import org.treetank.node.AbsStructNode;
+import org.treetank.node.DocumentRootNode;
+import org.treetank.node.ENodes;
+import org.treetank.node.ElementNode;
+import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>TreeModel</h1>

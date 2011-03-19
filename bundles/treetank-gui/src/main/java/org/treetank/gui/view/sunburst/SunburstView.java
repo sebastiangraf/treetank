@@ -24,9 +24,10 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.Semaphore;
 
-import javax.swing.*;
-
-import com.treetank.utils.LogWrapper;
+import javax.swing.JComponent;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.gui.GUI;
@@ -34,6 +35,7 @@ import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
 import org.treetank.gui.view.ViewNotifier;
+import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 

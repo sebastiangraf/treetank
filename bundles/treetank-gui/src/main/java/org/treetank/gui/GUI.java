@@ -24,14 +24,12 @@ import java.io.File;
 
 import javax.swing.*;
 
-import com.treetank.utils.LogWrapper;
-
 import org.slf4j.LoggerFactory;
+import org.treetank.gui.view.IView;
 import org.treetank.gui.view.ViewContainer;
 import org.treetank.gui.view.ViewNotifier;
 import org.treetank.gui.view.sunburst.SunburstView;
-import org.treetank.gui.view.text.TextView;
-import org.treetank.gui.view.tree.TreeView;
+import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>Treetank GUI</h1>

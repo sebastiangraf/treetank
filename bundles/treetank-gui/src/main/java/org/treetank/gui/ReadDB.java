@@ -18,15 +18,13 @@ package org.treetank.gui;
 
 import java.io.File;
 
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.exception.AbsTTException;
-import com.treetank.exception.TTIOException;
-import com.treetank.utils.LogWrapper;
-
 import org.slf4j.LoggerFactory;
+import org.treetank.access.Database;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.exception.AbsTTException;
+import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>ReadDB</h1>

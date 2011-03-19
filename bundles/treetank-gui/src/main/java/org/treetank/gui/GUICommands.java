@@ -32,16 +32,15 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.exception.AbsTTException;
-import com.treetank.service.xml.serialize.XMLSerializer;
-import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.access.Database;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.exception.AbsTTException;
+import org.treetank.service.xml.serialize.XMLSerializer;
+import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
 /**
  * <h1>GUICommands</h1>

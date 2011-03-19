@@ -17,11 +17,10 @@
 package org.treetank.gui.view.sunburst;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import com.treetank.api.IReadTransaction;
+import org.treetank.api.IReadTransaction;
 
 /**
  * Interface which models of the {@link SunburstView} have to implement.
