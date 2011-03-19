@@ -238,21 +238,4 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     @Override
     public abstract AbsNode clone();
 
-    protected static long[] cloneData(final long[] mInput) {
-        final long[] data = new long[mInput.length];
-        System.arraycopy(mInput, 0, data, 0, data.length);
-        return data;
-    }
-
-    protected static int[] cloneData(final int[] mInput) {
-        final int[] data = new int[mInput.length];
-        System.arraycopy(mInput, 0, data, 0, data.length);
-        return data;
-    }
-
-    protected static byte[] cloneData(final byte[] mInput) {
-        final byte[] value = new byte[mInput.length];
-        System.arraycopy(mInput, 0, value, 0, value.length);
-        return value;
-    }
 }

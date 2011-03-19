@@ -249,7 +249,7 @@ public class SessionTest {
         final ISession session3 = database2.getSession();
         final IReadTransaction rtx2 = session3.beginReadTransaction();
         assertEquals(1L, rtx2.getRevisionNumber());
-        rtx2.moveTo(14L);
+        rtx2.moveTo(12L);
         assertEquals("bar2", TypedValue.parseString(rtx2.getNode().getRawValue()));
 
         rtx2.close();

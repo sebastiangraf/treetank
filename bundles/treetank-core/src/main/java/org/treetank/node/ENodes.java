@@ -39,11 +39,6 @@ public enum ENodes {
             return null;
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] paramLongData, final int[] paramIntData,
-            final byte[] mValue) {
-            return new DummyNode(paramLongData, paramIntData);
-        }
     },
 
     /** Unknown kind. */
@@ -53,10 +48,6 @@ public enum ENodes {
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mData, final int[] mIntData, final byte[] mValue) {
-            throw new UnsupportedOperationException();
-        }
     },
     /** Node kind is element. */
     ELEMENT_KIND(1, 7, 5) {
@@ -80,10 +71,6 @@ public enum ENodes {
             return new ElementNode(longData, intData, attrKeys, namespKeys);
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mData, final int[] mIntData, final byte[] mValue) {
-            return new ElementNode(mData, mIntData, new ArrayList<Long>(), new ArrayList<Long>());
-        }
     },
     /** Node kind is attribute. */
     ATTRIBUTE_KIND(2, 3, 4) {
@@ -98,10 +85,6 @@ public enum ENodes {
             return new AttributeNode(longData, intData, value);
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
-            return new AttributeNode(mLongData, mIntData, mValue);
-        }
     },
     /** Node kind is text. */
     TEXT_KIND(3, 7, 2) {
@@ -116,10 +99,6 @@ public enum ENodes {
             return new TextNode(longData, intData, value);
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
-            return new TextNode(mLongData, mIntData, mValue);
-        }
     },
     /** Node kind is namespace. */
     NAMESPACE_KIND(13, 3, 3) {
@@ -131,10 +110,6 @@ public enum ENodes {
             return new NamespaceNode(data, intData);
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mData, final int[] mIntData, final byte[] mValue) {
-            return new NamespaceNode(mData, mIntData);
-        }
     },
     /** Node kind is processing instruction. */
     PROCESSING_KIND(7, 0, 0) {
@@ -143,10 +118,6 @@ public enum ENodes {
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mData, final int[] mIntData, final byte[] mValue) {
-            throw new UnsupportedOperationException();
-        }
     },
     /** Node kind is comment. */
     COMMENT_KIND(8, 0, 0) {
@@ -155,10 +126,6 @@ public enum ENodes {
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mData, final int[] mIntData, final byte[] mValue) {
-            throw new UnsupportedOperationException();
-        }
     },
     /** Node kind is document root. */
     ROOT_KIND(9, 7, 1) {
@@ -169,10 +136,6 @@ public enum ENodes {
             return new DocumentRootNode(data, intData);
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mData, final int[] mIntData, final byte[] mValue) {
-            return new DocumentRootNode(mData, mIntData);
-        }
     },
     /** Whitespace text. */
     WHITESPACE_KIND(4, 0, 0) {
@@ -181,10 +144,6 @@ public enum ENodes {
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mData, final int[] mIntData, final byte[] mValue) {
-            throw new UnsupportedOperationException();
-        }
     },
     /** Node kind is deleted node. */
     DELETE_KIND(5, 3, 1) {
@@ -195,10 +154,6 @@ public enum ENodes {
             return new DeletedNode(longData, intData);
         }
 
-        @Override
-        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
-            return new DeletedNode(mLongData, mIntData);
-        }
     };
 
     /** Identifier. */
@@ -244,10 +199,7 @@ public enum ENodes {
     }
 
     public abstract AbsNode createNodeFromPersistence(final ITTSource paramSource);
-
-    public abstract AbsNode createNodeFromScratch(final long[] paramLongData, final int[] paramIntData,
-        final byte[] mValue);
-
+    
     /**
      * @return the mSize
      */
@@ -287,6 +239,40 @@ public enum ENodes {
      */
     public static ENodes getEnumKind(final int paramKind) {
         return MAPPING.get(paramKind);
+    }
+
+    /**
+     * Cloning long-array
+     * 
+     * @param paramInput
+     * @return the cloned array
+     */
+    public static long[] cloneData(final long[] paramInput) {
+        final long[] data = new long[paramInput.length];
+        System.arraycopy(paramInput, 0, data, 0, data.length);
+        return data;
+    }
+    
+    /**
+     * Cloning int-array
+     * @param paramInput
+     * @return the cloned array
+     */
+    public static int[] cloneData(final int[] paramInput) {
+        final int[] data = new int[paramInput.length];
+        System.arraycopy(paramInput, 0, data, 0, data.length);
+        return data;
+    }
+    
+    /**
+     * Cloning byte-array
+     * @param paramInput
+     * @return the cloned array
+     */
+    public static byte[] cloneData(final byte[] paramInput) {
+        final byte[] value = new byte[paramInput.length];
+        System.arraycopy(paramInput, 0, value, 0, value.length);
+        return value;
     }
 
 }

@@ -66,7 +66,7 @@ public final class DocumentRootNode extends AbsStructNode {
 
     @Override
     public AbsNode clone() {
-        return new DocumentRootNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData));
+        return new DocumentRootNode(ENodes.cloneData(mLongData), ENodes.cloneData(mIntData));
     }
 
     public static DocumentRootNode createData() {

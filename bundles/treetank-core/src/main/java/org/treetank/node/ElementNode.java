@@ -229,7 +229,7 @@ public final class ElementNode extends AbsStructNode {
         }
 
         final AbsNode toClone =
-            new ElementNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData), attList, namespaceList);
+            new ElementNode(ENodes.cloneData(mLongData), ENodes.cloneData(mIntData), attList, namespaceList);
         return toClone;
     }
 
@@ -250,13 +250,7 @@ public final class ElementNode extends AbsStructNode {
         intData[AbsNode.TYPE_KEY] = mType;
         intData[ElementNode.ATTRIBUTE_COUNT] = 0;
         intData[ElementNode.NAMESPACE_COUNT] = 0;
-        return ENodes.ELEMENT_KIND.createNodeFromScratch(longData, intData, null);
-    }
-
-    public static AbsNode createData(final long mNodeKey, final ElementNode mNode) {
-        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(), mNode
-            .getRightSiblingKey(), mNode.getFirstChildKey(), mNode.getChildCount(), mNode.getNameKey(), mNode
-            .getURIKey(), mNode.getTypeKey(), mNode.getHash());
+        return new ElementNode(longData, intData, new ArrayList<Long>(),new ArrayList<Long>());
     }
 
     @Override

@@ -181,12 +181,6 @@ public final class WriteTransactionState extends ReadTransactionState {
         return mNode;
     }
 
-    protected ElementNode createElementNode(final ElementNode oldNode) throws TTIOException {
-        final ElementNode newNode =
-            (ElementNode)createNode(ElementNode.createData(mNewRoot.getMaxNodeKey() + 1, oldNode));
-        return newNode;
-    }
-
     protected ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
         final long rightSibKey, final long hash, final QName mName) throws TTIOException {
 
@@ -199,19 +193,11 @@ public final class WriteTransactionState extends ReadTransactionState {
             namespaceKey, typeKey, hash));
     }
 
-    protected TextNode createTextNode(final TextNode mNode) throws TTIOException {
-        return (TextNode)createNode(TextNode.createData(mNewRoot.getMaxNodeKey() + 1, mNode));
-    }
-
     protected TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
         final byte[] mValue) throws TTIOException {
         final int typeKey = createNameKey("xs:untyped");
         return (TextNode)createNode(TextNode.createData(mNewRoot.getMaxNodeKey() + 1, mParentKey,
             mLeftSibKey, rightSibKey, typeKey, mValue));
-    }
-
-    protected AttributeNode createAttributeNode(final AttributeNode mNode) throws TTIOException {
-        return (AttributeNode)createNode(AttributeNode.createData(mNewRoot.getMaxNodeKey() + 1, mNode));
     }
 
     protected AttributeNode createAttributeNode(final long parentKey, final QName mName, final byte[] mValue)
@@ -222,10 +208,6 @@ public final class WriteTransactionState extends ReadTransactionState {
         final int typeKey = createNameKey("xs:untypedAtomic");
         return (AttributeNode)createNode(AttributeNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey,
             nameKey, namespaceKey, typeKey, mValue));
-    }
-
-    protected NamespaceNode createNamespaceNode(final NamespaceNode mNode) throws TTIOException {
-        return (NamespaceNode)createNode(NamespaceNode.createData(mNewRoot.getMaxNodeKey() + 1, mNode));
     }
 
     protected NamespaceNode createNamespaceNode(final long parentKey, final int mUriKey, final int prefixKey)

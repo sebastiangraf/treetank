@@ -143,7 +143,7 @@ public final class TextNode extends AbsStructNode {
     @Override
     public AbsNode clone() {
         final AbsNode toClone =
-            new TextNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData), AbsNode.cloneData(mValue));
+            new TextNode(ENodes.cloneData(mLongData), ENodes.cloneData(mIntData), ENodes.cloneData(mValue));
         return toClone;
     }
 
@@ -158,11 +158,6 @@ public final class TextNode extends AbsStructNode {
         longData[AbsStructNode.FIRST_CHILD_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         intData[AbsNode.TYPE_KEY] = mType;
         return new TextNode(longData, intData, mValue);
-    }
-
-    public static AbsNode createData(final long mNodeKey, final TextNode mNode) {
-        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(),
-            mNode.getRightSiblingKey(), mNode.getTypeKey(), mNode.getRawValue());
     }
 
     /** {@inheritDoc} */

@@ -90,7 +90,7 @@ public final class NamespaceNode extends AbsNode {
     /** {@inheritDoc} */
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new NamespaceNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData));
+        final AbsNode toClone = new NamespaceNode(ENodes.cloneData(mLongData), ENodes.cloneData(mIntData));
         return toClone;
     }
 
@@ -103,10 +103,6 @@ public final class NamespaceNode extends AbsNode {
         intData[NamespaceNode.URI_KEY] = mUriKey;
         intData[NamespaceNode.NAME_KEY] = prefixKey;
         return new NamespaceNode(longData, intData);
-    }
-
-    public static AbsNode createData(final long mNodeKey, final NamespaceNode mNode) {
-        return createData(mNodeKey, mNode.getParentKey(), mNode.getURIKey(), mNode.getNameKey());
     }
 
     /** {@inheritDoc} */
