@@ -99,7 +99,7 @@ public final class DummyNode extends AbsStructNode {
         longData[AbsStructNode.LEFT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         longData[AbsStructNode.RIGHT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         longData[AbsStructNode.FIRST_CHILD_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        return (DummyNode)ENodes.DUMMY_KIND.createNodeFromScratch(longData, intData, null);
+        return new DummyNode(longData, intData);
     }
     
     /** {@inheritDoc} */

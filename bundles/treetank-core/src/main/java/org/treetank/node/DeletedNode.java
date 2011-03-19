@@ -52,7 +52,7 @@ public final class DeletedNode extends AbsNode {
 
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new DeletedNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData));
+        final AbsNode toClone = new DeletedNode(ENodes.cloneData(mLongData), ENodes.cloneData(mIntData));
         return toClone;
     }
 

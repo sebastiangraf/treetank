@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
-
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IItem;
 import org.treetank.api.IStructuralItem;
@@ -76,8 +75,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(
-        LoggerFactory.getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -366,22 +365,27 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setName(final String mName) throws TTIOException {
+    public synchronized void setName(final String paramName) throws TTIOException {
 
         assertNotClosed();
         mModificationCount++;
+        final long oldHash = getCurrentNode().hashCode();
+        
+        final AbsNode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        node.setNameKey(getTransactionState().createNameKey(paramName));
+        getTransactionState().finishNodeModification(node);
 
-        final AbsNode oldNode = (AbsNode)getCurrentNode();
-        final AbsNode newNode = createNodeToModify(oldNode);
+        // final AbsNode oldNode = (AbsNode)getCurrentNode();
+        // final AbsNode newNode = createNodeToModify(oldNode);
+        //
+        // if (oldNode instanceof AbsStructNode) {
+        // adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
+        // }
+        // newNode.setNameKey(getTransactionState().createNameKey(mName));
+        // getTransactionState().removeNode(oldNode);
 
-        if (oldNode instanceof AbsStructNode) {
-            adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
-        }
-        newNode.setNameKey(getTransactionState().createNameKey(mName));
-        getTransactionState().removeNode(oldNode);
-        setCurrentNode(newNode);
-
-        adaptHashedWithUpdate(oldNode.hashCode());
+        setCurrentNode(node);
+        adaptHashedWithUpdate(oldHash);
 
     }
 
@@ -389,45 +393,55 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setURI(final String mUri) throws TTIOException {
+    public synchronized void setURI(final String paramUri) throws TTIOException {
 
         assertNotClosed();
         mModificationCount++;
+        final long oldHash = getCurrentNode().hashCode();
+        
+        final AbsNode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        node.setURIKey(getTransactionState().createNameKey(paramUri));
+        getTransactionState().finishNodeModification(node);
 
-        final AbsNode oldNode = (AbsNode)getCurrentNode();
-        final AbsNode newNode = createNodeToModify(oldNode);
-
-        if (oldNode instanceof AbsStructNode) {
-            adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
-        }
-        newNode.setURIKey(getTransactionState().createNameKey(mUri));
-        getTransactionState().removeNode(oldNode);
-        setCurrentNode(newNode);
-
-        adaptHashedWithUpdate(oldNode.getHash());
+        // final AbsNode oldNode = (AbsNode)getCurrentNode();
+        // final AbsNode newNode = createNodeToModify(oldNode);
+        //
+        // if (oldNode instanceof AbsStructNode) {
+        // adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
+        // }
+        // newNode.setURIKey(getTransactionState().createNameKey(mUri));
+        // getTransactionState().removeNode(oldNode);
+        
+        setCurrentNode(node);
+        adaptHashedWithUpdate(oldHash);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final int mValueType, final byte[] mValue) throws TTIOException {
+    public synchronized void setValue(final int paramValueType, final byte[] paramValue) throws TTIOException {
 
         assertNotClosed();
         mModificationCount++;
+        final long oldHash = getCurrentNode().hashCode();
 
-        final AbsNode oldNode = (AbsNode)getCurrentNode();
-//        oldNode.setValue(mValueType, mValue);
-        final AbsNode newNode = createNodeToModify(oldNode);
+        final AbsNode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        node.setValue(paramValueType, paramValue);
+        getTransactionState().finishNodeModification(node);
 
-        if (oldNode instanceof AbsStructNode) {
-            adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
-        }
-        newNode.setValue(mValueType, mValue);
-        getTransactionState().removeNode(oldNode);
-        setCurrentNode(newNode);
-
-        adaptHashedWithUpdate(oldNode.getHash());
+        // final AbsNode oldNode = (AbsNode)getCurrentNode();
+        // // oldNode.setValue(mValueType, mValue);
+        // final AbsNode newNode = createNodeToModify(oldNode);
+        //
+        // if (oldNode instanceof AbsStructNode) {
+        // adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
+        // }
+        // newNode.setValue(mValueType, mValue);
+        // getTransactionState().removeNode(oldNode);
+        
+        setCurrentNode(node);
+        adaptHashedWithUpdate(oldHash);
     }
 
     /**
@@ -587,118 +601,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
     // ////////////////////////////////////////////////////////////
     // end of insert operation
-    // ////////////////////////////////////////////////////////////
-
-    // ////////////////////////////////////////////////////////////
-    // update operation
-    // ////////////////////////////////////////////////////////////
-
-    /**
-     * Creating a new element for an existing node.
-     * 
-     * @param paramOldNode
-     *            new Node to be cloned
-     * @throws TTIOException
-     *             if anything weird happens
-     * @return an {@link AbsNode} which is cloned
-     */
-    private AbsNode createNodeToModify(final AbsNode paramOldNode) throws TTIOException {
-        AbsNode newNode = null;
-        switch (paramOldNode.getKind()) {
-        case ELEMENT_KIND:
-            newNode = getTransactionState().createElementNode((ElementNode)paramOldNode);
-            break;
-        case ATTRIBUTE_KIND:
-            newNode = getTransactionState().createAttributeNode((AttributeNode)paramOldNode);
-            break;
-        case NAMESPACE_KIND:
-            newNode = getTransactionState().createNamespaceNode((NamespaceNode)paramOldNode);
-            break;
-        case TEXT_KIND:
-            newNode = getTransactionState().createTextNode((TextNode)paramOldNode);
-            break;
-        default:
-            break;
-        }
-        return newNode;
-    }
-
-    /**
-     * Adapting everything for update operations.
-     * 
-     * @param paramOldNode
-     *            pointer of the old node to be replaces
-     * @param paramNewNode
-     *            pointer of new node to be inserted
-     * @throws TTIOException
-     *             if anything weird happens
-     */
-    private void adaptForUpdate(final AbsStructNode paramOldNode, final AbsStructNode paramNewNode)
-        throws TTIOException {
-        // Adapt left sibling node if there is one.
-        if (paramOldNode.hasLeftSibling()) {
-            final AbsStructNode leftSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(
-                    paramOldNode.getLeftSiblingKey());
-            leftSibling.setRightSiblingKey(paramNewNode.getNodeKey());
-            getTransactionState().finishNodeModification(leftSibling);
-        }
-
-        // Adapt right sibling node if there is one.
-        if (paramOldNode.hasRightSibling()) {
-            final AbsStructNode rightSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(
-                    paramOldNode.getRightSiblingKey());
-            rightSibling.setLeftSiblingKey(paramNewNode.getNodeKey());
-            getTransactionState().finishNodeModification(rightSibling);
-        }
-
-        // Adapt parent, if node has now left sibling it is a first child.
-        if (!paramOldNode.hasLeftSibling()) {
-            final AbsStructNode parent =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(paramOldNode.getParentKey());
-            parent.setFirstChildKey(paramNewNode.getNodeKey());
-            getTransactionState().finishNodeModification(parent);
-        }
-
-        // Adapt first child + all childs
-        if (paramOldNode.hasFirstChild()) {
-            moveToFirstChild();
-            final AbsStructNode firstChild = (AbsStructNode)getCurrentNode();
-            setCurrentNode(firstChild);
-            do {
-                final AbsNode node =
-                    getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-                node.setParentKey(paramNewNode.getNodeKey());
-                getTransactionState().finishNodeModification(node);
-            } while (moveToRightSibling());
-        }
-
-        // Caring about attributes and namespaces
-        if (paramOldNode.getKind() == ENodes.ELEMENT_KIND) {
-            // setting the attributes and namespaces
-            for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
-                ((ElementNode)paramNewNode).insertAttribute(((ElementNode)paramOldNode).getAttributeKey(i));
-                final AbsNode node =
-                    getTransactionState().prepareNodeForModification(
-                        ((ElementNode)paramOldNode).getAttributeKey(i));
-                node.setParentKey(paramNewNode.getNodeKey());
-                getTransactionState().finishNodeModification(node);
-            }
-            for (int i = 0; i < ((ElementNode)paramOldNode).getNamespaceCount(); i++) {
-                ((ElementNode)paramNewNode).insertNamespace(((ElementNode)paramOldNode).getNamespaceKey(i));
-                final AbsNode node =
-                    getTransactionState().prepareNodeForModification(
-                        ((ElementNode)paramOldNode).getNamespaceKey(i));
-                node.setParentKey(paramNewNode.getNodeKey());
-                getTransactionState().finishNodeModification(node);
-            }
-        }
-
-    }
-
-    // ////////////////////////////////////////////////////////////
-    // end of update operation
     // ////////////////////////////////////////////////////////////
 
     // ////////////////////////////////////////////////////////////

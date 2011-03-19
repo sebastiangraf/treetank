@@ -138,7 +138,7 @@ public final class AttributeNode extends AbsNode {
     @Override
     public AbsNode clone() {
         final AbsNode toClone =
-            new AttributeNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData), AbsNode
+            new AttributeNode(ENodes.cloneData(mLongData), ENodes.cloneData(mIntData), ENodes
                 .cloneData(mValue));
         return toClone;
     }
@@ -152,12 +152,7 @@ public final class AttributeNode extends AbsNode {
         intData[AttributeNode.NAME_KEY] = mNameKey;
         intData[AttributeNode.URI_KEY] = mUriKey;
         intData[AbsNode.TYPE_KEY] = mType;
-        return ENodes.ATTRIBUTE_KIND.createNodeFromScratch(longData, intData, mValue);
-    }
-
-    public static AbsNode createData(final long mNodeKey, final AttributeNode mNode) {
-        return createData(mNodeKey, mNode.getParentKey(), mNode.getNameKey(), mNode.getURIKey(), mNode
-            .getTypeKey(), mNode.getRawValue());
+        return new AttributeNode(longData, intData, mValue);
     }
 
     @Override

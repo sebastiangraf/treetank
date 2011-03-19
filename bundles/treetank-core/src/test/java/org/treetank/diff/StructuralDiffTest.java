@@ -16,8 +16,6 @@
  */
 package org.treetank.diff;
 
-import static org.easymock.EasyMock.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -43,7 +41,15 @@ import org.treetank.utils.DocumentCreater;
 import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 /**
  * Test StructuralDiff.
@@ -815,6 +821,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
+
     //
     // @Test
     // public void testStructuralDiffTenth() throws Exception {
@@ -884,6 +891,7 @@ public final class StructuralDiffTest {
     // }
 
     @Test
+    @Ignore
     public void testStructuralDiffTenth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
