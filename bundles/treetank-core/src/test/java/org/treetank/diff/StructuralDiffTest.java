@@ -27,15 +27,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.stream.XMLStreamException;
 
-
-import org.easymock.IAnswer;
 import org.treetank.TestHelper;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.diff.DiffDepth;
-import org.treetank.diff.DiffFactory;
-import org.treetank.diff.IDiffObserver;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffKind;
 import org.treetank.exception.AbsTTException;
@@ -45,6 +40,7 @@ import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.shredder.XMLUpdateShredder;
 import org.treetank.utils.DocumentCreater;
 
+import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,7 +84,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -118,7 +114,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -153,7 +149,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -196,7 +192,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -242,7 +238,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -287,7 +283,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -329,7 +325,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -371,7 +367,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -409,7 +405,7 @@ public final class StructuralDiffTest {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -447,7 +443,7 @@ public final class StructuralDiffTest {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -488,7 +484,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -529,7 +525,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -574,7 +570,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -617,7 +613,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -663,7 +659,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -705,7 +701,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.DELETED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -746,7 +742,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -787,7 +783,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.UPDATED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.INSERTED), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
@@ -918,7 +914,7 @@ public final class StructuralDiffTest {
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));
-        listener.diffListener(EDiff.DONE, null, null, null);
+        listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
