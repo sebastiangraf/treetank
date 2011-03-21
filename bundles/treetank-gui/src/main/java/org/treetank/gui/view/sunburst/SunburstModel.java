@@ -69,7 +69,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
     @Override
     public void update(final SunburstContainer paramContainer) {
         long nodeKey = 0;
-        mLastItems.add(new ArrayList<SunburstItem>(mItems));
+        mLastItems.push(new ArrayList<SunburstItem>(mItems));
+        mLastDepths.push(mLastMaxDepth);
         nodeKey = mItems.get(mGUI.mHitTestIndex).mNode.getNodeKey();
         traverseTree(paramContainer.setKey(nodeKey));
     }
@@ -79,7 +80,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
     public void traverseTree(final SunburstContainer paramContainer) {
         assert paramContainer.mKey >= 0;
         final ExecutorService executor = Executors.newSingleThreadExecutor();
-        final Future<List<SunburstItem>> future =
+        final Future<SunburstFireContainer> future =
             executor.submit(new TraverseTree(paramContainer.mKey, this));
         executor.shutdown();
         try {
@@ -89,7 +90,9 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
         }
         try {
             mGUI.mDone = false;
-            mItems = future.get();
+            mItems = future.get().mItems;
+            mLastMaxDepth =  future.get().mDepthMax;
+            firePropertyChange("maxDepth", null, mLastMaxDepth);
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final ExecutionException e) {
@@ -99,7 +102,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
     }
 
     /** Traverse a tree (single revision). */
-    private static final class TraverseTree extends AbsComponent implements Callable<List<SunburstItem>>,
+    private static final class TraverseTree extends AbsComponent implements Callable<SunburstFireContainer>,
         IItems {
         /** Key from which to start traversal. */
         private transient long mKey;
@@ -169,7 +172,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
          * {@inheritDoc}
          */
         @Override
-        public List<SunburstItem> call() {
+        public SunburstFireContainer call() {
             LOGWRAPPER.debug("Build sunburst items.");
 
             // Get min and max textLength.
@@ -191,7 +194,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             // Fire property changes.
             firePropertyChange("maxDepth", null, mDepthMax);
             
-            return mItems;
+            return new SunburstFireContainer(mItems, mDepthMax);
         }
 
         /** {@inheritDoc} */

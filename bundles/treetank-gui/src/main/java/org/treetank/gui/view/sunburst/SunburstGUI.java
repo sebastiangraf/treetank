@@ -721,6 +721,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @see processing.core.PApplet#keyReleased()
      */
     void keyReleased() {
+        System.out.println(mXPathField.isFocus());
         if (!mXPathField.isFocus() && !mCtrl.isOpen()) {
             switch (mParent.key) {
             case 'c':
@@ -1075,6 +1076,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      *            change value
      */
     public void cancel(final int paramValue) {
+        mTextArea.clear();
         mCtrl.setVisible(false);
     }
 
@@ -1089,6 +1091,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     public void submit(final int paramValue) throws XMLStreamException, FactoryConfigurationError {
         try {
             mCtrl.setVisible(false);
+            mCtrl.setOpen(false);
             final XMLEventReader reader =
                 XMLInputFactory.newInstance().createXMLEventReader(
                     new ByteArrayInputStream(mTextArea.getText().getBytes()));
@@ -1097,6 +1100,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             service.shutdown();
             service.awaitTermination(5, TimeUnit.SECONDS);
             mWtx.close();
+            mTextArea.clear();
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
