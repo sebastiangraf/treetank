@@ -94,14 +94,6 @@ public final class ReadDB {
      */
     public IDatabase getDatabase() {
         return mDatabase;
-        // /**
-        // * Get the {@link IReadTransaction} instance.
-        // *
-        // * @return the Rtx.
-        // */
-        // public IReadTransaction getRtx() {
-        // return mRtx;
-        // }
     }
 
     /**

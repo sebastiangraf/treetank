@@ -22,6 +22,7 @@ import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.concurrent.Semaphore;
 
 import javax.swing.JComponent;
@@ -30,6 +31,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.gui.GUI;
 import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
@@ -96,7 +99,7 @@ public final class SunburstView extends JPanel implements IView {
         mGUI = mNotifier.getGUI();
 
         // Simple scroll mode, because we are adding a heavyweight component (PApplet to the JScrollPane).
-//        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        // getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
         // Create instance of processing innerclass.
         mEmbed = new Embedded();
@@ -139,15 +142,15 @@ public final class SunburstView extends JPanel implements IView {
         return mView;
     }
 
-//    /**
-//     * Not supported.
-//     * 
-//     * @see Object#clone()
-//     */
-//    @Override
-//    public Object clone() throws CloneNotSupportedException {
-//        throw new CloneNotSupportedException();
-//    }
+    /**
+     * Not supported.
+     * 
+     * @see Object#clone()
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
 
     /**
      * {@inheritDoc}
@@ -178,7 +181,20 @@ public final class SunburstView extends JPanel implements IView {
      */
     @Override
     public void refreshInit() {
-
+        long revision = 0;
+        try {
+            final IReadTransaction rtx = mDB.getDatabase().getSession().beginReadTransaction();
+            revision = rtx.getRevisionNumber();
+            rtx.close();
+        } catch (final AbsTTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
+        final File file = mDB.getDatabase().getFile();
+        if (mDB != null) {
+            mDB.close();
+        }
+        mDB = new ReadDB(file, revision);
+        mEmbed.refreshUpdate();
     }
 
     /**
@@ -187,7 +203,7 @@ public final class SunburstView extends JPanel implements IView {
     @Override
     public void refreshUpdate() {
         mDB = mNotifier.getGUI().getReadDB();
-//        setViewportView(mEmbed);
+        // setViewportView(mEmbed);
         add(mEmbed);
 
         /*
@@ -235,11 +251,11 @@ public final class SunburstView extends JPanel implements IView {
         /** Lock while initially querying model, thus draw() doesn't have to be invoked. */
         private transient Semaphore mLock = new Semaphore(1);
 
-//        /** {@inheritDoc} */
-//        @Override
-//        public void setup() {
-//            size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight() - 42);
-//        }
+        /** {@inheritDoc} */
+        @Override
+        public void setup() {
+            size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight() - 42);
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -300,10 +316,9 @@ public final class SunburstView extends JPanel implements IView {
             try {
                 noLoop();
                 mLock.acquire();
-                
-                size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight() - 42);
 
                 if (mModel == null || mSunburstGUI == null) {
+                    // Initial.
                     frameRate(30);
 
                     // Create Model.
@@ -313,15 +328,17 @@ public final class SunburstView extends JPanel implements IView {
                     mSunburstGUI = SunburstGUI.getInstance(this, mModel, mDB);
                     mSunburstGUI.mDone = false;
                     mSunburstGUI.mUseDiffView = false;
-                    
+
                     // Traverse.
                     mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()));
                 } else {
+                    // Database change.
                     mSunburstGUI.mDone = false;
                     mSunburstGUI.mUseDiffView = false;
+                    mSunburstGUI.updateDb(mDB);
                     mModel.updateDb(mDB);
                 }
-                
+
                 handleHLWeight();
             } catch (final InterruptedException e) {
                 LOGWRAPPER.warn(e.getMessage(), e);
@@ -331,10 +348,10 @@ public final class SunburstView extends JPanel implements IView {
             }
         }
 
-        // /** Refresh initialization. Thus Treetank storage has been updated to a new revision. */
-        // void refreshInit() {
-        // mNotifier.init();
-        // }
+        /** Refresh. Thus Treetank storage has been updated to a new revision. */
+        void refresh() {
+            mNotifier.init();
+        }
 
         /** Handle mix of heavyweight ({@link PApplet}) and leightweight ({@link JMenuBar}) components. */
         private void handleHLWeight() {

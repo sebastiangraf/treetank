@@ -29,21 +29,6 @@ import org.treetank.api.IReadTransaction;
  * 
  */
 interface IModel extends Iterable<SunburstItem> {
-    
-    /**
-     * Get a list of descendants per node.
-     * 
-     * @param paramRtx
-     *            Treetank {@link IReadTransaction} over which to iterate.
-     * @return List of {@link Future}s.
-     * @throws ExecutionException
-     *             if execution fails
-     * @throws InterruptedException
-     *             if task gets interrupted
-     */
-    List<Future<Integer>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
-        ExecutionException;
-
     /**
      * Get the {@link SunburstItem} at the specified index.
      * 
@@ -81,17 +66,4 @@ interface IModel extends Iterable<SunburstItem> {
      *            XPath expression to evaluate.
      */
     void evaluateXPath(final String paramXPathExpression);
-    
-    /** 
-     * Create a {@link SunburstItem} used as a callback method in {@link SunburstDescendantAxis}. 
-     * 
-     * @param paramItem
-     *          {@link Item} reference
-     * @param paramDepth
-     *          current depth in the tree
-     * @param mIndex
-     *          index of the current item
-     * @return child extension
-     */
-    float createSunburstItem(final Item paramItem, final int paramDepth, final int mIndex);
 }

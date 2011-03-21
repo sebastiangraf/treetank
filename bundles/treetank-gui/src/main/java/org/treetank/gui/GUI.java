@@ -135,14 +135,13 @@ public final class GUI extends JFrame {
      * @param paramRevision
      *            Determines the revision.
      */
-    void execute(final File paramFile, final long paramRevision) {
+    public void execute(final File paramFile, final long paramRevision) {
         if (mReadDB == null || !paramFile.equals(mReadDB.getDatabase().getFile())
             || paramRevision != mReadDB.getRevisionNumber()) {
             if (mReadDB != null) {
                 mReadDB.close();
             }
             mReadDB = new ReadDB(paramFile, paramRevision);
-//            mNotifier.init();
         }
         mNotifier.update();
     }

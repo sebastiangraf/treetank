@@ -524,29 +524,27 @@ final class SunburstItem {
             }
             mParent.noStroke();
             if (mGUI.mUseDiffView) {
-                mParent.colorMode(PConstants.RGB);
                 switch (mDiff) {
                 case INSERTED:
-                    mParent.fill(255, 0, 0);
+                    mParent.fill(360, 100, mGUI.mDotBrightness);
                     break;
                 case DELETED:
-                    mParent.fill(0, 255, 0);
+                    mParent.fill(200, 100, mGUI.mDotBrightness);
                     break;
                 case UPDATED:
-                    mParent.fill(0, 0, 255);
+                    mParent.fill(120, 100, mGUI.mDotBrightness);
                     break;
                 default:
-                    mParent.colorMode(PConstants.HSB);
-                    mParent.colorMode(PConstants.HSB);
-                    mParent.fill(0, 0, mGUI.mDotBrightness);
+                    mParent.fill(0, 0, 1 - mGUI.mDotBrightness);
                 }
             
                 mParent.ellipse(mX, mY, diameter, diameter);
             } else {
                 mParent.colorMode(PConstants.HSB);
-                mParent.fill(0, 0, mGUI.mDotBrightness);
+                mParent.fill(0, 0, 1 - mGUI.mDotBrightness);
                 mParent.ellipse(mX, mY, diameter, diameter);
             }
+            mParent.noFill();
         }
     }
 
@@ -695,27 +693,24 @@ final class SunburstItem {
             }
             paramBuffer.noStroke();
             if (mGUI.mUseDiffView) {
-                paramBuffer.colorMode(PConstants.RGB);
                 switch (mDiff) {
                 case INSERTED:
-                    paramBuffer.fill(255, 0, 0);
+                    paramBuffer.fill(360, 100, mGUI.mDotBrightness);
                     break;
                 case DELETED:
-                    paramBuffer.fill(0, 255, 0);
+                    paramBuffer.fill(200, 100, mGUI.mDotBrightness);
                     break;
                 case UPDATED:
-                    paramBuffer.fill(0, 0, 255);
+                    paramBuffer.fill(120, 100, mGUI.mDotBrightness);
                     break;
                 default:
-                    paramBuffer.colorMode(PConstants.HSB);
-                    paramBuffer.colorMode(PConstants.HSB);
-                    paramBuffer.fill(0, 0, mGUI.mDotBrightness);
+                    paramBuffer.fill(0, 0, 1 - mGUI.mDotBrightness);
                 }
             
                 paramBuffer.ellipse(mX, mY, diameter, diameter);
             } else {
                 paramBuffer.colorMode(PConstants.HSB);
-                paramBuffer.fill(0, 0, mGUI.mDotBrightness);
+                paramBuffer.fill(0, 0, 1 - mGUI.mDotBrightness);
                 paramBuffer.ellipse(mX, mY, diameter, diameter);
             }
             paramBuffer.noFill();

@@ -71,12 +71,6 @@ public enum GUICommands implements IGUICommand {
             // Create new panel etc.pp. for choosing the revision at the bottom of the frame.
             final JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());
-            // final BoxLayout box = new BoxLayout(panel, BoxLayout.Y_AXIS);
-            // panel.setLayout(box);
-            // final BorderLayout layout = (BorderLayout)fc.getLayout();
-            // final Component comp = layout.getLayoutComponent(BorderLayout.SOUTH);
-
-            // panel.add(fc);
             final JComboBox cb = new JComboBox();
 
             cb.addActionListener(new ActionListener() {
@@ -89,10 +83,8 @@ public enum GUICommands implements IGUICommand {
                 };
             });
 
-            // panel.add(fc, BorderLayout.CENTER);
             panel.add(cb, BorderLayout.SOUTH);
             fc.setAccessory(panel);
-            // fc.add(panel, BorderLayout.SOUTH);
 
             final PropertyChangeListener changeListener = new PropertyChangeListener() {
                 @Override

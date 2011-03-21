@@ -112,7 +112,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     private transient long mTempNextKey;
 
     /** Model which implements the method createSunburstItem(...) defined by {@link IModel}. */
-    private final IModel mModel;
+    private final IItems mModel;
 
     /** {@link List} of {@link EDiff}s. */
     private final List<Diff> mDiffs;
@@ -172,11 +172,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * @param paramMaxDepth
      *            maximum depth in old revision
      */
-    public SunburstCompareDescendantAxis(final boolean mIncludeSelf, final IModel paramModel,
+    public SunburstCompareDescendantAxis(final boolean mIncludeSelf, final IItems paramCallableModel,
         final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx, final List<Diff> paramDiffs,
         final int paramMaxDepth) {
         super(paramNewRtx, mIncludeSelf);
-        mModel = paramModel;
+        mModel = paramCallableModel;
         mDiffs = paramDiffs;
         mNewRtx = paramNewRtx;
         mOldRtx = paramOldRtx;
@@ -603,6 +603,23 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                     getTransaction().moveToFirstChild();
                     diffCounts = incrDiffCounter(index, diffCounts, paramInit);
                     index++;
+                    if (paramInit == EInit.INIT) {
+                        if (index < mDiffs.size()) {
+                            diffCont = mDiffs.get(index);
+                        }
+                        while (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.DELETED) {
+                            mCurrDiff = EDiff.DELETED;
+                            if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index).getDepth()
+                                .getOldDepth()
+                                && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index).getDepth()
+                                    .getOldDepth()) {
+                                diffCounts++;
+                            } else {
+                                break;
+                            }
+                            index++;
+                        }
+                    } else {
                         if (index - 1 < mDiffs.size()) {
                             diffCont = mDiffs.get(index - 1);
                         }
@@ -618,12 +635,29 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                             }
                             index++;
                         }
-                    
+                    }
                 } else {
                     while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
                         if (((AbsStructNode)getTransaction().getNode()).hasParent()
                             && getTransaction().getNode().getNodeKey() != nodeKey) {
                             getTransaction().moveToParent();
+                            if (paramInit == EInit.INIT) {
+                                if (index < mDiffs.size()) {
+                                    diffCont = mDiffs.get(index);
+                                }
+                                while (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.DELETED) {
+                                    mCurrDiff = EDiff.DELETED;
+                                    if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index).getDepth()
+                                        .getOldDepth()
+                                        && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index).getDepth()
+                                            .getOldDepth()) {
+                                        diffCounts++;
+                                    } else {
+                                        break;
+                                    }
+                                    index++;
+                                }
+                            } else {
                                 if (index - 1 < mDiffs.size()) {
                                     diffCont = mDiffs.get(index - 1);
                                 }
@@ -639,6 +673,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                                     }
                                     index++;
                                 }
+                            }
                         } else {
                             break;
                         }
@@ -647,6 +682,24 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         getTransaction().moveToRightSibling();
                         diffCounts = incrDiffCounter(index, diffCounts, paramInit);
                         index++;
+
+                        if (paramInit == EInit.INIT) {
+                            if (index < mDiffs.size()) {
+                                diffCont = mDiffs.get(index);
+                            }
+                            while (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.DELETED) {
+                                mCurrDiff = EDiff.DELETED;
+                                if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index).getDepth()
+                                    .getOldDepth()
+                                    && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index).getDepth()
+                                        .getOldDepth()) {
+                                    diffCounts++;
+                                } else {
+                                    break;
+                                }
+                                index++;
+                            }
+                        } else {
                             if (index - 1 < mDiffs.size()) {
                                 diffCont = mDiffs.get(index - 1);
                             }
@@ -662,6 +715,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                                 }
                                 index++;
                             }
+                        }
                     }
                 }
             } while (getTransaction().getNode().getNodeKey() != nodeKey);
