@@ -103,6 +103,8 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** Model which implements the method createSunburstItem(...) defined by {@link IModel}. */
     private transient IModel mModel;
+    
+    private transient IItems mCallable;
 
     /** {@link List} of {@link Future}s which hold the number of descendants. */
     private transient List<Future<Integer>> mDescendants;
@@ -131,11 +133,12 @@ public final class SunburstDescendantAxis extends AbsAxis {
      *            model which observes axis changes
      */
     public SunburstDescendantAxis(final IReadTransaction paramRtx, final boolean mIncludeSelf,
-        final AbsModel paramModel) {
+        final AbsModel paramModel, final IItems paramCallable) {
         super(paramRtx, mIncludeSelf);
         mModel = paramModel;
+        mCallable = paramCallable;
         try {
-            mDescendants = mModel.getDescendants(getTransaction());
+            mDescendants = mCallable.getDescendants(getTransaction());
             mParDescendantCount = mDescendants.get(mIndex + 1).get();
             mDescendantCount = mParDescendantCount;
         } catch (final InterruptedException e) {
@@ -203,7 +206,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
             }
 
             processMove();
-            mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+            mChildExtension = mCallable.createSunburstItem(mItem, mDepth, mIndex);
 
             mAngleStack.push(mAngle);
             mExtensionStack.push(mChildExtension);
@@ -221,7 +224,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
             mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
 
             processMove();
-            mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+            mChildExtension = mCallable.createSunburstItem(mItem, mDepth, mIndex);
 
             mAngle += mChildExtension;
             mMoved = EMoved.STARTRIGHTSIBL;
@@ -234,7 +237,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
             mNextKey = mRightSiblingKeyStack.pop();
 
             processMove();
-            mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+            mChildExtension = mCallable.createSunburstItem(mItem, mDepth, mIndex);
 
             // Next node will be a right sibling of an anchestor node or the traversal ends.
             mMoved = EMoved.ANCHESTSIBL;
@@ -268,7 +271,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
         // Then end.
         mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         processMove();
-        mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+        mChildExtension = mCallable.createSunburstItem(mItem, mDepth, mIndex);
         return true;
     }
 

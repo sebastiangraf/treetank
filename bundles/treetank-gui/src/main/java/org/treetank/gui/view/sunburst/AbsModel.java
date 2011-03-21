@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
+import org.treetank.axis.AbsAxis;
+import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.gui.ReadDB;
@@ -45,12 +47,6 @@ import processing.core.PApplet;
 abstract class AbsModel extends AbsComponent implements IModel, Iterator<SunburstItem> {
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsModel.class));
-
-    /** Maximum descendant count in tree. */
-    transient long mMaxDescendantCount;
-
-    /** {@link List} of descendants of every node. */
-    transient List<Future<Integer>> mDescendants;
 
     /** Semaphore to guarantee mutual exclusion for all methods. */
     // transient Semaphore mLock = new Semaphore(1);
@@ -82,15 +78,6 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
      */
     transient ReadDB mDb;
 
-    /** Get maximum depth in the (sub)tree. */
-    transient int mDepthMax;
-
-    /** Minimum text length. */
-    transient int mMinTextLength;
-
-    /** Maximum text length. */
-    transient int mMaxTextLength;
-
     /** Index of the current {@link SunburstItem} for the iterator. */
     private transient int mIndex;
 
@@ -115,8 +102,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         }
         mItems = new ArrayList<SunburstItem>();
         mLastItems = new ArrayList<List<SunburstItem>>();
-        mGUI = SunburstGUI.getInstance(mParent, this, paramDb);
         mDb = paramDb;
+        mGUI = SunburstGUI.getInstance(mParent, this, mDb);
         addPropertyChangeListener(mGUI);
     }
 
@@ -135,6 +122,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
+        mLastItems.clear();
         traverseTree(new SunburstContainer().setKey(mDb.getNodeKey()));
     }
 
@@ -142,7 +130,6 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     @Override
     public void evaluateXPath(final String paramXPathExpression) {
         assert paramXPathExpression != null;
-        assert mDepthMax != 0;
 
         // Initialize all items to ISNOTFOUND.
         for (final SunburstItem item : mItems) {
@@ -272,11 +259,11 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                     axis.next();
                     final long key = axis.getTransaction().getNode().getNodeKey();
                     nodeKeys.add(key);
-                    // for (final AbsAxis desc = new DescendantAxis(axis.getTransaction()); desc.hasNext();
-                    // desc.next()) {
-                    // nodeKeys.add(desc.getTransaction().getNode().getNodeKey());
-                    // }
-                    // axis.getTransaction().moveTo(key);
+                    for (final AbsAxis desc = new DescendantAxis(axis.getTransaction()); desc.hasNext(); desc
+                        .next()) {
+                        nodeKeys.add(desc.getTransaction().getNode().getNodeKey());
+                    }
+                    axis.getTransaction().moveTo(key);
                 }
 
                 // Do the work.

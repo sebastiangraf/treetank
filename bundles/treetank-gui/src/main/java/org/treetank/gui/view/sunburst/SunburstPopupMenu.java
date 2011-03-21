@@ -16,13 +16,13 @@
  */
 package org.treetank.gui.view.sunburst;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.xml.namespace.QName;
+
+import controlP5.ControlGroup;
+import controlP5.Textarea;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
@@ -40,175 +40,48 @@ import processing.core.PApplet;
  */
 final class SunburstPopupMenu extends JPopupMenu {
 
-    /** Parent processing {@link PApplet}. */
-    private final Embedded mParent;
+    /** {@link SunburstGUI} instance. */
+    private final SunburstGUI mGUI;
 
     /** Treetank {@link IWriteTransaction}. */
     private final IWriteTransaction mWtx;
 
-    /** {@link ReadDB} reference. */
-    private transient ReadDB mDb;
+    /** Textarea for XML fragment input. */
+    private final ControlGroup mCtrl;
 
     /**
      * Constructor.
      * 
-     * @param paramApplet
-     *            parent processing {@link PApplet}
+     * @param paramGUI
+     *            {@link SunburstGUI} instance
      * @param paramWtx
      *            Treetank {@link IWriteTransaction}
-     * @param paramDb
-     *            read Treetank database
+     * @param paramCtrl
+     *            control group for XML input
      */
-    SunburstPopupMenu(final Embedded paramApplet, final IWriteTransaction paramWtx, final ReadDB paramDb) {
-        mParent = paramApplet;
+    SunburstPopupMenu(final SunburstGUI paramGUI, final IWriteTransaction paramWtx,
+        final ControlGroup paramCtrl) {
+        mGUI = paramGUI;
         mWtx = paramWtx;
-        mDb = paramDb;
+        mCtrl = paramCtrl;
 
+        switch (mWtx.getNode().getKind()) {
+        case ELEMENT_KIND:
+            createMenu();
+            break;
+        case TEXT_KIND:
+            EMenu.DELETE.createMenuItem(mGUI, this, mWtx, mCtrl);
+            break;
+        }
+    }
+
+    /**
+     * Create all menu items.
+     */
+    private void createMenu() {
         for (EMenu menu : EMenu.values()) {
             // Create and add a menu item
-            final JMenuItem item = new JMenuItem(menu.toString());
-
-            switch (menu) {
-            case INSERT_ELEMENT_AS_FIRST_CHILD:
-                item.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent paramEvent) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });
-                break;
-            case INSERT_ELEMENT_AS_RIGHT_SIBLING:
-                item.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent paramEvent) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });
-                break;
-            case INSERT_TEXT_AS_FIRST_CHILD:
-                item.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent paramEvent) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });
-                break;
-            case INSERT_TEXT_AS_RIGHT_SIBLING:
-                item.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent paramEvent) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });
-                break;
-            case DELETE:
-                item.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent paramEvent) {
-                        delete();
-                    }
-                });
-                break;
-            default:
-                throw new AssertionError("Enum value not known!");
-            }
-
-            add(item);
+            menu.createMenuItem(mGUI, this, mWtx, mCtrl);
         }
-    }
-
-    /**
-     * Insert element as first child of the current node.
-     * 
-     * @param paramName
-     *            {@link QName} of the element node to insert.
-     */
-    private void insertElementAsFirstChild(final QName paramName) {
-        try {
-            mWtx.insertElementAsFirstChild(paramName);
-        } catch (final AbsTTException e) {
-            JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
-        }
-
-        refresh();
-    }
-
-    /**
-     * Insert element as right sibling of the current node.
-     * 
-     * @param paramName
-     *            {@link QName} of the element node to insert.
-     */
-    private void insertElementAsRightSibling(final QName paramName) {
-        try {
-            mWtx.insertElementAsRightSibling(paramName);
-        } catch (final AbsTTException e) {
-            JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
-        }
-
-        refresh();
-    }
-
-    /**
-     * Insert text as right sibling of the current node.
-     * 
-     * @param paramText
-     *            Text to insert.
-     */
-    private void insertTextAsFirstChild(final String paramText) {
-        try {
-            mWtx.insertTextAsFirstChild(paramText);
-        } catch (final AbsTTException e) {
-            JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
-        }
-
-        refresh();
-    }
-
-    /**
-     * Insert text as right sibling of the current node.
-     * 
-     * @param paramText
-     *            Text to insert.
-     */
-    private void insertTextAsRightSibling(final String paramText) {
-        try {
-            mWtx.insertTextAsRightSibling(paramText);
-        } catch (final AbsTTException e) {
-            JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
-        }
-
-        refresh();
-    }
-
-    /** Delete the current node, and it's subtree. */
-    private void delete() {
-        try {
-            mWtx.remove();
-        } catch (final AbsTTException e) {
-            JOptionPane.showMessageDialog(mParent, "Failed to delete node: " + e.getMessage());
-        }
-
-        refresh();
-    }
-
-    /**
-     * Commit and refresh.
-     */
-    private void refresh() {
-        try {
-            mWtx.commit();
-            mWtx.close();
-            final IReadTransaction rtx = mDb.getSession().beginReadTransaction();
-            mDb = new ReadDB(mDb.getDatabase().getFile(), rtx.getRevisionNumber());
-            rtx.close();
-        } catch (final AbsTTException e) {
-            JOptionPane.showMessageDialog(mParent, "Failed to commit change: " + e.getMessage());
-        }
-        mParent.refreshUpdate();
     }
 }

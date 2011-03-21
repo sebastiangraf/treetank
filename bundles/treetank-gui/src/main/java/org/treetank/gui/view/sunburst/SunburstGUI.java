@@ -19,12 +19,18 @@ package org.treetank.gui.view.sunburst;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.*;
+
+import javax.swing.JOptionPane;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 
 import controlP5.*;
 
@@ -37,6 +43,9 @@ import org.treetank.exception.TTIOException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
+import org.treetank.service.xml.shredder.EShredderCommit;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
@@ -121,7 +130,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     transient float mDotSize = 3f;
 
     /** Dot brightness. */
-    transient float mDotBrightness = 1f;
+    transient float mDotBrightness = 80f;
 
     /** Show arcs. */
     transient boolean mShowArcs = true;
@@ -204,18 +213,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** {@link ControlP5} toggles. */
     private transient List<Toggle> mToggles;
 
-    /** Drawing strategy. */
-    private volatile EDraw mDraw;
-
     /** {@link ControlP5} text field. */
     private transient Textfield mXPathField;
 
     /** Parent {@link PApplet}. */
     final Embedded mParent;
-
-    /** {@link ExecutorService} to parallelize painting. */
-    private transient ExecutorService mService;
-
+    
     private transient boolean mFirst;
 
     /** Determines if model has done the work. */
@@ -237,6 +240,14 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     volatile int mSelectedRev;
 
     volatile int mOldDepthMax;
+
+    private transient ControlGroup mCtrl;
+
+    private transient EShredderInsert mInsert;
+
+    private transient Textfield mTextArea;
+    
+    private transient boolean mUseNewMouseCoords = false;
 
     /**
      * Private constructor.
@@ -374,6 +385,27 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mXPathField.setFocus(false);
         mXPathField.setAutoClear(false);
         mXPathField.plugTo(this);
+
+        // Add textfield for XML fragment input.
+        mCtrl = mControlP5.addGroup("add XML fragment", 150, 25, 115);
+        mCtrl.setVisible(false);
+        mCtrl.close();
+
+        mTextArea =
+            mControlP5
+                .addTextfield(
+                    "Add XML fragment",
+                    0, 20, 400, 100);
+        mTextArea.setColorBackground(mParent.color(0)); // black
+        mTextArea.setColorForeground(mParent.color(255)); // white
+        mTextArea.setGroup(mCtrl);
+
+        final Button submit = mControlP5.addButton("submit", 20, 0, 140, 80, 19);
+        submit.plugTo(this);
+        submit.setGroup(mCtrl);
+        final Button cancel = mControlP5.addButton("cancel", 20, 150, 140, 80, 19);
+        cancel.plugTo(this);
+        cancel.setGroup(mCtrl);
 
         style(si, ri, ti);
     }
@@ -531,8 +563,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 LOGWRAPPER.debug("Without buffered image!");
                 mParent.background(0, 0, mBackgroundBrightness);
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
-                mDraw = EDraw.DRAW;
-                drawItems();
+                drawItems(EDraw.DRAW);
             } else {
                 LOGWRAPPER.debug("Buffered image!");
                 try {
@@ -551,7 +582,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             rollover();
 
             // Mouse rollover.
-            if ((!mZoomPanEnded || mZoomer.isZooming() || mZoomer.isPanning()) && !mShowGUI) {
+            if ((!mZoomPanEnded || mZoomer.isZooming() || mZoomer.isPanning()) && !mShowGUI
+                && !mCtrl.isVisible()) {
                 // Depth level focus.
                 if (mDepth <= mDepthMax) {
                     final float firstRad = calcEqualAreaRadius(mDepth, mDepthMax);
@@ -583,8 +615,14 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             }
 
             // Fisheye view.
-            if (mFisheye) {
+            if (mFisheye && !mSavePDF) { // In PDF mode cannot make pixel based transformations.
+                // Fisheye transormation.
                 fisheye(mParent.mouseX, mParent.mouseY, 120);
+            }
+            
+            if (mZoomPanEnded) {
+                update();
+                mZoomPanEnded = false;
             }
 
             mParent.popMatrix();
@@ -601,7 +639,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Initialize rollover method. */
     private void rolloverInit() {
         mHitTestIndex = -1;
-        if (mZoomer.isZooming() || mZoomer.isPanning() || mZoomPanEnded) {
+        if (mZoomer.isZooming() || mZoomer.isPanning() || mUseNewMouseCoords) {
             final PVector mousePosition = mZoomer.getMouseCoord();
             mX = mousePosition.x - mParent.width / 2;
             mY = mousePosition.y - mParent.height / 2;
@@ -683,7 +721,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @see processing.core.PApplet#keyReleased()
      */
     void keyReleased() {
-        if (!mXPathField.isFocus()) {
+        if (!mXPathField.isFocus() && !mCtrl.isOpen()) {
             switch (mParent.key) {
             case 'c':
             case 'C':
@@ -723,6 +761,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
                 mRevisions =
                     mControlP5.addDropdownList("Compare revision", mParent.width - 250, 100, 100, 120);
+                assert mDb != null;
                 try {
                     for (long i = mDb.getRevisionNumber() + 1, newestRev =
                         mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
@@ -833,9 +872,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                             mWtx.close();
                         }
                         mWtx = mDb.getSession().beginWriteTransaction();
-                        // wtx.revertTo(..getRevisionNumber());
+                        mWtx.revertTo(mDb.getRevisionNumber());
                         mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
-                        final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, mWtx, mDb);
+                        final SunburstPopupMenu menu = new SunburstPopupMenu(this, mWtx, mCtrl);
                         menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
                     } catch (final AbsTTException e) {
                         LOGWRAPPER.error(e.getMessage(), e);
@@ -927,134 +966,37 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     private void updateBuffer() {
         mBuffer.pushMatrix();
+        mZoomer.transform();
         mBuffer.colorMode(PConstants.HSB, 360, 100, 100, 100);
         mBuffer.background(0, 0, mBackgroundBrightness);
         mBuffer.noFill();
         mBuffer.ellipseMode(PConstants.RADIUS);
         mBuffer.strokeCap(PConstants.SQUARE);
-        // mBuffer.textLeading(14);
-        // mBuffer.textAlign(PConstants.LEFT, PConstants.TOP);
         mBuffer.smooth();
-
-        // Add menubar height (21 pixels).
         mBuffer.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
 
         // Draw items.
-        // mService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        mDraw = EDraw.UPDATEBUFFER;
-        drawItems();
+        drawItems(EDraw.UPDATEBUFFER);
 
-        // mService.submit(new UpdateBuffer(item));
-        // }
-        // mService.shutdown();
-        // try {
-        // mService.awaitTermination(5, TimeUnit.SECONDS);
-        // } catch (final InterruptedException e) {
-        // LOGWRAPPER.error(e.getMessage(), e);
-        // }
         mBuffer.popMatrix();
     }
-
-    /** Updates the buffered offscreen image after a zoom or pan. */
-    private void updateImage() {
-        LOGWRAPPER.debug("Available permits: " + mLock.availablePermits());
-        mParent.noLoop();
-
-        mParent.pushMatrix();
-
-        // This enables zooming/panning.
-        mZoomer.transform();
-        mFirst = true;
-
-        mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
-        mParent.noFill();
-        mParent.ellipseMode(PConstants.RADIUS);
-        mParent.strokeCap(PConstants.SQUARE);
-        mParent.textLeading(14);
-        mParent.textAlign(PConstants.LEFT, PConstants.TOP);
-        mParent.smooth();
-        mParent.background(0, 0, mBackgroundBrightness);
-        mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
-        mDraw = EDraw.DRAW;
-        drawItems();
-        mParent.popMatrix();
-
-        try {
-            mLock.acquire();
-            mImg = mParent.get(0, 0, mParent.width, mParent.height);
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.warn(e.getMessage(), e);
-        } finally {
-            mLock.release();
-            mParent.loop();
-        }
-    }
-
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @SuppressWarnings("unchecked")
-    // @Override
-    // public void propertyChange(final PropertyChangeEvent paramEvent) {
-    // boolean modifiedDepth = false;
-    // try {
-    // mLock.acquire();
-    // if (paramEvent.getPropertyName().equals("items")) {
-    // assert paramEvent.getNewValue() instanceof List;
-    // mItems = (List<SunburstItem>)paramEvent.getNewValue();
-    // } else if (paramEvent.getPropertyName().equals("maxDepth")) {
-    // assert paramEvent.getNewValue() instanceof Integer;
-    // mDepthMax = (Integer)paramEvent.getNewValue();
-    // modifiedDepth = true;
-    // }
-    // } catch (final InterruptedException e) {
-    // LOGWRAPPER.warn(e.getMessage(), e);
-    // } finally {
-    // mLock.release();
-    // }
-    // if (modifiedDepth) {
-    // update();
-    // }
-    // }
 
     /** Class for responding to the end of a zoom or pan action. */
     private final class MyListener implements ZoomPanListener {
         @Override
         public void panEnded() {
             LOGWRAPPER.debug("Pan ended!");
+            mUseNewMouseCoords = true;
             mZoomPanEnded = true;
-            updateImage();
         }
 
         @Override
         public void zoomEnded() {
             LOGWRAPPER.debug("Zoom ended!");
             mZoomPanEnded = true;
-            updateImage();
+            mUseNewMouseCoords = true;
         }
     }
-
-    // /** Update buffer concurrently. */
-    // private final class UpdateBuffer implements Runnable {
-    // /** @see SunburstItem */
-    // private final SunburstItem mItem;
-    //
-    // /**
-    // * Constructor.
-    // *
-    // * @param paramItem
-    // * {@link SunburstItem}
-    // */
-    // private UpdateBuffer(final SunburstItem paramItem) {
-    // mItem = paramItem;
-    // }
-    //
-    // @Override
-    // public void run() {
-    // mItem.update(mGUI.getMappingMode(), mBuffer);
-    // mDraw.drawStrategy(mGUI, mItem);
-    // }
-    // }
 
     /** {@inheritDoc} */
     @Override
@@ -1098,24 +1040,95 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /**
      * Draw items.
+     * 
+     * @param paramDraw
+     *            determines the drawing strategy
      */
-    private void drawItems() {
+    private void drawItems(final EDraw paramDraw) {
         for (final SunburstItem item : mModel) {
             item.update(getMappingMode(), null);
             if (mUseDiffView) {
-                mDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
+                paramDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
             } else {
-                mDraw.drawStrategy(this, item, EDrawSunburst.NORMAL);
+                paramDraw.drawStrategy(this, item, EDrawSunburst.NORMAL);
             }
         }
 
         if (mUseDiffView) {
-            mDraw.drawNewRevision(this);
-            mDraw.drawOldRevision(this);
+            paramDraw.drawNewRevision(this);
+            paramDraw.drawOldRevision(this);
 
             for (final SunburstItem item : mModel) {
-                EDrawSunburst.COMPARE.draw(this, item, mDraw);
+                paramDraw.drawRelation(this, item);
+            }
+
+            for (final SunburstItem item : mModel) {
+                paramDraw.drawDot(this, item);
             }
         }
+    }
+
+    /**
+     * Method to process event for cancel-button.
+     * 
+     * @param paramValue
+     *            change value
+     */
+    public void cancel(final int paramValue) {
+        mCtrl.setVisible(false);
+    }
+
+    /**
+     * Method to process event for submit-button.
+     * 
+     * @param paramValue
+     *            change value
+     * @throws FactoryConfigurationError
+     * @throws XMLStreamException
+     */
+    public void submit(final int paramValue) throws XMLStreamException, FactoryConfigurationError {
+        try {
+            mCtrl.setVisible(false);
+            final XMLEventReader reader =
+                XMLInputFactory.newInstance().createXMLEventReader(
+                    new ByteArrayInputStream(mTextArea.getText().getBytes()));
+            final ExecutorService service = Executors.newSingleThreadExecutor();
+            service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.COMMIT));
+            service.shutdown();
+            service.awaitTermination(5, TimeUnit.SECONDS);
+            mWtx.close();
+        } catch (final AbsTTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final FactoryConfigurationError e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final XMLStreamException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        }
+        mParent.refresh();
+    }
+
+    /**
+     * Set insert for shredding.
+     * 
+     * @param paramInsert
+     *            determines how to insert an XML fragment
+     */
+    void setInsert(final EShredderInsert paramInsert) {
+        mInsert = paramInsert;
+    }
+    
+    /**
+     * Set database instance.
+     * 
+     * @param paramDb the {@link ReadDB} instance to set
+     */
+    void updateDb(final ReadDB paramDb) {
+        mDb = paramDb;
     }
 }
