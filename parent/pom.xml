@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>treetank</groupId>
 	<artifactId>pom</artifactId>
@@ -43,6 +44,7 @@
 			<roles>
 				<role>Project Manager</role>
 				<role>Developer</role>
+				<role>Architect</role>
 			</roles>
 			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme/mitglieder/Sebastian-Graf
 			</url>
@@ -69,6 +71,48 @@
 		<developer>
 			<name>Johannes Lichtenberger</name>
 			<email>johannes.lichtenberger@uni-konstanz.de</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme
+			</url>
+			<organization>University of Konstanz, Distributed Systems Lab
+			</organization>
+			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/
+			</organizationUrl>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<name>Patrick Lang</name>
+			<email>patrick.3.lang@uni-konstanz.de</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme
+			</url>
+			<organization>University of Konstanz, Distributed Systems Lab
+			</organization>
+			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/
+			</organizationUrl>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<name>Daniel Kech</name>
+			<email>daniel.kech@uni-konstanz.de</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme
+			</url>
+			<organization>University of Konstanz, Distributed Systems Lab
+			</organization>
+			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/
+			</organizationUrl>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<name>Christoph Neu</name>
+			<email>christoph.neu@uni-konstanz.de</email>
 			<roles>
 				<role>Developer</role>
 			</roles>
@@ -153,6 +197,11 @@
 	</reporting>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.9.0</version>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
