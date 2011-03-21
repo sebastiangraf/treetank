@@ -27,14 +27,18 @@ public class SunburstFireContainer {
     
     transient int mOldDepthMax;
     
-    transient int mNewDepthMax;
+    transient int mDepthMax;
     
-    SunburstFireContainer(final List<SunburstItem> paramItems, final int paramOldDepthMax, final int paramNewDepthMax) {
+    SunburstFireContainer(final List<SunburstItem> paramItems, final int paramDepthMax) {
         assert paramItems != null;
-        assert paramOldDepthMax >= 0;
-        assert paramNewDepthMax >= 0;
+        assert paramDepthMax >= 0;
         mItems = paramItems;
+        mDepthMax = paramDepthMax;
+    }
+    
+    SunburstFireContainer setOldDepthMax(final int paramOldDepthMax) {
+        assert paramOldDepthMax >= 0;
         mOldDepthMax = paramOldDepthMax;
-        mNewDepthMax = paramNewDepthMax;
+        return this;
     }
 }

@@ -57,7 +57,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /**
      * Temporary {@link List} of {@link List}s of {@link SunburstItem}s.
      */
-    final List<List<SunburstItem>> mLastItems;
+//    final List<List<SunburstItem>> mLastItems;
 
     /** {@link SunburstGUI} interface. */
     final SunburstGUI mGUI;
@@ -80,6 +80,15 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
 
     /** Index of the current {@link SunburstItem} for the iterator. */
     private transient int mIndex;
+    
+    /** {@link Stack} with {@link List}s of {@link SunburstItem}s for undo operation. */
+    transient Stack<List<SunburstItem>> mLastItems;
+    
+    /** {@link Stack} with depths for undo operation. */
+    transient Stack<Integer> mLastDepths;
+    
+    /** Last maximum depth in the tree. */
+    transient int mLastMaxDepth;
 
     /**
      * Constructor.
@@ -101,7 +110,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             LOGWRAPPER.error(e.getMessage(), e);
         }
         mItems = new ArrayList<SunburstItem>();
-        mLastItems = new ArrayList<List<SunburstItem>>();
+        mLastItems = new Stack<List<SunburstItem>>();
+        mLastDepths = new Stack<Integer>();
         mDb = paramDb;
         mGUI = SunburstGUI.getInstance(mParent, this, mDb);
         addPropertyChangeListener(mGUI);
@@ -122,7 +132,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        mLastItems.clear();
+        mLastItems = new Stack<List<SunburstItem>>();
+        mLastDepths = new Stack<Integer>();
         traverseTree(new SunburstContainer().setKey(mDb.getNodeKey()));
     }
 
@@ -144,11 +155,11 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** {@inheritDoc} */
     @Override
     public void undo() {
-        if (!mLastItems.isEmpty()) {
+        if (!mLastItems.empty()) {
             // Go back one index in history list.
-            final int lastItemIndex = mLastItems.size() - 1;
-            mItems = mLastItems.get(lastItemIndex);
-            mLastItems.remove(lastItemIndex);
+            mItems = mLastItems.pop();
+            mLastMaxDepth = mLastDepths.peek();
+            firePropertyChange("maxDepth", null, mLastDepths.pop());
             firePropertyChange("done", null, true);
         }
     }

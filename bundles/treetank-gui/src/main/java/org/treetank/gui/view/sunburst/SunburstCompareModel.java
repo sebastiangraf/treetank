@@ -101,7 +101,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             mGUI.mDone = false;
             mItems = future.get().mItems;
             firePropertyChange("oldMaxDepth", null, future.get().mOldDepthMax);
-            firePropertyChange("maxDepth", null, future.get().mNewDepthMax);
+            firePropertyChange("maxDepth", null, future.get().mDepthMax);
             
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
@@ -267,7 +267,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
             LOGWRAPPER.debug("oldMaxDepth: " + mDepthMax);
 
-            return new SunburstFireContainer(mItems, mDepthMax, mNewDepthMax);
+            return new SunburstFireContainer(mItems, mNewDepthMax).setOldDepthMax(mDepthMax);
         }
 
         /** {@inheritDoc} */
