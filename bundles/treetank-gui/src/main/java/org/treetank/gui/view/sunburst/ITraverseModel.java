@@ -67,4 +67,12 @@ public interface ITraverseModel {
      */
     List<Future<Integer>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
         ExecutionException;
+    
+    /**
+     * Get minimum and maximum global text length.
+     * 
+     * @param paramRtx
+     *            Treetank {@link IReadTransaction}
+     */
+    void getMinMaxTextLength(final IReadTransaction paramRtx);
 }
