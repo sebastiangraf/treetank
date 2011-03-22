@@ -256,4 +256,10 @@
         </pluginManagement>
     </build>
 
+
+  <scm>
+    <connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/eclipse-1.0.0</connection>
+    <developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/eclipse-1.0.0</developerConnection>
+    <url>https://svn.uni-konstanz.de/disy/Treetank/tags/eclipse-1.0.0</url>
+  </scm>
 </project>
