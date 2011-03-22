@@ -196,7 +196,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final boolean moveToFirstChild() {
-        final IStructuralItem node = getNodeIfStructural();
+        final IStructuralItem node = getStructuralNode();
         return node == null ? false : moveTo(node.getFirstChildKey());
     }
 
@@ -205,7 +205,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final boolean moveToLeftSibling() {
-        final IStructuralItem node = getNodeIfStructural();
+        final IStructuralItem node = getStructuralNode();
         return node == null ? false : moveTo(node.getLeftSiblingKey());
     }
 
@@ -214,7 +214,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final boolean moveToRightSibling() {
-        final IStructuralItem node = getNodeIfStructural();
+        final IStructuralItem node = getStructuralNode();
         return node == null ? false : moveTo(node.getRightSiblingKey());
     }
 
@@ -472,17 +472,6 @@ public class ReadTransaction implements IReadTransaction {
         return qname;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final IStructuralItem getNodeIfStructural() {
-        if (mCurrentNode instanceof AbsStructNode) {
-            return (IStructuralItem)mCurrentNode;
-        } else {
-            return null;
-        }
-    }
     
     /**
      * {@inheritDoc}

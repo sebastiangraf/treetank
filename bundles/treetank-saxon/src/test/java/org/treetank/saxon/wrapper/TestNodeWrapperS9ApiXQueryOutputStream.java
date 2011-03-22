@@ -1,5 +1,6 @@
 /**
- * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ 
+* Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,16 +34,15 @@ import java.io.OutputStream;
 
 import javax.xml.stream.XMLEventReader;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.access.DatabaseConfiguration;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.service.xml.shredder.EShredderInsert;
-import com.treetank.service.xml.shredder.XMLShredder;
-
+import org.treetank.TestHelper;
+import org.treetank.access.Database;
+import org.treetank.access.DatabaseConfiguration;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.AfterClass;
 import org.junit.Before;

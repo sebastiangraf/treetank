@@ -39,22 +39,19 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.node.ENodes;
-import com.treetank.utils.DocumentCreater;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
-import org.treetank.saxon.wrapper.DocumentWrapper;
-import org.treetank.saxon.wrapper.NodeWrapper;
+import org.treetank.TestHelper;
+import org.treetank.access.Database;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.node.ENodes;
+import org.treetank.utils.DocumentCreater;
 
 import org.junit.AfterClass;
 import org.junit.Before;

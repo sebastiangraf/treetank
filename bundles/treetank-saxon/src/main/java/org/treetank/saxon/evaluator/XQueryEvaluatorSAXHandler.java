@@ -31,8 +31,6 @@ import java.util.concurrent.Callable;
 
 import org.xml.sax.ContentHandler;
 
-import com.treetank.api.IDatabase;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SAXDestination;
@@ -42,6 +40,7 @@ import net.sf.saxon.s9api.XQueryExecutable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IDatabase;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 import org.treetank.saxon.wrapper.NodeWrapper;
 

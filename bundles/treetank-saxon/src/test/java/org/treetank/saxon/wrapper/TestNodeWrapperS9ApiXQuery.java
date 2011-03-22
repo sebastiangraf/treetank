@@ -31,19 +31,18 @@ import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.access.DatabaseConfiguration;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.service.xml.shredder.EShredderInsert;
-import com.treetank.service.xml.shredder.XMLShredder;
-
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
 
+import org.treetank.TestHelper;
+import org.treetank.access.Database;
+import org.treetank.access.DatabaseConfiguration;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XQueryEvaluator;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.AfterClass;
 import org.junit.Before;

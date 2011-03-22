@@ -98,7 +98,6 @@
       final StringBuilder strBuilder = new StringBuilder();
       final ContentHandler contHandler = new XMLFilterImpl() {
 
-        @Override
         public void startElement(
           final String uri,
           final String localName,
@@ -114,13 +113,11 @@
           strBuilder.append(">");
         }
 
-        @Override
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
           strBuilder.append("</" + localName + ">");
         }
 
-        @Override
         public void characters(final char[] ch, final int start, final int length)
             throws SAXException {
           for (int i = start; i < start + length; i++) {

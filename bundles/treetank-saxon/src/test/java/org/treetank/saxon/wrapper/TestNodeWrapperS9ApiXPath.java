@@ -27,19 +27,18 @@
 
 package org.treetank.saxon.wrapper;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.utils.DocumentCreater;
-
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.treetank.TestHelper;
+import org.treetank.access.Database;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
+import org.treetank.utils.DocumentCreater;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

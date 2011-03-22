@@ -36,16 +36,15 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.access.DatabaseConfiguration;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.service.xml.shredder.EShredderInsert;
-import com.treetank.service.xml.shredder.XMLShredder;
-
+import org.treetank.TestHelper;
+import org.treetank.access.Database;
+import org.treetank.access.DatabaseConfiguration;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorSAXHandler;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.AfterClass;
 import org.junit.Before;
