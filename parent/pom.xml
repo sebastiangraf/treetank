@@ -38,9 +38,9 @@
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/
 	</url>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+		<connection>scm:hg:http://treetank.hg.sourceforge.net:8000/hgroot/treetank/treetank</connection>
+		<developerConnection>scm:hg:ssh://sebastiangraf@treetank.hg.sourceforge.net/hgroot/treetank/treetank </developerConnection>
+		<url>http://treetank.hg.sourceforge.net:8000/hgroot/treetank/treetank/</url>
 	</scm>
 	<issueManagement>
 		<system>Redmine</system>
@@ -51,7 +51,7 @@
 		<url>http://xen5.disy.inf.uni-konstanz.de/hudson</url>
 	</ciManagement>
 	<organization>
-		<name>University of Konstanz, Distributed Systems Lab</name>
+		<name>University of Konstanz, Distributed Systems Group</name>
 		<url>http://www.informatik.uni-konstanz.de/ags/disy/
 		</url>
 	</organization>
