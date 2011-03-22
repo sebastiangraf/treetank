@@ -40,7 +40,7 @@ import org.treetank.page.PagePersistenter;
  * reconstructed. Afterwards, this container is used to store a complete {@link NodePage} as well as one for
  * upcoming modifications.
  * 
- * Both {@link Nodepage}s can differ since the complete one is mainly used for
+ * Both {@link NodePage}s can differ since the complete one is mainly used for
  * read access and the modifying one for write access (and therefore mostly lazy
  * dereferenced).
  * 
@@ -59,24 +59,24 @@ public final class NodePageContainer {
     /**
      * Constructor with complete page and lazy instantiated modifying page.
      * 
-     * @param mComplete
+     * @param paramComplete
      *            to be used as a base for this container.
      */
-    public NodePageContainer(final NodePage mComplete) {
-        this(mComplete, new NodePage(mComplete.getNodePageKey(), mComplete.getRevision()));
+    public NodePageContainer(final NodePage paramComplete) {
+        this(paramComplete, new NodePage(paramComplete.getNodePageKey(), paramComplete.getRevision()));
     }
 
     /**
      * Constructor with both, complete and modifying page.
      * 
-     * @param mComplete
+     * @param paramComplete
      *            to be used as a base for this container
-     * @param mModifying
+     * @param paramModifying
      *            to be used as a base for this container
      */
-    public NodePageContainer(final NodePage mComplete, final NodePage mModifying) {
-        this.mComplete = mComplete;
-        this.mModified = mModifying;
+    public NodePageContainer(final NodePage paramComplete, final NodePage paramModifying) {
+        this.mComplete = paramComplete;
+        this.mModified = paramModifying;
     }
 
     /**
@@ -100,11 +100,11 @@ public final class NodePageContainer {
     /**
      * Serializing the container to the cache.
      * 
-     * @param mOut
+     * @param paramOut
      *            for serialization
      */
-    public void serialize(final TupleOutput mOut) {
-        final TupleOutputSink sink = new TupleOutputSink(mOut);
+    public void serialize(final TupleOutput paramOut) {
+        final TupleOutputSink sink = new TupleOutputSink(paramOut);
         PagePersistenter.serializePage(sink, mComplete);
         PagePersistenter.serializePage(sink, mModified);
     }

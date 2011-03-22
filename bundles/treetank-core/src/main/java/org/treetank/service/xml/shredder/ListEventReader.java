@@ -153,8 +153,6 @@ public final class ListEventReader implements XMLEventReader {
      * Just calls nextEvent().
      * 
      * @return null if an XMLStreamException occured
-     * @throw NoSuchElementException
-     *        thrown if no more elements are in the list.
      */
     @Override
     public Object next() {

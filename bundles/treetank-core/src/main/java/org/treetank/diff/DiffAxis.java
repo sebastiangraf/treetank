@@ -47,8 +47,6 @@ public class DiffAxis extends AbsAxis {
      *            {@link IReadTransaction} on new revision
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
-     * @param paramDiff
-     *            determines the kind of diff
      */
     public DiffAxis(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         super(paramNewRtx);

@@ -266,8 +266,6 @@ public final class DocumentCreater {
     /**
      * Create revisioned document.
      * 
-     * @param secondWtx
-     *            {@link IWriteTransaction} to create the new revision
      * @throws AbsTTException
      *             if shredding fails
      * @throws XMLStreamException

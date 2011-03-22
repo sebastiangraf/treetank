@@ -58,7 +58,7 @@ import org.treetank.utils.LogWrapper;
  * 
  * <p>
  * Import of temporal data, which is either available as exactly one file which includes several revisions or
- * many files, whereas one file represents exactly one revision. Beforehand one or more {@link RevNode}s have
+ * many files, whereas one file represents exactly one revision. Beforehand one or more <code>RevNode</code> have
  * to be instanciated.
  * </p>
  * 

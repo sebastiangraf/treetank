@@ -52,7 +52,7 @@ public interface ICache {
     NodePageContainer get(final long mKey);
 
     /**
-     * Putting an {@link NodePage} into the cache with a corresponding
+     * Putting an {@link NodePageContainer} into the cache with a corresponding
      * nodepagekey.
      * 
      * @param mKey

@@ -45,20 +45,20 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     private transient final LRUCache mFirstCache;
 
     /**
-     * Constructor including the {@link SessionConfiguration} for persistent
+     * Constructor including the {@link DatabaseConfiguration} for persistent
      * storage.
      * 
      * @param paramConfig
      *            the config for having a storage-place
-     * @param revision
+     * @param paramRevision
      *            revision number
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public TransactionLogCache(final DatabaseConfiguration paramConfig, final long revision)
+    public TransactionLogCache(final DatabaseConfiguration paramConfig, final long paramRevision)
         throws TTIOException {
         super(paramConfig);
-        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(paramConfig, revision);
+        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(paramConfig, paramRevision);
         mFirstCache = new LRUCache(secondCache);
     }
 

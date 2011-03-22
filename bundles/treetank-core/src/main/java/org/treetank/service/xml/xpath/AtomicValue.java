@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -117,6 +117,7 @@ public class AtomicValue implements IItem {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setNodeKey(final long mItemKey) {
 
         this.mItemKey = mItemKey;
@@ -125,14 +126,7 @@ public class AtomicValue implements IItem {
     /**
      * {@inheritDoc}
      */
-    public boolean isNode() {
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public byte[] getRawValue() {
 
         return mValue.clone();
@@ -141,6 +135,7 @@ public class AtomicValue implements IItem {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long getParentKey() {
 
         return (Integer)EFixed.NULL_NODE_KEY.getStandardProperty();
@@ -149,129 +144,41 @@ public class AtomicValue implements IItem {
     /**
      * {@inheritDoc}
      */
-    public boolean hasFirstChild() {
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasLeftSibling() {
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean hasParent() {
-
         return false;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean hasRightSibling() {
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public long getAttributeKey(final int index) {
-
-        return (Integer)EFixed.NULL_NODE_KEY.getStandardProperty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public long getNodeKey() {
-
         return mItemKey;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getAttributeCount() {
-
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public long getChildCount() {
-
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ENodes getKind() {
-
         return ENodes.UNKOWN_KIND;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getNameKey() {
-
         return 0;
     }
 
     /**
      * {@inheritDoc}
      */
-    public long getNamespaceKey(final int mIndex) {
-
-        return (Integer)EFixed.NULL_NODE_KEY.getStandardProperty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getNamespaceCount() {
-
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int getURIKey() {
-
         return -1;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isAttribute() {
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isDocumentRoot() {
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isElement() {
-
-        return false;
     }
 
     /**
@@ -307,14 +214,7 @@ public class AtomicValue implements IItem {
     /**
      * {@inheritDoc}
      */
-    public boolean isText() {
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public final int getTypeKey() {
         return mType;
     }
@@ -400,7 +300,7 @@ public class AtomicValue implements IItem {
     public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
         return (T)paramTransaction.getNode(this);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
