@@ -66,7 +66,7 @@ import processing.core.PApplet;
 public final class SunburstView extends JPanel implements IView {
 
     /**
-     * 
+     * SerialUID.
      */
     private static final long serialVersionUID = 1L;
 
