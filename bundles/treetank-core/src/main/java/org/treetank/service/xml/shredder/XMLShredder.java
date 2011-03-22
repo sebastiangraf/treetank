@@ -27,7 +27,11 @@
 
 package org.treetank.service.xml.shredder;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
@@ -38,15 +42,16 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-
 import org.slf4j.LoggerFactory;
 import org.treetank.access.Database;
 import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.WriteTransaction;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -54,6 +59,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.ENodes;
+import org.treetank.node.ElementNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.LogWrapper;

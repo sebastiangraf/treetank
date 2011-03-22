@@ -45,7 +45,6 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-
 import org.slf4j.LoggerFactory;
 import org.treetank.access.Database;
 import org.treetank.access.DatabaseConfiguration;
@@ -211,7 +210,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     private transient boolean mEmptyElement;
 
     /**
-     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
+     * Normal constructor to invoke a shredding process on a existing {@link IWriteTransaction}.
      * 
      * @param paramWtx
      *            {@link IWriteTransaction} where the new XML Fragment should be

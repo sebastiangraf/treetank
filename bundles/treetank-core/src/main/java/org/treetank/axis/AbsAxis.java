@@ -130,7 +130,8 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     }
 
     /**
-     * {@inheritDoc}
+     * Resetting the nodekey of this axis to a given nodekey
+     * @param paramNodeKey the nodekey where the reset should occur to.
      */
     public void reset(final long paramNodeKey) {
         mStartKey = paramNodeKey;

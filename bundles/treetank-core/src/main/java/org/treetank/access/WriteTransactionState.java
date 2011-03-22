@@ -119,11 +119,11 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Prepare a node for modification. This is getting the node from the
      * (persistence) layer, storing the page in the cache and setting up the
-     * node for upcoming modification. Note that this only occurs for {@link AbsStructNode}s.
+     * node for upcoming modification. Note that this only occurs for {@link AbsNode}s.
      * 
      * @param mNodeKey
      *            key of the node to be modified
-     * @return an {@link AbsNodeStruc} instance
+     * @return an {@link AbsNode} instance
      * @throws TTIOException
      *             if IO Error
      */

@@ -63,8 +63,6 @@ public class ForAxis extends AbsAxis {
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
      * @param range
      *            the range variable that holds the binding sequence
      * @param returnExpr

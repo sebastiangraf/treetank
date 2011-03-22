@@ -53,9 +53,9 @@ public abstract class AbsFilter implements IFilter {
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the Transaction of this filter
+     * @return the transaction of this filter
      */
-    // @Override
     protected final IReadTransaction getTransaction() {
         return mRTX;
     }

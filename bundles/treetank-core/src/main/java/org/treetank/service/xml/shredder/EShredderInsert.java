@@ -39,7 +39,7 @@ public enum EShredderInsert {
 
     /**
      * Subtree should be added as a right sibling of the current node. This is not possible
-     * when the {@link IWriteTransaction} is on root node.
+     * when the <code>IWriteTransaction</code> is on root node.
      */
     ADDASRIGHTSIBLING,
 }

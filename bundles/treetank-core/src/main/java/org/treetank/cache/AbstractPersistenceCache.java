@@ -39,7 +39,7 @@ import org.treetank.utils.LogWrapper;
 
 /**
  * Abstract class for holding all persistence caches. Each instance of this
- * class stores the data in a place related to the {@link SessionConfiguration} at a different subfolder.
+ * class stores the data in a place related to the {@link DatabaseConfiguration} at a different subfolder.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -65,7 +65,7 @@ public abstract class AbstractPersistenceCache implements ICache {
      * Constructor with the place to store the data.
      * 
      * @param paramConfig
-     *            {@link SessionConfiguration} which holds the place to store
+     *            {@link DatabaseConfiguration} which holds the place to store
      *            the data.
      */
     protected AbstractPersistenceCache(final DatabaseConfiguration paramConfig) {

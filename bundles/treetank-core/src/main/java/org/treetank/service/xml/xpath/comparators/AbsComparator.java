@@ -224,7 +224,7 @@ public abstract class AbsComparator extends AbsAxis  {
      *            kind of comparison
      * @param paramVal
      *            string value to estimate
-     * @return
+     * @return AbsComparator the comparator of two axis
      */
     public static final AbsComparator getComparator(final IReadTransaction paramRtx,
         final AbsAxis paramOperandOne, final AbsAxis paramOperandTwo, final CompKind paramKind,
