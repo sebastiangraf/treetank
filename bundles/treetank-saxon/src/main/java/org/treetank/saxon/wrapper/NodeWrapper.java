@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -29,45 +29,26 @@ package org.treetank.saxon.wrapper;
 
 import javax.xml.namespace.QName;
 
-import com.treetank.api.IDatabase;
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbsAxis;
-import com.treetank.axis.AncestorAxis;
-import com.treetank.axis.AttributeAxis;
-import com.treetank.axis.ChildAxis;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.axis.FilterAxis;
-import com.treetank.axis.FollowingAxis;
-import com.treetank.axis.FollowingSiblingAxis;
-import com.treetank.axis.ParentAxis;
-import com.treetank.axis.PrecedingAxis;
-import com.treetank.axis.PrecedingSiblingAxis;
-import com.treetank.axis.filter.TextFilter;
-import com.treetank.exception.AbsTTException;
-import com.treetank.node.ENodes;
-import com.treetank.node.ElementNode;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.om.Axis;
-import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.om.DocumentInfo;
-import net.sf.saxon.tree.iter.EmptyIterator;
-import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.om.NamePool;
-import net.sf.saxon.tree.iter.NamespaceIterator;
-import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.tree.wrapper.SiblingCountingNode;
-import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.om.StandardNames;
-import net.sf.saxon.tree.wrapper.VirtualNode;
 import net.sf.saxon.pattern.AnyNodeTest;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.iter.EmptyIterator;
+import net.sf.saxon.tree.iter.NamespaceIterator;
+import net.sf.saxon.tree.iter.SingletonIterator;
+import net.sf.saxon.tree.util.FastStringBuffer;
+import net.sf.saxon.tree.util.Navigator;
+import net.sf.saxon.tree.wrapper.SiblingCountingNode;
+import net.sf.saxon.tree.wrapper.VirtualNode;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.StringValue;
@@ -76,6 +57,24 @@ import net.sf.saxon.value.Value;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
+import org.treetank.axis.AbsAxis;
+import org.treetank.axis.AncestorAxis;
+import org.treetank.axis.AttributeAxis;
+import org.treetank.axis.ChildAxis;
+import org.treetank.axis.DescendantAxis;
+import org.treetank.axis.FilterAxis;
+import org.treetank.axis.FollowingAxis;
+import org.treetank.axis.FollowingSiblingAxis;
+import org.treetank.axis.ParentAxis;
+import org.treetank.axis.PrecedingAxis;
+import org.treetank.axis.PrecedingSiblingAxis;
+import org.treetank.axis.filter.TextFilter;
+import org.treetank.exception.AbsTTException;
+import org.treetank.node.ENodes;
+import org.treetank.node.ElementNode;
 
 /**
  * <h1>NodeWrapper</h1>
@@ -193,9 +192,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#atomize()
      */
+    @Override
     public Value atomize() throws XPathException {
         Value value = null;
 
@@ -215,10 +213,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#compareOrder(NodeInfo)
      */
-    // TODO compareTo von AbstractNode nehmen
+    @Override
     public int compareOrder(final NodeInfo node) {
         int retVal;
 
@@ -243,7 +239,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     /**
      * Copy this node to a given outputter (deep copy).
      * 
-     * @see net.sf.saxon.om.NodeInfo#copy(Receiver, int, boolean, int)
+     * @see net.sf.saxon.om.NodeInfo#copy(Receiver, int, int)
      */
     public void copy(final Receiver out, final int copyOption, final int locationId) throws XPathException {
         Navigator.copy(this, out, mDocWrapper.getNamePool(), copyOption, locationId);
@@ -251,18 +247,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#generateId(FastStringBuffer)
      */
+    @Override
     public void generateId(final FastStringBuffer buf) {
         buf.append(String.valueOf(mKey));
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getAttributeValue(int)
      */
+    @Override
     public String getAttributeValue(final int fingerprint) {
         String attVal = null;
 
@@ -281,9 +275,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getBaseURI()
      */
+    @Override
     public String getBaseURI() {
         mRTX.moveTo(mKey);
         String baseURI = null;
@@ -310,27 +303,24 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getColumnNumber()
      */
+    @Override
     public int getColumnNumber() {
         throw new UnsupportedOperationException("Not supported by TreeTank.");
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getConfiguration()
      */
+    @Override
     public Configuration getConfiguration() {
         return mDocWrapper.getConfiguration();
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getDeclaredNamespaces(int[])
      */
+    @Override
     public int[] getDeclaredNamespaces(final int[] buffer) {
         int[] retVal = null;
         if (nodeKind == ENodes.ELEMENT_KIND) {
@@ -367,9 +357,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getDisplayName()
      */
+    @Override
     public String getDisplayName() {
         String dName = "";
 
@@ -391,27 +380,24 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getDocumentNumber()
      */
+    @Override
     public long getDocumentNumber() {
         return mDocWrapper.getBaseURI().hashCode();
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getDocumentRoot()
      */
+    @Override
     public DocumentInfo getDocumentRoot() {
         return mDocWrapper;
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getFingerprint()
      */
+    @Override
     public int getFingerprint() {
         int retVal;
 
@@ -427,18 +413,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getLineNumber()
      */
+    @Override
     public int getLineNumber() {
         throw new UnsupportedOperationException("Not supported by TreeTank.");
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getLocalPart()
      */
+    @Override
     public String getLocalPart() {
         String localPart = "";
 
@@ -456,9 +440,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getNameCode()
      */
+    @Override
     public int getNameCode() {
         int nameCode = -1;
 
@@ -478,27 +461,24 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getNamePool()
      */
+    @Override
     public NamePool getNamePool() {
         return mDocWrapper.getNamePool();
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getNodeKind()
      */
+    @Override
     public int getNodeKind() {
         return nodeKind.getNodeIdentifier();
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getParent()
      */
+    @Override
     public NodeInfo getParent() {
         mRTX.moveTo(mKey);
         if (mRTX.getNode().hasParent()) {
@@ -512,9 +492,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getPrefix()
      */
+    @Override
     public String getPrefix() {
         String prefix = "";
 
@@ -535,9 +514,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getRoot()
      */
+    @Override
     public NodeInfo getRoot() {
         return (NodeInfo)mDocWrapper;
     }
@@ -545,17 +523,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     /**
      * getStringValue() just calls getStringValueCS().
      * 
-     * @see net.sf.saxon.om.NodeInfo#getStringValue()
      */
+    @Override
     public final String getStringValue() {
         return getStringValueCS().toString();
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getStringValueCS()
      */
+    @Override
     public final CharSequence getStringValueCS() {
         mRTX.moveTo(mKey);
         String mValue;
@@ -614,9 +591,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getSystemId()
      */
+    @Override
     public String getSystemId() {
         return mDocWrapper.getBaseURI();
     }
@@ -638,9 +614,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getURI()
      */
+    @Override
     public String getURI() {
         String URI = "";
 
@@ -662,12 +637,11 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#hasChildNodes()
      */
+    @Override
     public boolean hasChildNodes() {
         boolean hasChildNodes = false;
-        if (mRTX.getNodeIfStructural().getChildCount() > 0) {
+        if (mRTX.getStructuralNode().getChildCount() > 0) {
             hasChildNodes = true;
         }
         return hasChildNodes;
@@ -675,18 +649,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * Not supported.
-     * 
-     * @see net.sf.saxon.om.NodeInfo#isId()
      */
+    @Override
     public boolean isId() {
         return false;
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#isIdref()
      */
+    @Override
     public boolean isIdref() {
         throw new UnsupportedOperationException("Currently not supported by Treetank!");
         // return false;
@@ -694,9 +666,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#isNilled()
      */
+    @Override
     public boolean isNilled() {
         throw new UnsupportedOperationException("Currently not supported by Treetank!");
         // return false;
@@ -704,9 +675,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#isSameNodeInfo(NodeInfo)
      */
+    @Override
     public boolean isSameNodeInfo(final NodeInfo other) {
         boolean retVal;
 
@@ -721,18 +691,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#iterateAxis(byte)
      */
+    @Override
     public AxisIterator iterateAxis(final byte axisNumber) {
         return iterateAxis(axisNumber, AnyNodeTest.getInstance());
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#iterateAxis(byte, NodeTest)
      */
+    @Override
     public AxisIterator iterateAxis(final byte axisNumber, final NodeTest nodeTest) {
         mRTX.moveTo(mKey);
 
@@ -745,39 +713,39 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             if (getNodeKind() == ENodes.ROOT_KIND.getNodeIdentifier()) {
                 return EmptyIterator.getInstance();
             }
-            return new Navigator.AxisFilter(new Enumeration(new AncestorAxis(mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new SaxonEnumeration(new AncestorAxis(mRTX)), nodeTest);
 
         case Axis.ANCESTOR_OR_SELF:
             if (getNodeKind() == ENodes.ROOT_KIND.getNodeIdentifier()) {
                 return Navigator.filteredSingleton(this, nodeTest);
             }
-            return new Navigator.AxisFilter(new Enumeration(new AncestorAxis(mRTX, true)), nodeTest);
+            return new Navigator.AxisFilter(new SaxonEnumeration(new AncestorAxis(mRTX, true)), nodeTest);
 
         case Axis.ATTRIBUTE:
             if (getNodeKind() != ENodes.ELEMENT_KIND.getNodeIdentifier()) {
                 return EmptyIterator.getInstance();
             }
-            return new Navigator.AxisFilter(new Enumeration(new AttributeAxis(mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new SaxonEnumeration(new AttributeAxis(mRTX)), nodeTest);
 
         case Axis.CHILD:
             if (hasChildNodes()) {
-                return new Navigator.AxisFilter(new Enumeration(new ChildAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new SaxonEnumeration(new ChildAxis(mRTX)), nodeTest);
             } else {
                 return EmptyIterator.getInstance();
             }
 
         case Axis.DESCENDANT:
             if (hasChildNodes()) {
-                return new Navigator.AxisFilter(new Enumeration(new DescendantAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new SaxonEnumeration(new DescendantAxis(mRTX)), nodeTest);
             } else {
                 return EmptyIterator.getInstance();
             }
 
         case Axis.DESCENDANT_OR_SELF:
-            return new Navigator.AxisFilter(new Enumeration(new DescendantAxis(mRTX, true)), nodeTest);
+            return new Navigator.AxisFilter(new SaxonEnumeration(new DescendantAxis(mRTX, true)), nodeTest);
 
         case Axis.FOLLOWING:
-            return new Navigator.AxisFilter(new Enumeration(new FollowingAxis(mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new SaxonEnumeration(new FollowingAxis(mRTX)), nodeTest);
 
         case Axis.FOLLOWING_SIBLING:
             switch (nodeKind) {
@@ -786,7 +754,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             case NAMESPACE_KIND:
                 return EmptyIterator.getInstance();
             default:
-                return new Navigator.AxisFilter(new Enumeration(new FollowingSiblingAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new SaxonEnumeration(new FollowingSiblingAxis(mRTX)), nodeTest);
             }
 
         case Axis.NAMESPACE:
@@ -799,10 +767,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             if (mRTX.getNode().getParentKey() == ENodes.ROOT_KIND.getNodeIdentifier()) {
                 return EmptyIterator.getInstance();
             }
-            return new Navigator.AxisFilter(new Enumeration(new ParentAxis(mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new SaxonEnumeration(new ParentAxis(mRTX)), nodeTest);
 
         case Axis.PRECEDING:
-            return new Navigator.AxisFilter(new Enumeration(new PrecedingAxis(mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new SaxonEnumeration(new PrecedingAxis(mRTX)), nodeTest);
 
         case Axis.PRECEDING_SIBLING:
             switch (nodeKind) {
@@ -811,7 +779,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             case NAMESPACE_KIND:
                 return EmptyIterator.getInstance();
             default:
-                return new Navigator.AxisFilter(new Enumeration(new PrecedingSiblingAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new SaxonEnumeration(new PrecedingSiblingAxis(mRTX)), nodeTest);
             }
 
         case Axis.SELF:
@@ -827,26 +795,22 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#setSystemId(String)
      */
+    @Override
     public void setSystemId(final String systemId) {
         mDocWrapper.setBaseURI(systemId);
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.NodeInfo#getTypedValue()
      */
+    @Override
     public SequenceIterator getTypedValue() throws XPathException {
         return SingletonIterator.makeIterator((AtomicValue)atomize());
     }
 
     /**
-     * Just calls getUnderlying node.
-     * 
-     * @see net.sf.saxon.om.VirtualNode#getRealNode()
+     * {@inheritDoc}
      */
     public Object getRealNode() {
         return getUnderlyingNode();
@@ -854,23 +818,21 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.VirtualNode#getUnderlyingNode()
      */
+    @Override
     public Object getUnderlyingNode() {
         return node;
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @see net.sf.saxon.om.SiblingCountingNode#getSiblingPosition()
      */
+    @Override
     public int getSiblingPosition() {
         mRTX.moveTo(mKey);
         int index = 0;
 
-        while (mRTX.getNodeIfStructural().hasLeftSibling()) {
+        while (mRTX.getStructuralNode().hasLeftSibling()) {
             mRTX.moveToLeftSibling();
             index++;
         }
@@ -886,7 +848,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * Saxon adaptor for axis iterations.
      * </p>
      */
-    public final class Enumeration extends Navigator.BaseEnumeration {
+    public final class SaxonEnumeration extends Navigator.BaseEnumeration {
 
         /** Treetank axis iterator. */
         private final AbsAxis mAxis;
@@ -894,17 +856,15 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         /**
          * Constructor.
          * 
-         * @param axis
+         * @param paramAxis
          *            TreeTank axis iterator.
          */
-        public Enumeration(final AbsAxis axis) {
-            mAxis = axis;
+        public SaxonEnumeration(final AbsAxis paramAxis) {
+            mAxis = paramAxis;
         }
 
         /**
          * {@inheritDoc}
-         * 
-         * @see net.sf.saxon.om.Navigator$BaseEnumeration#advance()
          */
         @Override
         public void advance() {
@@ -918,12 +878,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
         /**
          * {@inheritDoc}
-         * 
-         * @see net.sf.saxon.om.Navigator$BaseEnumeration#getAnother()
          */
         @Override
         public SequenceIterator getAnother() {
-            return new Enumeration(mAxis);
+            return new SaxonEnumeration(mAxis);
         }
     }
 

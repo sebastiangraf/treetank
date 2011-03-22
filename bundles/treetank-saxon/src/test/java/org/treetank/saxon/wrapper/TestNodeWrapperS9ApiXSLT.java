@@ -37,14 +37,6 @@ import java.io.OutputStream;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.transform.stream.StreamSource;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.service.xml.shredder.EShredderInsert;
-import com.treetank.service.xml.shredder.XMLShredder;
-
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -57,7 +49,14 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
+import org.treetank.TestHelper;
+import org.treetank.access.Database;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XSLTEvaluator;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.After;
 import org.junit.Before;

@@ -809,11 +809,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                 }
 
                 // Caring about the children of a node
-                if (moveTo(getNodeIfStructural().getFirstChildKey())) {
+                if (moveTo(getStructuralNode().getFirstChildKey())) {
                     do {
                         hashCodeForParent = getCurrentNode().getHash() + hashCodeForParent * PRIME;
-                    } while (moveTo(getNodeIfStructural().getRightSiblingKey()));
-                    moveTo(getNodeIfStructural().getParentKey());
+                    } while (moveTo(getStructuralNode().getRightSiblingKey()));
+                    moveTo(getStructuralNode().getParentKey());
                 }
 
                 // setting hash and resetting hash

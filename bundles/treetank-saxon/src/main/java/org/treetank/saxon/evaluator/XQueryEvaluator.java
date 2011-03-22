@@ -29,8 +29,6 @@ package org.treetank.saxon.evaluator;
 
 import java.util.concurrent.Callable;
 
-import com.treetank.api.IDatabase;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -40,6 +38,7 @@ import net.sf.saxon.s9api.XdmValue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IDatabase;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 import org.treetank.saxon.wrapper.NodeWrapper;
 
@@ -70,18 +69,19 @@ public final class XQueryEvaluator implements Callable<XdmValue> {
     /**
      * Constructor.
      * 
-     * @param expression
+     * @param paramExpression
      *            XQuery expression.
-     * @param database
+     * @param paramDatabase
      *            Treetank database.
-     * @param file
-     *            Target Treetank storage.
      */
-    public XQueryEvaluator(final String expression, final IDatabase database) {
-        mExpression = expression;
-        mDatabase = database;
+    public XQueryEvaluator(final String paramExpression, final IDatabase paramDatabase) {
+        mExpression = paramExpression;
+        mDatabase = paramDatabase;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public XdmValue call() throws Exception {
         XdmValue value = null;

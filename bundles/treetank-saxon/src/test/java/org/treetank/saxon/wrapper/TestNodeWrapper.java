@@ -31,30 +31,27 @@ import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
 
-import com.treetank.TestHelper;
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.AbsTTException;
-import com.treetank.service.xml.shredder.EShredderInsert;
-import com.treetank.service.xml.shredder.XMLShredder;
-import com.treetank.utils.DocumentCreater;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.Axis;
-import net.sf.saxon.tree.iter.AxisIterator;
-import net.sf.saxon.tree.iter.NamespaceIterator.NamespaceNodeImpl;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.iter.NamespaceIterator.NamespaceNodeImpl;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
-import org.treetank.saxon.wrapper.DocumentWrapper;
-import org.treetank.saxon.wrapper.NodeWrapper;
+import org.treetank.TestHelper;
+import org.treetank.access.Database;
+import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
+import org.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;

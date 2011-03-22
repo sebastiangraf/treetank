@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -30,16 +30,16 @@ package org.treetank.saxon.wrapper;
 import java.util.Collections;
 import java.util.Iterator;
 
-import com.treetank.api.IDatabase;
-import com.treetank.axis.AbsAxis;
-import com.treetank.axis.DescendantAxis;
-import com.treetank.node.ENodes;
-import com.treetank.node.ElementNode;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NodeInfo;
+
+import org.treetank.api.IDatabase;
+import org.treetank.axis.AbsAxis;
+import org.treetank.axis.DescendantAxis;
+import org.treetank.node.ENodes;
+import org.treetank.node.ElementNode;
 
 /**
  * <h1>DocumentWrapper</h1>
@@ -67,19 +67,17 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
     /**
      * Wrap a Treetank document.
      * 
-     * @param session
-     *            Treetank session.
-     * @param config
+     * @param paramDatabase
+     *            Treetank database.
+     * @param paramConfig
      *            Configuration used.
-     * @param baseURI
-     *            BaseURI of the document (PATH).
      */
-    public DocumentWrapper(final IDatabase database, final Configuration config) {
-        super(database, 0);
+    public DocumentWrapper(final IDatabase paramDatabase, final Configuration paramConfig) {
+        super(paramDatabase, 0);
         nodeKind = ENodes.ROOT_KIND;
-        mBaseURI = database.getFile().getAbsolutePath();
+        mBaseURI = paramDatabase.getFile().getAbsolutePath();
         mDocWrapper = this;
-        setConfiguration(config);
+        setConfiguration(paramConfig);
     }
 
     /**
@@ -102,6 +100,9 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
         return makeWrapper(this, nodeKey);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getUnparsedEntity(final String name) {
         throw new UnsupportedOperationException("Currently not supported by Treetank!");
@@ -109,9 +110,6 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
     /**
      * Get the unparsed entity with a given name.
-     * 
-     * @param name
-     *            The name of the entity.
      * @return null: TreeTank does not provide access to unparsed entities.
      */
     @SuppressWarnings("unchecked")
@@ -121,9 +119,8 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
     /**
      * {@inheritDoc}
-     * 
-     * No check if the attribute is unique among all nodes and on the element.
      */
+    @Override
     public NodeInfo selectID(final String ID, final boolean getParent) {
         final AbsAxis axis = new DescendantAxis(mRTX, true);
         while (axis.hasNext()) {
@@ -157,9 +154,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
     }
 
     /**
-     * Get the name pool used for the names in this document.
-     * 
-     * @return namepool
+     * {@inheritDoc}
      */
     @Override
     public NamePool getNamePool() {
@@ -181,10 +176,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
     }
 
     /**
-     * Get the configuration previously set using setConfiguration (or the
-     * default configuraton allocated automatically).
-     * 
-     * @return configuration
+     * {@inheritDoc}
      */
     @Override
     public Configuration getConfiguration() {
@@ -192,9 +184,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
     }
 
     /**
-     * Return BaseURI of the current document.
-     * 
-     * @return BaseURI.
+     * {@inheritDoc}
      */
     @Override
     public String getBaseURI() {
@@ -211,15 +201,21 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
         mBaseURI = baseURI;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getUserData(String arg0) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUserData(String arg0, Object arg1) {
         // TODO Auto-generated method stub
-        
+
     }
 }

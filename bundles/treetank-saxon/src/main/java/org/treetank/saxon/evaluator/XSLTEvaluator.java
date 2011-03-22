@@ -33,8 +33,6 @@ import java.util.concurrent.Callable;
 
 import javax.xml.transform.stream.StreamSource;
 
-import com.treetank.api.IDatabase;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -46,6 +44,7 @@ import net.sf.saxon.s9api.XsltTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IDatabase;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 import org.treetank.saxon.wrapper.NodeWrapper;
 
@@ -98,25 +97,26 @@ public final class XSLTEvaluator implements Callable<OutputStream> {
     /**
      * Constructor.
      * 
-     * @param mDatabases
-     *            Treetank mDatabases.
-     * @param file
-     *            Treetank storage to which the stylesheet has to be applied.
-     * @param stylesheet
+     * @param paramDatabase
+     *            Treetank mDatabase.
+     * @param paramStyle
      *            Path to stylesheet.
-     * @param out
+     * @param paramOut
      *            Resulting stream of the transformation.
-     * @param serializer
+     * @param paramSerializer
      *            Serializer, for which one can specify output properties.
      */
-    public XSLTEvaluator(final IDatabase database, final File stylesheet, final OutputStream out,
-        final Serializer serializer) {
-        mDatabases = database;
-        mStylesheet = stylesheet;
-        mOut = out;
-        mSerializer = serializer;
+    public XSLTEvaluator(final IDatabase paramDatabase, final File paramStyle, final OutputStream paramOut,
+        final Serializer paramSerializer) {
+        mDatabases = paramDatabase;
+        mStylesheet = paramStyle;
+        mOut = paramOut;
+        mSerializer = paramSerializer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public OutputStream call() {
         final Processor proc = new Processor(false);

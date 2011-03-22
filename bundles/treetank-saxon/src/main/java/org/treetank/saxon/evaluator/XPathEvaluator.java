@@ -29,8 +29,6 @@ package org.treetank.saxon.evaluator;
 
 import java.util.concurrent.Callable;
 
-import com.treetank.api.IDatabase;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -41,6 +39,7 @@ import net.sf.saxon.s9api.XdmItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.api.IDatabase;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 import org.treetank.saxon.wrapper.NodeWrapper;
 
@@ -71,16 +70,19 @@ public final class XPathEvaluator implements Callable<XPathSelector> {
     /**
      * Constructor.
      * 
-     * @param expression
+     * @param paramExpression
      *            XPath expression.
-     * @param databse
+     * @param paramDatabase
      *            Treetank database.
      */
-    public XPathEvaluator(final String expression, final IDatabase database) {
-        mExpression = expression;
-        mDatabase = database;
+    public XPathEvaluator(final String paramExpression, final IDatabase paramDatabase) {
+        mExpression = paramExpression;
+        mDatabase = paramDatabase;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public XPathSelector call() throws Exception {
         final Processor proc = new Processor(false);
