@@ -30,7 +30,6 @@ package org.treetank.gui.view.sunburst;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.LoggerFactory;
@@ -59,16 +58,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsModel.class));
 
-    /** Semaphore to guarantee mutual exclusion for all methods. */
-    // transient Semaphore mLock = new Semaphore(1);
-
     /** {@link List} of {@link SunburstItem}s. */
     transient List<SunburstItem> mItems;
-
-    /**
-     * Temporary {@link List} of {@link List}s of {@link SunburstItem}s.
-     */
-//    final List<List<SunburstItem>> mLastItems;
 
     /** {@link SunburstGUI} interface. */
     final SunburstGUI mGUI;
@@ -82,11 +73,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** Treetank {@link ISession}. */
     transient ISession mSession;
 
-    /**
-     * Read database.
-     * 
-     * @see ReadDB
-     */
+    /** {@link ReadDB} instance. */
     transient ReadDB mDb;
 
     /** Index of the current {@link SunburstItem} for the iterator. */

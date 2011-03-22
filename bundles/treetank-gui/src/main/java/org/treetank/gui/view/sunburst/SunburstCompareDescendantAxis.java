@@ -123,7 +123,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     private transient long mTempNextKey;
 
     /** Model which implements the method createSunburstItem(...) defined by {@link IModel}. */
-    private final IItems mModel;
+    private final ITraverseModel mModel;
 
     /** {@link List} of {@link EDiff}s. */
     private final List<Diff> mDiffs;
@@ -183,7 +183,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * @param paramMaxDepth
      *            maximum depth in old revision
      */
-    public SunburstCompareDescendantAxis(final boolean mIncludeSelf, final IItems paramCallableModel,
+    public SunburstCompareDescendantAxis(final boolean mIncludeSelf, final ITraverseModel paramCallableModel,
         final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx, final List<Diff> paramDiffs,
         final int paramMaxDepth) {
         super(paramNewRtx, mIncludeSelf);

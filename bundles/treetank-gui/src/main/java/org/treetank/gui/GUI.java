@@ -123,7 +123,7 @@ public final class GUI extends JFrame {
         // Create views.
         mNotifier = new ViewNotifier(this);
         mContainer =
-            ViewContainer.getInstance(this, SunburstView.getInstance(mNotifier));//TreeView.getInstance(mNotifier));////, TextView.getInstance(mNotifier));
+            ViewContainer.getInstance(this, SunburstView.getInstance(mNotifier));////, TextView.getInstance(mNotifier));
         mContainer.layoutViews();
         top.add(mContainer, BorderLayout.CENTER);
         getContentPane().add(top);

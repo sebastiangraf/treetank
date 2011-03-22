@@ -39,7 +39,7 @@ import org.treetank.api.IReadTransaction;
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public interface IItems {
+public interface ITraverseModel {
     /** 
      * Create a {@link SunburstItem} used as a callback method in {@link SunburstDescendantAxis}. 
      * 

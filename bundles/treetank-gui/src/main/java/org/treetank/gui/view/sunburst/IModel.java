@@ -28,10 +28,6 @@
 package org.treetank.gui.view.sunburst;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import org.treetank.api.IReadTransaction;
 
 /**
  * Interface which models of the {@link SunburstView} have to implement.

@@ -124,7 +124,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
     /** Traverse and compare trees. */
     private static final class TraverseCompareTree extends AbsComponent implements Callable<SunburstFireContainer>,
-        IDiffObserver, IItems {
+        IDiffObserver, ITraverseModel {
 
         /** Timeout for {@link CountDownLatch}. */
         private static final long TIMEOUT_S = 200000;
