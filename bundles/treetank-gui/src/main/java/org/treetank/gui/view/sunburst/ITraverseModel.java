@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -34,21 +34,22 @@ import java.util.concurrent.Future;
 import org.treetank.api.IReadTransaction;
 
 /**
- * Interface which has to be implemented from {@link Callable} implementations inside the model.
+ * Interface which has to be implemented from TraverseTree inner classes inside the
+ * model.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public interface ITraverseModel {
-    /** 
-     * Create a {@link SunburstItem} used as a callback method in {@link SunburstDescendantAxis}. 
+    /**
+     * Create a {@link SunburstItem} used as a callback method in {@link SunburstDescendantAxis}.
      * 
      * @param paramItem
-     *          {@link Item} reference
+     *            {@link Item} reference
      * @param paramDepth
-     *          current depth in the tree
+     *            current depth in the tree
      * @param mIndex
-     *          index of the current item
+     *            index of the current item
      * @return child extension
      */
     float createSunburstItem(final Item paramItem, final int paramDepth, final int mIndex);

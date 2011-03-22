@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -170,10 +170,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /**
      * Constructor initializing internal state.
      * 
-     * @param mIncludeSelf
+     * @param paramIncludeSelf
      *            determines if self is included
-     * @param paramModel
-     *            {@link IModel} implementation which observes axis changes
+     * @param paramCallableModel
+     *            model which implements {@link ITraverseModel} interface and "observes" axis changes
      * @param paramNewRtx
      *            {@link IReadTransaction} on new revision
      * @param paramOldRtx
@@ -183,10 +183,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * @param paramMaxDepth
      *            maximum depth in old revision
      */
-    public SunburstCompareDescendantAxis(final boolean mIncludeSelf, final ITraverseModel paramCallableModel,
-        final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx, final List<Diff> paramDiffs,
-        final int paramMaxDepth) {
-        super(paramNewRtx, mIncludeSelf);
+    public SunburstCompareDescendantAxis(final boolean paramIncludeSelf,
+        final ITraverseModel paramCallableModel, final IReadTransaction paramNewRtx,
+        final IReadTransaction paramOldRtx, final List<Diff> paramDiffs, final int paramMaxDepth) {
+        super(paramNewRtx, paramIncludeSelf);
         mModel = paramCallableModel;
         mDiffs = paramDiffs;
         mNewRtx = paramNewRtx;
@@ -595,10 +595,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
         diffCounts = incrDiffCounter(index, diffCounts, paramInit);
         index++;
-        
-//        if (mDiffCont == null) {
-//            mDiffCont = mDiffs.get(0);
-//        }
+
+        // if (mDiffCont == null) {
+        // mDiffCont = mDiffs.get(0);
+        // }
 
         if (diffCounts == 1 && getTransaction().getStructuralNode().hasFirstChild()) {
             mSubtract = true;
@@ -672,12 +672,13 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                                 if (index - 1 < mDiffs.size()) {
                                     diffCont = mDiffs.get(index - 1);
                                 }
-                                while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
+                                while (index - 1 < mDiffs.size()
+                                    && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
                                     mCurrDiff = EDiff.DELETED;
                                     if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
                                         .getOldDepth()
-                                        && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
-                                            .getOldDepth()) {
+                                        && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1)
+                                            .getDepth().getOldDepth()) {
                                         diffCounts++;
                                     } else {
                                         break;
@@ -714,7 +715,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                             if (index - 1 < mDiffs.size()) {
                                 diffCont = mDiffs.get(index - 1);
                             }
-                            while (index - 1< mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
+                            while (index - 1 < mDiffs.size()
+                                && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
                                 mCurrDiff = EDiff.DELETED;
                                 if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
                                     .getOldDepth()
