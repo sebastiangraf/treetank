@@ -90,7 +90,7 @@ public class ConcurrentAxis extends AbsAxis {
      * 
      * @param paramRtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param AbsComparator
+     * @param paramChildAxis
      *            Producer axis.
      */
     public ConcurrentAxis(final IReadTransaction paramRtx, final AbsAxis paramChildAxis) {

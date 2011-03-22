@@ -32,7 +32,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>treetank</groupId>
     <artifactId>eclipse</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>treetank-eclipse</name>
     <packaging>pom</packaging>
 	<parent>
