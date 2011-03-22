@@ -46,7 +46,7 @@ import org.treetank.gui.GUI;
 public final class ViewContainer extends JPanel {
 
     /**
-     * 
+     * SerialUID.
      */
     private static final long serialVersionUID = -9151769742021251809L;
 

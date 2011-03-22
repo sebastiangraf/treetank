@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -34,18 +34,38 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 /**
+ * Abstract TreeModel to simplify implementation.
+ * 
  * @author Santhosh Kumar T
  */
 public abstract class AbsTreeModel implements TreeModel {
+    /**
+     * Object representing the root of a tree.
+     */
     protected Object root;
 
+    /**
+     * Protected constructor.
+     */
     protected AbsTreeModel() {
     }
 
+    /**
+     * Protected constructor.
+     * 
+     * @param root
+     *            object representing the root of a tree
+     */
     protected AbsTreeModel(Object root) {
         this.root = root;
     }
 
+    /**
+     * Set the root of a tree.
+     * 
+     * @param root
+     *            object representing the root of a tree
+     */
     public void setRoot(Object root) {
         this.root = root;
         fireTreeStructureChanged(root, new Object[] {
@@ -55,13 +75,16 @@ public abstract class AbsTreeModel implements TreeModel {
 
     /*-------------------------------------------------[ Listeners ]---------------------------------------------------*/
 
+    /** {@link EventListenerList} instance. */
     protected EventListenerList listenerList = new EventListenerList();
 
+    /** {@inheritDoc} */
     @Override
     public void addTreeModelListener(TreeModelListener listener) {
         listenerList.add(TreeModelListener.class, listener);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void removeTreeModelListener(TreeModelListener listener) {
         listenerList.remove(TreeModelListener.class, listener);
@@ -69,6 +92,15 @@ public abstract class AbsTreeModel implements TreeModel {
 
     /*-------------------------------------------------[ Firing Changes ]---------------------------------------------------*/
 
+    /**
+     * Value for path has changed.
+     * 
+     * @param path
+     *            {@link TreePath} instance
+     * @param newValue
+     *            object representing new value
+     * 
+     */
     @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
         Object[] listeners = listenerList.getListenerList();
@@ -80,6 +112,22 @@ public abstract class AbsTreeModel implements TreeModel {
         }
     }
 
+    /**
+     * Fire tree structure changed.
+     * 
+     * @param source
+     *            the Object responsible for generating the event (typically the creator of the event object
+     *            passes this for its value)
+     * @param path
+     *            an array of Object identifying the path to the parent of the modified item(s), where the
+     *            first element of the array is the Object stored at the root node and the last element is the
+     *            Object stored at the parent node
+     * @param childIndices
+     *            an array of int that specifies the index values of the removed items. The indices must be in
+     *            sorted order, from lowest to highest
+     * @param children
+     *            an array of Object containing the inserted, removed, or changed objects
+     */
     public void fireTreeStructureChanged(Object source, Object[] path, int[] childIndices, Object[] children) {
         Object[] listeners = listenerList.getListenerList();
         TreeModelEvent e = null;
@@ -90,6 +138,22 @@ public abstract class AbsTreeModel implements TreeModel {
         }
     }
 
+    /**
+     * Fire tree nodes inserted.
+     * 
+     * @param source
+     *            the Object responsible for generating the event (typically the creator of the event object
+     *            passes this for its value)
+     * @param path
+     *            an array of Object identifying the path to the parent of the modified item(s), where the
+     *            first element of the array is the Object stored at the root node and the last element is the
+     *            Object stored at the parent node
+     * @param childIndices
+     *            an array of int that specifies the index values of the removed items. The indices must be in
+     *            sorted order, from lowest to highest
+     * @param children
+     *            an array of Object containing the inserted, removed, or changed objects
+     */
     public void fireTreeNodesInserted(Object source, Object[] path, int[] childIndices, Object[] children) {
         Object[] listeners = listenerList.getListenerList();
         TreeModelEvent e = null;
@@ -100,6 +164,22 @@ public abstract class AbsTreeModel implements TreeModel {
         }
     }
 
+    /**
+     * Fire tree nodes removed.
+     * 
+     * @param source
+     *            the Object responsible for generating the event (typically the creator of the event object
+     *            passes this for its value)
+     * @param path
+     *            an array of Object identifying the path to the parent of the modified item(s), where the
+     *            first element of the array is the Object stored at the root node and the last element is the
+     *            Object stored at the parent node
+     * @param childIndices
+     *            an array of int that specifies the index values of the removed items. The indices must be in
+     *            sorted order, from lowest to highest
+     * @param children
+     *            an array of Object containing the inserted, removed, or changed objects
+     */
     public void fireTreeNodesRemoved(Object source, Object[] path, int[] childIndices, Object[] children) {
         Object[] listeners = listenerList.getListenerList();
         TreeModelEvent e = null;

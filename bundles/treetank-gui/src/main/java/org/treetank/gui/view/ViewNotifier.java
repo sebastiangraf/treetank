@@ -45,7 +45,7 @@ import org.treetank.gui.GUI;
  */
 public final class ViewNotifier implements Serializable {
     /**
-     * 
+     * SerialUID.
      */
     private static final long serialVersionUID = 1L;
 

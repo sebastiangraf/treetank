@@ -84,7 +84,7 @@ import org.treetank.utils.LogWrapper;
 public final class TextView extends JScrollPane implements IView {
 
     /**
-     * 
+     * SerialUID.
      */
     private static final long serialVersionUID = -5001983007463504219L;
 
