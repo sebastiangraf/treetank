@@ -233,7 +233,7 @@ public enum EDraw {
             for (int i = 0; i < paramText.length(); i++) {
                 // Instead of a constant width, we check the width of each character.
                 final char currentChar = paramText.charAt(i);
-                final float w = paramGUI.mParent.textWidth(currentChar);
+                final float w = 7f;//paramGUI.mParent.textWidth(currentChar);
 
                 // Each box is centered so we move half the width.
                 arclength += w / 2;

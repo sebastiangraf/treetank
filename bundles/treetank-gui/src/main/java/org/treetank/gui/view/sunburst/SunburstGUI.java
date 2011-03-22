@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -229,7 +229,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /** Parent {@link PApplet}. */
     final Embedded mParent;
-    
+
     private transient boolean mFirst;
 
     /** Determines if model has done the work. */
@@ -244,20 +244,28 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** {@link ReadDB} reference. */
     volatile ReadDB mDb;
 
+    /** {@link IWriteTransaction} instance. */
     private volatile IWriteTransaction mWtx;
 
+    /** {@link DropdownList} of available revisions, which are newer than the currently opened revision. */
     private volatile DropdownList mRevisions;
 
+    /** Selected revision from the {@link DropdownList} to compare. */
     volatile int mSelectedRev;
 
+    /** Old maximum depth. */
     volatile int mOldDepthMax;
 
+    /** {@link ControlGroup} to encapsulate the components to insert XML fragments. */
     private transient ControlGroup mCtrl;
 
+    /** Determines if XML fragments should be inserted as first child or as right sibling of the current node. */
     private transient EShredderInsert mInsert;
 
+    /** {@link Textfield} to insert an XML fragment. */
     private transient Textfield mTextArea;
-    
+
+    /** Determins if new mouse coordinates have to be used (after zooming/panning). */
     private transient boolean mUseNewMouseCoords = false;
 
     /**
@@ -395,6 +403,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mXPathField.setLabel("XPath expression");
         mXPathField.setFocus(false);
         mXPathField.setAutoClear(false);
+        mXPathField.setColorBackground(mParent.color(0)); // black
+        mXPathField.setColorForeground(mParent.color(255)); // white
         mXPathField.plugTo(this);
 
         // Add textfield for XML fragment input.
@@ -402,11 +412,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mCtrl.setVisible(false);
         mCtrl.close();
 
-        mTextArea =
-            mControlP5
-                .addTextfield(
-                    "Add XML fragment",
-                    0, 20, 400, 100);
+        mTextArea = mControlP5.addTextfield("Add XML fragment", 0, 20, 400, 100);
         mTextArea.setColorBackground(mParent.color(0)); // black
         mTextArea.setColorForeground(mParent.color(255)); // white
         mTextArea.setGroup(mCtrl);
@@ -630,7 +636,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 // Fisheye transormation.
                 fisheye(mParent.mouseX, mParent.mouseY, 120);
             }
-            
+
             if (mZoomPanEnded) {
                 update();
                 mZoomPanEnded = false;
@@ -1137,11 +1143,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     void setInsert(final EShredderInsert paramInsert) {
         mInsert = paramInsert;
     }
-    
+
     /**
      * Set database instance.
      * 
-     * @param paramDb the {@link ReadDB} instance to set
+     * @param paramDb
+     *            the {@link ReadDB} instance to set
      */
     void updateDb(final ReadDB paramDb) {
         mDb = paramDb;

@@ -114,7 +114,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
 
     /** Traverse a tree (single revision). */
     private static final class TraverseTree extends AbsComponent implements Callable<SunburstFireContainer>,
-        IItems {
+        ITraverseModel {
         /** Key from which to start traversal. */
         private transient long mKey;
 

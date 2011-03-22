@@ -115,7 +115,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
     /** Model which implements the method createSunburstItem(...) defined by {@link IModel}. */
     private transient IModel mModel;
     
-    private transient IItems mCallable;
+    private transient ITraverseModel mCallable;
 
     /** {@link List} of {@link Future}s which hold the number of descendants. */
     private transient List<Future<Integer>> mDescendants;
@@ -144,7 +144,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
      *            model which observes axis changes
      */
     public SunburstDescendantAxis(final IReadTransaction paramRtx, final boolean mIncludeSelf,
-        final AbsModel paramModel, final IItems paramCallable) {
+        final AbsModel paramModel, final ITraverseModel paramCallable) {
         super(paramRtx, mIncludeSelf);
         mModel = paramModel;
         mCallable = paramCallable;
