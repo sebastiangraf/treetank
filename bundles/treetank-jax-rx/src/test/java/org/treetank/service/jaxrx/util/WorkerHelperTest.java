@@ -130,7 +130,7 @@ public class WorkerHelperTest {
     }
 
     /**
-     * This method tests {@link WorkerHelper#serializeXML(IReadTransaction, OutputStream, boolean, boolean)}
+     * This method tests {@link WorkerHelper#serializeXML(ISession, OutputStream, boolean, boolean,Long)}
      */
     @Test
     public void testSerializeXML() throws AbsTTException, IOException {
@@ -145,7 +145,7 @@ public class WorkerHelperTest {
     }
 
     /**
-     * This method tests {@link WorkerHelper#shredInputStream(IWriteTransaction, InputStream, boolean)}
+     * This method tests {@link WorkerHelper#shredInputStream(IWriteTransaction, InputStream, EShredderInsert)}
      */
     @Test
     public void testShredInputStream() throws AbsTTException, IOException {
@@ -168,7 +168,7 @@ public class WorkerHelperTest {
     }
 
     /**
-     * This method tests {@link WorkerHelper#close(IWriteTransaction, IReadTransaction, ISession, IDatabase)}
+     * This method tests {@link WorkerHelper#closeWTX(boolean, IWriteTransaction, ISession, IDatabase)}
      */
     @Test(expected = IllegalStateException.class)
     public void testClose() throws AbsTTException {

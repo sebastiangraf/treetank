@@ -49,7 +49,7 @@ import static org.junit.Assert.assertNotNull;
 public class RESTXMLShredderTest {
 
     /**
-     * Test method for {@link org.treetank.rest.util.RESTXMLShredder#createReader(java.io.InputStream)} .
+     * Test method for {@link org.treetank.service.jaxrx.util.RESTXMLShredder#createReader(java.io.InputStream)} .
      * 
      * @throws XMLStreamException
      * @throws IOException
