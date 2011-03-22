@@ -94,15 +94,6 @@ public class ERevisioningTest {
         checkCombined(pages, page);
     }
 
-    @Test
-    public void testSnapshotCombinePages() {
-        final NodePage[] pages = prepareNormal(4);
-        final NodePage page =
-            ERevisioning.SLIDING_SNAPSHOT.combinePages(pages, Integer
-                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()));
-        checkCombined(pages, page);
-    }
-
     private static NodePage[] prepareNormal(final int length) {
         final NodePage[] pages = new NodePage[length];
         pages[pages.length - 1] = getNodePage(0, 0, 128, 0);
