@@ -332,13 +332,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             return depthMax;
         }
 
-        /**
-         * Get minimum and maximum global text length.
-         * 
-         * @param paramRtx
-         *            Treetank {@link IReadTransaction}
-         */
-        void getMinMaxTextLength(final IReadTransaction paramRtx) {
+        /** {@inheritDoc} */
+        @Override
+        public void getMinMaxTextLength(final IReadTransaction paramRtx) {
             assert paramRtx != null;
             assert !paramRtx.isClosed();
 

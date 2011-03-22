@@ -264,13 +264,9 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             return childExtension;
         }
 
-        /**
-         * Get minimum and maximum global text length.
-         * 
-         * @param paramRtx
-         *            Treetank {@link IReadTransaction}
-         */
-        void getMinMaxTextLength(final IReadTransaction paramRtx) {
+        /** {@inheritDoc} */
+        @Override
+        public void getMinMaxTextLength(final IReadTransaction paramRtx) {
             assert paramRtx != null;
             assert !paramRtx.isClosed();
 
