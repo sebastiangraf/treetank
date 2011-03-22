@@ -109,7 +109,7 @@ public class RESTResponseHelperTest {
     private static final String SLASH = "/";
 
     /**
-     * Test method for {@link org.treetank.rest.util.RESTResponseHelper#buildResponseOfDomLR(java.util.Map)} .
+     * Test method for {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(java.util.Map)} .
      * 
      * @throws IOException
      * @throws WebApplicationException

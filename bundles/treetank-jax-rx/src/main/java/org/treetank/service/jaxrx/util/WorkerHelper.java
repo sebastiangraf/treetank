@@ -256,7 +256,7 @@ public final class WorkerHelper {
     /**
      * This method checks the variable URL path after the node id resource (e.g.
      * http://.../factbook/3/[ACCESSTYPE]) for the available access type to
-     * identify a node. The access types are defined in {@link EIdAccesType}.
+     * identify a node. The access types are defined in {@link EIdAccessType}.
      * 
      * @param accessType
      *            The access type as String value encoded in the URL request.

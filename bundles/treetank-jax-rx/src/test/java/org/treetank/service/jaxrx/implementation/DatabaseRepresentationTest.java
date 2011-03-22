@@ -65,7 +65,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * This class is responsible to test the implementation class {@link DatabaseRepresentation};
+ * This class is responsible to test the implementation class <code> DatabaseRepresentation</code>;
  * 
  * @author Patrick Lang, Lukas Lewandowski, University of Konstanz
  * 
@@ -141,7 +141,7 @@ public class DatabaseRepresentationTest {
     }
 
     /**
-     * This method tests {@link DatabaseRepresentation#createResource(String, java.io.InputStream)}
+     * This method tests {@link DatabaseRepresentation#createResource(java.io.InputStream,String)}
      */
     @Test
     public void createResource() {
@@ -151,7 +151,7 @@ public class DatabaseRepresentationTest {
     }
 
     /**
-     * This method tests {@link DatabaseRepresentation#createResource(String, java.io.InputStream)}
+     * This method tests {@link DatabaseRepresentation#createResource(java.io.InputStream,String)}
      */
     @Test(expected = JaxRxException.class)
     public void createResourceExc() {
@@ -370,7 +370,7 @@ public class DatabaseRepresentationTest {
 
     /**
      * This method tests
-     * {@link DatabaseRepresentation#getModificHistory(String, String, boolean, java.io.OutputStream)}
+     * {@link DatabaseRepresentation#getModificHistory(String, String, boolean, java.io.OutputStream, boolean)}
      * 
      * @throws AbsTTException
      * @throws WebApplicationException

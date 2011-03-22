@@ -146,7 +146,7 @@ public final class RESTResponseHelper {
      * This method builds the overview for the resources and collection we offer
      * in our implementation.
      * 
-     * @param availableResources
+     * @param availableRes
      *            A map of available resources or collections.
      * @return The streaming output for the HTTP response body.
      */
