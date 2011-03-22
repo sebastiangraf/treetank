@@ -47,7 +47,7 @@ public final class ViewUtilities {
      * Serialization compatible String representation of a {@link QName} reference.
      * 
      * @param paramQName
-     *            The {@QName} reference.
+     *            The {@link QName} reference.
      * @return the string representation
      */
     public static String qNameToString(final QName paramQName) {
