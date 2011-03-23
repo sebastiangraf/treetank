@@ -41,7 +41,7 @@
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
 	<scm>
 		<connection>scm:hg:http://treetank.hg.sourceforge.net:8000/hgroot/treetank/treetank</connection>
-		<developerConnection>scm:hg:ssh://sebastiangraf@treetank.hg.sourceforge.net/hgroot/treetank/treetank </developerConnection>
+		<developerConnection>scm:hg:ssh://sebastiangraf@treetank.hg.sourceforge.net/hgroot/treetank/treetank</developerConnection>
 		<url>http://treetank.hg.sourceforge.net:8000/hgroot/treetank/treetank/</url>
 	</scm>
 	<distributionManagement>
