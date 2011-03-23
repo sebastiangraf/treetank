@@ -35,13 +35,7 @@
 	<packaging>pom</packaging>
 	<name>treetank-pom</name>
 	<version>1.0.2-SNAPSHOT</version>
-	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/
-	</url>
-	<scm>
-		<connection>scm:hg:http://treetank.hg.sourceforge.net:8000/hgroot/treetank/treetank</connection>
-		<developerConnection>scm:hg:ssh://sebastiangraf@treetank.hg.sourceforge.net/hgroot/treetank/treetank </developerConnection>
-		<url>http://treetank.hg.sourceforge.net:8000/hgroot/treetank/treetank/</url>
-	</scm>
+	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
 	<issueManagement>
 		<system>Redmine</system>
 		<url>https://projects.uni-konstanz.de/projects/treetank/</url>
@@ -196,6 +190,11 @@
 	</repositories>
 	<reporting>
 		<plugins>
+		    <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
