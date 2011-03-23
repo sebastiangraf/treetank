@@ -36,6 +36,11 @@
 	<name>treetank-pom</name>
 	<version>1.0.2-SNAPSHOT</version>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
+	<scm>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</developerConnection>
+		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</url>
+	</scm>
 	<issueManagement>
 		<system>Redmine</system>
 		<url>https://projects.uni-konstanz.de/projects/treetank/</url>
