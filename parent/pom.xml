@@ -54,6 +54,13 @@
 		<url>http://www.informatik.uni-konstanz.de/ags/disy/
 		</url>
 	</organization>
+	<licenses>
+      <license>
+        <name>New BSD</name>
+        <url>http://www.opensource.org/licenses/bsd-license.php</url>
+        <comments>3-clause BSD License</comments>
+      </license>
+    </licenses>
 	<developers>
 		<developer>
 			<name>Marc Kramis</name>
@@ -310,6 +317,10 @@
 		</dependency>
 	</dependencies>
 	<distributionManagement>
+	    <site>
+            <id>sf</id>
+            <url>scp://shell.sourceforge.net/home/groups/t/tr/treetank/htdocs</url>
+        </site>
 		<repository>
 			<id>disyInternal</id>
 			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
