@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.gui.view.sunburst.Item.Builder;
+import org.treetank.gui.view.sunburst.Item;
 import org.treetank.node.AbsStructNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.FastStack;

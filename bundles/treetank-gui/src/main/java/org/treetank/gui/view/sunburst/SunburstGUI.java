@@ -738,7 +738,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @see processing.core.PApplet#keyReleased()
      */
     void keyReleased() {
-        System.out.println(mXPathField.isFocus());
         if (!mXPathField.isFocus() && !mCtrl.isOpen()) {
             switch (mParent.key) {
             case 'c':

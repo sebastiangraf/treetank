@@ -27,12 +27,25 @@
 
 package org.treetank.gui.view.sunburst;
 
+import static org.easymock.EasyMock.*;
+
 import java.io.File;
 
 import junit.framework.Assert;
 
 import org.treetank.TestHelper;
+import org.treetank.TestHelper.PATHS;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
+import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.sunburst.Item.Builder;
+import org.treetank.service.xml.shredder.EShredderCommit;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
+import org.treetank.service.xml.shredder.XMLUpdateShredder;
 
 import org.junit.After;
 import org.junit.Before;
@@ -64,8 +77,15 @@ public class SunburstCompareModelTest {
         Assert.assertTrue(true);
     }
     
-//    @Test
-//    public void testDescendantCount() throws AbsTTException, IOException, XMLStreamException, InterruptedException, ExecutionException {
+    @Test
+    public void testDescendantCount() throws Exception {
+        Assert.assertTrue(true);
+//        final ITraverseModel mock = createStrictMock(ITraverseModel.class);
+//        final Builder builder = Item.BUILDER;
+//        builder.set(0, 0, -1).setDescendantCount(70);
+//        final Item item = Item.ITEM;
+//        mock.createSunburstItem(item, 0, -1);
+//        replay(mock);
 //        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 //        final ISession session = database.getSession();
 //        final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -81,15 +101,12 @@ public class SunburstCompareModelTest {
 //        wtx.close();
 //        
 //        final IReadTransaction rtx = session.beginReadTransaction();
-//        final IModel mock = createStrictMock(IModel.class);
-//        expect(mock.getDescendants(rtx).get(0).get()).andReturn(8);
-//        replay(mock);
 //        final ReadDB db = new ReadDB(secondRev, 1);
 //        final AbsModel model = new SunburstCompareModel(null, db);
 //        rtx.moveTo(db.getNodeKey());
-//        model.getDescendants(rtx);
+//        model.traverseTree(new SunburstContainer().setRevision(rtx.getRevisionNumber()).setModWeight(
+//            0.7f));
 //        verify(mock);
 //        db.close();
-////        Assert.assertEquals((Integer)8, descendants.get(0).get());
-//    }
+    }
 }

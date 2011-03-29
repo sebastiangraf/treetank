@@ -101,24 +101,19 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         Future<SunburstFireContainer> future =
             executor.submit(new TraverseCompareTree(paramContainer.mRevision, mDb.getRevisionNumber(),
                 paramContainer.mKey, paramContainer.mDepth, paramContainer.mModWeight, this));
-
-        executor.shutdown();
+        mGUI.mDone = false;
         try {
-            executor.awaitTermination(30, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
-        try {
-            mGUI.mDone = false;
             mItems = future.get().mItems;
+            mLastMaxDepth = future.get().mDepthMax;
             firePropertyChange("oldMaxDepth", null, future.get().mOldDepthMax);
             firePropertyChange("maxDepth", null, future.get().mDepthMax);
-            
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final ExecutionException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
+        shutdownAndAwaitTermination(executor);
+
         firePropertyChange("done", null, true);
     }
 
@@ -241,8 +236,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             mItems.clear();
 
             try {
-                // GET MIN-MAX TEXTLENGTH =======================
-                // Get min and max textLength of bothe revisions.
+                // Get min and max textLength of both revisions.
                 final IReadTransaction rtx = mDb.getSession().beginReadTransaction(mRevision);
                 getMinMaxTextLength(rtx);
                 rtx.close();
