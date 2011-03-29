@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -33,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -69,11 +70,14 @@ public enum GUICommands implements IGUICommand {
      * Open a Treetank file.
      */
     OPEN("Open TNK-File", EMenu.MENU) {
-        /** Revision number. */
-        private long mRevNumber;
-
+        /** Action listener for combobox. */
+        private final MyActionListener mActionListener = new MyActionListener();
+        
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
+
             // Create a file chooser.
             final JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -83,16 +87,7 @@ public enum GUICommands implements IGUICommand {
             final JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());
             final JComboBox cb = new JComboBox();
-
-            cb.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent paramEvent) {
-                    final JComboBox cb = (JComboBox)paramEvent.getSource();
-                    if (cb.getSelectedItem() != null) {
-                        mRevNumber = (Long)cb.getSelectedItem();
-                    }
-                };
-            });
+            cb.addActionListener(mActionListener);
 
             panel.add(cb, BorderLayout.SOUTH);
             fc.setAccessory(panel);
@@ -100,15 +95,19 @@ public enum GUICommands implements IGUICommand {
             final PropertyChangeListener changeListener = new PropertyChangeListener() {
                 @Override
                 public void propertyChange(final PropertyChangeEvent paramEvent) {
-                    // Remove items first.
-                    cb.removeAllItems();
-
+                    assert paramEvent != null;
+                    assert paramEvent.getSource() instanceof JFileChooser;
+                    
                     // Get last revision number from TT-storage.
                     final JFileChooser fileChooser = (JFileChooser)paramEvent.getSource();
                     final File tmpDir = fileChooser.getSelectedFile();
                     long revNumber = 0;
 
                     if (tmpDir != null) {
+                        // Remove items first.
+                        cb.removeActionListener(mActionListener);
+                        cb.removeAllItems();
+
                         // A directory is in focus.
                         boolean error = false;
 
@@ -129,6 +128,8 @@ public enum GUICommands implements IGUICommand {
                                 cb.addItem(i);
                             }
                         }
+                        
+                        cb.addActionListener(mActionListener);
                     }
                 }
             };
@@ -137,7 +138,8 @@ public enum GUICommands implements IGUICommand {
             // Handle open button action.
             if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
                 final File file = fc.getSelectedFile();
-                paramGUI.execute(file, mRevNumber);
+                LOGWRAPPER.debug("RevNumber: " + mActionListener.getRevision());
+                paramGUI.execute(file, mActionListener.getRevision());
             }
         }
     },
@@ -146,8 +148,10 @@ public enum GUICommands implements IGUICommand {
      * Shredder an XML-document.
      */
     SHREDDER("Shredder XML-document", EMenu.MENU) {
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
             shredder(paramGUI, EShredder.NORMAL);
         }
     },
@@ -156,8 +160,10 @@ public enum GUICommands implements IGUICommand {
      * Update a shreddered file.
      */
     SHREDDER_UPDATE("Update shreddered file", EMenu.MENU) {
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
             shredder(paramGUI, EShredder.UPDATEONLY);
         }
     },
@@ -166,8 +172,11 @@ public enum GUICommands implements IGUICommand {
      * Serialize a Treetank storage.
      */
     SERIALIZE("Serialize", EMenu.MENU) {
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
+
             // Create a file chooser.
             final JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -218,6 +227,7 @@ public enum GUICommands implements IGUICommand {
      * Separator.
      */
     SEPARATOR("", EMenu.SEPARATOR) {
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
 
@@ -228,8 +238,10 @@ public enum GUICommands implements IGUICommand {
      * Close Treetank GUI.
      */
     QUIT("Quit", EMenu.MENU) {
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
             paramGUI.dispose();
         }
     },
@@ -238,13 +250,16 @@ public enum GUICommands implements IGUICommand {
      * Show tree view.
      */
     TREE("Tree", EMenu.CHECKBOXITEM) {
+        /** {@inheritDoc} */
         @Override
         public boolean selected() {
             return GUIProp.EShowViews.SHOWTREE.getValue();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
             GUIProp.EShowViews.SHOWTREE.invert();
             paramGUI.getViewContainer().layoutViews();
         }
@@ -254,13 +269,16 @@ public enum GUICommands implements IGUICommand {
      * Show text view.
      */
     TEXT("Text", EMenu.CHECKBOXITEM) {
+        /** {@inheritDoc} */
         @Override
         public boolean selected() {
             return GUIProp.EShowViews.SHOWTEXT.getValue();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
             GUIProp.EShowViews.SHOWTEXT.invert();
             paramGUI.getViewContainer().layoutViews();
         }
@@ -270,13 +288,16 @@ public enum GUICommands implements IGUICommand {
      * Show treemap view.
      */
     TREEMAP("Treemap", EMenu.CHECKBOXITEM) {
+        /** {@inheritDoc} */
         @Override
         public boolean selected() {
             return GUIProp.EShowViews.SHOWTREEMAP.getValue();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
             GUIProp.EShowViews.SHOWTREE.invert();
             paramGUI.getViewContainer().layoutViews();
         }
@@ -286,13 +307,16 @@ public enum GUICommands implements IGUICommand {
      * Show sunburst view.
      */
     SUNBURST("Sunburst", EMenu.CHECKBOXITEM) {
+        /** {@inheritDoc} */
         @Override
         public boolean selected() {
             return GUIProp.EShowViews.SHOWSUNBURST.getValue();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
+            assert paramGUI != null;
             GUIProp.EShowViews.SHOWSUNBURST.invert();
             paramGUI.getViewContainer().layoutViews();
         }
@@ -316,6 +340,8 @@ public enum GUICommands implements IGUICommand {
      *            Determines if menu item is checked or not
      */
     GUICommands(final String paramDesc, final EMenu paramType) {
+        assert paramDesc != null;
+        assert paramType != null;
         mDesc = paramDesc;
         mType = paramType;
     }
@@ -353,9 +379,13 @@ public enum GUICommands implements IGUICommand {
      *            Determines which shredder to use
      */
     private static void shredder(final GUI paramGUI, final EShredder paramShredding) {
+        assert paramGUI != null;
+        assert paramShredding != null;
+
         // Create a file chooser.
         final JFileChooser fc = new JFileChooser();
         fc.setAcceptAllFileFilterUsed(false);
+        fc.setFileFilter(new XMLFileFilter());
 
         if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -380,6 +410,31 @@ public enum GUICommands implements IGUICommand {
                     LOGWRAPPER.error(e.getMessage(), e);
                 }
             }
+        }
+    }
+    
+    private final class MyActionListener implements ActionListener {
+        
+        /** Selected revision. */
+        private long mRevision;
+        
+        @Override
+        public void actionPerformed(final ActionEvent paramEvent) {
+            assert paramEvent != null;
+            assert paramEvent.getSource() instanceof JComboBox;
+            final JComboBox cb = (JComboBox)paramEvent.getSource();
+            if (cb.getSelectedItem() != null) {
+                mRevision = (Long)cb.getSelectedItem();
+            }
+        };
+        
+        /**
+         * Get selected revision number.
+         * 
+         * @return the Revision
+         */
+        Long getRevision() {
+            return mRevision;
         }
     }
 }

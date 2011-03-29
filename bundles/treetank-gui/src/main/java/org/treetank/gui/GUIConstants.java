@@ -95,6 +95,6 @@ public final class GUIConstants {
      */
     private GUIConstants() {
         // No instance allowed.
-        throw new AssertionError();
+        throw new AssertionError("No instance allowed!");
     }
 }

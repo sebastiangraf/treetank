@@ -114,6 +114,30 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         mGUI = SunburstGUI.getInstance(mParent, this, mDb);
         addPropertyChangeListener(mGUI);
     }
+    
+    /**
+     * Shutdown and await termination of {@link ExecutorService}.
+     * 
+     * @param paramPool
+     *               thread pool (single thread)
+     */
+    void shutdownAndAwaitTermination(final ExecutorService paramPool) {
+        paramPool.shutdown(); // Disable new tasks from being submitted.
+        try {
+            // Wait a while for existing tasks to terminate.
+            if (!paramPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                paramPool.shutdownNow(); // Cancel currently executing tasks.
+                // Wait a while for tasks to respond to being cancelled.
+                if (!paramPool.awaitTermination(60, TimeUnit.SECONDS))
+                    LOGWRAPPER.error("Pool did not terminate");
+            }
+        } catch (final InterruptedException ie) {
+            // (Re-)Cancel if current thread also interrupted.
+            paramPool.shutdownNow();
+            // Preserve interrupt status.
+            Thread.currentThread().interrupt();
+        }
+    }
 
     /**
      * Update {@link IDatabase} instance.
