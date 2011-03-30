@@ -42,6 +42,7 @@ public final class IConstants {
      */
     private IConstants() {
         // Cannot be instantiated.
+        throw new AssertionError("May not be instantiated!");
     }
 
     // --- Varia

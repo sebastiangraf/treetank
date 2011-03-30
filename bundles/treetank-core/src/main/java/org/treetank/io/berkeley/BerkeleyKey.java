@@ -42,11 +42,11 @@ public class BerkeleyKey extends AbsKey {
     /**
      * Public constructor.
      * 
-     * @param mInput
+     * @param paramInput
      *            base for the key (coming from the db)
      */
-    public BerkeleyKey(final ITTSource mInput) {
-        super(mInput.readLong());
+    public BerkeleyKey(final ITTSource paramInput) {
+        super(paramInput.readLong());
     }
 
     /**
@@ -91,8 +91,7 @@ public class BerkeleyKey extends AbsKey {
      * {@inheritDoc}
      */
     @Override
-    public long getIdentifier() {
-
+    public final long getIdentifier() {
         return super.getKeys()[0];
     }
 

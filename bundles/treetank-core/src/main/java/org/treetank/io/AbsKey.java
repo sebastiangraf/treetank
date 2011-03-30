@@ -41,14 +41,14 @@ package org.treetank.io;
  */
 public abstract class AbsKey {
 
-    /** all keys. */
+    /** All keys. */
     private final transient long[] mKeys;
 
     /**
      * Protected constructor, just setting the keys.
      * 
      * @param paramKeys
-     *            setting the keys.
+     *            setting the keys
      */
     protected AbsKey(final long... paramKeys) {
         mKeys = paramKeys;

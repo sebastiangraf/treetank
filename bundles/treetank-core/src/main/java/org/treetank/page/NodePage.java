@@ -53,36 +53,38 @@ public class NodePage extends AbsPage {
     /**
      * Create node page.
      * 
-     * @param nodePageKey
+     * @param paramNodePageKey
      *            Base key assigned to this node page.
+     * @param paramRevision
+     *            Revision number.
      */
-    public NodePage(final long nodePageKey, final long mRevision) {
-        super(0, mRevision);
-        mNodePageKey = nodePageKey;
+    public NodePage(final long paramNodePageKey, final long paramRevision) {
+        super(0, paramRevision);
+        mNodePageKey = paramNodePageKey;
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
     }
 
     /**
      * Read node page.
      * 
-     * @param mIn
+     * @param paramIn
      *            Input bytes to read page from.
      */
-    protected NodePage(final ITTSource mIn) {
-        super(0, mIn);
-        mNodePageKey = mIn.readLong();
+    protected NodePage(final ITTSource paramIn) {
+        super(0, paramIn);
+        mNodePageKey = paramIn.readLong();
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
 
         final int[] kinds = new int[IConstants.NDP_NODE_COUNT];
         for (int i = 0; i < kinds.length; i++) {
-            kinds[i] = mIn.readInt();
+            kinds[i] = paramIn.readInt();
         }
 
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
             final int kind = kinds[offset];
             final ENodes enumKind = ENodes.getEnumKind(kind);
             if (enumKind != ENodes.UNKOWN_KIND) {
-                getNodes()[offset] = enumKind.createNodeFromPersistence(mIn);
+                getNodes()[offset] = enumKind.createNodeFromPersistence(paramIn);
             }
         }
     }

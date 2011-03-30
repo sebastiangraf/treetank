@@ -27,6 +27,8 @@
 
 package org.treetank.diff;
 
+import static org.easymock.EasyMock.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -36,6 +38,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.easymock.IAnswer;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
@@ -49,19 +56,6 @@ import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.shredder.XMLUpdateShredder;
 import org.treetank.utils.DocumentCreater;
 
-import org.easymock.IAnswer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.easymock.EasyMock.createStrictMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-
 /**
  * Test StructuralDiff.
  * 
@@ -73,7 +67,7 @@ public final class StructuralDiffTest {
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
-    private static final long TIMEOUT_S = 200000;
+    private static final long TIMEOUT_S = 10;
 
     @Before
     public void setUp() throws AbsTTException {

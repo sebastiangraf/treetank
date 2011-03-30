@@ -52,7 +52,7 @@ public final class UberPage extends AbsPage {
     private boolean mBootstrap;
 
     /**
-     * s Create uber page.
+     * Create uber page.
      */
     public UberPage() {
         super(1, IConstants.UBP_ROOT_REVISION_NUMBER);
@@ -99,39 +99,37 @@ public final class UberPage extends AbsPage {
 
         ndp.setNode(0, DocumentRootNode.createData());
         rrp.incrementMaxNodeKey();
-
     }
 
     /**
      * Read uber page.
      * 
-     * @param mIn
+     * @param paramIn
      *            Input bytes.
      */
-    protected UberPage(final ITTSource mIn) {
-        super(1, mIn);
-        mRevisionCount = mIn.readLong();
+    protected UberPage(final ITTSource paramIn) {
+        super(1, paramIn);
+        mRevisionCount = paramIn.readLong();
         mBootstrap = false;
     }
 
     /**
      * Clone uber page.
      * 
-     * @param mCommittedUberPage
+     * @param paramCommittedUberPage
      *            Page to clone.
-     * @param revisionToUse
+     * @param paramRevisionToUse
      *            Revision number to use.
      */
-    public UberPage(final UberPage mCommittedUberPage, final long revisionToUse) {
-        super(1, mCommittedUberPage, revisionToUse);
-        if (mCommittedUberPage.isBootstrap()) {
-            mRevisionCount = mCommittedUberPage.mRevisionCount;
-            mBootstrap = mCommittedUberPage.mBootstrap;
+    public UberPage(final UberPage paramCommittedUberPage, final long paramRevisionToUse) {
+        super(1, paramCommittedUberPage, paramRevisionToUse);
+        if (paramCommittedUberPage.isBootstrap()) {
+            mRevisionCount = paramCommittedUberPage.mRevisionCount;
+            mBootstrap = paramCommittedUberPage.mBootstrap;
         } else {
-            mRevisionCount = mCommittedUberPage.mRevisionCount + 1;
+            mRevisionCount = paramCommittedUberPage.mRevisionCount + 1;
             mBootstrap = false;
         }
-
     }
 
     /**
@@ -200,10 +198,10 @@ public final class UberPage extends AbsPage {
      * {@inheritDoc}
      */
     @Override
-    protected void serialize(final ITTSink mOut) {
+    protected void serialize(final ITTSink paramOut) {
         mBootstrap = false;
-        super.serialize(mOut);
-        mOut.writeLong(mRevisionCount);
+        super.serialize(paramOut);
+        paramOut.writeLong(mRevisionCount);
     }
 
     /**

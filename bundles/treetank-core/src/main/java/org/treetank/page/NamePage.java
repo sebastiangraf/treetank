@@ -52,11 +52,11 @@ public final class NamePage extends AbsPage {
     /**
      * Create name page.
      * 
-     * @param mRevision
+     * @param paramRevision
      *            Revision number.
      */
-    public NamePage(final long mRevision) {
-        super(0, mRevision);
+    public NamePage(final long paramRevision) {
+        super(0, paramRevision);
         mNameMap = new HashMap<Integer, String>();
         // mRawNameMap = new HashMap<Integer, byte[]>();
     }
@@ -64,21 +64,21 @@ public final class NamePage extends AbsPage {
     /**
      * Read name page.
      * 
-     * @param mIn
+     * @param paramIn
      *            Input bytes to read from.
      */
-    protected NamePage(final ITTSource mIn) {
-        super(0, mIn);
+    protected NamePage(final ITTSource paramIn) {
+        super(0, paramIn);
 
-        final int mapSize = mIn.readInt();
+        final int mapSize = paramIn.readInt();
 
         mNameMap = new HashMap<Integer, String>(mapSize);
         for (int i = 0, l = (int)mapSize; i < l; i++) {
-            final int key = mIn.readInt();
-            final int valSize = mIn.readInt();
+            final int key = paramIn.readInt();
+            final int valSize = paramIn.readInt();
             final byte[] bytes = new byte[valSize];
             for (int j = 0; j < bytes.length; j++) {
-                bytes[j] = mIn.readByte();
+                bytes[j] = paramIn.readByte();
             }
             mNameMap.put(key, TypedValue.parseString(bytes));
             // mRawNameMap.put(key, bytes);
@@ -88,14 +88,14 @@ public final class NamePage extends AbsPage {
     /**
      * Clone name page.
      * 
-     * @param mCommittedNamePage
+     * @param paramCommittedNamePage
      *            Page to clone.
-     * @param revisionToUse
+     * @param paramRevisionToUse
      *            Revision Number to use.
      */
-    public NamePage(final NamePage mCommittedNamePage, final long revisionToUse) {
-        super(0, mCommittedNamePage, revisionToUse);
-        mNameMap = new HashMap<Integer, String>(mCommittedNamePage.mNameMap);
+    public NamePage(final NamePage paramCommittedNamePage, final long paramRevisionToUse) {
+        super(0, paramCommittedNamePage, paramRevisionToUse);
+        mNameMap = new HashMap<Integer, String>(paramCommittedNamePage.mNameMap);
         // mRawNameMap = new HashMap<Integer, byte[]>(
         // committedNamePage.mRawNameMap);
     }
@@ -125,13 +125,13 @@ public final class NamePage extends AbsPage {
     /**
      * Create name key given a name.
      * 
-     * @param mKey
+     * @param paramKey
      *            Key for given name.
-     * @param mName
+     * @param paramName
      *            Name to create key for.
      */
-    public void setName(final int mKey, final String mName) {
-        mNameMap.put(mKey, mName);
+    public void setName(final int paramKey, final String paramName) {
+        mNameMap.put(paramKey, paramName);
         // mRawNameMap.put(key, TypedValue.getBytes(name));
     }
 
@@ -139,17 +139,17 @@ public final class NamePage extends AbsPage {
      * {@inheritDoc}
      */
     @Override
-    protected void serialize(final ITTSink mOut) {
-        super.serialize(mOut);
+    protected void serialize(final ITTSink paramOut) {
+        super.serialize(paramOut);
 
-        mOut.writeInt(mNameMap.size());
+        paramOut.writeInt(mNameMap.size());
 
         for (final int key : mNameMap.keySet()) {
-            mOut.writeInt(key);
-            byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-            mOut.writeInt(tmp.length);
+            paramOut.writeInt(key);
+            final byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
+            paramOut.writeInt(tmp.length);
             for (final byte byteVal : tmp) {
-                mOut.writeByte(byteVal);
+                paramOut.writeByte(byteVal);
             }
         }
     }
@@ -162,6 +162,11 @@ public final class NamePage extends AbsPage {
         return super.toString() + ": nameCount=" + mNameMap.size();
     }
 
+    /**
+     * Get name map.
+     * 
+     * @return name map
+     */
     public Map<Integer, String> getNameMap() {
         return mNameMap;
     }

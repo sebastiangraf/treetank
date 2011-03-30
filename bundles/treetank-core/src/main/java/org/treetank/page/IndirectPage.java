@@ -43,21 +43,21 @@ public final class IndirectPage extends AbsPage {
     /**
      * Create indirect page.
      * 
-     * @param mRevision
+     * @param paramRevision
      *            Revision Number
      */
-    public IndirectPage(final long mRevision) {
-        super(IConstants.INP_REFERENCE_COUNT, mRevision);
+    public IndirectPage(final long paramRevision) {
+        super(IConstants.INP_REFERENCE_COUNT, paramRevision);
     }
 
     /**
      * Read indirect page.
      * 
-     * @param mIn
+     * @param paramIn
      *            Input bytes.
      */
-    protected IndirectPage(final ITTSource mIn) {
-        super(IConstants.INP_REFERENCE_COUNT, mIn);
+    protected IndirectPage(final ITTSource paramIn) {
+        super(IConstants.INP_REFERENCE_COUNT, paramIn);
     }
 
     /**
@@ -72,9 +72,9 @@ public final class IndirectPage extends AbsPage {
         super(IConstants.INP_REFERENCE_COUNT, page, revisionToUse);
     }
 
-    @Override
-    protected void serialize(final ITTSink mOut) {
-        super.serialize(mOut);
-    }
+//    @Override
+//    protected void serialize(final ITTSink mOut) {
+//        super.serialize(mOut);
+//    }
 
 }

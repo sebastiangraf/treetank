@@ -48,21 +48,21 @@ public interface IItemList {
     /**
      * Adds an item to the item list and assigns a unique item key to the item
      * and return it. The item key is the negatived index of the item in the
-     * item list The key is negatived to make it distinguishable from a node
+     * item list. The key is negatived to make it distinguishable from a node.
      * 
-     * @param mItem
+     * @param paramItem
      *            The item to add.
      * @return The item key.
      */
-    int addItem(final IItem mItem);
+    int addItem(final IItem paramItem);
 
     /**
      * Returns the item at a given index in the item list. If the given index is
      * the item key, it has to be negated before.
      * 
-     * @param mKey
+     * @param paramKey
      *            key of the item, that should be returned
      * @return item at the given index.
      */
-    IItem getItem(final long mKey);
+    IItem getItem(final long paramKey);
 }
