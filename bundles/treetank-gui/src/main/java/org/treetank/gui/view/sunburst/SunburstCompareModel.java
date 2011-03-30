@@ -214,18 +214,14 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             }
             
             mRevision = paramNewRevision;
-            mKey = paramKey;
+            mKey = paramKey == 0 ? paramKey + 1 : paramKey;
             mModWeight = paramModificationWeight;
             mRelations = new NodeRelations();
             mDiffs = new LinkedList<Diff>();
             mStart = new CountDownLatch(1);
             mItems = new LinkedList<SunburstItem>();
             mParent = mModel.mParent;
-
             mRtx.moveTo(mKey);
-            if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
-                mRtx.moveToFirstChild();
-            }
         }
 
         @Override
@@ -244,7 +240,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 // Invoke diff.
                 final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
                 observer.add(this);
-                DiffFactory.invokeStructuralDiff(mDb.getDatabase(), mRtx.getNode().getNodeKey(), mRevision,
+                DiffFactory.invokeStructuralDiff(mDb.getDatabase(), mKey, mRevision,
                     mRtx.getRevisionNumber(), EDiffKind.NORMAL, observer);
 
                 // Wait for diff list to complete.

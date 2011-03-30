@@ -156,7 +156,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             assert paramKey >= (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             assert paramKey >= 0;
             assert paramModel != null;
-            mKey = paramKey;
+            mKey = paramKey == 0 ? paramKey + 1 : paramKey;
             mModel = paramModel;
             mDb = mModel.mDb;
             try {
@@ -168,11 +168,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             addPropertyChangeListener(mModel.mGUI);
             mRelations = new NodeRelations();
             mItems = new LinkedList<SunburstItem>();
-
             mRtx.moveTo(mKey);
-            if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
-                mRtx.moveToFirstChild();
-            }
         }
 
         /**
