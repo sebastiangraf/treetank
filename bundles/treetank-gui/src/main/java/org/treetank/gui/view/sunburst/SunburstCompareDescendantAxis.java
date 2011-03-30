@@ -48,7 +48,7 @@ import org.treetank.gui.view.sunburst.Item.Builder;
 import processing.core.PConstants;
 
 /**
- * Compare descendant axis.
+ * Special sunburst compare descendant axis.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -59,13 +59,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     private static final LogWrapper LOGWRAPPER = new LogWrapper(
         LoggerFactory.getLogger(SunburstCompareDescendantAxis.class));
 
-    /** */
-    private enum EInit {
-        INIT,
-
-        SUBSEQUENT
-    }
-
+    /** Current diff value. */
     private transient EDiff mCurrDiff;
 
     /** Extension stack. */
@@ -530,8 +524,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         mBuilder.set(mAngle, mParExtension, mIndexToParent).setDescendantCount(mDescendantCount)
-            .setParentDescendantCount(mParentDescendantCount)
-            .setModificationCount(countDiffs(EInit.SUBSEQUENT))
+            .setParentDescendantCount(mParentDescendantCount).setModificationCount(countDiffs())
             .setParentModificationCount(mParentModificationCount).setSubtract(mSubtract).setDiff(mDiff).set();
         mMoved.processCompareMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mDescendantsStack,
             mParentStack, mDiffStack);
@@ -554,24 +547,15 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      *            diff counter
      * @return modified diff counter
      */
-    private int incrDiffCounter(final int paramIndex, final int paramDiffCounts, final EInit paramInit) {
+    private int incrDiffCounter(final int paramIndex, final int paramDiffCounts) {
         int diffCounts = paramDiffCounts;
         if (paramIndex == 0) {
-            if (paramInit == EInit.INIT) {
-                assert paramIndex < mDiffs.size();
-                mCurrDiff = mDiffs.get(paramIndex).getDiff();
-            } else {
-                mCurrDiff = mDiff;
-            }
+            mCurrDiff = mDiff;
         } else {
-            if (paramInit == EInit.INIT) {
-                assert paramIndex < mDiffs.size();
-                mCurrDiff = mDiffs.get(paramIndex).getDiff();
-            } else {
-                assert paramIndex - 1 < mDiffs.size();
-                mCurrDiff = mDiffs.get(paramIndex - 1).getDiff();
-            }
+            assert paramIndex - 1 < mDiffs.size();
+            mCurrDiff = mDiffs.get(paramIndex - 1).getDiff();
         }
+
         if (mCurrDiff != EDiff.SAME) {
             diffCounts++;
         }
@@ -583,7 +567,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * 
      * @return number of differences plus one
      */
-    private int countDiffs(final EInit paramInit) {
+    private int countDiffs() {
         int index = 0;
         int diffCounts = 0;
         Diff diffCont = null;
@@ -593,12 +577,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             getTransaction().moveToFirstChild();
         }
 
-        diffCounts = incrDiffCounter(index, diffCounts, paramInit);
+        diffCounts = incrDiffCounter(index, diffCounts);
         index++;
-
-        // if (mDiffCont == null) {
-        // mDiffCont = mDiffs.get(0);
-        // }
 
         if (diffCounts == 1 && getTransaction().getStructuralNode().hasFirstChild()) {
             mSubtract = true;
@@ -612,106 +592,30 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             do {
                 if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
                     getTransaction().moveToFirstChild();
-                    diffCounts = incrDiffCounter(index, diffCounts, paramInit);
+                    diffCounts = incrDiffCounter(index, diffCounts);
                     index++;
-                    if (paramInit == EInit.INIT) {
-                        if (index < mDiffs.size()) {
-                            diffCont = mDiffs.get(index);
-                        }
-                        while (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.DELETED) {
-                            mCurrDiff = EDiff.DELETED;
-                            if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index).getDepth()
-                                .getOldDepth()
-                                && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index).getDepth()
-                                    .getOldDepth()) {
-                                diffCounts++;
-                            } else {
-                                break;
-                            }
-                            index++;
-                        }
-                    } else {
-                        if (index - 1 < mDiffs.size()) {
-                            diffCont = mDiffs.get(index - 1);
-                        }
-                        while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
-                            mCurrDiff = EDiff.DELETED;
-                            if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
-                                .getOldDepth()
-                                && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
-                                    .getOldDepth()) {
-                                diffCounts++;
-                            } else {
-                                break;
-                            }
-                            index++;
-                        }
+                    if (index - 1 < mDiffs.size()) {
+                        diffCont = mDiffs.get(index - 1);
                     }
+                    while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
+                        mCurrDiff = EDiff.DELETED;
+                        if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
+                            .getOldDepth()
+                            && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
+                                .getOldDepth()) {
+                            diffCounts++;
+                        } else {
+                            break;
+                        }
+                        index++;
+                    }
+
                 } else {
                     while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
                         if (((AbsStructNode)getTransaction().getNode()).hasParent()
                             && getTransaction().getNode().getNodeKey() != nodeKey) {
                             getTransaction().moveToParent();
-                            if (paramInit == EInit.INIT) {
-                                if (index < mDiffs.size()) {
-                                    diffCont = mDiffs.get(index);
-                                }
-                                while (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.DELETED) {
-                                    mCurrDiff = EDiff.DELETED;
-                                    if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index).getDepth()
-                                        .getOldDepth()
-                                        && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index).getDepth()
-                                            .getOldDepth()) {
-                                        diffCounts++;
-                                    } else {
-                                        break;
-                                    }
-                                    index++;
-                                }
-                            } else {
-                                if (index - 1 < mDiffs.size()) {
-                                    diffCont = mDiffs.get(index - 1);
-                                }
-                                while (index - 1 < mDiffs.size()
-                                    && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
-                                    mCurrDiff = EDiff.DELETED;
-                                    if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
-                                        .getOldDepth()
-                                        && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1)
-                                            .getDepth().getOldDepth()) {
-                                        diffCounts++;
-                                    } else {
-                                        break;
-                                    }
-                                    index++;
-                                }
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                    if (getTransaction().getNode().getNodeKey() != nodeKey) {
-                        getTransaction().moveToRightSibling();
-                        diffCounts = incrDiffCounter(index, diffCounts, paramInit);
-                        index++;
 
-                        if (paramInit == EInit.INIT) {
-                            if (index < mDiffs.size()) {
-                                diffCont = mDiffs.get(index);
-                            }
-                            while (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.DELETED) {
-                                mCurrDiff = EDiff.DELETED;
-                                if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index).getDepth()
-                                    .getOldDepth()
-                                    && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index).getDepth()
-                                        .getOldDepth()) {
-                                    diffCounts++;
-                                } else {
-                                    break;
-                                }
-                                index++;
-                            }
-                        } else {
                             if (index - 1 < mDiffs.size()) {
                                 diffCont = mDiffs.get(index - 1);
                             }
@@ -728,6 +632,28 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                                 }
                                 index++;
                             }
+                        } else {
+                            break;
+                        }
+                    }
+                    if (getTransaction().getNode().getNodeKey() != nodeKey) {
+                        getTransaction().moveToRightSibling();
+                        diffCounts = incrDiffCounter(index, diffCounts);
+                        index++;
+                        if (index - 1 < mDiffs.size()) {
+                            diffCont = mDiffs.get(index - 1);
+                        }
+                        while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
+                            mCurrDiff = EDiff.DELETED;
+                            if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
+                                .getOldDepth()
+                                && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
+                                    .getOldDepth()) {
+                                diffCounts++;
+                            } else {
+                                break;
+                            }
+                            index++;
                         }
                     }
                 }

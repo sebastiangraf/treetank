@@ -611,24 +611,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     mParent.ellipse(0, 0, secondRad, secondRad);
                 }
                 // Rollover text.
-                if (mHitTestIndex != -1) {
-                    final String text = mHitItem.toString();
-
-                    int lines = 1;
-                    for (final char c : text.toCharArray()) {
-                        if (c == '\n') {
-                            lines++;
-                        }
-                    }
-
-                    final int offset = 5;
-                    final float texW = mParent.textWidth(text) * 1.2f;// + 2f * offset + 4f;
-                    mParent.fill(0, 0, 0);
-                    mParent.rect(mX + offset, mY + offset, texW,
-                        (mParent.textAscent() + mParent.textDescent()) * lines + 4);
-                    mParent.fill(0, 0, 100);
-                    mParent.text(text.toUpperCase(), mX + offset + 2, mY + offset + 2);
-                }
+                textMousOver();
             }
 
             // Fisheye view.
@@ -650,6 +633,37 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 PApplet.println("saving to pdf – done");
             }
             drawGUI();
+        }
+    }
+
+    /**
+     * 
+     */
+    private void textMousOver() {
+        if (mHitTestIndex != -1) {
+            final String text = mHitItem.toString();
+
+            int lines = 1;
+            for (final char c : text.toCharArray()) {
+                if (c == '\n') {
+                    lines++;
+                }
+            }
+
+            final int offset = 5;
+            final float textW = mParent.textWidth(text) * 1.2f;
+            mParent.fill(0, 0, 0);
+            if (mX + offset + textW > mParent.width) {
+                mParent.rect(mX - textW + offset, mY + offset, textW,
+                    (mParent.textAscent() + mParent.textDescent()) * lines + 4);
+                mParent.fill(0, 0, 100);
+                mParent.text(text.toUpperCase(), mX - textW + offset + 2, mY + offset + 2);
+            } else {
+                mParent.rect(mX + offset, mY + offset, textW, (mParent.textAscent() + mParent.textDescent())
+                    * lines + 4);
+                mParent.fill(0, 0, 100);
+                mParent.text(text.toUpperCase(), mX + offset + 2, mY + offset + 2);
+            }
         }
     }
 
