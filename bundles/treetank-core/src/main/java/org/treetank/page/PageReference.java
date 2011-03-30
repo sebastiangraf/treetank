@@ -68,42 +68,42 @@ public final class PageReference {
     /**
      * Constructor to clone an existing page reference.
      * 
-     * @param pageReference
+     * @param paramPageReference
      *            Page reference to clone.
      */
-    public PageReference(final PageReference pageReference) {
-        this(pageReference.mPage, pageReference.mKey, pageReference.mChecksum);
+    public PageReference(final PageReference paramPageReference) {
+        this(paramPageReference.mPage, paramPageReference.mKey, paramPageReference.mChecksum);
     }
 
     /**
      * Constructor to properly set up a page reference.
      * 
-     * @param page
+     * @param paramPage
      *            In-memory deserialized page instance.
-     * @param key
+     * @param paramKey
      *            {@link AbsKey} of the page to be referenced in the
      *            persistent storage
-     * @param checksum
+     * @param paramChecksum
      *            Checksum of serialized page.
      */
-    public PageReference(final AbsPage page, final AbsKey key, final byte[] checksum) {
-        mPage = page;
-        mKey = key;
-        System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
+    public PageReference(final AbsPage paramPage, final AbsKey paramKey, final byte[] paramChecksum) {
+        mPage = paramPage;
+        mKey = paramKey;
+        System.arraycopy(paramChecksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
     }
 
     /**
      * Read page reference from storage.
      * 
-     * @param mIn
+     * @param paramIn
      *            Input bytes.
      */
-    public PageReference(final ITTSource mIn) {
+    public PageReference(final ITTSource paramIn) {
         mPage = null;
-        mKey = KeyPersistenter.createKey(mIn);
+        mKey = KeyPersistenter.createKey(paramIn);
         mChecksum = new byte[IConstants.CHECKSUM_SIZE];
         for (int i = 0; i < mChecksum.length; i++) {
-            mChecksum[i] = mIn.readByte();
+            mChecksum[i] = paramIn.readByte();
         }
     }
 
@@ -113,7 +113,7 @@ public final class PageReference {
      * @return True if the reference points to an in-memory instance.
      */
     public boolean isInstantiated() {
-        return (mPage != null);
+        return mPage != null;
     }
 
     /**
@@ -128,21 +128,21 @@ public final class PageReference {
     /**
      * Get the checksum of the serialized page.
      * 
-     * @param checksum
+     * @param paramChecksum
      *            getting the checksum of the page in this byte array
      */
-    public void getChecksum(final byte[] checksum) {
-        System.arraycopy(mChecksum, 0, checksum, 0, IConstants.CHECKSUM_SIZE);
+    public void getChecksum(final byte[] paramChecksum) {
+        System.arraycopy(mChecksum, 0, paramChecksum, 0, IConstants.CHECKSUM_SIZE);
     }
 
     /**
      * Set the checksum of the serialized page.
      * 
-     * @param checksum
-     *            Checksum of serialized page.
+     * @param paramChecksum
+     *            checksum of serialized page
      */
-    public void setChecksum(final byte[] checksum) {
-        System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
+    public void setChecksum(final byte[] paramChecksum) {
+        System.arraycopy(paramChecksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
     }
 
     /**
@@ -157,11 +157,11 @@ public final class PageReference {
     /**
      * Set in-memory instance of deserialized page.
      * 
-     * @param page
+     * @param paramPage
      *            Deserialized page.
      */
-    public void setPage(final AbsPage page) {
-        mPage = page;
+    public void setPage(final AbsPage paramPage) {
+        mPage = paramPage;
     }
 
     /**
@@ -176,11 +176,11 @@ public final class PageReference {
     /**
      * Set start byte offset in file.
      * 
-     * @param key
+     * @param paramKey
      *            Key of this reference set by the persistent storage
      */
-    public void setKey(final AbsKey key) {
-        this.mKey = key;
+    public void setKey(final AbsKey paramKey) {
+        mKey = paramKey;
     }
 
     /**
@@ -244,14 +244,18 @@ public final class PageReference {
     }
 
     /**
-     * @param nodePageKey
+     * Set nodepage key.
+     * 
+     * @param paramNodePageKey
      *            the nodePageKey to set
      */
-    public void setNodePageKey(long nodePageKey) {
-        this.mNodePageKey = nodePageKey;
+    public void setNodePageKey(final long paramNodePageKey) {
+        mNodePageKey = paramNodePageKey;
     }
 
     /**
+     * Get nodepage key.
+     * 
      * @return the nodePageKey
      */
     public long getNodePageKey() {

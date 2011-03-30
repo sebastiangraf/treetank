@@ -152,12 +152,12 @@ public final class WriteTransactionState extends ReadTransactionState {
      * Finishing the node modification. That is storing the node including the
      * page in the cache.
      * 
-     * @param mNode
-     *            the node to be modified.
+     * @param paramNode
+     *            the node to be modified
      */
-    protected void finishNodeModification(final IItem mNode) {
-        final long nodePageKey = nodePageKey(mNode.getNodeKey());
-        if (mNodePageCon == null || mNode == null || mLog.get(nodePageKey) == null) {
+    protected void finishNodeModification(final IItem paramNode) {
+        final long nodePageKey = nodePageKey(paramNode.getNodeKey());
+        if (mNodePageCon == null || paramNode == null || mLog.get(nodePageKey) == null) {
             throw new IllegalStateException();
         }
 

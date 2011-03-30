@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -50,34 +50,33 @@ public abstract class AbsPage {
     /**
      * Constructor to initialize instance.
      * 
-     * @param referenceCount
+     * @param paramReferenceCount
      *            Number of references of page.
-     * @param revision
+     * @param paramRevision
      *            Revision Number.
      */
-    protected AbsPage(final int referenceCount, final long revision) {
-
-        mReferences = new PageReference[referenceCount];
-        mRevision = revision;
+    protected AbsPage(final int paramReferenceCount, final long paramRevision) {
+        mReferences = new PageReference[paramReferenceCount];
+        mRevision = paramRevision;
     }
 
     /**
      * Read constructor.
      * 
-     * @param referenceCount
+     * @param paramReferenceCount
      *            Number of references of page.
-     * @param mIn
+     * @param paramIn
      *            Input reader to read from.
      */
-    protected AbsPage(final int referenceCount, final ITTSource mIn) {
-        this(referenceCount, mIn.readLong());
-        final int[] values = new int[referenceCount];
+    protected AbsPage(final int paramReferenceCount, final ITTSource paramIn) {
+        this(paramReferenceCount, paramIn.readLong());
+        final int[] values = new int[paramReferenceCount];
         for (int i = 0; i < values.length; i++) {
-            values[i] = mIn.readInt();
+            values[i] = paramIn.readInt();
         }
-        for (int offset = 0; offset < referenceCount; offset++) {
+        for (int offset = 0; offset < paramReferenceCount; offset++) {
             if (values[offset] == 1) {
-                getReferences()[offset] = new PageReference(mIn);
+                getReferences()[offset] = new PageReference(paramIn);
             }
         }
     }
@@ -85,19 +84,19 @@ public abstract class AbsPage {
     /**
      * Clone constructor used for COW.
      * 
-     * @param referenceCount
+     * @param paramReferenceCount
      *            Number of references of page.
-     * @param mCommittedPage
+     * @param paramCommittedPage
      *            Page to clone.
-     * @param revision
+     * @param paramRevision
      *            Number of Revision.
      */
-    protected AbsPage(final int referenceCount, final AbsPage mCommittedPage, final long revision) {
-
-        this(referenceCount, revision);
-        for (int offset = 0; offset < referenceCount; offset++) {
-            if (mCommittedPage.getReferences()[offset] != null) {
-                final PageReference ref = mCommittedPage.getReferences()[offset];
+    protected AbsPage(final int paramReferenceCount, final AbsPage paramCommittedPage,
+        final long paramRevision) {
+        this(paramReferenceCount, paramRevision);
+        for (int offset = 0; offset < paramReferenceCount; offset++) {
+            if (paramCommittedPage.getReferences()[offset] != null) {
+                final PageReference ref = paramCommittedPage.getReferences()[offset];
                 getReferences()[offset] = new PageReference(ref);
             }
         }
@@ -106,63 +105,63 @@ public abstract class AbsPage {
     /**
      * Get page reference of given offset.
      * 
-     * @param mOffset
+     * @param paramOffset
      *            Offset of page reference.
      * @return PageReference at given offset.
      */
-    public final PageReference getReference(final int mOffset) {
-        if (getReferences()[mOffset] == null) {
-            getReferences()[mOffset] = new PageReference();
+    public final PageReference getReference(final int paramOffset) {
+        if (getReferences()[paramOffset] == null) {
+            getReferences()[paramOffset] = new PageReference();
         }
-        return getReferences()[mOffset];
+        return getReferences()[paramOffset];
     }
 
     /**
      * Set page reference at given offset.
      * 
-     * @param mOffset
+     * @param paramOffset
      *            Offset of page reference.
-     * @param mReference
+     * @param paramReference
      *            Page reference to set.
      */
-    public final void setReference(final int mOffset, final PageReference mReference) {
-        getReferences()[mOffset] = mReference;
+    public final void setReference(final int paramOffset, final PageReference paramReference) {
+        getReferences()[paramOffset] = paramReference;
     }
 
     /**
      * Recursively call commit on all referenced pages.
      * 
-     * @param mState
+     * @param paramState
      *            IWriteTransaction state.
      * @throws AbsTTException
      *             thorw when write error
      */
 
-    public final void commit(final WriteTransactionState mState) throws AbsTTException {
+    public final void commit(final WriteTransactionState paramState) throws AbsTTException {
         for (final PageReference reference : getReferences()) {
-            mState.commit(reference);
+            paramState.commit(reference);
         }
     }
 
     /**
      * Serialize page references into output.
      * 
-     * @param mOut
+     * @param paramOut
      *            Output stream.
      */
-    protected void serialize(final ITTSink mOut) {
-        mOut.writeLong(mRevision);
+    protected void serialize(final ITTSink paramOut) {
+        paramOut.writeLong(mRevision);
         for (int i = 0; i < getReferences().length; i++) {
             if (getReferences()[i] != null) {
-                mOut.writeInt(1);
+                paramOut.writeInt(1);
             } else {
-                mOut.writeInt(0);
+                paramOut.writeInt(0);
             }
         }
 
         for (final PageReference reference : getReferences()) {
             if (reference != null) {
-                reference.serialize(mOut);
+                reference.serialize(paramOut);
             }
         }
     }
@@ -170,7 +169,7 @@ public abstract class AbsPage {
     /**
      * @return the mReferences
      */
-    public PageReference[] getReferences() {
+    public final PageReference[] getReferences() {
         return mReferences;
     }
 

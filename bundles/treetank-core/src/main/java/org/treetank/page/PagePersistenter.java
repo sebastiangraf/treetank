@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -43,26 +43,34 @@ public final class PagePersistenter {
      */
     private PagePersistenter() {
         // Not needed over here
+        throw new AssertionError("May not be instantiated!");
     }
 
-    public static AbsPage createPage(final ITTSource mSource) {
-        final int kind = mSource.readInt();
+    /**
+     * Create page.
+     * 
+     * @param paramSource
+     *            source to read from
+     * @return the created page
+     */
+    public static AbsPage createPage(final ITTSource paramSource) {
+        final int kind = paramSource.readInt();
         AbsPage returnVal = null;
         switch (kind) {
         case NODEPAGE:
-            returnVal = new NodePage(mSource);
+            returnVal = new NodePage(paramSource);
             break;
         case NAMEPAGE:
-            returnVal = new NamePage(mSource);
+            returnVal = new NamePage(paramSource);
             break;
         case UBERPAGE:
-            returnVal = new UberPage(mSource);
+            returnVal = new UberPage(paramSource);
             break;
         case INDIRCTPAGE:
-            returnVal = new IndirectPage(mSource);
+            returnVal = new IndirectPage(paramSource);
             break;
         case REVISIONROOTPAGE:
-            returnVal = new RevisionRootPage(mSource);
+            returnVal = new RevisionRootPage(paramSource);
             break;
         default:
             throw new IllegalStateException(
@@ -71,28 +79,30 @@ public final class PagePersistenter {
         return returnVal;
     }
 
-    public static void serializePage(final ITTSink mSink, final AbsPage mPage) {
-
-        if (mPage instanceof NodePage) {
-            mSink.writeInt(PagePersistenter.NODEPAGE);
-
-        } else if (mPage instanceof IndirectPage) {
-            mSink.writeInt(PagePersistenter.INDIRCTPAGE);
-
-        } else if (mPage instanceof NamePage) {
-            mSink.writeInt(PagePersistenter.NAMEPAGE);
-
-        } else if (mPage instanceof RevisionRootPage) {
-            mSink.writeInt(PagePersistenter.REVISIONROOTPAGE);
-
-        } else if (mPage instanceof UberPage) {
-            mSink.writeInt(PagePersistenter.UBERPAGE);
-
+    /**
+     * Serialize page.
+     * 
+     * @param paramSink
+     *            output sink
+     * @param paramPage
+     *            the page to serialize
+     */
+    public static void serializePage(final ITTSink paramSink, final AbsPage paramPage) {
+        if (paramPage instanceof NodePage) {
+            paramSink.writeInt(PagePersistenter.NODEPAGE);
+        } else if (paramPage instanceof IndirectPage) {
+            paramSink.writeInt(PagePersistenter.INDIRCTPAGE);
+        } else if (paramPage instanceof NamePage) {
+            paramSink.writeInt(PagePersistenter.NAMEPAGE);
+        } else if (paramPage instanceof RevisionRootPage) {
+            paramSink.writeInt(PagePersistenter.REVISIONROOTPAGE);
+        } else if (paramPage instanceof UberPage) {
+            paramSink.writeInt(PagePersistenter.UBERPAGE);
         } else {
-            throw new IllegalStateException(new StringBuilder("Page ").append(mPage.getClass()).append(
-                " cannot be serialized").toString());
+            throw new IllegalStateException(new StringBuilder("Page ").append(paramPage.getClass())
+                .append(" cannot be serialized").toString());
         }
-        mPage.serialize(mSink);
+        paramPage.serialize(paramSink);
     }
 
 }

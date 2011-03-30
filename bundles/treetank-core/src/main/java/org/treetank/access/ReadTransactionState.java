@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -95,17 +95,17 @@ public class ReadTransactionState {
      *            Key of revision to read from uber page.
      * @param paramItemList
      *            List of non-persistent items.
-     * @param reader
+     * @param paramReader
      *            for this transaction
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
     protected ReadTransactionState(final DatabaseConfiguration paramDatabaseConfiguration,
         final UberPage paramUberPage, final long paramRevision, final IItemList paramItemList,
-        final IReader reader) throws TTIOException {
+        final IReader paramReader) throws TTIOException {
         mCache = new RAMCache();
         mDatabaseConfiguration = paramDatabaseConfiguration;
-        mPageReader = reader;
+        mPageReader = paramReader;
         mUberPage = paramUberPage;
         mRootPage = loadRevRoot(paramRevision);
         initializeNamePage();
@@ -203,7 +203,6 @@ public class ReadTransactionState {
     protected void close() throws TTIOException {
         mPageReader.close();
         mCache.clear();
-
     }
 
     /**
@@ -234,6 +233,12 @@ public class ReadTransactionState {
         return page;
     }
 
+    /**
+     * Initialize NamePage.
+     * 
+     * @throws TTIOException
+     *             if something odd happens during initialization
+     */
     protected final void initializeNamePage() throws TTIOException {
         final PageReference ref = mRootPage.getNamePageReference();
         if (ref.getPage() == null) {
@@ -242,6 +247,8 @@ public class ReadTransactionState {
     }
 
     /**
+     * Get UberPage.
+     * 
      * @return The uber page.
      */
     protected final UberPage getUberPage() {
@@ -249,13 +256,13 @@ public class ReadTransactionState {
     }
 
     /**
+     * Get item list.
+     * 
      * @return The item list.
      */
     public final IItemList getItemList() {
         return mItemList;
     }
-
-    // /**
 
     /**
      * Dereference node page reference.
@@ -316,8 +323,7 @@ public class ReadTransactionState {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final IndirectPage dereferenceIndirectPage(final PageReference reference)
-        throws TTIOException {
+    protected final IndirectPage dereferenceIndirectPage(final PageReference reference) throws TTIOException {
 
         IndirectPage page = (IndirectPage)reference.getPage();
 
@@ -418,9 +424,9 @@ public class ReadTransactionState {
      */
     @Override
     public String toString() {
-        return new StringBuilder("DatabaseConfiguration: ").append(mDatabaseConfiguration.toString()).append(
-            "\nPageReader: ").append(mPageReader.toString()).append("\nUberPage: ").append(
-            mUberPage.toString()).append("\nRevRootPage: ").append(mRootPage.toString()).toString();
+        return new StringBuilder("DatabaseConfiguration: ").append(mDatabaseConfiguration.toString())
+            .append("\nPageReader: ").append(mPageReader.toString()).append("\nUberPage: ")
+            .append(mUberPage.toString()).append("\nRevRootPage: ").append(mRootPage.toString()).toString();
     }
 
 }
