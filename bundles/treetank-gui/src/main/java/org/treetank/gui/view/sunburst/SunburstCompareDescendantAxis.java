@@ -146,9 +146,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** Maximum depth in old revision. */
     private transient int mMaxDepth;
 
-    /** Temporal depth. */
-    private transient int mTempDepth;
-
     /** Current diff. */
     private transient EDiff mDiff;
 
@@ -540,11 +537,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     }
 
     /**
-     * Calculates new depth when same nodes have been encountered before and now an insert or rename occurs.
+     * Calculates new depth for modifications and back to "normal" depth.
      */
     private void calculateDepth() {
         if (mDiff != EDiff.SAME && mLastDiff == EDiff.SAME) {
-            mTempDepth = mDepth;
             mDepth = mMaxDepth + 2;
         } else if (mDiff == EDiff.SAME && mLastDiff != EDiff.SAME) {
             mDepth = mDiffCont.getDepth().getNewDepth();
