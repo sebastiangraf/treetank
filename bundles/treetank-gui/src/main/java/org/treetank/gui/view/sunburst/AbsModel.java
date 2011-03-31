@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -78,18 +78,18 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
 
     /** Index of the current {@link SunburstItem} for the iterator. */
     private transient int mIndex;
-    
+
     /** {@link Stack} with {@link List}s of {@link SunburstItem}s for undo operation. */
     transient Stack<List<SunburstItem>> mLastItems;
-    
+
     /** {@link Stack} with depths for undo operation. */
     transient Stack<Integer> mLastDepths;
-    
+
     /** {@link Stack} with depths for undo operation. */
     transient Stack<Integer> mLastOldDepths;
-    
+
     transient int mLastMaxDepth;
-    
+
     transient int mLastOldMaxDepth;
 
     /**
@@ -119,12 +119,12 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         mGUI = SunburstGUI.getInstance(mParent, this, mDb);
         addPropertyChangeListener(mGUI);
     }
-    
+
     /**
      * Shutdown and await termination of {@link ExecutorService}.
      * 
      * @param paramPool
-     *               thread pool
+     *            thread pool
      */
     static void shutdownAndAwaitTermination(final ExecutorService paramPool) {
         paramPool.shutdown(); // Disable new tasks from being submitted.
@@ -186,9 +186,13 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         if (!mLastItems.empty()) {
             // Go back one index in history list.
             mItems = mLastItems.pop();
-            firePropertyChange("maxDepth", null, mLastDepths.pop());
+            mLastMaxDepth = mLastDepths.pop();
             if (!mLastOldDepths.empty()) {
-                firePropertyChange("maxOldDepth", null, mLastOldDepths.pop());
+                mLastOldMaxDepth = mLastOldDepths.pop();
+            }
+            firePropertyChange("maxDepth", null, mLastMaxDepth);
+            if (mLastOldMaxDepth != 0) {
+                firePropertyChange("oldMaxDepth", null, mLastOldMaxDepth);
             }
             firePropertyChange("done", null, true);
         }
