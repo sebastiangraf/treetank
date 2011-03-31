@@ -85,8 +85,12 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** {@link Stack} with depths for undo operation. */
     transient Stack<Integer> mLastDepths;
     
-    /** Last maximum depth in the tree. */
+    /** {@link Stack} with depths for undo operation. */
+    transient Stack<Integer> mLastOldDepths;
+    
     transient int mLastMaxDepth;
+    
+    transient int mLastOldMaxDepth;
 
     /**
      * Constructor.
@@ -110,6 +114,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         mItems = new ArrayList<SunburstItem>();
         mLastItems = new Stack<List<SunburstItem>>();
         mLastDepths = new Stack<Integer>();
+        mLastOldDepths = new Stack<Integer>();
         mDb = paramDb;
         mGUI = SunburstGUI.getInstance(mParent, this, mDb);
         addPropertyChangeListener(mGUI);
@@ -181,8 +186,10 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         if (!mLastItems.empty()) {
             // Go back one index in history list.
             mItems = mLastItems.pop();
-            mLastMaxDepth = mLastDepths.peek();
             firePropertyChange("maxDepth", null, mLastDepths.pop());
+            if (!mLastOldDepths.empty()) {
+                firePropertyChange("maxOldDepth", null, mLastOldDepths.pop());
+            }
             firePropertyChange("done", null, true);
         }
     }
