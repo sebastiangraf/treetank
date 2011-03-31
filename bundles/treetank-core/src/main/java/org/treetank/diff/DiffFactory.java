@@ -32,8 +32,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
 import org.treetank.exception.AbsTTException;
+import org.treetank.utils.LogWrapper;
 
 /**
  * Wrapper for public access.
@@ -42,6 +44,10 @@ import org.treetank.exception.AbsTTException;
  * 
  */
 public final class DiffFactory {
+    
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(DiffFactory.class));
 
     /**
      * Possible kinds of differences between two nodes.
@@ -80,10 +86,49 @@ public final class DiffFactory {
     /** Determines the kind of diff to invoke. */
     private enum DiffKind {
         /** Full diff. */
-        FULL,
+        FULL {
+            @Override
+            void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
+                final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+                try {
+                    new FullDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
+                } catch (final AbsTTException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                }
+            }
+        },
 
         /** Structural diff (doesn't recognize differences in namespace and attribute nodes. */
-        STRUCTURAL;
+        STRUCTURAL {
+            @Override
+            void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
+                final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+                try {
+                    new StructuralDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
+                } catch (final AbsTTException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                }
+            }
+        };
+        
+       /**
+        * Invoke diff.
+        * 
+        * @param paramDb
+        *            {@link IDatabase} reference
+        * @param paramKey
+        *            start key
+        * @param paramNewRev
+        *            new revision
+        * @param paramOldRev
+        *            old revision
+        * @param paramDiffKind
+        *            diff kind
+        * @param paramObservers
+        *            {@link Set} of {@link IDiffObserver}s
+        */
+        abstract void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
+            final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers);
     }
 
     /** Kind of diff to invoke. */
@@ -93,7 +138,8 @@ public final class DiffFactory {
      * Private constructor.
      */
     private DiffFactory() {
-        throw new AssertionError();
+        // No instantiation allowed.
+        throw new AssertionError("No instantiation allowed!");
     }
 
     /**
@@ -224,15 +270,16 @@ public final class DiffFactory {
 
         @Override
         public Void call() throws AbsTTException {
-            switch (mDiffKind) {
-            case STRUCTURAL:
-                new StructuralDiff(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
-                break;
-            case FULL:
-                new FullDiff(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
-                break;
-            default:
-            }
+            mDiffKind.invoke(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
+//            switch (mDiffKind) {
+//            case STRUCTURAL:
+//                new StructuralDiff(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
+//                break;
+//            case FULL:
+//                new FullDiff(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
+//                break;
+//            default:
+//            }
             return null;
         }
     }
