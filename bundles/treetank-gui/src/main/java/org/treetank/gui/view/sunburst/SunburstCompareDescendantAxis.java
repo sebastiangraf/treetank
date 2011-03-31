@@ -161,6 +161,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** {@link Diff} instance. */
     private transient Diff mDiffCont;
 
+    /** Last {@link Diff}. */
+    private transient Diff mLastDiffCont;
+
     /**
      * Constructor initializing internal state.
      * 
@@ -246,37 +249,41 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mOldRtx.moveTo(mDiffCont.getOldNode().getNodeKey());
 
                 if (mMoved == EMoved.ANCHESTSIBL) {
-                    // Must be done on the transaction which is bound to the new revision.
-                    final long currNodeKey = getTransaction().getNode().getNodeKey();
-                    boolean first = true;
-                    do {
-                        if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                            && mDepth <= mDiffCont.getDepth().getOldDepth()) {
-                            if (first) {
-                                // Do not pop from stack if it's a leaf node.
-                                first = false;
-                            } else {
-                                mDiffStack.pop();
-                                mAngleStack.pop();
-                                mExtensionStack.pop();
-                                mParentStack.pop();
-                                mDescendantsStack.pop();
-                            }
+                    if (mDepth > mDiffCont.getDepth().getOldDepth()) {
+                        // Must be done on the transaction which is bound to the new revision.
+                        final long currNodeKey = getTransaction().getNode().getNodeKey();
+                        boolean first = true;
+                        do {
+                            if (((AbsStructNode)getTransaction().getNode()).hasParent()
+                                && mDepth > mDiffCont.getDepth().getOldDepth()) {
+                                if (first) {
+                                    // Do not pop from stack if it's a leaf node.
+                                    first = false;
+                                } else {
+                                    mDiffStack.pop();
+                                    mAngleStack.pop();
+                                    mExtensionStack.pop();
+                                    mParentStack.pop();
+                                    mDescendantsStack.pop();
+                                }
 
-                            mDepth--;
-                            getTransaction().moveToParent();
-                        } else {
-                            break;
-                        }
-                    } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
-                    getTransaction().moveTo(currNodeKey);
+                                mDepth--;
+                                getTransaction().moveToParent();
+                            } else {
+                                break;
+                            }
+                        } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
+                        getTransaction().moveTo(currNodeKey);
+                    } else {
+                        mMoved = EMoved.STARTRIGHTSIBL;
+                    }
                 }
 
                 setTransaction(mOldRtx);
                 mTempNextKey = mNextKey;
                 mTempRightSiblingKeyStack = mRightSiblingKeyStack;
                 mRightSiblingKeyStack = new FastStack<Long>();
-                
+
                 final long currNodeKey = getTransaction().getNode().getNodeKey();
                 boolean first = true;
                 do {
@@ -331,9 +338,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 if (mMoved == EMoved.ANCHESTSIBL) {
                     final long currNodeKey = getTransaction().getNode().getNodeKey();
                     boolean first = true;
+                    long oldDepth = mLastDiffCont.getDepth().getOldDepth();
                     do {
                         if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                            && getTransaction().getNode().getNodeKey() != mNextKey) {
+                            && getTransaction().getNode().getNodeKey() != mNextKey
+                            && oldDepth > mDiffCont.getDepth().getNewDepth()) {
                             if (first) {
                                 // Do not pop from stack if it's a leaf node.
                                 first = false;
@@ -347,6 +356,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
                             getTransaction().moveToParent();
                             mDepth--;
+                            oldDepth--;
                         } else {
                             break;
                         }
@@ -394,6 +404,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         }
 
         getTransaction().moveTo(mNextKey);
+        mLastDiffCont = mDiffCont;
 
         // Fail if the subtree is finished.
         if (((AbsStructNode)getTransaction().getNode()).getLeftSiblingKey() == getStartKey()) {
@@ -475,6 +486,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             // Next node will be a right sibling of an anchestor node or the traversal ends.
             mMoved = EMoved.ANCHESTSIBL;
             if (mDiffs.get(0).getDiff() != EDiff.DELETED) {
+                /* 
+                 * Only move to next node if next diff is not a delete, because in deletes it moves itself to
+                 * the next node. This has been done because deletes can occur some depths/levels above but
+                 * between the next node and the current node.
+                 */
                 moveToNextNode();
             }
 
@@ -502,7 +518,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         boolean first = true;
         do {
             if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                && getTransaction().getNode().getNodeKey() != mTempNextKey) {
+                && getTransaction().getNode().getNodeKey() != mNextKey) {
                 if (first) {
                     // Do not pop from stack if it's a leaf node.
                     first = false;
@@ -532,7 +548,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mDepth = mMaxDepth + 2;
         } else if (mDiff == EDiff.SAME && mLastDiff != EDiff.SAME) {
             mDepth = mDiffCont.getDepth().getNewDepth();
-        } else if (mDiff == EDiff.DELETED && mDepth < mMaxDepth + 2) {
+        } else if (mDiff != EDiff.SAME && mDepth < mMaxDepth + 2) {
             mDepth = mMaxDepth + 2;
         }
     }

@@ -248,6 +248,12 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
                 // Wait for diff list to complete.
                 mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+                
+                for (final Diff diff : mDiffs) {
+                    final EDiff diffEnum = diff.getDiff();
+                    
+                    System.out.println(diffEnum);
+                }
 
                 // Maximum depth in old revision.
                 mDepthMax = getDepthMax(mRtx);
@@ -592,22 +598,22 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                     if (mNewRtx.getStructuralNode().getChildCount() > 0) {
                         do {
                             if (((AbsStructNode)mNewRtx.getNode()).hasFirstChild()) {
-                                mNewRtx.moveToFirstChild();
                                 retVal = countDeletes(retVal, depth);
+                                mNewRtx.moveToFirstChild();
                                 retVal++;
                             } else {
                                 while (!((AbsStructNode)mNewRtx.getNode()).hasRightSibling()) {
                                     if (((AbsStructNode)mNewRtx.getNode()).hasParent()
                                         && mNewRtx.getNode().getNodeKey() != nodeKey) {
-                                        mNewRtx.moveToParent();
                                         retVal = countDeletes(retVal, depth);
+                                        mNewRtx.moveToParent();
                                     } else {
                                         break;
                                     }
                                 }
                                 if (mNewRtx.getNode().getNodeKey() != nodeKey) {
-                                    mNewRtx.moveToRightSibling();
                                     retVal = countDeletes(retVal, depth);
+                                    mNewRtx.moveToRightSibling();
                                     retVal++;
                                 }
                             }
