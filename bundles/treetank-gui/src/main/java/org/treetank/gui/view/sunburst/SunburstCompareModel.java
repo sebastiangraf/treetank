@@ -84,7 +84,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
     @Override
     public void update(final SunburstContainer paramContainer) {
         long nodeKey = 0;
-        mLastItems.add(new ArrayList<SunburstItem>(mItems));
+        mLastItems.push(new ArrayList<SunburstItem>(mItems));
         mLastDepths.push(mLastMaxDepth);
         mLastOldDepths.push(mLastOldMaxDepth);
         nodeKey = mItems.get(mGUI.mHitTestIndex).mNode.getNodeKey();
