@@ -69,13 +69,12 @@ public enum GUICommands implements IGUICommand {
      * Open a Treetank file.
      */
     OPEN("Open TNK-File", EMenu.MENU) {
-        /** Action listener for combobox. */
-        private final MyActionListener mActionListener = new MyActionListener();
-        
         /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
             assert paramGUI != null;
+            
+            final MyActionListener mActionListener = new MyActionListener();
 
             // Create a file chooser.
             final JFileChooser fc = new JFileChooser();
