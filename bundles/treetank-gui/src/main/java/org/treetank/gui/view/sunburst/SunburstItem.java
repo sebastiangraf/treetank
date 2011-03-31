@@ -113,6 +113,9 @@ final class SunburstItem {
     /** {@link QName} of current node. */
     private final QName mQName;
 
+    /** {@link QName} of old node. */
+    private transient QName mOldQName;
+
     /** Depth in the tree. */
     private final int mDepth;
 
@@ -140,8 +143,11 @@ final class SunburstItem {
     /** Singleton {@link SunburstGUI} instance. */
     private transient SunburstGUI mGUI;
 
-    /** Text. */
+    /** Text string. */
     private final String mText;
+
+    /** Old text string. */
+    private transient String mOldText;
 
     /** Parent processing applet. */
     private final PApplet mParent;
@@ -166,6 +172,9 @@ final class SunburstItem {
         /** {@link QName} of current node. */
         private transient QName mQName;
 
+        /** {@link QName} of old node. */
+        private transient QName mOldQName;
+
         /** {@link NodeRelations} reference. */
         private final NodeRelations mRelations;
 
@@ -177,6 +186,9 @@ final class SunburstItem {
 
         /** Text string. */
         private transient String mText;
+
+        /** Old text string. */
+        private transient String mOldText;
 
         /** Kind of diff. */
         private transient EDiff mDiff;
@@ -241,6 +253,19 @@ final class SunburstItem {
         }
 
         /**
+         * Set old {@link QName}.
+         * 
+         * @param paramOldQName
+         *            {@link QName} of the current node.
+         * @return this builder
+         */
+        Builder setOldQName(final QName paramOldQName) {
+            assert paramOldQName != null;
+            mOldQName = paramOldQName;
+            return this;
+        }
+
+        /**
          * Set character content.
          * 
          * @param paramText
@@ -250,6 +275,19 @@ final class SunburstItem {
         Builder setText(final String paramText) {
             assert paramText != null;
             mText = paramText;
+            return this;
+        }
+
+        /**
+         * Set old character content.
+         * 
+         * @param paramText
+         *            text string in case of a text node
+         * @return this builder
+         */
+        Builder setOldText(final String paramOldText) {
+            assert paramOldText != null;
+            mOldText = paramOldText;
             return this;
         }
 
@@ -290,7 +328,9 @@ final class SunburstItem {
 
         mNode = paramBuilder.mNode;
         mQName = paramBuilder.mQName;
+        mOldQName = paramBuilder.mOldQName;
         mText = paramBuilder.mText;
+        mOldText = paramBuilder.mOldText;
         mParent = paramBuilder.mParent;
         mStructKind = paramBuilder.mRelations.mStructKind;
         mDescendantCount = paramBuilder.mRelations.mDescendantCount;
@@ -775,16 +815,36 @@ final class SunburstItem {
     public String toString() {
         String retVal;
         if (mQName == null) {
-            retVal =
-                new StringBuilder().append("[Depth: ").append(mDepth).append(" Text: ").append(mText)
-                    .append(" NodeKey: ").append(mNode.getNodeKey()).append("]").toString();
+            final StringBuilder builder =
+                new StringBuilder().append("[Depth: ").append(mDepth).append(" Text: ").append(mText);
+            updated(builder);
+            builder.append(" NodeKey: ").append(mNode.getNodeKey()).append("]");
+            retVal = builder.toString();
         } else {
-            retVal =
+            final StringBuilder builder =
                 new StringBuilder().append("[Depth: ").append(mDepth).append(" QName: ")
-                    .append(ViewUtilities.qNameToString(mQName)).append(" NodeKey: ")
-                    .append(mNode.getNodeKey()).append("]").toString();
+                    .append(ViewUtilities.qNameToString(mQName));
+            updated(builder);
+            builder.append(" NodeKey: ").append(mNode.getNodeKey()).append("]");
+            retVal = builder.toString();
         }
         return retVal;
+    }
+
+    /**
+     * Node has been updated so append to {@link StringBuilder}.
+     * 
+     * @param builder
+     *            {@link StringBuilder} instance
+     */
+    private void updated(StringBuilder builder) {
+        if (mDiff != null && mDiff == EDiff.UPDATED) {
+            if (mOldQName != null) {
+                builder.append(" old QName: ").append(ViewUtilities.qNameToString(mOldQName));
+            } else if (mOldText != null && !mOldText.isEmpty()) {
+                builder.append(" old Text: ").append(mOldText);
+            }
+        }
     }
 
     /**

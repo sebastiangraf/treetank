@@ -45,12 +45,14 @@ import org.treetank.diff.DiffFactory.EDiffKind;
 import org.treetank.diff.IDiffObserver;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.node.AbsNode;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.sunburst.SunburstItem.Builder;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
 
 import processing.core.PApplet;
@@ -105,7 +107,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 paramContainer.mKey, paramContainer.mDepth, paramContainer.mModWeight, this));
         mGUI.mDone = false;
         try {
-            mItems = future.get().mItems;   
+            mItems = future.get().mItems;
             mLastMaxDepth = future.get().mDepthMax;
             mLastOldMaxDepth = future.get().mOldDepthMax;
             firePropertyChange("oldMaxDepth", null, mLastOldMaxDepth);
@@ -248,12 +250,12 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
                 // Wait for diff list to complete.
                 mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-                
-                for (final Diff diff : mDiffs) {
-                    final EDiff diffEnum = diff.getDiff();
-                    
-                    System.out.println(diffEnum);
-                }
+
+//                for (final Diff diff : mDiffs) {
+//                    final EDiff diffEnum = diff.getDiff();
+//
+//                    System.out.println(diffEnum);
+//                }
 
                 // Maximum depth in old revision.
                 mDepthMax = getDepthMax(mRtx);
@@ -443,8 +445,11 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             // Build item.
             if (text != null) {
                 LOGWRAPPER.debug("text: " + text);
-                mItems.add(new SunburstItem.Builder(mParent, mModel, angle, extension, mRelations, mDb)
-                    .setNode(node).setText(text).setDiff(diff).build());
+                SunburstItem.Builder builder =
+                    new SunburstItem.Builder(mParent, mModel, angle, extension, mRelations, mDb)
+                        .setNode(node).setText(text).setDiff(diff);
+                updated(diff, builder);
+                mItems.add(builder.build());
             } else {
                 QName name = null;
                 if (diff == EDiff.DELETED) {
@@ -453,14 +458,36 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                     name = mNewRtx.getQNameOfCurrentNode();
                 }
                 LOGWRAPPER.debug("name: " + name.getLocalPart());
-                mItems.add(new SunburstItem.Builder(mParent, mModel, angle, extension, mRelations, mDb)
-                    .setNode(node).setQName(name).setDiff(diff).build());
+                SunburstItem.Builder builder =
+                    new SunburstItem.Builder(mParent, mModel, angle, extension, mRelations, mDb)
+                        .setNode(node).setQName(name).setDiff(diff);
+                updated(diff, builder);
+                mItems.add(builder.build());
             }
 
             // Set depth max.
             mNewDepthMax = Math.max(depth, mNewDepthMax);
 
             return extension;
+        }
+
+        /**
+         * Add old node text or {@link QName} to the {@link SunburstItem.Builder}.
+         * 
+         * @param paramDiff
+         *            determines if it's value is EDiff.UPDATED
+         * @param builder
+         *            {@link SunburstItem.Builder} instance
+         */
+        private void updated(final EDiff paramDiff, final SunburstItem.Builder builder) {
+            if (paramDiff == EDiff.UPDATED) {
+                final IStructuralItem oldNode = mRtx.getStructuralNode();
+                if (oldNode.getKind() == ENodes.TEXT_KIND) {
+                    builder.setOldText(mRtx.getValueOfCurrentNode());
+                } else {
+                    builder.setOldQName(mRtx.getQNameOfCurrentNode());
+                }
+            }
         }
 
         /**
@@ -474,7 +501,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             // Get descendants for every node and save it to a list.
             final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
             final ExecutorService executor = Executors.newSingleThreadExecutor();
-//                Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            // Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             final List<Diff> diffs = new LinkedList<Diff>(mDiffs);
             boolean firstNode = true;
             int index = 0;

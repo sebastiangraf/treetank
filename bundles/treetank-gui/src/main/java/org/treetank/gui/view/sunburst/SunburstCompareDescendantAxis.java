@@ -27,6 +27,7 @@
 
 package org.treetank.gui.view.sunburst;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ExecutionException;
@@ -241,6 +242,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         if (!mDiffs.isEmpty() && mNextKey != 0) {
             mDiffCont = mDiffs.remove(0);
             mDiff = mDiffCont.getDiff();
+            if (mDiff == EDiff.UPDATED) {
+                mOldRtx.moveTo(mDiffCont.getOldNode().getNodeKey());
+            }
             if (mDiff == EDiff.DELETED && mLastDiff != EDiff.DELETED) {
                 mNewRtx = getTransaction();
                 mOldRtx.moveTo(mDiffCont.getOldNode().getNodeKey());
@@ -273,6 +277,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         getTransaction().moveTo(currNodeKey);
                     } else {
                         mMoved = EMoved.STARTRIGHTSIBL;
+                        mAngle += mExtension;
                     }
                 }
 
@@ -598,9 +603,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     }
 
     /**
-     * Count how many differences in the subtree exists.
+     * Count how many differences in the subtree exists and add descendant-or-self count.
      * 
-     * @return number of differences plus one
+     * @return number of differences plus descendants
      */
     private int countDiffs() {
         int index = 0;
@@ -626,6 +631,21 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         } else if (getTransaction().getStructuralNode().getChildCount() > 0) {
             do {
                 if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
+                    if (index - 1 < mDiffs.size()) {
+                        diffCont = mDiffs.get(index - 1);
+                    }
+                    while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
+                        mCurrDiff = EDiff.DELETED;
+                        if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
+                            .getOldDepth()
+                            && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
+                                .getOldDepth()) {
+                            diffCounts++;
+                        } else {
+                            break;
+                        }
+                        index++;
+                    }
                     getTransaction().moveToFirstChild();
                     diffCounts = incrDiffCounter(index, diffCounts);
                     index++;
@@ -644,13 +664,12 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         }
                         index++;
                     }
-
                 } else {
                     while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
                         if (((AbsStructNode)getTransaction().getNode()).hasParent()
                             && getTransaction().getNode().getNodeKey() != nodeKey) {
                             getTransaction().moveToParent();
-
+                            
                             if (index - 1 < mDiffs.size()) {
                                 diffCont = mDiffs.get(index - 1);
                             }
