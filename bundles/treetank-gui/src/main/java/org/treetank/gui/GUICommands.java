@@ -73,65 +73,10 @@ public enum GUICommands implements IGUICommand {
         @Override
         public void execute(final GUI paramGUI) {
             assert paramGUI != null;
-            
+
+            // Create file chooser.
             final MyActionListener mActionListener = new MyActionListener();
-
-            // Create a file chooser.
-            final JFileChooser fc = new JFileChooser();
-            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            fc.setAcceptAllFileFilterUsed(false);
-
-            // Create new panel etc.pp. for choosing the revision at the bottom of the frame.
-            final JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-            final JComboBox cb = new JComboBox();
-            cb.addActionListener(mActionListener);
-
-            panel.add(cb, BorderLayout.SOUTH);
-            fc.setAccessory(panel);
-
-            final PropertyChangeListener changeListener = new PropertyChangeListener() {
-                @Override
-                public void propertyChange(final PropertyChangeEvent paramEvent) {
-                    assert paramEvent != null;
-                    assert paramEvent.getSource() instanceof JFileChooser;
-                    
-                    // Get last revision number from TT-storage.
-                    final JFileChooser fileChooser = (JFileChooser)paramEvent.getSource();
-                    final File tmpDir = fileChooser.getSelectedFile();
-                    long revNumber = 0;
-
-                    if (tmpDir != null) {
-                        // Remove items first.
-                        cb.removeActionListener(mActionListener);
-                        cb.removeAllItems();
-
-                        // A directory is in focus.
-                        boolean error = false;
-
-                        try {
-                            final IDatabase db = Database.openDatabase(tmpDir);
-                            final IReadTransaction rtx = db.getSession().beginReadTransaction();
-                            revNumber = rtx.getRevisionNumber();
-                            rtx.close();
-                            db.close();
-                        } catch (final AbsTTException e) {
-                            // Selected directory is not a Treetank storage.
-                            error = true;
-                        }
-
-                        if (!error) {
-                            // Create items, which are used as available revisions.
-                            for (long i = 0; i <= revNumber; i++) {
-                                cb.addItem(i);
-                            }
-                        }
-                        
-                        cb.addActionListener(mActionListener);
-                    }
-                }
-            };
-            fc.addPropertyChangeListener(changeListener);
+            final JFileChooser fc = createFileChooser(mActionListener);
 
             // Handle open button action.
             if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
@@ -175,46 +120,46 @@ public enum GUICommands implements IGUICommand {
         public void execute(final GUI paramGUI) {
             assert paramGUI != null;
 
-            // Create a file chooser.
-            final JFileChooser fc = new JFileChooser();
-            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            fc.setAcceptAllFileFilterUsed(false);
+            // Create file chooser.
+            final MyActionListener mActionListener = new MyActionListener();
+            final JFileChooser fc = createFileChooser(mActionListener);
 
             if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
                 final File source = fc.getSelectedFile();
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 fc.setAcceptAllFileFilterUsed(true);
-                if (fc.showSaveDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
-                    final File target = fc.getSelectedFile();
-                    if (target.delete()) {
+
+                final JFileChooser chooser = new JFileChooser();
+                if (chooser.showSaveDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
+                    final File target = chooser.getSelectedFile();
+                    try {
+                        final FileOutputStream outputStream = new FileOutputStream(target);
+
+                        final IDatabase db = Database.openDatabase(source);
+                        final ISession session = db.getSession();
+
+                        final ExecutorService executor = Executors.newSingleThreadExecutor();
+                        final XMLSerializer serializer =
+                            new XMLSerializerBuilder(session, outputStream).setIndend(true)
+                                .setVersions(new long[] {
+                                    mActionListener.getRevision()
+                                }).build();
+                        executor.submit(serializer);
+                        executor.shutdown();
                         try {
-                            final FileOutputStream outputStream = new FileOutputStream(target);
-
-                            final IDatabase db = Database.openDatabase(source);
-                            final ISession session = db.getSession();
-
-                            final ExecutorService executor = Executors.newSingleThreadExecutor();
-                            final XMLSerializer serializer =
-                                new XMLSerializerBuilder(session, outputStream).build();
-                            executor.submit(serializer);
-                            executor.shutdown();
-                            try {
-                                executor.awaitTermination(5, TimeUnit.SECONDS);
-                            } catch (final InterruptedException e) {
-                                LOGWRAPPER.error(e.getMessage(), e);
-                                return;
-                            }
-
-                            session.close();
-                            db.close();
-                            outputStream.close();
-                        } catch (final AbsTTException e) {
+                            executor.awaitTermination(5, TimeUnit.SECONDS);
+                        } catch (final InterruptedException e) {
                             LOGWRAPPER.error(e.getMessage(), e);
-                        } catch (final IOException e) {
-                            LOGWRAPPER.error(e.getMessage(), e);
+                            return;
                         }
-                    } else {
-                        // FIXME ERROR
+
+                        session.close();
+                        db.close();
+                        outputStream.close();
+                    } catch (final AbsTTException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final IOException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
                     }
                 }
             }
@@ -368,6 +313,70 @@ public enum GUICommands implements IGUICommand {
         throw new IllegalStateException("May not be invoked on this command!");
     }
 
+    private static JFileChooser createFileChooser(final MyActionListener paramActionListener) {
+        // Action listener.
+        final MyActionListener mActionListener = paramActionListener;
+
+        // Create a file chooser.
+        final JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setAcceptAllFileFilterUsed(false);
+
+        // Create new panel etc.pp. for choosing the revision at the bottom of the frame.
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        final JComboBox cb = new JComboBox();
+        cb.addActionListener(mActionListener);
+
+        panel.add(cb, BorderLayout.SOUTH);
+        fc.setAccessory(panel);
+
+        final PropertyChangeListener changeListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(final PropertyChangeEvent paramEvent) {
+                assert paramEvent != null;
+                assert paramEvent.getSource() instanceof JFileChooser;
+
+                // Get last revision number from TT-storage.
+                final JFileChooser fileChooser = (JFileChooser)paramEvent.getSource();
+                final File tmpDir = fileChooser.getSelectedFile();
+                long revNumber = 0;
+
+                if (tmpDir != null) {
+                    // Remove items first.
+                    cb.removeActionListener(mActionListener);
+                    cb.removeAllItems();
+
+                    // A directory is in focus.
+                    boolean error = false;
+
+                    try {
+                        final IDatabase db = Database.openDatabase(tmpDir);
+                        final IReadTransaction rtx = db.getSession().beginReadTransaction();
+                        revNumber = rtx.getRevisionNumber();
+                        rtx.close();
+                        db.close();
+                    } catch (final AbsTTException e) {
+                        // Selected directory is not a Treetank storage.
+                        error = true;
+                    }
+
+                    if (!error) {
+                        // Create items, which are used as available revisions.
+                        for (long i = 0; i <= revNumber; i++) {
+                            cb.addItem(i);
+                        }
+                    }
+
+                    cb.addActionListener(mActionListener);
+                }
+            }
+        };
+        fc.addPropertyChangeListener(changeListener);
+
+        return fc;
+    }
+
     /**
      * Shredder or shredder into.
      * 
@@ -410,12 +419,12 @@ public enum GUICommands implements IGUICommand {
             }
         }
     }
-    
+
     private final class MyActionListener implements ActionListener {
-        
+
         /** Selected revision. */
         private long mRevision;
-        
+
         @Override
         public void actionPerformed(final ActionEvent paramEvent) {
             assert paramEvent != null;
@@ -425,7 +434,7 @@ public enum GUICommands implements IGUICommand {
                 mRevision = (Long)cb.getSelectedItem();
             }
         };
-        
+
         /**
          * Get selected revision number.
          * 
