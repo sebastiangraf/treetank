@@ -380,16 +380,16 @@ public final class XMLSerializer extends AbsSerializer {
         private transient int mIndentSpaces = 2;
 
         /** Stream to pipe to. */
-        private final transient OutputStream mStream;
+        private final OutputStream mStream;
 
         /** Session to use. */
-        private final transient ISession mSession;
+        private final ISession mSession;
 
         /** Versions to use. */
-        private final transient long[] mVersions;
+        private transient long[] mVersions;
 
         /** Node key of subtree to shredder. */
-        private final transient long mNodeKey;
+        private final long mNodeKey;
 
         /**
          * Constructor, setting the necessary stuff.
@@ -483,6 +483,18 @@ public final class XMLSerializer extends AbsSerializer {
          */
         public XMLSerializerBuilder setID(final boolean paramID) {
             mID = paramID;
+            return this;
+        }
+        
+        /**
+         * Setting the ids on nodes.
+         * 
+         * @param paramVersions
+         *            to set
+         * @return XMLSerializerBuilder reference.
+         */
+        public XMLSerializerBuilder setVersions(final long[] paramVersions) {
+            mVersions = paramVersions;
             return this;
         }
 
