@@ -85,6 +85,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
     public void update(final SunburstContainer paramContainer) {
         long nodeKey = 0;
         mLastItems.add(new ArrayList<SunburstItem>(mItems));
+        mLastDepths.push(mLastMaxDepth);
+        mLastOldDepths.push(mLastOldMaxDepth);
         nodeKey = mItems.get(mGUI.mHitTestIndex).mNode.getNodeKey();
         traverseTree(paramContainer.setKey(nodeKey));
     }
@@ -103,10 +105,11 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 paramContainer.mKey, paramContainer.mDepth, paramContainer.mModWeight, this));
         mGUI.mDone = false;
         try {
-            mItems = future.get().mItems;
+            mItems = future.get().mItems;   
             mLastMaxDepth = future.get().mDepthMax;
-            firePropertyChange("oldMaxDepth", null, future.get().mOldDepthMax);
-            firePropertyChange("maxDepth", null, future.get().mDepthMax);
+            mLastOldMaxDepth = future.get().mOldDepthMax;
+            firePropertyChange("oldMaxDepth", null, mLastOldMaxDepth);
+            firePropertyChange("maxDepth", null, mLastMaxDepth);
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final ExecutionException e) {
@@ -464,8 +467,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
             // Get descendants for every node and save it to a list.
             final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
-            final ExecutorService executor =
-                Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            final ExecutorService executor = Executors.newSingleThreadExecutor();
+//                Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             final List<Diff> diffs = new LinkedList<Diff>(mDiffs);
             boolean firstNode = true;
             int index = 0;
@@ -523,9 +526,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             /**
              * Constructor.
              * 
-             * @param paramNewRtx
+             * @param paramNewRevision
              *            new revision number
-             * @param paramOldKey
+             * @param paramOldRevision
              *            old revision number
              * @param paramKey
              *            key of node
@@ -641,8 +644,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
                         mIndex++;
                     }
-                    mNewRtx.close();
                 }
+                mNewRtx.close();
                 return retVal;
             }
 
