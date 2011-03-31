@@ -428,7 +428,7 @@ public enum GUICommands implements IGUICommand {
     }
 
     /** Action listener to listen for the selection of a revision. */
-    private final class MyActionListener implements ActionListener {
+    private static final class MyActionListener implements ActionListener {
 
         /** Selected revision. */
         private long mRevision;
