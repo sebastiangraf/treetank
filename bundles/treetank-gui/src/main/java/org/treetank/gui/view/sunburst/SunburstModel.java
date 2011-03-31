@@ -160,7 +160,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             mModel = paramModel;
             mDb = mModel.mDb;
             try {
-                mRtx = mModel.mDb.getSession().beginReadTransaction();
+                mRtx = mModel.mDb.getSession().beginReadTransaction(mModel.mDb.getRevisionNumber());
             } catch (final AbsTTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
