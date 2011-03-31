@@ -146,8 +146,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Show arcs. */
     transient boolean mShowArcs = true;
 
-    /** Determines how much text lenght should be weighted. */
-    transient float mTextWeight = 0.2f;
+//    /** Determines how much text lenght should be weighted. */
+//    transient float mTextWeight = 0.2f;
 
     /** Maximum depth in the tree. */
     volatile int mDepthMax;
@@ -377,12 +377,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mSliders.add(si, mControlP5.addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left,
             top + posY + 0, len, 15));
         mSliders.get(si++).setLabel("backgroundBrightness");
-        posY += 30;
-
-        mSliders.add(si,
-            mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("text weight");
         posY += 50;
+
+//        mSliders.add(si,
+//            mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len, 15));
+//        mSliders.get(si++).setLabel("text weight");
+//        posY += 50;
 
         mToggles.add(ti, mControlP5.addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15));
         mToggles.get(ti++).setLabel("show Arcs");
@@ -395,9 +395,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mToggles.get(ti++).setLabel("Arc / Rect");
         mToggles.add(ti, mControlP5.addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
         mToggles.get(ti++).setLabel("Fisheye lense");
-        mToggles.add(ti,
-            mControlP5.addToggle("mUseDiffView", mUseDiffView, left + 0, top + posY + 100, 15, 15));
-        mToggles.get(ti++).setLabel("Diff view");
 
         mXPathField = mControlP5.addTextfield("xpath", mParent.width - 250, top + 20, 200, 20);
         mXPathField.setLabel("XPath expression");
