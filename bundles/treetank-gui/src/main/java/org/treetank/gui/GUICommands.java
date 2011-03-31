@@ -313,6 +313,13 @@ public enum GUICommands implements IGUICommand {
         throw new IllegalStateException("May not be invoked on this command!");
     }
 
+    /**
+     * Create a directory file chooser with the possibility to select a specific revision.
+     * 
+     * @param paramActionListener
+     *            {@link MyActionListener} instance
+     * @return {@link JFileChooser} instance
+     */
     private static JFileChooser createFileChooser(final MyActionListener paramActionListener) {
         // Action listener.
         final MyActionListener mActionListener = paramActionListener;
@@ -420,11 +427,13 @@ public enum GUICommands implements IGUICommand {
         }
     }
 
+    /** Action listener to listen for the selection of a revision. */
     private final class MyActionListener implements ActionListener {
 
         /** Selected revision. */
         private long mRevision;
 
+        /** {@inheritDoc} */
         @Override
         public void actionPerformed(final ActionEvent paramEvent) {
             assert paramEvent != null;
@@ -440,7 +449,7 @@ public enum GUICommands implements IGUICommand {
          * 
          * @return the Revision
          */
-        Long getRevision() {
+        long getRevision() {
             return mRevision;
         }
     }
