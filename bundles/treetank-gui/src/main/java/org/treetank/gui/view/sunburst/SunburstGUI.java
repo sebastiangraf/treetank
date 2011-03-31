@@ -911,6 +911,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     break;
                 default:
                     // Take no action.
+                    System.out.println("Tada");
                 }
             }
         }
