@@ -39,6 +39,7 @@ import java.util.concurrent.Semaphore;
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SunburstView extends JPanel implements IView {
+public final class SunburstView extends JScrollPane implements IView {
 
     /**
      * SerialUID.
@@ -214,8 +215,8 @@ public final class SunburstView extends JPanel implements IView {
     @Override
     public void refreshUpdate() {
         mDB = mNotifier.getGUI().getReadDB();
-        // setViewportView(mEmbed);
-        add(mEmbed);
+        setViewportView(mEmbed);
+//        add(mEmbed);
 
         /*
          * Important to call this whenever embedding a PApplet.

@@ -242,8 +242,8 @@ public final class TreeModel extends AbsTreeModel {
                 }
             }
 
-            System.out.println("ChildCount: " + childCount);
-            System.out.println("Child node: " + childNode);
+            LOGWRAPPER.debug("ChildCount: " + childCount);
+            LOGWRAPPER.debug("Child node: " + childNode);
 
             break;
         default:

@@ -146,9 +146,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Show arcs. */
     transient boolean mShowArcs = true;
 
-//    /** Determines how much text lenght should be weighted. */
-//    transient float mTextWeight = 0.2f;
-
     /** Maximum depth in the tree. */
     volatile int mDepthMax;
 
@@ -323,7 +320,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mSliders = new LinkedList<Slider>();
         mRanges = new LinkedList<Range>();
         mToggles = new LinkedList<Toggle>();
-        // mBoxes = new LinkedList<ListBox>();
 
         final int left = 0;
         final int top = 5;
@@ -378,11 +374,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             top + posY + 0, len, 15));
         mSliders.get(si++).setLabel("backgroundBrightness");
         posY += 50;
-
-//        mSliders.add(si,
-//            mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len, 15));
-//        mSliders.get(si++).setLabel("text weight");
-//        posY += 50;
 
         mToggles.add(ti, mControlP5.addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15));
         mToggles.get(ti++).setLabel("show Arcs");
@@ -634,7 +625,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     }
 
     /**
-     * 
+     * Mouse over to display text.
      */
     private void textMousOver() {
         if (mHitTestIndex != -1) {
@@ -650,7 +641,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             final int offset = 5;
             final float textW = mParent.textWidth(text) * 1.2f;
             mParent.fill(0, 0, 0);
-            if (mX + offset + textW > mParent.width) {
+            if (mX + offset + textW > mParent.width / 2) {
                 mParent.rect(mX - textW + offset, mY + offset, textW,
                     (mParent.textAscent() + mParent.textDescent()) * lines + 4);
                 mParent.fill(0, 0, 100);
@@ -910,8 +901,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
                     break;
                 default:
-                    // Take no action.
-                    System.out.println("Tada");
+                    // Do nothing.
                 }
             }
         }
@@ -1114,7 +1104,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @param paramValue
      *            change value
      * @throws FactoryConfigurationError
+     *             if something odd happens
      * @throws XMLStreamException
+     *             if the XML fragment isn't well formed
      */
     public void submit(final int paramValue) throws XMLStreamException, FactoryConfigurationError {
         try {

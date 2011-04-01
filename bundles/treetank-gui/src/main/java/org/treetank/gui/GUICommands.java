@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.slf4j.Logger;
@@ -156,6 +157,7 @@ public enum GUICommands implements IGUICommand {
                         session.close();
                         db.close();
                         outputStream.close();
+                        JOptionPane.showMessageDialog(paramGUI, "Serializing done!");
                     } catch (final AbsTTException e) {
                         LOGWRAPPER.error(e.getMessage(), e);
                     } catch (final IOException e) {
@@ -429,9 +431,8 @@ public enum GUICommands implements IGUICommand {
 
     /** Action listener to listen for the selection of a revision. */
     private static final class MyActionListener implements ActionListener {
-
         /** Selected revision. */
-        private long mRevision;
+        private transient long mRevision;
 
         /** {@inheritDoc} */
         @Override
