@@ -169,6 +169,8 @@ public final class TreeView extends JScrollPane implements IView {
     public void refreshUpdate() {
         // Use our Treetank model and renderer.
         final ReadDB db = mGUI.getReadDB();
+        mTree.setModel(new TreeModel(db));
+        mTree.setCellRenderer(new TreeCellRenderer(db));
 
         if (mTree.getTreeSelectionListeners().length == 0) {
             // Listen for when the selection changes.

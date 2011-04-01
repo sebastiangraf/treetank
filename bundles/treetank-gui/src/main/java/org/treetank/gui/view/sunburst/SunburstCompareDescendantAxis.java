@@ -243,6 +243,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mDiffCont = mDiffs.remove(0);
             mDiff = mDiffCont.getDiff();
             if (mDiff == EDiff.UPDATED) {
+                // For EDiff.UPDATE the transaction needs to be on the right node.
                 mOldRtx.moveTo(mDiffCont.getOldNode().getNodeKey());
             }
             if (mDiff == EDiff.DELETED && mLastDiff != EDiff.DELETED) {

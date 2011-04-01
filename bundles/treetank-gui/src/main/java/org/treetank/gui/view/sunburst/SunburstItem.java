@@ -583,10 +583,10 @@ final class SunburstItem {
             if (mGUI.mUseDiffView) {
                 switch (mDiff) {
                 case INSERTED:
-                    mParent.fill(360, 100, mGUI.mDotBrightness);
+                    mParent.fill(200, 100, mGUI.mDotBrightness);
                     break;
                 case DELETED:
-                    mParent.fill(200, 100, mGUI.mDotBrightness);
+                    mParent.fill(360, 100, mGUI.mDotBrightness);
                     break;
                 case UPDATED:
                     mParent.fill(120, 100, mGUI.mDotBrightness);
@@ -752,10 +752,10 @@ final class SunburstItem {
             if (mGUI.mUseDiffView) {
                 switch (mDiff) {
                 case INSERTED:
-                    paramBuffer.fill(360, 100, mGUI.mDotBrightness);
+                    paramBuffer.fill(200, 100, mGUI.mDotBrightness);
                     break;
                 case DELETED:
-                    paramBuffer.fill(200, 100, mGUI.mDotBrightness);
+                    paramBuffer.fill(360, 100, mGUI.mDotBrightness);
                     break;
                 case UPDATED:
                     paramBuffer.fill(120, 100, mGUI.mDotBrightness);

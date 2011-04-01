@@ -88,7 +88,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
         setTextSelectionColor(Color.red);
 
         try {
-            mRTX = paramReadDB.getSession().beginReadTransaction(paramReadDB.getNodeKey());
+            mRTX = paramReadDB.getSession().beginReadTransaction(paramReadDB.getRevisionNumber());
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
