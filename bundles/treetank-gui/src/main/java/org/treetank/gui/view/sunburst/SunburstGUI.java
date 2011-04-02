@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -179,8 +180,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** {@link Sempahore} to block re-initializing sunburst item list until draw() is finished(). */
     private volatile Semaphore mLock = new Semaphore(1);
 
-    /** Determines if zooming or panning endefinald. */
-    private transient boolean mZoomPanEnded;
+    /** Determines if zooming or panning is resetted. */
+    private transient boolean mZoomPanReset;
 
     /** Image to draw. */
     private volatile PImage mImg;
@@ -264,6 +265,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /** Determins if new mouse coordinates have to be used (after zooming/panning). */
     private transient boolean mUseNewMouseCoords = false;
+
+    /** Determines if it is currently zooming or panning or has been in the past. */
+    private transient boolean mIsZoomingPanning = false;
 
     /**
      * Private constructor.
@@ -549,12 +553,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         if (mControlP5 != null && mDone) {
             mParent.pushMatrix();
 
-            // This enables zooming/panning.
-            if (mFirst) {
-                mFirst = false;
-            } else {
-                mZoomer.transform();
+            if (mZoomer.isZooming() || mZoomer.isPanning()) {
+                mIsZoomingPanning = true;
             }
+
+            // This enables zooming/panning.
+            mZoomer.transform();
 
             mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
             mParent.noFill();
@@ -564,7 +568,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             mParent.textAlign(PConstants.LEFT, PConstants.TOP);
             mParent.smooth();
 
-            if (mZoomer.isZooming() || mZoomer.isPanning() || (mSavePDF && !mZoomPanEnded) || mFisheye) {
+            if (mIsZoomingPanning || mSavePDF || mFisheye) {
                 LOGWRAPPER.debug("Without buffered image!");
                 mParent.background(0, 0, mBackgroundBrightness);
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
@@ -587,8 +591,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             rollover();
 
             // Mouse rollover.
-            if ((!mZoomPanEnded || mZoomer.isZooming() || mZoomer.isPanning()) && !mShowGUI
-                && !mCtrl.isVisible()) {
+            if (!mShowGUI && !mCtrl.isVisible()) {
                 // Depth level focus.
                 if (mDepth <= mDepthMax) {
                     final float firstRad = calcEqualAreaRadius(mDepth, mDepthMax);
@@ -608,9 +611,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 fisheye(mParent.mouseX, mParent.mouseY, 120);
             }
 
-            if (mZoomPanEnded) {
+            if (mZoomPanReset) {
                 update();
-                mZoomPanEnded = false;
+                mZoomPanReset = false;
+                mIsZoomingPanning = false;
             }
 
             mParent.popMatrix();
@@ -642,11 +646,13 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             final float textW = mParent.textWidth(text) * 1.2f;
             mParent.fill(0, 0, 0);
             if (mX + offset + textW > mParent.width / 2) {
+                // Exceeds right window border, thus align to the left of the current mouse location.
                 mParent.rect(mX - textW + offset, mY + offset, textW,
                     (mParent.textAscent() + mParent.textDescent()) * lines + 4);
                 mParent.fill(0, 0, 100);
                 mParent.text(text.toUpperCase(), mX - textW + offset + 2, mY + offset + 2);
             } else {
+                // Align to the right of the current mouse location.
                 mParent.rect(mX + offset, mY + offset, textW, (mParent.textAscent() + mParent.textDescent())
                     * lines + 4);
                 mParent.fill(0, 0, 100);
@@ -662,7 +668,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             final PVector mousePosition = mZoomer.getMouseCoord();
             mX = mousePosition.x - mParent.width / 2;
             mY = mousePosition.y - mParent.height / 2;
-
         } else {
             mX = mParent.mouseX - mParent.width / 2;
             mY = mParent.mouseY - mParent.height / 2;
@@ -742,10 +747,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     void keyReleased() {
         if (!mXPathField.isFocus() && !mCtrl.isOpen()) {
             switch (mParent.key) {
-            case 'c':
-            case 'C':
-                update();
-                mZoomPanEnded = false;
+            case 'r':
+            case 'R':
+                mZoomer.reset();
+                mZoomPanReset = true;
                 break;
             case 's':
             case 'S':
@@ -874,8 +879,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             rollover();
 
             if (!mShowGUI && mHitTestIndex != -1) {
-                switch (mParent.mouseButton) {
-                case PConstants.LEFT:
+                // Bug in processing's mousbotton, thus used SwingUtilities.
+                if (SwingUtilities.isLeftMouseButton(paramEvent)) {
                     if (mUseDiffView) {
                         mModel.update(new SunburstContainer()
                             .setKey(mModel.getItem(mHitTestIndex).getNode().getNodeKey())
@@ -884,8 +889,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                         mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex).getNode()
                             .getNodeKey()));
                     }
-                    break;
-                case PConstants.RIGHT:
+                } else {
                     try {
                         if (mWtx != null && !mWtx.isClosed()) {
                             mWtx.close();
@@ -898,10 +902,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     } catch (final AbsTTException e) {
                         LOGWRAPPER.error(e.getMessage(), e);
                     }
-
-                    break;
-                default:
-                    // Do nothing.
                 }
             }
         }
@@ -1006,13 +1006,11 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         public void panEnded() {
             LOGWRAPPER.debug("Pan ended!");
             mUseNewMouseCoords = true;
-            mZoomPanEnded = true;
         }
 
         @Override
         public void zoomEnded() {
             LOGWRAPPER.debug("Zoom ended!");
-            mZoomPanEnded = true;
             mUseNewMouseCoords = true;
         }
     }
