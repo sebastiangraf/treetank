@@ -592,17 +592,24 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
             // Mouse rollover.
             if (!mShowGUI && !mCtrl.isVisible()) {
-                // Depth level focus.
-                if (mDepth <= mDepthMax) {
-                    final float firstRad = calcEqualAreaRadius(mDepth, mDepthMax);
-                    final float secondRad = calcEqualAreaRadius(mDepth + 1, mDepthMax);
-                    mParent.stroke(0, 0, 0, 30);
-                    mParent.strokeWeight(5.5f);
-                    mParent.ellipse(0, 0, firstRad, firstRad);
-                    mParent.ellipse(0, 0, secondRad, secondRad);
+                boolean doMouseOver = true;
+                if (mRevisions != null && mRevisions.isOpen()) {
+                    doMouseOver = false;
                 }
-                // Rollover text.
-                textMousOver();
+
+                if (doMouseOver) {
+                    // Depth level focus.
+                    if (mDepth <= mDepthMax) {
+                        final float firstRad = calcEqualAreaRadius(mDepth, mDepthMax);
+                        final float secondRad = calcEqualAreaRadius(mDepth + 1, mDepthMax);
+                        mParent.stroke(0, 0, 0, 30);
+                        mParent.strokeWeight(5.5f);
+                        mParent.ellipse(0, 0, firstRad, firstRad);
+                        mParent.ellipse(0, 0, secondRad, secondRad);
+                    }
+                    // Rollover text.
+                    textMousOver();
+                }
             }
 
             // Fisheye view.
@@ -618,6 +625,35 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             }
 
             mParent.popMatrix();
+
+            if (!mUseDiffView) {
+                mParent.fill(0, 0, 0);
+                mParent.translate(0, 0);
+                mParent.text("Press 'o' to get a list of revisions to compare!", mParent.width - 300f,
+                    mParent.height - 50f);
+            } else {
+                mParent.strokeWeight(0);
+                mParent.translate(0, 0);
+                mParent.fill(200, 100, mDotBrightness);
+                mParent.rect(mParent.width - 200f, mParent.height - 100f, 50, 17);
+                mParent.fill(0, 0, 0);
+                mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
+                mParent.fill(360, 100, mDotBrightness);
+                mParent.rect(mParent.width - 200f, mParent.height - 75f, 50, 17);
+                mParent.fill(0, 0, 0);
+                mParent.text("node deleted", mParent.width - 140f, mParent.height - 75f);
+                mParent.fill(120, 100, mDotBrightness);
+                mParent.rect(mParent.width - 200f, mParent.height - 50f, 50, 17);
+                mParent.fill(0, 0, 0);
+                mParent.text("node updated", mParent.width - 140f, mParent.height - 50f);
+            }
+
+            // mParent.fill(200, 100, mDotBrightness);
+            // mParent.rect(mParent.width - 200f, mParent.height - 100f, 50, 17);
+            // mParent.fill(0, 0, 0);
+            // mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
+            // mParent.fill(360, 100, mDotBrightness);
+            // mParent.rect(mParent.width - 200f, mParent.height - 75f, 50, 17);
 
             if (mSavePDF) {
                 mSavePDF = false;
@@ -650,13 +686,13 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 mParent.rect(mX - textW + offset, mY + offset, textW,
                     (mParent.textAscent() + mParent.textDescent()) * lines + 4);
                 mParent.fill(0, 0, 100);
-                mParent.text(text.toUpperCase(), mX - textW + offset + 2, mY + offset + 2);
+                mParent.text(text, mX - textW + offset + 2, mY + offset + 2);
             } else {
                 // Align to the right of the current mouse location.
                 mParent.rect(mX + offset, mY + offset, textW, (mParent.textAscent() + mParent.textDescent())
                     * lines + 4);
                 mParent.fill(0, 0, 100);
-                mParent.text(text.toUpperCase(), mX + offset + 2, mY + offset + 2);
+                mParent.text(text, mX + offset + 2, mY + offset + 2);
             }
         }
     }
@@ -664,14 +700,11 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Initialize rollover method. */
     private void rolloverInit() {
         mHitTestIndex = -1;
-        if (mZoomer.isZooming() || mZoomer.isPanning() || mUseNewMouseCoords) {
-            final PVector mousePosition = mZoomer.getMouseCoord();
-            mX = mousePosition.x - mParent.width / 2;
-            mY = mousePosition.y - mParent.height / 2;
-        } else {
-            mX = mParent.mouseX - mParent.width / 2;
-            mY = mParent.mouseY - mParent.height / 2;
-        }
+
+        final PVector mousePosition = mZoomer.getMouseCoord();
+        mX = mousePosition.x - mParent.width / 2;
+        mY = mousePosition.y - mParent.height / 2;
+
         mAngle = PApplet.atan2(mY - 0, mX - 0);
         final float radius = PApplet.dist(0, 0, mX, mY);
 
@@ -781,8 +814,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 break;
             case 'o':
             case 'O':
-                mUseDiffView = true;
-
                 mRevisions =
                     mControlP5.addDropdownList("Compare revision", mParent.width - 250, 100, 100, 120);
                 assert mDb != null;
@@ -874,33 +905,35 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
         mShowGUI = mControlP5.group("menu").isOpen();
 
-        // Mouse rollover.
-        if (!mParent.keyPressed) {
-            rollover();
+        if (!mShowGUI && mRevisions != null && !mRevisions.isOpen()) {
+            // Mouse rollover.
+            if (!mParent.keyPressed) {
+                rollover();
 
-            if (!mShowGUI && mHitTestIndex != -1) {
-                // Bug in processing's mousbotton, thus used SwingUtilities.
-                if (SwingUtilities.isLeftMouseButton(paramEvent)) {
-                    if (mUseDiffView) {
-                        mModel.update(new SunburstContainer()
-                            .setKey(mModel.getItem(mHitTestIndex).getNode().getNodeKey())
-                            .setRevision(mSelectedRev).setModWeight(mModificationWeight));
-                    } else {
-                        mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex).getNode()
-                            .getNodeKey()));
-                    }
-                } else {
-                    try {
-                        if (mWtx != null && !mWtx.isClosed()) {
-                            mWtx.close();
+                if (mHitTestIndex != -1) {
+                    // Bug in processing's mousbotton, thus used SwingUtilities.
+                    if (SwingUtilities.isLeftMouseButton(paramEvent)) {
+                        if (mUseDiffView) {
+                            mModel.update(new SunburstContainer()
+                                .setKey(mModel.getItem(mHitTestIndex).getNode().getNodeKey())
+                                .setRevision(mSelectedRev).setModWeight(mModificationWeight));
+                        } else {
+                            mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex)
+                                .getNode().getNodeKey()));
                         }
-                        mWtx = mDb.getSession().beginWriteTransaction();
-                        mWtx.revertTo(mDb.getRevisionNumber());
-                        mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
-                        final SunburstPopupMenu menu = new SunburstPopupMenu(this, mWtx, mCtrl);
-                        menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-                    } catch (final AbsTTException e) {
-                        LOGWRAPPER.error(e.getMessage(), e);
+                    } else {
+                        try {
+                            if (mWtx != null && !mWtx.isClosed()) {
+                                mWtx.close();
+                            }
+                            mWtx = mDb.getSession().beginWriteTransaction();
+                            mWtx.revertTo(mDb.getRevisionNumber());
+                            mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
+                            final SunburstPopupMenu menu = new SunburstPopupMenu(this, mWtx, mCtrl);
+                            menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
+                        } catch (final AbsTTException e) {
+                            LOGWRAPPER.error(e.getMessage(), e);
+                        }
                     }
                 }
             }
@@ -1024,6 +1057,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
             mOldDepthMax = (Integer)paramEvent.getNewValue();
+            mUseDiffView = true;
         } else if (paramEvent.getPropertyName().equals("done")) {
             update();
             assert paramEvent.getNewValue() instanceof Boolean;
