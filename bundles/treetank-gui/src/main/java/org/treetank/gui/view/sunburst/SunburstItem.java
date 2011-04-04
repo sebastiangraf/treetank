@@ -111,7 +111,7 @@ final class SunburstItem {
     private float mC2Y;
 
     /** {@link QName} of current node. */
-    private final QName mQName;
+    final QName mQName;
 
     /** {@link QName} of old node. */
     private transient QName mOldQName;
@@ -144,7 +144,7 @@ final class SunburstItem {
     private transient SunburstGUI mGUI;
 
     /** Text string. */
-    private final String mText;
+    final String mText;
 
     /** Old text string. */
     private transient String mOldText;
@@ -821,7 +821,7 @@ final class SunburstItem {
      * @param builder
      *            {@link StringBuilder} instance
      */
-    private void updated(StringBuilder builder) {
+    void updated(StringBuilder builder) {
         if (mDiff != null && mDiff == EDiff.UPDATED) {
             if (mOldQName != null) {
                 builder.append(" old QName: ").append(ViewUtilities.qNameToString(mOldQName));
