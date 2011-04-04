@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.exception.TTUsageException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
@@ -97,34 +98,34 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private static volatile SunburstGUI mGUI;
 
     /** Hue start value. */
-    transient float mHueStart = 273;
+    transient float mHueStart = 323;
 
     /** Hue end value. */
-    transient float mHueEnd = 323;
+    transient float mHueEnd = 273;
 
     /** Saturation start value. */
-    transient float mSaturationStart = 73;
+    transient float mSaturationStart = 100;
 
     /** Saturation end value. */
-    transient float mSaturationEnd = 100;
+    transient float mSaturationEnd = 73;
 
     /** Brightness start value. */
-    transient float mBrightnessStart = 30;
+    transient float mBrightnessStart = 77;
 
     /** Brightness end value. */
-    transient float mBrightnessEnd = 77;
+    transient float mBrightnessEnd = 33;
 
     /** Inner node brightness start value. */
-    transient float mInnerNodeBrightnessStart = 20;
+    transient float mInnerNodeBrightnessStart = 90;
 
     /** Inner node brightness end value. */
-    transient float mInnerNodeBrightnessEnd = 90;
+    transient float mInnerNodeBrightnessEnd = 20;
 
     /** Inner node stroke brightness start value. */
-    transient float mInnerNodeStrokeBrightnessStart = 20;
+    transient float mInnerNodeStrokeBrightnessStart = 90;
 
     /** Inner node stroke brightness end value. */
-    transient float mInnerNodeStrokeBrightnessEnd = 90;
+    transient float mInnerNodeStrokeBrightnessEnd = 20;
 
     /** Inner node arc scale. */
     transient float mInnerNodeArcScale = 0.7f;
@@ -228,8 +229,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Parent {@link PApplet}. */
     final Embedded mParent;
 
-    private transient boolean mFirst;
-
     /** Determines if model has done the work. */
     volatile boolean mDone;
 
@@ -262,9 +261,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /** {@link Textfield} to insert an XML fragment. */
     private transient Textfield mTextArea;
-
-    /** Determins if new mouse coordinates have to be used (after zooming/panning). */
-    private transient boolean mUseNewMouseCoords = false;
 
     /** Determines if it is currently zooming or panning or has been in the past. */
     private transient boolean mIsZoomingPanning = false;
@@ -312,6 +308,11 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Initial setup of the GUI. */
     private void setupGUI() {
         mParent.noLoop();
+
+        mParent.textMode(PConstants.SHAPE);
+        mParent.textFont(mParent.createFont("src" + File.separator + "main" + File.separator + "resources"
+            + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
+
         final int activeColor = mParent.color(0, 130, 164);
         mControlP5 = new ControlP5(mParent);
         mControlP5.addListener(this);
@@ -412,7 +413,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         final Button submit = mControlP5.addButton("submit", 20, 0, 140, 80, 19);
         submit.plugTo(this);
         submit.setGroup(mCtrl);
-        final Button cancel = mControlP5.addButton("cancel", 20, 150, 140, 80, 19);
+        final Button commit = mControlP5.addButton("commit", 20, 120, 140, 80, 19);
+        commit.plugTo(this);
+        commit.setGroup(mCtrl);
+        final Button cancel = mControlP5.addButton("cancel", 20, 240, 140, 80, 19);
         cancel.plugTo(this);
         cancel.setGroup(mCtrl);
 
@@ -626,40 +630,55 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
             mParent.popMatrix();
 
-            if (!mUseDiffView) {
+            mParent.translate(0, 0);
+            mParent.strokeWeight(0);
+            if (mUseDiffView) {
+                if (mDotSize > 0) {
+                    mParent.fill(200, 100, mDotBrightness);
+                    mParent.ellipse(mParent.width - 160f, mParent.height - 90f, 8, 8);
+                    mParent.fill(0, 0, 0);
+                    mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
+                    mParent.fill(360, 100, mDotBrightness);
+                    mParent.ellipse(mParent.width - 160f, mParent.height - 66f, 8, 8);
+                    mParent.fill(0, 0, 0);
+                    mParent.text("node deleted", mParent.width - 140f, mParent.height - 75f);
+                    mParent.fill(120, 100, mDotBrightness);
+                    mParent.ellipse(mParent.width - 160f, mParent.height - 38f, 8, 8);
+                    mParent.fill(0, 0, 0);
+                    mParent.text("node updated", mParent.width - 140f, mParent.height - 50f);
+                }
+            } else {
                 mParent.fill(0, 0, 0);
-                mParent.translate(0, 0);
                 mParent.text("Press 'o' to get a list of revisions to compare!", mParent.width - 300f,
                     mParent.height - 50f);
-            } else {
-                mParent.strokeWeight(0);
-                mParent.translate(0, 0);
-                mParent.fill(200, 100, mDotBrightness);
-                mParent.rect(mParent.width - 200f, mParent.height - 100f, 50, 17);
-                mParent.fill(0, 0, 0);
-                mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
-                mParent.fill(360, 100, mDotBrightness);
-                mParent.rect(mParent.width - 200f, mParent.height - 75f, 50, 17);
-                mParent.fill(0, 0, 0);
-                mParent.text("node deleted", mParent.width - 140f, mParent.height - 75f);
-                mParent.fill(120, 100, mDotBrightness);
-                mParent.rect(mParent.width - 200f, mParent.height - 50f, 50, 17);
-                mParent.fill(0, 0, 0);
-                mParent.text("node updated", mParent.width - 140f, mParent.height - 50f);
             }
 
-            // mParent.fill(200, 100, mDotBrightness);
-            // mParent.rect(mParent.width - 200f, mParent.height - 100f, 50, 17);
-            // mParent.fill(0, 0, 0);
-            // mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
-            // mParent.fill(360, 100, mDotBrightness);
-            // mParent.rect(mParent.width - 200f, mParent.height - 75f, 50, 17);
+            if (mShowArcs) {
+                mParent.fill(mHueStart, mSaturationStart, mBrightnessStart);
+                mParent.rect(20f, mParent.height - 70f, 50, 17);
+                mParent.fill(0, 0, 0);
+                mParent.text("-", 78, mParent.height - 70f);
+                mParent.fill(mHueEnd, mSaturationEnd, mBrightnessEnd);
+                mParent.rect(90f, mParent.height - 70f, 50, 17);
+                mParent.fill(0, 0, 0);
+                mParent.text("text length", 150f, mParent.height - 70f);
+                mParent.fill(0, 0, mInnerNodeBrightnessStart);
+                mParent.rect(20f, mParent.height - 50f, 50, 17);
+                mParent.fill(0, 0, 0);
+                mParent.text("-", 78, mParent.height - 50f);
+                mParent.fill(0, 0, mInnerNodeBrightnessEnd);
+                mParent.rect(90f, mParent.height - 50f, 50, 17);
+                mParent.fill(0, 0, 0);
+                mParent.text("descendants per node", 150f, mParent.height - 50f);
+            }
 
             if (mSavePDF) {
+                mParent.translate(mParent.width / 2, mParent.height / 2);
                 mSavePDF = false;
                 mParent.endRecord();
                 PApplet.println("saving to pdf – done");
             }
+
             drawGUI();
         }
     }
@@ -796,7 +815,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 mSavePDF = true;
                 PApplet.println("\n" + "saving to pdf – starting");
                 mParent.beginRecord(PConstants.PDF, SAVEPATH + timestamp() + ".pdf");
-                mParent.textFont(mParent.createFont(PGraphicsPDF.listFonts()[0], 12));
+                mParent.textMode(PConstants.SHAPE);
+                mParent.textFont(mParent.createFont("src" + File.separator + "main" + File.separator
+                    + "resources" + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
                 break;
             case '\b':
                 // Backspace.
@@ -905,34 +926,43 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
         mShowGUI = mControlP5.group("menu").isOpen();
 
-        if (!mShowGUI && mRevisions != null && !mRevisions.isOpen()) {
-            // Mouse rollover.
-            if (!mParent.keyPressed) {
-                rollover();
+        if (!mShowGUI) {
+            boolean doMouseOver = true;
+            if (mRevisions != null && mRevisions.isOpen()) {
+                doMouseOver = false;
+            }
 
-                if (mHitTestIndex != -1) {
-                    // Bug in processing's mousbotton, thus used SwingUtilities.
-                    if (SwingUtilities.isLeftMouseButton(paramEvent)) {
-                        if (mUseDiffView) {
-                            mModel.update(new SunburstContainer()
-                                .setKey(mModel.getItem(mHitTestIndex).getNode().getNodeKey())
-                                .setRevision(mSelectedRev).setModWeight(mModificationWeight));
-                        } else {
-                            mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex)
-                                .getNode().getNodeKey()));
-                        }
-                    } else {
-                        try {
-                            if (mWtx != null && !mWtx.isClosed()) {
-                                mWtx.close();
+            if (doMouseOver) {
+                // Mouse rollover.
+                if (!mParent.keyPressed) {
+                    rollover();
+
+                    if (mHitTestIndex != -1) {
+                        // Bug in processing's mousbotton, thus used SwingUtilities.
+                        if (SwingUtilities.isLeftMouseButton(paramEvent) && !mCtrl.isOpen()) {
+                            if (mUseDiffView) {
+                                mModel.update(new SunburstContainer()
+                                    .setKey(mModel.getItem(mHitTestIndex).getNode().getNodeKey())
+                                    .setRevision(mSelectedRev).setModWeight(mModificationWeight));
+                            } else {
+                                mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex)
+                                    .getNode().getNodeKey()));
                             }
-                            mWtx = mDb.getSession().beginWriteTransaction();
-                            mWtx.revertTo(mDb.getRevisionNumber());
-                            mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
-                            final SunburstPopupMenu menu = new SunburstPopupMenu(this, mWtx, mCtrl);
-                            menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-                        } catch (final AbsTTException e) {
-                            LOGWRAPPER.error(e.getMessage(), e);
+                        } else {
+                            if (!mUseDiffView) {
+                                try {
+                                    if (mWtx == null || mWtx.isClosed()) {
+                                        mWtx = mDb.getSession().beginWriteTransaction();
+                                        mWtx.revertTo(mDb.getRevisionNumber());
+                                    }
+                                    mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
+                                    final SunburstPopupMenu menu =
+                                        SunburstPopupMenu.getInstance(this, mWtx, mCtrl);
+                                    menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
+                                } catch (final AbsTTException e) {
+                                    LOGWRAPPER.error(e.getMessage(), e);
+                                }
+                            }
                         }
                     }
                 }
@@ -1038,13 +1068,11 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         @Override
         public void panEnded() {
             LOGWRAPPER.debug("Pan ended!");
-            mUseNewMouseCoords = true;
         }
 
         @Override
         public void zoomEnded() {
             LOGWRAPPER.debug("Zoom ended!");
-            mUseNewMouseCoords = true;
         }
     }
 
@@ -1053,7 +1081,11 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     public void propertyChange(final PropertyChangeEvent paramEvent) {
         if (paramEvent.getPropertyName().equals("maxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
-            mDepthMax = (Integer)paramEvent.getNewValue() + 2;
+            mDepthMax = (Integer)paramEvent.getNewValue();
+
+            if (mUseDiffView) {
+                mDepthMax += 2;
+            }
         } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
             mOldDepthMax = (Integer)paramEvent.getNewValue();
@@ -1140,25 +1172,61 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @throws XMLStreamException
      *             if the XML fragment isn't well formed
      */
-    public void submit(final int paramValue) throws XMLStreamException, FactoryConfigurationError {
+    public void submit(final int paramValue) throws XMLStreamException {
         try {
             mCtrl.setVisible(false);
             mCtrl.setOpen(false);
-            final XMLEventReader reader =
-                XMLInputFactory.newInstance().createXMLEventReader(
-                    new ByteArrayInputStream(mTextArea.getText().getBytes()));
-            final ExecutorService service = Executors.newSingleThreadExecutor();
-            service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.COMMIT));
-            service.shutdown();
-            service.awaitTermination(5, TimeUnit.SECONDS);
-            mWtx.close();
-            mTextArea.clear();
+            shredder();
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
         } catch (final FactoryConfigurationError e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Method to process event for submit-button.
+     * 
+     * @param paramValue
+     *            change value
+     * @throws XMLStreamException
+     *             if the XML fragment isn't well formed
+     */
+    public void commit(final int paramValue) throws XMLStreamException {
+        try {
+            mCtrl.setVisible(false);
+            mCtrl.setOpen(false);
+            shredder();
+            mWtx.commit();
+            mWtx.close();
+        } catch (final AbsTTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final FactoryConfigurationError e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        }
+        mParent.refresh();
+    }
+
+    /**
+     * Shredder XML fragment input.
+     * 
+     * @throws TTUsageException
+     *             if something went wrong while shredding
+     */
+    private void shredder() throws TTUsageException {
+        try {
+            final XMLEventReader reader =
+                XMLInputFactory.newInstance().createXMLEventReader(
+                    new ByteArrayInputStream(mTextArea.getText().getBytes()));
+            final ExecutorService service = Executors.newSingleThreadExecutor();
+            service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.NOCOMMIT));
+            service.shutdown();
+            service.awaitTermination(60, TimeUnit.SECONDS);
+            mTextArea.clear();
         } catch (final XMLStreamException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
@@ -1166,7 +1234,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
         }
-        mParent.refresh();
     }
 
     /**

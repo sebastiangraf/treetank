@@ -154,7 +154,7 @@ public final class GUI extends JFrame {
             }
             mReadDB = new ReadDB(paramFile, paramRevision);
         }
-        mNotifier.update();
+        mNotifier.init();
     }
 
     /**

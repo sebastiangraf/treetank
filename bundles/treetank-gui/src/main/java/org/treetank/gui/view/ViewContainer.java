@@ -82,7 +82,7 @@ public final class ViewContainer extends JPanel {
      *            {@link IView} implementations to layout
      * @return {@link ViewContainer} singleton instance
      */
-    public static ViewContainer getInstance(final GUI paramGUI, final IView... paramViews) {
+    public synchronized static ViewContainer getInstance(final GUI paramGUI, final IView... paramViews) {
         if (mContainer == null) {
             mContainer = new ViewContainer(paramGUI, paramViews);
         }
@@ -139,7 +139,7 @@ public final class ViewContainer extends JPanel {
         }
 
         super.revalidate();
-        repaint();
+        super.repaint();
     }
 
     /**

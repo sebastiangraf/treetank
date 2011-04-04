@@ -59,9 +59,12 @@ final class SunburstPopupMenu extends JPopupMenu {
 
     /** Textarea for XML fragment input. */
     private final ControlGroup mCtrl;
+    
+    /** Instance of this class. */
+    private transient static SunburstPopupMenu mSunburstPopupMenu;
 
     /**
-     * Constructor.
+     * Private constructor.
      * 
      * @param paramGUI
      *            {@link SunburstGUI} instance
@@ -70,7 +73,7 @@ final class SunburstPopupMenu extends JPopupMenu {
      * @param paramCtrl
      *            control group for XML input
      */
-    SunburstPopupMenu(final SunburstGUI paramGUI, final IWriteTransaction paramWtx,
+    private SunburstPopupMenu(final SunburstGUI paramGUI, final IWriteTransaction paramWtx,
         final ControlGroup paramCtrl) {
         mGUI = paramGUI;
         mWtx = paramWtx;
@@ -84,6 +87,25 @@ final class SunburstPopupMenu extends JPopupMenu {
             EMenu.DELETE.createMenuItem(mGUI, this, mWtx, mCtrl);
             break;
         }
+    }
+    
+    /**
+     * Singleton factory.
+     * 
+     * @param paramGUI
+     *            {@link SunburstGUI} instance
+     * @param paramWtx
+     *            Treetank {@link IWriteTransaction}
+     * @param paramCtrl
+     *            control group for XML input
+     * @return singleton {@link SunburstPopupMenu} instance
+     */
+    static synchronized SunburstPopupMenu getInstance(final SunburstGUI paramGUI, final IWriteTransaction paramWtx,
+        final ControlGroup paramCtrl) {
+        if (mSunburstPopupMenu == null) {
+            mSunburstPopupMenu = new SunburstPopupMenu(paramGUI, paramWtx, paramCtrl);
+        }
+        return mSunburstPopupMenu;
     }
 
     /**
