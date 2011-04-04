@@ -287,30 +287,30 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mTempRightSiblingKeyStack = mRightSiblingKeyStack;
                 mRightSiblingKeyStack = new FastStack<Long>();
 
-                final long currNodeKey = getTransaction().getNode().getNodeKey();
-                boolean first = true;
-                do {
-                    if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                        && mDiffCont.getDepth().getOldDepth() < mDepth && mLastDiff == EDiff.SAME) {
-                        mMoved = EMoved.ANCHESTSIBL;
-                        if (first) {
-                            // Do not pop from stack if it's a leaf node.
-                            first = false;
-                        } else {
-                            mDiffStack.pop();
-                            mAngleStack.pop();
-                            mExtensionStack.pop();
-                            mParentStack.pop();
-                            mDescendantsStack.pop();
-                        }
-
-                        mDepth--;
-                        getTransaction().moveToParent();
-                    } else {
-                        break;
-                    }
-                } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
-                getTransaction().moveTo(currNodeKey);
+//                final long currNodeKey = getTransaction().getNode().getNodeKey();
+//                boolean first = true;
+//                do {
+//                    if (((AbsStructNode)getTransaction().getNode()).hasParent()
+//                        && mDiffCont.getDepth().getOldDepth() < mDepth && mLastDiff == EDiff.SAME) {
+//                        mMoved = EMoved.ANCHESTSIBL;
+//                        if (first) {
+//                            // Do not pop from stack if it's a leaf node.
+//                            first = false;
+//                        } else {
+//                            mDiffStack.pop();
+//                            mAngleStack.pop();
+//                            mExtensionStack.pop();
+//                            mParentStack.pop();
+//                            mDescendantsStack.pop();
+//                        }
+//
+//                        mDepth--;
+//                        getTransaction().moveToParent();
+//                    } else {
+//                        break;
+//                    }
+//                } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
+//                getTransaction().moveTo(currNodeKey);
 
                 processMove();
                 calculateDepth();
@@ -489,7 +489,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             // Next node will be a right sibling of an anchestor node or the traversal ends.
             mMoved = EMoved.ANCHESTSIBL;
             if (mDiffs.get(0).getDiff() != EDiff.DELETED) {
-                /* 
+                /*
                  * Only move to next node if next diff is not a delete, because in deletes it moves itself to
                  * the next node. This has been done because deletes can occur some depths/levels above but
                  * between the next node and the current node.
@@ -509,6 +509,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mMoved = EMoved.ANCHESTSIBL;
         }
         mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+        if (0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED
+            && mDepth > mDiffs.get(0).getDepth().getNewDepth()) {
+            // Must be anchestsibl movement to pop in the delete step from the stacks.
+            mMoved = EMoved.ANCHESTSIBL;
+        }
         mLastDiff = mDiff;
         return true;
     }
@@ -670,7 +675,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         if (((AbsStructNode)getTransaction().getNode()).hasParent()
                             && getTransaction().getNode().getNodeKey() != nodeKey) {
                             getTransaction().moveToParent();
-                            
+
                             if (index - 1 < mDiffs.size()) {
                                 diffCont = mDiffs.get(index - 1);
                             }
