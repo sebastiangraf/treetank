@@ -389,9 +389,15 @@ final class SunburstItem {
                         / (float)(PApplet.log(mMaxDescendantCount) - PApplet.log(mMinDescendantCount));
                 break;
             case 3:
-                percent =
-                    (float)(PApplet.sqrt(mDescendantCount) - PApplet.sqrt(mMinDescendantCount))
-                        / (float)(PApplet.sqrt(mMaxDescendantCount) - PApplet.sqrt(mMinDescendantCount));
+                if (mMinDescendantCount == 0
+                    && mMaxDescendantCount == 0
+                    || (mMinDescendantCount == mMaxDescendantCount && mMaxDescendantCount == mDescendantCount)) {
+                    percent = 0;
+                } else {
+                    percent =
+                        (float)(PApplet.sqrt(mDescendantCount) - PApplet.sqrt(mMinDescendantCount))
+                            / (float)(PApplet.sqrt(mMaxDescendantCount) - PApplet.sqrt(mMinDescendantCount));
+                }
                 break;
             default:
             }
@@ -400,19 +406,19 @@ final class SunburstItem {
             switch (mNode.getKind()) {
             case ELEMENT_KIND:
                 float bright =
-                    PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, 1 - percent);
+                    PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, percent);
                 if (paramBuffer == null) {
                     mCol = mParent.color(0, 0, bright);
                 } else {
                     mCol = paramBuffer.color(0, 0, bright);
                 }
-                // bright =
-                // PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
-                // percent);
+                bright =
+                    PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
+                        percent);
                 if (paramBuffer == null) {
-                    mLineCol = mParent.color(0, 0, 10);
+                    mLineCol = mParent.color(0, 0, 1 - bright);
                 } else {
-                    mLineCol = paramBuffer.color(0, 0, 10);
+                    mLineCol = paramBuffer.color(0, 0, 1 - bright);
                 }
                 break;
             case TEXT_KIND:
@@ -422,40 +428,18 @@ final class SunburstItem {
                     final int from =
                         mParent.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
                     final int to = mParent.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
-                    mCol = mParent.lerpColor(from, to, 1 - percent);
+                    mCol = mParent.lerpColor(from, to, percent);
                 } else {
                     final int from =
                         paramBuffer.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
                     final int to = paramBuffer.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
-                    mCol = paramBuffer.lerpColor(from, to, 1 - percent);
+                    mCol = paramBuffer.lerpColor(from, to, percent);
                 }
                 mLineCol = mCol;
                 break;
             default:
                 throw new IllegalStateException("Node type currently not supported!");
             }
-
-            // // Colors for leaf nodes and inner nodes.
-            // switch (mStructKind) {
-            // case ISLEAFNODE:
-            // final int from = mParent.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
-            // final int to = mParent.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
-            // mCol = mParent.lerpColor(from, to, 1 - percent);
-            // mLineCol = mCol;
-            // break;
-            // case ISINNERNODE:
-            // float bright = 0;
-            // bright =
-            // PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, 1 - percent);
-            // mCol = mParent.color(0, 0, bright);
-            // bright =
-            // PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
-            // percent);
-            // mLineCol = mParent.color(0, 0, bright);
-            // break;
-            // default:
-            // throw new AssertionError("Structural kind not known!");
-            // }
 
             // Calculate stroke weight for relations line.
             mLineWeight = PApplet.map(mDepth, 1, depthMax, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
