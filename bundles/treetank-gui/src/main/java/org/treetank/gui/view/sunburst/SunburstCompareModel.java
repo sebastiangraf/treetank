@@ -575,7 +575,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             Descendants(final long paramNewRevision, final long paramOldRevision, final long paramKey,
                 final ISession paramSession, final int paramIndex, final List<Diff> paramDiffs) {
                 assert paramNewRevision > 0;
-                assert paramOldRevision > 0;
+                assert paramOldRevision >= 0;
                 assert paramSession != null;
                 assert paramIndex > -1;
                 assert paramDiffs != null;

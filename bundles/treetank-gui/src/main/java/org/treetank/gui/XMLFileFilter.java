@@ -37,13 +37,11 @@ public final class XMLFileFilter extends FileFilter {
     public boolean accept(final File paramFile) {
         boolean retVal = false;
 
-        if (!paramFile.isDirectory()) {
-            for (final String extension : ALLOWEDEXTENSIONS) {
-                final String fileName = paramFile.getName().toLowerCase();
-                if (fileName.endsWith(extension) || fileName.indexOf('.') == -1) {
-                    retVal = true;
-                    break;
-                }
+        for (final String extension : ALLOWEDEXTENSIONS) {
+            final String fileName = paramFile.getName().toLowerCase();
+            if (fileName.endsWith(extension) || fileName.indexOf('.') == -1) {
+                retVal = true;
+                break;
             }
         }
 

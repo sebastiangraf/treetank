@@ -54,6 +54,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
 import org.treetank.service.xml.shredder.EShredderCommit;
@@ -630,19 +631,19 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 if (mDotSize > 0) {
                     mParent.fill(200, 100, mDotBrightness);
                     mParent.ellipse(mParent.width - 160f, mParent.height - 90f, 8, 8);
-                    mParent.fill(0, 0, 0);
+                    color();
                     mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
                     mParent.fill(360, 100, mDotBrightness);
                     mParent.ellipse(mParent.width - 160f, mParent.height - 66f, 8, 8);
-                    mParent.fill(0, 0, 0);
+                    color();
                     mParent.text("node deleted", mParent.width - 140f, mParent.height - 75f);
                     mParent.fill(120, 100, mDotBrightness);
                     mParent.ellipse(mParent.width - 160f, mParent.height - 38f, 8, 8);
-                    mParent.fill(0, 0, 0);
+                    color();
                     mParent.text("node updated", mParent.width - 140f, mParent.height - 50f);
                 }
             } else {
-                mParent.fill(0, 0, 0);
+                color();
                 mParent.text("Press 'o' to get a list of revisions to compare!", mParent.width - 300f,
                     mParent.height - 50f);
             }
@@ -650,19 +651,19 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             if (mShowArcs) {
                 mParent.fill(mHueStart, mSaturationStart, mBrightnessStart);
                 mParent.rect(20f, mParent.height - 70f, 50, 17);
-                mParent.fill(0, 0, 0);
+                color();
                 mParent.text("-", 78, mParent.height - 70f);
                 mParent.fill(mHueEnd, mSaturationEnd, mBrightnessEnd);
                 mParent.rect(90f, mParent.height - 70f, 50, 17);
-                mParent.fill(0, 0, 0);
+                color();
                 mParent.text("text length", 150f, mParent.height - 70f);
                 mParent.fill(0, 0, mInnerNodeBrightnessStart);
                 mParent.rect(20f, mParent.height - 50f, 50, 17);
-                mParent.fill(0, 0, 0);
+                color();
                 mParent.text("-", 78, mParent.height - 50f);
                 mParent.fill(0, 0, mInnerNodeBrightnessEnd);
                 mParent.rect(90f, mParent.height - 50f, 50, 17);
-                mParent.fill(0, 0, 0);
+                color();
                 mParent.text("descendants per node", 150f, mParent.height - 50f);
             }
 
@@ -678,21 +679,50 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     }
 
     /**
+     * Fill color which changes to white or black depending on the background brightness.
+     */
+    private void color() {
+        if (mBackgroundBrightness > 40f) {
+            mParent.fill(0, 0, 0);
+        } else {
+            mParent.fill(360, 0, 100);
+        }
+    }
+
+    /**
      * Mouse over to display text.
      */
     private void textMousOver() {
         if (mHitTestIndex != -1) {
-            final String text = mHitItem.toString();
+            String text = mHitItem.toString();
 
             int lines = 1;
+            int chars = 0;
             for (final char c : text.toCharArray()) {
                 if (c == '\n') {
                     lines++;
+                    chars = 0;
                 }
+                chars++;
+            }
+
+            if (chars > 80) {
+                final StringBuilder builder = new StringBuilder().append("[Depth: ").append(mDepth);
+                if (mHitItem.mQName != null) {
+                    builder.append(" QName: ")
+                        .append(ViewUtilities.qNameToString(mHitItem.mQName).substring(0, 20)).append("...");
+                } else {
+                    builder.append(" Text: ").append(mHitItem.mText.substring(0, 20)).append("...");
+                }
+                if (mUseDiffView) {
+                    mHitItem.updated(builder);
+                }
+                builder.append(" NodeKey: ").append(mHitItem.mNode.getNodeKey()).append("]");
+                text = builder.toString();
             }
 
             final int offset = 5;
-            final float textW = mParent.textWidth(text) * 1.2f;
+            final float textW = mParent.textWidth(text) + 10f;
             mParent.fill(0, 0, 0);
             if (mX + offset + textW > mParent.width / 2) {
                 // Exceeds right window border, thus align to the left of the current mouse location.
@@ -1209,9 +1239,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * Set insertion method (as first child of the current node or as right sibling).
      * 
      * @param paramAddSubtree
-     *             add subtree as first child or right sibling
+     *            add subtree as first child or right sibling
      */
     public void setInsert(final EShredderInsert paramAddSubtree) {
-        mModel.setInsert(paramAddSubtree); 
+        mModel.setInsert(paramAddSubtree);
     }
 }
