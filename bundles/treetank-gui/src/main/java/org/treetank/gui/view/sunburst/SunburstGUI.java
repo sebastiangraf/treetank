@@ -241,9 +241,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** {@link ReadDB} reference. */
     volatile ReadDB mDb;
 
-    /** {@link IWriteTransaction} instance. */
-    private volatile IWriteTransaction mWtx;
-
     /** {@link DropdownList} of available revisions, which are newer than the currently opened revision. */
     private volatile DropdownList mRevisions;
 
@@ -255,9 +252,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /** {@link ControlGroup} to encapsulate the components to insert XML fragments. */
     private transient ControlGroup mCtrl;
-
-    /** Determines if XML fragments should be inserted as first child or as right sibling of the current node. */
-    private transient EShredderInsert mInsert;
 
     /** {@link Textfield} to insert an XML fragment. */
     private transient Textfield mTextArea;
@@ -948,20 +942,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                                 mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex)
                                     .getNode().getNodeKey()));
                             }
-                        } else {
+                        } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
                             if (!mUseDiffView) {
-                                try {
-                                    if (mWtx == null || mWtx.isClosed()) {
-                                        mWtx = mDb.getSession().beginWriteTransaction();
-                                        mWtx.revertTo(mDb.getRevisionNumber());
-                                    }
-                                    mWtx.moveTo(mModel.getItem(mHitTestIndex).mNode.getNodeKey());
-                                    final SunburstPopupMenu menu =
-                                        SunburstPopupMenu.getInstance(this, mWtx, mCtrl);
-                                    menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-                                } catch (final AbsTTException e) {
-                                    LOGWRAPPER.error(e.getMessage(), e);
-                                }
+                                mModel.popupMenu(paramEvent, mCtrl, mHitTestIndex);
                             }
                         }
                     }
@@ -1176,11 +1159,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         try {
             mCtrl.setVisible(false);
             mCtrl.setOpen(false);
-            shredder();
-        } catch (final AbsTTException e) {
+            mModel.shredder(mTextArea.getText().getBytes());
+            mTextArea.clear();
+        } catch (final FactoryConfigurationError e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (final FactoryConfigurationError e) {
+        } catch (TTUsageException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
         }
@@ -1198,52 +1182,17 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         try {
             mCtrl.setVisible(false);
             mCtrl.setOpen(false);
-            shredder();
-            mWtx.commit();
-            mWtx.close();
-        } catch (final AbsTTException e) {
+            mModel.shredder(mTextArea.getText().getBytes());
+            mModel.commit();
+            mTextArea.clear();
+        } catch (final FactoryConfigurationError e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (final FactoryConfigurationError e) {
+        } catch (TTUsageException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
         }
         mParent.refresh();
-    }
-
-    /**
-     * Shredder XML fragment input.
-     * 
-     * @throws TTUsageException
-     *             if something went wrong while shredding
-     */
-    private void shredder() throws TTUsageException {
-        try {
-            final XMLEventReader reader =
-                XMLInputFactory.newInstance().createXMLEventReader(
-                    new ByteArrayInputStream(mTextArea.getText().getBytes()));
-            final ExecutorService service = Executors.newSingleThreadExecutor();
-            service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.NOCOMMIT));
-            service.shutdown();
-            service.awaitTermination(60, TimeUnit.SECONDS);
-            mTextArea.clear();
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Set insert for shredding.
-     * 
-     * @param paramInsert
-     *            determines how to insert an XML fragment
-     */
-    void setInsert(final EShredderInsert paramInsert) {
-        mInsert = paramInsert;
     }
 
     /**
@@ -1254,5 +1203,15 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     void updateDb(final ReadDB paramDb) {
         mDb = paramDb;
+    }
+
+    /**
+     * Set insertion method (as first child of the current node or as right sibling).
+     * 
+     * @param paramAddSubtree
+     *             add subtree as first child or right sibling
+     */
+    public void setInsert(final EShredderInsert paramAddSubtree) {
+        mModel.setInsert(paramAddSubtree); 
     }
 }

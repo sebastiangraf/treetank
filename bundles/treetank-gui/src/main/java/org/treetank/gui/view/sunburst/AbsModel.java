@@ -27,21 +27,35 @@
 
 package org.treetank.gui.view.sunburst;
 
+import java.awt.event.MouseEvent;
+import java.io.ByteArrayInputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.JOptionPane;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+
+import controlP5.ControlGroup;
+
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTUsageException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.gui.ReadDB;
 import org.treetank.node.ENodes;
+import org.treetank.service.xml.shredder.EShredderCommit;
+import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.utils.LogWrapper;
 
@@ -88,9 +102,17 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** {@link Stack} with depths for undo operation. */
     transient Stack<Integer> mLastOldDepths;
 
+    /** The last maximum depth. */
     transient int mLastMaxDepth;
 
+    /** The last maximum depth in the old revision. */
     transient int mLastOldMaxDepth;
+
+    /** {@link IWriteTransaction} instance. */
+    private transient IWriteTransaction mWtx;
+
+    /** Determines if XML fragments should be inserted as first child or as right sibling of the current node. */
+    private transient EShredderInsert mInsert;
 
     /**
      * Constructor.
@@ -380,5 +402,79 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                 }
             }
         }
+    }
+
+    /**
+     * Shredder XML fragment input.
+     * 
+     * @param paramTextBytes
+     * @throws TTUsageException
+     *             if something went wrong while shredding
+     */
+    void shredder(final byte[] paramTextBytes) throws TTUsageException {
+        try {
+            final XMLEventReader reader =
+                XMLInputFactory.newInstance().createXMLEventReader(new ByteArrayInputStream(paramTextBytes));
+            final ExecutorService service = Executors.newSingleThreadExecutor();
+            service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.NOCOMMIT));
+            service.shutdown();
+            service.awaitTermination(60, TimeUnit.SECONDS);
+        } catch (final XMLStreamException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final TTUsageException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Commit changes.
+     */
+    void commit() {
+        try {
+            mWtx.commit();
+            mWtx.close();
+        } catch (final AbsTTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Create a popup menu for modifying nodes.
+     * 
+     * @param paramEvent
+     *            the current {@link MouseEvent}
+     * @param paramCtrl
+     *            {@link ControlGroup} to insert XML fragment
+     * @param paramHitTestIndex
+     *            the index of the {@link SunburstItem} which is currently hovered
+     */
+    void popupMenu(final MouseEvent paramEvent, final ControlGroup paramCtrl, final int paramHitTestIndex) {
+        try {
+            if (mWtx == null || mWtx.isClosed()) {
+                mWtx = mDb.getSession().beginWriteTransaction();
+                mWtx.revertTo(mDb.getRevisionNumber());
+            }
+            mWtx.moveTo(getItem(paramHitTestIndex).mNode.getNodeKey());
+            final SunburstPopupMenu menu = SunburstPopupMenu.getInstance(mGUI, mWtx, paramCtrl);
+            menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
+        } catch (final AbsTTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Set insert for shredding.
+     * 
+     * @param paramInsert
+     *            determines how to insert an XML fragment
+     */
+    void setInsert(final EShredderInsert paramInsert) {
+        mInsert = paramInsert;
     }
 }
