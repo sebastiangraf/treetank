@@ -144,6 +144,9 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
         /** Parent processing frame. */
         private transient PApplet mParent;
 
+        /** Depth in the tree. */
+        private transient int mDepth;
+
         /**
          * Constructor.
          * 
@@ -227,7 +230,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             LOGWRAPPER.debug("descendantCount: " + descendantCount);
             LOGWRAPPER.debug("parentDescCount: " + parDescendantCount);
             LOGWRAPPER.debug("indexToParent: " + indexToParent);
-            LOGWRAPPER.debug("extension: " + extension);
+            LOGWRAPPER.debug("extension: " + childExtension);
             LOGWRAPPER.debug("depth: " + depth);
             LOGWRAPPER.debug("angle: " + angle);
 
@@ -237,6 +240,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                 mRelations.setAll(depth, structKind, mRtx.getValueOfCurrentNode().length(), mMinTextLength,
                     mMaxTextLength, indexToParent);
                 text = mRtx.getValueOfCurrentNode();
+                LOGWRAPPER.debug("text: " + text);
             } else {
                 mRelations.setAll(depth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
             }
@@ -246,6 +250,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                 mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
                     .setNode(node).setText(text).build());
             } else {
+                LOGWRAPPER.debug("QName: " + mRtx.getQNameOfCurrentNode());
                 mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
                     .setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
             }
@@ -291,77 +296,205 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
          * {@inheritDoc}
          */
         @Override
-        public List<Future<Integer>> getDescendants(final IReadTransaction paramRtx)
-            throws InterruptedException, ExecutionException {
+        public List<Integer> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
+            ExecutionException {
             assert paramRtx != null;
 
             // Get descendants for every node and save it to a list.
-            final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
-            final ExecutorService executor =
-                Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-            boolean firstNode = true;
-            for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-                if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
-                    Future<Integer> submit = null;
-                    try {
-                        submit =
-                            executor.submit(new Descendants(mDb.getSession(), paramRtx.getRevisionNumber(),
-                                axis.getTransaction().getNode().getNodeKey()));
-                    } catch (TTIOException e) {
-                        LOGWRAPPER.error(e.getMessage(), e);
-                    }
+            // final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
+            // final ExecutorService executor =
+            // Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            final List<Integer> descendants = new LinkedList<Integer>();
+            // boolean firstNode = true;
+            // for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+            // if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
+            // Future<Integer> submit = null;
+            // try {
+            // submit =
+            // executor.submit(new Descendants(mDb.getSession(), paramRtx.getRevisionNumber(),
+            // axis.getTransaction().getNode().getNodeKey()));
+            // } catch (TTIOException e) {
+            // LOGWRAPPER.error(e.getMessage(), e);
+            // }
+            //
+            // assert submit != null;
+            // if (firstNode) {
+            // firstNode = false;
+            // mMaxDescendantCount = submit.get();
+            // }
+            // descendants.add(submit);
+            mDepth = 0;
+            boolean first = true;
 
-                    assert submit != null;
-                    if (firstNode) {
-                        firstNode = false;
-                        mMaxDescendantCount = submit.get();
+            if (paramRtx.getNode().getKind() == ENodes.ROOT_KIND) {
+                paramRtx.moveToFirstChild();
+            }
+            final long mKey = paramRtx.getNode().getNodeKey();
+            boolean hasNoChild = true;
+
+            while (first || paramRtx.getNode().getNodeKey() != mKey) {
+                if (paramRtx.getStructuralNode().hasFirstChild()) {
+                    hasNoChild = true;
+                    if (first) {
+                        first = false;
+                        final int descCount = countDescendants(paramRtx);
+                        descendants.add(descCount);
+                        mMaxDescendantCount = descCount;
+                        paramRtx.moveToFirstChild();
+                        mDepth++;
+                    } else {
+                        if (mDepth > 3) {
+                            while (!paramRtx.getStructuralNode().hasRightSibling()) {
+                                if (paramRtx.getNode().getNodeKey() == mKey) {
+                                    break;
+                                }
+                                paramRtx.moveToParent();
+                                mDepth--;
+                            }
+                            paramRtx.moveToRightSibling();
+                        } else {
+                            final int descCount = countDescendants(paramRtx);
+                            descendants.add(descCount);
+                            paramRtx.moveToFirstChild();
+                            mDepth++;
+                        }
                     }
-                    descendants.add(submit);
+                } else {
+                    boolean movedToNextFollowing = false;
+                    while (!paramRtx.getStructuralNode().hasRightSibling()) {
+                        if (paramRtx.getNode().getNodeKey() == mKey) {
+                            break;
+                        }
+
+                        if (hasNoChild && !movedToNextFollowing && mDepth < 4) {
+                            descendants.add(countDescendants(paramRtx));
+                        }
+                        paramRtx.moveToParent();
+                        mDepth--;
+                        movedToNextFollowing = true;
+                    }
+                    if (paramRtx.getNode().getNodeKey() != mKey) {
+                        hasNoChild = true;
+                        if (movedToNextFollowing) {
+                            paramRtx.moveToRightSibling();
+
+                            if (!hasNoChild && mDepth < 4) {
+                                descendants.add(countDescendants(paramRtx));
+                            }
+                        } else {
+                            if (mDepth < 4) {
+                            descendants.add(countDescendants(paramRtx));
+                            }
+                            paramRtx.moveToRightSibling();
+                        }
+                        hasNoChild = true;
+                    }
                 }
             }
-            executor.shutdown();
+            paramRtx.moveTo(mKey);
+            // }
+            // }
+            // executor.shutdown();
 
             return descendants;
         }
 
-        /** Counts descendants. */
-        final class Descendants implements Callable<Integer> {
-            /** Treetank {@link IReadTransaction}. */
-            private transient IReadTransaction mRtx;
+        /**
+         * Count descendants.
+         * 
+         * @param paramRtx
+         *            {@link IReadTransaction} instance
+         */
+        int countDescendants(final IReadTransaction paramRtx) {
+            assert paramRtx != null;
+            int retVal = 0;
 
-            /**
-             * Constructor.
-             * 
-             * @param paramRtx
-             *            {@link IReadTransaction} over which to iterate
-             */
-            Descendants(final ISession paramSession, final long paramRevision, final long paramNodeKey) {
-                assert paramSession != null;
-                assert !paramSession.isClosed();
-                assert paramRevision >= 0;
-                try {
-                    synchronized (paramSession) {
-                        mRtx = paramSession.beginReadTransaction(paramRevision);
+            // for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+            // retVal++;
+            // }
+            retVal++;
+
+            final long key = paramRtx.getNode().getNodeKey();
+            boolean first = true;
+            while (first || paramRtx.getNode().getNodeKey() != key) {
+                first = false;
+                if (paramRtx.getStructuralNode().hasFirstChild()) {
+                    mDepth++;
+                    if (mDepth < 4) {
+                        paramRtx.moveToFirstChild();
+                        retVal++;
+                    } else {
+                        mDepth--;
+                        retVal += nextNode(paramRtx, key);
                     }
-                } catch (final TTIOException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
-                } catch (final AbsTTException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
+                } else {
+                    retVal += nextNode(paramRtx, key);
                 }
-                mRtx.moveTo(paramNodeKey);
             }
+            paramRtx.moveTo(key);
 
-            @Override
-            public Integer call() throws Exception {
-                int retVal = 0;
+            return retVal;
+        }
 
-                for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
+        /**
+         * 
+         */
+        private int nextNode(final IReadTransaction paramRtx, final long paramKey) {
+            int retVal = 0;
+            while (!paramRtx.getStructuralNode().hasRightSibling()) {
+                if (paramRtx.getNode().getNodeKey() == paramKey) {
+                    break;
+                }
+                paramRtx.moveToParent();
+                mDepth--;
+            }
+            if (paramRtx.getNode().getNodeKey() != paramKey) {
+                paramRtx.moveToRightSibling();
+                if (mDepth < 4) {
                     retVal++;
                 }
-
-                mRtx.close();
-                return retVal;
             }
+            return retVal;
         }
+
+        // /** Counts descendants. */
+        // final class Descendants implements Callable<Integer> {
+        // /** Treetank {@link IReadTransaction}. */
+        // private transient IReadTransaction mRtx;
+        //
+        // /**
+        // * Constructor.
+        // *
+        // * @param paramRtx
+        // * {@link IReadTransaction} over which to iterate
+        // */
+        // Descendants(final ISession paramSession, final long paramRevision, final long paramNodeKey) {
+        // assert paramSession != null;
+        // assert !paramSession.isClosed();
+        // assert paramRevision >= 0;
+        // try {
+        // synchronized (paramSession) {
+        // mRtx = paramSession.beginReadTransaction(paramRevision);
+        // }
+        // } catch (final TTIOException e) {
+        // LOGWRAPPER.error(e.getMessage(), e);
+        // } catch (final AbsTTException e) {
+        // LOGWRAPPER.error(e.getMessage(), e);
+        // }
+        // mRtx.moveTo(paramNodeKey);
+        // }
+        //
+        // @Override
+        // public Integer call() throws Exception {
+        // int retVal = 0;
+        //
+        // for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
+        // retVal++;
+        // }
+        //
+        // mRtx.close();
+        // return retVal;
+        // }
+        // }
     }
 }

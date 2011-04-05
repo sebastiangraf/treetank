@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -112,12 +112,12 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** The nodeKey of the next node to visit. */
     private transient long mNextKey;
-    
+
     /** {@link ITraverseModel} which observes axis changes through a callback method. */
     private transient ITraverseModel mModel;
 
     /** {@link List} of {@link Future}s which hold the number of descendants. */
-    private transient List<Future<Integer>> mDescendants;
+    private transient List<Integer> mDescendants;
 
     /**
      * Constructor initializing internal state.
@@ -137,7 +137,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
         mModel = paramTraverseModel;
         try {
             mDescendants = mModel.getDescendants(getTransaction());
-            mParDescendantCount = mDescendants.get(mIndex + 1).get();
+            mParDescendantCount = mDescendants.get(mIndex + 1);
             mDescendantCount = mParDescendantCount;
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
@@ -198,70 +198,84 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
         // Always follow first child if there is one.
         if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
-            mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
-            if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
-                mRightSiblingKeyStack.push(((AbsStructNode)getTransaction().getNode()).getRightSiblingKey());
+            if (mDepth > 3) {
+                processPruned();
+            } else {
+                mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
+                if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+                    mRightSiblingKeyStack.push(((AbsStructNode)getTransaction().getNode())
+                        .getRightSiblingKey());
+                }
+                processMove();
+                mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+
+                mAngleStack.push(mAngle);
+                mExtensionStack.push(mChildExtension);
+                mParentStack.push(mIndex);
+                mChildrenPerDepth.push(mChildCountPerDepth);
+                mDescendantsStack.push(mDescendantCount);
+                mDepth++;
+
+                if (mDepth > 3 && !mRightSiblingKeyStack.empty()) {
+                    mRightSiblingKeyStack.pop();
+                }
+                mMoved = EMoved.CHILD;
             }
-
-            processMove();
-            mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
-
-            mAngleStack.push(mAngle);
-            mExtensionStack.push(mChildExtension);
-            mParentStack.push(mIndex);
-            mChildrenPerDepth.push(mChildCountPerDepth);
-            mDescendantsStack.push(mDescendantCount);
-            mDepth++;
-            mMoved = EMoved.CHILD;
 
             return true;
         }
 
         // Then follow right sibling if there is one.
         if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
-            mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
+            if (mDepth > 3) {
+                processPruned();
+            } else {
+                mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
+                processMove();
+                mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
-            processMove();
-            mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
-
-            mAngle += mChildExtension;
-            mMoved = EMoved.STARTRIGHTSIBL;
+                mAngle += mChildExtension;
+                mMoved = EMoved.STARTRIGHTSIBL;
+            }
 
             return true;
         }
 
         // Then follow right sibling on stack.
         if (mRightSiblingKeyStack.size() > 0) {
-            mNextKey = mRightSiblingKeyStack.pop();
+            if (mDepth > 3) {
+                processPruned();
+            } else {
+                mNextKey = mRightSiblingKeyStack.pop();
+                processMove();
+                mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
-            processMove();
-            mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+                // Next node will be a right sibling of an anchestor node or the traversal ends.
+                mMoved = EMoved.ANCHESTSIBL;
+                final long currNodeKey = getTransaction().getNode().getNodeKey();
+                boolean first = true;
+                do {
+                    if (((AbsStructNode)getTransaction().getNode()).hasParent()
+                        && getTransaction().getNode().getNodeKey() != mNextKey) {
+                        if (first) {
+                            // Do not pop from stack if it's a leaf node.
+                            first = false;
+                        } else {
+                            mAngleStack.pop();
+                            mExtensionStack.pop();
+                            mChildrenPerDepth.pop();
+                            mParentStack.pop();
+                            mDescendantsStack.pop();
+                        }
 
-            // Next node will be a right sibling of an anchestor node or the traversal ends.
-            mMoved = EMoved.ANCHESTSIBL;
-            final long currNodeKey = getTransaction().getNode().getNodeKey();
-            boolean first = true;
-            do {
-                if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                    && getTransaction().getNode().getNodeKey() != mNextKey) {
-                    if (first) {
-                        // Do not pop from stack if it's a leaf node.
-                        first = false;
+                        getTransaction().moveToParent();
+                        mDepth--;
                     } else {
-                        mAngleStack.pop();
-                        mExtensionStack.pop();
-                        mChildrenPerDepth.pop();
-                        mParentStack.pop();
-                        mDescendantsStack.pop();
+                        break;
                     }
-
-                    getTransaction().moveToParent();
-                    mDepth--;
-                } else {
-                    break;
-                }
-            } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
-            getTransaction().moveTo(currNodeKey);
+                } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
+                getTransaction().moveTo(currNodeKey);
+            }
 
             return true;
         }
@@ -273,17 +287,64 @@ public final class SunburstDescendantAxis extends AbsAxis {
         return true;
     }
 
+    /**
+     * Process pruned node.
+     */
+    private void processPruned() {
+        if (mIndex + 1 < mDescendants.size()) {
+            processMove();
+            if (getTransaction().getStructuralNode().hasRightSibling()) {
+                getTransaction().moveToRightSibling();
+                mMoved = EMoved.STARTRIGHTSIBL;
+            } else {
+                boolean first = true;
+                boolean movedToNextFollowing = false;
+                while (!getTransaction().getStructuralNode().hasRightSibling()) {
+                    if (getTransaction().getStructuralNode().hasParent()) {
+                        if (first) {
+                            // Do not pop from stack if it's a leaf node.
+                            first = false;
+                        } else {
+                            mAngleStack.pop();
+                            mExtensionStack.pop();
+                            mChildrenPerDepth.pop();
+                            mParentStack.pop();
+                            mDescendantsStack.pop();
+                        }
+
+                        getTransaction().moveToParent();
+                        mDepth--;
+                        movedToNextFollowing = true;
+                    } else {
+                        mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+                        return;
+                    }
+                }
+                getTransaction().moveToRightSibling();
+                if (movedToNextFollowing) {
+                    mMoved = EMoved.ANCHESTSIBL;
+                } else {
+                    mMoved = EMoved.STARTRIGHTSIBL;
+                }
+            }
+            mIndex--;
+            mNextKey = getTransaction().getNode().getNodeKey();
+        } else {
+            mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        }
+    }
+
     /** Process movement. */
     private void processMove() {
-        try {
-            mBuilder.set(mAngle, mExtension, mIndexToParent).setChildCountPerDepth(mChildCountPerDepth)
-                .setParentDescendantCount(mParDescendantCount)
-                .setDescendantCount(mDescendants.get(mIndex + 1).get()).set();
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final ExecutionException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
+        // try {
+        mBuilder.set(mAngle, mExtension, mIndexToParent).setChildCountPerDepth(mChildCountPerDepth)
+            .setParentDescendantCount(mParDescendantCount).setDescendantCount(mDescendants.get(mIndex + 1))
+            .set();
+        // } catch (final InterruptedException e) {
+        // LOGWRAPPER.error(e.getMessage(), e);
+        // } catch (final ExecutionException e) {
+        // LOGWRAPPER.error(e.getMessage(), e);
+        // }
         mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mChildrenPerDepth,
             mParentStack, mDescendantsStack);
         mAngle = mItem.mAngle;

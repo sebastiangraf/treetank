@@ -142,7 +142,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     private transient IReadTransaction mOldRtx;
 
     /** {@link List} of {@link Future}s which hold the number of descendants. */
-    private transient List<Future<Integer>> mDescendants;
+    private transient List<Integer> mDescendants;
 
     /** Maximum depth in old revision. */
     private transient int mMaxDepth;
@@ -188,7 +188,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         mOldRtx = paramOldRtx;
         try {
             mDescendants = mModel.getDescendants(getTransaction());
-            mParentDescendantCount = mDescendants.get(mIndex + 1).get();
+            mParentDescendantCount = mDescendants.get(mIndex + 1);
             mDescendantCount = mParentDescendantCount;
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
@@ -562,13 +562,13 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
     /** Process movement. */
     private void processMove() {
-        try {
-            mDescendantCount = mDescendants.get(mIndex + 1).get();
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final ExecutionException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
+//        try {
+            mDescendantCount = mDescendants.get(mIndex + 1);
+//        } catch (final InterruptedException e) {
+//            LOGWRAPPER.error(e.getMessage(), e);
+//        } catch (final ExecutionException e) {
+//            LOGWRAPPER.error(e.getMessage(), e);
+//        }
         mBuilder.set(mAngle, mParExtension, mIndexToParent).setDescendantCount(mDescendantCount)
             .setParentDescendantCount(mParentDescendantCount).setModificationCount(countDiffs())
             .setParentModificationCount(mParentModificationCount).setSubtract(mSubtract).setDiff(mDiff).set();

@@ -494,13 +494,13 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
          * {@inheritDoc}
          */
         @Override
-        public List<Future<Integer>> getDescendants(final IReadTransaction paramRtx)
+        public List<Integer> getDescendants(final IReadTransaction paramRtx)
             throws InterruptedException, ExecutionException {
             assert paramRtx != null;
 
             // Get descendants for every node and save it to a list.
-            final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
-            final ExecutorService executor = Executors.newSingleThreadExecutor();
+            final List<Integer> descendants = new LinkedList<Integer>();
+//            final ExecutorService executor = Executors.newSingleThreadExecutor();
             // Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             final List<Diff> diffs = new LinkedList<Diff>(mDiffs);
             boolean firstNode = true;
@@ -516,28 +516,29 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                     }
 
                     try {
-                        Future<Integer> submit =
-                            executor.submit(new Descendants(axis.getTransaction().getRevisionNumber(), mRtx
+                        final int descs = new Descendants(axis.getTransaction().getRevisionNumber(), mRtx
                                 .getRevisionNumber(), axis.getTransaction().getNode().getNodeKey(), mDb
-                                .getSession(), index, diffs));
+                                .getSession(), index, diffs).call();
                         if (firstNode && diffs.get(0).getDiff() != EDiff.DELETED) {
                             firstNode = false;
-                            mMaxDescendantCount = submit.get();
+                            mMaxDescendantCount = descs;
                         }
-                        System.out.println(submit.get());
-                        if (axis.getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
-                            System.out.println(axis.getTransaction().getQNameOfCurrentNode());
-                        }
+//                        System.out.println(submit.get());
+//                        if (axis.getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
+//                            System.out.println(axis.getTransaction().getQNameOfCurrentNode());
+//                        }
 
-                        descendants.add(submit);
+                        descendants.add(descs);
                         index++;
                         diffs.remove(0);
                     } catch (final TTIOException e) {
                         LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final AbsTTException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
                     }
                 }
             }
-            shutdownAndAwaitTermination(executor);
+//            shutdownAndAwaitTermination(executor);
 
             return descendants;
         }
@@ -595,7 +596,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             }
 
             @Override
-            public Integer call() throws Exception {
+            public Integer call() throws AbsTTException {
                 int retVal = 0;
 
                 final Diff diff = mDiffs.get(mIndex);
@@ -678,6 +679,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                         mIndex++;
                     }
                 }
+
                 mNewRtx.close();
                 return retVal;
             }
