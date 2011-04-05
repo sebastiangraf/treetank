@@ -65,7 +65,7 @@ public interface ITraverseModel {
      * @throws InterruptedException
      *             if task gets interrupted
      */
-    List<Future<Integer>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
+    List<Integer> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
         ExecutionException;
     
     /**
