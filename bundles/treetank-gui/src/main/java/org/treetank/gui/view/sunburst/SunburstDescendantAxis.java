@@ -201,25 +201,31 @@ public final class SunburstDescendantAxis extends AbsAxis {
             if (mDepth > 3) {
                 processPruned();
             } else {
-                mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
-                if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
-                    mRightSiblingKeyStack.push(((AbsStructNode)getTransaction().getNode())
-                        .getRightSiblingKey());
-                }
-                processMove();
-                mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+                if (mIndex + 1 < mDescendants.size()) {
+                    mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
+                    boolean hasRightSibling = false;
+                    if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+                        mRightSiblingKeyStack.push(((AbsStructNode)getTransaction().getNode())
+                            .getRightSiblingKey());
+                        hasRightSibling = true;
+                    }
+                    processMove();
+                    mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
-                mAngleStack.push(mAngle);
-                mExtensionStack.push(mChildExtension);
-                mParentStack.push(mIndex);
-                mChildrenPerDepth.push(mChildCountPerDepth);
-                mDescendantsStack.push(mDescendantCount);
-                mDepth++;
+                    mAngleStack.push(mAngle);
+                    mExtensionStack.push(mChildExtension);
+                    mParentStack.push(mIndex);
+                    mChildrenPerDepth.push(mChildCountPerDepth);
+                    mDescendantsStack.push(mDescendantCount);
+                    mDepth++;
 
-                if (mDepth > 3 && !mRightSiblingKeyStack.empty()) {
-                    mRightSiblingKeyStack.pop();
+                    if (mDepth > 3 && !mRightSiblingKeyStack.empty() && hasRightSibling) {
+                        mRightSiblingKeyStack.pop();
+                    }
+                    mMoved = EMoved.CHILD;
+                } else {
+                    return false;
                 }
-                mMoved = EMoved.CHILD;
             }
 
             return true;
@@ -230,12 +236,16 @@ public final class SunburstDescendantAxis extends AbsAxis {
             if (mDepth > 3) {
                 processPruned();
             } else {
-                mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
-                processMove();
-                mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+                if (mIndex + 1 < mDescendants.size()) {
+                    mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
+                    processMove();
+                    mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
-                mAngle += mChildExtension;
-                mMoved = EMoved.STARTRIGHTSIBL;
+                    mAngle += mChildExtension;
+                    mMoved = EMoved.STARTRIGHTSIBL;
+                } else {
+                    return false;
+                }
             }
 
             return true;
@@ -246,35 +256,39 @@ public final class SunburstDescendantAxis extends AbsAxis {
             if (mDepth > 3) {
                 processPruned();
             } else {
-                mNextKey = mRightSiblingKeyStack.pop();
-                processMove();
-                mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+                if (mIndex + 1 < mDescendants.size()) {
+                    mNextKey = mRightSiblingKeyStack.pop();
+                    processMove();
+                    mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
 
-                // Next node will be a right sibling of an anchestor node or the traversal ends.
-                mMoved = EMoved.ANCHESTSIBL;
-                final long currNodeKey = getTransaction().getNode().getNodeKey();
-                boolean first = true;
-                do {
-                    if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                        && getTransaction().getNode().getNodeKey() != mNextKey) {
-                        if (first) {
-                            // Do not pop from stack if it's a leaf node.
-                            first = false;
+                    // Next node will be a right sibling of an anchestor node or the traversal ends.
+                    mMoved = EMoved.ANCHESTSIBL;
+                    final long currNodeKey = getTransaction().getNode().getNodeKey();
+                    boolean first = true;
+                    do {
+                        if (((AbsStructNode)getTransaction().getNode()).hasParent()
+                            && getTransaction().getNode().getNodeKey() != mNextKey) {
+                            if (first) {
+                                // Do not pop from stack if it's a leaf node.
+                                first = false;
+                            } else {
+                                mAngleStack.pop();
+                                mExtensionStack.pop();
+                                mChildrenPerDepth.pop();
+                                mParentStack.pop();
+                                mDescendantsStack.pop();
+                            }
+
+                            getTransaction().moveToParent();
+                            mDepth--;
                         } else {
-                            mAngleStack.pop();
-                            mExtensionStack.pop();
-                            mChildrenPerDepth.pop();
-                            mParentStack.pop();
-                            mDescendantsStack.pop();
+                            break;
                         }
-
-                        getTransaction().moveToParent();
-                        mDepth--;
-                    } else {
-                        break;
-                    }
-                } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
-                getTransaction().moveTo(currNodeKey);
+                    } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
+                    getTransaction().moveTo(currNodeKey);
+                } else {
+                    return false;
+                }
             }
 
             return true;
@@ -282,8 +296,12 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
         // Then end.
         mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        processMove();
-        mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+        if (mIndex + 1 < mDescendants.size()) {
+            processMove();
+            mChildExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
+        } else {
+            return false;
+        }
         return true;
     }
 

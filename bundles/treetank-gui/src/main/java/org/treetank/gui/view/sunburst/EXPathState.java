@@ -43,16 +43,8 @@ enum EXPathState {
          * {@inheritDoc}
          */
         @Override
-        void setStroke(final PApplet paramParent, final int paramColor) {
-            paramParent.stroke(1);
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        void setStrokeBuffer(final PGraphics paramBuffer, final int paramColor) {
-            paramBuffer.stroke(1);
+        void setStroke(final PGraphics paramGraphic, final int paramColor) {
+            paramGraphic.stroke(1);
         }
     },
 
@@ -62,36 +54,18 @@ enum EXPathState {
          * {@inheritDoc}
          */
         @Override
-        void setStroke(final PApplet paramParent, final int paramColor) {
-            paramParent.stroke(paramColor);
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        void setStrokeBuffer(final PGraphics paramBuffer, final int paramColor) {
-            paramBuffer.stroke(paramColor);
+        void setStroke(final PGraphics paramGraphic, final int paramColor) {
+            paramGraphic.stroke(paramColor);
         }
     };
-
+    
     /**
      * Set stroke.
      * 
-     * @param paramParent
-     *            parent processing buffer
+     * @param paramGraphic
+     *            {@link PGraphics} instance
      * @param paramColor
      *            the color to use
      */
-    abstract void setStroke(final PApplet paramParent, final int paramColor);
-    
-    /**
-     * Set stroke buffer.
-     * 
-     * @param paramBuffer
-     *            Processing {@link PGraphics}
-     * @param paramColor
-     *            the color to use
-     */
-    abstract void setStrokeBuffer(final PGraphics paramBuffer, final int paramColor);
+    abstract void setStroke(final PGraphics paramGraphic, final int paramColor);
 }

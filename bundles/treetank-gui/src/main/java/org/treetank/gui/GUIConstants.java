@@ -60,6 +60,9 @@ public final class GUIConstants {
 
     /** Text color. */
     public static final Color TEXT_COLOR = Color.BLACK;
+    
+    /** Hover color. */
+    public static final Color HOVER_COLOR = new Color(77, 77, 77);
 
     // OTHER ===================================================================
 

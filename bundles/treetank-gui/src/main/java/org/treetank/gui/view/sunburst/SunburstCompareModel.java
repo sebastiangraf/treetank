@@ -101,7 +101,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         assert paramContainer.mDepth >= 0;
         assert paramContainer.mModWeight >= 0;
 
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        final ExecutorService executor = Executors.newCachedThreadPool();//Executors.newSingleThreadExecutor();
         Future<SunburstFireContainer> future =
             executor.submit(new TraverseCompareTree(paramContainer.mRevision, mDb.getRevisionNumber(),
                 paramContainer.mKey, paramContainer.mDepth, paramContainer.mModWeight, this));

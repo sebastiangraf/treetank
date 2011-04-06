@@ -90,7 +90,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
     @Override
     public void traverseTree(final SunburstContainer paramContainer) {
         assert paramContainer.mKey >= 0;
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        final ExecutorService executor = Executors.newFixedThreadPool(1);//Executors.newSingleThreadExecutor();
         final Future<SunburstFireContainer> future =
             executor.submit(new TraverseTree(paramContainer.mKey, this));
         mGUI.mDone = false;

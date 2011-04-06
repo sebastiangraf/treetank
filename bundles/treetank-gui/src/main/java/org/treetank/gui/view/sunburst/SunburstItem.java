@@ -32,6 +32,8 @@ import javax.xml.namespace.QName;
 import org.treetank.api.IItem;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.EHover;
+import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewUtilities;
 
 import processing.core.PApplet;
@@ -50,7 +52,7 @@ import processing.core.PGraphics;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstItem {
+final class SunburstItem implements IVisualItem {
 
     /** Current {@link IItem} in Treetank. */
     final IItem mNode;
@@ -157,6 +159,9 @@ final class SunburstItem {
 
     /** Determines if one must be subtracted. */
     private transient boolean mSubtract;
+
+    /** Image to write to. */
+    private transient PGraphics mGraphic;
 
     /** Builder to setup the Items. */
     static final class Builder {
@@ -350,11 +355,14 @@ final class SunburstItem {
      * 
      * @param paramMappingMode
      *            specifies the mapping mode
-     * @param paramBuffer
+     * @param paramGraphic
      *            offline buffer image
      */
-    void update(final int paramMappingMode, final PGraphics paramBuffer) {
+    @Override
+    public void update(final int paramMappingMode, final PGraphics paramGraphic) {
         assert paramMappingMode == 1 || paramMappingMode == 2 || paramMappingMode == 3;
+        assert paramGraphic != null;
+        mGraphic = paramGraphic;
         if (mIndexToParent > -1) {
             final int depthMax = mGUI.mDepthMax;
             mRadius = mGUI.calcEqualAreaRadius(mDepth, depthMax);
@@ -407,34 +415,21 @@ final class SunburstItem {
             case ELEMENT_KIND:
                 float bright =
                     PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, percent);
-                if (paramBuffer == null) {
-                    mCol = mParent.color(0, 0, bright);
-                } else {
-                    mCol = paramBuffer.color(0, 0, bright);
-                }
+                mCol = paramGraphic.color(0, 0, bright);
+
                 bright =
                     PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
                         percent);
-                if (paramBuffer == null) {
-                    mLineCol = mParent.color(0, 0, 1 - bright);
-                } else {
-                    mLineCol = paramBuffer.color(0, 0, 1 - bright);
-                }
+                mLineCol = paramGraphic.color(0, 0, 1 - bright);
                 break;
             case TEXT_KIND:
             case COMMENT_KIND:
             case PROCESSING_KIND:
-                if (paramBuffer == null) {
-                    final int from =
-                        mParent.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
-                    final int to = mParent.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
-                    mCol = mParent.lerpColor(from, to, percent);
-                } else {
-                    final int from =
-                        paramBuffer.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
-                    final int to = paramBuffer.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
-                    mCol = paramBuffer.lerpColor(from, to, percent);
-                }
+                final int from =
+                    paramGraphic.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
+                final int to = paramGraphic.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
+                mCol = paramGraphic.lerpColor(from, to, percent);
+
                 mLineCol = mCol;
                 break;
             default:
@@ -469,22 +464,25 @@ final class SunburstItem {
      *            scale of leaf nodes
      */
     void drawArc(final float paramInnerNodeScale, final float paramLeafScale) {
+        assert paramInnerNodeScale > 0f;
+        assert paramLeafScale > 0f;
+        assert mGraphic != null;
         float arcRadius = 0;
         if (mDepth >= 0) {
             switch (mStructKind) {
             case ISLEAFNODE:
-                mParent.strokeWeight(mDepthWeight * paramLeafScale);
+                mGraphic.strokeWeight(mDepthWeight * paramLeafScale);
                 arcRadius = mRadius + mDepthWeight * paramLeafScale / 2;
                 break;
             case ISINNERNODE:
-                mParent.strokeWeight(mDepthWeight * paramInnerNodeScale);
+                mGraphic.strokeWeight(mDepthWeight * paramInnerNodeScale);
                 arcRadius = mRadius + mDepthWeight * paramInnerNodeScale / 2;
                 break;
             default:
                 throw new AssertionError("Structural kind not known!");
             }
 
-            mXPathState.setStroke(mParent, mCol);
+            mXPathState.setStroke(mGraphic, mCol);
 
             // mParent.arc(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd);
             arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should work
@@ -511,14 +509,14 @@ final class SunburstItem {
     void arcWrap(final float paramX, final float paramY, final float paramW, final float paramH,
         final float paramA1, final float paramA2) {
         if (mArcLength > 2.5) {
-            mParent.arc(paramX, paramY, paramW, paramH, paramA1, paramA2);
+            mGraphic.arc(paramX, paramY, paramW, paramH, paramA1, paramA2);
         } else {
-            mParent.strokeWeight(mArcLength);
-            mParent.pushMatrix();
-            mParent.rotate(mAngleCenter);
-            mParent.translate(mRadius, 0);
-            mParent.line(0, 0, (paramW - mRadius) * 2, 0);
-            mParent.popMatrix();
+            mGraphic.strokeWeight(mArcLength);
+            mGraphic.pushMatrix();
+            mGraphic.rotate(mAngleCenter);
+            mGraphic.translate(mRadius, 0);
+            mGraphic.line(0, 0, (paramW - mRadius) * 2, 0);
+            mGraphic.popMatrix();
         }
     }
 
@@ -544,13 +542,13 @@ final class SunburstItem {
                 throw new AssertionError("Structural kind not known!");
             }
 
-            mParent.stroke(mCol);
-            mParent.strokeWeight(mArcLength);
-            mParent.pushMatrix();
-            mParent.rotate(mAngleCenter);
-            mParent.translate(mRadius, 0);
-            mParent.line(0, 0, (rectWidth - mRadius) * 2, 0);
-            mParent.popMatrix();
+            mGraphic.stroke(mCol);
+            mGraphic.strokeWeight(mArcLength);
+            mGraphic.pushMatrix();
+            mGraphic.rotate(mAngleCenter);
+            mGraphic.translate(mRadius, 0);
+            mGraphic.line(0, 0, (rectWidth - mRadius) * 2, 0);
+            mGraphic.popMatrix();
         }
     }
 
@@ -563,29 +561,29 @@ final class SunburstItem {
             if (mDepth > 0 && mArcLength < diameter) {
                 diameter = mArcLength * 0.95f;
             }
-            mParent.noStroke();
+            mGraphic.noStroke();
             if (mGUI.mUseDiffView) {
                 switch (mDiff) {
                 case INSERTED:
-                    mParent.fill(200, 100, mGUI.mDotBrightness);
+                    mGraphic.fill(200, 100, mGUI.mDotBrightness);
                     break;
                 case DELETED:
-                    mParent.fill(360, 100, mGUI.mDotBrightness);
+                    mGraphic.fill(360, 100, mGUI.mDotBrightness);
                     break;
                 case UPDATED:
-                    mParent.fill(120, 100, mGUI.mDotBrightness);
+                    mGraphic.fill(120, 100, mGUI.mDotBrightness);
                     break;
                 default:
-                    mParent.fill(0, 0, 1 - mGUI.mDotBrightness);
+                    mGraphic.fill(0, 0, 1 - mGUI.mDotBrightness);
                 }
 
-                mParent.ellipse(mX, mY, diameter, diameter);
+                mGraphic.ellipse(mX, mY, diameter, diameter);
             } else {
-                mParent.colorMode(PConstants.HSB);
-                mParent.fill(0, 0, 1 - mGUI.mDotBrightness);
-                mParent.ellipse(mX, mY, diameter, diameter);
+                mGraphic.colorMode(PConstants.HSB);
+                mGraphic.fill(0, 0, 1 - mGUI.mDotBrightness);
+                mGraphic.ellipse(mX, mY, diameter, diameter);
             }
-            mParent.noFill();
+            mGraphic.noFill();
         }
     }
 
@@ -594,9 +592,9 @@ final class SunburstItem {
      */
     void drawRelationLine() {
         if (mDepth > 0) {
-            mParent.stroke(mLineCol);
-            mParent.strokeWeight(mLineWeight);
-            mParent.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
+            mGraphic.stroke(mLineCol);
+            mGraphic.strokeWeight(mLineWeight);
+            mGraphic.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
                 mGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
@@ -607,187 +605,12 @@ final class SunburstItem {
     void drawRelationBezier() {
         if (mDepth > 0) {
             assert mIndexToParent >= 0;
-            mParent.stroke(mLineCol);
+            mGraphic.stroke(mLineCol);
             if (mLineWeight < 0) {
                 mLineWeight *= -1;
             }
-            mParent.strokeWeight(mLineWeight);
-            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
-                mGUI.mModel.getItem(mIndexToParent).mY);
-        }
-    }
-
-    /**
-     * Draw an arc.
-     * 
-     * @param paramInnerNodeScale
-     *            scale of inner nodes
-     * @param paramLeafScale
-     *            scale of leaf nodes
-     * @param paramBuffer
-     *            offline buffer to draw to
-     */
-    void drawArcBuffer(final float paramInnerNodeScale, final float paramLeafScale,
-        final PGraphics paramBuffer) {
-        float arcRadius = 0;
-        if (mDepth >= 0) {
-            switch (mStructKind) {
-            case ISLEAFNODE:
-                paramBuffer.strokeWeight(mDepthWeight * paramLeafScale);
-                arcRadius = mRadius + mDepthWeight * paramLeafScale / 2;
-                break;
-            case ISINNERNODE:
-                paramBuffer.strokeWeight(mDepthWeight * paramInnerNodeScale);
-                arcRadius = mRadius + mDepthWeight * paramInnerNodeScale / 2;
-                break;
-            default:
-                throw new AssertionError("Structural kind not known!");
-            }
-
-            mXPathState.setStrokeBuffer(paramBuffer, mCol);
-
-            // mParent.arc(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd);
-            arcWrapBuffer(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd, paramBuffer); // normaly arc //
-                                                                                            // should // work
-        }
-    }
-
-    /**
-     * Fix for arc it seems that the arc functions has a problem with very tiny angles ...
-     * arcWrap is a quick hack to get rid of this problem.
-     * 
-     * @param paramX
-     *            X position of middle point
-     * @param paramY
-     *            Y position of middle point
-     * @param paramW
-     *            width of ellipse
-     * @param paramH
-     *            height of ellipse
-     * @param paramA1
-     *            angle to start from
-     * @param paramA2
-     *            angle to end
-     * @param paramBuffer
-     *            offline buffer to draw to
-     */
-    void arcWrapBuffer(final float paramX, final float paramY, final float paramW, final float paramH,
-        final float paramA1, final float paramA2, final PGraphics paramBuffer) {
-        if (mArcLength > 2.5) {
-            paramBuffer.arc(paramX, paramY, paramW, paramH, paramA1, paramA2);
-        } else {
-            paramBuffer.strokeWeight(mArcLength);
-            paramBuffer.pushMatrix();
-            paramBuffer.rotate(mAngleCenter);
-            paramBuffer.translate(mRadius, 0);
-            paramBuffer.line(0, 0, (paramW - mRadius) * 2, 0);
-            paramBuffer.popMatrix();
-        }
-    }
-
-    /**
-     * Draw current sunburst item as a rectangle.
-     * 
-     * @param paramInnerNodeScale
-     *            scale of a non leaf node
-     * @param paramLeafScale
-     *            scale of a leaf node
-     * @param paramBuffer
-     *            offline buffer to draw to
-     */
-    void drawRectBuffer(final float paramInnerNodeScale, final float paramLeafScale,
-        final PGraphics paramBuffer) {
-        float rectWidth;
-        if (mDepth >= 0) {
-            switch (mStructKind) {
-            case ISLEAFNODE:
-                rectWidth = mRadius + mDepthWeight * paramLeafScale / 2;
-                break;
-            case ISINNERNODE:
-                rectWidth = mRadius + mDepthWeight * paramInnerNodeScale / 2;
-                break;
-            default:
-                throw new AssertionError("Structural kind not known!");
-            }
-
-            paramBuffer.stroke(mCol);
-            paramBuffer.strokeWeight(mArcLength);
-            paramBuffer.pushMatrix();
-            paramBuffer.rotate(mAngleCenter);
-            paramBuffer.translate(mRadius, 0);
-            paramBuffer.line(0, 0, (rectWidth - mRadius) * 2, 0);
-            paramBuffer.popMatrix();
-        }
-    }
-
-    /**
-     * Draw a dot which are the bezier-curve anchors.
-     * 
-     * @param paramBuffer
-     *            offline buffer to draw to
-     */
-    void drawDotBuffer(final PGraphics paramBuffer) {
-        if (mDepth >= 0) {
-            float diameter = mGUI.mDotSize;
-            if (mDepth > 0 && mArcLength < diameter) {
-                diameter = mArcLength * 0.95f;
-            }
-            paramBuffer.noStroke();
-            if (mGUI.mUseDiffView) {
-                switch (mDiff) {
-                case INSERTED:
-                    paramBuffer.fill(200, 100, mGUI.mDotBrightness);
-                    break;
-                case DELETED:
-                    paramBuffer.fill(360, 100, mGUI.mDotBrightness);
-                    break;
-                case UPDATED:
-                    paramBuffer.fill(120, 100, mGUI.mDotBrightness);
-                    break;
-                default:
-                    paramBuffer.fill(0, 0, 1 - mGUI.mDotBrightness);
-                }
-
-                paramBuffer.ellipse(mX, mY, diameter, diameter);
-            } else {
-                paramBuffer.colorMode(PConstants.HSB);
-                paramBuffer.fill(0, 0, 1 - mGUI.mDotBrightness);
-                paramBuffer.ellipse(mX, mY, diameter, diameter);
-            }
-            paramBuffer.noFill();
-        }
-    }
-
-    /**
-     * Draw a straight line from child to parent.
-     * 
-     * @param paramBuffer
-     *            offline buffer to draw to
-     */
-    void drawRelationLineBuffer(final PGraphics paramBuffer) {
-        if (mDepth > 0) {
-            paramBuffer.stroke(mLineCol);
-            paramBuffer.strokeWeight(mLineWeight);
-            paramBuffer.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
-                mGUI.mModel.getItem(mIndexToParent).mY);
-        }
-    }
-
-    /**
-     * Draw a bezier curve from child to parent.
-     * 
-     * @param paramBuffer
-     *            offline buffer to draw to
-     */
-    void drawRelationBezierBuffer(final PGraphics paramBuffer) {
-        if (mDepth > 0) {
-            assert mIndexToParent >= 0;
-            paramBuffer.stroke(mLineCol);
-            if (mLineWeight < 0) {
-                mLineWeight *= -1;
-            }
-            paramBuffer.strokeWeight(mLineWeight);
-            paramBuffer.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
+            mGraphic.strokeWeight(mLineWeight);
+            mGraphic.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
                 mGUI.mModel.getItem(mIndexToParent).mY);
         }
     }
@@ -885,5 +708,13 @@ final class SunburstItem {
      */
     public IItem getNode() {
         return mNode;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void hover(final EHover paramHover) {
+        // FIXME
+        // TODO
+
     }
 }

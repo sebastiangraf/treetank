@@ -1142,7 +1142,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     private void drawItems(final EDraw paramDraw) {
         for (final SunburstItem item : mModel) {
-            item.update(getMappingMode(), null);
+            paramDraw.update(this, item);
+            
             if (mUseDiffView) {
                 paramDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
             } else {
