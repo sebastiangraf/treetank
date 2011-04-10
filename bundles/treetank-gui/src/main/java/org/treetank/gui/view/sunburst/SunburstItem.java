@@ -29,12 +29,14 @@ package org.treetank.gui.view.sunburst;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.access.WriteTransactionState;
 import org.treetank.api.IItem;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.EHover;
 import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewUtilities;
+import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -155,7 +157,7 @@ final class SunburstItem implements IVisualItem {
     private final PApplet mParent;
 
     /** Kind of diff. */
-    private transient EDiff mDiff;
+    transient EDiff mDiff;
 
     /** Determines if one must be subtracted. */
     private transient boolean mSubtract;
@@ -417,10 +419,10 @@ final class SunburstItem implements IVisualItem {
                     PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, percent);
                 mCol = paramGraphic.color(0, 0, bright);
 
-                bright =
-                    PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
-                        percent);
-                mLineCol = paramGraphic.color(0, 0, 1 - bright);
+                // bright =
+                // PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
+                // percent);
+                mLineCol = paramGraphic.color(0, 0, 0);
                 break;
             case TEXT_KIND:
             case COMMENT_KIND:
@@ -462,31 +464,43 @@ final class SunburstItem implements IVisualItem {
      *            scale of inner nodes
      * @param paramLeafScale
      *            scale of leaf nodes
+     * @param paramHover
+     *            determines if item currently is hovered or not
      */
-    void drawArc(final float paramInnerNodeScale, final float paramLeafScale) {
+    void drawArc(final float paramInnerNodeScale, final float paramLeafScale, final EHover paramHover) {
         assert paramInnerNodeScale > 0f;
         assert paramLeafScale > 0f;
         assert mGraphic != null;
         float arcRadius = 0;
-        if (mDepth >= 0) {
-            switch (mStructKind) {
-            case ISLEAFNODE:
-                mGraphic.strokeWeight(mDepthWeight * paramLeafScale);
-                arcRadius = mRadius + mDepthWeight * paramLeafScale / 2;
-                break;
-            case ISINNERNODE:
-                mGraphic.strokeWeight(mDepthWeight * paramInnerNodeScale);
-                arcRadius = mRadius + mDepthWeight * paramInnerNodeScale / 2;
-                break;
-            default:
-                throw new AssertionError("Structural kind not known!");
+        switch (mStructKind) {
+        case ISLEAFNODE:
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.strokeWeight(mDepthWeight * paramLeafScale);
             }
-
-            mXPathState.setStroke(mGraphic, mCol);
-
-            // mParent.arc(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd);
-            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should work
+            mGraphic.strokeWeight(mDepthWeight * paramLeafScale);
+            arcRadius = mRadius + mDepthWeight * paramLeafScale / 2;
+            break;
+        case ISINNERNODE:
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.strokeWeight(mDepthWeight * paramInnerNodeScale);
+            }
+            mGraphic.strokeWeight(mDepthWeight * paramInnerNodeScale);
+            arcRadius = mRadius + mDepthWeight * paramInnerNodeScale / 2;
+            break;
+        default:
+            throw new AssertionError("Structural kind not known!");
         }
+
+        mXPathState.setStroke(mGraphic, mGUI.mParent.recorder, mCol, paramHover);
+        if (paramHover == EHover.TRUE) {
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.noFill();
+            }
+            mGraphic.noFill();
+        }
+
+        // mParent.arc(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd);
+        arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should work
     }
 
     /**
@@ -509,8 +523,19 @@ final class SunburstItem implements IVisualItem {
     void arcWrap(final float paramX, final float paramY, final float paramW, final float paramH,
         final float paramA1, final float paramA2) {
         if (mArcLength > 2.5) {
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.arc(paramX, paramY, paramW, paramH, paramA1, paramA2);
+            }
             mGraphic.arc(paramX, paramY, paramW, paramH, paramA1, paramA2);
         } else {
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.strokeWeight(mArcLength);
+                mGUI.mParent.recorder.pushMatrix();
+                mGUI.mParent.recorder.rotate(mAngleCenter);
+                mGUI.mParent.recorder.translate(mRadius, 0);
+                mGUI.mParent.recorder.line(0, 0, (paramW - mRadius) * 2, 0);
+                mGUI.mParent.recorder.popMatrix();
+            }
             mGraphic.strokeWeight(mArcLength);
             mGraphic.pushMatrix();
             mGraphic.rotate(mAngleCenter);
@@ -527,63 +552,139 @@ final class SunburstItem implements IVisualItem {
      *            scale of a non leaf node
      * @param paramLeafScale
      *            scale of a leaf node
+     * @param paramHover
+     *            determines if item currently is hovered or not
      */
-    void drawRect(final float paramInnerNodeScale, final float paramLeafScale) {
+    void drawRect(final float paramInnerNodeScale, final float paramLeafScale, final EHover paramHover) {
         float rectWidth;
-        if (mDepth >= 0) {
-            switch (mStructKind) {
-            case ISLEAFNODE:
-                rectWidth = mRadius + mDepthWeight * paramLeafScale / 2;
-                break;
-            case ISINNERNODE:
-                rectWidth = mRadius + mDepthWeight * paramInnerNodeScale / 2;
-                break;
-            default:
-                throw new AssertionError("Structural kind not known!");
-            }
-
-            mGraphic.stroke(mCol);
-            mGraphic.strokeWeight(mArcLength);
-            mGraphic.pushMatrix();
-            mGraphic.rotate(mAngleCenter);
-            mGraphic.translate(mRadius, 0);
-            mGraphic.line(0, 0, (rectWidth - mRadius) * 2, 0);
-            mGraphic.popMatrix();
+        switch (mStructKind) {
+        case ISLEAFNODE:
+            rectWidth = mRadius + mDepthWeight * paramLeafScale / 2;
+            break;
+        case ISINNERNODE:
+            rectWidth = mRadius + mDepthWeight * paramInnerNodeScale / 2;
+            break;
+        default:
+            throw new AssertionError("Structural kind not known!");
         }
+
+        mXPathState.setStroke(mGraphic, mGUI.mParent.recorder, mCol, paramHover);
+        if (mGUI.mParent.recorder != null) {
+            if (paramHover == EHover.TRUE) {
+                mGUI.mParent.recorder.noFill();
+            }
+            mGUI.mParent.recorder.strokeWeight(mArcLength);
+            mGUI.mParent.recorder.pushMatrix();
+            mGUI.mParent.recorder.rotate(mAngleCenter);
+            mGUI.mParent.recorder.translate(mRadius, 0);
+            mGUI.mParent.recorder.line(0, 0, (rectWidth - mRadius) * 2, 0);
+            mGUI.mParent.recorder.popMatrix();
+        }
+        if (paramHover == EHover.TRUE) {
+            mGraphic.noFill();
+        }
+        mGraphic.stroke(mCol);
+        mGraphic.strokeWeight(mArcLength);
+        mGraphic.pushMatrix();
+        mGraphic.rotate(mAngleCenter);
+        mGraphic.translate(mRadius, 0);
+        mGraphic.line(0, 0, (rectWidth - mRadius) * 2, 0);
+        mGraphic.popMatrix();
     }
 
     /**
      * Draw a dot which are the bezier-curve anchors.
+     * 
+     * @param paramHover
+     *            determines if item currently is hovered or not
      */
-    void drawDot() {
-        if (mDepth >= 0) {
-            float diameter = mGUI.mDotSize;
-            if (mDepth > 0 && mArcLength < diameter) {
-                diameter = mArcLength * 0.95f;
-            }
-            mGraphic.noStroke();
-            if (mGUI.mUseDiffView) {
-                switch (mDiff) {
-                case INSERTED:
-                    mGraphic.fill(200, 100, mGUI.mDotBrightness);
-                    break;
-                case DELETED:
-                    mGraphic.fill(360, 100, mGUI.mDotBrightness);
-                    break;
-                case UPDATED:
-                    mGraphic.fill(120, 100, mGUI.mDotBrightness);
-                    break;
-                default:
-                    mGraphic.fill(0, 0, 1 - mGUI.mDotBrightness);
-                }
+    void drawDot(final EHover paramHover) {
+        float diameter = mGUI.mDotSize;
 
-                mGraphic.ellipse(mX, mY, diameter, diameter);
-            } else {
-                mGraphic.colorMode(PConstants.HSB);
-                mGraphic.fill(0, 0, 1 - mGUI.mDotBrightness);
-                mGraphic.ellipse(mX, mY, diameter, diameter);
+        if (paramHover == EHover.TRUE) {
+            diameter = diameter * 2f;
+        }
+
+        if (mDepth > 0 && mArcLength < diameter) {
+            diameter = mArcLength * 0.95f;
+        }
+
+        if (mGUI.mParent.recorder != null) {
+            mGUI.mParent.recorder.noStroke();
+        }
+        mGraphic.noStroke();
+        if (mGUI.mUseDiffView) {
+            switch (mDiff) {
+            case INSERTED:
+                if (mGUI.mParent.recorder != null) {
+                    mGUI.mParent.recorder.fill(200, 100, mGUI.mDotBrightness);
+                }
+                mGraphic.fill(200, 100, mGUI.mDotBrightness);
+                break;
+            case DELETED:
+                if (mGUI.mParent.recorder != null) {
+                    mGUI.mParent.recorder.fill(360, 100, mGUI.mDotBrightness);
+                }
+                mGraphic.fill(360, 100, mGUI.mDotBrightness);
+                break;
+            case UPDATED:
+                if (mGUI.mParent.recorder != null) {
+                    mGUI.mParent.recorder.fill(120, 100, mGUI.mDotBrightness);
+                }
+                mGraphic.fill(120, 100, mGUI.mDotBrightness);
+                break;
+            default:
+                // EDiff.SAME.
+                dot(paramHover);
             }
-            mGraphic.noFill();
+
+        } else {
+            dot(paramHover);
+        }
+        if (mGUI.mParent.recorder != null) {
+            mGUI.mParent.recorder.ellipse(mX, mY, diameter, diameter);
+            mGUI.mParent.recorder.noFill();
+        }
+        mGraphic.ellipse(mX, mY, diameter, diameter);
+        mGraphic.noFill();
+    }
+
+    /**
+     * Draw black or white dot determined through the background brightness.
+     * 
+     * @param paramHover
+     *            determines if item is hovered or not
+     */
+    private void dot(final EHover paramHover) {
+        if (mGUI.mParent.recorder != null) {
+            switch (paramHover) {
+            case TRUE:
+                mGUI.mParent.recorder.colorMode(PConstants.RGB);
+                mGUI.mParent.recorder.fill(200, 80, 80);
+                mGUI.mParent.recorder.colorMode(PConstants.HSB);
+                break;
+            case FALSE:
+                if (mGUI.mBackgroundBrightness < 30) {
+                    mGUI.mParent.recorder.fill(0, 0, 20);
+                } else {
+                    mGUI.mParent.recorder.fill(0, 0, 0);
+                }
+                break;
+            }
+        }
+        switch (paramHover) {
+        case TRUE:
+            mGraphic.colorMode(PConstants.RGB);
+            mGraphic.fill(200, 80, 80);
+            mGraphic.colorMode(PConstants.HSB);
+            break;
+        case FALSE:
+            if (mGUI.mBackgroundBrightness < 30) {
+                mGraphic.fill(0, 0, 20);
+            } else {
+                mGraphic.fill(0, 0, 0);
+            }
+            break;
         }
     }
 
@@ -591,9 +692,19 @@ final class SunburstItem implements IVisualItem {
      * Draw a straight line from child to parent.
      */
     void drawRelationLine() {
-        if (mDepth > 0) {
+        if (mIndexToParent > -1) {
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.stroke(mLineCol);
+            }
             mGraphic.stroke(mLineCol);
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.strokeWeight(mLineWeight);
+            }
             mGraphic.strokeWeight(mLineWeight);
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
+                    mGUI.mModel.getItem(mIndexToParent).mY);
+            }
             mGraphic.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
                 mGUI.mModel.getItem(mIndexToParent).mY);
         }
@@ -603,13 +714,22 @@ final class SunburstItem implements IVisualItem {
      * Draw a bezier curve from child to parent.
      */
     void drawRelationBezier() {
-        if (mDepth > 0) {
-            assert mIndexToParent >= 0;
+        if (mIndexToParent > -1) {
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.stroke(mLineCol);
+            }
             mGraphic.stroke(mLineCol);
             if (mLineWeight < 0) {
                 mLineWeight *= -1;
             }
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.strokeWeight(mLineWeight);
+            }
             mGraphic.strokeWeight(mLineWeight);
+            if (mGUI.mParent.recorder != null) {
+                mGUI.mParent.recorder.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y,
+                    mGUI.mModel.getItem(mIndexToParent).mX, mGUI.mModel.getItem(mIndexToParent).mY);
+            }
             mGraphic.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
                 mGUI.mModel.getItem(mIndexToParent).mY);
         }
@@ -630,7 +750,7 @@ final class SunburstItem implements IVisualItem {
         } else {
             final StringBuilder builder =
                 new StringBuilder().append("[Depth: ").append(mDepth).append(" QName: ")
-                    .append(ViewUtilities.qNameToString(mQName));
+                    .append(WriteTransactionState.buildName(mQName));
             updated(builder);
             builder.append(" NodeKey: ").append(mNode.getNodeKey()).append("]");
             retVal = builder.toString();
@@ -647,7 +767,7 @@ final class SunburstItem implements IVisualItem {
     void updated(StringBuilder builder) {
         if (mDiff != null && mDiff == EDiff.UPDATED) {
             if (mOldQName != null) {
-                builder.append(" old QName: ").append(ViewUtilities.qNameToString(mOldQName));
+                builder.append(" old QName: ").append(WriteTransactionState.buildName(mOldQName));
             } else if (mOldText != null && !mOldText.isEmpty()) {
                 builder.append(" old Text: ").append(mOldText);
             }
@@ -712,9 +832,34 @@ final class SunburstItem implements IVisualItem {
 
     /** {@inheritDoc} */
     @Override
-    public void hover(final EHover paramHover) {
-        // FIXME
-        // TODO
-
+    public void hover() {
+        mGraphic = mParent.g;
+        if (mGUI.mShowArcs && !mGUI.mShowLines) {
+            if (mGUI.mUseArc) {
+                drawArc(mGUI.mInnerNodeArcScale, mGUI.mLeafArcScale, EHover.TRUE);
+            } else {
+                drawRect(mGUI.mInnerNodeArcScale, mGUI.mLeafArcScale, EHover.TRUE);
+            }
+            
+            drawDot(EHover.FALSE);
+            //
+            // for (int index = mGUI.mHitTestIndex + 1;; index++) {
+            // if (index < mGUI.mModel.mItems.size()) {
+            // final SunburstItem item = mGUI.mModel.getItem(index);
+            // if (item.mDepth == mDepth + 1 && mGUI.mShowLines) {
+            // if (mGUI.mUseBezierLine) {
+            // item.drawRelationBezier();
+            // } else {
+            // item.drawRelationLine();
+            // }
+            // } else {
+            // break;
+            // }
+            // }
+            // }
+            //
+        } else {
+            drawDot(EHover.TRUE);
+        }
     }
 }

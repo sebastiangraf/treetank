@@ -50,6 +50,7 @@ import org.gicentre.utils.move.ZoomPan;
 import org.gicentre.utils.move.ZoomPanListener;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
@@ -189,7 +190,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private volatile PImage mImg;
 
     /** Background brightness. */
-    private transient float mBackgroundBrightness = 100f;
+    transient float mBackgroundBrightness = 100f;
 
     /** Color mapping mode. */
     private transient int mMappingMode = 1;
@@ -258,7 +259,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private transient Textfield mTextArea;
 
     /** Determines if it is currently zooming or panning or has been in the past. */
-    private transient boolean mIsZoomingPanning = false;
+    private transient boolean mIsZoomingPanning;
+
+    /** Determines if pruning should be enabled or not. */
+    transient boolean mUsePruning;
 
     /**
      * Private constructor.
@@ -304,7 +308,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private void setupGUI() {
         mParent.noLoop();
 
-        mParent.textMode(PConstants.SHAPE);
         mParent.textFont(mParent.createFont("src" + File.separator + "main" + File.separator + "resources"
             + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
 
@@ -386,6 +389,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mToggles.get(ti++).setLabel("Arc / Rect");
         mToggles.add(ti, mControlP5.addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
         mToggles.get(ti++).setLabel("Fisheye lense");
+        mToggles
+            .add(ti, mControlP5.addToggle("mUsePruning", mUsePruning, left + 0, top + posY + 100, 15, 15));
+        mToggles.get(ti++).setLabel("Pruning");
 
         mXPathField = mControlP5.addTextfield("xpath", mParent.width - 250, top + 20, 200, 20);
         mXPathField.setLabel("XPath expression");
@@ -583,11 +589,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     mLock.release();
                     LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
                 }
-                mParent.translate(mParent.width / 2, mParent.height / 2);
+                mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
             }
-
-            // Mouse rollover, arc hittest vars.
-            rollover();
 
             // Mouse rollover.
             if (!mShowGUI && !mCtrl.isVisible()) {
@@ -597,6 +600,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 }
 
                 if (doMouseOver) {
+                    // Mouse rollover, arc hittest vars.
+                    rollover();
+
                     // Depth level focus.
                     if (mDepth <= mDepthMax) {
                         final float firstRad = calcEqualAreaRadius(mDepth, mDepthMax);
@@ -606,6 +612,13 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                         mParent.ellipse(0, 0, firstRad, firstRad);
                         mParent.ellipse(0, 0, secondRad, secondRad);
                     }
+
+                    mParent.pushMatrix();
+                    if (mHitItem != null) {
+                        mHitItem.hover();
+                    }
+                    mParent.popMatrix();
+
                     // Rollover text.
                     textMousOver();
                 }
@@ -634,13 +647,13 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     color();
                     mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
                     mParent.fill(360, 100, mDotBrightness);
-                    mParent.ellipse(mParent.width - 160f, mParent.height - 66f, 8, 8);
+                    mParent.ellipse(mParent.width - 160f, mParent.height - 67f, 8, 8);
                     color();
-                    mParent.text("node deleted", mParent.width - 140f, mParent.height - 75f);
+                    mParent.text("node deleted", mParent.width - 140f, mParent.height - 77f);
                     mParent.fill(120, 100, mDotBrightness);
-                    mParent.ellipse(mParent.width - 160f, mParent.height - 38f, 8, 8);
+                    mParent.ellipse(mParent.width - 160f, mParent.height - 44f, 8, 8);
                     color();
-                    mParent.text("node updated", mParent.width - 140f, mParent.height - 50f);
+                    mParent.text("node updated", mParent.width - 140f, mParent.height - 54f);
                 }
             } else {
                 color();
@@ -965,16 +978,24 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                         // Bug in processing's mousbotton, thus used SwingUtilities.
                         if (SwingUtilities.isLeftMouseButton(paramEvent) && !mCtrl.isOpen()) {
                             if (mUseDiffView) {
-                                mModel.update(new SunburstContainer()
-                                    .setKey(mModel.getItem(mHitTestIndex).getNode().getNodeKey())
-                                    .setRevision(mSelectedRev).setModWeight(mModificationWeight));
+                                final SunburstItem item = mModel.getItem(mHitTestIndex);
+                                if (item.mDiff == EDiff.SAME) {
+                                    mModel.update(new SunburstContainer().setAll(mSelectedRev,
+                                        item.getDepth(), mModificationWeight));
+                                }
                             } else {
-                                mModel.update(new SunburstContainer().setKey(mModel.getItem(mHitTestIndex)
-                                    .getNode().getNodeKey()));
+                                final SunburstContainer container = new SunburstContainer();
+                                if (mUsePruning) {
+                                    container.setPruning(EPruning.TRUE);
+                                } else {
+                                    container.setPruning(EPruning.FALSE);
+                                }
+                                mModel.update(container.setKey(mModel.getItem(mHitTestIndex).getNode()
+                                    .getNodeKey()));
                             }
                         } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
                             if (!mUseDiffView) {
-                                mModel.popupMenu(paramEvent, mCtrl, mHitTestIndex);
+                                ((SunburstModel)mModel).popupMenu(paramEvent, mCtrl, mHitTestIndex);
                             }
                         }
                     }
@@ -1120,15 +1141,21 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
         rolloverInit();
         int index = 0;
+        boolean found = false;
         for (final SunburstItem item : mModel) {
             // Hittest, which arc is the closest to the mouse.
             if (item.getDepth() == mDepth && mAngle > item.getAngleStart() && mAngle < item.getAngleEnd()) {
                 mHitTestIndex = index;
                 mHitItem = item;
                 retVal = true;
+                found = true;
                 break;
             }
             index++;
+        }
+        
+        if (!found) {
+            mHitItem = null;
         }
 
         return retVal;
@@ -1143,7 +1170,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private void drawItems(final EDraw paramDraw) {
         for (final SunburstItem item : mModel) {
             paramDraw.update(this, item);
-            
+
             if (mUseDiffView) {
                 paramDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
             } else {
@@ -1188,14 +1215,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     public void submit(final int paramValue) throws XMLStreamException {
         try {
+            assert mModel instanceof SunburstModel;
             mCtrl.setVisible(false);
             mCtrl.setOpen(false);
-            mModel.shredder(mTextArea.getText().getBytes());
+            ((SunburstModel)mModel).shredder(mTextArea.getText().getBytes());
             mTextArea.clear();
         } catch (final FactoryConfigurationError e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (TTUsageException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
         }
@@ -1211,15 +1236,13 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     public void commit(final int paramValue) throws XMLStreamException {
         try {
+            assert mModel instanceof SunburstModel;
             mCtrl.setVisible(false);
             mCtrl.setOpen(false);
-            mModel.shredder(mTextArea.getText().getBytes());
-            mModel.commit();
+            ((SunburstModel)mModel).shredder(mTextArea.getText().getBytes());
+            ((SunburstModel)mModel).commit();
             mTextArea.clear();
         } catch (final FactoryConfigurationError e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (TTUsageException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
         }
@@ -1243,6 +1266,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      *            add subtree as first child or right sibling
      */
     public void setInsert(final EShredderInsert paramAddSubtree) {
-        mModel.setInsert(paramAddSubtree);
+        assert mModel instanceof SunburstModel;
+        ((SunburstModel)mModel).setInsert(paramAddSubtree);
     }
 }

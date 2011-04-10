@@ -27,7 +27,10 @@
 
 package org.treetank.gui.view.sunburst;
 
+import org.treetank.gui.view.EHover;
+
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 
 /**
@@ -37,13 +40,17 @@ import processing.core.PGraphics;
  * 
  */
 enum EXPathState {
+    
     /** Item is found. */
     ISFOUND {
         /**
          * {@inheritDoc}
          */
         @Override
-        void setStroke(final PGraphics paramGraphic, final int paramColor) {
+        void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover) {
+            if (paramRecorder != null) {
+                paramRecorder.stroke(1);
+            }
             paramGraphic.stroke(1);
         }
     },
@@ -54,8 +61,23 @@ enum EXPathState {
          * {@inheritDoc}
          */
         @Override
-        void setStroke(final PGraphics paramGraphic, final int paramColor) {
-            paramGraphic.stroke(paramColor);
+        void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover) {
+            if (paramRecorder != null) {
+                if (paramHover == EHover.TRUE) {
+                    paramRecorder.colorMode(PConstants.RGB);
+                    paramRecorder.stroke(200, 80, 80);
+                    paramRecorder.colorMode(PConstants.HSB);
+                } else {
+                    paramRecorder.stroke(paramColor);
+                }
+            }
+            if (paramHover == EHover.TRUE) {
+                paramGraphic.colorMode(PConstants.RGB);
+                paramGraphic.stroke(200, 80, 80);
+                paramGraphic.colorMode(PConstants.HSB);
+            } else {
+                paramGraphic.stroke(paramColor);
+            }
         }
     };
     
@@ -64,8 +86,10 @@ enum EXPathState {
      * 
      * @param paramGraphic
      *            {@link PGraphics} instance
+     * @param paramRecorder
+     *             {@link PGraphics} instance for recording PDFs
      * @param paramColor
      *            the color to use
      */
-    abstract void setStroke(final PGraphics paramGraphic, final int paramColor);
+    abstract void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover);
 }

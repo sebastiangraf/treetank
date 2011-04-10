@@ -161,6 +161,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
     /** Last {@link Diff}. */
     private transient Diff mLastDiffCont;
+    
+    /** Initial depth. */
+    private transient int mInitDepth;
 
     /**
      * Constructor initializing internal state.
@@ -177,10 +180,12 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      *            {@link List} of {@link EDiff}s
      * @param paramMaxDepth
      *            maximum depth in old revision
+     * @param paramInitDepth 
+     *            initial depth
      */
     public SunburstCompareDescendantAxis(final boolean paramIncludeSelf,
         final ITraverseModel paramCallableModel, final IReadTransaction paramNewRtx,
-        final IReadTransaction paramOldRtx, final List<Diff> paramDiffs, final int paramMaxDepth) {
+        final IReadTransaction paramOldRtx, final List<Diff> paramDiffs, final int paramMaxDepth, final int paramInitDepth) {
         super(paramNewRtx, paramIncludeSelf);
         mModel = paramCallableModel;
         mDiffs = paramDiffs;
@@ -199,6 +204,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         mParentModificationCount = 1;
         mModificationCount = mParentModificationCount;
         mMaxDepth = paramMaxDepth;
+        mInitDepth = paramInitDepth;
     }
 
     /**
@@ -229,6 +235,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         mIndex = -1;
         mItem = Item.ITEM;
         mBuilder = Item.BUILDER;
+        mLastDiff = EDiff.SAME;
     }
 
     /**
@@ -251,7 +258,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mOldRtx.moveTo(mDiffCont.getOldNode().getNodeKey());
 
                 if (mMoved == EMoved.ANCHESTSIBL) {
-                    if (mDepth > mDiffCont.getDepth().getOldDepth()) {
+                    if (mDepth > mDiffCont.getDepth().getOldDepth() - mInitDepth) {
                         // Must be done on the transaction which is bound to the new revision.
                         final long currNodeKey = getTransaction().getNode().getNodeKey();
                         boolean first = true;
@@ -287,31 +294,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mTempRightSiblingKeyStack = mRightSiblingKeyStack;
                 mRightSiblingKeyStack = new FastStack<Long>();
 
-//                final long currNodeKey = getTransaction().getNode().getNodeKey();
-//                boolean first = true;
-//                do {
-//                    if (((AbsStructNode)getTransaction().getNode()).hasParent()
-//                        && mDiffCont.getDepth().getOldDepth() < mDepth && mLastDiff == EDiff.SAME) {
-//                        mMoved = EMoved.ANCHESTSIBL;
-//                        if (first) {
-//                            // Do not pop from stack if it's a leaf node.
-//                            first = false;
-//                        } else {
-//                            mDiffStack.pop();
-//                            mAngleStack.pop();
-//                            mExtensionStack.pop();
-//                            mParentStack.pop();
-//                            mDescendantsStack.pop();
-//                        }
-//
-//                        mDepth--;
-//                        getTransaction().moveToParent();
-//                    } else {
-//                        break;
-//                    }
-//                } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
-//                getTransaction().moveTo(currNodeKey);
-
                 processMove();
                 calculateDepth();
 
@@ -345,7 +327,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                     do {
                         if (((AbsStructNode)getTransaction().getNode()).hasParent()
                             && getTransaction().getNode().getNodeKey() != mNextKey
-                            && oldDepth > mDiffCont.getDepth().getNewDepth()) {
+                            && oldDepth > mDiffCont.getDepth().getNewDepth() - mInitDepth) {
                             if (first) {
                                 // Do not pop from stack if it's a leaf node.
                                 first = false;
@@ -450,6 +432,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             }
 
             mLastDiff = mDiff;
+            
+            if (0 >= mDiffs.size()) {
+                mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            }
+            
             return true;
         }
 
@@ -467,6 +454,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mMoved = EMoved.STARTRIGHTSIBL;
 
             mLastDiff = mDiff;
+            
+            if (0 >= mDiffs.size()) {
+                mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            }
+            
             return true;
         }
 
@@ -488,13 +480,15 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
             // Next node will be a right sibling of an anchestor node or the traversal ends.
             mMoved = EMoved.ANCHESTSIBL;
-            if (mDiffs.get(0).getDiff() != EDiff.DELETED) {
+            if (0 < mDiffs.size() && mDiffs.get(0).getDiff() != EDiff.DELETED) {
                 /*
                  * Only move to next node if next diff is not a delete, because in deletes it moves itself to
                  * the next node. This has been done because deletes can occur some depths/levels above but
                  * between the next node and the current node.
                  */
                 moveToNextNode();
+            } else if (0 >= mDiffs.size()) {
+                mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             }
 
             mLastDiff = mDiff;
@@ -554,7 +548,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         if (mDiff != EDiff.SAME && mLastDiff == EDiff.SAME) {
             mDepth = mMaxDepth + 2;
         } else if (mDiff == EDiff.SAME && mLastDiff != EDiff.SAME) {
-            mDepth = mDiffCont.getDepth().getNewDepth();
+            mDepth = mDiffCont.getDepth().getNewDepth() - mInitDepth;
         } else if (mDiff != EDiff.SAME && mDepth < mMaxDepth + 2) {
             mDepth = mMaxDepth + 2;
         }

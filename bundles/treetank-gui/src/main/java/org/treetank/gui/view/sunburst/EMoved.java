@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -48,8 +48,7 @@ enum EMoved {
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack,
-            final Stack<Integer> paramDescendantsStack) {
+            final Stack<Integer> paramParentStack, final Stack<Integer> paramDescendantsStack) {
             // Do nothing.
         }
 
@@ -73,14 +72,11 @@ enum EMoved {
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack,
-            final Stack<Integer> paramDescendantsStack) {
+            final Stack<Integer> paramParentStack, final Stack<Integer> paramDescendantsStack) {
             assert !paramAngleStack.empty();
             paramItem.mAngle = paramAngleStack.peek();
             assert !paramExtensionStack.empty();
             paramItem.mExtension = paramExtensionStack.peek();
-            assert !paramChildrenPerDepth.empty();
-            paramItem.mChildCountPerDepth = childCountPerDepth(paramRtx);
             assert !paramParentStack.empty();
             paramItem.mIndexToParent = paramParentStack.peek();
             assert !paramDescendantsStack.empty();
@@ -116,8 +112,7 @@ enum EMoved {
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-            final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack,
-            final Stack<Integer> paramDescendantsStack) {
+            final Stack<Integer> paramParentStack, final Stack<Integer> paramDescendantsStack) {
             assert !paramAngleStack.empty();
             paramItem.mAngle = paramAngleStack.pop();
             assert !paramExtensionStack.empty();
@@ -128,8 +123,6 @@ enum EMoved {
             paramParentStack.pop();
             assert !paramParentStack.empty();
             paramItem.mIndexToParent = paramParentStack.peek();
-            assert !paramChildrenPerDepth.empty();
-            paramItem.mChildCountPerDepth = paramChildrenPerDepth.pop();
             assert !paramDescendantsStack.empty();
             paramDescendantsStack.pop();
             assert !paramDescendantsStack.empty();
@@ -176,8 +169,6 @@ enum EMoved {
      *            stack for angles
      * @param paramExtensionStack
      *            stack for extensions
-     * @param paramChildrenPerDepth
-     *            stack for children per depth
      * @param paramParentStack
      *            stack for parent indexes
      * @param paramDescendantsStack
@@ -185,8 +176,7 @@ enum EMoved {
      */
     abstract void processMove(final IReadTransaction paramRtx, final Item paramItem,
         final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
-        final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack,
-        final Stack<Integer> paramDescendantsStack);
+        final Stack<Integer> paramParentStack, final Stack<Integer> paramDescendantsStack);
 
     /**
      * Process movement of Treetank {@link IReadTransaction}, while comparing revisions.
@@ -210,22 +200,4 @@ enum EMoved {
         final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
         final Stack<Integer> paramDescendantsStack, final Stack<Integer> paramParentStack,
         final Stack<Integer> paramModificationStack);
-
-    /**
-     * Traverses all right siblings and sums up child count. Thus a precondition to invoke the method
-     * is that it must be called on the first child node.
-     * 
-     * @param paramRtx
-     *            Treetank {@link IReadTransaction}
-     * @return child count per depth
-     */
-    private static long childCountPerDepth(final IReadTransaction paramRtx) {
-        long retVal = 0;
-        final long key = paramRtx.getNode().getNodeKey();
-        do {
-            retVal += ((AbsStructNode)paramRtx.getNode()).getChildCount();
-        } while (((AbsStructNode)paramRtx.getNode()).hasRightSibling() && paramRtx.moveToRightSibling());
-        paramRtx.moveTo(key);
-        return retVal;
-    }
 }

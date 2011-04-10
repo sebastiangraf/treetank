@@ -3,6 +3,9 @@
  */
 package org.treetank.gui.view;
 
+import processing.core.PConstants;
+import processing.core.PGraphics;
+
 /**
  * Determines if a {@link IVisualItem} currently is hovered or not.
  * 
@@ -11,26 +14,7 @@ package org.treetank.gui.view;
  */
 public enum EHover {
     /** Yes, it's hovered. */
-    TRUE {
-        @Override
-        void setColor(final IVisualItem paramItem) {
-            // TODO Auto-generated method stub
-
-        }
-    },
+    TRUE,
     /** No, it's not hovered. */
-    FALSE {
-        @Override
-        void setColor(final IVisualItem paramItem) {
-
-        }
-    };
-
-    /**
-     * Set hover color.
-     * 
-     * @param paramItem
-     *            {@link IVisualItem} reference
-     */
-    abstract void setColor(final IVisualItem paramItem);
+    FALSE;
 }

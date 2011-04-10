@@ -27,6 +27,8 @@
 
 package org.treetank.gui.view.sunburst;
 
+import org.treetank.gui.view.EHover;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -105,10 +107,7 @@ public enum EDraw {
     private static void drawOldRevision(final SunburstGUI paramGUI, final PGraphics paramGraphic) {
         paramGraphic.pushMatrix();
         final float arcRadius = calculateOldRadius(paramGUI, paramGraphic);
-        paramGraphic.stroke(200f);
-        paramGraphic.arc(0, 0, arcRadius, arcRadius, 0, 2 * PConstants.PI);
-        paramGraphic.stroke(0f);
-
+        drawRevision(paramGUI, paramGraphic, arcRadius);
         final String text = "revision " + paramGUI.mDb.getRevisionNumber();
         draw(paramGUI, paramGraphic, text, arcRadius);
         paramGraphic.popMatrix();
@@ -124,14 +123,11 @@ public enum EDraw {
      */
     private static void drawNewRevision(final SunburstGUI paramGUI, final PGraphics paramGraphic) {
         paramGraphic.pushMatrix();
-        final float arcRadius = calculateNewRadius(paramGUI);
-        paramGraphic.stroke(200f);
-        paramGraphic.arc(0, 0, arcRadius, arcRadius, 0, 2 * PConstants.PI);
-        paramGraphic.stroke(0f);
-
+        final float arcRadius = calculateNewRadius(paramGUI, paramGraphic);
+        drawRevision(paramGUI, paramGraphic, arcRadius);
         final String text = "revision " + paramGUI.mSelectedRev;
         draw(paramGUI, paramGraphic, text, arcRadius);
-        paramGUI.mBuffer.popMatrix();
+        paramGraphic.popMatrix();
     }
 
     /**
@@ -162,6 +158,17 @@ public enum EDraw {
             // Starting on the left side of the circle by adding PI.
             final float theta = PConstants.PI + arclength / paramArcRadius;
 
+            if (paramGUI.mParent.recorder != null) {
+                paramGUI.mParent.recorder.pushMatrix();
+                // Polar to cartesian coordinate conversion.
+                paramGUI.mParent.recorder.translate(paramArcRadius * PApplet.cos(theta), paramArcRadius * PApplet.sin(theta));
+                // Rotate the box.
+                paramGUI.mParent.recorder.rotate(theta + PConstants.PI / 2); // rotation is offset by 90 degrees
+                // Display the character.
+                paramGUI.mParent.recorder.fill(0);
+                paramGUI.mParent.recorder.text(currentChar, 0, 0);
+                paramGUI.mParent.recorder.popMatrix();
+            }
             paramGraphic.pushMatrix();
             // Polar to cartesian coordinate conversion.
             paramGraphic.translate(paramArcRadius * PApplet.cos(theta), paramArcRadius * PApplet.sin(theta));
@@ -173,6 +180,9 @@ public enum EDraw {
             paramGraphic.popMatrix();
             // Move halfway again.
             arclength += w / 2;
+        }
+        if (paramGUI.mParent.recorder != null) {
+            paramGUI.mParent.recorder.noFill();
         }
         paramGraphic.noFill();
     }
@@ -191,6 +201,9 @@ public enum EDraw {
         final float radius = paramGUI.calcEqualAreaRadius(revisionDepth, paramGUI.mDepthMax);
         final float depthWeight =
             paramGUI.calcEqualAreaRadius(revisionDepth + 1, paramGUI.mDepthMax) - radius;
+        if (paramGUI.mParent.recorder != null) {
+            paramGUI.mParent.recorder.strokeWeight(depthWeight);
+        }
         paramGraphic.strokeWeight(depthWeight);
         return radius + depthWeight / 2;
     }
@@ -200,15 +213,42 @@ public enum EDraw {
      * 
      * @param paramGUI
      *            {@link GUI} instance
+     * @param paramGraphic
+     *            {@link PGraphics} instance
      * @return calculated radius
      */
-    private static float calculateNewRadius(final SunburstGUI paramGUI) {
+    private static float calculateNewRadius(final SunburstGUI paramGUI, final PGraphics paramGraphic) {
         final int revisionDepth = paramGUI.mDepthMax - 1;
         final float radius = paramGUI.calcEqualAreaRadius(revisionDepth, paramGUI.mDepthMax);
         final float depthWeight =
             paramGUI.calcEqualAreaRadius(revisionDepth + 1, paramGUI.mDepthMax) - radius;
-        paramGUI.mBuffer.strokeWeight(depthWeight);
+        if (paramGUI.mParent.recorder != null) {
+            paramGUI.mParent.recorder.strokeWeight(depthWeight);
+        }
+        paramGraphic.strokeWeight(depthWeight);
         return radius + depthWeight / 2;
+    }
+    
+    /**
+     * Draw revision.
+     * 
+     * @param paramGUI
+     *            {@link SunburstGUI} instance
+     * @param paramGraphic
+     *            {@link PGraphics} instance
+     * @param paramArcRadius
+     *            arc radius
+     */
+    private static void drawRevision(final SunburstGUI paramGUI, final PGraphics paramGraphic,
+        final float paramArcRadius) {
+        if (paramGUI.mParent.recorder != null) {
+            paramGUI.mParent.recorder.stroke(200f);
+            paramGUI.mParent.recorder.arc(0, 0, paramArcRadius, paramArcRadius, 0, 2 * PConstants.PI);
+            paramGUI.mParent.recorder.stroke(0f);
+        }
+        paramGraphic.stroke(200f);
+        paramGraphic.arc(0, 0, paramArcRadius, paramArcRadius, 0, 2 * PConstants.PI);
+        paramGraphic.stroke(0f);
     }
 
     /**
@@ -222,9 +262,9 @@ public enum EDraw {
     protected void drawArc(final SunburstGUI paramGUI, final SunburstItem paramItem) {
         if (paramGUI.mShowArcs) {
             if (paramGUI.mUseArc) {
-                paramItem.drawArc(paramGUI.mInnerNodeArcScale, paramGUI.mLeafArcScale);
+                paramItem.drawArc(paramGUI.mInnerNodeArcScale, paramGUI.mLeafArcScale, EHover.FALSE);
             } else {
-                paramItem.drawRect(paramGUI.mInnerNodeArcScale, paramGUI.mLeafArcScale);
+                paramItem.drawRect(paramGUI.mInnerNodeArcScale, paramGUI.mLeafArcScale, EHover.FALSE);
             }
         }
     }
@@ -256,7 +296,7 @@ public enum EDraw {
      *            {@link SunburstItem} instance
      */
     protected void drawDot(final SunburstGUI paramGUI, final SunburstItem paramItem) {
-        paramItem.drawDot();
+        paramItem.drawDot(EHover.FALSE);
     }
 
     /**
