@@ -59,9 +59,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
     /** Extension stack. */
     private transient Stack<Float> mExtensionStack;
 
-    /** Children per depth. */
-    private transient Stack<Long> mChildrenPerDepth;
-
     /** Angle stack. */
     private transient Stack<Float> mAngleStack;
 
@@ -118,22 +115,29 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** {@link List} of {@link Future}s which hold the number of descendants. */
     private transient List<Integer> mDescendants;
+    
+    /** Determines if tree should be pruned or not. */
+    private transient EPruning mPruning;
 
     /**
      * Constructor initializing internal state.
      * 
      * @param paramRtx
      *            exclusive (immutable) trx to iterate with
-     * @param mIncludeSelf
+     * @param paramIncludeSelf
      *            determines if self is included
      * @param paramModel
      *            model which observes axis changes
      * @param paramTraverseModel
      *            model
+     * @param paramPruning 
      */
-    public SunburstDescendantAxis(final IReadTransaction paramRtx, final boolean mIncludeSelf,
-        final AbsModel paramModel, final ITraverseModel paramTraverseModel) {
-        super(paramRtx, mIncludeSelf);
+    public SunburstDescendantAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf, final ITraverseModel paramTraverseModel, final EPruning paramPruning) {
+        super(paramRtx, paramIncludeSelf);
+        assert paramRtx != null;
+        assert paramTraverseModel != null;
+        assert paramPruning != null;
+        mPruning = paramPruning;
         mModel = paramTraverseModel;
         try {
             mDescendants = mModel.getDescendants(getTransaction());
@@ -159,7 +163,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
             mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
         }
         mExtensionStack = new Stack<Float>();
-        mChildrenPerDepth = new Stack<Long>();
         mAngleStack = new Stack<Float>();
         mParentStack = new Stack<Integer>();
         mDescendantsStack = new Stack<Integer>();
@@ -198,7 +201,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
         // Always follow first child if there is one.
         if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
-            if (mDepth > 3) {
+            if (mPruning == EPruning.TRUE && mDepth > 3) {
                 processPruned();
             } else {
                 if (mIndex + 1 < mDescendants.size()) {
@@ -215,11 +218,10 @@ public final class SunburstDescendantAxis extends AbsAxis {
                     mAngleStack.push(mAngle);
                     mExtensionStack.push(mChildExtension);
                     mParentStack.push(mIndex);
-                    mChildrenPerDepth.push(mChildCountPerDepth);
                     mDescendantsStack.push(mDescendantCount);
                     mDepth++;
 
-                    if (mDepth > 3 && !mRightSiblingKeyStack.empty() && hasRightSibling) {
+                    if (mPruning == EPruning.TRUE && mDepth > 3 && !mRightSiblingKeyStack.empty() && hasRightSibling) {
                         mRightSiblingKeyStack.pop();
                     }
                     mMoved = EMoved.CHILD;
@@ -233,7 +235,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
         // Then follow right sibling if there is one.
         if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
-            if (mDepth > 3) {
+            if (mPruning == EPruning.TRUE && mDepth > 3) {
                 processPruned();
             } else {
                 if (mIndex + 1 < mDescendants.size()) {
@@ -253,7 +255,7 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
         // Then follow right sibling on stack.
         if (mRightSiblingKeyStack.size() > 0) {
-            if (mDepth > 3) {
+            if (mPruning == EPruning.TRUE && mDepth > 3) {
                 processPruned();
             } else {
                 if (mIndex + 1 < mDescendants.size()) {
@@ -274,7 +276,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
                             } else {
                                 mAngleStack.pop();
                                 mExtensionStack.pop();
-                                mChildrenPerDepth.pop();
                                 mParentStack.pop();
                                 mDescendantsStack.pop();
                             }
@@ -325,7 +326,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
                         } else {
                             mAngleStack.pop();
                             mExtensionStack.pop();
-                            mChildrenPerDepth.pop();
                             mParentStack.pop();
                             mDescendantsStack.pop();
                         }
@@ -355,19 +355,17 @@ public final class SunburstDescendantAxis extends AbsAxis {
     /** Process movement. */
     private void processMove() {
         // try {
-        mBuilder.set(mAngle, mExtension, mIndexToParent).setChildCountPerDepth(mChildCountPerDepth)
-            .setParentDescendantCount(mParDescendantCount).setDescendantCount(mDescendants.get(mIndex + 1))
-            .set();
+        mBuilder.set(mAngle, mExtension, mIndexToParent).setParentDescendantCount(mParDescendantCount)
+            .setDescendantCount(mDescendants.get(mIndex + 1)).set();
         // } catch (final InterruptedException e) {
         // LOGWRAPPER.error(e.getMessage(), e);
         // } catch (final ExecutionException e) {
         // LOGWRAPPER.error(e.getMessage(), e);
         // }
-        mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mChildrenPerDepth,
+        mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack,
             mParentStack, mDescendantsStack);
         mAngle = mItem.mAngle;
         mExtension = mItem.mExtension;
-        mChildCountPerDepth = mItem.mChildCountPerDepth;
         mIndexToParent = mItem.mIndexToParent;
         mParDescendantCount = mItem.mParentDescendantCount;
         mDescendantCount = mItem.mDescendantCount;

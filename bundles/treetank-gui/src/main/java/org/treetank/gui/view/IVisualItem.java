@@ -48,9 +48,6 @@ public interface IVisualItem {
 
     /**
      * Item hovered.
-     * 
-     * @param paramHover
-     *            determines if item is hovered or not
      */
-    void hover(EHover paramHover);
+    void hover();
 }

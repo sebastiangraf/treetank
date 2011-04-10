@@ -52,9 +52,6 @@ public final class Item {
     /** Index to the parent item. */
     transient int mIndexToParent;
 
-    /** Child count per depth. */
-    transient long mChildCountPerDepth;
-
     /** Descendant count. */
     transient int mDescendantCount;
 
@@ -81,9 +78,6 @@ public final class Item {
 
         /** End angle. */
         transient float mExtension;
-
-        /** Child count per depth. */
-        transient long mChildCountPerDepth = -1L;
 
         /** Child count per depth. */
         transient int mDescendantCount = -1;
@@ -143,18 +137,6 @@ public final class Item {
          */
         Builder setSubtract(final boolean paramSubtract) {
             mSubtract = paramSubtract;
-            return this;
-        }
-
-        /**
-         * Set child count per depth.
-         * 
-         * @param paramChildCountPerDepth
-         *            child count per depth
-         * @return this builder
-         */
-        Builder setChildCountPerDepth(final long paramChildCountPerDepth) {
-            mChildCountPerDepth = paramChildCountPerDepth;
             return this;
         }
 
@@ -222,7 +204,7 @@ public final class Item {
          * Setup item.
          */
         void set() {
-            assert mChildCountPerDepth != -1L || mDescendantCount != -1;
+            assert mDescendantCount != -1;
             ITEM.setAll(this);
         }
     }
@@ -244,7 +226,6 @@ public final class Item {
         mAngle = paramBuilder.mAngle;
         mExtension = paramBuilder.mExtension;
         mIndexToParent = paramBuilder.mIndexToParent;
-        mChildCountPerDepth = paramBuilder.mChildCountPerDepth;
         mModificationCount = paramBuilder.mModificationCount;
         mParentModificationCount = paramBuilder.mParentModificationCount;
         mDescendantCount = paramBuilder.mDescendantCount;

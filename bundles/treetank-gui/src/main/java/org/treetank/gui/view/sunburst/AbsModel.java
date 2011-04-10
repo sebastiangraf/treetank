@@ -108,12 +108,6 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** The last maximum depth in the old revision. */
     transient int mLastOldMaxDepth;
 
-    /** {@link IWriteTransaction} instance. */
-    private transient IWriteTransaction mWtx;
-
-    /** Determines if XML fragments should be inserted as first child or as right sibling of the current node. */
-    private transient EShredderInsert mInsert;
-
     /**
      * Constructor.
      * 
@@ -184,7 +178,13 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         }
         mLastItems = new Stack<List<SunburstItem>>();
         mLastDepths = new Stack<Integer>();
-        traverseTree(new SunburstContainer().setKey(mDb.getNodeKey()));
+        final SunburstContainer container = new SunburstContainer().setKey(mDb.getNodeKey());
+        if (mGUI.mUsePruning) {
+            container.setPruning(EPruning.TRUE);
+        } else {
+            container.setPruning(EPruning.FALSE);
+        }
+        traverseTree(container);
     }
 
     /** {@inheritDoc} */
@@ -402,79 +402,5 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                 }
             }
         }
-    }
-
-    /**
-     * Shredder XML fragment input.
-     * 
-     * @param paramTextBytes
-     * @throws TTUsageException
-     *             if something went wrong while shredding
-     */
-    void shredder(final byte[] paramTextBytes) throws TTUsageException {
-        try {
-            final XMLEventReader reader =
-                XMLInputFactory.newInstance().createXMLEventReader(new ByteArrayInputStream(paramTextBytes));
-            final ExecutorService service = Executors.newSingleThreadExecutor();
-            service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.NOCOMMIT));
-            service.shutdown();
-            service.awaitTermination(60, TimeUnit.SECONDS);
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (final TTUsageException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Commit changes.
-     */
-    void commit() {
-        try {
-            mWtx.commit();
-            mWtx.close();
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Create a popup menu for modifying nodes.
-     * 
-     * @param paramEvent
-     *            the current {@link MouseEvent}
-     * @param paramCtrl
-     *            {@link ControlGroup} to insert XML fragment
-     * @param paramHitTestIndex
-     *            the index of the {@link SunburstItem} which is currently hovered
-     */
-    void popupMenu(final MouseEvent paramEvent, final ControlGroup paramCtrl, final int paramHitTestIndex) {
-        try {
-            if (mWtx == null || mWtx.isClosed()) {
-                mWtx = mDb.getSession().beginWriteTransaction();
-                mWtx.revertTo(mDb.getRevisionNumber());
-            }
-            mWtx.moveTo(getItem(paramHitTestIndex).mNode.getNodeKey());
-            final SunburstPopupMenu menu = SunburstPopupMenu.getInstance(mGUI, mWtx, paramCtrl);
-            menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Set insert for shredding.
-     * 
-     * @param paramInsert
-     *            determines how to insert an XML fragment
-     */
-    void setInsert(final EShredderInsert paramInsert) {
-        mInsert = paramInsert;
     }
 }

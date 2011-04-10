@@ -267,30 +267,30 @@ public final class SunburstView extends JScrollPane implements IView {
         @Override
         public void setup() {
             newSize();
-//            addComponentListener(new ComponentListener() {
-//                @Override
-//                public void componentResized(final ComponentEvent paramEvt) {
-//                    mEmbed.newSize();
-//                }
-//
-//                @Override
-//                public void componentMoved(ComponentEvent e) {
-//                    // TODO Auto-generated method stub
-//
-//                }
-//
-//                @Override
-//                public void componentShown(ComponentEvent e) {
-//                    // TODO Auto-generated method stub
-//
-//                }
-//
-//                @Override
-//                public void componentHidden(ComponentEvent e) {
-//                    // TODO Auto-generated method stub
-//
-//                }
-//            });
+            // addComponentListener(new ComponentListener() {
+            // @Override
+            // public void componentResized(final ComponentEvent paramEvt) {
+            // mEmbed.newSize();
+            // }
+            //
+            // @Override
+            // public void componentMoved(ComponentEvent e) {
+            // // TODO Auto-generated method stub
+            //
+            // }
+            //
+            // @Override
+            // public void componentShown(ComponentEvent e) {
+            // // TODO Auto-generated method stub
+            //
+            // }
+            //
+            // @Override
+            // public void componentHidden(ComponentEvent e) {
+            // // TODO Auto-generated method stub
+            //
+            // }
+            // });
         }
 
         /**
@@ -373,7 +373,8 @@ public final class SunburstView extends JScrollPane implements IView {
                     mSunburstGUI.mUseDiffView = false;
 
                     // Traverse.
-                    mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()));
+                    mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()).setPruning(
+                        EPruning.FALSE));
                 } else {
                     // Database change.
                     mSunburstGUI.mDone = false;
