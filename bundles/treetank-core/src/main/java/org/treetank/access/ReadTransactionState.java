@@ -339,22 +339,22 @@ public class ReadTransactionState {
     /**
      * Find reference pointing to leaf page of an indirect tree.
      * 
-     * @param mStartReference
+     * @param paramStartReference
      *            Start reference pointing to the indirect tree.
-     * @param mKey
+     * @param paramKey
      *            Key to look up in the indirect tree.
      * @return Reference denoted by key pointing to the leaf page.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final PageReference dereferenceLeafOfTree(final PageReference mStartReference, final long mKey)
+    protected final PageReference dereferenceLeafOfTree(final PageReference paramStartReference, final long paramKey)
         throws TTIOException {
 
         // Initial state pointing to the indirect page of level 0.
-        PageReference reference = mStartReference;
+        PageReference reference = paramStartReference;
         int offset = 0;
-        long levelKey = mKey;
+        long levelKey = paramKey;
 
         // Iterate through all levels.
         for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {

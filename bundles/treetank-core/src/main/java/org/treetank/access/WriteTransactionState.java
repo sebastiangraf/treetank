@@ -121,29 +121,29 @@ public final class WriteTransactionState extends ReadTransactionState {
      * (persistence) layer, storing the page in the cache and setting up the
      * node for upcoming modification. Note that this only occurs for {@link AbsNode}s.
      * 
-     * @param mNodeKey
+     * @param paramNodeKey
      *            key of the node to be modified
      * @return an {@link AbsNode} instance
      * @throws TTIOException
      *             if IO Error
      */
-    protected AbsNode prepareNodeForModification(final long mNodeKey) throws TTIOException {
+    protected AbsNode prepareNodeForModification(final long paramNodeKey) throws TTIOException {
         if (mNodePageCon != null) {
             throw new IllegalStateException();
         }
 
-        final long nodePageKey = nodePageKey(mNodeKey);
-        final int nodePageOffset = nodePageOffset(mNodeKey);
+        final long nodePageKey = nodePageKey(paramNodeKey);
+        final int nodePageOffset = nodePageOffset(paramNodeKey);
         prepareNodePage(nodePageKey);
 
-        AbsNode node = this.mNodePageCon.getModified().getNode(nodePageOffset);
+        AbsNode node = mNodePageCon.getModified().getNode(nodePageOffset);
         if (node == null) {
-            final AbsNode oldNode = this.mNodePageCon.getComplete().getNode(nodePageOffset);
+            final AbsNode oldNode = mNodePageCon.getComplete().getNode(nodePageOffset);
             if (oldNode == null) {
                 throw new TTIOException("Cannot retrieve node from cache");
             }
             node = oldNode.clone();
-            this.mNodePageCon.getModified().setNode(nodePageOffset, node);
+            mNodePageCon.getModified().setNode(nodePageOffset, node);
         }
         return node;
     }

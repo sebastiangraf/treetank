@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,6 +32,7 @@ import java.util.Set;
 import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
+import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffKind;
 import org.treetank.exception.AbsTTException;
@@ -71,6 +72,13 @@ abstract class AbsDiff extends AbsDiffObservable {
         /** New revision. */
         NEW;
     }
+    
+    /**
+     * Kind of hash method.
+     * 
+     * @see HashKind
+     */
+    transient HashKind mHashKind;
 
     /**
      * Kind of difference.
@@ -85,58 +93,38 @@ abstract class AbsDiff extends AbsDiffObservable {
     /** {@link DepthCounter} instance. */
     private transient DepthCounter mDepth;
 
-    /**
-     * Kind of hash method.
-     * 
-     * @see HashKind
-     */
-    transient HashKind mHashKind;
+    /** Key of "root" node in new revision. */
+    private transient long mRootKey;
 
     /**
      * Constructor.
      * 
-     * @param paramDb
-     *            {@link IDatabase} instance
-     * @param paramKey
-     *            key of (sub)tree to check
-     * @param paramNewRev
-     *            new revision key
-     * @param paramOldRev
-     *            old revision key
-     * @param paramDiffKind
-     *            kind of diff (optimized or not)
-     * @param paramObservers
-     *            {@link Set} of Observers, which listen for the kinds of diff between two nodes
+     * @param paramBuilder
+     *            {@link Builder} reference
      */
-    AbsDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
-        final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
-        assert paramDb != null;
-        assert paramKey >= 0;
-        assert paramNewRev >= 0;
-        assert paramOldRev >= 0;
-        assert paramNewRev > paramOldRev;
-        assert paramDiffKind != null;
-        assert paramObservers != null;
+    AbsDiff(final Builder paramBuilder) {
+        assert paramBuilder != null;
         try {
-            mDiffKind = paramDiffKind;
-            synchronized (paramDb) {
-                mNewRtx = paramDb.getSession().beginReadTransaction(paramNewRev);
-                mOldRtx = paramDb.getSession().beginReadTransaction(paramOldRev);
+            mDiffKind = paramBuilder.mKind;
+            synchronized (paramBuilder.mDb) {
+                mNewRtx = paramBuilder.mDb.getSession().beginReadTransaction(paramBuilder.mNewRev);
+                mOldRtx = paramBuilder.mDb.getSession().beginReadTransaction(paramBuilder.mOldRev);
                 mHashKind =
-                    HashKind.valueOf(paramDb.getDatabaseConf().getProps()
+                    HashKind.valueOf(paramBuilder.mDb.getDatabaseConf().getProps()
                         .getProperty(EDatabaseSetting.HASHKIND_TYPE.name()));
             }
-            mNewRtx.moveTo(paramKey);
-            mOldRtx.moveTo(paramKey);
+            mNewRtx.moveTo(paramBuilder.mKey);
+            mOldRtx.moveTo(paramBuilder.mKey);
+            mRootKey = paramBuilder.mKey;
 
-            synchronized (paramObservers) {
-                for (final IDiffObserver observer : paramObservers) {
+            synchronized (paramBuilder.mObservers) {
+                for (final IDiffObserver observer : paramBuilder.mObservers) {
                     addObserver(observer);
                 }
             }
             mDiff = EDiff.SAME;
-            mDiffKind = paramDiffKind;
-            mDepth = new DepthCounter();
+            mDiffKind = paramBuilder.mKind;
+            mDepth = new DepthCounter(paramBuilder.mNewDepth, paramBuilder.mOldDepth);
             diffMovement();
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
@@ -255,8 +243,12 @@ abstract class AbsDiff extends AbsDiffObservable {
                     break;
                 }
             }
-        } while (!((AbsStructNode)paramRtx.getNode()).hasRightSibling()
-            && ((AbsStructNode)paramRtx.getNode()).hasParent());
+        } while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getStructuralNode().hasParent()
+            && paramRtx.getNode().getNodeKey() != mRootKey);
+
+        if (paramRtx.getNode().getNodeKey() == mRootKey) {
+            paramRtx.moveToDocumentRoot();
+        }
 
         moved = paramRtx.moveToRightSibling();
         return moved;
@@ -404,6 +396,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @return true if nodes are "equal" according to their {@link QName}s, otherwise false
      */
     boolean checkName(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+        assert paramNewRtx != null;
+        assert paramOldRtx != null;
         boolean found = false;
         if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
             switch (paramNewRtx.getNode().getKind()) {

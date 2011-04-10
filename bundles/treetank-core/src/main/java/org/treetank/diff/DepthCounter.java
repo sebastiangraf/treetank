@@ -31,12 +31,17 @@ package org.treetank.diff;
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public final class DepthCounter {
+final class DepthCounter {
     /** Depth in new revision. */
     private transient int mNewDepth;
     
     /** Depth in old revision. */
     private transient int mOldDepth;
+    
+    DepthCounter(final int paramNewDepth, final int paramOldDepth) {
+        mNewDepth = paramNewDepth;
+        mOldDepth = paramOldDepth;
+    }
     
     /** Increment depth in new revision. */
     void incrementNewDepth() {
