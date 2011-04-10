@@ -113,7 +113,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -143,7 +143,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -187,7 +187,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -230,7 +230,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -276,7 +276,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -321,7 +321,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -363,7 +363,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -405,7 +405,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -443,7 +443,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -481,7 +481,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -522,7 +522,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -563,7 +563,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -608,7 +608,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -651,7 +651,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -697,7 +697,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -739,7 +739,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -780,7 +780,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -821,7 +821,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -943,7 +943,7 @@ public final class StructuralDiffTest {
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        DiffFactory.invokeStructuralDiff(database, 0, 1, 0, EDiffKind.NORMAL, observer);
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);

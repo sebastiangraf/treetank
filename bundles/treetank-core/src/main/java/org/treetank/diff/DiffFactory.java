@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -44,16 +44,9 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public final class DiffFactory {
-    
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(
-        LoggerFactory.getLogger(DiffFactory.class));
 
     /**
      * Possible kinds of differences between two nodes.
-     * 
-     * @author Johannes Lichtenberger, University of Konstanz
-     * 
      */
     public enum EDiff {
         /** Nodes are the same. */
@@ -88,51 +81,108 @@ public final class DiffFactory {
         /** Full diff. */
         FULL {
             @Override
-            void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
-                final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
-                try {
-                    new FullDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
-                } catch (final AbsTTException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
-                }
+            void invoke(final Builder paramBuilder) {
+                new FullDiff(paramBuilder);
             }
         },
 
         /** Structural diff (doesn't recognize differences in namespace and attribute nodes. */
         STRUCTURAL {
             @Override
-            void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
-                final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
-                try {
-                    new StructuralDiff(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
-                } catch (final AbsTTException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
-                }
+            void invoke(final Builder paramBuilder) {
+                new StructuralDiff(paramBuilder);
             }
         };
-        
-       /**
-        * Invoke diff.
-        * 
-        * @param paramDb
-        *            {@link IDatabase} reference
-        * @param paramKey
-        *            start key
-        * @param paramNewRev
-        *            new revision
-        * @param paramOldRev
-        *            old revision
-        * @param paramDiffKind
-        *            diff kind
-        * @param paramObservers
-        *            {@link Set} of {@link IDiffObserver}s
-        */
-        abstract void invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
-            final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers);
+
+        /**
+         * Invoke diff.
+         * 
+         * @param paramBuilder
+         *            {@link Builder} reference
+         */
+        abstract void invoke(final Builder paramBuilder);
     }
 
     /** Kind of diff to invoke. */
     private static DiffKind mDiffKind;
+
+    /** Builder to simplify static methods. */
+    public static final class Builder {
+
+        /** {@link IDatabase} reference. */
+        final IDatabase mDb;
+
+        /** Start key. */
+        final long mKey;
+
+        /** New revision. */
+        final long mNewRev;
+
+        /** Old revision. */
+        final long mOldRev;
+
+        /** Depth of "root" node in new revision. */
+        transient int mNewDepth;
+
+        /** Depth of "root" node in old revision. */
+        transient int mOldDepth;
+
+        /** Diff kind. */
+        final EDiffKind mKind;
+
+        /** {@link Set} of {@link IDiffObserver}s. */
+        final Set<IDiffObserver> mObservers;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramDb
+         *            {@link IDatabase} instance
+         * @param paramKey
+         *            key of start node
+         * @param paramNewRev
+         *            new revision to compare
+         * @param paramOldRev
+         *            old revision to compare
+         * @param paramDiffKind
+         *            kind of diff (optimized or not)
+         * @param paramObservers
+         *            {@link Set} of observers
+         */
+        public Builder(final IDatabase paramDb, final long paramKey, final long paramNewRev,
+            final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+            mDb = paramDb;
+            mKey = paramKey;
+            mNewRev = paramNewRev;
+            mOldRev = paramOldRev;
+            mKind = paramDiffKind;
+            mObservers = paramObservers;
+        }
+
+        /**
+         * Set new depth.
+         * 
+         * @param paramNewDepth
+         *            depth of "root" node in new revision
+         * @return this builder
+         */
+        public Builder setNewDepth(final int paramNewDepth) {
+            mNewDepth = paramNewDepth;
+            return this;
+        }
+
+        /**
+         * Set old depth.
+         * 
+         * @param paramOldDepth
+         *            depth of "root" node in old revision
+         * @return this builder
+         */
+        public Builder setOldDepth(final int paramOldDepth) {
+            mOldDepth = paramOldDepth;
+            return this;
+        }
+    }
 
     /**
      * Private constructor.
@@ -145,77 +195,43 @@ public final class DiffFactory {
     /**
      * Do a full diff.
      * 
-     * @param paramDb
-     *            {@link IDatabase} instance
-     * @param paramKey
-     *            key of start node
-     * @param paramNewRev
-     *            new revision to compare
-     * @param paramOldRev
-     *            old revision to compare
-     * @param paramDiffKind
-     *            kind of diff (optimized or not)
-     * @param paramObservers
-     *            observes differences
+     * @param paramBuilder
+     *            {@link Builder} reference
      */
-    public static void invokeFullDiff(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-        final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
-        checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
+    public static void invokeFullDiff(final Builder paramBuilder) {
+        checkParams(paramBuilder);
         mDiffKind = DiffKind.FULL;
         final ExecutorService exes = Executors.newSingleThreadExecutor();
-        exes.submit(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
+        exes.submit(new Invoke(paramBuilder));
         exes.shutdown();
     }
 
     /**
      * Do a structural diff.
      * 
-     * @param paramDb
-     *            {@link IDatabase} instance
-     * @param paramKey
-     *            key of start node
-     * @param paramNewRev
-     *            new revision to compare
-     * @param paramOldRev
-     *            old revision to compare
-     * @param paramDiffKind
-     *            kind of diff (optimized or not)
-     * @param paramObservers
-     *            observe differences
+     * @param paramBuilder
+     *            {@link Builder} reference
      */
-    public static void invokeStructuralDiff(final IDatabase paramDb, final long paramKey,
-        final long paramNewRev, final long paramOldRev, final EDiffKind paramDiffKind,
-        final Set<IDiffObserver> paramObservers) {
-        checkParams(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers);
+    public static void invokeStructuralDiff(final Builder paramBuilder) {
+        checkParams(paramBuilder);
         mDiffKind = DiffKind.STRUCTURAL;
         final ExecutorService exes = Executors.newSingleThreadExecutor();
-        exes.submit(new Invoke(paramDb, paramKey, paramNewRev, paramOldRev, paramDiffKind, paramObservers));
+        exes.submit(new Invoke(paramBuilder));
         exes.shutdown();
     }
 
     /**
      * Check parameters for validity and assign global static variables.
      * 
-     * @param paramDb
-     *            {@link IDatabase} instance
-     * @param paramKey
-     *            key of start node
-     * @param paramNewRev
-     *            new revision to compare
-     * @param paramOldRev
-     *            old revision to compare
-     * @param paramDiffKind
-     *            kind of diff (optimized or not)
-     * @param paramObservers
-     *            {@link Set} of observers
+     * @param paramBuilder
+     *            {@link Builder} reference
      */
-    private static void checkParams(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-        final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
-        if (paramDb == null || paramKey < -1L || paramNewRev < 0 || paramOldRev < 0 || paramObservers == null
-            || paramDiffKind == null) {
-            throw new IllegalArgumentException();
+    private static void checkParams(final Builder paramBuilder) {
+        if (paramBuilder.mDb == null || paramBuilder.mKey < -1L || paramBuilder.mNewRev < 0
+            || paramBuilder.mOldRev < 0 || paramBuilder.mObservers == null || paramBuilder.mKind == null) {
+            throw new IllegalArgumentException("No valid arguments specified!");
         }
-        if (paramNewRev == paramOldRev || paramNewRev < paramOldRev) {
+        if (paramBuilder.mNewRev == paramBuilder.mOldRev || paramBuilder.mNewRev < paramBuilder.mOldRev) {
             throw new IllegalArgumentException(
                 "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
         }
@@ -224,62 +240,22 @@ public final class DiffFactory {
     /** Invoke diff. */
     private static class Invoke implements Callable<Void> {
 
-        /** {@link IDatabase} reference. */
-        private final IDatabase mDb;
-
-        /** Start key. */
-        private final long mKey;
-
-        /** New revision. */
-        private final long mNewRev;
-
-        /** Old revision. */
-        private final long mOldRev;
-
-        /** Diff kind. */
-        private final EDiffKind mKind;
-
-        /** {@link Set} of {@link IDiffObserver}s. */
-        private final Set<IDiffObserver> mObservers;
+        /** {@link Builder} reference. */
+        private final Builder mBuilder;
 
         /**
          * Constructor.
          * 
-         * @param paramDb
-         *            {@link IDatabase} reference
-         * @param paramKey
-         *            start key
-         * @param paramNewRev
-         *            new revision
-         * @param paramOldRev
-         *            old revision
-         * @param paramDiffKind
-         *            diff kind
-         * @param paramObservers
-         *            {@link Set} of {@link IDiffObserver}s
+         * @param paramBuilder
+         *            {@link Builder} reference
          */
-        Invoke(final IDatabase paramDb, final long paramKey, final long paramNewRev, final long paramOldRev,
-            final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
-            mDb = paramDb;
-            mKey = paramKey;
-            mNewRev = paramNewRev;
-            mOldRev = paramOldRev;
-            mKind = paramDiffKind;
-            mObservers = paramObservers;
+        Invoke(final Builder paramBuilder) {
+            mBuilder = paramBuilder;
         }
 
         @Override
         public Void call() throws AbsTTException {
-            mDiffKind.invoke(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
-//            switch (mDiffKind) {
-//            case STRUCTURAL:
-//                new StructuralDiff(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
-//                break;
-//            case FULL:
-//                new FullDiff(mDb, mKey, mNewRev, mOldRev, mKind, mObservers);
-//                break;
-//            default:
-//            }
+            mDiffKind.invoke(mBuilder);
             return null;
         }
     }
