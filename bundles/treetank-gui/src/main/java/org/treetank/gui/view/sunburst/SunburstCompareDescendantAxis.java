@@ -264,7 +264,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         boolean first = true;
                         do {
                             if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                                && mDepth > mDiffCont.getDepth().getOldDepth()) {
+                                && mDepth > mDiffCont.getDepth().getOldDepth() - mInitDepth) {
                                 if (first) {
                                     // Do not pop from stack if it's a leaf node.
                                     first = false;
@@ -321,7 +321,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mNextKey = mTempNextKey;
 
                 if (mMoved == EMoved.ANCHESTSIBL) {
-                    final long currNodeKey = getTransaction().getNode().getNodeKey();
                     boolean first = true;
                     long oldDepth = mLastDiffCont.getDepth().getOldDepth();
                     do {
@@ -346,7 +345,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                             break;
                         }
                     } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
-                    getTransaction().moveTo(currNodeKey);
                 }
 
                 setTransaction(mNewRtx);
@@ -480,7 +478,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
             // Next node will be a right sibling of an anchestor node or the traversal ends.
             mMoved = EMoved.ANCHESTSIBL;
-            if (0 < mDiffs.size() && mDiffs.get(0).getDiff() != EDiff.DELETED) {
+            if (mDiff != EDiff.DELETED && 0 < mDiffs.size() && mDiffs.get(0).getDiff() != EDiff.DELETED) {
                 /*
                  * Only move to next node if next diff is not a delete, because in deletes it moves itself to
                  * the next node. This has been done because deletes can occur some depths/levels above but

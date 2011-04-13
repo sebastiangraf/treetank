@@ -376,10 +376,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                                 mDepth++;
                             } else {
                                 if (mDepth > 3) {
-                                    while (!paramRtx.getStructuralNode().hasRightSibling()) {
-                                        if (paramRtx.getNode().getNodeKey() == key) {
-                                            break;
-                                        }
+                                    while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getNode().getNodeKey() != key) {
                                         paramRtx.moveToParent();
                                         mDepth--;
                                     }
@@ -393,11 +390,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                             }
                         } else {
                             boolean movedToNextFollowing = false;
-                            while (!paramRtx.getStructuralNode().hasRightSibling()) {
-                                if (paramRtx.getNode().getNodeKey() == key) {
-                                    break;
-                                }
-
+                            while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getNode().getNodeKey() != key) {
                                 if (hasNoChild && !movedToNextFollowing && mDepth < 4) {
                                     descendants.add(countDescendants(paramRtx));
                                 }
@@ -420,8 +413,6 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                                     paramRtx.moveToRightSibling();
                                 }
                                 hasNoChild = true;
-                            } else {
-
                             }
                         }
                     }
