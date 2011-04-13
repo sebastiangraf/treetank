@@ -55,13 +55,13 @@ final class SunburstPopupMenu extends JPopupMenu {
     private final SunburstGUI mGUI;
 
     /** Treetank {@link IWriteTransaction}. */
-    private final IWriteTransaction mWtx;
+    private static IWriteTransaction mWtx;
 
     /** Textarea for XML fragment input. */
     private final ControlGroup mCtrl;
     
     /** Instance of this class. */
-    private transient static SunburstPopupMenu mSunburstPopupMenu;
+    private static SunburstPopupMenu mSunburstPopupMenu;
 
     /**
      * Private constructor.
@@ -102,7 +102,7 @@ final class SunburstPopupMenu extends JPopupMenu {
      */
     static synchronized SunburstPopupMenu getInstance(final SunburstGUI paramGUI, final IWriteTransaction paramWtx,
         final ControlGroup paramCtrl) {
-        if (mSunburstPopupMenu == null) {
+        if (mSunburstPopupMenu == null || !paramWtx.equals(mWtx)) {
             mSunburstPopupMenu = new SunburstPopupMenu(paramGUI, paramWtx, paramCtrl);
         }
         return mSunburstPopupMenu;

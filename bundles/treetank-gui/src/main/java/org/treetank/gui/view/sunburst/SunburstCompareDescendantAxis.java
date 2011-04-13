@@ -462,7 +462,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
         // Then follow right sibling on stack.
         if (mRightSiblingKeyStack.size() > 0) {
-            if (mLastDiff == EDiff.DELETED && mDiff != EDiff.DELETED) {
+            if (mLastDiff == EDiff.DELETED && mDiff != EDiff.DELETED && mMoved == EMoved.CHILD) {
                 mRightSiblingKeyStack.pop();
             }
 
