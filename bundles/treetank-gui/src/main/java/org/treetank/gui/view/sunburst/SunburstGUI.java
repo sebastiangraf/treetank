@@ -281,11 +281,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mZoomer = new ZoomPan(paramParentApplet);
         mZoomer.setMouseMask(PConstants.CONTROL);
         mZoomer.addZoomPanListener(new MyListener());
+        mModel.addPropertyChangeListener(this);
     }
 
     /**
      * Factory method (Singleton). Note that it's always called from the animation thread, thus it doesn't
-     * need to be synchronized. Uses double checked locking to improve performance.
+     * need to be synchronized.
      * 
      * @param paramParentApplet
      *            parent processing applet
@@ -535,6 +536,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             if (paramControlEvent.group().name().equals("Compare revision")) {
                 mSelectedRev = (int)paramControlEvent.group().value();
                 mModel = new SunburstCompareModel(mParent, mDb);
+                mModel.addPropertyChangeListener(this);
                 mModel.traverseTree(new SunburstContainer().setRevision(mSelectedRev).setModWeight(
                     mModificationWeight));
             }
@@ -981,7 +983,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                                 final SunburstItem item = mModel.getItem(mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
                                     mModel.update(new SunburstContainer().setAll(mSelectedRev,
-                                        item.getDepth(), mModificationWeight));
+                                        item.getDepth(), mModificationWeight).setKey(item.mNode.getNodeKey()));
                                 }
                             } else {
                                 final SunburstContainer container = new SunburstContainer();
@@ -995,7 +997,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                             }
                         } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
                             if (!mUseDiffView) {
-                                ((SunburstModel)mModel).popupMenu(paramEvent, mCtrl, mHitTestIndex);
+                                try {
+                                    ((SunburstModel)mModel).popupMenu(paramEvent, mCtrl, mHitTestIndex);
+                                } catch (final AbsTTException e) {
+                                    LOGWRAPPER.error(e.getMessage(), e);
+                                    JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+                                }
                             }
                         }
                     }
@@ -1125,6 +1132,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             mOldDepthMax = (Integer)paramEvent.getNewValue();
             mUseDiffView = true;
         } else if (paramEvent.getPropertyName().equals("done")) {
+            mDone = false;
             update();
             assert paramEvent.getNewValue() instanceof Boolean;
             mDone = true;
@@ -1218,9 +1226,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             assert mModel instanceof SunburstModel;
             mCtrl.setVisible(false);
             mCtrl.setOpen(false);
-            ((SunburstModel)mModel).shredder(mTextArea.getText().getBytes());
+            ((SunburstModel)mModel).shredder(mTextArea.getText());
             mTextArea.clear();
         } catch (final FactoryConfigurationError e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
         }
@@ -1239,10 +1250,13 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             assert mModel instanceof SunburstModel;
             mCtrl.setVisible(false);
             mCtrl.setOpen(false);
-            ((SunburstModel)mModel).shredder(mTextArea.getText().getBytes());
+            ((SunburstModel)mModel).shredder(mTextArea.getText());
             ((SunburstModel)mModel).commit();
             mTextArea.clear();
         } catch (final FactoryConfigurationError e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
         }
@@ -1257,16 +1271,5 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     void updateDb(final ReadDB paramDb) {
         mDb = paramDb;
-    }
-
-    /**
-     * Set insertion method (as first child of the current node or as right sibling).
-     * 
-     * @param paramAddSubtree
-     *            add subtree as first child or right sibling
-     */
-    public void setInsert(final EShredderInsert paramAddSubtree) {
-        assert mModel instanceof SunburstModel;
-        ((SunburstModel)mModel).setInsert(paramAddSubtree);
     }
 }

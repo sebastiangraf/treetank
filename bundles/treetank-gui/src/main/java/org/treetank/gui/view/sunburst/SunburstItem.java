@@ -635,11 +635,11 @@ final class SunburstItem implements IVisualItem {
                 break;
             default:
                 // EDiff.SAME.
-                dot(paramHover);
+                dot();
             }
 
         } else {
-            dot(paramHover);
+            dot();
         }
         if (mGUI.mParent.recorder != null) {
             mGUI.mParent.recorder.ellipse(mX, mY, diameter, diameter);
@@ -655,36 +655,19 @@ final class SunburstItem implements IVisualItem {
      * @param paramHover
      *            determines if item is hovered or not
      */
-    private void dot(final EHover paramHover) {
+    private void dot() {
         if (mGUI.mParent.recorder != null) {
-            switch (paramHover) {
-            case TRUE:
-                mGUI.mParent.recorder.colorMode(PConstants.RGB);
-                mGUI.mParent.recorder.fill(200, 80, 80);
-                mGUI.mParent.recorder.colorMode(PConstants.HSB);
-                break;
-            case FALSE:
-                if (mGUI.mBackgroundBrightness < 30) {
-                    mGUI.mParent.recorder.fill(0, 0, 20);
-                } else {
-                    mGUI.mParent.recorder.fill(0, 0, 0);
-                }
-                break;
+            if (mGUI.mBackgroundBrightness < 30) {
+                mGUI.mParent.recorder.fill(0, 0, 20);
+            } else {
+                mGUI.mParent.recorder.fill(0, 0, 0);
             }
         }
-        switch (paramHover) {
-        case TRUE:
-            mGraphic.colorMode(PConstants.RGB);
-            mGraphic.fill(200, 80, 80);
-            mGraphic.colorMode(PConstants.HSB);
-            break;
-        case FALSE:
-            if (mGUI.mBackgroundBrightness < 30) {
-                mGraphic.fill(0, 0, 20);
-            } else {
-                mGraphic.fill(0, 0, 0);
-            }
-            break;
+
+        if (mGUI.mBackgroundBrightness < 30) {
+            mGraphic.fill(0, 0, 20);
+        } else {
+            mGraphic.fill(0, 0, 0);
         }
     }
 
@@ -840,8 +823,8 @@ final class SunburstItem implements IVisualItem {
             } else {
                 drawRect(mGUI.mInnerNodeArcScale, mGUI.mLeafArcScale, EHover.TRUE);
             }
-            
-            drawDot(EHover.FALSE);
+
+            drawDot(EHover.TRUE);
             //
             // for (int index = mGUI.mHitTestIndex + 1;; index++) {
             // if (index < mGUI.mModel.mItems.size()) {

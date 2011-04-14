@@ -35,6 +35,9 @@ package org.treetank.gui.view.sunburst;
  */
 final class SunburstContainer {
 
+    /** Index of currently clicked {@link SunburstItem}. */
+    transient int mHitTestIndex;
+    
     /** Revision to compare. */
     transient long mRevision;
 
@@ -73,6 +76,19 @@ final class SunburstContainer {
     SunburstContainer setRevision(final long paramRevision) {
         assert paramRevision > 0;
         mRevision = paramRevision;
+        return this;
+    }
+    
+    /**
+     * Set hit test item.
+     * 
+     * @param paramHitTestIndex
+     *            the index of the {@link SunburstItem} currently selected
+     * @return this
+     */
+    SunburstContainer setHitItem(final int paramHitTestIndex) {
+        assert paramHitTestIndex >= 0;
+        mHitTestIndex = paramHitTestIndex;
         return this;
     }
 

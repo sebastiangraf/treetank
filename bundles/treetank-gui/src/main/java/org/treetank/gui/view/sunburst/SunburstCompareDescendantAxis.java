@@ -161,7 +161,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
     /** Last {@link Diff}. */
     private transient Diff mLastDiffCont;
-    
+
     /** Initial depth. */
     private transient int mInitDepth;
 
@@ -180,12 +180,13 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      *            {@link List} of {@link EDiff}s
      * @param paramMaxDepth
      *            maximum depth in old revision
-     * @param paramInitDepth 
+     * @param paramInitDepth
      *            initial depth
      */
     public SunburstCompareDescendantAxis(final boolean paramIncludeSelf,
         final ITraverseModel paramCallableModel, final IReadTransaction paramNewRtx,
-        final IReadTransaction paramOldRtx, final List<Diff> paramDiffs, final int paramMaxDepth, final int paramInitDepth) {
+        final IReadTransaction paramOldRtx, final List<Diff> paramDiffs, final int paramMaxDepth,
+        final int paramInitDepth) {
         super(paramNewRtx, paramIncludeSelf);
         mModel = paramCallableModel;
         mDiffs = paramDiffs;
@@ -399,7 +400,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()
             || (0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED
                 && mOldRtx.moveTo(mDiffs.get(0).getOldNode().getNodeKey()) && mOldRtx.getStructuralNode()
-                .getParentKey() == getTransaction().getNode().getNodeKey())) {
+                .getParentKey() == getTransaction().getNode().getNodeKey())
+            || (mDiff == EDiff.UPDATED && mDiffs.get(0).getDiff() == EDiff.DELETED && mDiffs.get(0)
+                .getDepth().getOldDepth() == mDiffCont.getDepth().getNewDepth() + 1)) {
             if (getTransaction().getStructuralNode().hasFirstChild()) {
                 mNextKey = getTransaction().getStructuralNode().getFirstChildKey();
             } else if (getTransaction().getStructuralNode().hasRightSibling()) {
@@ -410,7 +413,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             }
 
-            if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+            if (getTransaction().getStructuralNode().hasFirstChild()
+                && getTransaction().getStructuralNode().hasRightSibling()) {
                 mRightSiblingKeyStack.push(((AbsStructNode)getTransaction().getNode()).getRightSiblingKey());
             }
 
@@ -430,11 +434,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             }
 
             mLastDiff = mDiff;
-            
+
             if (0 >= mDiffs.size()) {
                 mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             }
-            
+
             return true;
         }
 
@@ -452,11 +456,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mMoved = EMoved.STARTRIGHTSIBL;
 
             mLastDiff = mDiff;
-            
+
             if (0 >= mDiffs.size()) {
                 mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             }
-            
+
             return true;
         }
 
@@ -466,11 +470,12 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mRightSiblingKeyStack.pop();
             }
 
-            if (mRightSiblingKeyStack.size() > 0) {
+            if (!mRightSiblingKeyStack.empty()) {
                 mNextKey = mRightSiblingKeyStack.pop();
-            } else {
-                mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             }
+            // } else {
+            // mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            // }
 
             processMove();
             calculateDepth();
@@ -554,13 +559,13 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
     /** Process movement. */
     private void processMove() {
-//        try {
-            mDescendantCount = mDescendants.get(mIndex + 1);
-//        } catch (final InterruptedException e) {
-//            LOGWRAPPER.error(e.getMessage(), e);
-//        } catch (final ExecutionException e) {
-//            LOGWRAPPER.error(e.getMessage(), e);
-//        }
+        // try {
+        mDescendantCount = mDescendants.get(mIndex + 1);
+        // } catch (final InterruptedException e) {
+        // LOGWRAPPER.error(e.getMessage(), e);
+        // } catch (final ExecutionException e) {
+        // LOGWRAPPER.error(e.getMessage(), e);
+        // }
         mBuilder.set(mAngle, mParExtension, mIndexToParent).setDescendantCount(mDescendantCount)
             .setParentDescendantCount(mParentDescendantCount).setModificationCount(countDiffs())
             .setParentModificationCount(mParentModificationCount).setSubtract(mSubtract).setDiff(mDiff).set();
@@ -711,9 +716,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 }
             } while (getTransaction().getNode().getNodeKey() != nodeKey);
             getTransaction().moveTo(nodeKey);
-        } else if (diffCounts == 0 && 0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED
-            && 1 < mDiffs.size()
-            && mDiffs.get(1).getDepth().getOldDepth() > mDiffs.get(0).getDepth().getNewDepth()) {
+        } else if (0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED) {
+            // && 1 < mDiffs.size()
+            // && mDiffs.get(1).getDepth().getOldDepth() > mDiffs.get(0).getDepth().getNewDepth()) {
             mOldRtx.moveTo(mDiffs.get(0).getOldNode().getNodeKey());
 
             int diffIndex = 0;
@@ -721,6 +726,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 final long key = mOldRtx.getStructuralNode().getNodeKey();
 
                 if (mDiffCont.getDepth().getNewDepth() == (mDiffs.get(diffIndex).getDepth().getOldDepth() - 1)) {
+                    if (diffCounts == 1) {
+                        mSubtract = true;
+                    }
                     for (final AbsAxis axis = new DescendantAxis(mOldRtx, true); axis.hasNext(); axis.next()) {
                         diffCounts++;
                         diffIndex++;

@@ -51,8 +51,8 @@ import processing.core.PApplet;
  */
 final class SunburstPopupMenu extends JPopupMenu {
 
-    /** {@link SunburstGUI} instance. */
-    private final SunburstGUI mGUI;
+    /** Model which implements {@link IModel}. */
+    private final AbsModel mModel;
 
     /** Treetank {@link IWriteTransaction}. */
     private static IWriteTransaction mWtx;
@@ -66,16 +66,16 @@ final class SunburstPopupMenu extends JPopupMenu {
     /**
      * Private constructor.
      * 
-     * @param paramGUI
-     *            {@link SunburstGUI} instance
+     * @param paramModel
+     *            model which implements {@link IModel}
      * @param paramWtx
      *            Treetank {@link IWriteTransaction}
      * @param paramCtrl
      *            control group for XML input
      */
-    private SunburstPopupMenu(final SunburstGUI paramGUI, final IWriteTransaction paramWtx,
+    private SunburstPopupMenu(final AbsModel paramModel, final IWriteTransaction paramWtx,
         final ControlGroup paramCtrl) {
-        mGUI = paramGUI;
+        mModel = paramModel;
         mWtx = paramWtx;
         mCtrl = paramCtrl;
 
@@ -84,7 +84,8 @@ final class SunburstPopupMenu extends JPopupMenu {
             createMenu();
             break;
         case TEXT_KIND:
-            EMenu.DELETE.createMenuItem(mGUI, this, mWtx, mCtrl);
+            EMenu.INSERT_FRAGMENT_AS_RIGHT_SIBLING.createMenuItem(mModel, this, mWtx, mCtrl);
+            EMenu.DELETE.createMenuItem(mModel, this, mWtx, mCtrl);
             break;
         }
     }
@@ -100,10 +101,10 @@ final class SunburstPopupMenu extends JPopupMenu {
      *            control group for XML input
      * @return singleton {@link SunburstPopupMenu} instance
      */
-    static synchronized SunburstPopupMenu getInstance(final SunburstGUI paramGUI, final IWriteTransaction paramWtx,
+    static synchronized SunburstPopupMenu getInstance(final AbsModel paramModel, final IWriteTransaction paramWtx,
         final ControlGroup paramCtrl) {
         if (mSunburstPopupMenu == null || !paramWtx.equals(mWtx)) {
-            mSunburstPopupMenu = new SunburstPopupMenu(paramGUI, paramWtx, paramCtrl);
+            mSunburstPopupMenu = new SunburstPopupMenu(paramModel, paramWtx, paramCtrl);
         }
         return mSunburstPopupMenu;
     }
@@ -114,7 +115,7 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void createMenu() {
         for (EMenu menu : EMenu.values()) {
             // Create and add a menu item
-            menu.createMenuItem(mGUI, this, mWtx, mCtrl);
+            menu.createMenuItem(mModel, this, mWtx, mCtrl);
         }
     }
 }

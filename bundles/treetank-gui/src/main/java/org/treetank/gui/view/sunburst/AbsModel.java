@@ -75,9 +75,6 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
     /** {@link List} of {@link SunburstItem}s. */
     transient List<SunburstItem> mItems;
 
-    /** {@link SunburstGUI} interface. */
-    final SunburstGUI mGUI;
-
     /** The processing {@link PApplet} core library. */
     final PApplet mParent;
 
@@ -132,8 +129,6 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         mLastDepths = new Stack<Integer>();
         mLastOldDepths = new Stack<Integer>();
         mDb = paramDb;
-        mGUI = SunburstGUI.getInstance(mParent, this, mDb);
-        addPropertyChangeListener(mGUI);
     }
 
     /**
@@ -167,7 +162,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
      * @param paramDb
      *            {@link IDatabase} instance
      */
-    void updateDb(final ReadDB paramDb) {
+    void updateDb(final ReadDB paramDb, final SunburstContainer paramContainer) {
         mDb = paramDb;
         try {
             mSession = paramDb.getSession();
@@ -178,13 +173,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
         }
         mLastItems = new Stack<List<SunburstItem>>();
         mLastDepths = new Stack<Integer>();
-        final SunburstContainer container = new SunburstContainer().setKey(mDb.getNodeKey());
-        if (mGUI.mUsePruning) {
-            container.setPruning(EPruning.TRUE);
-        } else {
-            container.setPruning(EPruning.FALSE);
-        }
-        traverseTree(container);
+        traverseTree(paramContainer);
     }
 
     /** {@inheritDoc} */

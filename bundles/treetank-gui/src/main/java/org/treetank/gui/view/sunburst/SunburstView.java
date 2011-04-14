@@ -379,8 +379,13 @@ public final class SunburstView extends JScrollPane implements IView {
                     // Database change.
                     mSunburstGUI.mDone = false;
                     mSunburstGUI.mUseDiffView = false;
-                    mSunburstGUI.updateDb(mDB);
-                    mModel.updateDb(mDB);
+                    final SunburstContainer container = new SunburstContainer().setKey(mDB.getNodeKey());
+                    if (mSunburstGUI.mUsePruning) {
+                        container.setPruning(EPruning.TRUE);
+                    } else {
+                        container.setPruning(EPruning.FALSE);
+                    }
+                    mModel.updateDb(mDB, container);
                 }
 
                 handleHLWeight();

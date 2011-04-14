@@ -78,7 +78,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));
-    
+
     /** {@link IWriteTransaction} instance. */
     private transient IWriteTransaction mWtx;
 
@@ -100,11 +100,9 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
     /** {@inheritDoc} */
     @Override
     public void update(final SunburstContainer paramContainer) {
-        long nodeKey = 0;
         mLastItems.push(new ArrayList<SunburstItem>(mItems));
         mLastDepths.push(mLastMaxDepth);
-        nodeKey = mItems.get(mGUI.mHitTestIndex).mNode.getNodeKey();
-        traverseTree(paramContainer.setKey(nodeKey));
+        traverseTree(paramContainer);
     }
 
     /** {@inheritDoc} */
@@ -114,7 +112,6 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
         final ExecutorService executor = Executors.newFixedThreadPool(1);// Executors.newSingleThreadExecutor();
         final Future<SunburstFireContainer> future =
             executor.submit(new TraverseTree(paramContainer.mKey, paramContainer.mPruning, this));
-        mGUI.mDone = false;
         try {
             mItems = future.get().mItems;
             mLastMaxDepth = future.get().mDepthMax;
@@ -182,7 +179,6 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
          *            The {@link SunburstModel}.
          */
         private TraverseTree(final long paramKey, final EPruning paramPruning, final SunburstModel paramModel) {
-            assert paramKey >= (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             assert paramKey >= 0;
             assert paramModel != null;
             mKey = paramKey == 0 ? paramKey + 1 : paramKey;
@@ -195,7 +191,6 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
             mParent = mModel.mParent;
-            addPropertyChangeListener(mModel.mGUI);
             mRelations = new NodeRelations();
             mItems = new LinkedList<SunburstItem>();
             mRtx.moveTo(mKey);
@@ -376,7 +371,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                                 mDepth++;
                             } else {
                                 if (mDepth > 3) {
-                                    while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getNode().getNodeKey() != key) {
+                                    while (!paramRtx.getStructuralNode().hasRightSibling()
+                                        && paramRtx.getNode().getNodeKey() != key) {
                                         paramRtx.moveToParent();
                                         mDepth--;
                                     }
@@ -390,7 +386,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                             }
                         } else {
                             boolean movedToNextFollowing = false;
-                            while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getNode().getNodeKey() != key) {
+                            while (!paramRtx.getStructuralNode().hasRightSibling()
+                                && paramRtx.getNode().getNodeKey() != key) {
                                 if (hasNoChild && !movedToNextFollowing && mDepth < 4) {
                                     descendants.add(countDescendants(paramRtx));
                                 }
@@ -437,7 +434,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
                             firstNode = false;
                             mMaxDescendantCount = descendantCount;
                         }
-                        
+
                         descendants.add(descendantCount);
                     }
                 }
@@ -545,45 +542,43 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
         // }
         // }
     }
-    
 
     /**
      * Shredder XML fragment input.
      * 
      * @param paramTextBytes
-     *            bytes to shredder
+     *            XML fragment to shredder (might be text as well)
      */
-    void shredder(final byte[] paramTextBytes) {
+    void shredder(final String paramText) throws AbsTTException, XMLStreamException {
         try {
-            final XMLEventReader reader =
-                XMLInputFactory.newInstance().createXMLEventReader(new ByteArrayInputStream(paramTextBytes));
-            final ExecutorService service = Executors.newSingleThreadExecutor();
-            service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.NOCOMMIT));
-            service.shutdown();
-            service.awaitTermination(60, TimeUnit.SECONDS);
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to shredder: " + e.getMessage());
+            if (paramText.startsWith("<")) {
+                final XMLEventReader reader =
+                    XMLInputFactory.newInstance().createXMLEventReader(
+                        new ByteArrayInputStream(paramText.getBytes()));
+                final ExecutorService service = Executors.newSingleThreadExecutor();
+                service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.NOCOMMIT));
+                service.shutdown();
+                service.awaitTermination(60, TimeUnit.SECONDS);
+            } else {
+                switch (mInsert) {
+                case ADDASFIRSTCHILD:
+                    mWtx.insertTextAsFirstChild(paramText);
+                    break;
+                case ADDASRIGHTSIBLING:
+                    mWtx.insertTextAsRightSibling(paramText);
+                }
+            }
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to shredder: " + e.getMessage());
-        } catch (final TTUsageException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to shredder: " + e.getMessage());
         }
     }
 
     /**
      * Commit changes.
      */
-    void commit() {
-        try {
-            mWtx.commit();
-            mWtx.close();
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        }
+    void commit() throws AbsTTException {
+        mWtx.commit();
+        mWtx.close();
     }
 
     /**
@@ -596,20 +591,15 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
      * @param paramHitTestIndex
      *            the index of the {@link SunburstItem} which is currently hovered
      */
-    void popupMenu(final MouseEvent paramEvent, final ControlGroup paramCtrl, final int paramHitTestIndex) {
-        try {
-            if (mWtx == null || mWtx.isClosed()) {
-                mWtx = mDb.getSession().beginWriteTransaction();
-                mWtx.revertTo(mDb.getRevisionNumber());
-            }
-            mWtx.moveTo(getItem(paramHitTestIndex).mNode.getNodeKey());
-            final SunburstPopupMenu menu = SunburstPopupMenu.getInstance(mGUI, mWtx, paramCtrl);
-            menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent,
-                "Failed to create write transaction: " + e.getMessage());
+    void popupMenu(final MouseEvent paramEvent, final ControlGroup paramCtrl, final int paramHitTestIndex)
+        throws AbsTTException {
+        if (mWtx == null || mWtx.isClosed()) {
+            mWtx = mDb.getSession().beginWriteTransaction();
+            mWtx.revertTo(mDb.getRevisionNumber());
         }
+        mWtx.moveTo(getItem(paramHitTestIndex).mNode.getNodeKey());
+        final SunburstPopupMenu menu = SunburstPopupMenu.getInstance(this, mWtx, paramCtrl);
+        menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
     }
 
     /**
@@ -618,7 +608,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
      * @param paramInsert
      *            determines how to insert an XML fragment
      */
-    void setInsert(final EShredderInsert paramInsert) {
+    @Override
+    public void setInsert(final EShredderInsert paramInsert) {
         mInsert = paramInsert;
     }
 }

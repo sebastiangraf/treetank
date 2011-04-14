@@ -27,7 +27,7 @@ import javax.swing.filechooser.FileFilter;
  * 
  */
 public final class XMLFileFilter extends FileFilter {
-    /** File extensions which can be opened. */
+    /** File extensions which can be shreddered. */
     private static final String[] ALLOWEDEXTENSIONS = new String[] {
         "xml", "xhtml", "svg", "txt"
     };

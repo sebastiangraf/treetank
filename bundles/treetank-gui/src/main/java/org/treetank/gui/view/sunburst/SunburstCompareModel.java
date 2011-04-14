@@ -48,6 +48,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.node.AbsNode;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
+import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -85,12 +86,10 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
     /** {@inheritDoc} */
     @Override
     public void update(final SunburstContainer paramContainer) {
-        long nodeKey = 0;
         mLastItems.push(new ArrayList<SunburstItem>(mItems));
         mLastDepths.push(mLastMaxDepth);
         mLastOldDepths.push(mLastOldMaxDepth);
-        nodeKey = mItems.get(mGUI.mHitTestIndex).mNode.getNodeKey();
-        traverseTree(paramContainer.setKey(nodeKey));
+        traverseTree(paramContainer);
     }
 
     /** {@inheritDoc} */
@@ -101,11 +100,10 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         assert paramContainer.mDepth >= 0;
         assert paramContainer.mModWeight >= 0;
 
-        final ExecutorService executor = Executors.newCachedThreadPool();// Executors.newSingleThreadExecutor();
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<SunburstFireContainer> future =
             executor.submit(new TraverseCompareTree(paramContainer.mRevision, mDb.getRevisionNumber(),
                 paramContainer.mKey, paramContainer.mDepth, paramContainer.mModWeight, this));
-        mGUI.mDone = false;
         try {
             mItems = future.get().mItems;
             mLastMaxDepth = future.get().mDepthMax;
@@ -707,5 +705,14 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 return retVal;
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.treetank.gui.view.sunburst.IModel#setInsert(org.treetank.service.xml.shredder.EShredderInsert)
+     */
+    @Override
+    public void setInsert(EShredderInsert paramInsert) {
+        // TODO Auto-generated method stub
+        
     }
 }
