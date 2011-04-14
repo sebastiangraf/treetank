@@ -594,7 +594,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             mWtx = mDb.getSession().beginWriteTransaction();
             mWtx.revertTo(mDb.getRevisionNumber());
         }
-        mWtx.moveTo(getItem(paramHitTestIndex).mNode.getNodeKey());
+        mWtx.moveTo(getItem(paramHitTestIndex).getNode().getNodeKey());
         final SunburstPopupMenu menu = SunburstPopupMenu.getInstance(this, mWtx, paramCtrl);
         menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
     }
