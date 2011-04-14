@@ -53,7 +53,7 @@ enum EMenu {
     /** Insert XML fragment as first child. */
     INSERT_FRAGMENT_AS_FIRST_CHILD {
         @Override
-        void createMenuItem(final SunburstGUI paramGUI, final JPopupMenu paramMenu,
+        void createMenuItem(final AbsModel paramModel, final JPopupMenu paramMenu,
             final IWriteTransaction paramWtx, final ControlGroup paramCtrl) {
             // Create and add a menu item
             final JMenuItem item = new JMenuItem("insert as first child");
@@ -62,7 +62,7 @@ enum EMenu {
                 public void actionPerformed(final ActionEvent paramEvent) {
                     paramCtrl.setVisible(true);
                     paramCtrl.open();
-                    paramGUI.setInsert(EShredderInsert.ADDASFIRSTCHILD);
+                    paramModel.setInsert(EShredderInsert.ADDASFIRSTCHILD);
                 }
             });
             paramMenu.add(item);
@@ -73,7 +73,7 @@ enum EMenu {
     /** Insert XML fragment as right sibling. */
     INSERT_FRAGMENT_AS_RIGHT_SIBLING {
         @Override
-        void createMenuItem(final SunburstGUI paramGUI, final JPopupMenu paramMenu,
+        void createMenuItem(final AbsModel paramModel, final JPopupMenu paramMenu,
             final IWriteTransaction paramWtx, final ControlGroup paramCtrl) {
             // Create and add a menu item
             final JMenuItem item = new JMenuItem("insert as right sibling");
@@ -82,7 +82,7 @@ enum EMenu {
                 public void actionPerformed(final ActionEvent paramEvent) {
                     paramCtrl.setVisible(true);
                     paramCtrl.open();
-                    paramGUI.setInsert(EShredderInsert.ADDASRIGHTSIBLING);
+                    paramModel.setInsert(EShredderInsert.ADDASRIGHTSIBLING);
                 }
             });
             paramMenu.add(item);
@@ -92,14 +92,14 @@ enum EMenu {
     /** Delete node. */
     DELETE {
         @Override
-        void createMenuItem(final SunburstGUI paramGUI, final JPopupMenu paramMenu,
+        void createMenuItem(final AbsModel paramModel, final JPopupMenu paramMenu,
             final IWriteTransaction paramWtx, final ControlGroup paramCtrl) {
             // Create and add a menu item
             final JMenuItem item = new JMenuItem("delete node");
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(final ActionEvent paramEvent) {
-                    delete(paramGUI.mParent, paramWtx);
+                    delete(paramModel.mParent, paramWtx);
                 }
             });
             paramMenu.add(item);
@@ -128,8 +128,8 @@ enum EMenu {
     /**
      * Create a menu item.
      * 
-     * @param paramGUI
-     *            main {@link GUI} reference
+     * @param paramModel
+     *            the model
      * @param paramMenu
      *            {@link JPopupMenu} reference
      * @param paramWtx
@@ -137,6 +137,6 @@ enum EMenu {
      * @param paramCtrl
      *            {@link ControlGroup} to add XML fragments
      */
-    abstract void createMenuItem(final SunburstGUI paramGUI, final JPopupMenu paramMenu,
+    abstract void createMenuItem(final AbsModel paramModel, final JPopupMenu paramMenu,
         final IWriteTransaction paramWtx, final ControlGroup paramCtrl);
 }
