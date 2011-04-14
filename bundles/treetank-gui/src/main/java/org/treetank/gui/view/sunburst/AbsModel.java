@@ -104,6 +104,9 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
 
     /** The last maximum depth in the old revision. */
     transient int mLastOldMaxDepth;
+    
+    /** Determines if XML fragments should be inserted as first child or as right sibling of the current node. */
+    transient EShredderInsert mInsert;
 
     /**
      * Constructor.
@@ -391,5 +394,16 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                 }
             }
         }
+    }
+    
+    /**
+     * Set insert for shredding.
+     * 
+     * @param paramInsert
+     *            determines how to insert an XML fragment
+     */
+    @Override
+    public void setInsert(final EShredderInsert paramInsert) {
+        mInsert = paramInsert;
     }
 }
