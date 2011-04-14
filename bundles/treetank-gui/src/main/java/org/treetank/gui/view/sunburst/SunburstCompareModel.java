@@ -323,7 +323,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 if (node.hasFirstChild()) {
                     depth++;
 
-                    if (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.SAME) {
+                    if (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.SAME
+                        && index + 1 < mDiffs.size() && mDiffs.get(index + 1).getDiff() == EDiff.SAME) {
                         // Set depth max.
                         depthMax = Math.max(depth, depthMax);
                     }

@@ -874,18 +874,20 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 break;
             case 'o':
             case 'O':
-                mRevisions =
-                    mControlP5.addDropdownList("Compare revision", mParent.width - 250, 100, 100, 120);
-                assert mDb != null;
-                try {
-                    for (long i = mDb.getRevisionNumber() + 1, newestRev =
-                        mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
-                        mRevisions.addItem("Revision " + i, (int)i);
+                if (!mUseDiffView) {
+                    mRevisions =
+                        mControlP5.addDropdownList("Compare revision", mParent.width - 250, 100, 100, 120);
+                    assert mDb != null;
+                    try {
+                        for (long i = mDb.getRevisionNumber() + 1, newestRev =
+                            mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
+                            mRevisions.addItem("Revision " + i, (int)i);
+                        }
+                    } catch (final TTIOException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final AbsTTException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
                     }
-                } catch (final TTIOException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
-                } catch (final AbsTTException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
                 }
                 break;
             default:
@@ -983,7 +985,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                                 final SunburstItem item = mModel.getItem(mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
                                     mModel.update(new SunburstContainer().setAll(mSelectedRev,
-                                        item.getDepth(), mModificationWeight).setKey(item.getNode().getNodeKey()));
+                                        item.getDepth(), mModificationWeight).setKey(
+                                        item.getNode().getNodeKey()));
                                 }
                             } else {
                                 final SunburstContainer container = new SunburstContainer();
@@ -993,8 +996,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                                     container.setPruning(EPruning.FALSE);
                                 }
                                 final SunburstItem item = mModel.getItem(mHitTestIndex);
-                                mModel.update(container.setKey(item.getNode()
-                                    .getNodeKey()));
+                                mModel.update(container.setKey(item.getNode().getNodeKey()));
                             }
                         } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
                             if (!mUseDiffView) {
@@ -1002,7 +1004,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                                     ((SunburstModel)mModel).popupMenu(paramEvent, mCtrl, mHitTestIndex);
                                 } catch (final AbsTTException e) {
                                     LOGWRAPPER.error(e.getMessage(), e);
-                                    JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+                                    JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: "
+                                        + e.getMessage());
                                 }
                             }
                         }
@@ -1162,7 +1165,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             }
             index++;
         }
-        
+
         if (!found) {
             mHitItem = null;
         }
