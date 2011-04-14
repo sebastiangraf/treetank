@@ -248,7 +248,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
                 observer.add(this);
                 DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mDb.getDatabase(), mKey, mRevision,
-                    mRtx.getRevisionNumber(), EDiffKind.NORMAL, observer).setNewDepth(mDepth).setOldDepth(mDepth));
+                    mRtx.getRevisionNumber(), EDiffKind.NORMAL, observer).setNewDepth(mDepth).setOldDepth(
+                    mDepth));
 
                 // Wait for diff list to complete.
                 mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
@@ -311,24 +312,32 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
             int depthMax = 0;
             int depth = 0;
+            int index = -1;
             final long nodeKey = paramRtx.getNode().getNodeKey();
             for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-                final AbsStructNode node = (AbsStructNode)paramRtx.getNode();
+                index++;
+                while (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.INSERTED) {
+                    index++;
+                }
+                final IStructuralItem node = paramRtx.getStructuralNode();
                 if (node.hasFirstChild()) {
                     depth++;
-                    // Set depth max.
-                    depthMax = Math.max(depth, depthMax);
+
+                    if (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.SAME) {
+                        // Set depth max.
+                        depthMax = Math.max(depth, depthMax);
+                    }
                 } else if (!node.hasRightSibling()) {
                     // Next node will be a right sibling of an anchestor node or the traversal ends.
                     final long currNodeKey = mRtx.getNode().getNodeKey();
                     do {
-                        if (((AbsStructNode)mRtx.getNode()).hasParent()) {
+                        if (mRtx.getStructuralNode().hasParent()) {
                             mRtx.moveToParent();
                             depth--;
                         } else {
                             break;
                         }
-                    } while (!((AbsStructNode)mRtx.getNode()).hasRightSibling());
+                    } while (!mRtx.getStructuralNode().hasRightSibling());
                     mRtx.moveTo(currNodeKey);
                 }
             }
@@ -705,14 +714,5 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 return retVal;
             }
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.sunburst.IModel#setInsert(org.treetank.service.xml.shredder.EShredderInsert)
-     */
-    @Override
-    public void setInsert(EShredderInsert paramInsert) {
-        // TODO Auto-generated method stub
-        
     }
 }

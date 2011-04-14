@@ -80,33 +80,33 @@ public class SunburstCompareModelTest {
     @Test
     public void testDescendantCount() throws Exception {
         Assert.assertTrue(true);
-//        final ITraverseModel mock = createStrictMock(ITraverseModel.class);
-//        final Builder builder = Item.BUILDER;
-//        builder.set(0, 0, -1).setDescendantCount(70);
-//        final Item item = Item.ITEM;
-//        mock.createSunburstItem(item, 0, -1);
-//        replay(mock);
-//        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-//        final ISession session = database.getSession();
-//        final IWriteTransaction wtx = session.beginWriteTransaction();
-//        final File firstRev = new File(XMLDELETESECOND + File.separator + "1.xml");
-//        XMLShredder shredder =
-//            new XMLShredder(wtx, XMLShredder.createReader(firstRev), EShredderInsert.ADDASFIRSTCHILD);
-//        shredder.call();
-//        final File secondRev = new File(XMLDELETESECOND + File.separator + "2.xml");
-//        shredder =
-//            new XMLUpdateShredder(wtx, XMLShredder.createReader(secondRev),
-//                EShredderInsert.ADDASFIRSTCHILD, secondRev, EShredderCommit.COMMIT);
-//        shredder.call();
-//        wtx.close();
-//        
-//        final IReadTransaction rtx = session.beginReadTransaction();
-//        final ReadDB db = new ReadDB(secondRev, 1);
-//        final AbsModel model = new SunburstCompareModel(null, db);
-//        rtx.moveTo(db.getNodeKey());
-//        model.traverseTree(new SunburstContainer().setRevision(rtx.getRevisionNumber()).setModWeight(
-//            0.7f));
-//        verify(mock);
-//        db.close();
+        final ITraverseModel mock = createStrictMock(ITraverseModel.class);
+        final Builder builder = Item.BUILDER;
+        builder.set(0, 0, -1).setDescendantCount(70);
+        final Item item = Item.ITEM;
+        mock.createSunburstItem(item, 0, -1);
+        replay(mock);
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final File firstRev = new File(XMLDELETESECOND + File.separator + "1.xml");
+        XMLShredder shredder =
+            new XMLShredder(wtx, XMLShredder.createReader(firstRev), EShredderInsert.ADDASFIRSTCHILD);
+        shredder.call();
+        final File secondRev = new File(XMLDELETESECOND + File.separator + "2.xml");
+        shredder =
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(secondRev),
+                EShredderInsert.ADDASFIRSTCHILD, secondRev, EShredderCommit.COMMIT);
+        shredder.call();
+        wtx.close();
+        
+        final IReadTransaction rtx = session.beginReadTransaction();
+        final ReadDB db = new ReadDB(secondRev, 1);
+        final AbsModel model = new SunburstCompareModel(null, db);
+        rtx.moveTo(db.getNodeKey());
+        model.traverseTree(new SunburstContainer().setRevision(rtx.getRevisionNumber()).setModWeight(
+            0.7f));
+        verify(mock);
+        db.close();
     }
 }

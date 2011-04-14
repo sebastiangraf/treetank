@@ -82,9 +82,6 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
     /** {@link IWriteTransaction} instance. */
     private transient IWriteTransaction mWtx;
 
-    /** Determines if XML fragments should be inserted as first child or as right sibling of the current node. */
-    private transient EShredderInsert mInsert;
-
     /**
      * Constructor.
      * 
@@ -600,16 +597,5 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
         mWtx.moveTo(getItem(paramHitTestIndex).mNode.getNodeKey());
         final SunburstPopupMenu menu = SunburstPopupMenu.getInstance(this, mWtx, paramCtrl);
         menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-    }
-
-    /**
-     * Set insert for shredding.
-     * 
-     * @param paramInsert
-     *            determines how to insert an XML fragment
-     */
-    @Override
-    public void setInsert(final EShredderInsert paramInsert) {
-        mInsert = paramInsert;
     }
 }
