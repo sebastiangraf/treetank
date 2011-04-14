@@ -732,7 +732,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 if (mUseDiffView) {
                     mHitItem.updated(builder);
                 }
-                builder.append(" NodeKey: ").append(mHitItem.mNode.getNodeKey()).append("]");
+                builder.append(" NodeKey: ").append(mHitItem.getNode().getNodeKey()).append("]");
                 text = builder.toString();
             }
 
@@ -983,7 +983,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                                 final SunburstItem item = mModel.getItem(mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
                                     mModel.update(new SunburstContainer().setAll(mSelectedRev,
-                                        item.getDepth(), mModificationWeight).setKey(item.mNode.getNodeKey()));
+                                        item.getDepth(), mModificationWeight).setKey(item.getNode().getNodeKey()));
                                 }
                             } else {
                                 final SunburstContainer container = new SunburstContainer();
@@ -992,7 +992,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                                 } else {
                                     container.setPruning(EPruning.FALSE);
                                 }
-                                mModel.update(container.setKey(mModel.getItem(mHitTestIndex).getNode()
+                                final SunburstItem item = mModel.getItem(mHitTestIndex);
+                                mModel.update(container.setKey(item.getNode()
                                     .getNodeKey()));
                             }
                         } else if (SwingUtilities.isRightMouseButton(paramEvent)) {

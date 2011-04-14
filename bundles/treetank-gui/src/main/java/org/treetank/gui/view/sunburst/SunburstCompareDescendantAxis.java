@@ -259,13 +259,17 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 mOldRtx.moveTo(mDiffCont.getOldNode().getNodeKey());
 
                 if (mMoved == EMoved.ANCHESTSIBL) {
-                    if (mDepth > mDiffCont.getDepth().getOldDepth() - mInitDepth) {
+                    if (mLastDiffCont.getDepth().getNewDepth() - mInitDepth > mDiffCont.getDepth()
+                        .getOldDepth() - mInitDepth
+                        && mDepth > mDiffCont.getDepth().getOldDepth()) {
                         // Must be done on the transaction which is bound to the new revision.
                         final long currNodeKey = getTransaction().getNode().getNodeKey();
                         boolean first = true;
                         do {
                             if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                                && mDepth > mDiffCont.getDepth().getOldDepth() - mInitDepth) {
+                                && mLastDiffCont.getDepth().getNewDepth() - mInitDepth > mDiffCont.getDepth()
+                                    .getOldDepth() - mInitDepth
+                                && mDepth > mDiffCont.getDepth().getOldDepth()) {
                                 if (first) {
                                     // Do not pop from stack if it's a leaf node.
                                     first = false;

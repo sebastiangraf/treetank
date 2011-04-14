@@ -57,7 +57,7 @@ import processing.core.PGraphics;
 final class SunburstItem implements IVisualItem {
 
     /** Current {@link IItem} in Treetank. */
-    final IItem mNode;
+    private final IItem mNode;
 
     // Relations. ============================================
     /** Index to parent node. */
