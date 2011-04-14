@@ -257,11 +257,12 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             if (mDiff == EDiff.DELETED && mLastDiff != EDiff.DELETED) {
                 mNewRtx = getTransaction();
                 mOldRtx.moveTo(mDiffCont.getOldNode().getNodeKey());
+                int tmpDepth = mLastDiffCont.getDepth().getNewDepth();
 
                 if (mMoved == EMoved.ANCHESTSIBL) {
                     if (mLastDiffCont.getDepth().getNewDepth() - mInitDepth > mDiffCont.getDepth()
                         .getOldDepth() - mInitDepth
-                        && mDepth > mDiffCont.getDepth().getOldDepth()) {
+                        && tmpDepth > mDiffCont.getDepth().getOldDepth()) {
                         // Must be done on the transaction which is bound to the new revision.
                         final long currNodeKey = getTransaction().getNode().getNodeKey();
                         boolean first = true;
@@ -269,7 +270,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                             if (((AbsStructNode)getTransaction().getNode()).hasParent()
                                 && mLastDiffCont.getDepth().getNewDepth() - mInitDepth > mDiffCont.getDepth()
                                     .getOldDepth() - mInitDepth
-                                && mDepth > mDiffCont.getDepth().getOldDepth()) {
+                                && tmpDepth > mDiffCont.getDepth().getOldDepth()) {
                                 if (first) {
                                     // Do not pop from stack if it's a leaf node.
                                     first = false;
@@ -281,6 +282,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                                     mDescendantsStack.pop();
                                 }
 
+                                tmpDepth--;
                                 mDepth--;
                                 getTransaction().moveToParent();
                             } else {
