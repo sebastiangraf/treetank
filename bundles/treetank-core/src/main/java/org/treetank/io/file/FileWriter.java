@@ -76,15 +76,18 @@ public final class FileWriter implements IWriter {
      * 
      * @param paramConf
      *            the path to the storage
-     * @param mConcreteStorage
+     * @param paramStorage
      *            the Concrete Storage
      * @throws TTIOException
      *             if FileWriter IO error
      */
-    public FileWriter(final SessionConfiguration paramConf, final File mConcreteStorage)
+    public FileWriter(final SessionConfiguration paramConf, final File paramStorage)
         throws TTIOException {
         try {
-            mFile = new RandomAccessFile(mConcreteStorage, IConstants.READ_WRITE);
+            if(!paramStorage.getParentFile().exists()) {
+                paramStorage.getParentFile().mkdirs();
+            }
+            mFile = new RandomAccessFile(paramStorage, IConstants.READ_WRITE);
         } catch (final FileNotFoundException fileExc) {
             LOGWRAPPER.error(fileExc);
             throw new TTIOException(fileExc);
@@ -93,7 +96,7 @@ public final class FileWriter implements IWriter {
         mCompressor = new CryptoJavaImpl();
         mBuffer = new ByteBufferSinkAndSource();
 
-        reader = new FileReader(paramConf, mConcreteStorage);
+        reader = new FileReader(paramConf, paramStorage);
 
     }
 
