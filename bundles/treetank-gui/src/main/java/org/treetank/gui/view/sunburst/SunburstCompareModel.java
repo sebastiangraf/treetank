@@ -322,9 +322,15 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 final IStructuralItem node = paramRtx.getStructuralNode();
                 if (node.hasFirstChild()) {
                     depth++;
+                    
+                    int tmpIndex = index + 1;
+                    while (tmpIndex < mDiffs.size() && mDiffs.get(tmpIndex).getDiff() == EDiff.INSERTED) {
+                        tmpIndex++;
+                    }
+                    index = tmpIndex - 1;
 
-                    if (index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.SAME
-                        && index + 1 < mDiffs.size() && mDiffs.get(index + 1).getDiff() == EDiff.SAME) {
+                    if (//index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.SAME
+                        index + 1 < mDiffs.size() && mDiffs.get(index + 1).getDiff() == EDiff.SAME) {
                         // Set depth max.
                         depthMax = Math.max(depth, depthMax);
                     }
