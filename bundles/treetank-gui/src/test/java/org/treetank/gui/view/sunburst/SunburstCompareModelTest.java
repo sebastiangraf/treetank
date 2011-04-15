@@ -49,6 +49,7 @@ import org.treetank.service.xml.shredder.XMLUpdateShredder;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -77,6 +78,7 @@ public class SunburstCompareModelTest {
         Assert.assertTrue(true);
     }
     
+    @Ignore
     @Test
     public void testDescendantCount() throws Exception {
         Assert.assertTrue(true);
