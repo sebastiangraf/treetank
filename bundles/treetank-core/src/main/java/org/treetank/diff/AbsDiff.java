@@ -72,7 +72,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         /** New revision. */
         NEW;
     }
-    
+
     /**
      * Kind of hash method.
      * 
@@ -95,7 +95,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
     /** Key of "root" node in new revision. */
     private transient long mRootKey;
-
+    
     /**
      * Constructor.
      * 
@@ -149,15 +149,19 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         // Iterate over new revision.
-        while (mDiff == EDiff.DELETED || moveCursor(mNewRtx, ERevision.NEW)) {
+        while ((mOldRtx.getNode().getKind() != ENodes.ROOT_KIND && mDiff == EDiff.DELETED)
+            || moveCursor(mNewRtx, ERevision.NEW)) {
             if (mDiff != EDiff.INSERTED) {
                 moveCursor(mOldRtx, ERevision.OLD);
             }
 
-            if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
-                mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
-            } else {
-                mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
+            if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND
+                || mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
+                if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
+                    mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
+                } else {
+                    mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
+                }
             }
         }
 
@@ -176,7 +180,7 @@ abstract class AbsDiff extends AbsDiffObservable {
     }
 
     /**
-     * Move cursor forward.
+     * Move cursor one node forward in pre order.
      * 
      * @param paramRtx
      *            the {@link IReadTransaction} to use
@@ -196,7 +200,7 @@ abstract class AbsDiff extends AbsDiffObservable {
                 moved = paramRtx.moveToRightSibling();
 
                 if (!moved) {
-                    moved = moveToNextNode(paramRtx, paramRevision);
+                    moved = moveToFollowingNode(paramRtx, paramRevision);
                 }
             } else {
                 moved = paramRtx.moveToFirstChild();
@@ -214,14 +218,14 @@ abstract class AbsDiff extends AbsDiffObservable {
         } else if (node.hasRightSibling()) {
             moved = paramRtx.moveToRightSibling();
         } else {
-            moved = moveToNextNode(paramRtx, paramRevision);
+            moved = moveToFollowingNode(paramRtx, paramRevision);
         }
 
         return moved;
     }
 
     /**
-     * Move to next "anchestor right sibling" node.
+     * Move to next following node.
      * 
      * @param paramRtx
      *            the {@link IReadTransaction} to use
@@ -229,9 +233,10 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
      */
-    private boolean moveToNextNode(final IReadTransaction paramRtx, final ERevision paramRevision) {
+    private boolean moveToFollowingNode(final IReadTransaction paramRtx, final ERevision paramRevision) {
         boolean moved = false;
-        do {
+        while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getStructuralNode().hasParent()
+        && paramRtx.getNode().getNodeKey() != mRootKey) {
             moved = paramRtx.moveToParent();
             if (moved) {
                 switch (paramRevision) {
@@ -243,8 +248,7 @@ abstract class AbsDiff extends AbsDiffObservable {
                     break;
                 }
             }
-        } while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getStructuralNode().hasParent()
-            && paramRtx.getNode().getNodeKey() != mRootKey);
+        } 
 
         if (paramRtx.getNode().getNodeKey() == mRootKey) {
             paramRtx.moveToDocumentRoot();
