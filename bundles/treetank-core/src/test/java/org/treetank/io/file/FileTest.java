@@ -44,19 +44,17 @@ public class FileTest {
 
     @Before
     public void setUp() throws AbsTTException {
+        IOTestHelper.clean();
         dbConf = IOTestHelper.createDBConf(StorageType.File);
         sessionConf = IOTestHelper.createSessionConf();
-        IOTestHelper.clean();
     }
 
     @Test
-    @Ignore
     public void testFactory() throws AbsTTException {
         IOTestHelper.testFactory(dbConf, sessionConf);
     }
 
     @Test
-    @Ignore
     public void testFirstRef() throws AbsTTException {
         IOTestHelper.testReadWriteFirstRef(dbConf, sessionConf);
     }
