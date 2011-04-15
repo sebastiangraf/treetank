@@ -67,7 +67,7 @@ public final class StructuralDiffTest {
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
-    private static final long TIMEOUT_S = 10;
+    private static final long TIMEOUT_S = 200000;
 
     @Before
     public void setUp() throws AbsTTException {
