@@ -12,3 +12,4 @@ hg pull ssh://sebastiangraf@treetank.hg.sourceforge.net/hgroot/treetank/treetank
 hg update
 hg merge 2>/dev/null
 hg commit -m "merged disy and sf data"
+exit 0
