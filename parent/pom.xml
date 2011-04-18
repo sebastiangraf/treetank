@@ -38,13 +38,12 @@
 		<url>https://projects.uni-konstanz.de/projects/treetank/</url>
 	</issueManagement>
 	<ciManagement>
-		<system>hudson</system>
-		<url>http://xen5.disy.inf.uni-konstanz.de/hudson</url>
+		<system>jenkins</system>
+		<url>http://ci.disy.inf.uni-konstanz.de</url>
 	</ciManagement>
 	<organization>
 		<name>University of Konstanz, Distributed Systems Group</name>
-		<url>http://www.informatik.uni-konstanz.de/ags/disy/
-		</url>
+		<url>http://www.informatik.uni-konstanz.de/ags/disy</url>
 	</organization>
 	<licenses>
 		<license>
@@ -161,7 +160,7 @@
 		<repository>
 			<id>disyInternal</id>
 			<name>Internal Repository for the Distributed System Group</name>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -172,7 +171,7 @@
 		<repository>
 			<id>disyInternalSnapshot</id>
 			<name>Internal Snapshot Repository for the Distributed System Group</name>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -183,7 +182,7 @@
 		<repository>
 			<id>disyThirdParty</id>
 			<name>Repository for third party jar used by disy</name>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyThirdParty/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyThirdParty</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>

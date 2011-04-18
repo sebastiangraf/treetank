@@ -55,12 +55,12 @@
             </site>
 		<repository>
 			<id>disyInternal</id>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal</url>
 			<uniqueVersion>false</uniqueVersion>
 		</repository>
 		<snapshotRepository>
 			<id>disyInternalSnapshot</id>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
@@ -76,7 +76,7 @@
 <repository>
 			<id>disyInternal</id>
 			<name>Internal Repository for the Distributed System Group</name>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -87,7 +87,7 @@
 		<repository>
 			<id>disyInternalSnapshot</id>
 			<name>Internal Snapshot Repository for the Distributed System Group</name>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
