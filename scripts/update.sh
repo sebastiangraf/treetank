@@ -1,7 +1,8 @@
 #!/bin/sh
 
-###SCRIPT FOR CI
-
+###SCRIPT FOR CI###
+#setting error to false, not beautiful but efficient because of updating/merging
+set +e
 #getting disy data
 hg pull
 hg update
