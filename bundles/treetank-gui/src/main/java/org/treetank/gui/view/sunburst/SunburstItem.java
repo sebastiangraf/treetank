@@ -346,10 +346,10 @@ final class SunburstItem implements IVisualItem {
         mIndexToParent = paramBuilder.mRelations.mIndexToParent;
         mDepth = paramBuilder.mRelations.mDepth;
         mSubtract = paramBuilder.mRelations.mSubtract;
-        mAngleStart = paramBuilder.mAngleStart;// + 0.003f;
+        mAngleStart = paramBuilder.mAngleStart + 0.003f;
         mDiff = paramBuilder.mDiff;
         mAngleCenter = mAngleStart + paramBuilder.mExtension / 2;
-        mAngleEnd = mAngleStart + paramBuilder.mExtension;// - 0.003f;
+        mAngleEnd = mAngleStart + paramBuilder.mExtension - 0.003f;
     }
 
     /**

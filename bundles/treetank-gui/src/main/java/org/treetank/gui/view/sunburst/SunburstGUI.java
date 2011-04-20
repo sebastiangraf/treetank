@@ -987,6 +987,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     if (mHitTestIndex != -1) {
                         // Bug in processing's mousbotton, thus used SwingUtilities.
                         if (SwingUtilities.isLeftMouseButton(paramEvent) && !mCtrl.isOpen()) {
+                            mDone = false;
                             if (mUseDiffView) {
                                 final SunburstItem item = mModel.getItem(mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
@@ -1077,6 +1078,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     void update() {
         LOGWRAPPER.debug("[update()]: Available permits: " + mLock.availablePermits());
         LOGWRAPPER.debug("parent width: " + mParent.width + " parent height: " + mParent.height);
+        mZoomer.reset();
         mBuffer = mParent.createGraphics(mParent.width, mParent.height, PConstants.JAVA2D);
         mBuffer.beginDraw();
         updateBuffer();
@@ -1156,24 +1158,20 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     private boolean rollover() {
         boolean retVal = false;
+        mHitTestIndex = -1;
+        mHitItem = null;
 
         rolloverInit();
         int index = 0;
-        boolean found = false;
         for (final SunburstItem item : mModel) {
             // Hittest, which arc is the closest to the mouse.
             if (item.getDepth() == mDepth && mAngle > item.getAngleStart() && mAngle < item.getAngleEnd()) {
                 mHitTestIndex = index;
                 mHitItem = item;
                 retVal = true;
-                found = true;
                 break;
             }
             index++;
-        }
-
-        if (!found) {
-            mHitItem = null;
         }
 
         return retVal;
