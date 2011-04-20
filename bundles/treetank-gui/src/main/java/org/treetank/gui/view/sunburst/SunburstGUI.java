@@ -987,15 +987,16 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     if (mHitTestIndex != -1) {
                         // Bug in processing's mousbotton, thus used SwingUtilities.
                         if (SwingUtilities.isLeftMouseButton(paramEvent) && !mCtrl.isOpen()) {
-                            mDone = false;
                             if (mUseDiffView) {
                                 final SunburstItem item = mModel.getItem(mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
+                                    mDone = false;
                                     mModel.update(new SunburstContainer().setAll(mSelectedRev,
                                         item.getDepth(), mModificationWeight).setKey(
                                         item.getNode().getNodeKey()));
                                 }
                             } else {
+                                mDone = false;
                                 final SunburstContainer container = new SunburstContainer();
                                 if (mUsePruning) {
                                     container.setPruning(EPruning.TRUE);
