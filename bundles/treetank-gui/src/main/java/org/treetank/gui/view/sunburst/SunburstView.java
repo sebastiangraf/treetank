@@ -331,11 +331,6 @@ public final class SunburstView extends JScrollPane implements IView {
 
                 // Create Model.
                 mModel = new SunburstModel(this, mDB);
-
-                if (mSunburstGUI != null) {
-                    mSunburstGUI.updateDb(mDB);
-                    mSunburstGUI.setupGUI();
-                }
                 
                 // Create GUI.
                 mSunburstGUI = SunburstGUI.getInstance(this, mModel, mDB);
@@ -359,6 +354,7 @@ public final class SunburstView extends JScrollPane implements IView {
                     container.setPruning(EPruning.FALSE);
                 }
                 mModel.updateDb(mDB, container);
+                mSunburstGUI.updateDb(mDB);
             }
 
             handleHLWeight();

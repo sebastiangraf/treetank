@@ -346,10 +346,10 @@ final class SunburstItem implements IVisualItem {
         mIndexToParent = paramBuilder.mRelations.mIndexToParent;
         mDepth = paramBuilder.mRelations.mDepth;
         mSubtract = paramBuilder.mRelations.mSubtract;
-        mAngleStart = paramBuilder.mAngleStart + 0.003f;
+        mAngleStart = paramBuilder.mAngleStart;// + 0.003f;
         mDiff = paramBuilder.mDiff;
         mAngleCenter = mAngleStart + paramBuilder.mExtension / 2;
-        mAngleEnd = mAngleStart + paramBuilder.mExtension - 0.003f;
+        mAngleEnd = mAngleStart + paramBuilder.mExtension;// - 0.003f;
     }
 
     /**
@@ -439,7 +439,7 @@ final class SunburstItem implements IVisualItem {
             }
 
             // Calculate stroke weight for relations line.
-            mLineWeight = PApplet.map(mDepth, 1, depthMax, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
+            mLineWeight = PApplet.map(mDepth, 0, depthMax, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
             if (mArcLength < mLineWeight) {
                 mLineWeight = mArcLength * 0.93f;
             }
@@ -709,12 +709,11 @@ final class SunburstItem implements IVisualItem {
                 mGUI.mParent.recorder.strokeWeight(mLineWeight);
             }
             mGraphic.strokeWeight(mLineWeight);
+            final SunburstItem item = mGUI.mModel.getItem(mIndexToParent);
             if (mGUI.mParent.recorder != null) {
-                mGUI.mParent.recorder.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y,
-                    mGUI.mModel.getItem(mIndexToParent).mX, mGUI.mModel.getItem(mIndexToParent).mY);
+                mGUI.mParent.recorder.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, item.mX, item.mY);
             }
-            mGraphic.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mGUI.mModel.getItem(mIndexToParent).mX,
-                mGUI.mModel.getItem(mIndexToParent).mY);
+            mGraphic.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, item.mX, item.mY);
         }
     }
 
