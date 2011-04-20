@@ -28,6 +28,8 @@
 package org.treetank.gui.view.sunburst;
 
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -74,7 +76,7 @@ import processing.core.PConstants;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
+final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, PropertyChangeListener {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));
@@ -106,21 +108,9 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
     @Override
     public void traverseTree(final SunburstContainer paramContainer) {
         assert paramContainer.mKey >= 0;
-        final ExecutorService executor = Executors.newFixedThreadPool(1);// Executors.newSingleThreadExecutor();
-        final Future<SunburstFireContainer> future =
-            executor.submit(new TraverseTree(paramContainer.mKey, paramContainer.mPruning, this));
-        try {
-            mItems = future.get().mItems;
-            mLastMaxDepth = future.get().mDepthMax;
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final ExecutionException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(new TraverseTree(paramContainer.mKey, paramContainer.mPruning, this));
         shutdownAndAwaitTermination(executor);
-
-        firePropertyChange("maxDepth", null, mLastMaxDepth);
-        firePropertyChange("done", null, true);
     }
 
     /** Traverse a tree (single revision). */
@@ -180,6 +170,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
             assert paramModel != null;
             mKey = paramKey == 0 ? paramKey + 1 : paramKey;
             mModel = paramModel;
+            addPropertyChangeListener(mModel);
             mPruning = paramPruning;
             mDb = mModel.mDb;
             try {
@@ -218,8 +209,10 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
 
             // Fire property changes.
             firePropertyChange("maxDepth", null, mDepthMax);
-
-            return new SunburstFireContainer(mItems, mDepthMax);
+            firePropertyChange("items", null, mItems);
+            firePropertyChange("done", null, true);
+            
+            return null;
         }
 
         /** {@inheritDoc} */
@@ -597,5 +590,19 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem> {
         mWtx.moveTo(getItem(paramHitTestIndex).getNode().getNodeKey());
         final SunburstPopupMenu menu = SunburstPopupMenu.getInstance(this, mWtx, paramCtrl);
         menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void propertyChange(final PropertyChangeEvent paramEvent) {
+        if (paramEvent.getPropertyName().equals("maxDepth")) {
+            mLastMaxDepth = (Integer)paramEvent.getNewValue();
+            firePropertyChange("maxDepth", null, mLastMaxDepth);
+        } else if (paramEvent.getPropertyName().equals("done")) {
+            firePropertyChange("done", null, true);
+        } else if (paramEvent.getPropertyName().equals("items")) {
+            mItems = (List<SunburstItem>)paramEvent.getNewValue();
+        }
     }
 }

@@ -27,6 +27,9 @@
 
 package org.treetank.gui.view.sunburst;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.Thread.State;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -65,7 +68,8 @@ import processing.core.PConstants;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SunburstCompareModel extends AbsModel implements IModel, Iterator<SunburstItem> {
+public final class SunburstCompareModel extends AbsModel implements IModel, Iterator<SunburstItem>,
+    PropertyChangeListener {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(
@@ -101,23 +105,9 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
         assert paramContainer.mModWeight >= 0;
 
         final ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<SunburstFireContainer> future =
-            executor.submit(new TraverseCompareTree(paramContainer.mRevision, mDb.getRevisionNumber(),
-                paramContainer.mKey, paramContainer.mDepth, paramContainer.mModWeight, this));
-        try {
-            mItems = future.get().mItems;
-            mLastMaxDepth = future.get().mDepthMax;
-            mLastOldMaxDepth = future.get().mOldDepthMax;
-            firePropertyChange("oldMaxDepth", null, mLastOldMaxDepth);
-            firePropertyChange("maxDepth", null, mLastMaxDepth);
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final ExecutionException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
+        executor.submit(new TraverseCompareTree(paramContainer.mRevision, mDb.getRevisionNumber(),
+            paramContainer.mKey, paramContainer.mDepth, paramContainer.mModWeight, this));
         shutdownAndAwaitTermination(executor);
-
-        firePropertyChange("done", null, true);
     }
 
     /** Traverse and compare trees. */
@@ -211,6 +201,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             }
 
             mModel = (SunburstCompareModel)paramModel;
+            addPropertyChangeListener(mModel);
             mDb = mModel.mDb;
 
             try {
@@ -251,6 +242,8 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                     mRtx.getRevisionNumber(), EDiffKind.NORMAL, observer).setNewDepth(mDepth).setOldDepth(
                     mDepth));
 
+                LOGWRAPPER.debug("CountDownLatch: " + mStart.getCount());
+
                 // Wait for diff list to complete.
                 mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
 
@@ -262,12 +255,14 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
 
                 // Maximum depth in old revision.
                 mDepthMax = getDepthMax(mRtx);
+                stackTraces();
 
                 mNewRtx = mDb.getSession().beginReadTransaction(mRevision);
                 mNewRtx.moveTo(mKey);
                 for (final AbsAxis axis =
                     new SunburstCompareDescendantAxis(true, this, mNewRtx, mRtx, mDiffs, mDepthMax, mDepth); axis
                     .hasNext(); axis.next()) {
+                    // stackTraces();
                 }
             } catch (final AbsTTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
@@ -283,7 +278,57 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
             LOGWRAPPER.debug("oldMaxDepth: " + mDepthMax);
 
-            return new SunburstFireContainer(mItems, mNewDepthMax).setOldDepthMax(mDepthMax);
+            firePropertyChange("oldMaxDepth", null, mDepthMax);
+            firePropertyChange("maxDepth", null, mNewDepthMax);
+            firePropertyChange("items", null, mItems);
+            firePropertyChange("done", null, true);
+
+            return null;
+        }
+
+        /**
+         * 
+         */
+        private void stackTraces() {
+            Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();
+            Iterator<Thread> itr = map.keySet().iterator();
+            while (itr.hasNext()) {
+                Thread t = itr.next();
+                StackTraceElement[] elem = map.get(t);
+                System.out.print("\"" + t.getName() + "\"");
+                System.out.print(" prio=" + t.getPriority());
+                System.out.print(" tid=" + t.getId());
+                State s = t.getState();
+                String state = null;
+                switch (s) {
+                case NEW:
+                    state = "NEW";
+                    break;
+                case BLOCKED:
+                    state = "BLOCKED";
+                    break;
+                case RUNNABLE:
+                    state = "RUNNABLE";
+                    break;
+                case TERMINATED:
+                    state = "TERMINATED";
+                    break;
+                case TIMED_WAITING:
+                    state = "TIME WAITING";
+                    break;
+                case WAITING:
+                    state = "WAITING";
+                    break;
+                }
+                System.out.println(" " + state + "\n");
+                for (int i = 0; i < elem.length; i++) {
+                    System.out.println("  at ");
+                    System.out.print(elem[i].toString());
+                    System.out.println("\n");
+                }
+                System.out.println("----------------------------\n");
+            }
+
         }
 
         /** {@inheritDoc} */
@@ -322,17 +367,22 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 final IStructuralItem node = paramRtx.getStructuralNode();
                 if (node.hasFirstChild()) {
                     depth++;
-                    
+
                     int tmpIndex = index + 1;
                     while (tmpIndex < mDiffs.size() && mDiffs.get(tmpIndex).getDiff() == EDiff.INSERTED) {
                         tmpIndex++;
                     }
                     index = tmpIndex - 1;
 
-                    if (//index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.SAME
-                        index + 1 < mDiffs.size() && mDiffs.get(index + 1).getDiff() == EDiff.SAME) {
+                    if (// index < mDiffs.size() && mDiffs.get(index).getDiff() == EDiff.SAME
+                    index + 1 < mDiffs.size() && mDiffs.get(index + 1).getDiff() == EDiff.SAME) {
                         // Set depth max.
                         depthMax = Math.max(depth, depthMax);
+                    }
+                } else if (node.hasRightSibling()) {
+                    if (index + 1 < mDiffs.size() && mDiffs.get(index + 1).getDiff() == EDiff.SAME) {
+                        // Set depth max.
+                        depthMax = Math.max(depth, depthMax); 
                     }
                 } else if (!node.hasRightSibling()) {
                     // Next node will be a right sibling of an anchestor node or the traversal ends.
@@ -346,6 +396,11 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                         }
                     } while (!mRtx.getStructuralNode().hasRightSibling());
                     mRtx.moveTo(currNodeKey);
+                    
+                    if (index + 1 < mDiffs.size() && mDiffs.get(index + 1).getDiff() == EDiff.SAME) {
+                        // Set depth max.
+                        depthMax = Math.max(depth, depthMax); 
+                    }
                 }
             }
             paramRtx.moveTo(nodeKey);
@@ -720,6 +775,23 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 }
                 return retVal;
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void propertyChange(final PropertyChangeEvent paramEvent) {
+        if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
+            mLastOldMaxDepth = (Integer)paramEvent.getNewValue();
+            firePropertyChange("oldMaxDepth", null, mLastOldMaxDepth);
+        } else if (paramEvent.getPropertyName().equals("maxDepth")) {
+            mLastMaxDepth = (Integer)paramEvent.getNewValue();
+            firePropertyChange("maxDepth", null, mLastMaxDepth);
+        } else if (paramEvent.getPropertyName().equals("done")) {
+            firePropertyChange("done", null, true);
+        } else if (paramEvent.getPropertyName().equals("items")) {
+            mItems = (List<SunburstItem>)paramEvent.getNewValue();
         }
     }
 }

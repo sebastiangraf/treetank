@@ -263,6 +263,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /** Determines if pruning should be enabled or not. */
     transient boolean mUsePruning;
+    
+    /** Determines if GUI has been initialized. */
+    transient boolean mInitialized;
 
     /**
      * Private constructor.
@@ -306,8 +309,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     }
 
     /** Initial setup of the GUI. */
-    private void setupGUI() {
-        mParent.noLoop();
+    void setupGUI() {
+        mParent.smooth();
+        mParent.background(255f);
 
         mParent.textFont(mParent.createFont("src" + File.separator + "main" + File.separator + "resources"
             + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
@@ -557,7 +561,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * Implements the {@link PApplet} draw() method.
      */
     void draw() {
-        if (mControlP5 != null && mDone) {
+        if (mControlP5 != null) {
             mParent.pushMatrix();
 
             if (mZoomer.isZooming() || mZoomer.isPanning()) {
@@ -579,8 +583,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 LOGWRAPPER.debug("Without buffered image!");
                 mParent.background(0, 0, mBackgroundBrightness);
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
-                drawItems(EDraw.DRAW);
-            } else {
+                if (mDone) {
+                    drawItems(EDraw.DRAW);
+                }
+            } else if (mDone) {
                 LOGWRAPPER.debug("Buffered image!");
                 try {
                     mLock.acquire();
@@ -595,7 +601,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             }
 
             // Mouse rollover.
-            if (!mShowGUI && !mCtrl.isVisible()) {
+            if (!mShowGUI && !mCtrl.isVisible() && mDone) {
                 boolean doMouseOver = true;
                 if (mRevisions != null && mRevisions.isOpen()) {
                     doMouseOver = false;
@@ -627,7 +633,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             }
 
             // Fisheye view.
-            if (mFisheye && !mSavePDF) { // In PDF mode cannot make pixel based transformations.
+            if (mDone && mFisheye && !mSavePDF) { // In PDF mode cannot make pixel based transformations.
                 // Fisheye transormation.
                 fisheye(mParent.mouseX, mParent.mouseY, 120);
             }
@@ -1093,7 +1099,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     private void updateBuffer() {
         mBuffer.pushMatrix();
-        mZoomer.transform();
+//        mZoomer.transform();
         mBuffer.colorMode(PConstants.HSB, 360, 100, 100, 100);
         mBuffer.background(0, 0, mBackgroundBrightness);
         mBuffer.noFill();

@@ -53,6 +53,7 @@ import org.treetank.gui.view.ViewNotifier;
 import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 
 /**
  * <h1>SunburstView</h1>
@@ -260,61 +261,34 @@ public final class SunburstView extends JScrollPane implements IView {
         /** The Treetank {@link SunburstModel}. */
         private transient SunburstModel mModel;
 
-        /** Lock while initially querying model, thus draw() doesn't have to be invoked. */
-        private transient Semaphore mLock = new Semaphore(1);
-
         /** {@inheritDoc} */
         @Override
         public void setup() {
             newSize();
-            // addComponentListener(new ComponentListener() {
-            // @Override
-            // public void componentResized(final ComponentEvent paramEvt) {
-            // mEmbed.newSize();
-            // }
-            //
-            // @Override
-            // public void componentMoved(ComponentEvent e) {
-            // // TODO Auto-generated method stub
-            //
-            // }
-            //
-            // @Override
-            // public void componentShown(ComponentEvent e) {
-            // // TODO Auto-generated method stub
-            //
-            // }
-            //
-            // @Override
-            // public void componentHidden(ComponentEvent e) {
-            // // TODO Auto-generated method stub
-            //
-            // }
-            // });
+            handleHLWeight();
         }
 
         /**
          * Set new size.
          */
         private void newSize() {
-            size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight() - 42);
+            size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight() - 42, PConstants.JAVA2D);
         }
 
         /** {@inheritDoc} */
         @Override
         public void draw() {
-            if (mSunburstGUI != null && mSunburstGUI.mDone && mLock.tryAcquire()) {
+            if (mSunburstGUI != null) {
                 LOGWRAPPER.debug("drawing");
                 mSunburstGUI.draw();
                 handleHLWeight();
-                mLock.release();
             }
         }
 
         /** {@inheritDoc} */
         @Override
         public void mouseEntered(final MouseEvent paramEvent) {
-            if (mSunburstGUI != null && mSunburstGUI.mDone) {
+            if (mSunburstGUI != null) {
                 mSunburstGUI.mouseEntered(paramEvent);
                 handleHLWeight();
             }
@@ -323,7 +297,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void mouseExited(final MouseEvent paramEvent) {
-            if (mSunburstGUI != null && mSunburstGUI.mDone) {
+            if (mSunburstGUI != null) {
                 mSunburstGUI.mouseExited(paramEvent);
                 handleHLWeight();
             }
@@ -332,7 +306,7 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void keyReleased() {
-            if (mSunburstGUI != null && mSunburstGUI.mDone) {
+            if (mSunburstGUI != null) {
                 mSunburstGUI.keyReleased();
                 handleHLWeight();
             }
@@ -341,60 +315,53 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void mousePressed(final MouseEvent paramEvent) {
-            if (mSunburstGUI != null && mSunburstGUI.mDone) {
-                try {
-                    mLock.acquire();
-                    mSunburstGUI.mousePressed(paramEvent);
-                    handleHLWeight();
-                } catch (final InterruptedException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
-                } finally {
-                    mLock.release();
-                }
+            if (mSunburstGUI != null) {
+                mSunburstGUI.mousePressed(paramEvent);
+                handleHLWeight();
             }
         }
 
         /** Refresh. */
         void refreshUpdate() {
-            try {
+            if (mModel == null || mSunburstGUI == null) {
                 noLoop();
-                mLock.acquire();
+                
+                // Initial.
+                frameRate(30);
 
-                if (mModel == null || mSunburstGUI == null) {
-                    // Initial.
-                    frameRate(30);
+                // Create Model.
+                mModel = new SunburstModel(this, mDB);
 
-                    // Create Model.
-                    mModel = new SunburstModel(this, mDB);
-
-                    // Create GUI.
-                    mSunburstGUI = SunburstGUI.getInstance(this, mModel, mDB);
-                    mSunburstGUI.mDone = false;
-                    mSunburstGUI.mUseDiffView = false;
-
-                    // Traverse.
-                    mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()).setPruning(
-                        EPruning.FALSE));
-                } else {
-                    // Database change.
-                    mSunburstGUI.mDone = false;
-                    mSunburstGUI.mUseDiffView = false;
-                    final SunburstContainer container = new SunburstContainer().setKey(mDB.getNodeKey());
-                    if (mSunburstGUI.mUsePruning) {
-                        container.setPruning(EPruning.TRUE);
-                    } else {
-                        container.setPruning(EPruning.FALSE);
-                    }
-                    mModel.updateDb(mDB, container);
+                if (mSunburstGUI != null) {
+                    mSunburstGUI.updateDb(mDB);
+                    mSunburstGUI.setupGUI();
                 }
+                
+                // Create GUI.
+                mSunburstGUI = SunburstGUI.getInstance(this, mModel, mDB);
+                mSunburstGUI.mDone = false;
+                mSunburstGUI.mUseDiffView = false;
+                mSunburstGUI.mInitialized = false;
 
-                handleHLWeight();
-            } catch (final InterruptedException e) {
-                LOGWRAPPER.warn(e.getMessage(), e);
-            } finally {
-                mLock.release();
+                // Traverse.
+                mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()).setPruning(
+                    EPruning.FALSE));
                 loop();
+                
+            } else {
+                // Database change.
+                mSunburstGUI.mDone = false;
+                mSunburstGUI.mUseDiffView = false;
+                final SunburstContainer container = new SunburstContainer().setKey(mDB.getNodeKey());
+                if (mSunburstGUI.mUsePruning) {
+                    container.setPruning(EPruning.TRUE);
+                } else {
+                    container.setPruning(EPruning.FALSE);
+                }
+                mModel.updateDb(mDB, container);
             }
+
+            handleHLWeight();
         }
 
         /** Refresh. Thus Treetank storage has been updated to a new revision. */
