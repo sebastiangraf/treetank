@@ -31,7 +31,7 @@ import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.diff.AbsDiff.EFireDiff;
-import org.treetank.diff.DiffFactory.EDiffKind;
+import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.node.ENodes;
 
 /**
