@@ -57,7 +57,7 @@ public final class GUIMenuBar extends JMenuBar {
             menu.setMnemonic((int)MENUBAR[i].charAt(0));
 
             for (int j = 0; j < MENUITEMS[i].length; j++) {
-                final IGUICommand cmd = (IGUICommand)MENUITEMS[i][j];
+                final IGUICommand cmd = MENUITEMS[i][j];
                 final JComponent item = cmd.type().construct(paramGUI, cmd);
                 menu.add(item);
             }

@@ -44,7 +44,7 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.diff.DiffDepth;
 import org.treetank.diff.DiffFactory;
 import org.treetank.diff.DiffFactory.EDiff;
-import org.treetank.diff.DiffFactory.EDiffKind;
+import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.diff.IDiffObserver;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
@@ -236,13 +236,12 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 rtx.close();
 
                 // Invoke diff.
+                LOGWRAPPER.debug("CountDownLatch: " + mStart.getCount());
                 final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
                 observer.add(this);
                 DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mDb.getDatabase(), mKey, mRevision,
-                    mRtx.getRevisionNumber(), EDiffKind.NORMAL, observer).setNewDepth(mDepth).setOldDepth(
+                    mRtx.getRevisionNumber(), EDiffOptimized.NO, observer).setNewDepth(mDepth).setOldDepth(
                     mDepth));
-
-                LOGWRAPPER.debug("CountDownLatch: " + mStart.getCount());
 
                 // Wait for diff list to complete.
                 mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
@@ -651,6 +650,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 final ISession paramSession, final int paramIndex, final List<Diff> paramDiffs) {
                 assert paramNewRevision > 0;
                 assert paramOldRevision >= 0;
+                assert paramNewRevision > paramOldRevision;
                 assert paramSession != null;
                 assert paramIndex > -1;
                 assert paramDiffs != null;
@@ -755,6 +755,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
                 }
 
                 mNewRtx.close();
+                mOldRtx.close();
                 return retVal;
             }
 

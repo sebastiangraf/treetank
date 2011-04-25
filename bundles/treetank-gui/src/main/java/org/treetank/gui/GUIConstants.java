@@ -85,7 +85,7 @@ public final class GUIConstants {
     };
 
     /** Two-dimensional Menu entries, containing the menu item commands. */
-    static final Object[][] MENUITEMS = {
+    static final IGUICommand[][] MENUITEMS = {
         {
             OPEN, SHREDDER, SHREDDER_UPDATE, SERIALIZE, SEPARATOR, QUIT
         }, {
