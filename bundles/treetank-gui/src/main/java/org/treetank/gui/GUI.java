@@ -40,6 +40,8 @@ import org.treetank.gui.view.IView;
 import org.treetank.gui.view.ViewContainer;
 import org.treetank.gui.view.ViewNotifier;
 import org.treetank.gui.view.sunburst.SunburstView;
+import org.treetank.gui.view.text.TextView;
+import org.treetank.gui.view.tree.TreeView;
 import org.treetank.utils.LogWrapper;
 
 /**
@@ -123,7 +125,7 @@ public final class GUI extends JFrame {
         // Create views.
         mNotifier = new ViewNotifier(this);
         mContainer =
-            ViewContainer.getInstance(this, SunburstView.getInstance(mNotifier));////, TextView.getInstance(mNotifier));
+            ViewContainer.getInstance(this, TreeView.getInstance(mNotifier), SunburstView.getInstance(mNotifier), TextView.getInstance(mNotifier));////, TextView.getInstance(mNotifier));
         mContainer.layoutViews();
         top.add(mContainer, BorderLayout.CENTER);
         getContentPane().add(top);

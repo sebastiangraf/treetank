@@ -333,7 +333,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                     do {
                         if (((AbsStructNode)getTransaction().getNode()).hasParent()
                             && getTransaction().getNode().getNodeKey() != mNextKey
-                            && oldDepth > mDiffCont.getDepth().getNewDepth() - mInitDepth) {
+                            && oldDepth - mInitDepth > mDiffCont.getDepth().getNewDepth() - mInitDepth) {
                             if (first) {
                                 // Do not pop from stack if it's a leaf node.
                                 first = false;
