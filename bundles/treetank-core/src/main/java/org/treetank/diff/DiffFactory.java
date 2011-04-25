@@ -66,14 +66,14 @@ public final class DiffFactory {
     }
 
     /**
-     * Kind of diff.
+     * Determines if an optimized diff calculation should be done, which is faster.
      */
-    public enum EDiffKind {
+    public enum EDiffOptimized {
         /** Normal diff. */
-        NORMAL,
+        NO,
 
         /** Optimized diff. */
-        OPTIMIZED
+        HASHED
     }
 
     /** Determines the kind of diff to invoke. */
@@ -82,7 +82,8 @@ public final class DiffFactory {
         FULL {
             @Override
             void invoke(final Builder paramBuilder) {
-                new FullDiff(paramBuilder);
+                final FullDiff diff = new FullDiff(paramBuilder);
+                diff.diffMovement();
             }
         },
 
@@ -90,7 +91,8 @@ public final class DiffFactory {
         STRUCTURAL {
             @Override
             void invoke(final Builder paramBuilder) {
-                new StructuralDiff(paramBuilder);
+                final StructuralDiff diff = new StructuralDiff(paramBuilder);
+                diff.diffMovement();
             }
         };
 
@@ -102,9 +104,6 @@ public final class DiffFactory {
          */
         abstract void invoke(final Builder paramBuilder);
     }
-
-    /** Kind of diff to invoke. */
-    private static DiffKind mDiffKind;
 
     /** Builder to simplify static methods. */
     public static final class Builder {
@@ -128,10 +127,13 @@ public final class DiffFactory {
         transient int mOldDepth;
 
         /** Diff kind. */
-        final EDiffKind mKind;
+        final EDiffOptimized mKind;
 
         /** {@link Set} of {@link IDiffObserver}s. */
         final Set<IDiffObserver> mObservers;
+        
+        /** Kind of diff to invoke. */
+        transient DiffKind mDiffKind;
 
         /**
          * Constructor.
@@ -150,7 +152,7 @@ public final class DiffFactory {
          *            {@link Set} of observers
          */
         public Builder(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-            final long paramOldRev, final EDiffKind paramDiffKind, final Set<IDiffObserver> paramObservers) {
+            final long paramOldRev, final EDiffOptimized paramDiffKind, final Set<IDiffObserver> paramObservers) {
             mDb = paramDb;
             mKey = paramKey;
             mNewRev = paramNewRev;
@@ -182,6 +184,19 @@ public final class DiffFactory {
             mOldDepth = paramOldDepth;
             return this;
         }
+        
+        /**
+         * Set kind of diff.
+         * 
+         * @param paramDiffKind
+         *                      {@link DiffKind} instance
+         *            
+         * @return this builder
+         */
+        Builder setDiffKind(final DiffKind paramDiffKind) {
+            mDiffKind = paramDiffKind;
+            return this;
+        }
     }
 
     /**
@@ -200,7 +215,7 @@ public final class DiffFactory {
      */
     public static void invokeFullDiff(final Builder paramBuilder) {
         checkParams(paramBuilder);
-        mDiffKind = DiffKind.FULL;
+        paramBuilder.setDiffKind(DiffKind.FULL);
         final ExecutorService exes = Executors.newSingleThreadExecutor();
         exes.submit(new Invoke(paramBuilder));
         exes.shutdown();
@@ -214,7 +229,7 @@ public final class DiffFactory {
      */
     public static void invokeStructuralDiff(final Builder paramBuilder) {
         checkParams(paramBuilder);
-        mDiffKind = DiffKind.STRUCTURAL;
+        paramBuilder.setDiffKind(DiffKind.STRUCTURAL);
         final ExecutorService exes = Executors.newSingleThreadExecutor();
         exes.submit(new Invoke(paramBuilder));
         exes.shutdown();
@@ -255,7 +270,10 @@ public final class DiffFactory {
 
         @Override
         public Void call() throws AbsTTException {
-            mDiffKind.invoke(mBuilder);
+//            if (mBuilder.mDiffKind == DiffKind.STRUCTURAL) {
+//                new StructuralDiff(mBuilder);
+//            }
+            mBuilder.mDiffKind.invoke(mBuilder);
             return null;
         }
     }

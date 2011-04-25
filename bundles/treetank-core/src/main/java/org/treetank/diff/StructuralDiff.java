@@ -32,7 +32,7 @@ import java.util.Set;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.diff.DiffFactory.Builder;
-import org.treetank.diff.DiffFactory.EDiffKind;
+import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 
 /**

@@ -43,7 +43,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.diff.DiffFactory.EDiff;
-import org.treetank.diff.DiffFactory.EDiffKind;
+import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderCommit;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -113,7 +113,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -143,7 +143,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.OPTIMIZED, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.HASHED, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -185,7 +185,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -228,7 +228,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -268,7 +268,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -304,7 +304,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -343,7 +343,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -388,7 +388,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -433,7 +433,7 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
@@ -488,7 +488,7 @@ public class FullDiffTest {
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffKind.NORMAL, observer));
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(database, 0, 1, 0, EDiffOptimized.NO, observer));
 
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);

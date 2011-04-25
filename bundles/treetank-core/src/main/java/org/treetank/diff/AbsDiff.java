@@ -34,7 +34,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
-import org.treetank.diff.DiffFactory.EDiffKind;
+import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
@@ -88,7 +88,7 @@ abstract class AbsDiff extends AbsDiffObservable {
     private transient EDiff mDiff;
 
     /** Diff kind. */
-    private transient EDiffKind mDiffKind;
+    private transient EDiffOptimized mDiffKind;
 
     /** {@link DepthCounter} instance. */
     private transient DepthCounter mDepth;
@@ -125,7 +125,6 @@ abstract class AbsDiff extends AbsDiffObservable {
             mDiff = EDiff.SAME;
             mDiffKind = paramBuilder.mKind;
             mDepth = new DepthCounter(paramBuilder.mNewDepth, paramBuilder.mOldDepth);
-            diffMovement();
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
@@ -141,7 +140,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         // Check first nodes.
         if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND) {
-            if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
+            if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                 mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
             } else {
                 mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
@@ -157,7 +156,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
             if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND
                 || mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
-                if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
+                if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                     mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
                 } else {
                     mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
@@ -168,7 +167,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         // Nodes deleted in old rev at the end of the tree.
         if (mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
             while (moveCursor(mOldRtx, ERevision.OLD)) {
-                if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
+                if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                     mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
                 } else {
                     mDiff = optimizedDiff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
@@ -195,7 +194,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         final AbsStructNode node = paramRtx.getNode();
 
         if (node.hasFirstChild()) {
-            if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffKind.OPTIMIZED
+            if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffOptimized.HASHED
                 && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
                 moved = paramRtx.moveToRightSibling();
 
