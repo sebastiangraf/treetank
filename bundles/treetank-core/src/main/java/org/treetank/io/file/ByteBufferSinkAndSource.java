@@ -27,10 +27,13 @@
 
 package org.treetank.io.file;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
+import org.treetank.node.io.NodeSink;
+import org.treetank.node.io.NodeSource;
 import org.treetank.utils.IConstants;
 
 /**
@@ -41,7 +44,7 @@ import org.treetank.utils.IConstants;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
+public final class ByteBufferSinkAndSource implements ITTSink, ITTSource, NodeSink, NodeSource {
 
     /** internal buffer. */
     private transient ByteBuffer mBuffer;
@@ -154,6 +157,11 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
             mBuffer = newBuffer;
             mBuffer.position(position);
         }
+    }
+
+    @Override
+    public ByteArrayOutputStream getOutputStream() {
+        return null;
     }
 
 }
