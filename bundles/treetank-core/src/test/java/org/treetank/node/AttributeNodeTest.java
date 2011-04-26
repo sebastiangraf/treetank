@@ -27,15 +27,13 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
+import org.treetank.io.file.ByteBufferSinkAndSource;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
-import org.treetank.io.file.ByteBufferSinkAndSource;
-import org.treetank.node.AttributeNode;
-import org.treetank.node.ENodes;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AttributeNodeTest {
 
