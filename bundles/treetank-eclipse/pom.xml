@@ -128,7 +128,7 @@
                                         <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle" />
                                         <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse" />
 
-                                        <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/disy-checkstyle.xml" />
+                                        <!--<get src="file:${checkstyle.url}" dest="${full.eclipse.workspace}/disy-checkstyle.xml" />-->
 
                                         <!-- Add checkstyle config -->
                                         <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="no">
