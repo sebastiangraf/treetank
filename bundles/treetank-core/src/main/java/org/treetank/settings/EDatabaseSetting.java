@@ -37,6 +37,7 @@ import org.treetank.io.AbsIOFactory.StorageType;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Deprecated
 public enum EDatabaseSetting {
 
     /** Default storage. */

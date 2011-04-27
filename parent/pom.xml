@@ -304,6 +304,11 @@
 			<version>1.6.1</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>3.0</version>
@@ -327,6 +332,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<properties>
+		<spring.version>3.0.5.RELEASE</spring.version>
 		<compileSource>1.6</compileSource>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
