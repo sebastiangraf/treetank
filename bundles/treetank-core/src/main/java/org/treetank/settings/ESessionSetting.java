@@ -34,6 +34,7 @@ package org.treetank.settings;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Deprecated
 public enum ESessionSetting {
 
     /** Number of concurrent exclusive write transactions. */
