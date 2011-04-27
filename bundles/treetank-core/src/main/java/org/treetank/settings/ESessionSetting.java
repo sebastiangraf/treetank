@@ -41,7 +41,10 @@ public enum ESessionSetting {
     /** Number of concurrent shared read transactions. */
     MAX_READ_TRANSACTIONS("128"),
     /** Commit threshold. */
-    COMMIT_THRESHOLD("262144");
+    COMMIT_THRESHOLD("262144"), 
+    /** Default User. */
+    DEFAULT_USER("ALL")
+    ;
 
     private final String mValue;
 
