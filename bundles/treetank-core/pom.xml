@@ -37,7 +37,7 @@
 
 	<groupId>treetank</groupId>
 	<artifactId>core</artifactId>
-	<version>5.3.5</version>
+	<version>5.3.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>treetank-core</name>
 	<description>Treetank is a fully java-implemented native XML-Database.
@@ -48,9 +48,9 @@
 		These versions can be easily retrieved within the database itself.
 	</description>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.5</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.5</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.5</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
 	</scm>
 	<repositories>
 		<repository>
