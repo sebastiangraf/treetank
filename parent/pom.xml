@@ -315,10 +315,6 @@
 		</dependency>
 	</dependencies>
 	<distributionManagement>
-		<site>
-			<id>treetank.sf.net</id>
-			<url>scp://shell.sourceforge.net/home/groups/t/tr/treetank/htdocs</url>
-		</site>
 		<repository>
 			<id>disyInternal</id>
 			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
