@@ -19,19 +19,18 @@
 	OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
 	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>treetank</groupId>
 	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
 	<name>treetank-pom</name>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2</version>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</developerConnection>
-		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.2</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.2</developerConnection>
+		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.2</url>
 	</scm>
 	<issueManagement>
 		<system>Redmine</system>
