@@ -317,7 +317,7 @@
 	</dependencies>
 	<distributionManagement>
 		<site>
-			<id>sf</id>
+			<id>treetank.sf.net</id>
 			<url>scp://shell.sourceforge.net/home/groups/t/tr/treetank/htdocs</url>
 		</site>
 		<repository>
