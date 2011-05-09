@@ -103,10 +103,7 @@ import org.treetank.node.ElementNode;
 public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /** Treetank reading transaction. */
-    protected transient IReadTransaction mRTX;
-
-    /** Treetank database. */
-    protected transient IDatabase mDatabase;
+    protected final IReadTransaction mRTX;
 
     /** Kind of current node. */
     protected transient ENodes nodeKind;
@@ -138,47 +135,26 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
     protected NodeWrapper(final IDatabase database, final long nodekeyToStart) {
         try {
-            if (mDatabase == null || !(mDatabase.equals(database))) {
-                mDatabase = database;
 
-                if (mRTX != null && !mRTX.isClosed()) {
-                    mRTX.close();
-                }
-            }
-
-            if (mRTX == null || mRTX.isClosed()) {
-                mRTX = mDatabase.getSession(new SessionConfiguration()).beginReadTransaction();
-            }
+            mRTX = database.getSession(new SessionConfiguration()).beginReadTransaction();
             mRTX.moveTo(nodekeyToStart);
+
+            mRTX.moveTo(mRTX.getNode().getNodeKey());
+            nodeKind = mRTX.getNode().getKind();
+            mKey = mRTX.getNode().getNodeKey();
+            node = mRTX.getNode();
+
+            if (nodeKind == ENodes.ELEMENT_KIND || nodeKind == ENodes.ATTRIBUTE_KIND) {
+                qName = mRTX.getQNameOfCurrentNode();
+            }
         } catch (final AbsTTException e) {
             LOGGER.error("TreetankException: " + e.getMessage(), e);
         }
-
-        mRTX.moveTo(mRTX.getNode().getNodeKey());
-        nodeKind = mRTX.getNode().getKind();
-        mKey = mRTX.getNode().getNodeKey();
-        node = mRTX.getNode();
-
-        if (nodeKind == ENodes.ELEMENT_KIND || nodeKind == ENodes.ATTRIBUTE_KIND) {
-            qName = mRTX.getQNameOfCurrentNode();
-        }
     }
 
-    /**
-     * Wrap a Treetank transaction object into a Saxon implementation of a node.
-     * 
-     * @param docWrapper
-     *            A document wrapper.
-     * @param key
-     *            Node key of treetank item/node.
-     * @return nodeWrapper.
-     */
-    protected NodeWrapper makeWrapper(final DocumentWrapper docWrapper, final long key) {
-
-        final NodeWrapper mNodeWrapper = new NodeWrapper(mDatabase, key);
-        mNodeWrapper.mDocWrapper = docWrapper;
-
-        return mNodeWrapper;
+    public NodeWrapper wrapNode(final long key) {
+        mRTX.moveTo(key);
+        return this;
     }
 
     /**
@@ -483,7 +459,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         mRTX.moveTo(mKey);
         if (mRTX.getNode().hasParent()) {
             // Parent transaction.
-            final NodeInfo mParent = makeWrapper(mDocWrapper, mRTX.getNode().getParentKey());
+            final NodeInfo mParent = wrapNode(mRTX.getNode().getParentKey());
             return mParent;
         } else {
             return null;
@@ -872,7 +848,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         public void advance() {
             if (mAxis.hasNext()) {
                 final long nextKey = mAxis.next();
-                current = makeWrapper(mDocWrapper, nextKey);
+                current = wrapNode(nextKey);
             } else {
                 current = null;
             }

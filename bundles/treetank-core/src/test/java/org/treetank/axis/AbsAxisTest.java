@@ -52,6 +52,8 @@ import static org.junit.Assert.fail;
 
 public class AbsAxisTest {
 
+    private AbsAxisTest.Holder holder;
+
     public static Holder generateHolder() throws TTUsageException, AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession(new SessionConfiguration());
@@ -95,25 +97,42 @@ public class AbsAxisTest {
 
     }
 
+    /**
+     * Method is called once before each test. It deletes all states, shreds XML file to database and
+     * initializes the required variables.
+     * 
+     * @throws Exception
+     *             of any kind
+     */
+    @Before
+    public final void setUp() throws Exception {
+        TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
+    }
+
+    /**
+     * Close all connections.
+     * 
+     * @throws AbsTTException
+     */
+    @After
+    public final void tearDown() throws AbsTTException {
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.closeEverything();
+
+    }
+
     @Test
     public void testIAxisUserExample() throws AbsTTException {
 
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-
-        wtx.moveToDocumentRoot();
-        final AbsAxis axis = new DescendantAxis(wtx);
+        final AbsAxis axis = new DescendantAxis(holder.rtx);
         long count = 0L;
         while (axis.hasNext()) {
             count += 1;
         }
         Assert.assertEquals(10L, count);
-
-        wtx.abort();
-        wtx.close();
-        session.close();
     }
 
     public static class Holder {
@@ -126,6 +145,5 @@ public class AbsAxisTest {
             this.session = session;
         }
     }
-    
-    
+
 }
