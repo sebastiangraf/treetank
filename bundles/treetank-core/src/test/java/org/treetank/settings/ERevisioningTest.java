@@ -37,6 +37,7 @@ import org.junit.Test;
 
 
 import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
 import org.treetank.page.NodePage;
 import org.treetank.settings.EDatabaseSetting;
 import org.treetank.settings.ERevisioning;
@@ -44,7 +45,7 @@ import org.treetank.settings.ERevisioning;
 public class ERevisioningTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
