@@ -57,6 +57,7 @@ import net.sf.saxon.value.Value;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
@@ -102,10 +103,10 @@ import org.treetank.node.ElementNode;
 public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /** Treetank reading transaction. */
-    protected transient static IReadTransaction mRTX;
+    protected transient IReadTransaction mRTX;
 
     /** Treetank database. */
-    protected transient static IDatabase mDatabase;
+    protected transient IDatabase mDatabase;
 
     /** Kind of current node. */
     protected transient ENodes nodeKind;
@@ -137,8 +138,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
     protected NodeWrapper(final IDatabase database, final long nodekeyToStart) {
         try {
-            if (mDatabase == null || mDatabase.getFile() == null
-                || !(mDatabase.getFile().equals(database.getFile()))) {
+            if (mDatabase == null || !(mDatabase.equals(database))) {
                 mDatabase = database;
 
                 if (mRTX != null && !mRTX.isClosed()) {
@@ -147,7 +147,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             }
 
             if (mRTX == null || mRTX.isClosed()) {
-                mRTX = mDatabase.getSession().beginReadTransaction();
+                mRTX = mDatabase.getSession(new SessionConfiguration()).beginReadTransaction();
             }
             mRTX.moveTo(nodekeyToStart);
         } catch (final AbsTTException e) {
@@ -754,7 +754,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             case NAMESPACE_KIND:
                 return EmptyIterator.getInstance();
             default:
-                return new Navigator.AxisFilter(new SaxonEnumeration(new FollowingSiblingAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new SaxonEnumeration(new FollowingSiblingAxis(mRTX)),
+                    nodeTest);
             }
 
         case Axis.NAMESPACE:
@@ -779,7 +780,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             case NAMESPACE_KIND:
                 return EmptyIterator.getInstance();
             default:
-                return new Navigator.AxisFilter(new SaxonEnumeration(new PrecedingSiblingAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new SaxonEnumeration(new PrecedingSiblingAxis(mRTX)),
+                    nodeTest);
             }
 
         case Axis.SELF:

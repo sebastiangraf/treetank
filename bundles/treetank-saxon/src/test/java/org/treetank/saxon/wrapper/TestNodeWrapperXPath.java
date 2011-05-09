@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -44,7 +44,8 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
 import org.treetank.TestHelper;
-import org.treetank.access.Database;
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
@@ -80,9 +81,9 @@ public final class TestNodeWrapperXPath {
 
     @Before
     public void setUp() throws AbsTTException, XPathFactoryConfigurationException {
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession().beginWriteTransaction();
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        database = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
@@ -98,8 +99,7 @@ public final class TestNodeWrapperXPath {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        database.close();
-        Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     /**
@@ -162,7 +162,8 @@ public final class TestNodeWrapperXPath {
                 for (int j = 0; j < test.size(); j++) {
                     final IItem item = test.get(j);
 
-                    final IReadTransaction rtx = database.getSession().beginReadTransaction();
+                    final IReadTransaction rtx =
+                        database.getSession(new SessionConfiguration()).beginReadTransaction();
                     rtx.moveTo(item.getNodeKey());
 
                     final QName qName = rtx.getQNameOfCurrentNode();
@@ -380,7 +381,7 @@ public final class TestNodeWrapperXPath {
         final ArrayList<IItem> result = (ArrayList<IItem>)findLine.evaluate(doc, XPathConstants.NODESET);
         assertNotNull(result);
 
-        final IReadTransaction rtx = database.getSession().beginReadTransaction();
+        final IReadTransaction rtx = database.getSession(new SessionConfiguration()).beginReadTransaction();
         rtx.moveTo(result.get(0).getNodeKey());
         assertEquals("oops1", rtx.getValueOfCurrentNode());
         rtx.moveTo(result.get(1).getNodeKey());
@@ -429,7 +430,7 @@ public final class TestNodeWrapperXPath {
         assertEquals(5, result.get(0).getNodeKey());
         assertEquals(9, result.get(1).getNodeKey());
 
-        final IReadTransaction rtx = database.getSession().beginReadTransaction();
+        final IReadTransaction rtx = database.getSession(new SessionConfiguration()).beginReadTransaction();
         rtx.moveTo(result.get(0).getNodeKey());
         assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
 

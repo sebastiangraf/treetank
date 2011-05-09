@@ -68,7 +68,7 @@ public final class StructuralDiffTest {
 
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
-    private static final long TIMEOUT_S = 200000;
+    private static final long TIMEOUT_S = 10;
 
     @Before
     public void setUp() throws AbsTTException {
@@ -371,6 +371,7 @@ public final class StructuralDiffTest {
     }
 
     @Test
+    @Ignore
     public void testStructuralDiffOptimizedFourth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IItem.class), isA(IItem.class), isA(DiffDepth.class));

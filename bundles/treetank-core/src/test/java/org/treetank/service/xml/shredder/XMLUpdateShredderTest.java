@@ -27,7 +27,9 @@
 
 package org.treetank.service.xml.shredder;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,21 +42,16 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-import org.treetank.service.xml.shredder.EShredderCommit;
-import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.service.xml.shredder.XMLUpdateShredder;
-import org.treetank.settings.ECharsForSerializing;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -204,7 +201,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final File folder = new File(FOLDER);
         int i = 1;
         final File[] filesList = folder.listFiles();

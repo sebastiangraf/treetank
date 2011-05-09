@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,26 +27,18 @@
 
 package org.treetank.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-
-import java.util.Map;
-import java.util.Properties;
-
-
 import org.treetank.TestHelper;
 import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.AbsIOFactory;
-import org.treetank.io.IReader;
-import org.treetank.io.IWriter;
 import org.treetank.io.AbsIOFactory.StorageType;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.settings.EDatabaseSetting;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 /**
  * Helper class for testing the io interfaces
@@ -67,35 +59,20 @@ public final class IOTestHelper {
      * @return a suitable {@link DatabaseConfiguration}
      * @throws TTUsageException
      */
-    public static DatabaseConfiguration createDBConf(final StorageType type) throws TTUsageException {
-        final Properties props = new Properties();
-        props.setProperty(EDatabaseSetting.STORAGE_TYPE.name(), type.name());
-        return new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile(), props);
-    }
-
-    /**
-     * Static method to get {@link SessionConfiguration}
-     * 
-     * @return a suitable {@link SessionConfiguration}
-     * @throws TTUsageException
-     */
-    public static SessionConfiguration createSessionConf() throws TTUsageException {
-        return new SessionConfiguration();
+    public static SessionConfiguration registerIO(final StorageType type) throws AbsTTException {
+        final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
+        builder.setType(type);
+        final DatabaseConfiguration config = builder.build();
+        final SessionConfiguration sessionConfig = new SessionConfiguration();
+        AbsIOFactory.registerInstance(TestHelper.PATHS.PATH1.getFile(), config, sessionConfig);
+        return sessionConfig;
     }
 
     /**
      * Tear down for all tests related to the io layer.
      */
     public static void clean() throws AbsTTException {
-
-        final Map<SessionConfiguration, AbsIOFactory> mapping = AbsIOFactory.getActiveFactories();
-        for (final SessionConfiguration conf : mapping.keySet()) {
-            final AbsIOFactory fac = mapping.get(conf);
-
-            // Closing all storages
-            fac.closeStorage();
-            TestHelper.deleteEverything();
-        }
+        TestHelper.deleteEverything();
 
     }
 
@@ -107,20 +84,15 @@ public final class IOTestHelper {
      * @param sessionConf
      *            to be tested
      */
-    public static void testFactory(final DatabaseConfiguration dbConf, final SessionConfiguration sessionConf)
-        throws AbsTTException {
-        final AbsIOFactory fac1 = AbsIOFactory.getInstance(dbConf, sessionConf);
-        final AbsIOFactory fac2 = AbsIOFactory.getInstance(dbConf, sessionConf);
+    public static void testFactory(final SessionConfiguration sessionConf) throws AbsTTException {
+        final AbsIOFactory fac1 = AbsIOFactory.getInstance(sessionConf);
+        final AbsIOFactory fac2 = AbsIOFactory.getInstance(sessionConf);
         assertSame(fac1, fac2);
         fac1.closeStorage();
-        final AbsIOFactory fac3 = AbsIOFactory.getInstance(dbConf, sessionConf);
-        assertNotSame(fac1, fac3);
-        fac3.closeStorage();
     }
 
-    public static void testReadWriteFirstRef(final DatabaseConfiguration dbConf,
-        final SessionConfiguration sessionConf) throws AbsTTException {
-        final AbsIOFactory fac = AbsIOFactory.getInstance(dbConf, sessionConf);
+    public static void testReadWriteFirstRef(final SessionConfiguration sessionConf) throws AbsTTException {
+        final AbsIOFactory fac = AbsIOFactory.getInstance(sessionConf);
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();
         pageRef1.setPage(page1);
@@ -141,15 +113,8 @@ public final class IOTestHelper {
         assertEquals(((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef3.getPage())
             .getRevisionCount());
         reader.close();
+        fac.closeStorage();
 
     }
 
-    // public static void testReadWriteNodePageStructure(
-    // final SessionConfiguration conf) throws TreetankException {
-    // final AbstractIOFactory fac = AbstractIOFactory.getInstance(conf);
-    // final PageReference pageRef1 = new PageReference();
-    // final UberPage page1 = new UberPage();
-    // pageRef1.setPage(page1);
-    //
-    // }
 }

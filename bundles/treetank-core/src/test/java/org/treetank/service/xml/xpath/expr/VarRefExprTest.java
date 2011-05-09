@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,6 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -35,6 +34,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.expr.VarRefExpr;
@@ -54,59 +54,52 @@ import static org.junit.Assert.assertEquals;
  */
 public class VarRefExprTest {
 
+    private AbsAxisTest.Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
-
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @Test
     public void testEveryExpr() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
 
-        final AbsAxis axis = new XPathAxis(rtx, "for $a in b return $a");
+        final AbsAxis axis = new XPathAxis(holder.rtx, "for $a in b return $a");
 
-        final VariableAxis variable = new VariableAxis(rtx, axis);
+        final VariableAxis variable = new VariableAxis(holder.rtx, axis);
 
-        final VarRefExpr axis1 = new VarRefExpr(rtx, variable);
+        final VarRefExpr axis1 = new VarRefExpr(holder.rtx, variable);
         // assertEquals(false, axis1.hasNext());
         axis1.update(5L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(5L, rtx.getNode().getNodeKey());
+        assertEquals(5L, holder.rtx.getNode().getNodeKey());
         axis1.update(13L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(13L, rtx.getNode().getNodeKey());
+        assertEquals(13L, holder.rtx.getNode().getNodeKey());
         axis1.update(1L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(1L, holder.rtx.getNode().getNodeKey());
         assertEquals(false, axis1.hasNext());
 
-        final VarRefExpr axis2 = new VarRefExpr(rtx, variable);
+        final VarRefExpr axis2 = new VarRefExpr(holder.rtx, variable);
         // assertEquals(false, axis2.hasNext());
         axis2.update(13L);
         assertEquals(true, axis2.hasNext());
-        assertEquals(13L, rtx.getNode().getNodeKey());
+        assertEquals(13L, holder.rtx.getNode().getNodeKey());
         assertEquals(false, axis2.hasNext());
         axis2.update(12L);
         assertEquals(true, axis2.hasNext());
-        assertEquals(12L, rtx.getNode().getNodeKey());
+        assertEquals(12L, holder.rtx.getNode().getNodeKey());
         assertEquals(false, axis2.hasNext());
 
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.rtx.close();
+        holder.session.close();
         TestHelper.closeEverything();
     }
 

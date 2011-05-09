@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,6 +38,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -47,8 +48,6 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
-import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.TypedValue;
@@ -57,17 +56,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class XMLShredderTest extends XMLTestCase {
 
-    public static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "test.xml";
 
-    public static final String XML2 =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test2.xml";
+    public static final String XML2 = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "test2.xml";
 
-    public static final String XML3 =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test3.xml";
+    public static final String XML3 = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "test3.xml";
 
     @Override
     @Before
@@ -86,7 +84,7 @@ public class XMLShredderTest extends XMLTestCase {
         // Setup expected session.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 
-        final ISession expectedSession = database.getSession();
+        final ISession expectedSession = database.getSession(new SessionConfiguration());
         final IWriteTransaction expectedTrx = expectedSession.beginWriteTransaction();
         DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
@@ -96,7 +94,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        final ISession session = database2.getSession();
+        final ISession session = database2.getSession(new SessionConfiguration());
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
@@ -142,7 +140,7 @@ public class XMLShredderTest extends XMLTestCase {
     @Test
     public void testShredIntoExisting() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
@@ -158,7 +156,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        final ISession expectedSession = database2.getSession();
+        final ISession expectedSession = database2.getSession(new SessionConfiguration());
 
         final IWriteTransaction expectedTrx = expectedSession.beginWriteTransaction();
         DocumentCreater.create(expectedTrx);
@@ -191,8 +189,6 @@ public class XMLShredderTest extends XMLTestCase {
         expectedSession.close();
         rtx.close();
         session.close();
-        database.close();
-        database2.close();
 
     }
 
@@ -200,14 +196,14 @@ public class XMLShredderTest extends XMLTestCase {
     public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession expectedSession2 = database.getSession();
+        final ISession expectedSession2 = database.getSession(new SessionConfiguration());
         final IWriteTransaction expectedTrx2 = expectedSession2.beginWriteTransaction();
         DocumentCreater.createWithoutNamespace(expectedTrx2);
         expectedTrx2.commit();
 
         // Setup parsed session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        final ISession session2 = database2.getSession();
+        final ISession session2 = database2.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session2.beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createReader(new File(XML2)), EShredderInsert.ADDASFIRSTCHILD);
@@ -245,14 +241,12 @@ public class XMLShredderTest extends XMLTestCase {
         expectedSession2.close();
         rtx.close();
         session2.close();
-        database.close();
-        database2.close();
     }
 
     @Test
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createReader(new File(XML3)), EShredderInsert.ADDASFIRSTCHILD);

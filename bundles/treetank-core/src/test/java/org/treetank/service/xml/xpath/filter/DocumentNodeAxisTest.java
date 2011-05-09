@@ -45,53 +45,52 @@ import org.treetank.utils.DocumentCreater;
 
 public class DocumentNodeAxisTest {
 
+
+    private AbsAxisTest.Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testIterate() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
 
-        wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        holder.rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.rtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
-        wtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        holder.rtx.moveTo(5L);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.rtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
-        wtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        holder.rtx.moveTo(9L);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.rtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
-        wtx.moveTo(9L);
-        wtx.moveToAttribute(0);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        holder.rtx.moveTo(9L);
+        holder.rtx.moveToAttribute(0);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.rtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
-        wtx.moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx), new long[] {
+        holder.rtx.moveTo(13L);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.rtx), new long[] {
             (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
         });
 
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
     }
 
 }

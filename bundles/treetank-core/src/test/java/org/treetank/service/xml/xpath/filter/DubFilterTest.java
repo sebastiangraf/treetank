@@ -50,46 +50,43 @@ import org.treetank.utils.DocumentCreater;
  */
 public class DubFilterTest {
 
+
+    private AbsAxisTest.Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.deleteEverything();
     }
-
     @Test
     public void testDupElemination() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
 
-        wtx.moveTo(1L);
+        holder.rtx.moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(wtx, "child::node()/parent::node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "child::node()/parent::node()"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(wtx, "b/following-sibling::node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "b/following-sibling::node()"), new long[] {
             8L, 9L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(wtx, "b/preceding::node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "b/preceding::node()"), new long[] {
             4L, 8L, 7L, 6L, 5L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(wtx, "//c/ancestor::node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "//c/ancestor::node()"), new long[] {
             5L, 1L, 9L
         });
 
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
     }
 
 }

@@ -39,24 +39,22 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class FileTest {
-    private DatabaseConfiguration dbConf;
     private SessionConfiguration sessionConf;
 
     @Before
     public void setUp() throws AbsTTException {
         IOTestHelper.clean();
-        dbConf = IOTestHelper.createDBConf(StorageType.File);
-        sessionConf = IOTestHelper.createSessionConf();
+        sessionConf = IOTestHelper.registerIO(StorageType.File);
     }
 
     @Test
     public void testFactory() throws AbsTTException {
-        IOTestHelper.testFactory(dbConf, sessionConf);
+        IOTestHelper.testFactory(sessionConf);
     }
 
     @Test
     public void testFirstRef() throws AbsTTException {
-        IOTestHelper.testReadWriteFirstRef(dbConf, sessionConf);
+        IOTestHelper.testReadWriteFirstRef(sessionConf);
     }
 
     @After

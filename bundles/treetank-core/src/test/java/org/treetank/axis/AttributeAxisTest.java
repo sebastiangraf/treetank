@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -56,7 +57,7 @@ public class AttributeAxisTest {
     @Test
     public void testIterate() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
@@ -82,13 +83,12 @@ public class AttributeAxisTest {
         wtx.abort();
         wtx.close();
         session.close();
-        database.close();
     }
 
     @Test
     public void testMultipleAttributes() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");
@@ -137,7 +137,6 @@ public class AttributeAxisTest {
         wtx.abort();
         wtx.close();
         session.close();
-        database.close();
     }
 
     @After

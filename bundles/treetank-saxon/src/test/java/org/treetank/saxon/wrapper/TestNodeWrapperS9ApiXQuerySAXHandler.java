@@ -36,9 +36,12 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import com.sleepycat.je.Database;
+
 import org.treetank.TestHelper;
-import org.treetank.access.Database;
 import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
@@ -74,11 +77,11 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
     @Before
     public void setUp() throws Exception {
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database.createDatabase(new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile()));
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.createDatabase(TestHelper.PATHS.PATH1.getFile(),new DatabaseConfiguration.Builder().build());
 
-        databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction mWTX = databaseBooks.getSession().beginWriteTransaction();
+        databaseBooks = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction mWTX = databaseBooks.getSession(new SessionConfiguration()).beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
         final XMLShredder shredder = new XMLShredder(mWTX, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
@@ -87,8 +90,7 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
     @AfterClass
     public static void tearDown() throws AbsTTException {
-        databaseBooks.close();
-        Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test

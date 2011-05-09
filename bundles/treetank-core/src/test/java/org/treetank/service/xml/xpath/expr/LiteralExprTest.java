@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,6 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -36,6 +35,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
@@ -56,59 +56,46 @@ import static org.junit.Assert.assertEquals;
  */
 public class LiteralExprTest {
 
-    private IItem item1;
-
-    private IItem item2;
-
-    private int key1;
-
-    private int key2;
+    private AbsAxisTest.Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        item1 = new AtomicValue(false);
-        item2 = new AtomicValue(14, Type.INTEGER);
-
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testLiteralExpr() throws AbsTTException {
         // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
 
-        key1 = rtx.getItemList().addItem(item1);
-        key2 = rtx.getItemList().addItem(item2);
+        final IItem item1 = new AtomicValue(false);
+        final IItem item2 = new AtomicValue(14, Type.INTEGER);
 
-        final AbsAxis axis1 = new LiteralExpr(rtx, key1);
+        final int key1 = holder.rtx.getItemList().addItem(item1);
+        final int key2 = holder.rtx.getItemList().addItem(item2);
+
+        final AbsAxis axis1 = new LiteralExpr(holder.rtx, key1);
         assertEquals(true, axis1.hasNext());
-        assertEquals(key1, rtx.getNode().getNodeKey());
-        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-        assertEquals(false, TypedValue.parseBoolean((rtx.getNode().getRawValue())));
+        assertEquals(key1, holder.rtx.getNode().getNodeKey());
+        assertEquals(holder.rtx.keyForName("xs:boolean"), holder.rtx.getNode().getTypeKey());
+        assertEquals(false, TypedValue.parseBoolean((holder.rtx.getNode().getRawValue())));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new LiteralExpr(rtx, key2);
+        final AbsAxis axis2 = new LiteralExpr(holder.rtx, key2);
         assertEquals(true, axis2.hasNext());
-        assertEquals(key2, rtx.getNode().getNodeKey());
-        assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
-        assertEquals(14, (int)TypedValue.parseDouble(rtx.getNode().getRawValue()));
+        assertEquals(key2, holder.rtx.getNode().getNodeKey());
+        assertEquals(holder.rtx.keyForName("xs:integer"), holder.rtx.getNode().getTypeKey());
+        assertEquals(14, (int)TypedValue.parseDouble(holder.rtx.getNode().getRawValue()));
         assertEquals(false, axis2.hasNext());
 
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
     }
 
 }

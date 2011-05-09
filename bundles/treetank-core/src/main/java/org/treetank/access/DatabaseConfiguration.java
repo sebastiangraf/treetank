@@ -34,10 +34,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
+import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.settings.EDatabaseSetting;
+import org.treetank.io.AbsIOFactory.StorageType;
+import org.treetank.settings.ERevisioning;
 import org.treetank.settings.EStoragePaths;
 import org.treetank.utils.LogWrapper;
 
@@ -50,167 +52,107 @@ import org.treetank.utils.LogWrapper;
  */
 public class DatabaseConfiguration {
 
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(DatabaseConfiguration.class));
+    /** Type of Storage (File, Berkeley). */
+    public final StorageType mType;
 
-    /** Absolute path to tnk directory. */
-    private final File mFile;
+    /** Kind of revisioning (Incremental, Differential). */
+    public final ERevisioning mRevision;
 
-    /** Props to hold all related data. */
-    private final Properties mProps;
+    /** Kind of integrity hash (rolling, postorder). */
+    public final HashKind mHashKind;
 
-    /**
-     * Constructor, just the location of either an existing or a new database.
-     * 
-     * @param paramFile
-     *            the path to the database
-     * @throws AbsTTException
-     *             if the reading of the props is failing or properties are not
-     *             valid
-     */
-    public DatabaseConfiguration(final File paramFile) throws AbsTTException {
-        this(paramFile, new File(paramFile, EStoragePaths.DBSETTINGS.getFile().getName()));
-    }
+    /** Number of revisions to restore a complete set of data. */
+    public final int mRevisionsToRestore;
+
+    /** Binary version of storage. */
+    public final String mBinaryVersion;
 
     /**
      * Constructor with all possible properties.
      * 
-     * @param paramFile
-     *            the path to the database
-     * @param paramProps
+     * @param paramBuilder
      *            properties to be set for setting
-     * @throws TTUsageException
-     *             if properties are not valid
      */
-    public DatabaseConfiguration(final File paramFile, final Properties paramProps) throws TTUsageException {
-        mFile = paramFile;
-        mProps = new Properties();
-        buildUpProperties(paramProps);
-
+    private DatabaseConfiguration(final DatabaseConfiguration.Builder paramBuilder) {
+        this.mType = paramBuilder.mType;
+        this.mRevision = paramBuilder.mRevision;
+        this.mHashKind = paramBuilder.mHashKind;
+        this.mRevisionsToRestore = paramBuilder.mRevisionsToRestore;
+        this.mBinaryVersion = paramBuilder.mBinaryVersion;
     }
 
-    /**
-     * Constructor with all possible properties stored in a file.
-     * 
-     * @param paramFile
-     *            the path to the database
-     * @param paramProp
-     *            properties to be set
-     * @throws AbsTTException
-     *             if the reading of the props is failing or properties are not
-     *             valid
-     */
-    public DatabaseConfiguration(final File paramFile, final File paramProp) throws AbsTTException {
-        mFile = paramFile;
-        mProps = new Properties();
-        final Properties loadProps = new Properties();
+    public static class Builder {
 
-        try {
-            if (!paramProp.exists() || paramProp.length() == 0) {
-                buildUpProperties(mProps);
-            } else {
-                loadProps.load(new FileInputStream(paramProp));
-                buildUpProperties(loadProps);
+        public final static String BINARY = "5.4.5";
 
-                // Check if property file comes from external
-                if ((paramProp.getName().equals(EStoragePaths.DBSETTINGS.getFile().getName()) && paramProp
-                    .getParentFile().equals(paramFile))
-                    // and check if the loaded checksum is valid
-                    && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name()).equals(
-                        Integer.toString(hashCode()))) {
-                    throw new TTUsageException("Checksums differ: Loaded", getProps().toString(),
-                        "and expected", toString());
+        /** Type of Storage (File, Berkeley). */
+        private StorageType mType = StorageType.File;
 
-                }
-            }
-        } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
-            throw new TTIOException(exc);
-        }
-    }
+        /** Kind of revisioning (Incremental, Differential). */
+        private ERevisioning mRevision = ERevisioning.INCREMENTAL;
 
-    /**
-     * Building up the properties and replacing all missing with the values from
-     * the standard one.
-     * 
-     * @param props
-     *            to be included
-     * @throws TTUsageException
-     *             if wrong properties are into existing database
-     */
-    private void buildUpProperties(final Properties props) throws TTUsageException {
-        for (final EDatabaseSetting enumProps : EDatabaseSetting.values()) {
-            if (enumProps != EDatabaseSetting.CHECKSUM) {
-                if (props.containsKey(enumProps.name())) {
-                    getProps().setProperty(enumProps.name(), props.getProperty(enumProps.name()));
-                } else {
-                    getProps().setProperty(enumProps.name(), enumProps.getStandardProperty());
-                }
-            }
+        /** Kind of integrity hash (rolling, postorder). */
+        private HashKind mHashKind = HashKind.Rolling;
+
+        /** Number of revisions to restore a complete set of data. */
+        private int mRevisionsToRestore = 4;
+
+        /** Binary version of storage. */
+        private String mBinaryVersion = BINARY;
+
+        /**
+         * Setter for mStorageType
+         * 
+         * @param paramType
+         *            to be set
+         */
+        public void setType(StorageType paramType) {
+            this.mType = paramType;
         }
 
-    }
-
-    /**
-     * Getter for the properties. The values are refered over {@link EDatabaseSetting}.
-     * 
-     * @return the properties
-     */
-    public final Properties getProps() {
-        return mProps;
-    }
-
-    /**
-     * Get tnk folder.
-     * 
-     * @return Path to tnk folder.
-     */
-    public final File getFile() {
-        return mFile;
-    }
-
-    /**
-     * Serializing the data.
-     * 
-     * @return test if serializing the properties was successful
-     */
-    public final boolean serialize() {
-        try {
-            final Integer hashCode = hashCode();
-            getProps().setProperty(EDatabaseSetting.CHECKSUM.name(), Integer.toString(hashCode));
-            getProps().store(
-                new FileOutputStream(new File(mFile, EStoragePaths.DBSETTINGS.getFile().getName())), "");
-        } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
-            return false;
+        /**
+         * Setter for mRevision
+         * 
+         * @param paramRevision
+         *            to be set
+         */
+        public void setRevision(ERevisioning paramRevision) {
+            this.mRevision = paramRevision;
         }
-        return true;
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final int hashCode() {
-        return mProps.hashCode();
-    }
+        /**
+         * Setter for mHashKind
+         * 
+         * @param paramHashKind
+         *            to be set
+         */
+        public void setHashKind(HashKind paramHashKind) {
+            this.mHashKind = paramHashKind;
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean equals(final Object paramObj) {
-        return mProps.equals(paramObj);
-    }
+        /**
+         * Setter for mRevisionsToRestore
+         * 
+         * @param paramRevisionsToRestore
+         *            to be set
+         */
+        public void setRevisionsToRestore(int paramRevisionsToRestore) {
+            this.mRevisionsToRestore = paramRevisionsToRestore;
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    public final String toString() {
-        return new StringBuilder(mProps.toString()).toString();
+        /**
+         * Setter for paramBinaryVersion
+         * 
+         * @param paramBinaryVersion
+         *            to be set
+         */
+        public void setBinaryVersion(String paramBinaryVersion) {
+            this.mBinaryVersion = paramBinaryVersion;
+        }
+
+        public DatabaseConfiguration build() {
+            return new DatabaseConfiguration(this);
+        }
     }
 
 }

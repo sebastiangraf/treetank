@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -30,7 +30,6 @@ package org.treetank.service.xml.xpath.filter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -50,100 +49,96 @@ import org.treetank.utils.DocumentCreater;
  */
 public class PredicateFilterAxisTest {
 
+    private AbsAxisTest.Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testPredicates() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
 
         // Find descendants starting from nodeKey 0L (root).
-        rtx.moveToDocumentRoot();
+        holder.rtx.moveToDocumentRoot();
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "/p:a[@i]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "/p:a[@i]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a/b[@p:x]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a/b[@p:x]"), new long[] {
             9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[text()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[text()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[element()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[element()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[node()/text()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[node()/text()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[./node()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[./node()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[./node()/node()/node()]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[./node()/node()/node()]"),
+            new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[//element()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[//element()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[/text()]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[/text()]"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3<4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[3<4]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[13>=4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[13>=4]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[13.0>=4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[13.0>=4]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[4 = 4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[4 = 4]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3=4]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[3=4]"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[3.2 = 3.22]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "p:a[3.2 = 3.22]"), new long[] {});
 
-        rtx.moveTo(1L);
+        holder.rtx.moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::b[child::c]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "child::b[child::c]"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::*[text() or c]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "child::*[text() or c]"), new long[] {
             5l, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::*[text() or c], /node(), //c"), new long[] {
-            5l, 9L, 1L, 7L, 11L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "child::*[text() or c], /node(), //c"),
+            new long[] {
+                5l, 9L, 1L, 7L, 11L
+            });
 
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
     }
 
 }

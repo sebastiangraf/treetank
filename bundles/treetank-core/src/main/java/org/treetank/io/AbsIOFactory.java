@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,6 +27,7 @@
 
 package org.treetank.io;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,7 +36,6 @@ import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyFactory;
 import org.treetank.io.file.FileFactory;
-import org.treetank.settings.EDatabaseSetting;
 
 /**
  * Abstract Factory to build up a concrete storage for the data. The Abstract
@@ -53,6 +53,9 @@ public abstract class AbsIOFactory {
         /** Berkeley Storage. */
         Berkeley
     }
+
+    /** Folder to store the data */
+    public final File mFile;
 
     /**
      * Concurrent storage for all avaliable databases in runtime.
@@ -79,9 +82,11 @@ public abstract class AbsIOFactory {
      * @param paramDatabase
      *            to be set
      */
-    protected AbsIOFactory(final DatabaseConfiguration paramDatabase, final SessionConfiguration paramSession) {
+    protected AbsIOFactory(final File paramFile, final DatabaseConfiguration paramDatabase,
+        final SessionConfiguration paramSession) {
         mSessionConfig = paramSession;
         mDatabaseConfig = paramDatabase;
+        this.mFile = paramFile;
     }
 
     /**
@@ -121,8 +126,29 @@ public abstract class AbsIOFactory {
      */
     protected abstract void closeConcreteStorage() throws TTIOException;
 
+    public static final void registerInstance(final File paramFile,
+        final DatabaseConfiguration paramDatabaseConf, final SessionConfiguration paramSessionConf)
+        throws TTIOException {
+        AbsIOFactory fac = null;
+        if (!FACTORIES.containsKey(paramSessionConf)) {
+            final AbsIOFactory.StorageType storageType = paramDatabaseConf.mType;
+            switch (storageType) {
+            case File:
+                fac = new FileFactory(paramFile, paramDatabaseConf, paramSessionConf);
+                break;
+            case Berkeley:
+                fac = new BerkeleyFactory(paramFile, paramDatabaseConf, paramSessionConf);
+                break;
+            default:
+                throw new TTIOException("Type", storageType.toString(), "not valid!");
+            }
+            FACTORIES.put(paramSessionConf, fac);
+        }
+    }
+
     /**
      * Getting an AbstractIOFactory instance.
+     * !!!MUST CALL REGISTERINSTANCE BEFOREHAND!!!!
      * 
      * @param paramDatabaseConf
      *            with settings for the storage.
@@ -132,37 +158,9 @@ public abstract class AbsIOFactory {
      *             If error
      * @return an instance of this factory based on the kind in the conf
      */
-    public static final AbsIOFactory getInstance(final DatabaseConfiguration paramDatabaseConf,
-        final SessionConfiguration paramSessionConf) throws TTIOException {
-        AbsIOFactory fac = null;
-        if (FACTORIES.containsKey(paramSessionConf)) {
-            fac = FACTORIES.get(paramSessionConf);
-        } else {
-            final AbsIOFactory.StorageType storageType =
-                AbsIOFactory.StorageType.valueOf(paramDatabaseConf.getProps().getProperty(
-                    EDatabaseSetting.STORAGE_TYPE.name()));
-            switch (storageType) {
-            case File:
-                fac = new FileFactory(paramDatabaseConf, paramSessionConf);
-                break;
-            case Berkeley:
-                fac = new BerkeleyFactory(paramDatabaseConf, paramSessionConf);
-                break;
-            default:
-                throw new TTIOException("Type", storageType.toString(), "not valid!");
-            }
-            FACTORIES.put(paramSessionConf, fac);
-        }
-        return fac;
-    }
-
-    /**
-     * Getting of all active {@link AbsIOFactory} and related {@link SessionConfiguration}s.
-     * 
-     * @return a {@link Map} with the {@link SessionConfiguration} and {@link AbsIOFactory} pairs.
-     */
-    public static final Map<SessionConfiguration, AbsIOFactory> getActiveFactories() {
-        return FACTORIES;
+    public static final AbsIOFactory getInstance(final SessionConfiguration paramSessionConf)
+        throws TTIOException {
+        return FACTORIES.get(paramSessionConf);
     }
 
     /**
@@ -180,7 +178,7 @@ public abstract class AbsIOFactory {
         builder.append("factory keys: ").append(FACTORIES.keySet()).append("\n");
         builder.append("DatabaseConfig: ").append(mDatabaseConfig.toString()).append("\n");
         builder.append("SessionConfig: ").append(mSessionConfig.toString()).append("\n");
-//        builder.append("exists: ").append(exists()).append("\n");
+        // builder.append("exists: ").append(exists()).append("\n");
         return builder.toString();
     }
 }

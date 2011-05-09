@@ -30,6 +30,7 @@ package org.treetank.axis;
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -70,7 +71,7 @@ public class ForAxisTest {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -127,7 +128,6 @@ public class ForAxisTest {
         wtx.abort();
         wtx.close();
         session.close();
-        database.close();
     }
 
 }

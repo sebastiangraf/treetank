@@ -64,7 +64,7 @@ public final class OverallTest {
         + File.separator + "auction.xml";
 
     @Before
-    public void setUp() {
+    public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
@@ -73,7 +73,7 @@ public final class OverallTest {
 
         for (int i = 0; i < Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()) * 2; i++) {
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession();
+            final ISession session = database.getSession(new SessionConfiguration());
             final IWriteTransaction wtx = session.beginWriteTransaction();
             if (wtx.moveToFirstChild()) {
                 wtx.remove();
@@ -88,7 +88,6 @@ public final class OverallTest {
 
             wtx.close();
             session.close();
-            database.close();
 
         }
     }
@@ -96,7 +95,7 @@ public final class OverallTest {
     @Test
     public void testJustEverything() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         wtx.insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {

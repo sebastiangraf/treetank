@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,6 +27,8 @@
 
 package org.treetank.cache;
 
+import java.io.File;
+
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -38,7 +40,6 @@ import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.utils.LogWrapper;
 
@@ -86,7 +87,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     /**
      * Constructor. Building up the berkeley db and setting necessary settings.
      * 
-     * @param paramSessionConfig
+     * @param paramFile
      *            the place where the berkeley db is stored.
      * @param paramRevision
      *            revision number, needed to reconstruct the sliding window in
@@ -94,9 +95,9 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceCache(final DatabaseConfiguration paramSessionConfig, final long paramRevision)
+    public BerkeleyPersistenceCache(final File paramFile, final long paramRevision)
         throws TTIOException {
-        super(paramSessionConfig);
+        super(paramFile);
         try {
             /* Create a new, transactional database environment */
             final EnvironmentConfig config = new EnvironmentConfig();

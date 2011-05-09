@@ -33,7 +33,8 @@ import java.util.concurrent.ConcurrentMap;
 
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.Database;
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -337,14 +338,13 @@ public final class XMLSerializer extends AbsSerializer {
         target.delete();
         final FileOutputStream outputStream = new FileOutputStream(target);
 
-        final IDatabase db = Database.openDatabase(new File(args[0]));
-        final ISession session = db.getSession();
+        final IDatabase db = FileDatabase.openDatabase(new File(args[0]));
+        final ISession session = db.getSession(new SessionConfiguration());
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();
         serializer.call();
 
         session.close();
-        db.close();
         outputStream.close();
 
         System.out.println(" done [" + (System.currentTimeMillis() - time) + "ms].");

@@ -43,6 +43,8 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.LoggerFactory;
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.GUI;
@@ -214,13 +216,14 @@ public final class SunburstView extends JScrollPane implements IView {
     public void refreshUpdate() {
         long revision = 0;
         try {
-            final IReadTransaction rtx = mDB.getDatabase().getSession().beginReadTransaction();
+            final IReadTransaction rtx =
+                mDB.getDatabase().getSession(new SessionConfiguration()).beginReadTransaction();
             revision = rtx.getRevisionNumber();
             rtx.close();
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        final File file = mDB.getDatabase().getFile();
+        final File file = ((FileDatabase)mDB.getDatabase()).mFile;
         if (mDB != null) {
             mDB.close();
         }
@@ -325,13 +328,13 @@ public final class SunburstView extends JScrollPane implements IView {
         void refreshUpdate() {
             if (mModel == null || mSunburstGUI == null) {
                 noLoop();
-                
+
                 // Initial.
                 frameRate(30);
 
                 // Create Model.
                 mModel = new SunburstModel(this, mDB);
-                
+
                 // Create GUI.
                 mSunburstGUI = SunburstGUI.getInstance(this, mModel, mDB);
                 mSunburstGUI.mDone = false;
@@ -342,7 +345,7 @@ public final class SunburstView extends JScrollPane implements IView {
                 mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()).setPruning(
                     EPruning.FALSE));
                 loop();
-                
+
             } else {
                 // Database change.
                 mSunburstGUI.mDone = false;

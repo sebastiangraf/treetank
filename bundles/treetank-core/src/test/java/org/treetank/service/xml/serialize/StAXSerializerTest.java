@@ -27,9 +27,6 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
@@ -43,24 +40,25 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.serialize.StAXSerializer;
-import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import org.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Test StAXSerializer.
@@ -83,7 +81,7 @@ public class StAXSerializerTest {
         try {
             // Setup test file.
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession();
+            final ISession session = database.getSession(new SessionConfiguration());
             final IWriteTransaction wtx = session.beginWriteTransaction();
             DocumentCreater.create(wtx);
             wtx.commit();
@@ -206,7 +204,6 @@ public class StAXSerializerTest {
             wtx.close();
             rtx.close();
             session.close();
-            database.close();
         } catch (final XMLStreamException e) {
             fail("XML error while parsing: " + e.getMessage());
         } catch (final AbsTTException e) {

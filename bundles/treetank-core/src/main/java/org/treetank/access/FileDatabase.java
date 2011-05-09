@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,14 +32,13 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.settings.EDatabaseSetting;
+import org.treetank.io.AbsIOFactory;
 import org.treetank.settings.EStoragePaths;
 import org.treetank.utils.LogWrapper;
 
@@ -49,24 +48,17 @@ import org.treetank.utils.LogWrapper;
  * @see IDatabase
  * @author Sebastian Graf, University of Konstanz
  */
-public final class Database implements IDatabase {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(Database.class));
+public final class FileDatabase implements IDatabase {
 
     /** Central repository of all running sessions. */
-    private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
-
-    /** Queue with all session registered. */
-    private ISession mSession;
+    private static final ConcurrentMap<File, FileDatabase> DATABASEMAP =
+        new ConcurrentHashMap<File, FileDatabase>();
 
     /** DatabaseConfiguration with fixed settings. */
-    private DatabaseConfiguration mDatabaseConfiguration;
+    final DatabaseConfiguration mDatabaseConfiguration;
 
-    /** SessionConfiguration with variable settings. */
-    private SessionConfiguration mSessionConfiguration;
+    /** File for storing the DB */
+    public final File mFile;
 
     /**
      * Private constructor.
@@ -78,10 +70,9 @@ public final class Database implements IDatabase {
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    private Database(final DatabaseConfiguration paramDBConf, final SessionConfiguration paramSessionConf)
-        throws AbsTTException {
+    private FileDatabase(final File paramFile, final DatabaseConfiguration paramDBConf) throws AbsTTException {
+        this.mFile = paramFile;
         this.mDatabaseConfiguration = paramDBConf;
-        this.mSessionConfiguration = paramSessionConf;
         this.checkStorage();
     }
 
@@ -90,16 +81,18 @@ public final class Database implements IDatabase {
      * building up the structure and
      * preparing everything for login.
      * 
+     * @param paramFile
+     *            the file where the storage is
      * @param paramConf
      *            which are used for the database
      * @return true of creation is valid, false otherwise
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    public static synchronized boolean createDatabase(final DatabaseConfiguration paramConf)
-        throws TTIOException {
+    public static synchronized boolean createDatabase(final File paramFile,
+        final DatabaseConfiguration paramConf) throws TTIOException {
         try {
-            final File file = paramConf.getFile();
+            final File file = paramFile;
             boolean returnVal = true;
             if (file.exists()) {
                 returnVal = false;
@@ -107,7 +100,7 @@ public final class Database implements IDatabase {
                 returnVal = file.mkdirs();
                 if (returnVal) {
                     for (EStoragePaths paths : EStoragePaths.values()) {
-                        final File toCreate = new File(paramConf.getFile(), paths.getFile().getName());
+                        final File toCreate = new File(file, paths.getFile().getName());
                         if (paths.isFolder()) {
                             returnVal = toCreate.mkdir();
                         } else {
@@ -119,7 +112,6 @@ public final class Database implements IDatabase {
                     }
                 }
             }
-            returnVal = paramConf.serialize();
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
@@ -127,7 +119,6 @@ public final class Database implements IDatabase {
             }
             return returnVal;
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -155,21 +146,6 @@ public final class Database implements IDatabase {
      * is given back.
      * 
      * @param paramFile
-     *            where the database is located
-     * @return {@link IDatabase} instance.
-     * @throws AbsTTException
-     *             if something odd happens
-     */
-    public static synchronized IDatabase openDatabase(final File paramFile) throws AbsTTException {
-        return openDatabase(paramFile, new SessionConfiguration());
-    }
-
-    /**
-     * Open database. A database can be opened only once. Afterwards the
-     * singleton instance bound to the File
-     * is given back.
-     * 
-     * @param paramFile
      *            where the database is located sessionConf a {@link SessionConfiguration} object to set up
      *            the session
      * @param paramSessionConf
@@ -178,18 +154,19 @@ public final class Database implements IDatabase {
      * @throws AbsTTException
      *             if something odd happens
      */
-    public static synchronized IDatabase openDatabase(final File paramFile,
-        final SessionConfiguration paramSessionConf) throws AbsTTException {
-        if (!paramFile.exists() && !createDatabase(new DatabaseConfiguration(paramFile))) {
+    public static synchronized IDatabase openDatabase(final File paramFile) throws AbsTTException {
+        if (!paramFile.exists() && !createDatabase(paramFile, new DatabaseConfiguration.Builder().build())) {
             throw new TTUsageException("DB could not be created at location", paramFile.toString());
         }
-        IDatabase database =
-            DATABASEMAP.putIfAbsent(paramFile, new Database(new DatabaseConfiguration(paramFile),
-                paramSessionConf));
-        if (database == null) {
-            database = DATABASEMAP.get(paramFile);
+        final FileDatabase database =
+            new FileDatabase(paramFile, new DatabaseConfiguration.Builder().build());
+        final FileDatabase returnVal = DATABASEMAP.putIfAbsent(paramFile, database);
+        if (returnVal == null) {
+            return database;
+        } else {
+            return returnVal;
         }
-        return database;
+
     }
 
     /**
@@ -200,46 +177,13 @@ public final class Database implements IDatabase {
      * @throws AbsTTException
      *             if something weird happens while closing
      */
-    public static synchronized void forceCloseDatabase(final File paramFile) throws AbsTTException {
-        final IDatabase database = DATABASEMAP.remove(paramFile);
-        if (database != null) {
-            database.close();
-        }
+    public static synchronized void closeDatabase(final File paramFile) throws AbsTTException {
+        DATABASEMAP.remove(paramFile);
     }
 
-    /**
-     * Closing a database. All {@link ISession} instances within this database
-     * are closed.
-     * 
-     * @throws AbsTTException
-     *             if close is not successful.
-     */
-    public synchronized void close() throws AbsTTException {
-        if (mSession != null) {
-            mSession.close();
-        }
-        if (mDatabaseConfiguration != null) {
-            DATABASEMAP.remove(getFile(), this);
-        }
-        mDatabaseConfiguration = null;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws AbsTTException
-     */
-    @Override
-    public synchronized ISession getSession() throws AbsTTException {
-        if (mSession == null || mSession.isClosed()) {
-            mSession = new Session(this.mDatabaseConfiguration, this.mSessionConfiguration);
-        }
-        return mSession;
-    }
-    
     /** {@inheritDoc} */
     @Override
-    public synchronized DatabaseConfiguration getDatabaseConf() {
+    public DatabaseConfiguration getDatabaseConf() {
         return mDatabaseConfiguration;
     }
 
@@ -247,29 +191,8 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public synchronized File getFile() {
-        if (mDatabaseConfiguration == null) {
-            return null;
-        } else {
-            return mDatabaseConfiguration.getFile();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized int[] getVersion() {
-        final int[] versions =
-            {
-                Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
-                    EDatabaseSetting.VERSION_MAJOR.name())),
-                Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
-                    EDatabaseSetting.VERSION_MINOR.name())),
-                Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
-                    EDatabaseSetting.VERSION_FIX.name()))
-            };
-        return versions;
+    public String getVersion() {
+        return mDatabaseConfiguration.mBinaryVersion;
     }
 
     /**
@@ -291,39 +214,38 @@ public final class Database implements IDatabase {
     }
 
     /**
+     * {@inheritDoc}
+     * 
+     * @throws AbsTTException
+     */
+    @Override
+    public synchronized ISession getSession(final SessionConfiguration paramSessionConfiguration)
+        throws AbsTTException {
+        AbsIOFactory.registerInstance(mFile, mDatabaseConfiguration, paramSessionConfiguration);
+        return new Session(this.mDatabaseConfiguration, paramSessionConfiguration);
+    }
+
+    /**
      * Checking if storage is valid.
      * 
      * @throws TTUsageException
      *             if storage is not valid
      */
     private void checkStorage() throws TTUsageException {
-        final int compareStructure = EStoragePaths.compareStructure(getFile());
+        final int compareStructure = EStoragePaths.compareStructure(mFile);
         if (compareStructure != 0) {
             throw new TTUsageException("Storage has no valid storage structure."
                 + " Compared to the specification, storage has", Integer.toString(compareStructure),
                 "elements!");
         }
-        final int[] versions =
-            {
-                Integer.parseInt(EDatabaseSetting.VERSION_MAJOR.getStandardProperty()),
-                Integer.parseInt(EDatabaseSetting.VERSION_MINOR.getStandardProperty()),
-                Integer.parseInt(EDatabaseSetting.VERSION_FIX.getStandardProperty())
-            };
-        final int[] storedVersions = getVersion();
-        if (storedVersions[0] < versions[0]) {
-            throw new TTUsageException("Version Major expected:", Integer.toString(storedVersions[0]),
-                "but was", Integer.toString(versions[0]));
-        } else {
-            if (storedVersions[1] < versions[1]) {
-                throw new TTUsageException("Version Minor expected:", Integer
-                    .toString(storedVersions[1]), "but was", Integer.toString(versions[1]));
-            } else {
-                if (storedVersions[2] < versions[2]) {
-                    throw new TTUsageException("Version Fix expected:", Integer
-                        .toString(storedVersions[2]), "but was", Integer.toString(versions[2]));
-                }
-            }
+        final String version = DatabaseConfiguration.Builder.BINARY;
+
+        final String storedVersions = getVersion();
+        if (!version.equals(storedVersions)) {
+            throw new TTUsageException("Versions Differ, Expected Version:", version, "but was",
+                storedVersions);
         }
 
     }
+
 }

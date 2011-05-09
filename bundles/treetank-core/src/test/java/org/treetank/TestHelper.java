@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,26 +27,22 @@
 
 package org.treetank;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
-import org.treetank.access.Database;
 import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.FileDatabase;
 import org.treetank.access.Session;
-import org.treetank.access.WriteTransaction;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.AbsIOFactory.StorageType;
@@ -58,8 +54,14 @@ import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 import org.treetank.page.NodePage;
 import org.treetank.settings.ECharsForSerializing;
-import org.treetank.settings.EDatabaseSetting;
 import org.treetank.settings.ERevisioning;
+import org.treetank.utils.DocumentCreater;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * 
@@ -106,11 +108,15 @@ public final class TestHelper {
     @Ignore
     public static final IDatabase getDatabase(final File file) {
         final DatabaseConfiguration config = configs.get(file);
+        final DatabaseConfiguration tempConfig = new DatabaseConfiguration.Builder().build();
         try {
-            if (config != null) {
-                Database.createDatabase(config);
+            if (!file.exists() && config == null) {
+                FileDatabase.createDatabase(file, tempConfig);
+                if (config == null) {
+                    configs.put(file, tempConfig);
+                }
             }
-            return Database.openDatabase(file);
+            return FileDatabase.openDatabase(file);
         } catch (final AbsTTException exc) {
             fail(exc.toString());
             return null;
@@ -120,9 +126,9 @@ public final class TestHelper {
     @Ignore
     public static final void setDB(final File file, final String hashKind) throws TTUsageException {
 
-        final Properties props = new Properties();
-        props.put(EDatabaseSetting.HASHKIND_TYPE.name(), hashKind);
-        final DatabaseConfiguration config = new DatabaseConfiguration(file, props);
+        final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
+        builder.setHashKind(HashKind.valueOf(hashKind));
+        final DatabaseConfiguration config = builder.build();
         configs.put(file, config);
     }
 
@@ -130,22 +136,25 @@ public final class TestHelper {
     public static final void setDB(final StorageType storageKind, final ERevisioning revisionKind,
         final int revisions, final File file, final HashKind hashKind) throws TTUsageException {
 
-        final Properties props = new Properties();
-        props.put(EDatabaseSetting.STORAGE_TYPE.name(), storageKind);
-        props.put(EDatabaseSetting.REVISION_TYPE.name(), revisionKind);
-        props.put(EDatabaseSetting.REVISION_TO_RESTORE.name(), revisions);
-        props.put(EDatabaseSetting.HASHKIND_TYPE, hashKind);
-        final DatabaseConfiguration config = new DatabaseConfiguration(file, props);
+        final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
+        builder.setType(storageKind);
+        builder.setHashKind(hashKind);
+        builder.setRevision(revisionKind);
+        builder.setRevisionsToRestore(revisions);
+
+        final DatabaseConfiguration config = builder.build();
         configs.put(file, config);
     }
 
     @Ignore
-    public static final void deleteEverything() {
+    public static final void deleteEverything() throws AbsTTException {
         if (PATHS.PATH1.getFile().exists()) {
-            assertTrue(Database.truncateDatabase(PATHS.PATH1.getFile()));
+            FileDatabase.closeDatabase(PATHS.PATH1.getFile());
+            assertTrue(FileDatabase.truncateDatabase(PATHS.PATH1.getFile()));
         }
         if (PATHS.PATH2.getFile().exists()) {
-            assertTrue(Database.truncateDatabase(PATHS.PATH2.getFile()));
+            FileDatabase.closeDatabase(PATHS.PATH2.getFile());
+            assertTrue(FileDatabase.truncateDatabase(PATHS.PATH2.getFile()));
         }
 
         configs.clear();
@@ -155,8 +164,8 @@ public final class TestHelper {
     @Ignore
     public static final void closeEverything() {
         try {
-            Database.forceCloseDatabase(PATHS.PATH1.getFile());
-            Database.forceCloseDatabase(PATHS.PATH2.getFile());
+            FileDatabase.closeDatabase(PATHS.PATH1.getFile());
+            FileDatabase.closeDatabase(PATHS.PATH2.getFile());
         } catch (final AbsTTException exc) {
             fail(exc.toString());
         }
@@ -237,4 +246,14 @@ public final class TestHelper {
         return sBuilder;
     }
 
+    public static void createTestDocument() throws AbsTTException {
+        // Build simple test tree.
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
+        session.close();
+    }
 }

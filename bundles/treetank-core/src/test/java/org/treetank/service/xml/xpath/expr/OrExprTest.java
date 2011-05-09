@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,21 +27,13 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathError;
-import org.treetank.service.xml.xpath.expr.LiteralExpr;
-import org.treetank.service.xml.xpath.expr.OrExpr;
-import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.TypedValue;
 
 import org.junit.After;
@@ -58,109 +50,94 @@ import static org.junit.Assert.fail;
  */
 public class OrExprTest {
 
+    private AbsAxisTest.Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
-
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testOr() throws AbsTTException {
 
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        IReadTransaction rtx = session.beginReadTransaction();
+        long iTrue = holder.rtx.getItemList().addItem(new AtomicValue(true));
+        long iFalse = holder.rtx.getItemList().addItem(new AtomicValue(false));
 
-        long iTrue = rtx.getItemList().addItem(new AtomicValue(true));
-        long iFalse = rtx.getItemList().addItem(new AtomicValue(false));
+        AbsAxis trueLit1 = new LiteralExpr(holder.rtx, iTrue);
+        AbsAxis trueLit2 = new LiteralExpr(holder.rtx, iTrue);
+        AbsAxis falseLit1 = new LiteralExpr(holder.rtx, iFalse);
+        AbsAxis falseLit2 = new LiteralExpr(holder.rtx, iFalse);
 
-        AbsAxis trueLit1 = new LiteralExpr(rtx, iTrue);
-        AbsAxis trueLit2 = new LiteralExpr(rtx, iTrue);
-        AbsAxis falseLit1 = new LiteralExpr(rtx, iFalse);
-        AbsAxis falseLit2 = new LiteralExpr(rtx, iFalse);
-
-        AbsAxis axis1 = new OrExpr(rtx, trueLit1, trueLit2);
+        AbsAxis axis1 = new OrExpr(holder.rtx, trueLit1, trueLit2);
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        AbsAxis axis2 = new OrExpr(rtx, trueLit1, falseLit1);
+        AbsAxis axis2 = new OrExpr(holder.rtx, trueLit1, falseLit1);
         assertEquals(true, axis2.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
         assertEquals(false, axis2.hasNext());
 
-        AbsAxis axis3 = new OrExpr(rtx, falseLit1, trueLit1);
+        AbsAxis axis3 = new OrExpr(holder.rtx, falseLit1, trueLit1);
         assertEquals(true, axis3.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
         assertEquals(false, axis3.hasNext());
 
-        AbsAxis axis4 = new OrExpr(rtx, falseLit1, falseLit2);
+        AbsAxis axis4 = new OrExpr(holder.rtx, falseLit1, falseLit2);
         assertEquals(true, axis4.hasNext());
-        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+        assertEquals(false, Boolean
+            .parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
         assertEquals(false, axis4.hasNext());
-
-        rtx.close();
-        session.close();
-        database.close();
     }
 
     @Test
     public void testOrQuery() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
 
-        rtx.moveTo(1L);
+        holder.rtx.moveTo(1L);
 
-        final AbsAxis axis1 = new XPathAxis(rtx, "text() or node()");
+        final AbsAxis axis1 = new XPathAxis(holder.rtx, "text() or node()");
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new XPathAxis(rtx, "comment() or node()");
+        final AbsAxis axis2 = new XPathAxis(holder.rtx, "comment() or node()");
         assertEquals(true, axis2.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
         assertEquals(false, axis2.hasNext());
 
-        final AbsAxis axis3 = new XPathAxis(rtx, "1 eq 1 or 2 eq 2");
+        final AbsAxis axis3 = new XPathAxis(holder.rtx, "1 eq 1 or 2 eq 2");
         assertEquals(true, axis3.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
         assertEquals(false, axis3.hasNext());
 
-        final AbsAxis axis4 = new XPathAxis(rtx, "1 eq 1 or 2 eq 3");
+        final AbsAxis axis4 = new XPathAxis(holder.rtx, "1 eq 1 or 2 eq 3");
         assertEquals(true, axis4.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
         assertEquals(false, axis4.hasNext());
 
-        final AbsAxis axis5 = new XPathAxis(rtx, "1 eq 2 or (3 idiv 0 = 1)");
+        final AbsAxis axis5 = new XPathAxis(holder.rtx, "1 eq 2 or (3 idiv 0 = 1)");
         try {
             assertEquals(true, axis5.hasNext());
-            assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
+            assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode()
+                .getRawValue()))));
             assertEquals(false, axis5.hasNext());
             fail("Exprected XPathError");
         } catch (XPathError e) {
             assertEquals("err:FOAR0001: Division by zero.", e.getMessage());
         }
 
-        final AbsAxis axis6 = new XPathAxis(rtx, "1 eq 1 or (3 idiv 0 = 1)");
+        final AbsAxis axis6 = new XPathAxis(holder.rtx, "1 eq 1 or (3 idiv 0 = 1)");
         assertEquals(true, axis6.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
-
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
 
     }
-
 }
