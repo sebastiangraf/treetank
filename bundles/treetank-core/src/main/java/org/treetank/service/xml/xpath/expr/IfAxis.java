@@ -124,15 +124,4 @@ public class IfAxis extends AbsAxis {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void setTransaction(final IReadTransaction rtx) {
-        super.setTransaction(rtx);
-        mIf.setTransaction(rtx);
-        mElse.setTransaction(rtx);
-        mThen.setTransaction(rtx);
-    }
-
 }

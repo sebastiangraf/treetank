@@ -36,13 +36,16 @@ import org.treetank.TestHelper;
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
 import org.treetank.utils.DocumentCreater;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -56,31 +59,34 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     /**
      * Treetank database on Treetank test document {@link IDatabase}.
      */
-    private static transient IDatabase databaseTest;
+    private transient Holder mHolder;
 
     @Override
-    @BeforeClass
+    @Before
     public void setUp() throws AbsTTException {
         FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        databaseTest = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx =
-            databaseTest.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IDatabase databaseTest = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        final ISession session = databaseTest.getSession(new SessionConfiguration());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
-
+        session.close();
         XMLUnit.setIgnoreWhitespace(true);
+        mHolder = AbsAxisTest.generateHolder();
     }
 
-    @Override
-    @AfterClass
+    @After
     public void tearDown() throws AbsTTException {
+        mHolder.rtx.close();
+        mHolder.session.close();
         FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test
     public void testB1() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[1]", databaseTest).call();
+        final XPathSelector selector = new XPathEvaluator("//b[1]", mHolder.session).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -94,7 +100,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testB1String() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[1]/text()", databaseTest).call();
+        final XPathSelector selector = new XPathEvaluator("//b[1]/text()", mHolder.session).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -107,7 +113,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testB2() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[2]", databaseTest).call();
+        final XPathSelector selector = new XPathEvaluator("//b[2]", mHolder.session).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -121,7 +127,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testB2Text() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[2]/text()", databaseTest).call();
+        final XPathSelector selector = new XPathEvaluator("//b[2]/text()", mHolder.session).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -134,7 +140,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testB() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b", databaseTest).call();
+        final XPathSelector selector = new XPathEvaluator("//b", mHolder.session).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -151,7 +157,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testCountB() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("count(//b)", databaseTest).call();
+        final XPathSelector selector = new XPathEvaluator("count(//b)", mHolder.session).call();
 
         final StringBuilder sb = new StringBuilder();
 

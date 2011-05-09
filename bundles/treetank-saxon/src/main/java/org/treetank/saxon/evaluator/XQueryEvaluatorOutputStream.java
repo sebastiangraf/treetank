@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.util.concurrent.Callable;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -40,6 +41,7 @@ import net.sf.saxon.s9api.XQueryExecutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 import org.treetank.saxon.wrapper.NodeWrapper;
 
@@ -63,7 +65,7 @@ public final class XQueryEvaluatorOutputStream implements Callable<Void> {
     private final transient String mExpression;
 
     /** Treetank database. */
-    private final transient IDatabase mDatabase;
+    private final transient ISession mSession;
 
     /** Output Stream. */
     private final transient OutputStream mOut;
@@ -76,14 +78,14 @@ public final class XQueryEvaluatorOutputStream implements Callable<Void> {
      * 
      * @param paramExpression
      *            XQuery expression.
-     * @param paramDatabase
+     * @param paramSession
      *            Treetank database.
      * @param paramOut
      *            Output Stream.
      */
-    public XQueryEvaluatorOutputStream(final String paramExpression, final IDatabase paramDatabase,
+    public XQueryEvaluatorOutputStream(final String paramExpression, final ISession paramSession,
         final OutputStream paramOut) {
-        this(paramExpression, paramDatabase, paramOut, null);
+        this(paramExpression, paramSession, paramOut, null);
     }
 
     /**
@@ -91,17 +93,17 @@ public final class XQueryEvaluatorOutputStream implements Callable<Void> {
      * 
      * @param paramExpression
      *            XQuery expression.
-     * @param paramDatabase
+     * @param paramSession
      *            Treetank database
      * @param paramOut
      *            Output Stream.
      * @param paramSerializer
      *            Serializer, for which one can specify output properties
      */
-    public XQueryEvaluatorOutputStream(final String paramExpression, final IDatabase paramDatabase,
+    public XQueryEvaluatorOutputStream(final String paramExpression, final ISession paramSession,
         final OutputStream paramOut, final Serializer paramSerializer) {
         mExpression = paramExpression;
-        mDatabase = paramDatabase;
+        mSession = paramSession;
         mOut = paramOut;
         mSerializer = paramSerializer;
     }
@@ -114,7 +116,7 @@ public final class XQueryEvaluatorOutputStream implements Callable<Void> {
         try {
             final Processor proc = new Processor(false);
             final Configuration config = proc.getUnderlyingConfiguration();
-            final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(mDatabase, config).wrap();
+            final NodeInfo doc = new DocumentWrapper(mSession, config);
             final XQueryCompiler comp = proc.newXQueryCompiler();
             final XQueryExecutable exp = comp.compile(mExpression);
 

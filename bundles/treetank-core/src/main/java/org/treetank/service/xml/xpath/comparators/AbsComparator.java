@@ -241,14 +241,5 @@ public abstract class AbsComparator extends AbsAxis  {
         throw new IllegalStateException(paramVal + " is not a valid comparison.");
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void setTransaction(final IReadTransaction rtx) {
-      super.setTransaction(rtx);
-      mOperand1.setTransaction(rtx);
-      mOperand2.setTransaction(rtx);
-    }
 
 }

@@ -126,14 +126,5 @@ public class ForAxis extends AbsAxis {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void setTransaction(final IReadTransaction rtx) {
-        super.setTransaction(rtx);
-        mRange.setTransaction(rtx);
-        mReturn.setTransaction(rtx);
-    }
 
 }

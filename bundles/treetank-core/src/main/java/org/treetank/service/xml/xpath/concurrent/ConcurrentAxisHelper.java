@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -56,12 +56,6 @@ import org.treetank.settings.EFixed;
  */
 public class ConcurrentAxisHelper implements Runnable {
 
-    /**
-     * Additional transaction to operate on parallel to the original
-     * transaction.
-     */
-    private final IReadTransaction mRTX;
-
     /** Axis that computes the results. */
     private final AbsAxis mAxis;
 
@@ -77,7 +71,6 @@ public class ConcurrentAxisHelper implements Runnable {
      * hasNext().
      */
     private final boolean callNext;
-    
 
     /**
      * Bind axis step to transaction.
@@ -89,9 +82,7 @@ public class ConcurrentAxisHelper implements Runnable {
      */
     public ConcurrentAxisHelper(final IReadTransaction rtx, final AbsAxis axis,
         final BlockingQueue<Long> results) {
-        mRTX = new ReadTransaction((ReadTransaction)rtx);
         mAxis = axis;
-        mAxis.setTransaction(mRTX);
         mResults = results;
         callNext =
             !(mAxis instanceof UnionAxis || mAxis instanceof ExceptAxis
@@ -110,7 +101,7 @@ public class ConcurrentAxisHelper implements Runnable {
             }
             try {
                 // store result in queue as soon as there is space left
-               //System.out.println("put: " + mAxis.getTransaction().getNode().getNodeKey());
+                // System.out.println("put: " + mAxis.getTransaction().getNode().getNodeKey());
                 mResults.put(mAxis.getTransaction().getNode().getNodeKey());
                 // wait until next thread arrives and exchange blocking queue
             } catch (final InterruptedException mExp) {

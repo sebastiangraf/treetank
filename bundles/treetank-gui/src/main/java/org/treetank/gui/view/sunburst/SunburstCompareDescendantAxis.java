@@ -57,8 +57,8 @@ import processing.core.PConstants;
 public final class SunburstCompareDescendantAxis extends AbsAxis {
 
     /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(
-        LoggerFactory.getLogger(SunburstCompareDescendantAxis.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(SunburstCompareDescendantAxis.class));
 
     /** Current diff value. */
     private transient EDiff mCurrDiff;
@@ -261,7 +261,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
                 if (mMoved == EMoved.ANCHESTSIBL) {
                     if (mLastDiffCont.getDepth().getNewDepth() - mInitDepth > mDiffCont.getDepth()
-                        .getOldDepth() - mInitDepth
+                        .getOldDepth()
+                        - mInitDepth
                         && tmpDepth > mDiffCont.getDepth().getOldDepth()) {
                         // Must be done on the transaction which is bound to the new revision.
                         final long currNodeKey = getTransaction().getNode().getNodeKey();
@@ -269,8 +270,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         do {
                             if (((AbsStructNode)getTransaction().getNode()).hasParent()
                                 && mLastDiffCont.getDepth().getNewDepth() - mInitDepth > mDiffCont.getDepth()
-                                    .getOldDepth() - mInitDepth
-                                && tmpDepth > mDiffCont.getDepth().getOldDepth()) {
+                                    .getOldDepth()
+                                    - mInitDepth && tmpDepth > mDiffCont.getDepth().getOldDepth()) {
                                 if (first) {
                                     // Do not pop from stack if it's a leaf node.
                                     first = false;
@@ -295,8 +296,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         mAngle += mExtension;
                     }
                 }
-
-                setTransaction(mOldRtx);
+                // TODO FIX ME
+                // setTransaction(mOldRtx);
                 mTempNextKey = mNextKey;
                 mTempRightSiblingKeyStack = mRightSiblingKeyStack;
                 mRightSiblingKeyStack = new FastStack<Long>();
@@ -354,7 +355,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                     } while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling());
                 }
 
-                setTransaction(mNewRtx);
+                // TODO FIX ME!!
+                // setTransaction(mNewRtx);
             } else if (mDiff == EDiff.DELETED) {
                 mNextKey = mDiffCont.getOldNode().getNodeKey();
 

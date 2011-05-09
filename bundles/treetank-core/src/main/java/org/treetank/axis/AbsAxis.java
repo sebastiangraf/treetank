@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -53,7 +53,7 @@ import org.treetank.exception.TTXPathException;
 public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<Long> {
 
     /** Iterate over transaction exclusive to this step. */
-    private IReadTransaction mRTX;
+    public final IReadTransaction mRTX;
 
     /** Key of last found node. */
     private long mKey;
@@ -66,13 +66,7 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
 
     /** Include self? */
     private final boolean mIncludeSelf;
-    
-    /** Size of thread pool for executor service. */
-    private static int THREADPOOLSIZE = 2;
-    
-    /** Executor Service holding the execution plan for future tasks. */
-    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(THREADPOOLSIZE);
-   
+
     /**
      * Bind axis step to transaction.
      * 
@@ -131,7 +125,9 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
 
     /**
      * Resetting the nodekey of this axis to a given nodekey
-     * @param paramNodeKey the nodekey where the reset should occur to.
+     * 
+     * @param paramNodeKey
+     *            the nodekey where the reset should occur to.
      */
     public void reset(final long paramNodeKey) {
         mStartKey = paramNodeKey;
@@ -201,16 +197,6 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     public abstract boolean hasNext();
 
     /**
-     * Resets the transaction.
-     * 
-     * @param rtx
-     *            read transaction which is bound to transaction.
-     */
-    public synchronized void setTransaction(final IReadTransaction rtx) {
-        mRTX = rtx;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -219,5 +205,7 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
             next();
         }
     }
+    
+    
 
 }

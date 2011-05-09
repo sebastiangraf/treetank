@@ -37,8 +37,6 @@ import java.io.OutputStream;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.transform.stream.StreamSource;
 
-import com.sleepycat.je.Database;
-
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -55,7 +53,10 @@ import org.treetank.TestHelper;
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XSLTEvaluator;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -82,20 +83,22 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     private static final File BOOKS = new File("src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "data" + File.separator + "books.xml");
 
-    /** Treetank database on Treetank test document. */
-    private static transient IDatabase databaseBooks;
+    private Holder mHolder;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
-        databaseBooks = FileDatabase.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        final IWriteTransaction mWTX =
-            databaseBooks.getSession(new SessionConfiguration()).beginWriteTransaction();
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IDatabase databaseBooks = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        final ISession session = databaseBooks.getSession(new SessionConfiguration());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKS);
-        final XMLShredder shredder = new XMLShredder(mWTX, reader, EShredderInsert.ADDASFIRSTCHILD);
+        final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
-        mWTX.close();
+        wtx.close();
+        session.close();
+        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        mHolder = AbsAxisTest.generateHolder();
 
         saxonTransform(BOOKS, STYLESHEET);
 
@@ -105,14 +108,16 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     @Override
     @After
     public void tearDown() throws AbsTTException {
+        mHolder.rtx.close();
+        mHolder.session.close();
         FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH2.getFile());
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test
     public void testWithoutSerializer() throws Exception {
         final OutputStream out =
-            new XSLTEvaluator(databaseBooks, STYLESHEET, new ByteArrayOutputStream()).call();
+            new XSLTEvaluator(mHolder.session, STYLESHEET, new ByteArrayOutputStream()).call();
 
         final StringBuilder sBuilder = readFile();
 
@@ -129,7 +134,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
 
         final OutputStream out =
-            new XSLTEvaluator(databaseBooks, STYLESHEET, new ByteArrayOutputStream(), serializer).call();
+            new XSLTEvaluator(mHolder.session, STYLESHEET, new ByteArrayOutputStream(), serializer).call();
 
         final StringBuilder sBuilder = readFile();
 
