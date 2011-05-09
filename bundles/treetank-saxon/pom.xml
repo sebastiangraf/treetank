@@ -72,9 +72,9 @@
 	</repositories>
 	
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.2</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.2</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.2</url>
 	</scm>
 	<dependencies>
 		<dependency>
