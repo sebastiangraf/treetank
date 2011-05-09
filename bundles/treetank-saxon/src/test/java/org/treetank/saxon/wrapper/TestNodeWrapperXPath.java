@@ -41,20 +41,19 @@ import javax.xml.xpath.XPathFactoryConfigurationException;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
 import org.treetank.TestHelper;
 import org.treetank.access.FileDatabase;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
-import org.treetank.utils.DocumentCreater;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,8 +69,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public final class TestNodeWrapperXPath {
 
-    /** TreeTank session. */
-    private static transient IDatabase database;
+    private Holder mHolder;
 
     /** XPath expression. */
     private static transient XPath xpe;
@@ -82,11 +80,8 @@ public final class TestNodeWrapperXPath {
     @Before
     public void setUp() throws AbsTTException, XPathFactoryConfigurationException {
         FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        database = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
+        TestHelper.createTestDocument();
+        mHolder = AbsAxisTest.generateHolder();
 
         // Saxon setup.
         System.setProperty("javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON,
@@ -97,9 +92,13 @@ public final class TestNodeWrapperXPath {
         config = ((XPathFactoryImpl)xpf).getConfiguration();
     }
 
-    @AfterClass
-    public static void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
+        mHolder.rtx.close();
+        mHolder.session.close();
         FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+
     }
 
     /**
@@ -162,19 +161,16 @@ public final class TestNodeWrapperXPath {
                 for (int j = 0; j < test.size(); j++) {
                     final IItem item = test.get(j);
 
-                    final IReadTransaction rtx =
-                        database.getSession(new SessionConfiguration()).beginReadTransaction();
-                    rtx.moveTo(item.getNodeKey());
+                    mHolder.rtx.moveTo(item.getNodeKey());
 
-                    final QName qName = rtx.getQNameOfCurrentNode();
+                    final QName qName = mHolder.rtx.getQNameOfCurrentNode();
 
-                    if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                    if (mHolder.rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
                         assertEquals(expRes[j], qName.getPrefix() + ":" + qName.getLocalPart());
-                    } else if (rtx.getNode().getKind() == ENodes.TEXT_KIND) {
-                        assertEquals(expRes[j], rtx.getValueOfCurrentNode());
+                    } else if (mHolder.rtx.getNode().getKind() == ENodes.TEXT_KIND) {
+                        assertEquals(expRes[j], mHolder.rtx.getValueOfCurrentNode());
                     }
 
-                    rtx.close();
                 }
             } else {
                 assertEquals(expectedResults[i], result[i]);
@@ -191,7 +187,7 @@ public final class TestNodeWrapperXPath {
                 "//b[2]/text()", "//p:a/text()"
             };
 
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         final Object[] expectedResults = {
             2D, 1D, "j", "", "foo",
@@ -223,7 +219,7 @@ public final class TestNodeWrapperXPath {
     public void testElementBCount() throws Exception {
 
         final XPathExpression findLine = xpe.compile("count(//b)");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final double result = Double.parseDouble(findLine.evaluate(doc, XPathConstants.NUMBER).toString());
@@ -235,7 +231,7 @@ public final class TestNodeWrapperXPath {
     public void testElementACount() throws Exception {
 
         final XPathExpression findLine = xpe.compile("count(//a)");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final double result = Double.parseDouble(findLine.evaluate(doc, XPathConstants.NUMBER).toString());
@@ -247,7 +243,7 @@ public final class TestNodeWrapperXPath {
     public void testNamespaceElementCount() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("count(//p:a)");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final double result = Double.parseDouble(findLine.evaluate(doc, XPathConstants.NUMBER).toString());
@@ -259,7 +255,7 @@ public final class TestNodeWrapperXPath {
     public void testAttributeCount() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("count(//p:a/@i)");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final double result = Double.parseDouble(findLine.evaluate(doc, XPathConstants.NUMBER).toString());
@@ -271,7 +267,7 @@ public final class TestNodeWrapperXPath {
     public void testNamespaceAttributeCount() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("count(//p:a/@p:i)");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final double result = Double.parseDouble(findLine.evaluate(doc, XPathConstants.NUMBER).toString());
@@ -284,7 +280,7 @@ public final class TestNodeWrapperXPath {
     public void testAttributeValue() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//p:a/@i");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = findLine.evaluate(doc, XPathConstants.STRING).toString();
@@ -297,7 +293,7 @@ public final class TestNodeWrapperXPath {
     public void testNamespaceAttributeValue() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//p:a/@p:i");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = findLine.evaluate(doc, XPathConstants.STRING).toString();
@@ -309,7 +305,7 @@ public final class TestNodeWrapperXPath {
     @Test
     public void testText() throws Exception {
         final XPathExpression findLine = xpe.compile("//b[1]/text()");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = (String)findLine.evaluate(doc, XPathConstants.STRING);
@@ -322,7 +318,7 @@ public final class TestNodeWrapperXPath {
     public void testText1() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//p:a[1]/text()[1]");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = (String)findLine.evaluate(doc, XPathConstants.STRING);
@@ -335,7 +331,7 @@ public final class TestNodeWrapperXPath {
     public void testDefaultNamespaceText1() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//p:a/text()[1]");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = (String)findLine.evaluate(doc, XPathConstants.STRING);
@@ -348,7 +344,7 @@ public final class TestNodeWrapperXPath {
     public void testDefaultNamespaceText2() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//p:a/text()[2]");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = (String)findLine.evaluate(doc, XPathConstants.STRING);
@@ -361,7 +357,7 @@ public final class TestNodeWrapperXPath {
     public void testDefaultNamespaceText3() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//p:a/text()[3]");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = (String)findLine.evaluate(doc, XPathConstants.STRING);
@@ -375,26 +371,27 @@ public final class TestNodeWrapperXPath {
     public void testDefaultNamespaceTextAll() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//p:a/text()");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final ArrayList<IItem> result = (ArrayList<IItem>)findLine.evaluate(doc, XPathConstants.NODESET);
         assertNotNull(result);
 
-        final IReadTransaction rtx = database.getSession(new SessionConfiguration()).beginReadTransaction();
+        final IReadTransaction rtx = mHolder.session.beginReadTransaction();
         rtx.moveTo(result.get(0).getNodeKey());
         assertEquals("oops1", rtx.getValueOfCurrentNode());
         rtx.moveTo(result.get(1).getNodeKey());
         assertEquals("oops2", rtx.getValueOfCurrentNode());
         rtx.moveTo(result.get(2).getNodeKey());
         assertEquals("oops3", rtx.getValueOfCurrentNode());
+        rtx.close();
     }
 
     @Test
     public void testB1() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//b[1]");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = (String)findLine.evaluate(doc, XPathConstants.STRING);
@@ -407,7 +404,7 @@ public final class TestNodeWrapperXPath {
     public void testB2() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//b[2]");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final String result = (String)findLine.evaluate(doc, XPathConstants.STRING);
@@ -421,7 +418,7 @@ public final class TestNodeWrapperXPath {
     public void testBAll() throws Exception {
         xpe.setNamespaceContext(new DocNamespaceContext());
         final XPathExpression findLine = xpe.compile("//b");
-        final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(database, config).wrap();
+        final NodeInfo doc = new DocumentWrapper(mHolder.session, config);
 
         // Execute XPath.
         final ArrayList<IItem> result = (ArrayList<IItem>)findLine.evaluate(doc, XPathConstants.NODESET);
@@ -430,7 +427,7 @@ public final class TestNodeWrapperXPath {
         assertEquals(5, result.get(0).getNodeKey());
         assertEquals(9, result.get(1).getNodeKey());
 
-        final IReadTransaction rtx = database.getSession(new SessionConfiguration()).beginReadTransaction();
+        final IReadTransaction rtx = mHolder.session.beginReadTransaction();
         rtx.moveTo(result.get(0).getNodeKey());
         assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
 

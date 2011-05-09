@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -42,7 +42,6 @@ import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.settings.EFixed;
 
 import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
-
 
 /**
  * <h1>AbstractOpAxis</h1>
@@ -108,9 +107,11 @@ public abstract class ConcurrentAbsOpAxis extends AbsAxis {
         if (mIsFirst) {
             mIsFirst = false;
 
-            final Future<Integer> itemF1 = ConcurrentAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand1));
+            final Future<Integer> itemF1 =
+                ConcurrentAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand1));
 
-            final Future<Integer> itemF2 = ConcurrentAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand2));
+            final Future<Integer> itemF2 =
+                ConcurrentAxis.EXECUTOR.submit(new Atomize(getTransaction(), mOperand2));
 
             try {
                 Integer item1 = itemF1.get();
@@ -178,13 +179,6 @@ public abstract class ConcurrentAbsOpAxis extends AbsAxis {
      */
     protected abstract Type getReturnType(final int op1, final int op2);
 
-    @Override
-    public void setTransaction(final IReadTransaction rtx) {
-        super.setTransaction(rtx);
-        mOperand1.setTransaction(rtx);
-        mOperand2.setTransaction(rtx);
-    }
-
 }
 
 class Atomize implements Callable<Integer> {
@@ -196,7 +190,6 @@ class Atomize implements Callable<Integer> {
     Atomize(final IReadTransaction rtx, final AbsAxis axis) {
         mRtx = new ReadTransaction((ReadTransaction)rtx);
         mAxis = axis;
-        mAxis.setTransaction(mRtx);
 
     }
 

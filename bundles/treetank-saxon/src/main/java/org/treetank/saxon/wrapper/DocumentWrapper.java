@@ -32,13 +32,24 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.event.Receiver;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.pattern.NodeTest;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.util.FastStringBuffer;
+import net.sf.saxon.value.Value;
 
-import org.treetank.api.IDatabase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 
@@ -52,9 +63,18 @@ import org.treetank.node.ElementNode;
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
+ * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
+public final class DocumentWrapper implements DocumentInfo {
+
+    /**
+     * Log wrapper for better output.
+     */
+    protected static final Logger LOGGER = LoggerFactory.getLogger(DocumentWrapper.class);
+
+    /** Treetank database. */
+    protected transient final ISession mSession;
 
     /** Base URI of the document. */
     protected transient String mBaseURI;
@@ -63,7 +83,12 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
     protected transient Configuration mConfig;
 
     /** Unique document number. */
-    protected static long documentNumber;
+    protected transient long documentNumber;
+
+    /**
+     * Instance to {@link NodeWrapper}-implementation
+     */
+    private final NodeWrapper mNodeWrapper;
 
     /**
      * Wrap a Treetank document.
@@ -72,33 +97,14 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
      *            Treetank database.
      * @param paramConfig
      *            Configuration used.
+     * @throws AbsTTException
      */
-    public DocumentWrapper(final IDatabase paramDatabase, final Configuration paramConfig) {
-        super(paramDatabase, 0);
-        nodeKind = ENodes.ROOT_KIND;
-        mBaseURI = File.separator;
-        mDocWrapper = this;
+    public DocumentWrapper(final ISession paramSession, final Configuration paramConfig)
+        throws AbsTTException {
+        this.mSession = paramSession;
+        mBaseURI = paramSession.toString();
         setConfiguration(paramConfig);
-    }
-
-    /**
-     * Wrap a node in the Treetank document.
-     * 
-     * @return The wrapped Treetank transaction in form of a NodeInfo object.
-     */
-    public NodeInfo wrap() {
-        return makeWrapper(this, 0);
-    }
-
-    /**
-     * Wrap a node in the Treetank document.
-     * 
-     * @param nodeKey
-     *            Node key to start wrapping.
-     * @return The wrapping NodeWrapper object.
-     */
-    public NodeInfo wrap(final long nodeKey) {
-        return makeWrapper(this, nodeKey);
+        mNodeWrapper = new NodeWrapper(this, 0);
     }
 
     /**
@@ -124,34 +130,36 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
      */
     @Override
     public NodeInfo selectID(final String ID, final boolean getParent) {
-        final AbsAxis axis = new DescendantAxis(mRTX, true);
-        while (axis.hasNext()) {
-            if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                final int attCount = ((ElementNode)mRTX.getNode()).getAttributeCount();
+        try {
+            final IReadTransaction rtx = mSession.beginReadTransaction();
+            final AbsAxis axis = new DescendantAxis(rtx, true);
+            while (axis.hasNext()) {
+                if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                    final int attCount = ((ElementNode)rtx.getNode()).getAttributeCount();
 
-                if (attCount > 0) {
-                    final long nodeKey = mRTX.getNode().getNodeKey();
+                    if (attCount > 0) {
+                        final long nodeKey = rtx.getNode().getNodeKey();
 
-                    for (int index = 0; index < attCount; index++) {
-                        mRTX.moveToAttribute(index);
+                        for (int index = 0; index < attCount; index++) {
+                            rtx.moveToAttribute(index);
 
-                        if ("xml:id".equalsIgnoreCase(mRTX.getQNameOfCurrentNode().getLocalPart())
-                            && ID.equals(mRTX.getValueOfCurrentNode())) {
-                            if (getParent) {
-                                mRTX.moveToParent();
-                                return wrap(mRTX.getNode().getNodeKey());
-                            } else {
-                                return wrap(mRTX.getNode().getNodeKey());
+                            if ("xml:id".equalsIgnoreCase(rtx.getQNameOfCurrentNode().getLocalPart())
+                                && ID.equals(rtx.getValueOfCurrentNode())) {
+                                if (getParent) {
+                                    rtx.moveToParent();
+                                }
+                                return new NodeWrapper(this, rtx.getNode().getNodeKey());
                             }
+                            rtx.moveTo(nodeKey);
                         }
-
-                        mRTX.moveTo(nodeKey);
                     }
                 }
+                axis.next();
             }
-            axis.next();
+            rtx.close();
+        } catch (final AbsTTException exc) {
+            LOGGER.error(exc.toString());
         }
-
         return null;
     }
 
@@ -208,7 +216,6 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
      */
     @Override
     public Object getUserData(String arg0) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -217,7 +224,172 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
      */
     @Override
     public void setUserData(String arg0, Object arg1) {
-        // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public Value atomize() throws XPathException {
+        return getNodeWrapper().atomize();
+    }
+
+    @Override
+    public int compareOrder(NodeInfo arg0) {
+        return getNodeWrapper().compareOrder(arg0);
+    }
+
+    @Override
+    public void copy(Receiver arg0, int arg1, int arg2) throws XPathException {
+        getNodeWrapper().copy(arg0, arg1, arg2);
+
+    }
+
+    @Override
+    public void generateId(FastStringBuffer arg0) {
+        getNodeWrapper().generateId(arg0);
+
+    }
+
+    @Override
+    public String getAttributeValue(int arg0) {
+        return getNodeWrapper().getAttributeValue(arg0);
+    }
+
+    @Override
+    public int getColumnNumber() {
+        return getNodeWrapper().getColumnNumber();
+    }
+
+    @Override
+    public int[] getDeclaredNamespaces(int[] arg0) {
+        return getNodeWrapper().getDeclaredNamespaces(arg0);
+    }
+
+    @Override
+    public String getDisplayName() {
+        return getNodeWrapper().getDisplayName();
+    }
+
+    @Override
+    public long getDocumentNumber() {
+        return getNodeWrapper().getDocumentNumber();
+    }
+
+    @Override
+    public DocumentInfo getDocumentRoot() {
+        return getNodeWrapper().getDocumentRoot();
+    }
+
+    @Override
+    public int getFingerprint() {
+        return getNodeWrapper().getFingerprint();
+    }
+
+    @Override
+    public int getLineNumber() {
+        return getNodeWrapper().getLineNumber();
+    }
+
+    @Override
+    public String getLocalPart() {
+        return getNodeWrapper().getLocalPart();
+    }
+
+    @Override
+    public int getNameCode() {
+        return getNodeWrapper().getNameCode();
+    }
+
+    @Override
+    public int getNodeKind() {
+        return getNodeWrapper().getNodeKind();
+    }
+
+    @Override
+    public NodeInfo getParent() {
+        return getNodeWrapper().getParent();
+    }
+
+    @Override
+    public String getPrefix() {
+        return getNodeWrapper().getPrefix();
+    }
+
+    @Override
+    public NodeInfo getRoot() {
+        return getNodeWrapper().getRoot();
+    }
+
+    @Override
+    public String getStringValue() {
+        return getNodeWrapper().getStringValue();
+    }
+
+    @Override
+    public String getSystemId() {
+        return getNodeWrapper().getSystemId();
+    }
+
+    @Override
+    public int getTypeAnnotation() {
+        return getNodeWrapper().getTypeAnnotation();
+    }
+
+    @Override
+    public String getURI() {
+        return getNodeWrapper().getURI();
+    }
+
+    @Override
+    public boolean hasChildNodes() {
+        return getNodeWrapper().hasChildNodes();
+    }
+
+    @Override
+    public boolean isId() {
+        return getNodeWrapper().isId();
+    }
+
+    @Override
+    public boolean isIdref() {
+        return getNodeWrapper().isIdref();
+    }
+
+    @Override
+    public boolean isNilled() {
+        return getNodeWrapper().isNilled();
+    }
+
+    @Override
+    public boolean isSameNodeInfo(NodeInfo arg0) {
+        return getNodeWrapper().isSameNodeInfo(arg0);
+    }
+
+    @Override
+    public AxisIterator iterateAxis(byte arg0) {
+        return getNodeWrapper().iterateAxis(arg0);
+    }
+
+    @Override
+    public AxisIterator iterateAxis(byte arg0, NodeTest arg1) {
+        return getNodeWrapper().iterateAxis(arg0, arg1);
+    }
+
+    @Override
+    public void setSystemId(String arg0) {
+        getNodeWrapper().setSystemId(arg0);
+    }
+
+    @Override
+    public CharSequence getStringValueCS() {
+        return getNodeWrapper().getStringValueCS();
+    }
+
+    @Override
+    public SequenceIterator getTypedValue() throws XPathException {
+        return getNodeWrapper().getTypedValue();
+    }
+
+    public NodeWrapper getNodeWrapper() {
+        return mNodeWrapper;
     }
 }

@@ -38,7 +38,7 @@
 	<parent>
 		<artifactId>pom</artifactId>
 		<groupId>treetank</groupId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.4-SNAPSHOT</version>
 	</parent>
 	<repositories>
 		<repository>

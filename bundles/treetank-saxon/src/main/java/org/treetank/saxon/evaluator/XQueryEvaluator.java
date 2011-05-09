@@ -30,6 +30,7 @@ package org.treetank.saxon.evaluator;
 import java.util.concurrent.Callable;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XQueryCompiler;
@@ -38,7 +39,7 @@ import net.sf.saxon.s9api.XdmValue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 import org.treetank.saxon.wrapper.NodeWrapper;
 
@@ -64,19 +65,19 @@ public final class XQueryEvaluator implements Callable<XdmValue> {
     private final transient String mExpression;
 
     /** Treetank session. */
-    private final transient IDatabase mDatabase;
+    private final transient ISession mSession;
 
     /**
      * Constructor.
      * 
      * @param paramExpression
      *            XQuery expression.
-     * @param paramDatabase
+     * @param paramSession
      *            Treetank database.
      */
-    public XQueryEvaluator(final String paramExpression, final IDatabase paramDatabase) {
+    public XQueryEvaluator(final String paramExpression, final ISession paramSession) {
         mExpression = paramExpression;
-        mDatabase = paramDatabase;
+        mSession = paramSession;
     }
 
     /**
@@ -89,7 +90,7 @@ public final class XQueryEvaluator implements Callable<XdmValue> {
         try {
             final Processor proc = new Processor(false);
             final Configuration config = proc.getUnderlyingConfiguration();
-            final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(mDatabase, config).wrap();
+            final NodeInfo doc = new DocumentWrapper(mSession, config);
             final XQueryCompiler comp = proc.newXQueryCompiler();
             final XQueryExecutable exp = comp.compile(mExpression);
             final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();

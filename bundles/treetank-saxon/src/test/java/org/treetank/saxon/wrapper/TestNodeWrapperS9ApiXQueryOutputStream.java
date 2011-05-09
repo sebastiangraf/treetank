@@ -34,20 +34,19 @@ import java.io.OutputStream;
 
 import javax.xml.stream.XMLEventReader;
 
-import com.sleepycat.je.Database;
-
 import org.treetank.TestHelper;
 import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,38 +61,27 @@ import static org.junit.Assert.assertEquals;
 public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
     /** Treetank database on books document. */
-    private static transient IDatabase databaseBooks;
-
-    /** Path to books file. */
-    private static final File BOOKSXML = new File(new StringBuilder("src").append(File.separator).append(
-        "test").append(File.separator).append("resources").append(File.separator).append("data").append(
-        File.separator).append("my-books.xml").toString());
+    private transient Holder mHolder;
 
     @Before
     public void setUp() throws Exception {
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder()
-            .build());
-
-        databaseBooks = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction mWTX =
-            databaseBooks.getSession(new SessionConfiguration()).beginWriteTransaction();
-        final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
-        final XMLShredder shredder = new XMLShredder(mWTX, reader, EShredderInsert.ADDASFIRSTCHILD);
-        shredder.call();
-        mWTX.close();
+        BookShredding.createBookDB();
+        mHolder = AbsAxisTest.generateHolder();
     }
 
-    @AfterClass
-    public static void tearDown() throws AbsTTException {
+    @After
+    public void tearDown() throws AbsTTException {
+        mHolder.rtx.close();
+        mHolder.session.close();
         FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test
     public void testWhereBooks() throws Exception {
         final OutputStream out = new ByteArrayOutputStream();
         new XQueryEvaluatorOutputStream("for $x in /bookstore/book where $x/price>30 return $x/title",
-            databaseBooks, out).call();
+            mHolder.session, out).call();
         final String result = out.toString();
         assertEquals("<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
             result);
@@ -103,7 +91,7 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
     public void testOrderByBooks() throws Exception {
         final OutputStream out = new ByteArrayOutputStream();
         new XQueryEvaluatorOutputStream(
-            "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title", databaseBooks,
+            "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title", mHolder.session,
             out).call();
         final String result = out.toString();
         assertEquals("<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
@@ -115,7 +103,7 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
         final OutputStream out = new ByteArrayOutputStream();
         new XQueryEvaluatorOutputStream(
             "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
-            databaseBooks, out).call();
+            mHolder.session, out).call();
         final String result = out.toString();
         assertEquals("<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
             result);

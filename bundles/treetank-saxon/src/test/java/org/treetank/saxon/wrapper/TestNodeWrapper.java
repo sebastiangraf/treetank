@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -30,8 +30,6 @@ package org.treetank.saxon.wrapper;
 import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
-
-import com.sleepycat.je.Database;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.Axis;
@@ -51,6 +49,8 @@ import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
@@ -74,7 +74,7 @@ import static org.junit.Assert.fail;
 public class TestNodeWrapper {
 
     /** Treetank session on Treetank test document. */
-    private static transient IDatabase databaseTest;
+    private transient Holder mHolder;
 
     /** Document node. */
     private transient NodeWrapper node;
@@ -83,30 +83,26 @@ public class TestNodeWrapper {
     public void beforeMethod() throws AbsTTException {
         FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        databaseTest = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = databaseTest.getSession(new SessionConfiguration()).beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
+        TestHelper.createTestDocument();
+        mHolder = AbsAxisTest.generateHolder();
 
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 
-        node = (NodeWrapper)new DocumentWrapper(databaseTest, config).wrap();
+        node = new DocumentWrapper(mHolder.session, config).getNodeWrapper();
     }
 
     @After
     public void afterMethod() throws AbsTTException {
+        mHolder.session.close();
+        mHolder.rtx.close();
         FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH2.getFile());
         FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
     }
 
     @Test
-    public void testAtomize() throws XPathException {
-        final NodeWrapper wrapper = new NodeWrapper(databaseTest, 0);
-        final Value value = wrapper.atomize();
+    public void testAtomize() throws Exception {
+        final Value value = node.atomize();
         assertEquals(true, value instanceof UntypedAtomicValue);
         assertEquals("oops1foooops2baroops3", value.getStringValue());
     }
@@ -117,32 +113,36 @@ public class TestNodeWrapper {
         final Configuration config = proc.getUnderlyingConfiguration();
 
         final IDatabase database = FileDatabase.openDatabase(TestHelper.PATHS.PATH2.getFile());
+        final ISession session = database.getSession(new SessionConfiguration());
 
         // Not the same document.
-        NodeWrapper node = (NodeWrapper)new DocumentWrapper(database, config).wrap();
-        NodeWrapper other = (NodeWrapper)new DocumentWrapper(databaseTest, config).wrap(3);
+        NodeInfo node = new DocumentWrapper(session, config);
+        NodeInfo other = new NodeWrapper(new DocumentWrapper(mHolder.session, config), 3);
         assertEquals(-2, node.compareOrder(other));
 
         // Before.
-        node = (NodeWrapper)new DocumentWrapper(databaseTest, config).wrap();
-        other = (NodeWrapper)new DocumentWrapper(databaseTest, config).wrap(3);
+        node = new DocumentWrapper(mHolder.session, config);
+        other = new NodeWrapper(new DocumentWrapper(mHolder.session, config), 3);
         assertEquals(-1, node.compareOrder(other));
 
         // After.
-        node = (NodeWrapper)new DocumentWrapper(databaseTest, config).wrap(3);
-        other = (NodeWrapper)new DocumentWrapper(databaseTest, config).wrap(0);
+        node = new NodeWrapper(new DocumentWrapper(mHolder.session, config), 3);
+        other = new NodeWrapper(new DocumentWrapper(mHolder.session, config), 0);
         assertEquals(1, node.compareOrder(other));
 
         // Same.
-        node = (NodeWrapper)new DocumentWrapper(databaseTest, config).wrap(3);
-        other = (NodeWrapper)new DocumentWrapper(databaseTest, config).wrap(3);
+        node = new NodeWrapper(new DocumentWrapper(mHolder.session, config), 3);
+        other = new NodeWrapper(new DocumentWrapper(mHolder.session, config), 3);
         assertEquals(0, node.compareOrder(other));
+
+        session.close();
+        FileDatabase.closeDatabase(TestHelper.PATHS.PATH2.getFile());
     }
 
     @Test
-    public void testGetAttributeValue() {
+    public void testGetAttributeValue() throws AbsTTException {
         final Processor proc = new Processor(false);
-        node = (NodeWrapper)new DocumentWrapper(databaseTest, proc.getUnderlyingConfiguration()).wrap(1);
+        node = new NodeWrapper(new DocumentWrapper(mHolder.session, proc.getUnderlyingConfiguration()), 1);
 
         final AxisIterator iterator = node.iterateAxis(Axis.ATTRIBUTE);
         final NodeInfo attribute = (NodeInfo)iterator.next();
@@ -159,9 +159,6 @@ public class TestNodeWrapper {
     // @Ignore
         public
         void testGetBaseURI() throws Exception {
-        // Test without xml:base specified.
-        assertEquals(File.separator, node.getBaseURI());
-
         // Test with xml:base specified.
         final File source =
             new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "data"
@@ -170,16 +167,15 @@ public class TestNodeWrapper {
         FileDatabase.truncateDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
         final IDatabase database =
             FileDatabase.openDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
-        final ISession mSession = database.getSession(new SessionConfiguration());
-        final IWriteTransaction mWTX = mSession.beginWriteTransaction();
+        final ISession session = database.getSession(new SessionConfiguration());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(source);
-        final XMLShredder shredder = new XMLShredder(mWTX, reader, EShredderInsert.ADDASFIRSTCHILD);
+        final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
-        mWTX.close();
+        wtx.close();
 
         final Processor proc = new Processor(false);
-        final NodeWrapper doc =
-            (NodeWrapper)new DocumentWrapper(database, proc.getUnderlyingConfiguration()).wrap();
+        final NodeInfo doc = new DocumentWrapper(session, proc.getUnderlyingConfiguration());
 
         doc.getNamePool().allocate("xml", "http://www.w3.org/XML/1998/namespace", "base");
         doc.getNamePool().allocate("", "", "baz");
@@ -189,6 +185,9 @@ public class TestNodeWrapper {
         final NodeInfo baz = (NodeInfo)iterator.next();
 
         assertEquals("http://example.org", baz.getBaseURI());
+        session.close();
+        FileDatabase.closeDatabase(TestHelper.PATHS.PATH2.getFile());
+
     }
 
     @Test

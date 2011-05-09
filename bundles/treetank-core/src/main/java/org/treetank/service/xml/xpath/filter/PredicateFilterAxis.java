@@ -131,14 +131,5 @@ public class PredicateFilterAxis extends AbsAxis {
         }
 
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setTransaction(final IReadTransaction rtx) {
-        super.setTransaction(rtx);
-        mPredicate.setTransaction(rtx);
-    }
 
 }

@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,6 +32,7 @@ import java.util.concurrent.Callable;
 import org.xml.sax.ContentHandler;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SAXDestination;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -41,6 +42,7 @@ import net.sf.saxon.s9api.XQueryExecutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 import org.treetank.saxon.wrapper.NodeWrapper;
 
@@ -64,7 +66,7 @@ public final class XQueryEvaluatorSAXHandler implements Callable<Void> {
     private final String mExpression;
 
     /** Treetank database. */
-    private final IDatabase mDatabase;
+    private final ISession mSession;
 
     /** SAX receiver. */
     private final ContentHandler mHandler;
@@ -74,15 +76,15 @@ public final class XQueryEvaluatorSAXHandler implements Callable<Void> {
      * 
      * @param expression
      *            XQuery expression.
-     * @param database
+     * @param paramSession
      *            Treetank database.
      * @param handler
      *            SAX content handler.
      */
-    public XQueryEvaluatorSAXHandler(final String expression, final IDatabase database,
+    public XQueryEvaluatorSAXHandler(final String expression, final ISession paramSession,
         final ContentHandler handler) {
         mExpression = expression;
-        mDatabase = database;
+        mSession = paramSession;
         mHandler = handler;
     }
 
@@ -91,7 +93,7 @@ public final class XQueryEvaluatorSAXHandler implements Callable<Void> {
         try {
             final Processor proc = new Processor(false);
             final Configuration config = proc.getUnderlyingConfiguration();
-            final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(mDatabase, config).wrap();
+            final NodeInfo doc = new DocumentWrapper(mSession, config);
             final XQueryCompiler comp = proc.newXQueryCompiler();
             final XQueryExecutable exp = comp.compile(mExpression);
             final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();

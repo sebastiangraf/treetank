@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -34,6 +34,7 @@ import java.util.concurrent.Callable;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -44,7 +45,8 @@ import net.sf.saxon.s9api.XsltTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
+import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 import org.treetank.saxon.wrapper.NodeWrapper;
 
@@ -78,26 +80,26 @@ public final class XSLTEvaluator implements Callable<OutputStream> {
     private transient Serializer mSerializer;
 
     /** Treetank database. */
-    private final transient IDatabase mDatabases;
+    private final transient ISession mSession;
 
     /**
      * Constructor.
      * 
-     * @param database
+     * @param paramSession
      *            Treetank database.
      * @param stylesheet
      *            Path to stylesheet.
      * @param out
      *            Resulting stream of the transformation.
      */
-    public XSLTEvaluator(final IDatabase database, final File stylesheet, final OutputStream out) {
-        this(database, stylesheet, out, null);
+    public XSLTEvaluator(final ISession paramSession, final File stylesheet, final OutputStream out) {
+        this(paramSession, stylesheet, out, null);
     }
 
     /**
      * Constructor.
      * 
-     * @param paramDatabase
+     * @param paramSession
      *            Treetank mDatabase.
      * @param paramStyle
      *            Path to stylesheet.
@@ -106,9 +108,9 @@ public final class XSLTEvaluator implements Callable<OutputStream> {
      * @param paramSerializer
      *            Serializer, for which one can specify output properties.
      */
-    public XSLTEvaluator(final IDatabase paramDatabase, final File paramStyle, final OutputStream paramOut,
+    public XSLTEvaluator(final ISession paramSession, final File paramStyle, final OutputStream paramOut,
         final Serializer paramSerializer) {
-        mDatabases = paramDatabase;
+        mSession = paramSession;
         mStylesheet = paramStyle;
         mOut = paramOut;
         mSerializer = paramSerializer;
@@ -126,7 +128,7 @@ public final class XSLTEvaluator implements Callable<OutputStream> {
 
         try {
             final Configuration config = proc.getUnderlyingConfiguration();
-            final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(mDatabases, config).wrap();
+            final NodeInfo doc = new DocumentWrapper(mSession, config);
             exp = comp.compile(new StreamSource(mStylesheet));
             source = proc.newDocumentBuilder().build(doc);
 
@@ -146,6 +148,8 @@ public final class XSLTEvaluator implements Callable<OutputStream> {
             trans.transform();
         } catch (final SaxonApiException e) {
             LOGGER.error("Saxon exception: " + e.getMessage(), e);
+        } catch (final AbsTTException e) {
+            LOGGER.error("TT exception: " + e.getMessage(), e);
         }
 
         return mOut;
