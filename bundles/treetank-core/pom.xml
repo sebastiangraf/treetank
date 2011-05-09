@@ -41,9 +41,9 @@
 		These versions can be easily retrieved within the database itself.
 	</description>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.5</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.5</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.5</url>
 	</scm>
 	<repositories>
 		<repository>
