@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,12 +35,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.filter.IFilterTest;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.AbsTTException;
@@ -49,54 +49,45 @@ import org.treetank.utils.DocumentCreater;
 
 public class WildcardFilterTest {
 
+    private AbsAxisTest.Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
+        holder.rtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "b", true), true);
+        holder.rtx.moveToAttribute(0);
         try {
-            // Build simple test tree.
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession();
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+            IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "p", false), true);
+            fail("Expected an Exception, because attributes are not supported.");
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
 
-            wtx.moveTo(9L);
-            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b", true), true);
-            wtx.moveToAttribute(0);
-            try {
-                IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p", false), true);
-                fail("Expected an Exception, because attributes are not supported.");
-            } catch (IllegalStateException e) {
-                assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
-
-            }
-            // IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b",
-            // true), true);
-
-            // wtx.moveTo(3L);
-            // IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
-
-            wtx.moveTo(1L);
-            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p", false), true);
-            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "a", true), true);
-            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "c", true), false);
-            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b", false), false);
-
-            wtx.abort();
-            wtx.close();
-            session.close();
-            database.close();
-        } catch (final TTIOException exc) {
-            fail(exc.toString());
         }
+        // IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "b",
+        // true), true);
+
+        // holder.rtx.moveTo(3L);
+        // IFilterTest.testIFilterConventions(new ItemFilter(holder.rtx), true);
+
+        holder.rtx.moveTo(1L);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "p", false), true);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "a", true), true);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "c", true), false);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "b", false), false);
 
     }
 }

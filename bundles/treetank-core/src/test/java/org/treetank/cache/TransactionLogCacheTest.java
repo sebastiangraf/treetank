@@ -55,7 +55,7 @@ public class TransactionLogCacheTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
 
-        cache = new TransactionLogCache(new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile()), 1);
+        cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1);
         for (int i = 0; i < pages.length; i++) {
             final NodePage page = new NodePage(i, 0);
             final NodePage[] revs =

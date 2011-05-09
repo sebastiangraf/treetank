@@ -27,6 +27,7 @@
 
 package org.treetank.saxon.wrapper;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -75,7 +76,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
     public DocumentWrapper(final IDatabase paramDatabase, final Configuration paramConfig) {
         super(paramDatabase, 0);
         nodeKind = ENodes.ROOT_KIND;
-        mBaseURI = paramDatabase.getFile().getAbsolutePath();
+        mBaseURI = File.separator;
         mDocWrapper = this;
         setConfiguration(paramConfig);
     }
@@ -110,6 +111,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
     /**
      * Get the unparsed entity with a given name.
+     * 
      * @return null: TreeTank does not provide access to unparsed entities.
      */
     @SuppressWarnings("unchecked")

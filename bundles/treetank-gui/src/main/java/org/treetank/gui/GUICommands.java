@@ -46,7 +46,8 @@ import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.treetank.access.Database;
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -136,13 +137,13 @@ public enum GUICommands implements IGUICommand {
                     try {
                         final FileOutputStream outputStream = new FileOutputStream(target);
 
-                        final IDatabase db = Database.openDatabase(source);
-                        final ISession session = db.getSession();
+                        final IDatabase db = FileDatabase.openDatabase(source);
+                        final ISession session = db.getSession(new SessionConfiguration());
 
                         final ExecutorService executor = Executors.newSingleThreadExecutor();
                         final XMLSerializer serializer =
-                            new XMLSerializerBuilder(session, outputStream).setIndend(true)
-                                .setVersions(new long[] {
+                            new XMLSerializerBuilder(session, outputStream).setIndend(true).setVersions(
+                                new long[] {
                                     mActionListener.getRevision()
                                 }).build();
                         executor.submit(serializer);
@@ -155,7 +156,6 @@ public enum GUICommands implements IGUICommand {
                         }
 
                         session.close();
-                        db.close();
                         outputStream.close();
                         JOptionPane.showMessageDialog(paramGUI, "Serializing done!");
                     } catch (final AbsTTException e) {
@@ -360,11 +360,11 @@ public enum GUICommands implements IGUICommand {
                     boolean error = false;
 
                     try {
-                        final IDatabase db = Database.openDatabase(tmpDir);
-                        final IReadTransaction rtx = db.getSession().beginReadTransaction();
+                        final IDatabase db = FileDatabase.openDatabase(tmpDir);
+                        final IReadTransaction rtx =
+                            db.getSession(new SessionConfiguration()).beginReadTransaction();
                         revNumber = rtx.getRevisionNumber();
                         rtx.close();
-                        db.close();
                     } catch (final AbsTTException e) {
                         // Selected directory is not a Treetank storage.
                         error = true;
@@ -414,13 +414,12 @@ public enum GUICommands implements IGUICommand {
                 paramShredding.shred(source, target);
 
                 try {
-                    final IDatabase database = Database.openDatabase(target);
-                    final ISession session = database.getSession();
+                    final IDatabase database = FileDatabase.openDatabase(target);
+                    final ISession session = database.getSession(new SessionConfiguration());
                     final IReadTransaction rtx = session.beginReadTransaction();
                     final long rev = rtx.getRevisionNumber();
                     rtx.close();
                     session.close();
-                    database.close();
                     paramGUI.execute(target, rev);
                 } catch (final AbsTTException e) {
                     LOGWRAPPER.error(e.getMessage(), e);

@@ -34,6 +34,7 @@ import org.junit.Test;
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -50,7 +51,7 @@ public class FollowingAxisTest {
     @Test
     public void testAxisConventions() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
@@ -80,7 +81,6 @@ public class FollowingAxisTest {
         wtx.abort();
         wtx.close();
         session.close();
-        database.close();
     }
 
     @After

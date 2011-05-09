@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IItemList;
 import org.treetank.cache.ICache;
@@ -47,7 +48,6 @@ import org.treetank.page.NodePage;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
-import org.treetank.settings.EDatabaseSetting;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
 
@@ -137,14 +137,10 @@ public class ReadTransactionState {
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
 
-            final int mileStoneRevision =
-                Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
-                    EDatabaseSetting.REVISION_TO_RESTORE.name()));
+            final int mileStoneRevision = mDatabaseConfiguration.mRevisionsToRestore;
 
             // Build up the complete page.
-            final ERevisioning revision =
-                ERevisioning.valueOf(mDatabaseConfiguration.getProps().getProperty(
-                    EDatabaseSetting.REVISION_TYPE.name()));
+            final ERevisioning revision = mDatabaseConfiguration.mRevision;
             final NodePage completePage = revision.combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
@@ -290,8 +286,7 @@ public class ReadTransactionState {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
-                    EDatabaseSetting.REVISION_TO_RESTORE.name()))) {
+                if (refs.size() == mDatabaseConfiguration.mRevisionsToRestore) {
                     break;
                 }
 
@@ -348,8 +343,8 @@ public class ReadTransactionState {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final PageReference dereferenceLeafOfTree(final PageReference paramStartReference, final long paramKey)
-        throws TTIOException {
+    protected final PageReference dereferenceLeafOfTree(final PageReference paramStartReference,
+        final long paramKey) throws TTIOException {
 
         // Initial state pointing to the indirect page of level 0.
         PageReference reference = paramStartReference;
@@ -424,9 +419,9 @@ public class ReadTransactionState {
      */
     @Override
     public String toString() {
-        return new StringBuilder("DatabaseConfiguration: ").append(mDatabaseConfiguration.toString())
-            .append("\nPageReader: ").append(mPageReader.toString()).append("\nUberPage: ")
-            .append(mUberPage.toString()).append("\nRevRootPage: ").append(mRootPage.toString()).toString();
+        return new StringBuilder("DatabaseConfiguration: ").append(mDatabaseConfiguration.toString()).append(
+            "\nPageReader: ").append(mPageReader.toString()).append("\nUberPage: ").append(
+            mUberPage.toString()).append("\nRevRootPage: ").append(mRootPage.toString()).toString();
     }
 
 }

@@ -44,7 +44,7 @@ import javax.xml.stream.events.XMLEvent;
 
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.Database;
+import org.treetank.access.FileDatabase;
 import org.treetank.access.Session;
 import org.treetank.access.WriteTransaction;
 import org.treetank.api.IDatabase;

@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -51,7 +51,6 @@ import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 import org.treetank.page.UberPage;
-import org.treetank.settings.EDatabaseSetting;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.LogWrapper;
 import org.treetank.utils.TypedValue;
@@ -150,9 +149,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         } else {
             mCommitScheduler = null;
         }
-        mHashKind =
-            HashKind.valueOf(getSessionState().mDatabaseConfiguration.getProps().getProperty(
-                EDatabaseSetting.HASHKIND_TYPE.name()));
+        mHashKind = getSessionState().mDatabaseConfiguration.mHashKind;
     }
 
     /**
@@ -380,7 +377,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         assertNotClosed();
         mModificationCount++;
         final long oldHash = getCurrentNode().hashCode();
-        
+
         final AbsNode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
         node.setNameKey(getTransactionState().createNameKey(paramName));
         getTransactionState().finishNodeModification(node);
@@ -408,7 +405,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         assertNotClosed();
         mModificationCount++;
         final long oldHash = getCurrentNode().hashCode();
-        
+
         final AbsNode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
         node.setURIKey(getTransactionState().createNameKey(paramUri));
         getTransactionState().finishNodeModification(node);
@@ -421,7 +418,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         // }
         // newNode.setURIKey(getTransactionState().createNameKey(mUri));
         // getTransactionState().removeNode(oldNode);
-        
+
         setCurrentNode(node);
         adaptHashedWithUpdate(oldHash);
     }
@@ -449,7 +446,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         // }
         // newNode.setValue(mValueType, mValue);
         // getTransactionState().removeNode(oldNode);
-        
+
         setCurrentNode(node);
         adaptHashedWithUpdate(oldHash);
     }

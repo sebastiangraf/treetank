@@ -31,6 +31,8 @@ import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
 
+import com.sleepycat.je.Database;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.Axis;
 import net.sf.saxon.om.NodeInfo;
@@ -44,7 +46,8 @@ import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
 import org.treetank.TestHelper;
-import org.treetank.access.Database;
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -78,10 +81,10 @@ public class TestNodeWrapper {
 
     @Before
     public void beforeMethod() throws AbsTTException {
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
-        databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = databaseTest.getSession().beginWriteTransaction();
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        databaseTest = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction wtx = databaseTest.getSession(new SessionConfiguration()).beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
@@ -94,10 +97,10 @@ public class TestNodeWrapper {
 
     @After
     public void afterMethod() throws AbsTTException {
-        Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database.forceCloseDatabase(TestHelper.PATHS.PATH2.getFile());
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
+        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.closeDatabase(TestHelper.PATHS.PATH2.getFile());
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
     }
 
     @Test
@@ -113,7 +116,7 @@ public class TestNodeWrapper {
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 
-        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
+        final IDatabase database = FileDatabase.openDatabase(TestHelper.PATHS.PATH2.getFile());
 
         // Not the same document.
         NodeWrapper node = (NodeWrapper)new DocumentWrapper(database, config).wrap();
@@ -157,17 +160,17 @@ public class TestNodeWrapper {
         public
         void testGetBaseURI() throws Exception {
         // Test without xml:base specified.
-        assertEquals(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), node.getBaseURI());
+        assertEquals(File.separator, node.getBaseURI());
 
         // Test with xml:base specified.
         final File source =
             new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "data"
                 + File.separator + "testBaseURI.xml");
 
-        Database.truncateDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
+        FileDatabase.truncateDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
         final IDatabase database =
-            Database.openDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
-        final ISession mSession = database.getSession();
+            FileDatabase.openDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
+        final ISession mSession = database.getSession(new SessionConfiguration());
         final IWriteTransaction mWTX = mSession.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(source);
         final XMLShredder shredder = new XMLShredder(mWTX, reader, EShredderInsert.ADDASFIRSTCHILD);

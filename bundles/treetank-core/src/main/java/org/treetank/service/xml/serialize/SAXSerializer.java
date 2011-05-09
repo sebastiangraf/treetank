@@ -33,7 +33,8 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.Database;
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransactionState;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
@@ -216,8 +217,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
             LOGWRAPPER.error("Usage: SAXSerializer input-TT");
         }
 
-        final IDatabase database = Database.openDatabase(new File(args[0]));
-        final ISession session = database.getSession();
+        final IDatabase database = FileDatabase.openDatabase(new File(args[0]));
+        final ISession session = database.getSession(new SessionConfiguration());
 
         final DefaultHandler defHandler = new DefaultHandler();
 
@@ -225,7 +226,6 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         serializer.call();
 
         session.close();
-        database.close();
     }
 
     @Override

@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -30,7 +30,6 @@ package org.treetank.service.xml.xpath.expr;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -50,54 +49,50 @@ import org.treetank.utils.DocumentCreater;
  * 
  */
 public class ExceptAxisTest {
+
+    private AbsAxisTest.Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testExcept() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
 
-        rtx.moveTo(1L);
+        holder.rtx.moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::node() except b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "child::node() except b"), new long[] {
             4L, 8L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
             "child::node() except child::node()[attribute::p:x]"), new long[] {
             4L, 5L, 8L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(
-            new XPathAxis(rtx, "child::node()/parent::node() except self::node()"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+            "child::node()/parent::node() except self::node()"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "//node() except //text()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "//node() except //text()"), new long[] {
             1L, 5L, 9L, 7L, 11L
         });
 
-        rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "b/preceding::node() except text()"), new long[] {
-            7L, 6L, 5L
-        });
+        holder.rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "b/preceding::node() except text()"),
+            new long[] {
+                7L, 6L, 5L
+            });
 
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
     }
 
 }

@@ -29,6 +29,7 @@ package org.treetank.diff;
 
 import java.util.Set;
 
+import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
@@ -38,7 +39,6 @@ import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
-import org.treetank.settings.EDatabaseSetting;
 import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
     /** Key of "root" node in new revision. */
     private transient long mRootKey;
-    
+
     /**
      * Constructor.
      * 
@@ -107,11 +107,9 @@ abstract class AbsDiff extends AbsDiffObservable {
         try {
             mDiffKind = paramBuilder.mKind;
             synchronized (paramBuilder.mDb) {
-                mNewRtx = paramBuilder.mDb.getSession().beginReadTransaction(paramBuilder.mNewRev);
-                mOldRtx = paramBuilder.mDb.getSession().beginReadTransaction(paramBuilder.mOldRev);
-                mHashKind =
-                    HashKind.valueOf(paramBuilder.mDb.getDatabaseConf().getProps()
-                        .getProperty(EDatabaseSetting.HASHKIND_TYPE.name()));
+                mNewRtx = paramBuilder.mDb.getSession(new SessionConfiguration()).beginReadTransaction(paramBuilder.mNewRev);
+                mOldRtx = paramBuilder.mDb.getSession(new SessionConfiguration()).beginReadTransaction(paramBuilder.mOldRev);
+                mHashKind = paramBuilder.mDb.getDatabaseConf().mHashKind;
             }
             mNewRtx.moveTo(paramBuilder.mKey);
             mOldRtx.moveTo(paramBuilder.mKey);
@@ -235,7 +233,7 @@ abstract class AbsDiff extends AbsDiffObservable {
     private boolean moveToFollowingNode(final IReadTransaction paramRtx, final ERevision paramRevision) {
         boolean moved = false;
         while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getStructuralNode().hasParent()
-        && paramRtx.getNode().getNodeKey() != mRootKey) {
+            && paramRtx.getNode().getNodeKey() != mRootKey) {
             moved = paramRtx.moveToParent();
             if (moved) {
                 switch (paramRevision) {
@@ -247,7 +245,7 @@ abstract class AbsDiff extends AbsDiffObservable {
                     break;
                 }
             }
-        } 
+        }
 
         if (paramRtx.getNode().getNodeKey() == mRootKey) {
             paramRtx.moveToDocumentRoot();
@@ -292,8 +290,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         if (paramFireDiff == EFireDiff.TRUE) {
-            fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode(),
-                new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
+            fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode(), new DiffDepth(paramDepth
+                .getNewDepth(), paramDepth.getOldDepth()));
         }
         return diff;
     }
@@ -339,11 +337,11 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         if (paramFireDiff == EFireDiff.TRUE) {
             if (diff == EDiff.SAMEHASH) {
-                fireDiff(EDiff.SAME, paramNewRtx.getNode(), paramOldRtx.getNode(),
-                    new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
+                fireDiff(EDiff.SAME, paramNewRtx.getNode(), paramOldRtx.getNode(), new DiffDepth(paramDepth
+                    .getNewDepth(), paramDepth.getOldDepth()));
             } else {
-                fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode(),
-                    new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
+                fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode(), new DiffDepth(paramDepth
+                    .getNewDepth(), paramDepth.getOldDepth()));
             }
         }
         return diff;

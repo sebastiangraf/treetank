@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,6 +35,7 @@ import junit.framework.Assert;
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -56,13 +57,13 @@ import org.junit.Test;
  * Test SunburstCompareModel.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public class SunburstCompareModelTest {
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
-    
+
     private static final String XMLDELETESECOND = RESOURCES + File.separator + "revXMLsDelete1";
-    
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
@@ -72,12 +73,12 @@ public class SunburstCompareModelTest {
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
-    
+
     @Test
     public void test() {
         Assert.assertTrue(true);
     }
-    
+
     @Ignore
     @Test
     public void testDescendantCount() throws Exception {
@@ -89,7 +90,7 @@ public class SunburstCompareModelTest {
         mock.createSunburstItem(item, 0, -1);
         replay(mock);
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final File firstRev = new File(XMLDELETESECOND + File.separator + "1.xml");
         XMLShredder shredder =
@@ -97,17 +98,16 @@ public class SunburstCompareModelTest {
         shredder.call();
         final File secondRev = new File(XMLDELETESECOND + File.separator + "2.xml");
         shredder =
-            new XMLUpdateShredder(wtx, XMLShredder.createReader(secondRev),
-                EShredderInsert.ADDASFIRSTCHILD, secondRev, EShredderCommit.COMMIT);
+            new XMLUpdateShredder(wtx, XMLShredder.createReader(secondRev), EShredderInsert.ADDASFIRSTCHILD,
+                secondRev, EShredderCommit.COMMIT);
         shredder.call();
         wtx.close();
-        
+
         final IReadTransaction rtx = session.beginReadTransaction();
         final ReadDB db = new ReadDB(secondRev, 1);
         final AbsModel model = new SunburstCompareModel(null, db);
         rtx.moveTo(db.getNodeKey());
-        model.traverseTree(new SunburstContainer().setRevision(rtx.getRevisionNumber()).setModWeight(
-            0.7f));
+        model.traverseTree(new SunburstContainer().setRevision(rtx.getRevisionNumber()).setModWeight(0.7f));
         verify(mock);
         db.close();
     }

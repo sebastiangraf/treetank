@@ -35,6 +35,7 @@ import javax.xml.stream.XMLStreamException;
 
 
 import org.treetank.TestHelper;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
@@ -276,12 +277,12 @@ public final class DocumentCreater {
     public static void createRevisioned() throws AbsTTException, IOException,
         XMLStreamException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction firstWtx = database.getSession().beginWriteTransaction();
+        final IWriteTransaction firstWtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(firstWtx, XMLShredder.createStringReader(REVXML), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         firstWtx.close();
-        final IWriteTransaction secondWtx = database.getSession().beginWriteTransaction();
+        final IWriteTransaction secondWtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
         secondWtx.moveToFirstChild();
         secondWtx.moveToFirstChild();
         secondWtx.moveToFirstChild();

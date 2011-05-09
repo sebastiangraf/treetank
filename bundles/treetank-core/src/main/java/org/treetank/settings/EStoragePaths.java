@@ -44,8 +44,6 @@ public enum EStoragePaths {
     TT(new File("tt"), true),
     /** Folder for transaction log. */
     TRANSACTIONLOG(new File("transactionLog"), true),
-    /** File to store the db settings. */
-    DBSETTINGS(new File("dbsettings.properties"), false),
     /** File to store encryption db settings */
     ENCRYPTIONSTORE(new File("encryption"), true);
 

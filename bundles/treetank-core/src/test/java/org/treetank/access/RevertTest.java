@@ -59,7 +59,7 @@ public final class RevertTest {
     @Test
     public void test() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
+        final ISession session = database.getSession(new SessionConfiguration());
         IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
@@ -88,6 +88,5 @@ public final class RevertTest {
         wtx.close();
 
         session.close();
-        database.close();
     }
 }

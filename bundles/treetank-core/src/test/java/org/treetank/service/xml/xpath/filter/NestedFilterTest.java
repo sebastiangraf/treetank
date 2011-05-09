@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -31,12 +31,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.filter.AttributeFilter;
 import org.treetank.axis.filter.ElementFilter;
 import org.treetank.axis.filter.IFilterTest;
@@ -50,44 +50,41 @@ import org.treetank.utils.DocumentCreater;
 
 public class NestedFilterTest {
 
+    private AbsAxisTest.Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.rtx.close();
+        holder.session.close();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
 
-        wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx, new ItemFilter(wtx), new ElementFilter(wtx),
-            new NameFilter(wtx, "b")), true);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx, new ItemFilter(wtx),
-            new AttributeFilter(wtx), new NameFilter(wtx, "b")), false);
+        holder.rtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new ItemFilter(holder.rtx),
+            new ElementFilter(holder.rtx), new NameFilter(holder.rtx, "b")), true);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new ItemFilter(holder.rtx),
+            new AttributeFilter(holder.rtx), new NameFilter(holder.rtx, "b")), false);
 
-        wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(
-            new NestedFilter(wtx, new NodeFilter(wtx), new ElementFilter(wtx)), false);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx, new NodeFilter(wtx), new TextFilter(wtx)),
-            true);
+        holder.rtx.moveTo(4L);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new NodeFilter(holder.rtx),
+            new ElementFilter(holder.rtx)), false);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new NodeFilter(holder.rtx),
+            new TextFilter(holder.rtx)), true);
 
-        wtx.moveTo(1L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx, new AttributeFilter(wtx), new NameFilter(
-            wtx, "i")), true);
+        holder.rtx.moveTo(1L);
+        holder.rtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new AttributeFilter(holder.rtx),
+            new NameFilter(holder.rtx, "i")), true);
 
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
     }
 }

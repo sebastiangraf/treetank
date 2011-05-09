@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
+import junit.extensions.TestDecorator;
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -35,6 +36,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
@@ -56,40 +58,20 @@ import static org.junit.Assert.fail;
 public class NodeCompTest {
 
     private AbsComparator comparator;
-
-    private IDatabase database;
-
-    private ISession session;
-
-    private IWriteTransaction wtx;
-
-    private IReadTransaction rtx;
+    private AbsAxisTest.Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-
-        // Build simple test tree.
-        database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        session = database.getSession();
-        wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-
-        // Find descendants starting from nodeKey 0L (root).
-        wtx.commit();
-        wtx.moveToDocumentRoot();
-        rtx = session.beginReadTransaction();
-
-        comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(rtx, -1), CompKind.IS);
+        TestHelper.createTestDocument();
+        holder = AbsAxisTest.generateHolder();
+        comparator = new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1), CompKind.IS);
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
+        holder.rtx.close();
+        holder.session.close();
         TestHelper.closeEverything();
     }
 
@@ -110,7 +92,7 @@ public class NodeCompTest {
         assertEquals(true, comparator.compare(op3, op2));
 
         try {
-            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(rtx, -1), CompKind.PRE);
+            comparator = new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1), CompKind.PRE);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
@@ -118,7 +100,7 @@ public class NodeCompTest {
         }
 
         try {
-            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(rtx, -1), CompKind.FO);
+            comparator = new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1), CompKind.FO);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
@@ -130,16 +112,16 @@ public class NodeCompTest {
     @Test
     public void testAtomize() throws TTXPathException {
 
-        AbsAxis axis = new LiteralExpr(rtx, -2);
+        AbsAxis axis = new LiteralExpr(holder.rtx, -2);
         axis.hasNext(); // this is needed, because hasNext() has already been
         // called
         AtomicValue[] value = comparator.atomize(axis);
         assertEquals(value.length, 1);
-        assertEquals(rtx.getNode().getNodeKey(), value[0].getNodeKey());
+        assertEquals(holder.rtx.getNode().getNodeKey(), value[0].getNodeKey());
         assertEquals("xs:integer", value[0].getType());
 
         try {
-            axis = new DescendantAxis(rtx, false);
+            axis = new DescendantAxis(holder.rtx, false);
             axis.hasNext();
             comparator.atomize(axis);
         } catch (TTXPathException e) {

@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,6 +26,8 @@
  */
 
 package org.treetank.access;
+
+import java.io.File;
 
 import javax.xml.namespace.QName;
 
@@ -49,7 +51,6 @@ import org.treetank.page.NodePage;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
-import org.treetank.settings.EDatabaseSetting;
 import org.treetank.settings.EFixed;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
@@ -103,14 +104,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected WriteTransactionState(final DatabaseConfiguration paramDatabaseConfig,
+    protected WriteTransactionState(final File toStore, final DatabaseConfiguration paramDatabaseConfig,
         final SessionState paramSessionState, final UberPage paramUberPage, final IWriter paramWriter,
-        final long paramParamId, final long paramRepresentRev, final long paramStoreRev)
-        throws TTIOException {
+        final long paramParamId, final long paramRepresentRev, final long paramStoreRev) throws TTIOException {
         super(paramDatabaseConfig, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mSessionState = paramSessionState;
-        mLog = new TransactionLogCache(paramDatabaseConfig, paramStoreRev);
+        mLog = new TransactionLogCache(toStore, paramStoreRev);
         mPageWriter = paramWriter;
         mTransactionID = paramParamId;
 
@@ -562,12 +562,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     private NodePageContainer dereferenceNodePageForModification(final long mNodePageKey)
         throws TTIOException {
         final NodePage[] revs = getSnapshotPages(mNodePageKey);
-        final ERevisioning revision =
-            ERevisioning.valueOf(getDatabaseConfiguration().getProps().getProperty(
-                EDatabaseSetting.REVISION_TYPE.name()));
-        final int mileStoneRevision =
-            Integer.parseInt(getDatabaseConfiguration().getProps().getProperty(
-                EDatabaseSetting.REVISION_TO_RESTORE.name()));
+        final ERevisioning revision = getDatabaseConfiguration().mRevision;
+        final int mileStoneRevision = getDatabaseConfiguration().mRevisionsToRestore;
 
         return revision.combinePagesForModification(revs, mileStoneRevision);
     }

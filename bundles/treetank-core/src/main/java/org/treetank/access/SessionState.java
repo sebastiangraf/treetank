@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -124,7 +125,7 @@ public final class SessionState {
         mSyncTransactionsReturns = new ConcurrentHashMap<Long, Map<Long, Collection<Future<Void>>>>();
 
         mTransactionIDCounter = new AtomicLong();
-        mCommitLock = new ReentrantLock(true);
+        mCommitLock = new ReentrantLock(false);
 
         // Init session members.
         mWriteSemaphore =
@@ -135,7 +136,7 @@ public final class SessionState {
                 ESessionSetting.MAX_READ_TRANSACTIONS.name())));
         final PageReference uberPageReference = new PageReference();
 
-        mFac = AbsIOFactory.getInstance(mDatabaseConfiguration, mSessionConfiguration);
+        mFac = AbsIOFactory.getInstance(mSessionConfiguration);
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
@@ -237,8 +238,8 @@ public final class SessionState {
         final long mRepresentRevision, final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
-        return new WriteTransactionState(mDatabaseConfiguration, this, new UberPage(mLastCommittedUberPage,
-            mStoreRevision + 1), writer, mId, mRepresentRevision, mStoreRevision);
+        return new WriteTransactionState(mFac.mFile, mDatabaseConfiguration, this, new UberPage(
+            mLastCommittedUberPage, mStoreRevision + 1), writer, mId, mRepresentRevision, mStoreRevision);
     }
 
     protected synchronized void syncLogs(final NodePageContainer mContToSync, final long mTransactionId)

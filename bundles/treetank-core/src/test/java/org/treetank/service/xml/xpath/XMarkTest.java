@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,10 +38,10 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
-
 
 /**
  * Performes the XMark benchmark.
@@ -55,84 +55,73 @@ public class XMarkTest {
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "auction.xml";
 
-    private IDatabase database;
-
-    private ISession session;
-
-    private IReadTransaction rtx;
+    private AbsAxisTest.Holder holder;
 
     @Before
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Build simple test tree.
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
+        holder = AbsAxisTest.generateHolder();
 
-        // Verify.
-        database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        session = database.getSession();
-        rtx = session.beginReadTransaction();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.rtx.close();
+        holder.session.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void testQ1_10() throws AbsTTException {
+        // Verify.
 
-        XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
             "/site/people/person[@id=\"person0\"]/name/text()"), new String[] {
             "Sinisa Farrel"
         });
-
     }
 
     @Test
     public void testQ1() throws AbsTTException {
 
         // Q1 The name of the person with ID 'person0' {projecting}
-        XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
             "for $b in /site/people/person[@id=\"person0\"] " + "return $b/name/text()"), new String[] {
             "Sinisa Farrel"
         });
-
     }
-
 
     @Test
     public void testQ5() throws AbsTTException {
 
         // Q5 How many sold items cost more than 40?
-        XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
             "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] "
                 + "return $i/price)"), new String[] {
             "75"
         });
-
     }
 
     @Test
     public void testQ6() throws AbsTTException {
 
         // Q6 How many items are listed on all continents?
-        XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
             "for $b in //site/regions return fn:count($b//item)"), new String[] {
             "217"
         });
-
     }
 
     @Test
     public void testQ7() throws AbsTTException {
-
         // Q7 How many pieces of prose are in our database?
-        XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
             "for $p in /site return fn:count($p//description) + "
                 + "fn:count($p//annotation) + fn:count($p//emailaddress)"), new String[] {
             "916.0"
         }); // TODO: why double?
-
     }
 
     // @Test

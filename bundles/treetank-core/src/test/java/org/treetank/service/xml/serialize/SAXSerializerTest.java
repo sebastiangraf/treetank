@@ -27,23 +27,24 @@
 
 package org.treetank.service.xml.serialize;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.XMLFilterImpl;
+
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.serialize.SAXSerializer;
 import org.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLFilterImpl;
 
 
 /**
@@ -70,7 +71,7 @@ public class SAXSerializerTest extends XMLTestCase {
         try {
             // Setup test file.
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession();
+            final ISession session = database.getSession(new SessionConfiguration());
             final IWriteTransaction testTrx = session.beginWriteTransaction();
             DocumentCreater.create(testTrx);
             testTrx.commit();

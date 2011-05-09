@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -49,8 +49,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.Database;
+import org.treetank.access.FileDatabase;
 import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -323,10 +324,10 @@ public class XMLShredder implements Callable<Long> {
         System.out.print("Shredding '" + mArgs[0] + "' to '" + mArgs[1] + "' ... ");
         final long time = System.currentTimeMillis();
         final File target = new File(mArgs[1]);
-        Database.truncateDatabase(target);
-        Database.createDatabase(new DatabaseConfiguration(target));
-        final IDatabase db = Database.openDatabase(target);
-        final ISession session = db.getSession();
+        FileDatabase.truncateDatabase(target);
+        FileDatabase.createDatabase(target, new DatabaseConfiguration.Builder().build());
+        final IDatabase db = FileDatabase.openDatabase(target);
+        final ISession session = db.getSession(new SessionConfiguration());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = createReader(new File(mArgs[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
@@ -334,7 +335,6 @@ public class XMLShredder implements Callable<Long> {
 
         wtx.close();
         session.close();
-        db.close();
 
         System.out.println(" done [" + (System.currentTimeMillis() - time) + "ms].");
     }
@@ -357,7 +357,7 @@ public class XMLShredder implements Callable<Long> {
         final InputStream in = new FileInputStream(paramFile);
         return factory.createXMLEventReader(in);
     }
-    
+
     /**
      * Create a new StAX reader on a string.
      * 
@@ -369,8 +369,8 @@ public class XMLShredder implements Callable<Long> {
      * @throws XMLStreamException
      *             if any parsing error occurs
      */
-    public static synchronized XMLEventReader createStringReader(final String paramString) throws IOException,
-        XMLStreamException {
+    public static synchronized XMLEventReader createStringReader(final String paramString)
+        throws IOException, XMLStreamException {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         final InputStream in = new ByteArrayInputStream(paramString.getBytes());
