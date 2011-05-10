@@ -27,29 +27,6 @@
 
 package org.treetank.service.xml.xpath.xmark;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-
-import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.FileDatabase;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxis;
-import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.settings.EDatabaseSetting;
 
 public class XPathTestQueries {
 
