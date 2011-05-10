@@ -27,21 +27,9 @@
 
 package org.treetank.access;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
-
-import org.slf4j.LoggerFactory;
 import org.treetank.access.WriteTransaction.HashKind;
-import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.io.AbsIOFactory.StorageType;
 import org.treetank.settings.ERevisioning;
-import org.treetank.settings.EStoragePaths;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>Database Configuration</h1> class represents a configuration of a
@@ -51,6 +39,19 @@ import org.treetank.utils.LogWrapper;
  * @author Sebastian Graf, University of Konstanz
  */
 public class DatabaseConfiguration {
+
+    // STATIC STANDARD FIELDS
+    /** Identification for string */
+    public final static String BINARY = "5.4.0";
+    /** Standard storage */
+    public final static StorageType STORAGE = StorageType.File;
+    /** Standard Versioning Approach */
+    public final static ERevisioning VERSIONING = ERevisioning.INCREMENTAL;
+    /** Type of hashing */
+    public final static HashKind HASHKIND = HashKind.Rolling;
+    /** Versions to restore. */
+    public final static int VERSIONSTORESTORE = 4;
+    // END STATIC STANDARD FIELDS
 
     /** Type of Storage (File, Berkeley). */
     public final StorageType mType;
@@ -83,19 +84,17 @@ public class DatabaseConfiguration {
 
     public static class Builder {
 
-        public final static String BINARY = "5.4.5";
-
         /** Type of Storage (File, Berkeley). */
-        private StorageType mType = StorageType.File;
+        private StorageType mType = STORAGE;
 
         /** Kind of revisioning (Incremental, Differential). */
-        private ERevisioning mRevision = ERevisioning.INCREMENTAL;
+        private ERevisioning mRevision = VERSIONING;
 
         /** Kind of integrity hash (rolling, postorder). */
-        private HashKind mHashKind = HashKind.Rolling;
+        private HashKind mHashKind = HASHKIND;
 
         /** Number of revisions to restore a complete set of data. */
-        private int mRevisionsToRestore = 4;
+        private int mRevisionsToRestore = VERSIONSTORESTORE;
 
         /** Binary version of storage. */
         private String mBinaryVersion = BINARY;

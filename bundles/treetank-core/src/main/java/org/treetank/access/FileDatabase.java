@@ -238,7 +238,7 @@ public final class FileDatabase implements IDatabase {
                 + " Compared to the specification, storage has", Integer.toString(compareStructure),
                 "elements!");
         }
-        final String version = DatabaseConfiguration.Builder.BINARY;
+        final String version = DatabaseConfiguration.BINARY;
 
         final String storedVersions = getVersion();
         if (!version.equals(storedVersions)) {

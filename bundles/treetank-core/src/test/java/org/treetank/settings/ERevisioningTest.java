@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,20 +27,18 @@
 
 package org.treetank.settings;
 
-import static org.junit.Assert.assertEquals;
-
-import static org.treetank.TestHelper.getNodePage;
+import org.treetank.TestHelper;
+import org.treetank.access.DatabaseConfiguration;
+import org.treetank.exception.AbsTTException;
+import org.treetank.page.NodePage;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 
-import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
-import org.treetank.page.NodePage;
-import org.treetank.settings.EDatabaseSetting;
-import org.treetank.settings.ERevisioning;
+import static org.treetank.TestHelper.getNodePage;
 
 public class ERevisioningTest {
 
@@ -61,8 +59,7 @@ public class ERevisioningTest {
         pages[1] = getNodePage(0, 0, 128, 0);
 
         final NodePage page =
-            ERevisioning.FULLDUMP.combinePages(pages, Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-                .getStandardProperty()));
+            ERevisioning.FULLDUMP.combinePages(pages, DatabaseConfiguration.VERSIONSTORESTORE);
 
         for (int j = 0; j < page.getNodes().length; j++) {
             assertEquals(pages[0].getNode(j), page.getNode(j));
@@ -74,8 +71,7 @@ public class ERevisioningTest {
     public void testDifferentialCombinePages() {
         final NodePage[] pages = prepareNormal(4);
         final NodePage page =
-            ERevisioning.DIFFERENTIAL.combinePages(pages, Integer
-                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()));
+            ERevisioning.DIFFERENTIAL.combinePages(pages, DatabaseConfiguration.VERSIONSTORESTORE);
 
         for (int j = 0; j < 32; j++) {
             assertEquals(pages[0].getNode(j), page.getNode(j));
@@ -90,8 +86,7 @@ public class ERevisioningTest {
     public void testIncrementalCombinePages() {
         final NodePage[] pages = prepareNormal(4);
         final NodePage page =
-            ERevisioning.INCREMENTAL.combinePages(pages, Integer
-                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()));
+            ERevisioning.INCREMENTAL.combinePages(pages, DatabaseConfiguration.VERSIONSTORESTORE);
         checkCombined(pages, page);
     }
 
