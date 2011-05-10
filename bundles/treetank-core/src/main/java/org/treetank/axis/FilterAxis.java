@@ -28,7 +28,6 @@
 package org.treetank.axis;
 
 import org.treetank.api.IFilter;
-import org.treetank.api.IReadTransaction;
 
 /**
  * <h1>TestAxis</h1>

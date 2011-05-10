@@ -28,8 +28,6 @@
 package org.treetank.axis;
 
 import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.treetank.api.IExpression;
 import org.treetank.api.IReadTransaction;

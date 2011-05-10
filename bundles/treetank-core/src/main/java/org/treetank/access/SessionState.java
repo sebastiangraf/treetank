@@ -27,7 +27,6 @@
 
 package org.treetank.access;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -57,7 +56,6 @@ import org.treetank.io.IWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 import org.treetank.settings.ESessionSetting;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>SessionState</h1>
@@ -67,11 +65,6 @@ import org.treetank.utils.LogWrapper;
  * </p>
  */
 public final class SessionState {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SessionState.class));
 
     /** Lock for blocking the commit. */
     protected final Lock mCommitLock;
@@ -183,7 +176,6 @@ public final class SessionState {
         try {
             mReadSemaphore.acquire();
         } catch (final InterruptedException exc) {
-            LOGWRAPPER.error(exc);
             throw new AbsTTException(exc) {
                 private static final long serialVersionUID = 1L;
             };
@@ -212,7 +204,6 @@ public final class SessionState {
         try {
             mWriteSemaphore.acquire();
         } catch (final InterruptedException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTThreadedException(exc);
 
         }
@@ -274,10 +265,8 @@ public final class SessionState {
                     try {
                         returnVal.get();
                     } catch (final InterruptedException exc) {
-                        LOGWRAPPER.error(exc);
                         throw new TTThreadedException(exc);
                     } catch (final ExecutionException exc) {
-                        LOGWRAPPER.error(exc);
                         throw new TTThreadedException(exc);
                     }
                 }

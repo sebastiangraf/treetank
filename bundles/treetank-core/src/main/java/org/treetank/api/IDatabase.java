@@ -27,8 +27,6 @@
 
 package org.treetank.api;
 
-import java.io.File;
-
 import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.AbsTTException;

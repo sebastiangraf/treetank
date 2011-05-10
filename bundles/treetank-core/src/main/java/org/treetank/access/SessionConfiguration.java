@@ -27,17 +27,10 @@
 
 package org.treetank.access;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Properties;
 
-import org.slf4j.LoggerFactory;
-import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.settings.ESessionSetting;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>SessionConfiguration</h1>
@@ -48,12 +41,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public final class SessionConfiguration {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(SessionConfiguration.class));
 
     /** Props to hold all related data. */
     private final Properties mProps;
@@ -85,26 +72,6 @@ public final class SessionConfiguration {
             } else {
                 this.getProps().setProperty(enumProps.name(), enumProps.getValue());
             }
-        }
-
-    }
-
-    /**
-     * Constructor using specified properties stored in a file. Every property
-     * which is not specified is set by the standard-one
-     * 
-     * @param propFile
-     *            to be specified
-     * @throws AbsTTException
-     *             if session could not be established
-     */
-    public SessionConfiguration(final File propFile) throws AbsTTException {
-        this(new Properties());
-        try {
-            getProps().load(new FileInputStream(propFile));
-        } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
-            throw new TTIOException(exc);
         }
 
     }

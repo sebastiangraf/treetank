@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IItemList;
 import org.treetank.cache.ICache;

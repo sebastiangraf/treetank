@@ -27,27 +27,12 @@
 
 package org.treetank.access;
 
-import java.util.concurrent.locks.Lock;
-
 import javax.xml.namespace.QName;
 
-import org.treetank.api.IItem;
-import org.treetank.api.IStructuralItem;
-import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.node.AbsNode;
-import org.treetank.node.AbsStructNode;
-import org.treetank.node.AttributeNode;
-import org.treetank.node.DocumentRootNode;
-import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
-import org.treetank.node.NamespaceNode;
-import org.treetank.node.TextNode;
-import org.treetank.page.UberPage;
-import org.treetank.settings.EFixed;
-import org.treetank.utils.TypedValue;
 
 public class SynchWriteTransaction extends WriteTransaction {
 
