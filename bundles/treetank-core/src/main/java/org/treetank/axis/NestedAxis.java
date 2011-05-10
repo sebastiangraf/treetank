@@ -27,7 +27,6 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.IReadTransaction;
 
 /**
  * <h1>ChainedAxis</h1>

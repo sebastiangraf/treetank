@@ -27,7 +27,12 @@
 
 package org.treetank.api;
 
-import org.treetank.node.*;
+import org.treetank.node.AttributeNode;
+import org.treetank.node.DocumentRootNode;
+import org.treetank.node.DummyNode;
+import org.treetank.node.ElementNode;
+import org.treetank.node.NamespaceNode;
+import org.treetank.node.TextNode;
 
 /**
  * Interface which must be implemented from visitors to implement functionality based on the

@@ -27,13 +27,8 @@
 
 package org.treetank.access;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import javax.xml.namespace.QName;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IItem;
 import org.treetank.api.IStructuralItem;
 import org.treetank.api.IWriteTransaction;
@@ -52,7 +47,6 @@ import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 import org.treetank.page.UberPage;
 import org.treetank.settings.EFixed;
-import org.treetank.utils.LogWrapper;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -81,17 +75,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /** Prime for computing the hash. */
     private static final int PRIME = 77081;
 
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(WriteTransaction.class));
-
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
-
-    /** Scheduler to commit after mMaxTime seconds. */
-    private ScheduledExecutorService mCommitScheduler;
 
     /** Modification counter. */
     private long mModificationCount;
@@ -130,25 +115,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         mMaxNodeCount = maxNodeCount;
         mModificationCount = 0L;
 
-        // Only auto commit by time if the time is more than 0 seconds.
-        if (maxTime > 0) {
-            mCommitScheduler = Executors.newScheduledThreadPool(1);
-            mCommitScheduler.scheduleAtFixedRate(new Runnable() {
-                @Override
-                public void run() {
-                    if (mModificationCount > 0) {
-                        try {
-                            commit();
-                        } catch (final AbsTTException exc) {
-                            LOGWRAPPER.error(exc);
-                            throw new IllegalStateException(exc);
-                        }
-                    }
-                }
-            }, 0, maxTime, TimeUnit.SECONDS);
-        } else {
-            mCommitScheduler = null;
-        }
         mHashKind = getSessionState().mDatabaseConfiguration.mHashKind;
     }
 
@@ -532,11 +498,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             // Make sure to commit all dirty data.
             if (mModificationCount > 0) {
                 throw new TTUsageException("Must commit/abort transaction first");
-            }
-            // Make sure to cancel the periodic commit task if it was started.
-            if (mCommitScheduler != null) {
-                mCommitScheduler.shutdownNow();
-                mCommitScheduler = null;
             }
             // Release all state immediately.
             getTransactionState().close();

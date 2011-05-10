@@ -31,7 +31,14 @@ import javax.xml.namespace.QName;
 
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.*;
+import org.treetank.node.AbsNode;
+import org.treetank.node.AttributeNode;
+import org.treetank.node.DeletedNode;
+import org.treetank.node.DocumentRootNode;
+import org.treetank.node.DummyNode;
+import org.treetank.node.ElementNode;
+import org.treetank.node.NamespaceNode;
+import org.treetank.node.TextNode;
 import org.treetank.service.xml.xpath.AtomicValue;
 
 /**

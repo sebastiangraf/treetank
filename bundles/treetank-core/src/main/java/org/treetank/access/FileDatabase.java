@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
@@ -40,7 +39,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.AbsIOFactory;
 import org.treetank.settings.EStoragePaths;
-import org.treetank.utils.LogWrapper;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.

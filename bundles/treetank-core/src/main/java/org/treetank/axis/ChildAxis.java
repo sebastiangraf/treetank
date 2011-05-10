@@ -28,7 +28,6 @@
 package org.treetank.axis;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.AbsStructNode;
 
 /**
  * <h1>ChildAxis</h1>

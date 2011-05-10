@@ -27,8 +27,6 @@
 
 package org.treetank.access;
 
-import java.io.File;
-
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;

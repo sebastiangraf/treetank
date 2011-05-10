@@ -31,7 +31,12 @@ import org.treetank.api.ISession;
 import org.treetank.api.IVisitor;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.*;
+import org.treetank.node.AttributeNode;
+import org.treetank.node.DocumentRootNode;
+import org.treetank.node.DummyNode;
+import org.treetank.node.ElementNode;
+import org.treetank.node.NamespaceNode;
+import org.treetank.node.TextNode;
 
 /**
  * <h1>AbsVisitorSupport</h1>

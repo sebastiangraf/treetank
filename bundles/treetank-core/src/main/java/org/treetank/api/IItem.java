@@ -27,7 +27,6 @@
 
 package org.treetank.api;
 
-import org.treetank.node.AbsNode;
 import org.treetank.node.ENodes;
 
 /**
