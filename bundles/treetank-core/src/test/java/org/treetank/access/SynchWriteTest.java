@@ -39,7 +39,6 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -47,8 +46,6 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
-import org.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;

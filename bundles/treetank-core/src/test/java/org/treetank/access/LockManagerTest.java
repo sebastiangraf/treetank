@@ -33,8 +33,6 @@ import junit.framework.TestCase;
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.access.LockManager;
-import org.treetank.access.SynchWriteTransaction;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;

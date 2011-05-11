@@ -49,8 +49,8 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
 import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction;
 import org.treetank.api.IDatabase;
@@ -63,7 +63,6 @@ import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.FastStack;
-import org.treetank.utils.LogWrapper;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -77,11 +76,6 @@ import org.treetank.utils.TypedValue;
  * 
  */
 public class XMLShredder implements Callable<Long> {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(XMLShredder.class));
 
     /** {@link IWriteTransaction}. */
     protected final transient IWriteTransaction mWtx;
@@ -214,7 +208,6 @@ public class XMLShredder implements Callable<Long> {
                 }
             }
         } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
             throw new TTIOException(e);
         }
     }

@@ -29,7 +29,6 @@ package org.treetank.service.xml.xpath.concurrent;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.treetank.access.ReadTransaction;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.XPathAxis;

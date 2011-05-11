@@ -37,7 +37,6 @@ import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
 import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.LogWrapper;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -48,10 +47,6 @@ import org.treetank.utils.TypedValue;
  */
 public class MulOpAxis extends AbsObAxis {
 
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(MulOpAxis.class));
 
     /**
      * Constructor. Initializes the internal state.
@@ -114,7 +109,6 @@ public class MulOpAxis extends AbsObAxis {
             type1 = Type.getType(mOp1).getPrimitiveBaseType();
             type2 = Type.getType(mOp2).getPrimitiveBaseType();
         } catch (final IllegalStateException e) {
-            LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.XPTY0004);
         }
 

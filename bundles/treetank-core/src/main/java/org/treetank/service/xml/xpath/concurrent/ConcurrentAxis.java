@@ -34,7 +34,6 @@ import java.util.concurrent.Executors;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.settings.EFixed;
 
 /**

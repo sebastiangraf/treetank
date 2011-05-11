@@ -27,16 +27,14 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.treetank.io.file.ByteBufferSinkAndSource;
+import org.treetank.settings.EFixed;
 
 import org.junit.Test;
 
-import org.treetank.io.file.ByteBufferSinkAndSource;
-import org.treetank.node.ENodes;
-import org.treetank.node.TextNode;
-import org.treetank.settings.EFixed;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TextNodeTest {
 

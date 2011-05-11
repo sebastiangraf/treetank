@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,16 +32,6 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.access.WriteTransactionState;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.node.ElementNode;
-import org.treetank.utils.LogWrapper;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -54,6 +44,14 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.slf4j.LoggerFactory;
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
+import org.treetank.access.WriteTransactionState;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.node.ElementNode;
 
 /**
  * <h1>SaxSerializer</h1>
@@ -66,11 +64,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  */
 public final class SAXSerializer extends AbsSerializer implements XMLReader {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SAXSerializer.class));
 
     /** SAX content handler. */
     private transient ContentHandler mContHandler;
@@ -113,8 +106,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         final QName qName = rtx.getQNameOfCurrentNode();
         try {
             mContHandler.endElement(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName));
-        } catch (final SAXException e) {
-            LOGWRAPPER.error(e);
+        } catch (final SAXException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -124,8 +117,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         atts.addAttribute("", "revision", "tt", "", Long.toString(revision));
         try {
             mContHandler.startElement("", "tt", "tt", atts);
-        } catch (final SAXException e) {
-            LOGWRAPPER.error(e);
+        } catch (final SAXException exc) {
+            exc.printStackTrace();
         }
 
     }
@@ -134,8 +127,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     protected void emitEndManualElement(final long revision) {
         try {
             mContHandler.endElement("", "tt", "tt");
-        } catch (final SAXException e) {
-            LOGWRAPPER.error(e);
+        } catch (final SAXException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -183,8 +176,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
                 mContHandler.endElement(mRtx.nameForKey(mRtx.getNode().getURIKey()), qName.getLocalPart(),
                     WriteTransactionState.buildName(qName));
             }
-        } catch (final SAXException e) {
-            LOGWRAPPER.error(e);
+        } catch (final SAXException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -198,8 +191,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         try {
             mContHandler.characters(mRtx.getValueOfCurrentNode().toCharArray(), 0, mRtx
                 .getValueOfCurrentNode().length());
-        } catch (final SAXException e) {
-            LOGWRAPPER.error(e);
+        } catch (final SAXException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -213,9 +206,6 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      *             handling treetank exception
      */
     public static void main(final String... args) throws Exception {
-        if (args.length != 1) {
-            LOGWRAPPER.error("Usage: SAXSerializer input-TT");
-        }
 
         final IDatabase database = FileDatabase.openDatabase(new File(args[0]));
         final ISession session = database.getSession(new SessionConfiguration());
@@ -232,8 +222,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     protected void emitStartDocument() {
         try {
             mContHandler.startDocument();
-        } catch (final SAXException e) {
-            LOGWRAPPER.error(e);
+        } catch (final SAXException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -241,8 +231,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     protected void emitEndDocument() {
         try {
             mContHandler.endDocument();
-        } catch (final SAXException e) {
-            LOGWRAPPER.error(e);
+        } catch (final SAXException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -294,8 +284,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         emitStartDocument();
         try {
             super.call();
-        } catch (final Exception e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final Exception exc) {
+            exc.printStackTrace();
         }
         emitEndDocument();
     }

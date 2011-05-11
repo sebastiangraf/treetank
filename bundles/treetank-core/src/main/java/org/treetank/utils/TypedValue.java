@@ -39,10 +39,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class TypedValue {
 
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(TypedValue.class));
 
     /** Empty string. */
     public static final byte[] EMPTY = new byte[0];
@@ -205,7 +201,6 @@ public final class TypedValue {
             }
             return builder.toString();
         } catch (final Exception e) {
-            LOGWRAPPER.error(e);
             throw new RuntimeException("Could not convert byte[] to String: " + e.getLocalizedMessage());
         }
 
@@ -439,7 +434,6 @@ public final class TypedValue {
                 // .getBytes(IConstants.DEFAULT_ENCODING);
             }
         } catch (final Exception e) {
-            LOGWRAPPER.error(e);
             throw new RuntimeException("Could not convert String to byte[]: " + e.getLocalizedMessage());
         }
         return bytes;

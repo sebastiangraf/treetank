@@ -27,9 +27,6 @@
 
 package org.treetank.axis;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.perfidix.annotation.Bench;
 import org.perfidix.annotation.BenchClass;
 import org.treetank.TestHelper;
@@ -39,9 +36,12 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.ChildAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 @BenchClass(runs = 1)
 public class ChildAxisTest {

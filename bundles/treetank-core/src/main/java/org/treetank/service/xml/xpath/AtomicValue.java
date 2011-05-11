@@ -30,7 +30,6 @@ package org.treetank.service.xml.xpath;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IVisitor;
-import org.treetank.node.AbsNode;
 import org.treetank.node.ENodes;
 import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.settings.EFixed;

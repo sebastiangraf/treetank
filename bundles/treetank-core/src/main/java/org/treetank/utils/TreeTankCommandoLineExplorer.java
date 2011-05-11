@@ -49,12 +49,6 @@ import org.treetank.exception.AbsTTException;
  */
 public final class TreeTankCommandoLineExplorer {
 
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(TreeTankCommandoLineExplorer.class));
-
     private TreeTankCommandoLineExplorer() {
         // Not used over here.
     }
@@ -171,7 +165,6 @@ public final class TreeTankCommandoLineExplorer {
             }
 
         } catch (final Exception e) {
-            LOGWRAPPER.error(e);
             if (rtx != null) {
                 rtx.close();
             }
@@ -329,7 +322,6 @@ public final class TreeTankCommandoLineExplorer {
                         builder.append("node with key ").append(nodeKey).append(" ");
                         succeed = mCurrentRtx.moveTo(nodeKey);
                     } catch (final NumberFormatException e) {
-                        LOGWRAPPER.error(e);
                         builder.append("invalid node ");
                         succeed = false;
                     }
@@ -366,7 +358,6 @@ public final class TreeTankCommandoLineExplorer {
                             + "(that means without revision parameter");
                     }
                 } catch (final AbsTTException exc) {
-                    LOGWRAPPER.error(exc);
                     builder.append(" throws exception: ").append(exc);
                 }
                 return builder.toString();
@@ -398,7 +389,6 @@ public final class TreeTankCommandoLineExplorer {
 
                 return command;
             } catch (final Exception e) {
-                LOGWRAPPER.error(e);
                 return NOVALUE;
             }
         }

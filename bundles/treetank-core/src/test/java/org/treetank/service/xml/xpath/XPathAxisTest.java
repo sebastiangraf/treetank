@@ -27,23 +27,13 @@
 
 package org.treetank.service.xml.xpath;
 
-import java.io.IOException;
+import org.treetank.TestHelper;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.exception.AbsTTException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.DocumentCreater;
 
 /**
  * JUnit-test class to test the functionality of the XPathAxis.

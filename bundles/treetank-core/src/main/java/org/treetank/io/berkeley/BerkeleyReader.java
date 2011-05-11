@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,13 +35,11 @@ import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.page.AbsPage;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.utils.LogWrapper;
 
 /**
  * This class represents an reading instance of the Treetank-Application
@@ -51,12 +49,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public class BerkeleyReader implements IReader {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(BerkeleyReader.class));
 
     /** Link to the {@link Database}. */
     private transient final Database mDatabase;
@@ -110,7 +102,6 @@ public class BerkeleyReader implements IReader {
             }
             return page;
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
 
@@ -139,7 +130,6 @@ public class BerkeleyReader implements IReader {
 
             return uberPageReference;
         } catch (final DatabaseException e) {
-            LOGWRAPPER.error(e);
             throw new TTIOException(e);
         }
 
@@ -152,7 +142,6 @@ public class BerkeleyReader implements IReader {
         try {
             mTxn.abort();
         } catch (final DatabaseException e) {
-            LOGWRAPPER.error(e);
             throw new TTIOException(e);
 
         }

@@ -27,9 +27,6 @@
 
 package org.treetank.settings;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 

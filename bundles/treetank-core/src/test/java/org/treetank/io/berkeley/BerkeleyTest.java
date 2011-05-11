@@ -27,15 +27,14 @@
 
 package org.treetank.io.berkeley;
 
+import org.treetank.access.SessionConfiguration;
+import org.treetank.exception.AbsTTException;
+import org.treetank.io.AbsIOFactory.StorageType;
+import org.treetank.io.IOTestHelper;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.exception.AbsTTException;
-import org.treetank.io.IOTestHelper;
-import org.treetank.io.AbsIOFactory.StorageType;
 
 public class BerkeleyTest {
 

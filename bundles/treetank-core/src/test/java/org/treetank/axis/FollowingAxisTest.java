@@ -27,20 +27,18 @@
 
 package org.treetank.axis;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.FollowingAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FollowingAxisTest {
     @Before

@@ -29,9 +29,6 @@ package org.treetank.service.xml.xpath.parser;
 
 import java.io.IOException;
 
-import org.treetank.service.xml.xpath.parser.TokenType;
-import org.treetank.service.xml.xpath.parser.XPathScanner;
-
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -46,7 +46,6 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-
 import org.slf4j.LoggerFactory;
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
@@ -58,7 +57,6 @@ import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>WikipediaImport</h1>
@@ -71,10 +69,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public final class WikipediaImport implements IImport<StartElement> {
-
-    /** Logger. */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(WikipediaImport.class));
 
     /** StAX parser {@link XMLEventReader}. */
     private transient XMLEventReader mReader;
@@ -114,18 +108,18 @@ public final class WikipediaImport implements IImport<StartElement> {
         final XMLInputFactory xmlif = XMLInputFactory.newInstance();
         try {
             mReader = xmlif.createXMLEventReader(new FileInputStream(paramXMLFile));
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final FileNotFoundException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final XMLStreamException exc) {
+            exc.printStackTrace();
+        } catch (final FileNotFoundException exc) {
+            exc.printStackTrace();
         }
 
         try {
             final IDatabase db = FileDatabase.openDatabase(paramTTDir);
             mSession = db.getSession(new SessionConfiguration());
             mWTX = mSession.beginWriteTransaction();
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -188,7 +182,7 @@ public final class WikipediaImport implements IImport<StartElement> {
         final StartElement page = paramData.get(1);
         final StartElement rev = paramData.get(2);
         final StartElement id = paramData.get(3);
-//        final StartElement text = paramData.get(4);
+        // final StartElement text = paramData.get(4);
 
         // Initialize variables.
         mFound = false;
@@ -204,7 +198,7 @@ public final class WikipediaImport implements IImport<StartElement> {
                 }
 
                 // Add event to page or revision metadata list if it's not a whitespace.
-                mPageEvents.add(event);   
+                mPageEvents.add(event);
 
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
@@ -229,8 +223,8 @@ public final class WikipediaImport implements IImport<StartElement> {
                                         EShredderInsert.ADDASFIRSTCHILD, mPageEvents,
                                         EShredderCommit.NOCOMMIT);
                                 updateShredder.call();
-                            } catch (final IOException e) {
-                                LOGWRAPPER.error(e.getMessage(), e);
+                            } catch (final IOException exc) {
+                                exc.printStackTrace();
                             }
                         } else {
                             // Move wtx to end of file and append page.
@@ -267,12 +261,12 @@ public final class WikipediaImport implements IImport<StartElement> {
             mWTX.commit();
             mWTX.close();
             mSession.close();
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final IOException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final XMLStreamException exc) {
+            exc.printStackTrace();
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
+        } catch (final IOException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -323,20 +317,16 @@ public final class WikipediaImport implements IImport<StartElement> {
             event = mReader.nextEvent();
             mPageEvents.add(event);
 
-            if (event.isCharacters()) {
-                final String currTimestamp = event.asCharacters().getData();
+            final String currTimestamp = event.asCharacters().getData();
 
-                // Timestamp.
-                if (mTimestamp == null) {
-                    mTimestamp = parseTimestamp(paramDateRange, currTimestamp);
-                } else if (!parseTimestamp(paramDateRange, currTimestamp).equals(mTimestamp)) {
-                    mTimestamp = parseTimestamp(paramDateRange, currTimestamp);
-                    mWTX.commit();
-                    mWTX.close();
-                    mWTX = mSession.beginWriteTransaction();
-                }
-            } else {
-                LOGWRAPPER.warn("No characters after timestamp start element found!");
+            // Timestamp.
+            if (mTimestamp == null) {
+                mTimestamp = parseTimestamp(paramDateRange, currTimestamp);
+            } else if (!parseTimestamp(paramDateRange, currTimestamp).equals(mTimestamp)) {
+                mTimestamp = parseTimestamp(paramDateRange, currTimestamp);
+                mWTX.commit();
+                mWTX.close();
+                mWTX = mSession.beginWriteTransaction();
             }
 
             assert mIdText != null;
@@ -459,7 +449,7 @@ public final class WikipediaImport implements IImport<StartElement> {
         assert mWTX.getNode().getKind() == ENodes.ELEMENT_KIND;
         assert mWTX.getQNameOfCurrentNode().equals(paramPage.getName());
     }
-    
+
     /**
      * Check if start element of two StAX parsers match.
      * 

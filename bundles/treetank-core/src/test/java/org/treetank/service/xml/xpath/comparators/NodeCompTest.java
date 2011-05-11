@@ -27,26 +27,15 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
-import junit.extensions.TestDecorator;
-
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.comparators.AbsComparator;
-import org.treetank.service.xml.xpath.comparators.CompKind;
-import org.treetank.service.xml.xpath.comparators.NodeComp;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;

@@ -28,7 +28,6 @@
 package org.treetank.service.xml.xpath.types;
 
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.types.Type;
 
 import org.junit.Before;
 import org.junit.Test;

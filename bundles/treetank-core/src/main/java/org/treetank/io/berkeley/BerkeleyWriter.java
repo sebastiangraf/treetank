@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -40,7 +40,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.AbsPage;
 import org.treetank.page.PageReference;
-import org.treetank.utils.LogWrapper;
 
 /**
  * This class represents an reading instance of the Treetank-Application
@@ -51,12 +50,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public class BerkeleyWriter implements IWriter {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(BerkeleyWriter.class));
 
     /** Current {@link Database} to write to. */
     private transient final Database mDatabase;
@@ -86,7 +79,6 @@ public class BerkeleyWriter implements IWriter {
             this.mDatabase = mDatabase;
             this.mNodepagekey = getLastNodePage();
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
 
@@ -101,7 +93,6 @@ public class BerkeleyWriter implements IWriter {
             setLastNodePage(mNodepagekey);
             mTxn.commit();
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -129,7 +120,6 @@ public class BerkeleyWriter implements IWriter {
                     .append(" failed!").toString());
             }
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
         pageReference.setKey(key);
@@ -155,7 +145,6 @@ public class BerkeleyWriter implements IWriter {
             mDatabase.put(mTxn, keyEntry, valueEntry);
 
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -184,7 +173,6 @@ public class BerkeleyWriter implements IWriter {
             }
             return val;
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
 
@@ -205,7 +193,6 @@ public class BerkeleyWriter implements IWriter {
         try {
             mDatabase.put(mTxn, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
 

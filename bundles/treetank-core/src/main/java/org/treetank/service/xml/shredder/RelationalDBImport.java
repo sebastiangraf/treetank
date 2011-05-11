@@ -1,18 +1,18 @@
 /**
- * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+F * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,31 +27,10 @@
 
 package org.treetank.service.xml.shredder;
 
-import java.io.File;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-
-// import net.sf.saxon.s9api.DocumentBuilder;
-// import net.sf.saxon.s9api.Processor;
-// import net.sf.saxon.s9api.SaxonApiException;
-// import net.sf.saxon.s9api.WhitespaceStrippingPolicy;
-// import net.sf.saxon.s9api.XPathCompiler;
-// import net.sf.saxon.s9api.XPathSelector;
-// import net.sf.saxon.s9api.XdmItem;
-// import net.sf.saxon.s9api.XdmNode;
-
-import org.slf4j.LoggerFactory;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>RelationalDBImport</h1>
@@ -70,12 +49,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public final class RelationalDBImport implements IImport<Object> {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(RelationalDBImport.class));
 
     /** Driver class string. */
     private final String mDriverClass;
@@ -117,14 +90,14 @@ public final class RelationalDBImport implements IImport<Object> {
         try {
             Class.forName(mDriverClass).newInstance();
             mConnection = DriverManager.getConnection(mConnURL, mUserName, mUserPass);
-        } catch (final InstantiationException e) {
-            LOGWRAPPER.error(e);
-        } catch (final IllegalAccessException e) {
-            LOGWRAPPER.error(e);
-        } catch (final ClassNotFoundException e) {
-            LOGWRAPPER.error(e);
-        } catch (final SQLException e) {
-            LOGWRAPPER.error(e);
+        } catch (final InstantiationException exc) {
+            exc.printStackTrace();
+        } catch (final IllegalAccessException exc) {
+            exc.printStackTrace();
+        } catch (final ClassNotFoundException exc) {
+            exc.printStackTrace();
+        } catch (final SQLException exc) {
+            exc.printStackTrace();
         }
     }
 

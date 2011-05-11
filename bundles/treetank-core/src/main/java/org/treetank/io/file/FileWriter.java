@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,7 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-
 import org.slf4j.LoggerFactory;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.TTIOException;
@@ -43,7 +42,6 @@ import org.treetank.page.PageReference;
 import org.treetank.utils.CryptoJavaImpl;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.ICrypto;
-import org.treetank.utils.LogWrapper;
 
 /**
  * File Writer for providing read/write access for file as a treetank backend.
@@ -53,11 +51,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public final class FileWriter implements IWriter {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(FileWriter.class));
 
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;
@@ -81,15 +74,13 @@ public final class FileWriter implements IWriter {
      * @throws TTIOException
      *             if FileWriter IO error
      */
-    public FileWriter(final SessionConfiguration paramConf, final File paramStorage)
-        throws TTIOException {
+    public FileWriter(final SessionConfiguration paramConf, final File paramStorage) throws TTIOException {
         try {
-            if(!paramStorage.getParentFile().exists()) {
+            if (!paramStorage.getParentFile().exists()) {
                 paramStorage.getParentFile().mkdirs();
             }
             mFile = new RandomAccessFile(paramStorage, IConstants.READ_WRITE);
         } catch (final FileNotFoundException fileExc) {
-            LOGWRAPPER.error(fileExc);
             throw new TTIOException(fileExc);
         }
 
@@ -145,7 +136,6 @@ public final class FileWriter implements IWriter {
             pageReference.setKey(key);
             pageReference.setChecksum(checksum);
         } catch (final IOException paramExc) {
-            LOGWRAPPER.error(paramExc);
             throw new TTIOException(paramExc);
         }
 
@@ -161,7 +151,6 @@ public final class FileWriter implements IWriter {
                 mFile.close();
             }
         } catch (final IOException e) {
-            LOGWRAPPER.error(e);
             throw new TTIOException(e);
         }
     }
@@ -201,7 +190,6 @@ public final class FileWriter implements IWriter {
             pageReference.getChecksum(tmp);
             mFile.write(tmp);
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }

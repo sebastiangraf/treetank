@@ -45,9 +45,8 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
 import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -59,7 +58,6 @@ import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.settings.EFixed;
-import org.treetank.utils.LogWrapper;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -74,12 +72,6 @@ import org.treetank.utils.TypedValue;
  * 
  */
 public final class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(XMLUpdateShredder.class));
 
     /** File to parse. */
     protected transient File mFile;
@@ -394,10 +386,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             }
             // TODO: use Java7 multi-catch feature.
         } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e);
             throw new TTIOException(e);
         } catch (final IOException e) {
-            LOGWRAPPER.error(e);
             throw new TTIOException(e);
         }
 
@@ -418,13 +408,6 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     private void processStartTag(final StartElement paramElem) throws IOException, XMLStreamException,
         AbsTTException {
         assert paramElem != null;
-        // Log debugging messages.
-        LOGWRAPPER.debug("TO SHREDDER: " + paramElem.getName());
-        if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-            LOGWRAPPER.debug("SHREDDERED: " + mWtx.getQNameOfCurrentNode());
-        } else {
-            LOGWRAPPER.debug("SHREDDERED: " + mWtx.getValueOfCurrentNode());
-        }
 
         // Initialize variables.
         initializeVars();
@@ -733,9 +716,6 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
         // Check if last node reached.
         // checkIfLastNode(false);
-
-        // Log debugging messages.
-        LOGWRAPPER.debug("FOUND: " + mWtx.getQNameOfCurrentNode() + mWtx.getNode().getNodeKey());
 
         // Skip whitespace events.
         skipWhitespaces(mReader);
@@ -1383,12 +1363,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
             wtx.close();
             session.close();
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e);
-        } catch (final IOException e) {
-            LOGWRAPPER.error(e);
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
+        } catch (final IOException exc) {
+            exc.printStackTrace();
+        } catch (final XMLStreamException exc) {
+            exc.printStackTrace();
         }
 
         System.out.println(" done [" + (System.currentTimeMillis() - time) + "ms].");

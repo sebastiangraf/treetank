@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.xpath.xmark;
 
+import org.perfidix.AbstractConfig;
 import org.perfidix.element.KindOfArrangement;
 import org.perfidix.meter.AbstractMeter;
 import org.perfidix.meter.MemMeter;
@@ -34,7 +35,6 @@ import org.perfidix.meter.Memory;
 import org.perfidix.meter.Time;
 import org.perfidix.meter.TimeMeter;
 import org.perfidix.ouput.AbstractOutput;
-import org.perfidix.AbstractConfig;
 
 public class BenchConfigClass extends AbstractConfig {
 

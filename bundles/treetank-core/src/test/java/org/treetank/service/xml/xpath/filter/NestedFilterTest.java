@@ -27,15 +27,7 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.filter.AttributeFilter;
 import org.treetank.axis.filter.ElementFilter;
@@ -46,7 +38,10 @@ import org.treetank.axis.filter.NestedFilter;
 import org.treetank.axis.filter.NodeFilter;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class NestedFilterTest {
 

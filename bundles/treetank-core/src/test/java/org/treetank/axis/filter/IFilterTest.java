@@ -31,7 +31,6 @@ package org.treetank.axis.filter;
 import org.treetank.TestHelper;
 import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
-import org.treetank.axis.filter.AbsFilter;
 import org.treetank.exception.AbsTTException;
 
 import org.junit.After;

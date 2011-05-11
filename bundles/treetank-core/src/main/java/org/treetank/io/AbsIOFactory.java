@@ -84,8 +84,8 @@ public abstract class AbsIOFactory {
      */
     protected AbsIOFactory(final File paramFile, final DatabaseConfiguration paramDatabase,
         final SessionConfiguration paramSession) {
-        mSessionConfig = paramSession;
-        mDatabaseConfig = paramDatabase;
+        this.mSessionConfig = paramSession;
+        this.mDatabaseConfig = paramDatabase;
         this.mFile = paramFile;
     }
 

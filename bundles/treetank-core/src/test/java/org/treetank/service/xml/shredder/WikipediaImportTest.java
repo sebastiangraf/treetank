@@ -31,15 +31,13 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.junit.After;
-import org.junit.Before;
-
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.serialize.XMLSerializer;
-import org.treetank.service.xml.shredder.WikipediaImport;
+
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * Test WikipediaImport.
