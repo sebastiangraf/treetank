@@ -41,6 +41,7 @@ import com.sleepycat.je.OperationStatus;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.exception.TTIOException;
+import org.treetank.utils.LogWrapper;
 
 /**
  * Berkeley implementation of a persistent cache. That means that all data is
@@ -51,6 +52,12 @@ import org.treetank.exception.TTIOException;
  * 
  */
 public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
+
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(BerkeleyPersistenceCache.class));
 
     /**
      * Berkeley database.
@@ -88,7 +95,8 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceCache(final File paramFile, final long paramRevision) throws TTIOException {
+    public BerkeleyPersistenceCache(final File paramFile, final long paramRevision)
+        throws TTIOException {
         super(paramFile);
         try {
             /* Create a new, transactional database environment */
@@ -108,6 +116,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mValueBinding = new NodePageContainerBinding();
 
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
 
         }
@@ -127,6 +136,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mDatabase.put(null, keyEntry, valueEntry);
 
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
 
@@ -143,6 +153,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mEnv.close();
 
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -164,6 +175,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
             return val;
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
