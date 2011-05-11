@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 @Aspect
 public class LoggerAspect {
 
-    public static final ILoggerFactory FACTORY = LoggerFactory.getILoggerFactory();
+    private static final ILoggerFactory FACTORY = LoggerFactory.getILoggerFactory();
 
     @Around("@annotation(org.treetank.aspects.logging.Logging)")
     public Object advice(ProceedingJoinPoint pjp) throws Throwable {
