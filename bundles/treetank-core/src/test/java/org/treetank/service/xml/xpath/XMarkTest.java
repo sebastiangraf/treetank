@@ -29,19 +29,16 @@ package org.treetank.service.xml.xpath;
 
 import java.io.File;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.perfidix.annotation.BenchClass;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.service.xml.xpath.XPathAxis;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Performes the XMark benchmark.

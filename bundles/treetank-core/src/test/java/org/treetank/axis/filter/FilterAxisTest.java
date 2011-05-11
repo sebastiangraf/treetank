@@ -27,11 +27,6 @@
 
 package org.treetank.axis.filter;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -42,10 +37,12 @@ import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.AttributeAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
-import org.treetank.axis.filter.NameFilter;
-import org.treetank.axis.filter.ValueFilter;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FilterAxisTest {
     @Before

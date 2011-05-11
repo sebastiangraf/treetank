@@ -27,25 +27,20 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import org.treetank.TestHelper;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.filter.IFilterTest;
+import org.treetank.axis.filter.WildcardFilter;
+import org.treetank.exception.AbsTTException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.axis.filter.IFilterTest;
-import org.treetank.axis.filter.WildcardFilter;
-import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
-import org.treetank.utils.DocumentCreater;
+import static org.hamcrest.CoreMatchers.is;
+
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class WildcardFilterTest {
 

@@ -27,31 +27,6 @@
 
 package org.treetank.service.xml.shredder;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
-
-import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
-import org.treetank.access.Session;
-import org.treetank.access.WriteTransaction;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>XMLImport</h1>

@@ -29,15 +29,12 @@ package org.treetank.axis;
 
 import javax.xml.namespace.QName;
 
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AttributeAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.TypedValue;

@@ -35,9 +35,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.access.WriteTransaction;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -47,7 +45,6 @@ import org.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

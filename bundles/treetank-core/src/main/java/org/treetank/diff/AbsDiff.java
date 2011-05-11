@@ -27,11 +27,10 @@
 
 package org.treetank.diff;
 
-import java.util.Set;
+import javax.xml.namespace.QName;
 
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction.HashKind;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
@@ -39,9 +38,6 @@ import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
-import org.treetank.utils.LogWrapper;
-
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract diff class which implements common functionality.
@@ -50,9 +46,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 abstract class AbsDiff extends AbsDiffObservable {
-
-    /** Logger. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsDiff.class));
 
     /** Determines if a diff should be fired or not. */
     enum EFireDiff {
@@ -101,35 +94,40 @@ abstract class AbsDiff extends AbsDiffObservable {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
+     * @throws AbsTTException
      */
-    AbsDiff(final Builder paramBuilder) {
+    AbsDiff(final Builder paramBuilder) throws AbsTTException {
         assert paramBuilder != null;
-        try {
-            mDiffKind = paramBuilder.mKind;
-            synchronized (paramBuilder.mDb) {
-                mNewRtx = paramBuilder.mDb.getSession(new SessionConfiguration()).beginReadTransaction(paramBuilder.mNewRev);
-                mOldRtx = paramBuilder.mDb.getSession(new SessionConfiguration()).beginReadTransaction(paramBuilder.mOldRev);
-                mHashKind = paramBuilder.mDb.getDatabaseConf().mHashKind;
-            }
-            mNewRtx.moveTo(paramBuilder.mKey);
-            mOldRtx.moveTo(paramBuilder.mKey);
-            mRootKey = paramBuilder.mKey;
-
-            synchronized (paramBuilder.mObservers) {
-                for (final IDiffObserver observer : paramBuilder.mObservers) {
-                    addObserver(observer);
-                }
-            }
-            mDiff = EDiff.SAME;
-            mDiffKind = paramBuilder.mKind;
-            mDepth = new DepthCounter(paramBuilder.mNewDepth, paramBuilder.mOldDepth);
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        mDiffKind = paramBuilder.mKind;
+        synchronized (paramBuilder.mDb) {
+            mNewRtx =
+                paramBuilder.mDb.getSession(new SessionConfiguration()).beginReadTransaction(
+                    paramBuilder.mNewRev);
+            mOldRtx =
+                paramBuilder.mDb.getSession(new SessionConfiguration()).beginReadTransaction(
+                    paramBuilder.mOldRev);
+            mHashKind = paramBuilder.mDb.getDatabaseConf().mHashKind;
         }
+        mNewRtx.moveTo(paramBuilder.mKey);
+        mOldRtx.moveTo(paramBuilder.mKey);
+        mRootKey = paramBuilder.mKey;
+
+        synchronized (paramBuilder.mObservers) {
+            for (final IDiffObserver observer : paramBuilder.mObservers) {
+                addObserver(observer);
+            }
+        }
+        mDiff = EDiff.SAME;
+        mDiffKind = paramBuilder.mKind;
+        mDepth = new DepthCounter(paramBuilder.mNewDepth, paramBuilder.mOldDepth);
     }
 
-    /** Do the diff. */
-    void diffMovement() {
+    /**
+     * Do the diff.
+     * 
+     * @throws AbsTTException
+     */
+    void diffMovement() throws AbsTTException {
         assert mHashKind != null;
         assert mNewRtx != null;
         assert mOldRtx != null;

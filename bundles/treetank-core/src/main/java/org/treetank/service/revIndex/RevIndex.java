@@ -43,7 +43,6 @@ import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.utils.LogWrapper;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -55,11 +54,6 @@ import org.treetank.utils.NamePageHash;
  * 
  */
 public final class RevIndex {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(RevIndex.class));
 
     protected static final String EMPTY_STRING = "";
 
@@ -220,7 +214,6 @@ public final class RevIndex {
             try {
                 wtx.commit();
             } catch (final TTIOException exc) {
-                LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
             wtx.moveToDocumentRoot();
@@ -240,7 +233,6 @@ public final class RevIndex {
                 mRtx.close();
                 mIndexSession.close();
             } catch (final AbsTTException exc) {
-                LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
         }
@@ -354,7 +346,6 @@ public final class RevIndex {
             try {
                 wtx.commit();
             } catch (final TTIOException exc) {
-                LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
         }

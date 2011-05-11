@@ -27,12 +27,6 @@
 
 package org.treetank.access;
 
-import static junit.framework.Assert.assertEquals;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -41,6 +35,12 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ElementNode;
 import org.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
 
 public class AttributeAndNamespaceTest {
 

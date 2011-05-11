@@ -28,11 +28,7 @@
 package org.treetank.service.xml.xpath.operators;
 
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
@@ -40,8 +36,6 @@ import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.expr.SequenceAxis;
-import org.treetank.service.xml.xpath.operators.AbsObAxis;
-import org.treetank.service.xml.xpath.operators.MulOpAxis;
 import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.utils.TypedValue;
 

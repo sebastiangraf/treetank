@@ -27,12 +27,8 @@
 
 package org.treetank.diff;
 
-import java.util.Set;
-
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.diff.DiffFactory.Builder;
-import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
@@ -50,8 +46,9 @@ final class FullDiff extends AbsDiff {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
+     * @throws AbsTTException
      */
-    FullDiff(final Builder paramBuilder) {
+    FullDiff(final Builder paramBuilder) throws AbsTTException {
         super(paramBuilder);
     }
 

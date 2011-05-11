@@ -27,7 +27,6 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.filter.AbsFilter;
 

@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,10 +35,6 @@ import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.slf4j.LoggerFactory;
-import org.treetank.utils.LogWrapper;
-
-
 /**
  * <h1>XMLSerializerProperties</h1>
  * 
@@ -52,12 +48,6 @@ import org.treetank.utils.LogWrapper;
 public final class XMLSerializerProperties {
 
     // ============== Class constants. =================
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(XMLSerializerProperties.class));
 
     /** YES maps to true. */
     private static final boolean YES = true;
@@ -111,8 +101,10 @@ public final class XMLSerializerProperties {
                 final Object[] arr = (Object[])obj;
                 mProps.put(arr[0].toString(), arr[1]);
             }
-        } catch (final Exception e) {
-            LOGWRAPPER.error(e);
+        } catch (final IllegalArgumentException exc) {
+            exc.printStackTrace();
+        } catch (IllegalAccessException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -157,7 +149,7 @@ public final class XMLSerializerProperties {
 
                 final int equals = line.indexOf('=');
                 if (equals < 0) {
-                    LOGWRAPPER.warn("Properties file has no '=' sign in line -- parsing error!");
+                    System.out.println("Properties file has no '=' sign in line -- parsing error!");
                 }
 
                 final String key = line.substring(0, equals).toUpperCase();
@@ -166,8 +158,8 @@ public final class XMLSerializerProperties {
                 mProps.put(key, value);
                 buffReader.close();
             }
-        } catch (final IOException e) {
-            LOGWRAPPER.error(e);
+        } catch (final IOException exc) {
+            exc.printStackTrace();
         }
 
         return mProps;

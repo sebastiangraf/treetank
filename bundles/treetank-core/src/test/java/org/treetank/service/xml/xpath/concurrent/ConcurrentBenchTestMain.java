@@ -31,7 +31,6 @@ package org.treetank.service.xml.xpath.concurrent;
 import org.perfidix.Benchmark;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
-import org.treetank.service.xml.xpath.xmark.XMarkBenchTestPerfidix;
 
 /**
  * Main class for Perfidix test.

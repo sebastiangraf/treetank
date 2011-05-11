@@ -33,12 +33,8 @@ import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxis;
-import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Assert;

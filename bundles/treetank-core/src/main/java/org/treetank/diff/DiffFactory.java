@@ -32,10 +32,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.LogWrapper;
 
 /**
  * Wrapper for public access.
@@ -81,7 +79,7 @@ public final class DiffFactory {
         /** Full diff. */
         FULL {
             @Override
-            void invoke(final Builder paramBuilder) {
+            void invoke(final Builder paramBuilder) throws AbsTTException {
                 final FullDiff diff = new FullDiff(paramBuilder);
                 diff.diffMovement();
             }
@@ -90,7 +88,7 @@ public final class DiffFactory {
         /** Structural diff (doesn't recognize differences in namespace and attribute nodes. */
         STRUCTURAL {
             @Override
-            void invoke(final Builder paramBuilder) {
+            void invoke(final Builder paramBuilder) throws AbsTTException {
                 final StructuralDiff diff = new StructuralDiff(paramBuilder);
                 diff.diffMovement();
             }
@@ -102,7 +100,7 @@ public final class DiffFactory {
          * @param paramBuilder
          *            {@link Builder} reference
          */
-        abstract void invoke(final Builder paramBuilder);
+        abstract void invoke(final Builder paramBuilder) throws AbsTTException;
     }
 
     /** Builder to simplify static methods. */
@@ -131,7 +129,7 @@ public final class DiffFactory {
 
         /** {@link Set} of {@link IDiffObserver}s. */
         final Set<IDiffObserver> mObservers;
-        
+
         /** Kind of diff to invoke. */
         transient DiffKind mDiffKind;
 
@@ -152,7 +150,8 @@ public final class DiffFactory {
          *            {@link Set} of observers
          */
         public Builder(final IDatabase paramDb, final long paramKey, final long paramNewRev,
-            final long paramOldRev, final EDiffOptimized paramDiffKind, final Set<IDiffObserver> paramObservers) {
+            final long paramOldRev, final EDiffOptimized paramDiffKind,
+            final Set<IDiffObserver> paramObservers) {
             mDb = paramDb;
             mKey = paramKey;
             mNewRev = paramNewRev;
@@ -184,13 +183,13 @@ public final class DiffFactory {
             mOldDepth = paramOldDepth;
             return this;
         }
-        
+
         /**
          * Set kind of diff.
          * 
          * @param paramDiffKind
-         *                      {@link DiffKind} instance
-         *            
+         *            {@link DiffKind} instance
+         * 
          * @return this builder
          */
         Builder setDiffKind(final DiffKind paramDiffKind) {
@@ -270,9 +269,9 @@ public final class DiffFactory {
 
         @Override
         public Void call() throws AbsTTException {
-//            if (mBuilder.mDiffKind == DiffKind.STRUCTURAL) {
-//                new StructuralDiff(mBuilder);
-//            }
+            // if (mBuilder.mDiffKind == DiffKind.STRUCTURAL) {
+            // new StructuralDiff(mBuilder);
+            // }
             mBuilder.mDiffKind.invoke(mBuilder);
             return null;
         }

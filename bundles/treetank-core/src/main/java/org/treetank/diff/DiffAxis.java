@@ -27,12 +27,8 @@
 
 package org.treetank.diff;
 
-import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.diff.AbsDiff.EFireDiff;
-import org.treetank.diff.DiffFactory.EDiffOptimized;
-import org.treetank.node.ENodes;
 
 /**
  * @author Johannes Lichtenberger, University of Konstanz

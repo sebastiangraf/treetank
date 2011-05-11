@@ -27,19 +27,15 @@
 
 package org.treetank.node;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IVisitor;
-import org.treetank.encryption.NodeEncryption;
 import org.treetank.io.ITTSink;
 import org.treetank.settings.EFixed;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>ElementNode</h1>

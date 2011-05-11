@@ -27,9 +27,6 @@
 
 package org.treetank.service.xml.xpath.parser;
 
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.treetank.access.ReadTransaction;
 
 /**
  * <h1>XPathToken</h1>

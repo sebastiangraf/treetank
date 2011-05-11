@@ -28,7 +28,6 @@
 package org.treetank.service.xml.xpath.comparators;
 
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.comparators.CompKind;
 import org.treetank.service.xml.xpath.types.Type;
 
 import org.junit.Test;

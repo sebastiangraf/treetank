@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-
 import org.slf4j.LoggerFactory;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.TTIOException;
@@ -43,7 +42,6 @@ import org.treetank.page.UberPage;
 import org.treetank.utils.CryptoJavaImpl;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.ICrypto;
-import org.treetank.utils.LogWrapper;
 
 /**
  * File Reader. Used for ReadTransaction to provide read only access on a
@@ -55,11 +53,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public final class FileReader implements IReader {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(FileReader.class));
 
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;
@@ -78,8 +71,7 @@ public final class FileReader implements IReader {
      * @throws TTIOException
      *             if something bad happens
      */
-    public FileReader(final SessionConfiguration paramConf, final File mConcreteStorage)
-        throws TTIOException {
+    public FileReader(final SessionConfiguration paramConf, final File mConcreteStorage) throws TTIOException {
 
         try {
             if (!mConcreteStorage.exists()) {
@@ -91,7 +83,6 @@ public final class FileReader implements IReader {
             mDecompressor = new CryptoJavaImpl();
             mBuffer = new ByteBufferSinkAndSource();
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -138,7 +129,6 @@ public final class FileReader implements IReader {
             }
 
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
 
@@ -172,7 +162,6 @@ public final class FileReader implements IReader {
 
             return uberPageReference;
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -181,7 +170,6 @@ public final class FileReader implements IReader {
         try {
             mFile.close();
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
 
         }

@@ -27,7 +27,6 @@
 
 package org.treetank.page;
 
-import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.utils.IConstants;
 

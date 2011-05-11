@@ -27,21 +27,14 @@
 
 package org.treetank.axis.filter;
 
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.exception.AbsTTException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.axis.filter.ValueFilter;
-import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
 
 public class ValueFilterTest {
 

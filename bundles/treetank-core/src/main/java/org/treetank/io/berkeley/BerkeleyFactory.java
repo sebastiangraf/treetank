@@ -53,7 +53,6 @@ import org.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
 import org.treetank.page.AbsPage;
 import org.treetank.page.PageReference;
 import org.treetank.settings.EStoragePaths;
-import org.treetank.utils.LogWrapper;
 
 /**
  * Factory class to build up {@link IReader} {@link IWriter} instances for the
@@ -66,12 +65,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public final class BerkeleyFactory extends AbsIOFactory {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(BerkeleyFactory.class));
 
     /** Binding for {@link AbsKey}. */
     public static final TupleBinding<AbsKey> KEY = new KeyBinding();
@@ -137,7 +130,6 @@ public final class BerkeleyFactory extends AbsIOFactory {
 
             mDatabase = mEnv.openDatabase(null, NAME, conf);
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
 
@@ -151,7 +143,6 @@ public final class BerkeleyFactory extends AbsIOFactory {
         try {
             return new BerkeleyReader(mEnv, mDatabase);
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -173,7 +164,6 @@ public final class BerkeleyFactory extends AbsIOFactory {
             mDatabase.close();
             mEnv.close();
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -196,7 +186,6 @@ public final class BerkeleyFactory extends AbsIOFactory {
             }
             reader.close();
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
         return returnVal;

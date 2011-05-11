@@ -27,21 +27,14 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import org.treetank.TestHelper;
+import org.treetank.axis.AbsAxisTest;
+import org.treetank.exception.AbsTTException;
+import org.treetank.settings.EFixed;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.xpath.filter.DocumentNodeAxis;
-import org.treetank.settings.EFixed;
-import org.treetank.utils.DocumentCreater;
 
 public class DocumentNodeAxisTest {
 

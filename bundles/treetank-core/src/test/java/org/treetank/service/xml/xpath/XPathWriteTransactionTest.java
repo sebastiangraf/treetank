@@ -27,13 +27,7 @@
 
 package org.treetank.service.xml.xpath;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -44,7 +38,12 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.service.xml.xpath.XPathAxis;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 /**
  * Testcase for working with XPath and WriteTransactions

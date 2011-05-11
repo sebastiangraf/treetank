@@ -35,7 +35,6 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.utils.DocumentCreater;

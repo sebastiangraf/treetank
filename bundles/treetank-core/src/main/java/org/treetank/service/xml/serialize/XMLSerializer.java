@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,10 +27,13 @@
 
 package org.treetank.service.xml.serialize;
 
-
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ConcurrentMap;
-
 
 import org.slf4j.LoggerFactory;
 import org.treetank.access.FileDatabase;
@@ -42,7 +45,6 @@ import org.treetank.node.AbsStructNode;
 import org.treetank.node.ElementNode;
 import org.treetank.settings.ECharsForSerializing;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.LogWrapper;
 
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
@@ -60,11 +62,6 @@ import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDE
  * </p>
  */
 public final class XMLSerializer extends AbsSerializer {
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(XMLSerializer.class));
 
     /** Offset that must be added to digit to make it ASCII. */
     private static final int ASCII_OFFSET = 48;
@@ -196,7 +193,7 @@ public final class XMLSerializer extends AbsSerializer {
                 break;
             }
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
+            exc.printStackTrace();
         }
     }
 
@@ -218,7 +215,7 @@ public final class XMLSerializer extends AbsSerializer {
                 mOut.write(ECharsForSerializing.NEWLINE.getBytes());
             }
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
+            exc.printStackTrace();
         }
     }
 
@@ -232,7 +229,7 @@ public final class XMLSerializer extends AbsSerializer {
                 write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
             }
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
+            exc.printStackTrace();
         }
     }
 
@@ -244,7 +241,7 @@ public final class XMLSerializer extends AbsSerializer {
             }
             mOut.flush();
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
+            exc.printStackTrace();
         }
 
     }
@@ -256,7 +253,7 @@ public final class XMLSerializer extends AbsSerializer {
             write(Long.toString(mVersion));
             write("\">");
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
+            exc.printStackTrace();
         }
 
     }
@@ -266,7 +263,7 @@ public final class XMLSerializer extends AbsSerializer {
         try {
             write("</tt>");
         } catch (final IOException exc) {
-            LOGWRAPPER.error(exc);
+            exc.printStackTrace();
         }
     }
 
@@ -417,7 +414,7 @@ public final class XMLSerializer extends AbsSerializer {
          * @param paramNodeKey
          *            root node key of subtree to shredder
          * @param paramStream
-         *            {@link OutputStream} 
+         *            {@link OutputStream}
          * @param paramProperties
          *            {@link XMLSerializerProperties}
          * @param paramVersions
@@ -485,7 +482,7 @@ public final class XMLSerializer extends AbsSerializer {
             mID = paramID;
             return this;
         }
-        
+
         /**
          * Setting the ids on nodes.
          * 

@@ -27,8 +27,6 @@
 
 package org.treetank.service.xml.xpath;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
 import org.treetank.TestHelper;
@@ -38,8 +36,9 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.utils.TypedValue;
+
+import static org.junit.Assert.fail;
 
 @Deprecated
 public class ClassInvocation {

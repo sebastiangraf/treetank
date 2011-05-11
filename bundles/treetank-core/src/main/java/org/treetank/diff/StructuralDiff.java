@@ -27,12 +27,8 @@
 
 package org.treetank.diff;
 
-import java.util.Set;
-
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.diff.DiffFactory.Builder;
-import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 
 /**
@@ -49,8 +45,9 @@ final class StructuralDiff extends AbsDiff {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
+     * @throws AbsTTException
      */
-    public StructuralDiff(final Builder paramBuilder) {
+    public StructuralDiff(final Builder paramBuilder) throws AbsTTException {
         super(paramBuilder);
     }
 

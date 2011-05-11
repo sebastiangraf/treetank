@@ -27,16 +27,16 @@
 
 package org.treetank.service.xml.xpath;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.treetank.service.xml.xpath.types.Type;
+import org.treetank.utils.TypedValue;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.TypedValue;
+import static org.hamcrest.CoreMatchers.is;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class AtomicValueTest {
 

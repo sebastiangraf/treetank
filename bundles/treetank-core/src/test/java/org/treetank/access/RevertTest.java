@@ -27,14 +27,7 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.xml.namespace.QName;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -43,6 +36,12 @@ import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public final class RevertTest {
 

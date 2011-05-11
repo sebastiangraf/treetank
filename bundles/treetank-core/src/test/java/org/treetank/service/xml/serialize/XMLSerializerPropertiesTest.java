@@ -27,6 +27,17 @@
 
 package org.treetank.service.xml.serialize;
 
+import java.io.File;
+import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -37,19 +48,6 @@ import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDEN
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
-
-import java.io.File;
-import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-
-import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.serialize.XMLSerializerProperties;
 
 
 public class XMLSerializerPropertiesTest {

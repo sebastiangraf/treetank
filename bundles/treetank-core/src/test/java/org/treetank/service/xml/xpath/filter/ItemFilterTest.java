@@ -27,20 +27,15 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.filter.IFilterTest;
 import org.treetank.axis.filter.ItemFilter;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ItemFilterTest {
 

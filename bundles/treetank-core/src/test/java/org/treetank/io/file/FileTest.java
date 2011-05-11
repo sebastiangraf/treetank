@@ -27,7 +27,6 @@
 
 package org.treetank.io.file;
 
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.AbsIOFactory.StorageType;
@@ -35,7 +34,6 @@ import org.treetank.io.IOTestHelper;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class FileTest {

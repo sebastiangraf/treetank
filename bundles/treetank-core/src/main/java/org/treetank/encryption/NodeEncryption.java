@@ -24,9 +24,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import org.slf4j.LoggerFactory;
-import org.treetank.utils.LogWrapper;
-
 /**
  * Singleton class to provide operations for node encryption and decrpytion.
  * 
@@ -35,11 +32,6 @@ import org.treetank.utils.LogWrapper;
  */
 public class NodeEncryption {
 
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(NodeEncryption.class));
     /**
      * Encryption algorithm.
      */
@@ -105,7 +97,6 @@ public class NodeEncryption {
             encrypted = cipher.doFinal(bytesToEncrypt);
 
         } catch (final GeneralSecurityException exc) {
-            LOGWRAPPER.error(exc);
             exc.printStackTrace();
         }
         return encrypted;
@@ -131,7 +122,6 @@ public class NodeEncryption {
             cipher.init(Cipher.DECRYPT_MODE, sKey, ivParams);
             decrypted = cipher.doFinal(bytesToDecrypt);
         } catch (final GeneralSecurityException exc) {
-            LOGWRAPPER.error(exc);
             exc.printStackTrace();
         }
         return decrypted;
@@ -152,7 +142,6 @@ public class NodeEncryption {
             sKey = kGen.generateKey();
 
         } catch (final NoSuchAlgorithmException exc) {
-            LOGWRAPPER.error(exc);
             exc.printStackTrace();
         }
         return sKey;

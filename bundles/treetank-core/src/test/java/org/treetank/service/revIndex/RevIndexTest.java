@@ -29,7 +29,6 @@ package org.treetank.service.revIndex;
 
 import java.util.Stack;
 
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -40,9 +39,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.service.revIndex.DocumentTreeNavigator;
-import org.treetank.service.revIndex.RevIndex;
-import org.treetank.service.revIndex.TrieNavigator;
 
 import org.junit.After;
 import org.junit.Before;
