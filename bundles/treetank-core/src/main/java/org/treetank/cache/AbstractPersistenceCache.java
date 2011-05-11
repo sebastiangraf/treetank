@@ -30,10 +30,12 @@ package org.treetank.cache;
 import java.io.File;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.FileDatabase;
+import org.treetank.access.DatabaseConfiguration;
+import org.treetank.api.IDatabase;
 import org.treetank.exception.TTIOException;
 import org.treetank.settings.EStoragePaths;
+import org.treetank.utils.LogWrapper;
 
 /**
  * Abstract class for holding all persistence caches. Each instance of this
@@ -43,6 +45,11 @@ import org.treetank.settings.EStoragePaths;
  * 
  */
 public abstract class AbstractPersistenceCache implements ICache {
+
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(FileDatabase.class));
 
     /**
      * Place to store the data.
@@ -65,6 +72,9 @@ public abstract class AbstractPersistenceCache implements ICache {
         place =
             new File(paramFile, new StringBuilder(EStoragePaths.TRANSACTIONLOG.getFile().getName()).append(
                 File.separator).append(counter).toString());
+        if (!place.mkdirs()) {
+            LOGWRAPPER.error("Couldn't create directory for " + place);
+        }
         counter++;
     }
 
@@ -75,6 +85,7 @@ public abstract class AbstractPersistenceCache implements ICache {
         try {
             putPersistent(mKey, mPage);
         } catch (final TTIOException exc) {
+            LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
     }
@@ -94,6 +105,7 @@ public abstract class AbstractPersistenceCache implements ICache {
                 throw new TTIOException("Couldn't delete!");
             }
         } catch (final TTIOException exc) {
+            LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
     }
@@ -105,6 +117,7 @@ public abstract class AbstractPersistenceCache implements ICache {
         try {
             return getPersistent(mKey);
         } catch (final TTIOException exc) {
+            LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
     }
