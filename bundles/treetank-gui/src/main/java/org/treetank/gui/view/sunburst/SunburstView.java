@@ -34,15 +34,12 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.concurrent.Semaphore;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IReadTransaction;
@@ -52,7 +49,6 @@ import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
 import org.treetank.gui.view.ViewNotifier;
-import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -74,8 +70,6 @@ public final class SunburstView extends JScrollPane implements IView {
      */
     private static final long serialVersionUID = 1L;
 
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstView.class));
 
     /** Name of the sunburst view. */
     private static final String NAME = "SunburstView";
@@ -220,8 +214,8 @@ public final class SunburstView extends JScrollPane implements IView {
                 mDB.getDatabase().getSession(new SessionConfiguration()).beginReadTransaction();
             revision = rtx.getRevisionNumber();
             rtx.close();
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace(); 
         }
         final File file = ((FileDatabase)mDB.getDatabase()).mFile;
         if (mDB != null) {
@@ -282,7 +276,6 @@ public final class SunburstView extends JScrollPane implements IView {
         @Override
         public void draw() {
             if (mSunburstGUI != null) {
-                LOGWRAPPER.debug("drawing");
                 mSunburstGUI.draw();
                 handleHLWeight();
             }

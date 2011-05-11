@@ -35,33 +35,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-import javax.swing.JOptionPane;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import controlP5.ControlGroup;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.service.xml.shredder.EShredderCommit;
-import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.settings.EFixed;
-import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -77,9 +73,6 @@ import processing.core.PConstants;
  * 
  */
 final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, PropertyChangeListener {
-
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));
 
     /** {@link IWriteTransaction} instance. */
     private transient IWriteTransaction mWtx;
@@ -175,8 +168,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
             mDb = mModel.mDb;
             try {
                 mRtx = mModel.mDb.getSession().beginReadTransaction(mModel.mDb.getRevisionNumber());
-            } catch (final AbsTTException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final AbsTTException exc) {
+                exc.printStackTrace();
             }
             mParent = mModel.mParent;
             mRelations = new NodeRelations();
@@ -189,7 +182,6 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
          */
         @Override
         public SunburstFireContainer call() {
-            LOGWRAPPER.debug("Build sunburst items.");
 
             // Get min and max textLength.
             getMinMaxTextLength(mRtx);
@@ -199,19 +191,17 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 .next()) {
             }
 
-            LOGWRAPPER.debug("Built " + mItems.size() + " SunburstItems!");
-
             try {
                 mRtx.close();
-            } catch (final AbsTTException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final AbsTTException exc) {
+                exc.printStackTrace();
             }
 
             // Fire property changes.
             firePropertyChange("maxDepth", null, mDepthMax);
             firePropertyChange("items", null, mItems);
             firePropertyChange("done", null, true);
-            
+
             return null;
         }
 
@@ -238,13 +228,13 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
             } else {
                 childExtension = 2 * PConstants.PI;
             }
-            LOGWRAPPER.debug("ITEM: " + paramIndex);
-            LOGWRAPPER.debug("descendantCount: " + descendantCount);
-            LOGWRAPPER.debug("parentDescCount: " + parDescendantCount);
-            LOGWRAPPER.debug("indexToParent: " + indexToParent);
-            LOGWRAPPER.debug("extension: " + childExtension);
-            LOGWRAPPER.debug("depth: " + depth);
-            LOGWRAPPER.debug("angle: " + angle);
+            // LOGWRAPPER.debug("ITEM: " + paramIndex);
+            // LOGWRAPPER.debug("descendantCount: " + descendantCount);
+            // LOGWRAPPER.debug("parentDescCount: " + parDescendantCount);
+            // LOGWRAPPER.debug("indexToParent: " + indexToParent);
+            // LOGWRAPPER.debug("extension: " + childExtension);
+            // LOGWRAPPER.debug("depth: " + depth);
+            // LOGWRAPPER.debug("angle: " + angle);
 
             // Set node relations.
             String text = null;
@@ -252,7 +242,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 mRelations.setAll(depth, structKind, mRtx.getValueOfCurrentNode().length(), mMinTextLength,
                     mMaxTextLength, indexToParent);
                 text = mRtx.getValueOfCurrentNode();
-                LOGWRAPPER.debug("text: " + text);
+                // LOGWRAPPER.debug("text: " + text);
             } else {
                 mRelations.setAll(depth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
             }
@@ -262,7 +252,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
                     .setNode(node).setText(text).build());
             } else {
-                LOGWRAPPER.debug("QName: " + mRtx.getQNameOfCurrentNode());
+                // LOGWRAPPER.debug("QName: " + mRtx.getQNameOfCurrentNode());
                 mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
                     .setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
             }
@@ -300,8 +290,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 mMaxTextLength = 0;
             }
 
-            LOGWRAPPER.debug("MINIMUM text length: " + mMinTextLength);
-            LOGWRAPPER.debug("MAXIMUM text length: " + mMaxTextLength);
+            // LOGWRAPPER.debug("MINIMUM text length: " + mMinTextLength);
+            // LOGWRAPPER.debug("MAXIMUM text length: " + mMaxTextLength);
         }
 
         /**
@@ -558,8 +548,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                     mWtx.insertTextAsRightSibling(paramText);
                 }
             }
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final InterruptedException exc) {
+            exc.printStackTrace();
         }
     }
 

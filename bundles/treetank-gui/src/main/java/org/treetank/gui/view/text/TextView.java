@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,12 +26,6 @@
  */
 
 package org.treetank.gui.view.text;
-
-import static org.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
-import static org.treetank.gui.GUIConstants.ELEMENT_COLOR;
-import static org.treetank.gui.GUIConstants.NAMESPACE_COLOR;
-import static org.treetank.gui.GUIConstants.NEWLINE;
-import static org.treetank.gui.GUIConstants.TEXT_COLOR;
 
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
@@ -56,7 +50,6 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.DescendantAxis;
@@ -69,7 +62,12 @@ import org.treetank.gui.view.ViewNotifier;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.node.ElementNode;
 import org.treetank.service.xml.serialize.StAXSerializer;
-import org.treetank.utils.LogWrapper;
+
+import static org.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
+import static org.treetank.gui.GUIConstants.ELEMENT_COLOR;
+import static org.treetank.gui.GUIConstants.NAMESPACE_COLOR;
+import static org.treetank.gui.GUIConstants.NEWLINE;
+import static org.treetank.gui.GUIConstants.TEXT_COLOR;
 
 /**
  * <h1>TextView</h1>
@@ -87,9 +85,6 @@ public final class TextView extends JScrollPane implements IView {
      * SerialUID.
      */
     private static final long serialVersionUID = -5001983007463504219L;
-
-    /** Logger. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(TextView.class));
 
     /** Name of the view. */
     private static final String NAME = "TextView";
@@ -188,8 +183,8 @@ public final class TextView extends JScrollPane implements IView {
 
         return mView;
     }
-    
-    /** 
+
+    /**
      * Not supported.
      * 
      * @see Object#clone()
@@ -261,10 +256,10 @@ public final class TextView extends JScrollPane implements IView {
                         try {
                             processStAX(State.UPDATE);
                             mText.setCaretPosition(0);
-                        } catch (final XMLStreamException e) {
-                            LOGWRAPPER.error(e.getMessage(), e);
-                        } catch (final BadLocationException e) {
-                            LOGWRAPPER.error(e.getMessage(), e);
+                        } catch (final XMLStreamException exc) {
+                            exc.printStackTrace();
+                        } catch (final BadLocationException exc) {
+                            exc.printStackTrace();
                         }
                     }
 
@@ -287,8 +282,8 @@ public final class TextView extends JScrollPane implements IView {
 
             serialize(rtx, node);
             mText.setCaretPosition(0);
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
         }
 
         repaint();
@@ -349,18 +344,12 @@ public final class TextView extends JScrollPane implements IView {
                 }
 
                 if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
-                    doc.insertString(
-                        doc.getLength(),
-                        new StringBuilder().append("xmlns='")
-                            .append(rtx.nameForKey(rtx.getNode().getURIKey())).append("'").toString(),
-                        styleNamespaces);
+                    doc.insertString(doc.getLength(), new StringBuilder().append("xmlns='").append(
+                        rtx.nameForKey(rtx.getNode().getURIKey())).append("'").toString(), styleNamespaces);
                 } else {
-                    doc.insertString(
-                        doc.getLength(),
-                        new StringBuilder().append("xmlns:")
-                            .append(rtx.nameForKey(rtx.getNode().getNameKey())).append("='")
-                            .append(rtx.nameForKey(rtx.getNode().getURIKey())).append("'").toString(),
-                        styleNamespaces);
+                    doc.insertString(doc.getLength(), new StringBuilder().append("xmlns:").append(
+                        rtx.nameForKey(rtx.getNode().getNameKey())).append("='").append(
+                        rtx.nameForKey(rtx.getNode().getURIKey())).append("'").toString(), styleNamespaces);
                 }
                 break;
             case ATTRIBUTE_KIND:
@@ -398,10 +387,10 @@ public final class TextView extends JScrollPane implements IView {
             if (insert) {
                 processStAX(State.INITIAL);
             }
-        } catch (final BadLocationException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final BadLocationException exc) {
+            exc.printStackTrace();
+        } catch (final XMLStreamException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -465,11 +454,9 @@ public final class TextView extends JScrollPane implements IView {
                     } else {
                         final EndElement endTag = event.asEndElement();
                         indent(doc, level, indentSpaces);
-                        doc.insertString(
-                            doc.getLength(),
-                            new StringBuilder().append("</")
-                                .append(ViewUtilities.qNameToString(endTag.getName())).append(">")
-                                .append(NEWLINE).toString(), styleElements);
+                        doc.insertString(doc.getLength(), new StringBuilder().append("</").append(
+                            ViewUtilities.qNameToString(endTag.getName())).append(">").append(NEWLINE)
+                            .toString(), styleElements);
                     }
                     level--;
                     break;
@@ -485,7 +472,6 @@ public final class TextView extends JScrollPane implements IView {
                 }
             }
             mTempLevel = level;
-            LOGWRAPPER.info("level: " + mTempLevel);
             break;
         case UPDATE:
             for (int i = 0; mSerializer.hasNext() && i <= mLineChanges; i++) {
@@ -510,11 +496,9 @@ public final class TextView extends JScrollPane implements IView {
                     } else {
                         final EndElement endTag = event.asEndElement();
                         indent(doc, mTempLevel, indentSpaces);
-                        doc.insertString(
-                            doc.getLength(),
-                            new StringBuilder().append("</")
-                                .append(ViewUtilities.qNameToString(endTag.getName())).append(">")
-                                .append(NEWLINE).toString(), styleElements);
+                        doc.insertString(doc.getLength(), new StringBuilder().append("</").append(
+                            ViewUtilities.qNameToString(endTag.getName())).append(">").append(NEWLINE)
+                            .toString(), styleElements);
                     }
                     mTempLevel--;
                     break;
@@ -573,8 +557,8 @@ public final class TextView extends JScrollPane implements IView {
                     paramDoc.insertString(paramDoc.getLength(), " xmlns=" + ns.getNamespaceURI(),
                         styleNamespaces);
                 } else {
-                    paramDoc.insertString(paramDoc.getLength(),
-                        " xmlns:" + ns.getPrefix() + "=" + ns.getNamespaceURI(), styleNamespaces);
+                    paramDoc.insertString(paramDoc.getLength(), " xmlns:" + ns.getPrefix() + "="
+                        + ns.getNamespaceURI(), styleNamespaces);
                 }
 
                 if (paramStartTag.getAttributes().hasNext()) {
@@ -586,9 +570,9 @@ public final class TextView extends JScrollPane implements IView {
             for (final Iterator<?> attributes = paramStartTag.getAttributes(); attributes.hasNext();) {
                 final Attribute att = (Attribute)attributes.next();
 
-                paramDoc.insertString(paramDoc.getLength(),
-                    new StringBuilder().append(ViewUtilities.qNameToString(att.getName())).append("=\"")
-                        .append(att.getValue()).append("\"").toString(), styleAttributes);
+                paramDoc.insertString(paramDoc.getLength(), new StringBuilder().append(
+                    ViewUtilities.qNameToString(att.getName())).append("=\"").append(att.getValue()).append(
+                    "\"").toString(), styleAttributes);
 
                 if (attributes.hasNext()) {
                     paramDoc.insertString(paramDoc.getLength(), " ", styleElements);
@@ -605,8 +589,8 @@ public final class TextView extends JScrollPane implements IView {
             default:
                 break;
             }
-        } catch (final BadLocationException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final BadLocationException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -625,15 +609,15 @@ public final class TextView extends JScrollPane implements IView {
         assert paramDocument != null;
         System.out.println("Level: " + paramLevel);
         assert paramLevel > -1;
-//        LOGWRAPPER.debug("LEVEL: " + paramLevel);
+        // LOGWRAPPER.debug("LEVEL: " + paramLevel);
         assert paramIndentSpaces != null;
         try {
             for (int i = 0; i < paramLevel; i++) {
-                paramDocument.insertString(paramDocument.getLength(), paramIndentSpaces,
-                    paramDocument.addStyle(null, null));
+                paramDocument.insertString(paramDocument.getLength(), paramIndentSpaces, paramDocument
+                    .addStyle(null, null));
             }
-        } catch (final BadLocationException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final BadLocationException exc) {
+            exc.printStackTrace();
         }
     }
 

@@ -27,37 +27,28 @@
 
 package org.treetank.gui.view.sunburst;
 
-import java.awt.event.MouseEvent;
-import java.io.ByteArrayInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.JOptionPane;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-
-import controlP5.ControlGroup;
-
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.gui.ReadDB;
 import org.treetank.node.ENodes;
-import org.treetank.service.xml.shredder.EShredderCommit;
 import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 
@@ -69,8 +60,6 @@ import processing.core.PApplet;
  * 
  */
 abstract class AbsModel extends AbsComponent implements IModel, Iterator<SunburstItem> {
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsModel.class));
 
     /** {@link List} of {@link SunburstItem}s. */
     transient List<SunburstItem> mItems;
@@ -104,7 +93,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
 
     /** The last maximum depth in the old revision. */
     transient int mLastOldMaxDepth;
-    
+
     /** Determines if XML fragments should be inserted as first child or as right sibling of the current node. */
     transient EShredderInsert mInsert;
 
@@ -124,8 +113,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             mSession = paramDb.getSession();
             mRtx = mSession.beginReadTransaction(paramDb.getRevisionNumber());
             mRtx.moveTo(paramDb.getNodeKey());
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
         }
         mItems = new ArrayList<SunburstItem>();
         mLastItems = new Stack<List<SunburstItem>>();
@@ -142,21 +131,21 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
      */
     static void shutdownAndAwaitTermination(final ExecutorService paramPool) {
         paramPool.shutdown(); // Disable new tasks from being submitted.
-//        try {
-//            // Wait a while for existing tasks to terminate.
-//            if (!paramPool.awaitTermination(60, TimeUnit.SECONDS)) {
-//                paramPool.shutdownNow(); // Cancel currently executing tasks.
-//                // Wait a while for tasks to respond to being cancelled.
-//                if (!paramPool.awaitTermination(60, TimeUnit.SECONDS)) {
-//                    LOGWRAPPER.error("Pool did not terminate");
-//                }
-//            }
-//        } catch (final InterruptedException ie) {
-//            // (Re-)Cancel if current thread also interrupted.
-//            paramPool.shutdownNow();
-//            // Preserve interrupt status.
-//            Thread.currentThread().interrupt();
-//        }
+        // try {
+        // // Wait a while for existing tasks to terminate.
+        // if (!paramPool.awaitTermination(60, TimeUnit.SECONDS)) {
+        // paramPool.shutdownNow(); // Cancel currently executing tasks.
+        // // Wait a while for tasks to respond to being cancelled.
+        // if (!paramPool.awaitTermination(60, TimeUnit.SECONDS)) {
+        // LOGWRAPPER.error("Pool did not terminate");
+        // }
+        // }
+        // } catch (final InterruptedException ie) {
+        // // (Re-)Cancel if current thread also interrupted.
+        // paramPool.shutdownNow();
+        // // Preserve interrupt status.
+        // Thread.currentThread().interrupt();
+        // }
     }
 
     /**
@@ -171,8 +160,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             mSession = paramDb.getSession();
             mRtx = mSession.beginReadTransaction(paramDb.getRevisionNumber());
             mRtx.moveTo(paramDb.getNodeKey());
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
         }
         mItems = new ArrayList<SunburstItem>();
         mLastItems = new Stack<List<SunburstItem>>();
@@ -303,8 +292,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                 if (mRTX.getNode().getKind() == ENodes.ROOT_KIND) {
                     mRTX.moveToFirstChild();
                 }
-            } catch (final AbsTTException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final AbsTTException exc) {
+                exc.printStackTrace();
             }
         }
 
@@ -341,14 +330,14 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                 executor.shutdown();
                 try {
                     executor.awaitTermination(5, TimeUnit.SECONDS);
-                } catch (final InterruptedException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
+                } catch (final InterruptedException exc) {
+                    exc.printStackTrace();
                     return;
                 }
 
                 firePropertyChange("done", null, true);
             } catch (final TTXPathException exc) {
-                LOGWRAPPER.error(exc);
+                exc.printStackTrace();
             }
         }
     }
@@ -380,8 +369,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             try {
                 mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
                 mRTX.moveTo(mRtx.getNode().getNodeKey());
-            } catch (final AbsTTException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final AbsTTException exc) {
+                exc.printStackTrace();
             }
         }
 
@@ -396,7 +385,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
             }
         }
     }
-    
+
     /**
      * Set insert for shredding.
      * 

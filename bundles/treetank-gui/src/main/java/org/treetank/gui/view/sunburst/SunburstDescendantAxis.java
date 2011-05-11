@@ -32,15 +32,12 @@ import java.util.Stack;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.gui.view.sunburst.Item.Builder;
-import org.treetank.gui.view.sunburst.Item;
 import org.treetank.node.AbsStructNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.FastStack;
-import org.treetank.utils.LogWrapper;
 
 import processing.core.PConstants;
 
@@ -52,9 +49,6 @@ import processing.core.PConstants;
  */
 public final class SunburstDescendantAxis extends AbsAxis {
 
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(
-        LoggerFactory.getLogger(SunburstDescendantAxis.class));
 
     /** Extension stack. */
     private transient Stack<Float> mExtensionStack;
@@ -143,10 +137,10 @@ public final class SunburstDescendantAxis extends AbsAxis {
             mDescendants = mModel.getDescendants(getTransaction());
             mParDescendantCount = mDescendants.get(mIndex + 1);
             mDescendantCount = mParDescendantCount;
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final ExecutionException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final InterruptedException exc) {
+            exc.printStackTrace(); 
+        } catch (final ExecutionException exc) {
+            exc.printStackTrace(); 
         }
     }
 
