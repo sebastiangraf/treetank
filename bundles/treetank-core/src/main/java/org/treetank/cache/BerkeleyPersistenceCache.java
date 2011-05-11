@@ -53,11 +53,6 @@ import org.treetank.utils.LogWrapper;
  */
 public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(BerkeleyPersistenceCache.class));
 
     /**
      * Berkeley database.
@@ -116,7 +111,6 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mValueBinding = new NodePageContainerBinding();
 
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
 
         }
@@ -136,7 +130,6 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mDatabase.put(null, keyEntry, valueEntry);
 
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
 
@@ -153,7 +146,6 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mEnv.close();
 
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
@@ -175,7 +167,6 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
             return val;
         } catch (final DatabaseException exc) {
-            LOGWRAPPER.error(exc);
             throw new TTIOException(exc);
         }
     }
