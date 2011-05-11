@@ -43,7 +43,6 @@ import org.treetank.gui.view.ViewNotifier;
 import org.treetank.gui.view.sunburst.SunburstView;
 import org.treetank.gui.view.text.TextView;
 import org.treetank.gui.view.tree.TreeView;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>Treetank GUI</h1>
@@ -58,9 +57,6 @@ import org.treetank.utils.LogWrapper;
 public final class GUI extends JFrame {
     /** Serialization UID. */
     private static final long serialVersionUID = 7396552752125858796L;
-
-    /** {@link LogWrapper} which wraps a Logger. */
-    private static final LogWrapper LOGGER = new LogWrapper(LoggerFactory.getLogger(GUI.class));
 
     /** Optionally set the look and feel. */
     private static boolean mUseSystemLookAndFeel;
@@ -201,14 +197,14 @@ public final class GUI extends JFrame {
         if (mUseSystemLookAndFeel) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (final ClassNotFoundException e) {
-                LOGGER.error(e.getMessage(), e);
-            } catch (final InstantiationException e) {
-                LOGGER.error(e.getMessage(), e);
-            } catch (final IllegalAccessException e) {
-                LOGGER.error(e.getMessage(), e);
-            } catch (final UnsupportedLookAndFeelException e) {
-                LOGGER.error(e.getMessage(), e);
+            } catch (final ClassNotFoundException exc) {
+                exc.printStackTrace();
+            } catch (final InstantiationException exc) {
+                exc.printStackTrace();
+            } catch (final IllegalAccessException exc) {
+                exc.printStackTrace();
+            } catch (final UnsupportedLookAndFeelException exc) {
+                exc.printStackTrace();
             }
         }
 

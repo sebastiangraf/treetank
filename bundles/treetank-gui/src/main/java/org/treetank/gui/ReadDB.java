@@ -29,14 +29,12 @@ package org.treetank.gui;
 
 import java.io.File;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>ReadDB</h1>
@@ -49,8 +47,6 @@ import org.treetank.utils.LogWrapper;
  * 
  */
 public final class ReadDB {
-    /** Logger. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(ReadDB.class));
 
     /** Treetank {@link IDatabase}. */
     private transient IDatabase mDatabase;
@@ -94,8 +90,8 @@ public final class ReadDB {
             mRtx = mSession.beginReadTransaction(paramRevision);
             mRtx.moveTo(paramNodekeyToStart);
             mRevision = mRtx.getRevisionNumber();
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error("TreetankException: " + e.getMessage(), e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -152,8 +148,8 @@ public final class ReadDB {
         try {
             mRtx.close();
             mSession.close();
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
         }
     }
 }

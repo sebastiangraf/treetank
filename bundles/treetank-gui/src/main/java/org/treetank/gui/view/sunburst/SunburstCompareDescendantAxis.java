@@ -27,7 +27,6 @@
 
 package org.treetank.gui.view.sunburst;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ExecutionException;
@@ -37,14 +36,11 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.diff.DiffFactory.EDiff;
+import org.treetank.gui.view.sunburst.Item.Builder;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.FastStack;
-import org.treetank.utils.LogWrapper;
-
-import org.slf4j.LoggerFactory;
-import org.treetank.gui.view.sunburst.Item.Builder;
 
 import processing.core.PConstants;
 
@@ -56,9 +52,9 @@ import processing.core.PConstants;
  */
 public final class SunburstCompareDescendantAxis extends AbsAxis {
 
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(SunburstCompareDescendantAxis.class));
+    // /** {@link LogWrapper}. */
+    // private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+    // .getLogger(SunburstCompareDescendantAxis.class));
 
     /** Current diff value. */
     private transient EDiff mCurrDiff;
@@ -196,10 +192,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mDescendants = mModel.getDescendants(getTransaction());
             mParentDescendantCount = mDescendants.get(mIndex + 1);
             mDescendantCount = mParentDescendantCount;
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final ExecutionException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final InterruptedException exc) {
+            exc.printStackTrace();
+        } catch (final ExecutionException exc) {
+            exc.printStackTrace();
         }
 
         mParentModificationCount = 1;

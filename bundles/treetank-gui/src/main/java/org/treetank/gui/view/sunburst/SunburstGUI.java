@@ -30,45 +30,42 @@ package org.treetank.gui.view.sunburst;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
-import controlP5.*;
+import controlP5.Button;
+import controlP5.ControlEvent;
+import controlP5.ControlGroup;
+import controlP5.ControlListener;
+import controlP5.ControlP5;
+import controlP5.DropdownList;
+import controlP5.Range;
+import controlP5.Slider;
+import controlP5.Textfield;
+import controlP5.Toggle;
 
 import org.gicentre.utils.move.ZoomPan;
 import org.gicentre.utils.move.ZoomPanListener;
-import org.slf4j.LoggerFactory;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
-import org.treetank.service.xml.shredder.EShredderCommit;
-import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PVector;
-import processing.pdf.PGraphicsPDF;
 
 /**
  * <h1>SunburstGUI</h1>
@@ -86,9 +83,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * Serial version UID.
      */
     private static final long serialVersionUID = -4747210906900567484L;
-
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstGUI.class));
 
     /** Path to save visualization as a PDF or PNG file. */
     private static final String SAVEPATH = "target" + File.separator;
@@ -263,7 +257,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /** Determines if pruning should be enabled or not. */
     transient boolean mUsePruning;
-    
+
     /** Determines if GUI has been initialized. */
     transient boolean mInitialized;
 
@@ -356,8 +350,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mSliders.add(si, mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
             + posY + 0, len, 15));
         mSliders.get(si++).setLabel("innerNodeArcScale");
-        mSliders.add(si,
-            mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
+        mSliders.add(si, mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20,
+            len, 15));
         mSliders.get(si++).setLabel("leafNodeArcScale");
         posY += 50;
         mSliders.add(si, mControlP5.addSlider("mModificationWeight", 0, 1, mModificationWeight, left, top
@@ -365,16 +359,14 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mSliders.get(si++).setLabel("modification weight");
         posY += 50;
 
-        mRanges.add(
-            ri++,
-            mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart, mStrokeWeightEnd, left, top
-                + posY + 0, len, 15));
+        mRanges.add(ri++, mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart,
+            mStrokeWeightEnd, left, top + posY + 0, len, 15));
         posY += 30;
 
         mSliders.add(si, mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
         mSliders.get(si++).setLabel("dotSize");
-        mSliders.add(si,
-            mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15));
+        mSliders.add(si, mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left,
+            top + posY + 20, len, 15));
         mSliders.get(si++).setLabel("dotBrightness");
         posY += 50;
 
@@ -387,8 +379,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mToggles.get(ti++).setLabel("show Arcs");
         mToggles.add(ti, mControlP5.addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
         mToggles.get(ti++).setLabel("show Lines");
-        mToggles.add(ti,
-            mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15));
+        mToggles.add(ti, mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40,
+            15, 15));
         mToggles.get(ti++).setLabel("Bezier / Line");
         mToggles.add(ti, mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
         mToggles.get(ti++).setLabel("Arc / Rect");
@@ -580,22 +572,22 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             mParent.smooth();
 
             if (mIsZoomingPanning || mSavePDF || mFisheye) {
-                LOGWRAPPER.debug("Without buffered image!");
+                // LOGWRAPPER.debug("Without buffered image!");
                 mParent.background(0, 0, mBackgroundBrightness);
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
                 if (mDone) {
                     drawItems(EDraw.DRAW);
                 }
             } else if (mDone) {
-                LOGWRAPPER.debug("Buffered image!");
+                // LOGWRAPPER.debug("Buffered image!");
                 try {
                     mLock.acquire();
                     mParent.image(mImg, 0, 0);
-                } catch (final InterruptedException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
+                } catch (final InterruptedException exc) {
+                    exc.printStackTrace();
                 } finally {
                     mLock.release();
-                    LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
+                    // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
                 }
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
             }
@@ -730,8 +722,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             if (chars > 80) {
                 final StringBuilder builder = new StringBuilder().append("[Depth: ").append(mDepth);
                 if (mHitItem.mQName != null) {
-                    builder.append(" QName: ")
-                        .append(ViewUtilities.qNameToString(mHitItem.mQName).substring(0, 20)).append("...");
+                    builder.append(" QName: ").append(
+                        ViewUtilities.qNameToString(mHitItem.mQName).substring(0, 20)).append("...");
                 } else {
                     builder.append(" Text: ").append(mHitItem.mText.substring(0, 20)).append("...");
                 }
@@ -747,8 +739,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             mParent.fill(0, 0, 0);
             if (mX + offset + textW > mParent.width / 2) {
                 // Exceeds right window border, thus align to the left of the current mouse location.
-                mParent.rect(mX - textW + offset, mY + offset, textW,
-                    (mParent.textAscent() + mParent.textDescent()) * lines + 4);
+                mParent.rect(mX - textW + offset, mY + offset, textW, (mParent.textAscent() + mParent
+                    .textDescent())
+                    * lines + 4);
                 mParent.fill(0, 0, 100);
                 mParent.text(text, mX - textW + offset + 2, mY + offset + 2);
             } else {
@@ -889,10 +882,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                             mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
                             mRevisions.addItem("Revision " + i, (int)i);
                         }
-                    } catch (final TTIOException e) {
-                        LOGWRAPPER.error(e.getMessage(), e);
-                    } catch (final AbsTTException e) {
-                        LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final AbsTTException exc) {
+                        exc.printStackTrace();
                     }
                 }
                 break;
@@ -1010,10 +1001,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                             if (!mUseDiffView) {
                                 try {
                                     ((SunburstModel)mModel).popupMenu(paramEvent, mCtrl, mHitTestIndex);
-                                } catch (final AbsTTException e) {
-                                    LOGWRAPPER.error(e.getMessage(), e);
+                                } catch (final AbsTTException exc) {
+                                    exc.printStackTrace();
                                     JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: "
-                                        + e.getMessage());
+                                        + exc.getMessage());
                                 }
                             }
                         }
@@ -1077,8 +1068,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
     /** Update items as well as the buffered offscreen image. */
     void update() {
-        LOGWRAPPER.debug("[update()]: Available permits: " + mLock.availablePermits());
-        LOGWRAPPER.debug("parent width: " + mParent.width + " parent height: " + mParent.height);
+        // LOGWRAPPER.debug("[update()]: Available permits: " + mLock.availablePermits());
+        // LOGWRAPPER.debug("parent width: " + mParent.width + " parent height: " + mParent.height);
         mZoomer.reset();
         mBuffer = mParent.createGraphics(mParent.width, mParent.height, PConstants.JAVA2D);
         mBuffer.beginDraw();
@@ -1089,8 +1080,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         try {
             mLock.acquire();
             mImg = mBuffer.get(0, 0, mBuffer.width, mBuffer.height);
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.warn(e.getMessage(), e);
+        } catch (final InterruptedException exc) {
+            exc.printStackTrace();
         } finally {
             mLock.release();
             mParent.loop();
@@ -1102,7 +1093,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      */
     private void updateBuffer() {
         mBuffer.pushMatrix();
-//        mZoomer.transform();
+        // mZoomer.transform();
         mBuffer.colorMode(PConstants.HSB, 360, 100, 100, 100);
         mBuffer.background(0, 0, mBackgroundBrightness);
         mBuffer.noFill();
@@ -1121,12 +1112,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private final class MyListener implements ZoomPanListener {
         @Override
         public void panEnded() {
-            LOGWRAPPER.debug("Pan ended!");
+            // LOGWRAPPER.debug("Pan ended!");
         }
 
         @Override
         public void zoomEnded() {
-            LOGWRAPPER.debug("Zoom ended!");
+            // LOGWRAPPER.debug("Zoom ended!");
         }
     }
 
@@ -1237,12 +1228,12 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             mCtrl.setOpen(false);
             ((SunburstModel)mModel).shredder(mTextArea.getText());
             mTextArea.clear();
-        } catch (final FactoryConfigurationError e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final FactoryConfigurationError exc) {
+            exc.printStackTrace();
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
         }
     }
 
@@ -1262,12 +1253,13 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             ((SunburstModel)mModel).shredder(mTextArea.getText());
             ((SunburstModel)mModel).commit();
             mTextArea.clear();
-        } catch (final FactoryConfigurationError e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + e.getMessage());
+        } catch (final FactoryConfigurationError exc) {
+            exc.printStackTrace();
+            ;
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
+            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
         }
         mParent.refresh();
     }

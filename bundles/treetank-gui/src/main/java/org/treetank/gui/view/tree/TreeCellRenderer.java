@@ -27,10 +27,6 @@
 
 package org.treetank.gui.view.tree;
 
-import static org.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
-import static org.treetank.gui.GUIConstants.DOC_COLOR;
-import static org.treetank.gui.GUIConstants.ELEMENT_COLOR;
-
 import java.awt.Color;
 import java.awt.Component;
 
@@ -38,14 +34,16 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.xml.namespace.QName;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.access.FileDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
 import org.treetank.node.ElementNode;
-import org.treetank.utils.LogWrapper;
+
+import static org.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
+import static org.treetank.gui.GUIConstants.DOC_COLOR;
+import static org.treetank.gui.GUIConstants.ELEMENT_COLOR;
 
 /**
  * <h1>TreeCellRenderer</h1>
@@ -64,9 +62,6 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
      */
     private static final long serialVersionUID = -6242168246410260644L;
 
-    /** Logger. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(TreeCellRenderer.class));
 
     /** Treetant reading transaction {@link IReadTransaction}. */
     private transient IReadTransaction mRTX;
@@ -89,8 +84,8 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
 
         try {
             mRTX = paramReadDB.getSession().beginReadTransaction(paramReadDB.getRevisionNumber());
-        } catch (final AbsTTException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
         }
         mPATH = ((FileDatabase)paramReadDB.getDatabase()).mFile.getName();
     }
