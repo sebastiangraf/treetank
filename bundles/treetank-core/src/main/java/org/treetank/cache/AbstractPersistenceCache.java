@@ -47,11 +47,6 @@ import org.treetank.utils.LogWrapper;
 public abstract class AbstractPersistenceCache implements ICache {
 
     /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(FileDatabase.class));
-
-    /**
      * Place to store the data.
      */
     protected final File place;
@@ -72,9 +67,7 @@ public abstract class AbstractPersistenceCache implements ICache {
         place =
             new File(paramFile, new StringBuilder(EStoragePaths.TRANSACTIONLOG.getFile().getName()).append(
                 File.separator).append(counter).toString());
-        if (!place.mkdirs()) {
-            LOGWRAPPER.error("Couldn't create directory for " + place);
-        }
+        place.mkdirs();
         counter++;
     }
 
@@ -85,7 +78,6 @@ public abstract class AbstractPersistenceCache implements ICache {
         try {
             putPersistent(mKey, mPage);
         } catch (final TTIOException exc) {
-            LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
     }
@@ -105,7 +97,6 @@ public abstract class AbstractPersistenceCache implements ICache {
                 throw new TTIOException("Couldn't delete!");
             }
         } catch (final TTIOException exc) {
-            LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
     }
@@ -117,7 +108,6 @@ public abstract class AbstractPersistenceCache implements ICache {
         try {
             return getPersistent(mKey);
         } catch (final TTIOException exc) {
-            LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
     }
