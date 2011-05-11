@@ -29,13 +29,9 @@ package org.treetank.cache;
 
 import java.io.File;
 
-import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
 import org.treetank.access.DatabaseConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.exception.TTIOException;
 import org.treetank.settings.EStoragePaths;
-import org.treetank.utils.LogWrapper;
 
 /**
  * Abstract class for holding all persistence caches. Each instance of this

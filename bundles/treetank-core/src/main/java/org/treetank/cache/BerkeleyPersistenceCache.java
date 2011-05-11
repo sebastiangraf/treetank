@@ -39,9 +39,7 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.exception.TTIOException;
-import org.treetank.utils.LogWrapper;
 
 /**
  * Berkeley implementation of a persistent cache. That means that all data is
