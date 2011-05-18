@@ -75,18 +75,18 @@ public final class StructuralDiffTest {
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
     private static final long TIMEOUT_S = 10;
-
+    @Ignore
     @Before
     public void setUp() throws AbsTTException {
         mStart = new CountDownLatch(1);
         TestHelper.deleteEverything();
     }
-
+    @Ignore
     @After
     public void tearDown() {
         TestHelper.closeEverything();
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -125,7 +125,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffOptimizedFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -155,7 +155,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffSecond() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
@@ -199,7 +199,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffOptimizedSecond() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
@@ -242,7 +242,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
@@ -288,7 +288,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffOptimizedThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
@@ -333,7 +333,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffFourth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -418,7 +418,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffFifth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -456,7 +456,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffOptimizedFifth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -494,7 +494,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffSixth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -535,7 +535,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffOptimizedSixth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -576,7 +576,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffSeventh() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -621,7 +621,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffOptimizedSeventh() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -664,7 +664,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffEighth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -710,7 +710,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffOptimizedEighth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -752,7 +752,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffNeinth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
@@ -793,7 +793,7 @@ public final class StructuralDiffTest {
         mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
         verify(listener);
     }
-
+    @Ignore
     @Test
     public void testStructuralDiffOptimizedNeinth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);

@@ -17,6 +17,7 @@
 package org.treetank.encryption;
 
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
