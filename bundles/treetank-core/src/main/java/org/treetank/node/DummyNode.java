@@ -50,15 +50,15 @@ public final class DummyNode extends AbsStructNode {
      * @param paramIntBuilder
      *            int array with data
      */
-    public DummyNode(final long[] paramLongBuilder, final int[] paramIntBuilder) {
-        super(paramLongBuilder, paramIntBuilder);
+    public DummyNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder) {
+        super(paramByteBuilder, paramPointerBuilder);
     }
 
     @Override
     public int hashCode() {
         final int prime = 17;
         int result = 1;
-        result = prime * result + Arrays.hashCode(mIntData);
+        result = prime * result + Arrays.hashCode(mByteData);
         return result;
     }
 
@@ -103,14 +103,34 @@ public final class DummyNode extends AbsStructNode {
      * @return {@link DummyNode} instance
      */
     public static DummyNode createData(final long paramNodeKey, final long paramParentKey) {
-        final long[] longData = new long[ENodes.DUMMY_KIND.getLongSize()];
-        final int[] intData = new int[ENodes.DUMMY_KIND.getIntSize()];
-        longData[AbsNode.NODE_KEY] = paramNodeKey;
-        longData[AbsNode.PARENT_KEY] = paramParentKey;
-        longData[AbsStructNode.LEFT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        longData[AbsStructNode.RIGHT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        longData[AbsStructNode.FIRST_CHILD_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        return new DummyNode(longData, intData);
+        final byte[] byteData = new byte[ENodes.DUMMY_KIND.getByteSize()];
+        final byte[] pointerData = new byte[ENodes.DUMMY_KIND.getPointerSize()];
+        
+        int mCount = AbsNode.NODE_KEY;
+        for (byte aByte : longToByteArray(paramNodeKey)) {
+            pointerData[mCount++] = aByte;
+        }
+
+        mCount = AbsNode.PARENT_KEY;
+        for (byte aByte : longToByteArray(paramParentKey)) {
+            pointerData[mCount++] = aByte;
+        }
+        
+        mCount = AbsStructNode.LEFT_SIBLING_KEY;
+        for (byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())) {
+            pointerData[mCount++] = aByte;
+        }
+        
+        mCount = AbsStructNode.RIGHT_SIBLING_KEY;
+        for (byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())) {
+            pointerData[mCount++] = aByte;
+        }
+        
+        mCount = AbsStructNode.FIRST_CHILD_KEY;
+        for (byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())) {
+            pointerData[mCount++] = aByte;
+        }
+        return new DummyNode(byteData, pointerData);
     }
     
     /** {@inheritDoc} */
