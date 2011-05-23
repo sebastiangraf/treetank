@@ -53,12 +53,12 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
 
     /** standard TYPE_KEY. */
     protected static final int TYPE_KEY = 0;
-    
+
     /** standard ELEMENT KIND. */
     protected static final int ELEMENT_KIND = 56;
 
     protected final byte[] mByteData;
-    
+
     protected final byte[] mPointerData;
 
     /**
@@ -124,10 +124,16 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
         return readIntBytes(TYPE_KEY);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public long getHash() {
         return readLongPointer(HASHCODE);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     public int getElementKind() {
         return readIntPointer(ELEMENT_KIND);
     }
@@ -149,7 +155,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
         for (int i = 0; i < mPointerData.length; i++) {
             mNodeOut.writeByte(mPointerData[i]);
         }
-        
+
         for (int i = 0; i < mByteData.length; i++) {
             mNodeOut.writeByte(mByteData[i]);
         }
@@ -192,14 +198,14 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     public final void setHash(final long mHashcode) {
         writeLongPointer(HASHCODE, mHashcode);
     }
-    
+
     /**
      * setting element kind to current node.
      * 
      * @param mKind
      *            to be set
      */
-    public final void setElementKind(final int mKind){
+    public final void setElementKind(final int mKind) {
         writeIntPointer(ELEMENT_KIND, mKind);
     }
 
@@ -370,8 +376,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
             mByteData[i++] = aByte;
         }
     }
-    
-    
+
     public long readLongPointer(final int mOffset) {
         final byte[] mBuffer = new byte[8];
         for (int i = 0; i < mBuffer.length; i++) {
@@ -403,6 +408,5 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
             mPointerData[i++] = aByte;
         }
     }
-
 
 }
