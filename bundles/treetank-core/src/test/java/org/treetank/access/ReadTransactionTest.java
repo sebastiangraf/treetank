@@ -43,79 +43,100 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ReadTransactionTest {
 
-    private IDatabase database;
+	private IDatabase database;
 
-    @Before
-    public void setUp() throws AbsTTException {
-        TestHelper.deleteEverything();
-        database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
-        session.close();
-    }
+	@Before
+	public void setUp() throws AbsTTException {
+		TestHelper.deleteEverything();
+		database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database
+				.getSession(new SessionConfiguration());
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
+		wtx.commit();
+		wtx.close();
+		session.close();
+	}
 
-    @After
-    public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
-    }
+	@After
+	public void tearDown() throws AbsTTException {
+		TestHelper.closeEverything();
+	}
 
-    @Test
-    public void testDocumentRoot() throws AbsTTException {
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IReadTransaction rtx = session.beginReadTransaction();
+	@Test
+	public void testEmptyRtx() throws AbsTTException {
+		assertFalse(PATHS.PATH2.getFile().exists());
+		final IDatabase db = FileDatabase.openDatabase(PATHS.PATH2.getFile());
+		final ISession session = db.getSession(new SessionConfiguration());
+		final IReadTransaction rtx = session.beginReadTransaction();
+		rtx.getRevisionNumber();
+		rtx.close();
+		session.close();
+		FileDatabase.closeDatabase(PATHS.PATH1.getFile());
+	}
 
-        assertEquals(true, rtx.moveToDocumentRoot());
-        assertEquals(ENodes.ROOT_KIND, rtx.getNode().getKind());
-        assertEquals(false, rtx.getNode().hasParent());
-        assertEquals(false, ((AbsStructNode)rtx.getNode()).hasLeftSibling());
-        assertEquals(false, ((AbsStructNode)rtx.getNode()).hasRightSibling());
-        assertEquals(true, ((AbsStructNode)rtx.getNode()).hasFirstChild());
+	@Test
+	public void testDocumentRoot() throws AbsTTException {
+		final ISession session = database
+				.getSession(new SessionConfiguration());
+		final IReadTransaction rtx = session.beginReadTransaction();
 
-        rtx.close();
-    }
+		assertEquals(true, rtx.moveToDocumentRoot());
+		assertEquals(ENodes.ROOT_KIND, rtx.getNode().getKind());
+		assertEquals(false, rtx.getNode().hasParent());
+		assertEquals(false, ((AbsStructNode) rtx.getNode()).hasLeftSibling());
+		assertEquals(false, ((AbsStructNode) rtx.getNode()).hasRightSibling());
+		assertEquals(true, ((AbsStructNode) rtx.getNode()).hasFirstChild());
 
-    @Test
-    public void testConventions() throws AbsTTException {
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IReadTransaction rtx = session.beginReadTransaction();
+		rtx.close();
+	}
 
-        // IReadTransaction Convention 1.
-        assertEquals(true, rtx.moveToDocumentRoot());
-        long key = rtx.getNode().getNodeKey();
+	@Test
+	public void testConventions() throws AbsTTException {
+		final ISession session = database
+				.getSession(new SessionConfiguration());
+		final IReadTransaction rtx = session.beginReadTransaction();
 
-        // IReadTransaction Convention 2.
-        assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
-        assertEquals(key, rtx.getNode().getNodeKey());
+		// IReadTransaction Convention 1.
+		assertEquals(true, rtx.moveToDocumentRoot());
+		long key = rtx.getNode().getNodeKey();
 
-        assertEquals(((AbsStructNode)rtx.getNode()).hasFirstChild(), rtx.moveToFirstChild());
-        assertEquals(1L, rtx.getNode().getNodeKey());
+		// IReadTransaction Convention 2.
+		assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
+		assertEquals(key, rtx.getNode().getNodeKey());
 
-        assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
-        assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
-        assertEquals(1L, rtx.getNode().getNodeKey());
+		assertEquals(((AbsStructNode) rtx.getNode()).hasFirstChild(),
+				rtx.moveToFirstChild());
+		assertEquals(1L, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)rtx.getNode()).hasRightSibling(), rtx.moveToRightSibling());
-        assertEquals(1L, rtx.getNode().getNodeKey());
+		assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
+		assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
+		assertEquals(1L, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)rtx.getNode()).hasFirstChild(), rtx.moveToFirstChild());
-        assertEquals(4L, rtx.getNode().getNodeKey());
+		assertEquals(((AbsStructNode) rtx.getNode()).hasRightSibling(),
+				rtx.moveToRightSibling());
+		assertEquals(1L, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)rtx.getNode()).hasRightSibling(), rtx.moveToRightSibling());
-        assertEquals(5L, rtx.getNode().getNodeKey());
+		assertEquals(((AbsStructNode) rtx.getNode()).hasFirstChild(),
+				rtx.moveToFirstChild());
+		assertEquals(4L, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)rtx.getNode()).hasLeftSibling(), rtx.moveToLeftSibling());
-        assertEquals(4L, rtx.getNode().getNodeKey());
+		assertEquals(((AbsStructNode) rtx.getNode()).hasRightSibling(),
+				rtx.moveToRightSibling());
+		assertEquals(5L, rtx.getNode().getNodeKey());
 
-        assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
-        assertEquals(1L, rtx.getNode().getNodeKey());
+		assertEquals(((AbsStructNode) rtx.getNode()).hasLeftSibling(),
+				rtx.moveToLeftSibling());
+		assertEquals(4L, rtx.getNode().getNodeKey());
 
-        rtx.close();
-    }
+		assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
+		assertEquals(1L, rtx.getNode().getNodeKey());
+
+		rtx.close();
+	}
 
 }
