@@ -288,93 +288,12 @@ public interface IReadTransaction {
      */
     IItemList getItemList();
 
-    // /**
-    // * Getting the current node.
-    // *
-    // * @return the node
-    // */
-    // IItem getNode();
-
-    /**
+     /**
      * Getting the current node.
-     * 
-     * @param paramNode
-     *            {@link DummyNode} instance
+     *
      * @return the node
      */
-    DummyNode getNode(final DummyNode paramNode);
-
-    /**
-     * Getting the current node.
-     * 
-     * @param paramNode
-     *            {@link TextNode} instance
-     * @return the node
-     */
-    TextNode getNode(final TextNode paramNode);
-
-    /**
-     * Getting the current node.
-     * 
-     * @param paramNode
-     *            {@link AtomicValue} instance
-     * @return the node
-     */
-    IItem getNode(final AtomicValue paramNode);
-
-    /**
-     * Getting the current node.
-     * 
-     * @param paramNode
-     *            {@link ElementNode} instance
-     * @return the node
-     */
-    ElementNode getNode(final ElementNode paramNode);
-
-    /**
-     * Getting the current node.
-     * 
-     * @param paramNode
-     *            {@link AttributeNode} instance
-     * @return the node
-     */
-    AttributeNode getNode(final AttributeNode paramNode);
-
-    /**
-     * Getting the current node.
-     * 
-     * @param paramNode
-     *            {@link NamespaceNode} instance
-     * @return the node
-     */
-    NamespaceNode getNode(final NamespaceNode paramNode);
-
-    /**
-     * Getting the current node.
-     * 
-     * @param paramNode
-     *            {@link DeletedNode} instance
-     * @return the node
-     */
-    DeletedNode getNode(final DeletedNode paramNode);
-
-    /**
-     * Getting the current node.
-     * 
-     * @param paramNode
-     *            {@link DocumentRootNode} instance
-     * @return the node
-     */
-    DocumentRootNode getNode(final DocumentRootNode paramNode);
-
-    /**
-     * Get the current node.
-     * 
-     * @param <T>
-     *            node which implements {@link IItem}
-     * @return current node which implements {@link IItem}
-     */
-    <T extends IItem> T getNode();
+     IItem getNode();
 
     /**
      * Close shared read transaction and immediately release all resources.

@@ -46,7 +46,7 @@ import org.treetank.utils.TypedValue;
  */
 public class AtomicValue implements IItem {
 
-    /** value of the item as byte array. */
+    /** Value of the item as byte array. */
     private byte[] mValue;
 
     /** The item's value type. */
@@ -292,12 +292,6 @@ public class AtomicValue implements IItem {
     public long getHash() {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
-        return (T)paramTransaction.getNode(this);
     }
 
     /** {@inheritDoc} */

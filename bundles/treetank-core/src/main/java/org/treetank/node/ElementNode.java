@@ -348,14 +348,7 @@ public final class ElementNode extends AbsStructNode {
         // result = prime * result + mNamespaceKeys.hashCode();
         return result;
     }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
-        return (T)paramTransaction.getNode(this);
-    }
-
+    
     /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
