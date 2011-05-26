@@ -27,7 +27,6 @@
 
 package org.treetank.diff;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.EDiff;
 
