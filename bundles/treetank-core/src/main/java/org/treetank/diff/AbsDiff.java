@@ -36,7 +36,6 @@ import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 
@@ -328,18 +327,18 @@ abstract class AbsDiff extends AbsDiffObservable {
         case ROOT_KIND:
         case TEXT_KIND:
         case ELEMENT_KIND:
-            // ///DEBUG CODE STARTS HERE!!!!!!!
-            mNewRtx.moveToFirstChild();
-            mOldRtx.moveToFirstChild();
-            mNewRtx.moveToFirstChild();
-            mOldRtx.moveToFirstChild();
-
-            mNewRtx.moveToParent();
-            mNewRtx.moveToParent();
-            mOldRtx.moveToParent();
-            mOldRtx.moveToParent();
-
-            // ///DEBUG CODE ENDS HERE!!!!!!!
+//            // ///DEBUG CODE STARTS HERE!!!!!!!
+//            mNewRtx.moveToFirstChild();
+//            mOldRtx.moveToFirstChild();
+//            mNewRtx.moveToFirstChild();
+//            mOldRtx.moveToFirstChild();
+//
+//            mNewRtx.moveToParent();
+//            mNewRtx.moveToParent();
+//            mOldRtx.moveToParent();
+//            mOldRtx.moveToParent();
+//
+//            // ///DEBUG CODE ENDS HERE!!!!!!!
 
             if (paramNewRtx.getNode().getNodeKey() != paramOldRtx.getNode().getNodeKey()
                 || paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
