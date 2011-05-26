@@ -328,13 +328,19 @@ abstract class AbsDiff extends AbsDiffObservable {
         case ROOT_KIND:
         case TEXT_KIND:
         case ELEMENT_KIND:
-            try {
-                System.out.println("new: " + paramNewRtx.getRevisionNumber());
-                System.out.println("old: " + paramOldRtx.getRevisionNumber());
-            } catch (final TTIOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            // ///DEBUG CODE STARTS HERE!!!!!!!
+            mNewRtx.moveToFirstChild();
+            mOldRtx.moveToFirstChild();
+            mNewRtx.moveToFirstChild();
+            mOldRtx.moveToFirstChild();
+
+            mNewRtx.moveToParent();
+            mNewRtx.moveToParent();
+            mOldRtx.moveToParent();
+            mOldRtx.moveToParent();
+
+            // ///DEBUG CODE ENDS HERE!!!!!!!
+
             if (paramNewRtx.getNode().getNodeKey() != paramOldRtx.getNode().getNodeKey()
                 || paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
                 // Check if nodes are the same (even if subtrees may vary).
