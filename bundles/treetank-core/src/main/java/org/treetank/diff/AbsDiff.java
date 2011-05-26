@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffOptimized;
@@ -191,7 +192,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         boolean moved = false;
 
-        final AbsStructNode node = paramRtx.getNode();
+        final IStructuralItem node = paramRtx.getStructuralNode();
         if (node.hasFirstChild()) {
             if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffOptimized.HASHED
                 && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {

@@ -164,22 +164,26 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public final boolean moveTo(final long mNodeKey) {
         assertNotClosed();
-        if (mNodeKey != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (mNodeKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+            return false;
+        } else {
             // Remember old node and fetch new one.
             final IItem oldNode = mCurrentNode;
             try {
                 mCurrentNode = mTransactionState.getNode(mNodeKey);
             } catch (final Exception e) {
                 mCurrentNode = null;
+//                mCurrentNode = oldNode;
+//                return false;
             }
-            if (mCurrentNode != null) {
-                return true;
-            } else {
+            
+//            return true;
+            if (mCurrentNode == null) {
                 mCurrentNode = oldNode;
                 return false;
+            } else {
+                return true;
             }
-        } else {
-            return false;
         }
     }
 
@@ -444,13 +448,13 @@ public class ReadTransaction implements IReadTransaction {
         mCurrentNode = paramCurrentNode;
     }
 
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @Override
-    // public final IItem getNode() {
-    // return mCurrentNode;
-    // }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final IItem getNode() {
+        return mCurrentNode;
+    }
 
     /**
      * {@inheritDoc}
@@ -491,60 +495,5 @@ public class ReadTransaction implements IReadTransaction {
         } else {
             return DummyNode.createData(mCurrentNode.getNodeKey(), mCurrentNode.getParentKey());
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TextNode getNode(final TextNode paramNode) {
-        return paramNode;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ElementNode getNode(final ElementNode paramNode) {
-        return paramNode;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public AttributeNode getNode(final AttributeNode paramNode) {
-        return paramNode;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public NamespaceNode getNode(final NamespaceNode paramNode) {
-        return paramNode;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DeletedNode getNode(final DeletedNode paramNode) {
-        return paramNode;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DocumentRootNode getNode(final DocumentRootNode paramNode) {
-        return paramNode;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public IItem getNode(final AtomicValue paramNode) {
-        return paramNode;
-    }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends IItem> T getNode() {
-        return (T)mCurrentNode.accept(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public DummyNode getNode(final DummyNode paramNode) {
-        return paramNode;
     }
 }

@@ -152,18 +152,13 @@ public final class NamespaceNode extends AbsNode {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
-        return (T)paramTransaction.getNode(this);
-    }
-
-    /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
         paramVisitor.visit(this);
     }
 
+    /** {@inheritDoc} */
+    @Override
     public long getNodeKey() {
         return super.getNodeKey();
     }

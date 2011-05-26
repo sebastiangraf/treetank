@@ -943,7 +943,7 @@ public enum Type {
                 a = a.mDerivedFrom;
                 b = b.mDerivedFrom;
             }
-            assert (a == b);
+            assert a == b;
 
         } else {
             assert a == ANY_TYPE || b == ANY_TYPE;
@@ -996,7 +996,7 @@ public enum Type {
      */
     public boolean isNumericType() {
 
-        return (derivesFrom(Type.DOUBLE) || derivesFrom(Type.FLOAT) || derivesFrom(Type.DECIMAL));
+        return derivesFrom(Type.DOUBLE) || derivesFrom(Type.FLOAT) || derivesFrom(Type.DECIMAL);
     }
 
     /**

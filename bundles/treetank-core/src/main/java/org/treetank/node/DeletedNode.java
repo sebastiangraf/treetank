@@ -90,12 +90,6 @@ public final class DeletedNode extends AbsNode {
         return 0;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends IItem> T accept(final IReadTransaction paramTransaction) {
-        return (T)paramTransaction.getNode(this);
-    }
-
     /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
