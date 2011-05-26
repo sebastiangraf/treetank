@@ -33,12 +33,11 @@ import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.io.File;
 
-import javax.swing.JComponent;
-import javax.swing.JMenuBar;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
@@ -108,15 +107,24 @@ public final class SunburstView extends JScrollPane implements IView {
         mGUI = mNotifier.getGUI();
 
         // Simple scroll mode, because we are adding a heavyweight component (PApplet to the JScrollPane).
-        // getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // Create instance of processing innerclass.
         mEmbed = new Embedded();
 
+        mGUI.addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                updateWindowSize();
+            }
+        });
+
         mGUI.addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(final ComponentEvent paramEvt) {
-                mEmbed.loop();
+                updateWindowSize();
             }
 
             @Override
@@ -149,6 +157,14 @@ public final class SunburstView extends JScrollPane implements IView {
         }
 
         return mView;
+    }
+    
+    /** Update window size. */
+    void updateWindowSize() {
+        assert mEmbed != null;
+        final Dimension dim = mGUI.getSize();
+        getViewport().setSize(dim.width, dim.height - 42);
+        mEmbed.update();
     }
 
     /**
@@ -192,7 +208,6 @@ public final class SunburstView extends JScrollPane implements IView {
     public void refreshInit() {
         mDB = mNotifier.getGUI().getReadDB();
         setViewportView(mEmbed);
-        // add(mEmbed);
 
         /*
          * Important to call this whenever embedding a PApplet.
@@ -221,7 +236,11 @@ public final class SunburstView extends JScrollPane implements IView {
         if (mDB != null) {
             mDB.close();
         }
-        mDB = new ReadDB(file, revision);
+        try {
+            mDB = new ReadDB(file, revision);
+        } catch (final AbsTTException e) {
+            e.printStackTrace();
+        }
         mEmbed.refreshUpdate();
     }
 
@@ -242,7 +261,6 @@ public final class SunburstView extends JScrollPane implements IView {
     public Dimension getPreferredSize() {
         final Dimension parentFrame = mGUI.getSize();
         return new Dimension(parentFrame.width, parentFrame.height - 21);
-        // return new Dimension((int)(parentFrame.width - 300), parentFrame.height - 200);
     }
 
     /** Embedded processing view. */
@@ -261,15 +279,8 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@inheritDoc} */
         @Override
         public void setup() {
-            newSize();
+            size(mGUI.getSize().width, mGUI.getSize().height - 42, PConstants.JAVA2D);
             handleHLWeight();
-        }
-
-        /**
-         * Set new size.
-         */
-        private void newSize() {
-            size((int)mGUI.getSize().getWidth(), (int)mGUI.getSize().getHeight() - 42, PConstants.JAVA2D);
         }
 
         /** {@inheritDoc} */
@@ -337,8 +348,6 @@ public final class SunburstView extends JScrollPane implements IView {
                 // Traverse.
                 mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()).setPruning(
                     EPruning.FALSE));
-                loop();
-
             } else {
                 // Database change.
                 mSunburstGUI.mDone = false;
@@ -359,6 +368,12 @@ public final class SunburstView extends JScrollPane implements IView {
         /** Refresh. Thus Treetank storage has been updated to a new revision. */
         void refresh() {
             mNotifier.update();
+        }
+
+        void update() {
+            if (mSunburstGUI != null) {
+                mSunburstGUI.update();
+            }
         }
 
         /** Handle mix of heavyweight ({@link PApplet}) and leightweight ({@link JMenuBar}) components. */

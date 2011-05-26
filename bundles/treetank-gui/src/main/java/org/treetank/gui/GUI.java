@@ -37,6 +37,7 @@ import javax.swing.*;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.access.FileDatabase;
+import org.treetank.exception.AbsTTException;
 import org.treetank.gui.view.IView;
 import org.treetank.gui.view.ViewContainer;
 import org.treetank.gui.view.ViewNotifier;
@@ -92,20 +93,6 @@ public final class GUI extends JFrame {
         // Title of the frame.
         setTitle("Treetank GUI");
 
-        // Component listener, to revalidate layout manager.
-        addComponentListener(new ComponentAdapter() {
-            /**
-             * Relayout all components.
-             * 
-             * @param paramEvent
-             *            {@link ComponentEvent} reference
-             */
-            @Override
-            public void componentResized(final ComponentEvent paramEvent) {
-                mContainer.revalidate();
-            }
-        });
-
         // Set default size and close operation.
         final Dimension frameSize = new Dimension(WIDTH, HEIGHT);
         setSize(frameSize);
@@ -121,13 +108,25 @@ public final class GUI extends JFrame {
 
         // Create views.
         mNotifier = new ViewNotifier(this);
-        mContainer =
-            ViewContainer.getInstance(this, TreeView.getInstance(mNotifier), SunburstView
-                .getInstance(mNotifier), TextView.getInstance(mNotifier));// //,
-                                                                          // TextView.getInstance(mNotifier));
+        mContainer = ViewContainer.getInstance(this, TreeView.getInstance(mNotifier), TextView.getInstance(mNotifier),
+                SunburstView.getInstance(mNotifier));
         mContainer.layoutViews();
         top.add(mContainer, BorderLayout.CENTER);
         getContentPane().add(top);
+        
+        // Component listener, to revalidate layout manager.
+        addComponentListener(new ComponentAdapter() {
+            /**
+             * Relayout all components.
+             * 
+             * @param paramEvent
+             *            {@link ComponentEvent} reference
+             */
+            @Override
+            public void componentResized(final ComponentEvent paramEvent) {
+                mContainer.revalidate();
+            }
+        });
 
         // Center the frame.
         setLocationRelativeTo(null);
@@ -153,7 +152,11 @@ public final class GUI extends JFrame {
             if (mReadDB != null) {
                 mReadDB.close();
             }
-            mReadDB = new ReadDB(paramFile, paramRevision);
+            try {
+                mReadDB = new ReadDB(paramFile, paramRevision);
+            } catch (final AbsTTException e) {
+                e.printStackTrace();
+            }
         }
         mNotifier.init();
     }
@@ -229,5 +232,14 @@ public final class GUI extends JFrame {
                 createAndShowGUI();
             }
         });
+    }
+
+    /**
+     * Get {@link ViewNotifier}.
+     * 
+     * @return {@link ViewNotifier} reference
+     */
+    public ViewNotifier getNotifier() {
+        return mNotifier;
     }
 }

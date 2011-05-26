@@ -166,6 +166,7 @@ public final class TextView extends JScrollPane implements IView {
         // Create a scroll pane and add the XML text area to it.
         setViewportView(mText);
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         setMinimumSize(new Dimension(PANE_WIDTH, PANE_HEIGHT));
     }
 
@@ -231,6 +232,7 @@ public final class TextView extends JScrollPane implements IView {
 
     @Override
     public void refreshInit() {
+        refreshUpdate();
         final JScrollBar vertScrollBar = getVerticalScrollBar();
         vertScrollBar.setValue(vertScrollBar.getMinimum());
 
@@ -276,7 +278,7 @@ public final class TextView extends JScrollPane implements IView {
         final ReadDB db = mGUI.getReadDB();
         IReadTransaction rtx;
         try {
-            rtx = db.getSession().beginReadTransaction();
+            rtx = db.getSession().beginReadTransaction(db.getRevisionNumber());
             rtx.moveTo(db.getNodeKey());
             final IItem node = rtx.getNode();
 

@@ -64,7 +64,7 @@ final class SunburstItem implements IVisualItem {
     private final int mIndexToParent;
 
     /** Number of descendant nodes of the current node. */
-    private final long mDescendantCount;
+    private int mDescendantCount;
 
     // Arc and lines drawing vars. ===========================
     /** Color of item. */
@@ -84,7 +84,7 @@ final class SunburstItem implements IVisualItem {
     private final float mAngleCenter;
 
     /** The end of the angle in radians. */
-    private final float mAngleEnd;
+    private float mAngleEnd;
 
     /** Radius of the current depth. */
     private transient float mRadius;
@@ -165,6 +165,9 @@ final class SunburstItem implements IVisualItem {
     /** Image to write to. */
     private transient PGraphics mGraphic;
 
+    /** Modification count. */
+    private transient int mModifications;
+
     /** Builder to setup the Items. */
     static final class Builder {
         /** {@link PApplet} representing the core processing library. */
@@ -207,6 +210,9 @@ final class SunburstItem implements IVisualItem {
          */
         private final ReadDB mReadDB;
 
+        /** Modification count. */
+        private transient int mModifications;
+
         /**
          * Constructor.
          * 
@@ -221,7 +227,7 @@ final class SunburstItem implements IVisualItem {
          * @param paramRelations
          *            {@link NodeRelations} instance
          * @param paramReadDB
-         *            read database
+         *            {@link ReadDB} instance
          */
         Builder(final PApplet paramApplet, final AbsModel paramModel, final float paramAngleStart,
             final float paramExtension, final NodeRelations paramRelations, final ReadDB paramReadDB) {
@@ -243,6 +249,20 @@ final class SunburstItem implements IVisualItem {
         Builder setNode(final IItem paramNode) {
             assert paramNode != null;
             mNode = paramNode;
+            return this;
+        }
+
+        /**
+         * Set modification count.
+         * 
+         * @param paramModifications
+         *            counted modifications in subtree of current node
+         * 
+         * @return this builder
+         */
+        Builder setModifcations(final int paramModifications) {
+            assert paramModifications >= 0;
+            mModifications = paramModifications;
             return this;
         }
 
@@ -339,6 +359,7 @@ final class SunburstItem implements IVisualItem {
         mText = paramBuilder.mText;
         mOldText = paramBuilder.mOldText;
         mParent = paramBuilder.mParent;
+        mModifications = paramBuilder.mModifications;
         mStructKind = paramBuilder.mRelations.mStructKind;
         mDescendantCount = paramBuilder.mRelations.mDescendantCount;
         mMinDescendantCount = paramBuilder.mRelations.mMinDescendantCount;
@@ -723,20 +744,18 @@ final class SunburstItem implements IVisualItem {
     @Override
     public String toString() {
         String retVal;
+        final StringBuilder builder = new StringBuilder().append("[Depth: ").append(mDepth);
         if (mQName == null) {
-            final StringBuilder builder =
-                new StringBuilder().append("[Depth: ").append(mDepth).append(" Text: ").append(mText);
-            updated(builder);
-            builder.append(" NodeKey: ").append(mNode.getNodeKey()).append("]");
-            retVal = builder.toString();
+            builder.append(" Text: ").append(mText);
         } else {
-            final StringBuilder builder =
-                new StringBuilder().append("[Depth: ").append(mDepth).append(" QName: ")
-                    .append(WriteTransactionState.buildName(mQName));
-            updated(builder);
-            builder.append(" NodeKey: ").append(mNode.getNodeKey()).append("]");
-            retVal = builder.toString();
+            builder.append(" QName: ").append(WriteTransactionState.buildName(mQName));
         }
+        updated(builder);
+        if (mModifications > 0) {
+            builder.append(" ModifcationCount: ").append(mModifications);
+        }
+        builder.append(" NodeKey: ").append(mNode.getNodeKey()).append("]");
+        retVal = builder.toString();
         return retVal;
     }
 
@@ -823,6 +842,11 @@ final class SunburstItem implements IVisualItem {
                 drawRect(mGUI.mInnerNodeArcScale, mGUI.mLeafArcScale, EHover.TRUE);
             }
 
+            if (mGUI.mUseBezierLine) {
+                drawRelationBezier();
+            } else {
+                drawRelationLine();
+            }
             drawDot(EHover.TRUE);
             //
             // for (int index = mGUI.mHitTestIndex + 1;; index++) {
@@ -841,7 +865,97 @@ final class SunburstItem implements IVisualItem {
             // }
             //
         } else {
+            float tmpLineWeight = mLineWeight;
+            mLineWeight += 5f;
+            if (mGUI.mUseBezierLine) {
+                drawRelationBezier();
+            } else {
+                drawRelationLine();
+            }
+            mLineWeight = tmpLineWeight;
             drawDot(EHover.TRUE);
+
         }
+    }
+
+    /**
+     * Get index of parent node.
+     * 
+     * @return index of parent node
+     */
+    public int getIndexToParent() {
+        return mIndexToParent;
+    }
+
+    /**
+     * Calculate new extension.
+     */
+    public void calcNewExtension() {
+        mDescendantCount--;
+        final SunburstItem parent = mGUI.mModel.getItem(mIndexToParent);
+        // Calculate extension.
+        float extension = 2 * PConstants.PI;
+        float parentModificationCount = parent.getModificationCount();
+        if (mIndexToParent > -1) {
+            if (parent.getSubtract()) {
+                parentModificationCount -= 1;
+            }
+            float parExtension = parent.getAngleEnd() - parent.getAngleStart();
+            extension =
+                (1 - mGUI.mModificationWeight)
+                    * (parExtension * (float)mDescendantCount / ((float)parent.getDescendantCount() - 1f))
+                    + mGUI.mModificationWeight
+                    * (parExtension * (float)mModifications / ((float)parentModificationCount - 1f));
+        }
+        mAngleEnd = mAngleStart + extension;
+    }
+
+    /**
+     * Set modification count.
+     * 
+     * @param paramModificationCount
+     *            new modification count
+     */
+    public void setModificationCount(final int paramModificationCount) {
+        mModifications = paramModificationCount;
+    }
+
+    /**
+     * Get modification count.
+     * 
+     * @return modification count
+     */
+    public int getModificationCount() {
+        return mModifications;
+    }
+
+    /**
+     * Set descendant count.
+     * 
+     * @param paramDescendantCount
+     *            new descendant count
+     */
+    public void setDescendantCount(final int paramDescendantCount) {
+        mDescendantCount = paramDescendantCount;
+    }
+
+    /**
+     * Get descendant count.
+     * 
+     * @return descendant count
+     */
+    public int getDescendantCount() {
+        return mDescendantCount;
+    }
+
+    /**
+     * Set angle end.
+     * 
+     * @param paramAngleEnd
+     *            new angle end
+     */
+    public void setAngleEnd(final float paramAngleEnd) {
+        assert paramAngleEnd > 0f;
+        mAngleEnd = paramAngleEnd;
     }
 }

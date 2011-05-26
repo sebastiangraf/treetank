@@ -124,16 +124,16 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     transient float mInnerNodeStrokeBrightnessEnd = 20;
 
     /** Inner node arc scale. */
-    transient float mInnerNodeArcScale = 0.7f;
+    transient float mInnerNodeArcScale = 0.9f;
 
     /** Modification weight. */
     transient float mModificationWeight = 0.7f;
 
     /** Stroke weight start. */
-    transient float mStrokeWeightStart = 0.5f;
+    transient float mStrokeWeightStart = 0.2f;
 
     /** Stroke weight end. */
-    transient float mStrokeWeightEnd = 1.0f;
+    transient float mStrokeWeightEnd = 4.0f;
 
     /** Dot size. */
     transient float mDotSize = 3f;
@@ -187,7 +187,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     transient float mBackgroundBrightness = 100f;
 
     /** Color mapping mode. */
-    private transient int mMappingMode = 1;
+    private transient int mMappingMode = 3;
 
     /** Determines if fisheye should be used. */
     private transient boolean mFisheye;
@@ -261,6 +261,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Determines if GUI has been initialized. */
     transient boolean mInitialized;
 
+    private transient int mRad;
+
+    private transient boolean mRadChanged;
+
     /**
      * Private constructor.
      * 
@@ -293,11 +297,15 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      *            read database
      * @return a {@link SunburstGUI} singleton
      */
-    static synchronized SunburstGUI getInstance(final PApplet paramParentApplet, final AbsModel paramModel,
+    static SunburstGUI getInstance(final PApplet paramParentApplet, final AbsModel paramModel,
         final ReadDB paramReadDB) {
         if (mGUI == null) {
-            mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
-            mGUI.setupGUI();
+            synchronized (SunburstGUI.class) {
+                if (mGUI == null) {
+                    mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
+                    mGUI.setupGUI();
+                }
+            }
         }
         return mGUI;
     }
@@ -350,8 +358,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mSliders.add(si, mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
             + posY + 0, len, 15));
         mSliders.get(si++).setLabel("innerNodeArcScale");
-        mSliders.add(si, mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20,
-            len, 15));
+        mSliders.add(si,
+            mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
         mSliders.get(si++).setLabel("leafNodeArcScale");
         posY += 50;
         mSliders.add(si, mControlP5.addSlider("mModificationWeight", 0, 1, mModificationWeight, left, top
@@ -359,14 +367,16 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mSliders.get(si++).setLabel("modification weight");
         posY += 50;
 
-        mRanges.add(ri++, mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart,
-            mStrokeWeightEnd, left, top + posY + 0, len, 15));
+        mRanges.add(
+            ri++,
+            mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart, mStrokeWeightEnd, left, top
+                + posY + 0, len, 15));
         posY += 30;
 
         mSliders.add(si, mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
         mSliders.get(si++).setLabel("dotSize");
-        mSliders.add(si, mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left,
-            top + posY + 20, len, 15));
+        mSliders.add(si,
+            mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15));
         mSliders.get(si++).setLabel("dotBrightness");
         posY += 50;
 
@@ -379,8 +389,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mToggles.get(ti++).setLabel("show Arcs");
         mToggles.add(ti, mControlP5.addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
         mToggles.get(ti++).setLabel("show Lines");
-        mToggles.add(ti, mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40,
-            15, 15));
+        mToggles.add(ti,
+            mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15));
         mToggles.get(ti++).setLabel("Bezier / Line");
         mToggles.add(ti, mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
         mToggles.get(ti++).setLabel("Arc / Rect");
@@ -530,11 +540,17 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             update();
         } else if (paramControlEvent.isGroup()) {
             if (paramControlEvent.group().name().equals("Compare revision")) {
+                mParent.noLoop();
                 mSelectedRev = (int)paramControlEvent.group().value();
                 mModel = new SunburstCompareModel(mParent, mDb);
                 mModel.addPropertyChangeListener(this);
-                mModel.traverseTree(new SunburstContainer().setRevision(mSelectedRev).setModWeight(
-                    mModificationWeight));
+                final SunburstContainer container = new SunburstContainer();
+                if (mUsePruning) {
+                    container.setPruning(EPruning.TRUE);
+                } else {
+                    container.setPruning(EPruning.FALSE);
+                }
+                mModel.traverseTree(container.setRevision(mSelectedRev).setModWeight(mModificationWeight));
             }
         }
     }
@@ -575,11 +591,18 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 // LOGWRAPPER.debug("Without buffered image!");
                 mParent.background(0, 0, mBackgroundBrightness);
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
+                mParent.rotate(PApplet.radians(mRad));
                 if (mDone) {
                     drawItems(EDraw.DRAW);
                 }
             } else if (mDone) {
                 // LOGWRAPPER.debug("Buffered image!");
+                
+                if (mRadChanged) {
+                    mRadChanged = false;
+                    update();
+                }
+                
                 try {
                     mLock.acquire();
                     mParent.image(mImg, 0, 0);
@@ -615,12 +638,18 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
                     mParent.pushMatrix();
                     if (mHitItem != null) {
+                        if (!mIsZoomingPanning && !mSavePDF && !mFisheye) {
+                            mParent.rotate(PApplet.radians(mRad));
+                        }
                         mHitItem.hover();
                     }
                     mParent.popMatrix();
 
                     // Rollover text.
-                    textMousOver();
+                    if (mIsZoomingPanning || mSavePDF || mFisheye) {
+                        mParent.rotate(-PApplet.radians(mRad));
+                    }
+                    textMouseOver();
                 }
             }
 
@@ -705,7 +734,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /**
      * Mouse over to display text.
      */
-    private void textMousOver() {
+    private void textMouseOver() {
         if (mHitTestIndex != -1) {
             String text = mHitItem.toString();
 
@@ -722,8 +751,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             if (chars > 80) {
                 final StringBuilder builder = new StringBuilder().append("[Depth: ").append(mDepth);
                 if (mHitItem.mQName != null) {
-                    builder.append(" QName: ").append(
-                        ViewUtilities.qNameToString(mHitItem.mQName).substring(0, 20)).append("...");
+                    builder.append(" QName: ")
+                        .append(ViewUtilities.qNameToString(mHitItem.mQName).substring(0, 20)).append("...");
                 } else {
                     builder.append(" Text: ").append(mHitItem.mText.substring(0, 20)).append("...");
                 }
@@ -739,9 +768,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             mParent.fill(0, 0, 0);
             if (mX + offset + textW > mParent.width / 2) {
                 // Exceeds right window border, thus align to the left of the current mouse location.
-                mParent.rect(mX - textW + offset, mY + offset, textW, (mParent.textAscent() + mParent
-                    .textDescent())
-                    * lines + 4);
+                mParent.rect(mX - textW + offset, mY + offset, textW,
+                    (mParent.textAscent() + mParent.textDescent()) * lines + 4);
                 mParent.fill(0, 0, 100);
                 mParent.text(text, mX - textW + offset + 2, mY + offset + 2);
             } else {
@@ -911,6 +939,14 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             } else {
                 mControlP5.group("menu").close();
             }
+
+            if (mParent.keyCode == PConstants.RIGHT) {
+                mRad += 5;
+                mRadChanged = true;
+            } else if (mParent.keyCode == PConstants.LEFT) {
+                mRad -= 5;
+                mRadChanged = true;
+            }
         }
     }
 
@@ -935,7 +971,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @see processing.core.PApplet#mouseEntered
      */
     void mouseEntered(final MouseEvent paramEvent) {
-        mParent.loop();
+        if (mDone) {
+            mParent.loop();
+        }
     }
 
     /**
@@ -978,22 +1016,21 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                     if (mHitTestIndex != -1) {
                         // Bug in processing's mousbotton, thus used SwingUtilities.
                         if (SwingUtilities.isLeftMouseButton(paramEvent) && !mCtrl.isOpen()) {
+                            final SunburstContainer container = new SunburstContainer();
+                            if (mUsePruning) {
+                                container.setPruning(EPruning.TRUE);
+                            } else {
+                                container.setPruning(EPruning.FALSE);
+                            }
                             if (mUseDiffView) {
                                 final SunburstItem item = mModel.getItem(mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
                                     mDone = false;
-                                    mModel.update(new SunburstContainer().setAll(mSelectedRev,
-                                        item.getDepth(), mModificationWeight).setKey(
-                                        item.getNode().getNodeKey()));
+                                    mModel.update(container.setAll(mSelectedRev, item.getDepth(),
+                                        mModificationWeight).setKey(item.getNode().getNodeKey()));
                                 }
                             } else {
                                 mDone = false;
-                                final SunburstContainer container = new SunburstContainer();
-                                if (mUsePruning) {
-                                    container.setPruning(EPruning.TRUE);
-                                } else {
-                                    container.setPruning(EPruning.FALSE);
-                                }
                                 final SunburstItem item = mModel.getItem(mHitTestIndex);
                                 mModel.update(container.setKey(item.getNode().getNodeKey()));
                             }
@@ -1024,15 +1061,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @return calculated area
      */
     float calcEqualAreaRadius(final int paramDepth, final int paramDepthMax) {
-        float retVal = 0f;
-
-        if (paramDepth == 0) {
-            retVal = PApplet.sqrt(PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
-        } else {
-            retVal = PApplet.sqrt(paramDepth * PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
-        }
-
-        return retVal;
+        return PApplet.sqrt(paramDepth * PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
     }
 
     /**
@@ -1045,7 +1074,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * @return calculated area
      */
     float calcAreaRadius(final int paramDepth, final int paramDepthMax) {
-        return PApplet.map(paramDepth, 0, paramDepthMax + 3, 0, getInitialRadius());
+        return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, getInitialRadius());
     }
 
     /**
@@ -1101,6 +1130,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         mBuffer.strokeCap(PConstants.SQUARE);
         mBuffer.smooth();
         mBuffer.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
+        mBuffer.rotate(PApplet.radians(mRad));
 
         // Draw items.
         drawItems(EDraw.UPDATEBUFFER);
@@ -1157,7 +1187,8 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         int index = 0;
         for (final SunburstItem item : mModel) {
             // Hittest, which arc is the closest to the mouse.
-            if (item.getDepth() == mDepth && mAngle > item.getAngleStart() && mAngle < item.getAngleEnd()) {
+            if (item.getDepth() == mDepth && mAngle > item.getAngleStart() + PApplet.radians(mRad)
+                && mAngle < item.getAngleEnd() + PApplet.radians(mRad)) {
                 mHitTestIndex = index;
                 mHitItem = item;
                 retVal = true;
@@ -1176,10 +1207,15 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      *            determines the drawing strategy
      */
     private void drawItems(final EDraw paramDraw) {
+        if (!mShowArcs) {
+            paramDraw.drawRings(this);
+        }
+
         for (final SunburstItem item : mModel) {
             paramDraw.update(this, item);
 
             if (mUseDiffView) {
+                paramDraw.drawModificationRel(this, item);
                 paramDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
             } else {
                 paramDraw.drawStrategy(this, item, EDrawSunburst.NORMAL);
@@ -1255,7 +1291,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             mTextArea.clear();
         } catch (final FactoryConfigurationError exc) {
             exc.printStackTrace();
-            ;
             JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
         } catch (final AbsTTException exc) {
             exc.printStackTrace();

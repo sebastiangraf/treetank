@@ -41,6 +41,9 @@ import org.treetank.api.IReadTransaction;
  * 
  */
 public interface ITraverseModel {
+    /** Factor to add to weighting of modifications. */
+    int FACTOR = 10;
+
     /**
      * Create a {@link SunburstItem} used as a callback method in {@link SunburstDescendantAxis}.
      * 
@@ -65,9 +68,9 @@ public interface ITraverseModel {
      * @throws InterruptedException
      *             if task gets interrupted
      */
-    List<Integer> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
+    List<Future<Integer>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
         ExecutionException;
-    
+
     /**
      * Get minimum and maximum global text length.
      * 
@@ -75,4 +78,18 @@ public interface ITraverseModel {
      *            Treetank {@link IReadTransaction}
      */
     void getMinMaxTextLength(final IReadTransaction paramRtx);
+
+    /**
+     * Get if current item has been pruned or not.
+     * 
+     * @return true if it has been pruned, false otherwise
+     */
+    boolean getIsPruned();
+
+    /**
+     * Get maximum descendant count.
+     * 
+     * @return maximum descendant count
+     */
+    int getMaxDescendantCount();
 }

@@ -75,7 +75,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
      * @param paramReadDB
      *            {@link ReadDB}.
      */
-    public TreeCellRenderer(final ReadDB paramReadDB) {
+    TreeCellRenderer(final ReadDB paramReadDB) {
         setOpenIcon(null);
         setClosedIcon(null);
         setLeafIcon(null);
@@ -87,6 +87,8 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
         } catch (final AbsTTException exc) {
             exc.printStackTrace();
         }
+
+        mRTX.moveTo(paramReadDB.getNodeKey());
         mPATH = ((FileDatabase)paramReadDB.getDatabase()).mFile.getName();
     }
 

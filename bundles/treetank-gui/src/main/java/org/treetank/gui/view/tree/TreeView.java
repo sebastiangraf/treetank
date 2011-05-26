@@ -81,9 +81,6 @@ public final class TreeView extends JScrollPane implements IView {
     /** Main {@link GUI} window. */
     private final GUI mGUI;
 
-    /** Treetank {@link IReadTransaction}. */
-    private transient IReadTransaction mRtx;
-
     /**
      * Private Constructor, called from singleton factory method.
      * 
@@ -204,10 +201,7 @@ public final class TreeView extends JScrollPane implements IView {
     /** {@inheritDoc} */
     @Override
     public void refreshInit() {
-        // Use our Treetank model and renderer.
-        final ReadDB db = mGUI.getReadDB();
-        mTree.setModel(new TreeModel(db));
-        mTree.setCellRenderer(new TreeCellRenderer(db));
+        refreshUpdate();
     }
     
     /**

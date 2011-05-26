@@ -104,6 +104,12 @@ public final class ViewContainer extends JPanel {
         
         final List<IView> views = visibleViews();
 
+        for (final IView view : views) {
+            if (mGUI.getReadDB() != null) {
+                view.refreshInit();
+            }
+        }
+        
         JComponent tmpView = null;
         int width = 0;
         int i = 0;
