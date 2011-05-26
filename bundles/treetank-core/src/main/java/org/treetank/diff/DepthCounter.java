@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -28,42 +28,52 @@
 package org.treetank.diff;
 
 /**
+ * Container for transaction cursor depths in both the old and new revision.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 final class DepthCounter {
     /** Depth in new revision. */
     private transient int mNewDepth;
-    
+
     /** Depth in old revision. */
     private transient int mOldDepth;
-    
+
+    /**
+     * Constructor.
+     * 
+     * @param paramNewDepth
+     *            depth of transaction cursor in new revision
+     * @param paramOldDepth
+     *            depth of transaction cursor in old revision
+     */
     DepthCounter(final int paramNewDepth, final int paramOldDepth) {
         mNewDepth = paramNewDepth;
         mOldDepth = paramOldDepth;
     }
-    
+
     /** Increment depth in new revision. */
     void incrementNewDepth() {
         mNewDepth++;
     }
-    
+
     /** Decrement depth in new revision. */
     void decrementNewDepth() {
         mNewDepth--;
     }
-    
+
     /** Increment depth in old revision. */
     void incrementOldDepth() {
         mOldDepth++;
     }
-    
+
     /** Decrement depth in old revision. */
     void decrementOldDepth() {
         mOldDepth--;
     }
-    
-    /** 
+
+    /**
      * Get depth in new revision.
      * 
      * @return depth in new revision
@@ -71,8 +81,8 @@ final class DepthCounter {
     int getNewDepth() {
         return mNewDepth;
     }
-    
-    /** 
+
+    /**
      * Get depth in old revision.
      * 
      * @return depth in old revision

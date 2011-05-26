@@ -36,6 +36,7 @@ import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 
@@ -95,6 +96,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramBuilder
      *            {@link Builder} reference
      * @throws AbsTTException
+     *             if setting up transactions failes
      */
     AbsDiff(final Builder paramBuilder) throws AbsTTException {
         assert paramBuilder != null;
@@ -126,6 +128,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      * Do the diff.
      * 
      * @throws AbsTTException
+     *             if setting up transactions failes
      */
     void diffMovement() throws AbsTTException {
         assert mHashKind != null;
@@ -162,7 +165,8 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         // Nodes deleted in old rev at the end of the tree.
         if (mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
-            while (moveCursor(mOldRtx, ERevision.OLD)) {
+            // First time it might be EDiff.INSERTED where the cursor doesn't move.
+            while (mDiff == EDiff.INSERTED || moveCursor(mOldRtx, ERevision.OLD)) {
                 if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                     mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
                 } else {
@@ -187,8 +191,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         assert paramRtx != null;
 
         boolean moved = false;
-        final AbsStructNode node = paramRtx.getNode();
 
+        final AbsStructNode node = paramRtx.getNode();
         if (node.hasFirstChild()) {
             if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffOptimized.HASHED
                 && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
@@ -211,7 +215,11 @@ abstract class AbsDiff extends AbsDiffObservable {
                 }
             }
         } else if (node.hasRightSibling()) {
-            moved = paramRtx.moveToRightSibling();
+            if (paramRtx.getNode().getNodeKey() == mRootKey) {
+                paramRtx.moveToDocumentRoot();
+            } else {
+                moved = paramRtx.moveToRightSibling();
+            }
         } else {
             moved = moveToFollowingNode(paramRtx, paramRevision);
         }
@@ -288,8 +296,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         if (paramFireDiff == EFireDiff.TRUE) {
-            fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode(), new DiffDepth(paramDepth
-                .getNewDepth(), paramDepth.getOldDepth()));
+            fireDiff(diff, paramNewRtx.getStructuralNode(), paramOldRtx.getStructuralNode(), new DiffDepth(
+                paramDepth.getNewDepth(), paramDepth.getOldDepth()));
         }
         return diff;
     }
@@ -320,7 +328,15 @@ abstract class AbsDiff extends AbsDiffObservable {
         case ROOT_KIND:
         case TEXT_KIND:
         case ELEMENT_KIND:
-            if (paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
+            try {
+                System.out.println("new: " + paramNewRtx.getRevisionNumber());
+                System.out.println("old: " + paramOldRtx.getRevisionNumber());
+            } catch (final TTIOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            if (paramNewRtx.getNode().getNodeKey() != paramOldRtx.getNode().getNodeKey()
+                || paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
                 // Check if nodes are the same (even if subtrees may vary).
                 if (checkNodes(paramNewRtx, paramOldRtx)) {
                     diff = EDiff.SAME;
@@ -335,11 +351,11 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         if (paramFireDiff == EFireDiff.TRUE) {
             if (diff == EDiff.SAMEHASH) {
-                fireDiff(EDiff.SAME, paramNewRtx.getNode(), paramOldRtx.getNode(), new DiffDepth(paramDepth
-                    .getNewDepth(), paramDepth.getOldDepth()));
+                fireDiff(EDiff.SAME, paramNewRtx.getStructuralNode(), paramOldRtx.getStructuralNode(),
+                    new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
             } else {
-                fireDiff(diff, paramNewRtx.getNode(), paramOldRtx.getNode(), new DiffDepth(paramDepth
-                    .getNewDepth(), paramDepth.getOldDepth()));
+                fireDiff(diff, paramNewRtx.getStructuralNode(), paramOldRtx.getStructuralNode(),
+                    new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
             }
         }
         return diff;

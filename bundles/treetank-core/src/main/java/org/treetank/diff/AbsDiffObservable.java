@@ -30,8 +30,8 @@ package org.treetank.diff;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
 
@@ -62,7 +62,7 @@ abstract class AbsDiffObservable implements IDiffObservable {
 
     /** {@inheritDoc} */
     @Override
-    public final void fireDiff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode,
+    public final void fireDiff(final EDiff paramDiff, final IStructuralItem paramNewNode, final IStructuralItem paramOldNode,
         final DiffDepth paramDepth) {
         for (final IDiffObserver observer : mDiffObservers) {
             observer.diffListener(paramDiff, paramNewNode, paramOldNode, paramDepth);

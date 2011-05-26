@@ -99,6 +99,8 @@ public final class DiffFactory {
          * 
          * @param paramBuilder
          *            {@link Builder} reference
+         * @throws AbsTTException
+         *            if anything while diffing goes wrong related to Treetank
          */
         abstract void invoke(final Builder paramBuilder) throws AbsTTException;
     }
@@ -269,9 +271,6 @@ public final class DiffFactory {
 
         @Override
         public Void call() throws AbsTTException {
-            // if (mBuilder.mDiffKind == DiffKind.STRUCTURAL) {
-            // new StructuralDiff(mBuilder);
-            // }
             mBuilder.mDiffKind.invoke(mBuilder);
             return null;
         }
