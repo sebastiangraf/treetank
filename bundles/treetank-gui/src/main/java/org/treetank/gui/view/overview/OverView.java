@@ -25,58 +25,112 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.forcedirected;
+package org.treetank.gui.view.overview;
+
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
+import org.slf4j.LoggerFactory;
+import org.treetank.gui.GUI;
+import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
+import org.treetank.gui.view.ViewNotifier;
+import org.treetank.utils.LogWrapper;
 
 /**
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public class ForceDirectedView extends JScrollPane implements IView {
+public class OverView extends JScrollPane implements IView {
 
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.IView#name()
+    /**
+     * SerialUID.
      */
-    @Override
-    public String name() {
-        // TODO Auto-generated method stub
-        return null;
+    private static final long serialVersionUID = 1L;
+
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(OverView.class));
+
+    /** Name of the sunburst view. */
+    private static final String NAME = "OverView";
+
+    /** {@link SunburstView} instance. */
+    private static OverView mView;
+
+    /** {@link ViewNotifier} to notify views of changes. */
+    private final ViewNotifier mNotifier;
+
+    /** {@link ReadDB} instance to interact with Treetank. */
+    private transient ReadDB mDB;
+    
+    /** {@link GUI} reference. */
+    private final GUI mGUI;
+    
+    /**
+     * Constructor.
+     * 
+     * @param paramNotifier
+     *            {@link ViewNotifier} instance.
+     */
+    private OverView(final ViewNotifier paramNotifier) {
+        mNotifier = paramNotifier;
+
+        // Add view to notifier.
+        mNotifier.add(this);
+
+        // Main GUI frame.
+        mGUI = mNotifier.getGUI();
+
+        // Simple scroll mode, because we are adding a heavyweight component (PApplet to the JScrollPane).
+        // getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
     }
 
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.IView#refreshInit()
+    /**
+     * Singleton factory method.
+     * 
+     * @param paramNotifier
+     *            {@link ViewNotifier} to notify views of changes etc.pp.
+     * @return {@link OverView} instance
      */
+    public static synchronized OverView getInstance(final ViewNotifier paramNotifier) {
+        if (mView == null) {
+            mView = new OverView(paramNotifier);
+        }
+
+        return mView;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public String name() {
+        return NAME;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public void refreshInit() {
         // TODO Auto-generated method stub
         
     }
 
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.IView#refreshUpdate()
-     */
+    /** {@inheritDoc} */
     @Override
     public void refreshUpdate() {
         // TODO Auto-generated method stub
         
     }
 
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.IView#dispose()
-     */
+    /** {@inheritDoc} */
     @Override
     public void dispose() {
         // TODO Auto-generated method stub
         
     }
 
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.IView#component()
-     */
+    /** {@inheritDoc} */
     @Override
     public JComponent component() {
         // TODO Auto-generated method stub

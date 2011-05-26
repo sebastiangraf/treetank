@@ -49,16 +49,16 @@ import org.treetank.exception.AbsTTException;
 public final class ReadDB {
 
     /** Treetank {@link IDatabase}. */
-    private transient IDatabase mDatabase;
+    private final IDatabase mDatabase;
 
     /** Treetank {@link ISession}. */
-    private transient ISession mSession;
+    private final ISession mSession;
 
     /** Treetank {@link IReadTransaction}. */
-    private transient IReadTransaction mRtx;
+    private final IReadTransaction mRtx;
 
     /** Revision number. */
-    private transient long mRevision;
+    private final long mRevision;
 
     /**
      * Constructor.
@@ -67,8 +67,10 @@ public final class ReadDB {
      *            The {@link File} to open.
      * @param paramRevision
      *            The revision to open.
+     * @throws AbsTTException
+     *             if anything went wrong while opening a file
      */
-    public ReadDB(final File paramFile, final long paramRevision) {
+    public ReadDB(final File paramFile, final long paramRevision) throws AbsTTException {
         this(paramFile, paramRevision, 0);
     }
 
@@ -81,18 +83,17 @@ public final class ReadDB {
      *            The revision to open.
      * @param paramNodekeyToStart
      *            The key of the node where the transaction initially has to move to.
+     * @throws AbsTTException
+     *             if anything went wrong while opening a file
      */
-    public ReadDB(final File paramFile, final long paramRevision, final long paramNodekeyToStart) {
-        try {
-            // Initialize database.
-            mDatabase = FileDatabase.openDatabase(paramFile);
-            mSession = mDatabase.getSession(new SessionConfiguration());
-            mRtx = mSession.beginReadTransaction(paramRevision);
-            mRtx.moveTo(paramNodekeyToStart);
-            mRevision = mRtx.getRevisionNumber();
-        } catch (final AbsTTException exc) {
-            exc.printStackTrace();
-        }
+    public ReadDB(final File paramFile, final long paramRevision, final long paramNodekeyToStart)
+        throws AbsTTException {
+        // Initialize database.
+        mDatabase = FileDatabase.openDatabase(paramFile);
+        mSession = mDatabase.getSession(new SessionConfiguration());
+        mRtx = mSession.beginReadTransaction(paramRevision);
+        mRtx.moveTo(paramNodekeyToStart);
+        mRevision = mRtx.getRevisionNumber();
     }
 
     /**

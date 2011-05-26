@@ -48,13 +48,13 @@ final class NodeRelations {
     transient EStructType mStructKind;
 
     /** Descendant count of the node. */
-    transient long mDescendantCount;
+    transient int mDescendantCount;
 
     /** Global minimum descendant count. */
-    transient long mMinDescendantCount;
+    transient int mMinDescendantCount;
 
     /** Global maximum descendant count. */
-    transient long mMaxDescendantCount;
+    transient int mMaxDescendantCount;
 
     /** Index to the parent item. */
     transient int mIndexToParent;
@@ -80,8 +80,8 @@ final class NodeRelations {
      * @return NodeRelations instance.
      */
     NodeRelations setAll(final int paramDepth, final EStructType paramStructKind,
-        final long paramDescendantCount, final long paramMinDescendantCount,
-        final long paramMaxDescendantCount, final int paramIndexToParent) {
+        final int paramDescendantCount, final int paramMinDescendantCount,
+        final int paramMaxDescendantCount, final int paramIndexToParent) {
         assert paramDepth >= 0;
         assert paramStructKind != null;
         assert paramDescendantCount >= 0;

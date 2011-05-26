@@ -52,6 +52,9 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
+import org.treetank.gui.view.sunburst.SunburstView;
+import org.treetank.gui.view.text.TextView;
+import org.treetank.gui.view.tree.TreeView;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
@@ -206,6 +209,9 @@ public enum GUICommands implements IGUICommand {
         public void execute(final GUI paramGUI) {
             assert paramGUI != null;
             GUIProp.EShowViews.SHOWTREE.invert();
+            if (!GUIProp.EShowViews.SHOWTREE.getValue()) {
+                TreeView.getInstance(paramGUI.getNotifier()).dispose();
+            }
             paramGUI.getViewContainer().layoutViews();
         }
     },
@@ -225,6 +231,9 @@ public enum GUICommands implements IGUICommand {
         public void execute(final GUI paramGUI) {
             assert paramGUI != null;
             GUIProp.EShowViews.SHOWTEXT.invert();
+            if (!GUIProp.EShowViews.SHOWTEXT.getValue()) {
+                TextView.getInstance(paramGUI.getNotifier()).dispose();
+            }
             paramGUI.getViewContainer().layoutViews();
         }
     },
@@ -232,7 +241,7 @@ public enum GUICommands implements IGUICommand {
     /**
      * Show treemap view.
      */
-    TREEMAP("Treemap", EMenu.CHECKBOXITEM) {
+    DIFFOVERVIEW("Diff overview", EMenu.CHECKBOXITEM) {
         /** {@inheritDoc} */
         @Override
         public boolean selected() {
@@ -263,6 +272,9 @@ public enum GUICommands implements IGUICommand {
         public void execute(final GUI paramGUI) {
             assert paramGUI != null;
             GUIProp.EShowViews.SHOWSUNBURST.invert();
+            if (!GUIProp.EShowViews.SHOWSUNBURST.getValue()) {
+                SunburstView.getInstance(paramGUI.getNotifier()).dispose();
+            }
             paramGUI.getViewContainer().layoutViews();
         }
     };

@@ -100,7 +100,7 @@ final class SunburstContainer {
      * @return this
      */
     SunburstContainer setModWeight(final float paramModWeight) {
-        assert paramModWeight > 0;
+        assert paramModWeight >= 0;
         mModWeight = paramModWeight;
         return this;
     }
@@ -120,7 +120,7 @@ final class SunburstContainer {
         final float paramModificationWeight) {
         assert paramRevision >= 0;
         assert paramDepth >= 0;
-        assert paramModificationWeight > 0;
+        assert paramModificationWeight >= 0;
         mRevision = paramRevision;
         mDepth = paramDepth;
         mModWeight = paramModificationWeight;

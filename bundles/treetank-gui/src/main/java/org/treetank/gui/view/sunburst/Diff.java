@@ -28,6 +28,7 @@
 package org.treetank.gui.view.sunburst;
 
 import org.treetank.api.IItem;
+import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffDepth;
 import org.treetank.diff.DiffFactory.EDiff;
 
@@ -41,11 +42,11 @@ class Diff {
     /** {@link EDiff} which specifies the kind of diff between two nodes. */
     private transient EDiff mDiff;
 
-    /** {@link IItem} in new revision. */
-    private transient IItem mNewNode;
+    /** {@link IStructuralItem} in new revision. */
+    private transient IStructuralItem mNewNode;
 
-    /** {@link IItem} in old revision. */
-    private transient IItem mOldNode;
+    /** {@link IStructuralItem} in old revision. */
+    private transient IStructuralItem mOldNode;
 
     /** {@link DiffDepth} instance. */
     private transient DiffDepth mDepth;
@@ -56,17 +57,18 @@ class Diff {
      * @param paramDiff
      *            {@link EDiff} which specifies the kind of diff between two nodes
      * @param paramNewNode
-     *            {@link IItem} in new revision
+     *            {@link IStructuralItem} in new revision
      * @param paramOldNode
-     *            {@link IItem} in old revision
+     *            {@link IStructuralItem} in old revision
      * @param paramDepth
      *            current {@link Depth}
      */
-    public Diff(final EDiff paramDiff, final IItem paramNewNode, final IItem paramOldNode,
+    public Diff(final EDiff paramDiff, final IStructuralItem paramNewNode, final IStructuralItem paramOldNode,
         final DiffDepth paramDepth) {
         assert paramDiff != null;
         assert paramNewNode != null;
         assert paramOldNode != null;
+        assert paramDepth != null;
 
         mDiff = paramDiff;
         mNewNode = paramNewNode;
@@ -88,7 +90,7 @@ class Diff {
      * 
      * @return the new node
      */
-    IItem getNewNode() {
+    IStructuralItem getNewNode() {
         return mNewNode;
     }
 
@@ -97,7 +99,7 @@ class Diff {
      * 
      * @return the old node
      */
-    IItem getOldNode() {
+    IStructuralItem getOldNode() {
         return mOldNode;
     }
 

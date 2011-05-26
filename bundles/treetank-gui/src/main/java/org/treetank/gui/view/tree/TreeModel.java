@@ -27,6 +27,7 @@
 
 package org.treetank.gui.view.tree;
 
+import org.slf4j.LoggerFactory;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
@@ -35,6 +36,7 @@ import org.treetank.node.AbsStructNode;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
+import org.treetank.utils.LogWrapper;
 
 /**
  * <h1>TreeModel</h1>
@@ -49,6 +51,10 @@ import org.treetank.node.ElementNode;
  */
 public final class TreeModel extends AbsTreeModel {
 
+    /** Logger. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(TreeModel.class));
+    
     /** Treetank {@link IReadTransaction}. */
     private transient IReadTransaction mRTX;
 
@@ -58,11 +64,12 @@ public final class TreeModel extends AbsTreeModel {
      * @param paramDB
      *            {@link ReadDB}.
      */
-    public TreeModel(final ReadDB paramDB) {
+    TreeModel(final ReadDB paramDB) {
         try {
             mRTX = paramDB.getSession().beginReadTransaction(paramDB.getRevisionNumber());
-        } catch (final AbsTTException exc) {
-            exc.printStackTrace();
+            mRTX.moveTo(paramDB.getNodeKey());
+        } catch (final AbsTTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
         }
     }
 

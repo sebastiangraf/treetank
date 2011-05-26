@@ -32,12 +32,15 @@ import java.util.Stack;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.slf4j.LoggerFactory;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.gui.view.sunburst.Item.Builder;
+import org.treetank.gui.view.sunburst.Item;
 import org.treetank.node.AbsStructNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.FastStack;
+import org.treetank.utils.LogWrapper;
 
 import processing.core.PConstants;
 
@@ -49,6 +52,9 @@ import processing.core.PConstants;
  */
 public final class SunburstDescendantAxis extends AbsAxis {
 
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(SunburstDescendantAxis.class));
 
     /** Extension stack. */
     private transient Stack<Float> mExtensionStack;
@@ -86,9 +92,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
     /** Start angle. */
     private transient float mAngle;
 
-    /** Child count per depth. */
-    private transient long mChildCountPerDepth;
-
     /** Current item indes. */
     private transient int mIndex;
 
@@ -108,8 +111,8 @@ public final class SunburstDescendantAxis extends AbsAxis {
     private transient ITraverseModel mModel;
 
     /** {@link List} of {@link Future}s which hold the number of descendants. */
-    private transient List<Integer> mDescendants;
-    
+    private transient List<Future<Integer>> mDescendants;
+
     /** Determines if tree should be pruned or not. */
     private transient EPruning mPruning;
 
@@ -124,9 +127,10 @@ public final class SunburstDescendantAxis extends AbsAxis {
      *            model which observes axis changes
      * @param paramTraverseModel
      *            model
-     * @param paramPruning 
+     * @param paramPruning
      */
-    public SunburstDescendantAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf, final ITraverseModel paramTraverseModel, final EPruning paramPruning) {
+    public SunburstDescendantAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf,
+        final ITraverseModel paramTraverseModel, final EPruning paramPruning) {
         super(paramRtx, paramIncludeSelf);
         assert paramRtx != null;
         assert paramTraverseModel != null;
@@ -135,12 +139,12 @@ public final class SunburstDescendantAxis extends AbsAxis {
         mModel = paramTraverseModel;
         try {
             mDescendants = mModel.getDescendants(getTransaction());
-            mParDescendantCount = mDescendants.get(mIndex + 1);
+            mParDescendantCount = mModel.getMaxDescendantCount();
             mDescendantCount = mParDescendantCount;
-        } catch (final InterruptedException exc) {
-            exc.printStackTrace(); 
-        } catch (final ExecutionException exc) {
-            exc.printStackTrace(); 
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final ExecutionException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
         }
     }
 
@@ -162,7 +166,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
         mDescendantsStack = new Stack<Integer>();
         mAngle = 0F;
         mDepth = 0;
-        mChildCountPerDepth = ((AbsStructNode)getTransaction().getNode()).getChildCount();
         mMoved = EMoved.STARTRIGHTSIBL;
         mIndexToParent = -1;
         mExtension = PConstants.TWO_PI;
@@ -215,7 +218,8 @@ public final class SunburstDescendantAxis extends AbsAxis {
                     mDescendantsStack.push(mDescendantCount);
                     mDepth++;
 
-                    if (mPruning == EPruning.TRUE && mDepth > 3 && !mRightSiblingKeyStack.empty() && hasRightSibling) {
+                    if (mPruning == EPruning.TRUE && mDepth > 3 && !mRightSiblingKeyStack.empty()
+                        && hasRightSibling) {
                         mRightSiblingKeyStack.pop();
                     }
                     mMoved = EMoved.CHILD;
@@ -348,16 +352,16 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** Process movement. */
     private void processMove() {
-        // try {
-        mBuilder.set(mAngle, mExtension, mIndexToParent).setParentDescendantCount(mParDescendantCount)
-            .setDescendantCount(mDescendants.get(mIndex + 1)).set();
-        // } catch (final InterruptedException e) {
-        // LOGWRAPPER.error(e.getMessage(), e);
-        // } catch (final ExecutionException e) {
-        // LOGWRAPPER.error(e.getMessage(), e);
-        // }
-        mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack,
-            mParentStack, mDescendantsStack);
+        try {
+            mBuilder.set(mAngle, mExtension, mIndexToParent).setParentDescendantCount(mParDescendantCount)
+                .setDescendantCount(mDescendants.get(mIndex + 1).get()).set();
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final ExecutionException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
+        mMoved.processMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mParentStack,
+            mDescendantsStack);
         mAngle = mItem.mAngle;
         mExtension = mItem.mExtension;
         mIndexToParent = mItem.mIndexToParent;

@@ -35,29 +35,33 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
+import javax.swing.JOptionPane;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import controlP5.ControlGroup;
 
+import org.slf4j.LoggerFactory;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTIOException;
+import org.treetank.exception.TTUsageException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.service.xml.shredder.EShredderCommit;
+import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
+import org.treetank.settings.EFixed;
+import org.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -73,6 +77,9 @@ import processing.core.PConstants;
  * 
  */
 final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, PropertyChangeListener {
+
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));
 
     /** {@link IWriteTransaction} instance. */
     private transient IWriteTransaction mWtx;
@@ -102,12 +109,16 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
     public void traverseTree(final SunburstContainer paramContainer) {
         assert paramContainer.mKey >= 0;
         final ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(new TraverseTree(paramContainer.mKey, paramContainer.mPruning, this));
+        try {
+            executor.submit(new TraverseTree(paramContainer.mKey, paramContainer.mPruning, this));
+        } catch (final AbsTTException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
         shutdownAndAwaitTermination(executor);
     }
 
     /** Traverse a tree (single revision). */
-    private static final class TraverseTree extends AbsComponent implements Callable<SunburstFireContainer>,
+    private static final class TraverseTree extends AbsComponent implements Callable<Void>,
         ITraverseModel {
         /** Key from which to start traversal. */
         private transient long mKey;
@@ -116,7 +127,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
         private final SunburstModel mModel;
 
         /** {@link IReadTransaction} instance. */
-        private transient IReadTransaction mRtx;
+        private final IReadTransaction mRtx;
 
         /** {@link List} of {@link SunburstItem}s. */
         private final List<SunburstItem> mItems;
@@ -137,7 +148,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
         private final ReadDB mDb;
 
         /** Maximum descendant count in tree. */
-        private transient long mMaxDescendantCount;
+        private transient int mMaxDescendantCount;
 
         /** Parent processing frame. */
         private transient PApplet mParent;
@@ -147,6 +158,9 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
 
         /** Determines if tree should be pruned or not. */
         private transient EPruning mPruning;
+        
+        /** Determines if current item has been pruned or not. */
+        private transient boolean mPruned;
 
         /**
          * Constructor.
@@ -158,7 +172,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
          * @param paramModel
          *            The {@link SunburstModel}.
          */
-        private TraverseTree(final long paramKey, final EPruning paramPruning, final SunburstModel paramModel) {
+        private TraverseTree(final long paramKey, final EPruning paramPruning, final SunburstModel paramModel)
+            throws AbsTTException {
             assert paramKey >= 0;
             assert paramModel != null;
             mKey = paramKey == 0 ? paramKey + 1 : paramKey;
@@ -166,22 +181,20 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
             addPropertyChangeListener(mModel);
             mPruning = paramPruning;
             mDb = mModel.mDb;
-            try {
-                mRtx = mModel.mDb.getSession().beginReadTransaction(mModel.mDb.getRevisionNumber());
-            } catch (final AbsTTException exc) {
-                exc.printStackTrace();
-            }
+
+            mRtx = mModel.mDb.getSession().beginReadTransaction(mModel.mDb.getRevisionNumber());
+            mRtx.moveTo(mKey);
             mParent = mModel.mParent;
             mRelations = new NodeRelations();
             mItems = new LinkedList<SunburstItem>();
-            mRtx.moveTo(mKey);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public SunburstFireContainer call() {
+        public Void call() {
+            LOGWRAPPER.debug("Build sunburst items.");
 
             // Get min and max textLength.
             getMinMaxTextLength(mRtx);
@@ -191,10 +204,12 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 .next()) {
             }
 
+            LOGWRAPPER.debug("Built " + mItems.size() + " SunburstItems!");
+
             try {
                 mRtx.close();
-            } catch (final AbsTTException exc) {
-                exc.printStackTrace();
+            } catch (final AbsTTException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
             }
 
             // Fire property changes.
@@ -222,19 +237,17 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 node.hasFirstChild() ? EStructType.ISINNERNODE : EStructType.ISLEAFNODE;
 
             // Calculate extension.
-            float childExtension = 0f;
+            float childExtension = 2 * PConstants.PI;
             if (indexToParent > -1) {
                 childExtension = extension * (float)descendantCount / ((float)parDescendantCount - 1f);
-            } else {
-                childExtension = 2 * PConstants.PI;
-            }
-            // LOGWRAPPER.debug("ITEM: " + paramIndex);
-            // LOGWRAPPER.debug("descendantCount: " + descendantCount);
-            // LOGWRAPPER.debug("parentDescCount: " + parDescendantCount);
-            // LOGWRAPPER.debug("indexToParent: " + indexToParent);
-            // LOGWRAPPER.debug("extension: " + childExtension);
-            // LOGWRAPPER.debug("depth: " + depth);
-            // LOGWRAPPER.debug("angle: " + angle);
+            } 
+//            LOGWRAPPER.debug("ITEM: " + paramIndex);
+//            LOGWRAPPER.debug("descendantCount: " + descendantCount);
+//            LOGWRAPPER.debug("parentDescCount: " + parDescendantCount);
+//            LOGWRAPPER.debug("indexToParent: " + indexToParent);
+//            LOGWRAPPER.debug("extension: " + childExtension);
+//            LOGWRAPPER.debug("depth: " + depth);
+//            LOGWRAPPER.debug("angle: " + angle);
 
             // Set node relations.
             String text = null;
@@ -242,7 +255,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 mRelations.setAll(depth, structKind, mRtx.getValueOfCurrentNode().length(), mMinTextLength,
                     mMaxTextLength, indexToParent);
                 text = mRtx.getValueOfCurrentNode();
-                // LOGWRAPPER.debug("text: " + text);
+//                LOGWRAPPER.debug("text: " + text);
             } else {
                 mRelations.setAll(depth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
             }
@@ -252,7 +265,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
                     .setNode(node).setText(text).build());
             } else {
-                // LOGWRAPPER.debug("QName: " + mRtx.getQNameOfCurrentNode());
+//                LOGWRAPPER.debug("QName: " + mRtx.getQNameOfCurrentNode());
                 mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
                     .setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
             }
@@ -261,6 +274,18 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
             mDepthMax = Math.max(depth, mDepthMax);
 
             return childExtension;
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public int getMaxDescendantCount() {
+            return mMaxDescendantCount;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean getIsPruned() {
+            return mPruned;
         }
 
         /** {@inheritDoc} */
@@ -272,8 +297,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
             mMinTextLength = Integer.MAX_VALUE;
             mMaxTextLength = Integer.MIN_VALUE;
             for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-                if (paramRtx.getNode().getKind() == ENodes.TEXT_KIND) {
-                    final int length = paramRtx.getValueOfCurrentNode().length();
+                if (axis.getTransaction().getNode().getKind() == ENodes.TEXT_KIND) {
+                    final int length = axis.getTransaction().getValueOfCurrentNode().length();
                     if (length < mMinTextLength) {
                         mMinTextLength = length;
                     }
@@ -290,135 +315,124 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                 mMaxTextLength = 0;
             }
 
-            // LOGWRAPPER.debug("MINIMUM text length: " + mMinTextLength);
-            // LOGWRAPPER.debug("MAXIMUM text length: " + mMaxTextLength);
+            LOGWRAPPER.debug("MINIMUM text length: " + mMinTextLength);
+            LOGWRAPPER.debug("MAXIMUM text length: " + mMaxTextLength);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public List<Integer> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
-            ExecutionException {
+        public List<Future<Integer>> getDescendants(final IReadTransaction paramRtx)
+            throws InterruptedException, ExecutionException {
             assert paramRtx != null;
             assert mPruning != null;
-            final List<Integer> descendants = new LinkedList<Integer>();
+            final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
 
-            switch (mPruning) {
-            case TRUE:
-                // Get descendants for every node and save it to a list.
-                // final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
-                // final ExecutorService executor =
-                // Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-                // boolean firstNode = true;
-                // for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next())
-                // {
-                // if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
-                // Future<Integer> submit = null;
-                // try {
-                // submit =
-                // executor.submit(new Descendants(mDb.getSession(), paramRtx.getRevisionNumber(),
-                // axis.getTransaction().getNode().getNodeKey()));
-                // } catch (TTIOException e) {
-                // LOGWRAPPER.error(e.getMessage(), e);
-                // }
-                //
-                // assert submit != null;
-                // if (firstNode) {
-                // firstNode = false;
-                // mMaxDescendantCount = submit.get();
-                // }
-                // descendants.add(submit);
-                mDepth = 0;
-                boolean first = true;
+            try {
+                final IReadTransaction rtx = mDb.getSession().beginReadTransaction(mDb.getRevisionNumber());
+                rtx.moveTo(paramRtx.getNode().getNodeKey());
 
-                if (paramRtx.getNode().getKind() == ENodes.ROOT_KIND) {
-                    paramRtx.moveToFirstChild();
-                }
-                final long key = paramRtx.getNode().getNodeKey();
-                boolean hasNoChild = true;
-
-                if (paramRtx.getStructuralNode().hasFirstChild()) {
-                    while (first || paramRtx.getNode().getNodeKey() != key) {
-                        if (paramRtx.getStructuralNode().hasFirstChild()) {
-                            hasNoChild = true;
-                            if (first) {
-                                first = false;
-                                final int descCount = countDescendants(paramRtx);
-                                descendants.add(descCount);
-                                mMaxDescendantCount = descCount;
-                                paramRtx.moveToFirstChild();
-                                mDepth++;
-                            } else {
-                                if (mDepth > 3) {
-                                    while (!paramRtx.getStructuralNode().hasRightSibling()
-                                        && paramRtx.getNode().getNodeKey() != key) {
-                                        paramRtx.moveToParent();
-                                        mDepth--;
-                                    }
-                                    paramRtx.moveToRightSibling();
-                                } else {
-                                    final int descCount = countDescendants(paramRtx);
-                                    descendants.add(descCount);
-                                    paramRtx.moveToFirstChild();
-                                    mDepth++;
+                switch (mPruning) {
+                case TRUE:
+                    // mDepth = 0;
+                    // boolean first = true;
+                    //
+                    // if (paramRtx.getNode().getKind() == ENodes.ROOT_KIND) {
+                    // paramRtx.moveToFirstChild();
+                    // }
+                    // final long key = paramRtx.getNode().getNodeKey();
+                    // boolean hasNoChild = true;
+                    //
+                    // if (paramRtx.getStructuralNode().hasFirstChild()) {
+                    // while (first || paramRtx.getNode().getNodeKey() != key) {
+                    // if (paramRtx.getStructuralNode().hasFirstChild()) {
+                    // hasNoChild = true;
+                    // if (first) {
+                    // first = false;
+                    // final int descCount = countDescendants(paramRtx);
+                    // descendants.add(descCount);
+                    // mMaxDescendantCount = descCount;
+                    // paramRtx.moveToFirstChild();
+                    // mDepth++;
+                    // } else {
+                    // if (mDepth > 3) {
+                    // while (!paramRtx.getStructuralNode().hasRightSibling()
+                    // && paramRtx.getNode().getNodeKey() != key) {
+                    // paramRtx.moveToParent();
+                    // mDepth--;
+                    // }
+                    // paramRtx.moveToRightSibling();
+                    // } else {
+                    // final int descCount = countDescendants(paramRtx);
+                    // descendants.add(descCount);
+                    // paramRtx.moveToFirstChild();
+                    // mDepth++;
+                    // }
+                    // }
+                    // } else {
+                    // boolean movedToNextFollowing = false;
+                    // while (!paramRtx.getStructuralNode().hasRightSibling()
+                    // && paramRtx.getNode().getNodeKey() != key) {
+                    // if (hasNoChild && !movedToNextFollowing && mDepth < 4) {
+                    // descendants.add(countDescendants(paramRtx));
+                    // }
+                    // paramRtx.moveToParent();
+                    // mDepth--;
+                    // movedToNextFollowing = true;
+                    // }
+                    // if (paramRtx.getNode().getNodeKey() != key) {
+                    // hasNoChild = true;
+                    // if (movedToNextFollowing) {
+                    // paramRtx.moveToRightSibling();
+                    //
+                    // if (!hasNoChild && mDepth < 4) {
+                    // descendants.add(countDescendants(paramRtx));
+                    // }
+                    // } else {
+                    // if (mDepth < 4) {
+                    // descendants.add(countDescendants(paramRtx));
+                    // }
+                    // paramRtx.moveToRightSibling();
+                    // }
+                    // hasNoChild = true;
+                    // }
+                    // }
+                    // }
+                    //
+                    // paramRtx.moveTo(mKey);
+                    // } else {
+                    // descendants.add(1);
+                    // }
+                    // break;
+                case FALSE:
+                    // Get descendants for every node and save it to a list.
+                    final ExecutorService executor =
+                        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+                    boolean firstNode = true;
+                    for (final AbsAxis axis = new DescendantAxis(rtx, true); axis.hasNext(); axis.next()) {
+                        if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
+                            try {
+                                final Future<Integer> submit =
+                                    executor.submit(new Descendants(mDb.getSession(),
+                                        rtx.getRevisionNumber(), rtx.getNode().getNodeKey()));
+                                if (firstNode) {
+                                    firstNode = false;
+                                    mMaxDescendantCount = submit.get();
                                 }
-                            }
-                        } else {
-                            boolean movedToNextFollowing = false;
-                            while (!paramRtx.getStructuralNode().hasRightSibling()
-                                && paramRtx.getNode().getNodeKey() != key) {
-                                if (hasNoChild && !movedToNextFollowing && mDepth < 4) {
-                                    descendants.add(countDescendants(paramRtx));
-                                }
-                                paramRtx.moveToParent();
-                                mDepth--;
-                                movedToNextFollowing = true;
-                            }
-                            if (paramRtx.getNode().getNodeKey() != key) {
-                                hasNoChild = true;
-                                if (movedToNextFollowing) {
-                                    paramRtx.moveToRightSibling();
-
-                                    if (!hasNoChild && mDepth < 4) {
-                                        descendants.add(countDescendants(paramRtx));
-                                    }
-                                } else {
-                                    if (mDepth < 4) {
-                                        descendants.add(countDescendants(paramRtx));
-                                    }
-                                    paramRtx.moveToRightSibling();
-                                }
-                                hasNoChild = true;
+                                descendants.add(submit);
+                            } catch (TTIOException e) {
+                                LOGWRAPPER.error(e.getMessage(), e);
                             }
                         }
                     }
-
-                    paramRtx.moveTo(mKey);
-                } else {
-                    descendants.add(1);
+                    shutdownAndAwaitTermination(executor);
+                    break;
                 }
-                break;
-            case FALSE:
-                boolean firstNode = true;
-                for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-                    if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
-                        int descendantCount = 0;
-
-                        for (final AbsAxis descAxis = new DescendantAxis(paramRtx, true); descAxis.hasNext(); descAxis
-                            .next()) {
-                            descendantCount++;
-                        }
-
-                        if (firstNode) {
-                            firstNode = false;
-                            mMaxDescendantCount = descendantCount;
-                        }
-
-                        descendants.add(descendantCount);
-                    }
-                }
-                break;
+                rtx.close();
+            } catch (final AbsTTException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
 
             return descendants;
@@ -482,45 +496,45 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
             return retVal;
         }
 
-        // /** Counts descendants. */
-        // final class Descendants implements Callable<Integer> {
-        // /** Treetank {@link IReadTransaction}. */
-        // private transient IReadTransaction mRtx;
-        //
-        // /**
-        // * Constructor.
-        // *
-        // * @param paramRtx
-        // * {@link IReadTransaction} over which to iterate
-        // */
-        // Descendants(final ISession paramSession, final long paramRevision, final long paramNodeKey) {
-        // assert paramSession != null;
-        // assert !paramSession.isClosed();
-        // assert paramRevision >= 0;
-        // try {
-        // synchronized (paramSession) {
-        // mRtx = paramSession.beginReadTransaction(paramRevision);
-        // }
-        // } catch (final TTIOException e) {
-        // LOGWRAPPER.error(e.getMessage(), e);
-        // } catch (final AbsTTException e) {
-        // LOGWRAPPER.error(e.getMessage(), e);
-        // }
-        // mRtx.moveTo(paramNodeKey);
-        // }
-        //
-        // @Override
-        // public Integer call() throws Exception {
-        // int retVal = 0;
-        //
-        // for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
-        // retVal++;
-        // }
-        //
-        // mRtx.close();
-        // return retVal;
-        // }
-        // }
+        /** Counts descendants. */
+        final class Descendants implements Callable<Integer> {
+            /** Treetank {@link IReadTransaction}. */
+            private transient IReadTransaction mRtx;
+
+            /**
+             * Constructor.
+             * 
+             * @param paramRtx
+             *            {@link IReadTransaction} over which to iterate
+             */
+            Descendants(final ISession paramSession, final long paramRevision, final long paramNodeKey) {
+                assert paramSession != null;
+                assert !paramSession.isClosed();
+                assert paramRevision >= 0;
+                try {
+//                    synchronized (paramSession) {
+                        mRtx = paramSession.beginReadTransaction(paramRevision);
+//                    }
+                } catch (final TTIOException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                } catch (final AbsTTException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                }
+                mRtx.moveTo(paramNodeKey);
+            }
+
+            @Override
+            public Integer call() throws Exception {
+                int retVal = 0;
+
+                for (final AbsAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
+                    retVal++;
+                }
+
+                mRtx.close();
+                return retVal;
+            }
+        }
     }
 
     /**
@@ -548,8 +562,8 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                     mWtx.insertTextAsRightSibling(paramText);
                 }
             }
-        } catch (final InterruptedException exc) {
-            exc.printStackTrace();
+        } catch (final InterruptedException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
         }
     }
 
