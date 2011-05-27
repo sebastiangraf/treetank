@@ -185,9 +185,9 @@ public enum ENodes {
     private final int mKind;
 
     /** Size in the long data array. */
-    private final int mByteSize;
+    public static final int MDATASIZE = 24;
     
-    private final int mPointerSize;
+    public static final int MPOINTERSIZE = 60;
 
     /** Mapping of keys -> Nodes */
     private final static Map<Integer, ENodes> MAPPING = new HashMap<Integer, ENodes>();
@@ -209,8 +209,6 @@ public enum ENodes {
      */
     private ENodes(final int paramKind, final int paramLongSize, final int paramIntSize) {
         mKind = paramKind;
-        mByteSize = 24;
-        mPointerSize= 60;
     }
 
     /**
@@ -228,14 +226,14 @@ public enum ENodes {
      * @return the byte size
      */
     int getByteSize() {
-        return mByteSize;
+        return MDATASIZE;
     }
     
     /**
      * @return the pointer size
      */
     int getPointerSize() {
-        return mPointerSize;
+        return MPOINTERSIZE;
     }
 
     byte[] readByteData(final ITTSource mSource) {
