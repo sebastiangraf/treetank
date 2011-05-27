@@ -43,7 +43,7 @@ public class NodePage extends AbsPage {
     /** Array of nodes. This can have null nodes that were removed. */
     private final AbsNode[] mNodes;
 
-    private final static boolean NODE_ENCRYPTION = true;
+    private final static boolean NODE_ENCRYPTION = false;
 
     /**
      * Create node page.
