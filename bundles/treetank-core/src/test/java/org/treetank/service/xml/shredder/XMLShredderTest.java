@@ -84,7 +84,7 @@ public class XMLShredderTest extends XMLTestCase {
         // Setup expected session.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 
-        final ISession expectedSession = database.getSession(new SessionConfiguration());
+        final ISession expectedSession = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction expectedTrx = expectedSession.beginWriteTransaction();
         DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
@@ -94,7 +94,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        final ISession session = database2.getSession(new SessionConfiguration());
+        final ISession session = database2.getSession(new SessionConfiguration.Builder().build());
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
@@ -140,7 +140,7 @@ public class XMLShredderTest extends XMLTestCase {
     @Test
     public void testShredIntoExisting() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
@@ -156,7 +156,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        final ISession expectedSession = database2.getSession(new SessionConfiguration());
+        final ISession expectedSession = database2.getSession(new SessionConfiguration.Builder().build());
 
         final IWriteTransaction expectedTrx = expectedSession.beginWriteTransaction();
         DocumentCreater.create(expectedTrx);
@@ -196,14 +196,14 @@ public class XMLShredderTest extends XMLTestCase {
     public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession expectedSession2 = database.getSession(new SessionConfiguration());
+        final ISession expectedSession2 = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction expectedTrx2 = expectedSession2.beginWriteTransaction();
         DocumentCreater.createWithoutNamespace(expectedTrx2);
         expectedTrx2.commit();
 
         // Setup parsed session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        final ISession session2 = database2.getSession(new SessionConfiguration());
+        final ISession session2 = database2.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session2.beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createReader(new File(XML2)), EShredderInsert.ADDASFIRSTCHILD);
@@ -246,7 +246,7 @@ public class XMLShredderTest extends XMLTestCase {
     @Test
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createReader(new File(XML3)), EShredderInsert.ADDASFIRSTCHILD);

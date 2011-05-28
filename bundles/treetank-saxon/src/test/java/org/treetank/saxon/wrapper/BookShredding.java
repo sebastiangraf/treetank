@@ -31,7 +31,7 @@ public final class BookShredding {
         FileDatabase.createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder()
             .build());
         final IDatabase database = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

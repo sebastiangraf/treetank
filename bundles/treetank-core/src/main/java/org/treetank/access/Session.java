@@ -58,9 +58,9 @@ public final class Session implements ISession {
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    protected Session(final DatabaseConfiguration mDatabaseConf,
-        final SessionConfiguration mSessionConf) throws AbsTTException {
-        mSessionState = new SessionState( mDatabaseConf, mSessionConf);
+    protected Session(final DatabaseConfiguration mDatabaseConf, final SessionConfiguration mSessionConf)
+        throws AbsTTException {
+        mSessionState = new SessionState(mDatabaseConf, mSessionConf);
         mClosed = false;
     }
 
@@ -100,22 +100,6 @@ public final class Session implements ISession {
         throws AbsTTException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(maxNodeCount, maxTime);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized int getReadTransactionCount() {
-        return mSessionState.getReadTransactionCount();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized int getWriteTransactionCount() {
-        return mSessionState.getWriteTransactionCount();
     }
 
     /**

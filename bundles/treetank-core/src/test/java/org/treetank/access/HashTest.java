@@ -67,7 +67,7 @@ public class HashTest {
     public void testPostorderNamespace() throws Exception {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         testNamespace(session);
 
     }
@@ -76,7 +76,7 @@ public class HashTest {
     public void testPostorderInsertRemove() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
@@ -85,7 +85,7 @@ public class HashTest {
     public void testPostorderDeep() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         testDeepTree(wtx);
     }
@@ -94,7 +94,7 @@ public class HashTest {
     public void testPostorderSetter() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         testSetter(wtx);
     }
@@ -103,7 +103,7 @@ public class HashTest {
     public void testRollingNamespace() throws Exception {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         testNamespace(session);
 
     }
@@ -112,7 +112,7 @@ public class HashTest {
     public void testRollingInsertRemove() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
@@ -121,7 +121,7 @@ public class HashTest {
     public void testRollingDeep() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         testDeepTree(wtx);
     }
@@ -130,7 +130,7 @@ public class HashTest {
     public void testRollingSetter() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         testSetter(wtx);
     }

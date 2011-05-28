@@ -73,7 +73,7 @@ public class SessionTest {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         IReadTransaction rtx = session.beginReadTransaction();
         rtx.close();
 
@@ -101,7 +101,7 @@ public class SessionTest {
     public void testInsertChild() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
@@ -122,7 +122,7 @@ public class SessionTest {
     @Test
     public void testRevision() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         IReadTransaction rtx = session.beginReadTransaction();
         assertEquals(0L, rtx.getRevisionNumber());
@@ -149,7 +149,7 @@ public class SessionTest {
     @Test
     public void testShreddedRevision() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         final IWriteTransaction wtx1 = session.beginWriteTransaction();
         DocumentCreater.create(wtx1);
@@ -185,7 +185,7 @@ public class SessionTest {
     @Test
     public void testExisting() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session1 = database.getSession(new SessionConfiguration());
+        final ISession session1 = database.getSession(new SessionConfiguration.Builder().build());
 
         final IWriteTransaction wtx1 = session1.beginWriteTransaction();
         DocumentCreater.create(wtx1);
@@ -194,7 +194,7 @@ public class SessionTest {
         wtx1.close();
         session1.close();
 
-        final ISession session2 = database.getSession(new SessionConfiguration());
+        final ISession session2 = database.getSession(new SessionConfiguration.Builder().build());
         final IReadTransaction rtx1 = session2.beginReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
@@ -214,7 +214,7 @@ public class SessionTest {
         session2.close();
 
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session3 = database2.getSession(new SessionConfiguration());
+        final ISession session3 = database2.getSession(new SessionConfiguration.Builder().build());
         final IReadTransaction rtx2 = session3.beginReadTransaction();
         assertEquals(1L, rtx2.getRevisionNumber());
         rtx2.moveTo(12L);
@@ -228,7 +228,7 @@ public class SessionTest {
     @Test
     public void testIdempotentClose() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -249,7 +249,7 @@ public class SessionTest {
     public void testGetStructuralNode() throws AbsTTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
@@ -286,7 +286,7 @@ public class SessionTest {
     public void testAutoCommit() throws AbsTTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
@@ -296,39 +296,11 @@ public class SessionTest {
     @Test
     public void testAutoClose() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         session.beginReadTransaction();
     }
-
-    @Test
-    public void testTransactionCount() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        Assert.assertEquals(1, session.getWriteTransactionCount());
-        Assert.assertEquals(0, session.getReadTransactionCount());
-        wtx.close();
-
-        final IReadTransaction rtx = session.beginReadTransaction();
-        Assert.assertEquals(0, session.getWriteTransactionCount());
-        Assert.assertEquals(1, session.getReadTransactionCount());
-
-        final IReadTransaction rtx1 = session.beginReadTransaction();
-        Assert.assertEquals(0, session.getWriteTransactionCount());
-        Assert.assertEquals(2, session.getReadTransactionCount());
-
-        rtx.close();
-        rtx1.close();
-
-        Assert.assertEquals(0, session.getWriteTransactionCount());
-        Assert.assertEquals(0, session.getReadTransactionCount());
-
-        session.close();
-    }
-
 }

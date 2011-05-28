@@ -201,7 +201,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final File folder = new File(FOLDER);
         int i = 1;
         final File[] filesList = folder.listFiles();

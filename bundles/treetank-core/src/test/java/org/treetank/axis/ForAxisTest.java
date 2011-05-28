@@ -56,8 +56,8 @@ public class ForAxisTest {
 
     @Before
     public void setUp() throws AbsTTException {
-
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
     }
 
     @After
@@ -67,14 +67,8 @@ public class ForAxisTest {
 
     @Test
     public void testFor() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction rtx = holder.rtx;
 
         rtx.moveTo(1L);
 
@@ -124,9 +118,7 @@ public class ForAxisTest {
         assertEquals(false, axis.hasNext());
 
         rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
+        holder.session.close();
     }
 
 }

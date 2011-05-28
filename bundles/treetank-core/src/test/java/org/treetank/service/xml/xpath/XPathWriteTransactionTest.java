@@ -70,7 +70,7 @@ public final class XPathWriteTransactionTest {
 
         // Verify.
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        session = database.getSession(new SessionConfiguration());
+        session = database.getSession(new SessionConfiguration.Builder().build());
         wtx = session.beginWriteTransaction();
     }
 

@@ -116,7 +116,7 @@ public final class WikipediaImport implements IImport<StartElement> {
 
         try {
             final IDatabase db = FileDatabase.openDatabase(paramTTDir);
-            mSession = db.getSession(new SessionConfiguration());
+            mSession = db.getSession(new SessionConfiguration.Builder().build());
             mWTX = mSession.beginWriteTransaction();
         } catch (final AbsTTException exc) {
             exc.printStackTrace();

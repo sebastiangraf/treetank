@@ -31,6 +31,7 @@ import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
@@ -45,24 +46,21 @@ public class PostOrderTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
     }
 
     @Test
     public void testIterate() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction wtx = holder.rtx;
 
         wtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new PostOrderAxis(wtx), new long[] {
             4L, 6L, 7L, 5L, 8L, 11L, 12L, 9L, 13L, 1L, 0L
         });
 
-        wtx.abort();
         wtx.close();
-        session.close();
+        holder.session.close();
     }
 
     @After

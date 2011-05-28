@@ -27,10 +27,7 @@
 
 package org.treetank.access;
 
-import java.util.Properties;
-
 import org.treetank.exception.TTUsageException;
-import org.treetank.settings.ESessionSetting;
 
 /**
  * <h1>SessionConfiguration</h1>
@@ -42,8 +39,28 @@ import org.treetank.settings.ESessionSetting;
  */
 public final class SessionConfiguration {
 
-    /** Props to hold all related data. */
-    private final Properties mProps;
+    // STATIC STANDARD FIELDS
+    /** Number of concurrent exclusive write transactions. */
+    public final static int MAX_WRITE_TRANSACTIONS = 1;
+    /** Number of concurrent shared read transactions. */
+    public final static int MAX_READ_TRANSACTIONS = 128;
+    /** Commit threshold. */
+    public final static int COMMIT_THRESHOLD = 262144;
+    /** Default User. */
+    public final static String DEFAULT_USER = "ALL";
+    // END STATIC STANDARD FIELDS
+
+    /** Numbers of allowed IWriteTransaction Instances. */
+    public final int mWtxAllowed;
+
+    /** Numbers of allowed IWriteTransaction Instances. */
+    public final int mRtxAllowed;
+
+    /** Number of node modifications until an automatic commit occurs. */
+    public final int mCommitThreshold;
+
+    /** User for this session. */
+    public final String mUser;
 
     /**
      * Convenience constructor using the standard settings.
@@ -51,46 +68,78 @@ public final class SessionConfiguration {
      * @throws TTUsageException
      *             if session is not valid
      */
-    public SessionConfiguration() throws TTUsageException {
-        this(new Properties());
+    private SessionConfiguration(final SessionConfiguration.Builder paramBuilder) {
+        this.mWtxAllowed = paramBuilder.mWtxAllowed;
+        this.mRtxAllowed = paramBuilder.mRtxAllowed;
+        this.mCommitThreshold = paramBuilder.mCommitThreshold;
+        this.mUser = paramBuilder.mUser;
     }
 
     /**
-     * Constructor using specified properties. Every property which is not
-     * specified is set by the standard-one
-     * 
-     * @param props
-     *            to be specified
-     * @throws TTUsageException
-     *             if session could not be established
+     * Builder class for generating new SessionConfiguration.
      */
-    public SessionConfiguration(final Properties props) throws TTUsageException {
-        this.mProps = new Properties();
-        for (final ESessionSetting enumProps : ESessionSetting.values()) {
-            if (props.containsKey(enumProps.name())) {
-                this.getProps().setProperty(enumProps.name(), props.getProperty(enumProps.name()));
-            } else {
-                this.getProps().setProperty(enumProps.name(), enumProps.getValue());
-            }
+    public static class Builder {
+
+        /** Numbers of allowed IWriteTransaction Instances. */
+        private int mWtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
+
+        /** Numbers of allowed IWriteTransaction Instances. */
+        private int mRtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
+
+        /** Number of node modifications until an automatic commit occurs. */
+        private int mCommitThreshold = SessionConfiguration.COMMIT_THRESHOLD;
+
+        /** User for this session. */
+        private String mUser = SessionConfiguration.DEFAULT_USER;
+
+        /**
+         * Setter for field mWtxAllowed
+         * 
+         * @param mWtxAllowed
+         *            new value for field
+         */
+        public void setWtxAllowed(int mWtxAllowed) {
+            this.mWtxAllowed = mWtxAllowed;
         }
 
-    }
+        /**
+         * Setter for field mRtxAllowed
+         * 
+         * @param mRtxAllowed
+         *            new value for field
+         */
+        public void setRtxAllowed(int mRtxAllowed) {
+            this.mRtxAllowed = mRtxAllowed;
+        }
 
-    /**
-     * Getting the properties set in this configuration. All properties must
-     * refer to <code>ESessionSetting</code>.
-     * 
-     * @return the properties to this session
-     */
-    public Properties getProps() {
-        return mProps;
-    }
+        /**
+         * Setter for field mCommitThreshold
+         * 
+         * @param mCommitThreshold
+         *            new value for field
+         */
+        public void setCommitThreshold(int mCommitThreshold) {
+            this.mCommitThreshold = mCommitThreshold;
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    public final String toString() {
-        return new StringBuilder(mProps.toString()).toString();
+        /**
+         * Setter for field mUser
+         * 
+         * @param mUser
+         *            new value for field
+         */
+        public void setUser(String mUser) {
+            this.mUser = mUser;
+        }
+
+        /**
+         * Builder method to generate new configuration
+         * 
+         * @return a new {@link SessionConfiguration} instance
+         */
+        public SessionConfiguration build() {
+            return new SessionConfiguration(this);
+        }
     }
 
 }

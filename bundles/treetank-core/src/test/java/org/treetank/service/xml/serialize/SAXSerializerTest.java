@@ -71,7 +71,7 @@ public class SAXSerializerTest extends XMLTestCase {
         try {
             // Setup test file.
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession(new SessionConfiguration());
+            final ISession session = database.getSession(new SessionConfiguration.Builder().build());
             final IWriteTransaction testTrx = session.beginWriteTransaction();
             DocumentCreater.create(testTrx);
             testTrx.commit();

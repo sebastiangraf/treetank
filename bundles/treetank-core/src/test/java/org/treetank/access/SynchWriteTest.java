@@ -60,7 +60,7 @@ public class SynchWriteTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         wtx.moveToDocumentRoot();
         wtx.insertElementAsFirstChild(new QName(""));
@@ -89,7 +89,7 @@ public class SynchWriteTest {
     public void testConcurrentWrite() throws AbsTTException, InterruptedException, ExecutionException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final Semaphore semaphore = new Semaphore(1);
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
         final ExecutorService exec = Executors.newFixedThreadPool(2);

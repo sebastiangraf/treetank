@@ -31,6 +31,7 @@ import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
@@ -45,15 +46,13 @@ public class FollowingSiblingAxisTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
     }
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction wtx = holder.rtx;
         wtx.moveTo(9L);
         AbsAxisTest.testIAxisConventions(new FollowingSiblingAxis(wtx), new long[] {
             13L
@@ -76,9 +75,8 @@ public class FollowingSiblingAxisTest {
         wtx.moveToAttribute(0);
         AbsAxisTest.testIAxisConventions(new FollowingSiblingAxis(wtx), new long[] {});
 
-        wtx.abort();
         wtx.close();
-        session.close();
+        holder.session.close();
     }
 
     @After

@@ -84,7 +84,7 @@ public class FunctionsXMarkTest {
             TestHelper.deleteEverything();
             XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
             mDatabase = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            mSession = mDatabase.getSession(new SessionConfiguration());
+            mSession = mDatabase.getSession(new SessionConfiguration.Builder().build());
             mRtx = mSession.beginReadTransaction();
         } catch (final Exception mExe) {
             mExe.printStackTrace();

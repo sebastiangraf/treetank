@@ -90,7 +90,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     public void setUp() throws Exception {
         FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         final IDatabase databaseBooks = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final ISession session = databaseBooks.getSession(new SessionConfiguration());
+        final ISession session = databaseBooks.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKS);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

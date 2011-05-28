@@ -66,7 +66,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     public void setUp() throws AbsTTException {
         FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         final IDatabase databaseTest = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final ISession session = databaseTest.getSession(new SessionConfiguration());
+        final ISession session = databaseTest.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();

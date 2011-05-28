@@ -55,7 +55,7 @@ public class LockManagerTest {
         TestHelper.deleteEverything();
 
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
         nodes = new Long[13];
@@ -107,7 +107,7 @@ public class LockManagerTest {
      */
     public void basicLockingTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
         LockManager lock = LockManager.getLockManager();
@@ -126,7 +126,7 @@ public class LockManagerTest {
      */
     public void permitLockingInFreeSubtreeTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
@@ -146,7 +146,7 @@ public class LockManagerTest {
      */
     public void denyLockingOnForeignTrnTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
@@ -168,7 +168,7 @@ public class LockManagerTest {
      */
     public void denyLockingUnderForeignTrnTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
         LockManager lock = LockManager.getLockManager();
@@ -189,7 +189,7 @@ public class LockManagerTest {
      */
     public void denyLockingAboveForeignTrnTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
         LockManager lock = LockManager.getLockManager();
@@ -210,7 +210,7 @@ public class LockManagerTest {
      */
     public void permitLockingAboveMultipleOwnTrnTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         LockManager lock = LockManager.getLockManager();
         lock.getWritePermission(nodes[4], (SynchWriteTransaction)wtx);
@@ -231,7 +231,7 @@ public class LockManagerTest {
      */
     public void conquerReleasedSubtreeTest() throws AbsTTException {
         IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
         LockManager lock = LockManager.getLockManager();

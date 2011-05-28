@@ -31,6 +31,7 @@ import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.filter.NameFilter;
@@ -48,15 +49,14 @@ public class NestedAxisTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
     }
+
 
     @Test
     public void testNestedAxisTest() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction wtx = holder.rtx;
 
         // Find descendants starting from nodeKey 0L (root).
         wtx.moveToDocumentRoot();
@@ -75,18 +75,14 @@ public class NestedAxisTest {
             6L, 12L
         });
 
-        wtx.abort();
         wtx.close();
-        session.close();
+        holder.session.close();
     }
 
     @Test
     public void testNestedAxisTest2() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction wtx = holder.rtx;
 
         // Find descendants starting from nodeKey 0L (root).
         wtx.moveToDocumentRoot();
@@ -105,18 +101,14 @@ public class NestedAxisTest {
             10L
         });
 
-        wtx.abort();
         wtx.close();
-        session.close();
+        holder.session.close();
     }
 
     @Test
     public void testNestedAxisTest3() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction wtx = holder.rtx;
 
         // Find desceFndants starting from nodeKey 0L (root).
         wtx.moveToDocumentRoot();
@@ -135,9 +127,8 @@ public class NestedAxisTest {
             4L, 5L, 8L, 9L, 13L
         });
 
-        wtx.abort();
         wtx.close();
-        session.close();
+        holder.session.close();
     }
 
     @After

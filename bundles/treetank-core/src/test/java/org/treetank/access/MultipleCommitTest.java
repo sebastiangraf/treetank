@@ -66,7 +66,7 @@ public class MultipleCommitTest {
     @Test
     public void test() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         Assert.assertEquals(0L, wtx.getRevisionNumber());
 
@@ -88,7 +88,7 @@ public class MultipleCommitTest {
     @Test
     public void testAutoCommit() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -102,7 +102,7 @@ public class MultipleCommitTest {
     @Test
     public void testRemove() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -122,7 +122,7 @@ public class MultipleCommitTest {
     @Test
     public void testAttributeRemove() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();

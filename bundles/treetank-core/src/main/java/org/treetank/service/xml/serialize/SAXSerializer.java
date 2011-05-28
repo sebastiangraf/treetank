@@ -208,7 +208,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     public static void main(final String... args) throws Exception {
 
         final IDatabase database = FileDatabase.openDatabase(new File(args[0]));
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         final DefaultHandler defHandler = new DefaultHandler();
 

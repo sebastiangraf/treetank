@@ -85,18 +85,30 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -109,7 +121,8 @@ public final class StructuralDiffTest {
         replay(listener);
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         DocumentCreater.createVersioned(wtx);
         wtx.close();
 
@@ -125,9 +138,12 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffOptimizedFirst() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -140,7 +156,8 @@ public final class StructuralDiffTest {
         replay(listener);
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         DocumentCreater.createVersioned(wtx);
         wtx.close();
 
@@ -154,15 +171,23 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    public void testStructuralDiffSecond() throws AbsTTException, InterruptedException, IOException, XMLStreamException {
+    public void testStructuralDiffSecond() throws AbsTTException, InterruptedException, IOException,
+        XMLStreamException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -177,7 +202,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll4"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -201,12 +227,18 @@ public final class StructuralDiffTest {
     public void testStructuralDiffOptimizedSecond() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -221,7 +253,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll4"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -245,15 +278,24 @@ public final class StructuralDiffTest {
     public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -268,7 +310,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -292,14 +335,22 @@ public final class StructuralDiffTest {
     public void testStructuralDiffOptimizedThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -314,7 +365,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -337,12 +389,18 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffFourth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -357,7 +415,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll3"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -381,12 +440,18 @@ public final class StructuralDiffTest {
     @Ignore
     public void testStructuralDiffOptimizedFourth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -401,7 +466,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll3"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -424,8 +490,10 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffFifth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -440,7 +508,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll2"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -463,8 +532,10 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffOptimizedFifth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -479,7 +550,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll2"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -502,11 +574,16 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffSixth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -521,7 +598,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete2" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -544,11 +622,16 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffOptimizedSixth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -563,7 +646,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete2" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -586,15 +670,24 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffSeventh() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -609,7 +702,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -632,13 +726,20 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffOptimizedSeventh() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -653,7 +754,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -676,16 +778,26 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffEighth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -700,7 +812,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete4" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -723,12 +836,18 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffOptimizedEighth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -743,7 +862,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete4" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -766,11 +886,16 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffNeinth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -785,7 +910,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll7"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -808,11 +934,16 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffOptimizedNeinth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -827,7 +958,8 @@ public final class StructuralDiffTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IWriteTransaction wtx = database.getSession(new SessionConfiguration()).beginWriteTransaction();
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll7"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -918,34 +1050,62 @@ public final class StructuralDiffTest {
     @Test
     public void testStructuralDiffTenth() throws Exception {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class), isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
+        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
+            isA(DiffDepth.class));
         listener.diffDone();
 
         expectLastCall().andAnswer(new IAnswer<Void>() {

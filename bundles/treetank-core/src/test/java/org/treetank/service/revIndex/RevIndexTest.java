@@ -69,7 +69,7 @@ public class RevIndexTest {
 
         // check
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
         rtx.moveToFirstChild();
@@ -154,7 +154,7 @@ public class RevIndexTest {
 
         // check
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToFirstChild();
         rtx.moveToRightSibling();

@@ -149,6 +149,11 @@ public class DatabaseConfiguration {
             this.mBinaryVersion = paramBinaryVersion;
         }
 
+        /**
+         * Builder method to generate new configuration
+         * 
+         * @return a new {@link DatabaseConfiguration} instance
+         */
         public DatabaseConfiguration build() {
             return new DatabaseConfiguration(this);
         }

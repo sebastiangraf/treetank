@@ -112,7 +112,7 @@ public final class RevIndex {
      */
     public RevIndex(final File mIndex, final long mRev) throws AbsTTException {
         final IDatabase db = FileDatabase.openDatabase(mIndex);
-        mIndexSession = db.getSession(new SessionConfiguration());
+        mIndexSession = db.getSession(new SessionConfiguration.Builder().build());
         if (mRev < 0) {
             mRtx = mIndexSession.beginWriteTransaction();
         } else {

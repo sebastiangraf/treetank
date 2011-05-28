@@ -31,8 +31,10 @@ import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
 
@@ -45,15 +47,15 @@ public class ElementFilterTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
     }
+
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
         // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction wtx = holder.rtx;
 
         wtx.moveTo(0L);
         IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
@@ -84,9 +86,8 @@ public class ElementFilterTest {
         wtx.moveTo(12L);
         IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
 
-        wtx.abort();
         wtx.close();
-        session.close();
+        holder.session.close();
     }
 
     @After
