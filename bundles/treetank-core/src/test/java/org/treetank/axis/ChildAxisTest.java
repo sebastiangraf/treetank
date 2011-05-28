@@ -27,36 +27,26 @@
 
 package org.treetank.axis;
 
-import org.perfidix.annotation.Bench;
-import org.perfidix.annotation.BenchClass;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-@BenchClass(runs = 1)
 public class ChildAxisTest {
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
     }
 
     @Test
-    @Bench(runs = 10)
     public void testIterate() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction wtx = holder.rtx;
 
         wtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {
@@ -71,39 +61,8 @@ public class ChildAxisTest {
         wtx.moveTo(13L);
         AbsAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
 
-        wtx.abort();
         wtx.close();
-        session.close();
-    }
-
-    @Test
-    @Bench(runs = 10)
-    public void testPersistent() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
-
-        final IReadTransaction rtx = session.beginReadTransaction();
-
-        rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {
-            4L, 5L, 8L, 9L, 13L
-        });
-
-        rtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {
-            6L, 7L
-        });
-
-        rtx.moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {});
-
-        rtx.close();
-        session.close();
-
+        holder.session.close();
     }
 
     @After

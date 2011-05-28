@@ -62,7 +62,7 @@ public final class IOTestHelper {
         final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
         builder.setType(type);
         final DatabaseConfiguration config = builder.build();
-        final SessionConfiguration sessionConfig = new SessionConfiguration();
+        final SessionConfiguration sessionConfig = new SessionConfiguration.Builder().build();
         AbsIOFactory.registerInstance(TestHelper.PATHS.PATH1.getFile(), config, sessionConfig);
         return sessionConfig;
     }

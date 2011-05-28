@@ -64,7 +64,7 @@ public class UpdateTest {
     @Test
     public void testInsertChild() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         IWriteTransaction wtx = session.beginWriteTransaction();
         wtx.commit();
@@ -104,7 +104,7 @@ public class UpdateTest {
     @Test
     public void testInsertPath() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         IWriteTransaction wtx = session.beginWriteTransaction();
 
@@ -139,7 +139,7 @@ public class UpdateTest {
     @Test
     public void testPageBoundary() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
         // Document root.
@@ -159,7 +159,7 @@ public class UpdateTest {
     @Test(expected = TTUsageException.class)
     public void testRemoveDocument() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -179,7 +179,7 @@ public class UpdateTest {
     @Test
     public void testRemoveDescendant() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();

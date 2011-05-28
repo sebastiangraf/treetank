@@ -54,7 +54,7 @@ public class ReadTransactionTest {
 		TestHelper.deleteEverything();
 		database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database
-				.getSession(new SessionConfiguration());
+				.getSession(new SessionConfiguration.Builder().build());
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		DocumentCreater.create(wtx);
 		wtx.commit();
@@ -71,7 +71,7 @@ public class ReadTransactionTest {
 	public void testEmptyRtx() throws AbsTTException {
 		assertFalse(PATHS.PATH2.getFile().exists());
 		final IDatabase db = FileDatabase.openDatabase(PATHS.PATH2.getFile());
-		final ISession session = db.getSession(new SessionConfiguration());
+		final ISession session = db.getSession(new SessionConfiguration.Builder().build());
 		final IReadTransaction rtx = session.beginReadTransaction();
 		rtx.getRevisionNumber();
 		rtx.close();
@@ -82,7 +82,7 @@ public class ReadTransactionTest {
 	@Test
 	public void testDocumentRoot() throws AbsTTException {
 		final ISession session = database
-				.getSession(new SessionConfiguration());
+				.getSession(new SessionConfiguration.Builder().build());
 		final IReadTransaction rtx = session.beginReadTransaction();
 
 		assertEquals(true, rtx.moveToDocumentRoot());
@@ -98,7 +98,7 @@ public class ReadTransactionTest {
 	@Test
 	public void testConventions() throws AbsTTException {
 		final ISession session = database
-				.getSession(new SessionConfiguration());
+				.getSession(new SessionConfiguration.Builder().build());
 		final IReadTransaction rtx = session.beginReadTransaction();
 
 		// IReadTransaction Convention 1.

@@ -41,7 +41,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
@@ -55,7 +54,6 @@ import org.treetank.io.IReader;
 import org.treetank.io.IWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.settings.ESessionSetting;
 
 /**
  * <h1>SessionState</h1>
@@ -121,12 +119,8 @@ public final class SessionState {
         mCommitLock = new ReentrantLock(false);
 
         // Init session members.
-        mWriteSemaphore =
-            new Semaphore(Integer.parseInt(paramSessionConfig.getProps().getProperty(
-                ESessionSetting.MAX_WRITE_TRANSACTIONS.name())));
-        mReadSemaphore =
-            new Semaphore(Integer.parseInt(paramSessionConfig.getProps().getProperty(
-                ESessionSetting.MAX_READ_TRANSACTIONS.name())));
+        mWriteSemaphore = new Semaphore(paramSessionConfig.mWtxAllowed);
+        mReadSemaphore = new Semaphore(paramSessionConfig.mRtxAllowed);
         final PageReference uberPageReference = new PageReference();
 
         mFac = AbsIOFactory.getInstance(mSessionConfiguration);
@@ -143,22 +137,6 @@ public final class SessionState {
             reader.close();
         }
 
-    }
-
-    protected int getReadTransactionCount() {
-        return Integer.parseInt(mSessionConfiguration.getProps().getProperty(
-            ESessionSetting.MAX_READ_TRANSACTIONS.name()))
-            - mReadSemaphore.availablePermits();
-    }
-
-    protected int getWriteTransactionCount() {
-        return Integer.parseInt(mSessionConfiguration.getProps().getProperty(
-            ESessionSetting.MAX_WRITE_TRANSACTIONS.name()))
-            - mWriteSemaphore.availablePermits();
-    }
-
-    protected String getUser() {
-        return mSessionConfiguration.getProps().getProperty(ESessionSetting.DEFAULT_USER.name());
     }
 
     protected IReadTransaction beginReadTransaction() throws AbsTTException {

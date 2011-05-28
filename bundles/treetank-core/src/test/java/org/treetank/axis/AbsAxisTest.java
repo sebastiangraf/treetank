@@ -52,7 +52,7 @@ public class AbsAxisTest {
 
     public static Holder generateHolder() throws TTUsageException, AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IReadTransaction rtx = session.beginReadTransaction();
         return new Holder(rtx, session);
     }

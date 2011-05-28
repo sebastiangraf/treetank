@@ -55,7 +55,7 @@ public class ShreddFileInvocation {
 
             // Verify.
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession(new SessionConfiguration());
+            final ISession session = database.getSession(new SessionConfiguration.Builder().build());
             final IReadTransaction rtx = session.beginReadTransaction();
             final IWriteTransaction wtx = session.beginWriteTransaction();
             rtx.moveToDocumentRoot();

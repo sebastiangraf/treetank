@@ -113,7 +113,7 @@ public class TestNodeWrapper {
         final Configuration config = proc.getUnderlyingConfiguration();
 
         final IDatabase database = FileDatabase.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         // Not the same document.
         NodeInfo node = new DocumentWrapper(session, config);
@@ -167,7 +167,7 @@ public class TestNodeWrapper {
         FileDatabase.truncateDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
         final IDatabase database =
             FileDatabase.openDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(source);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

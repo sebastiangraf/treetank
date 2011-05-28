@@ -103,10 +103,10 @@ abstract class AbsDiff extends AbsDiffObservable {
         mDiffKind = paramBuilder.mKind;
         synchronized (paramBuilder.mDb) {
             mNewRtx =
-                paramBuilder.mDb.getSession(new SessionConfiguration()).beginReadTransaction(
+                paramBuilder.mDb.getSession(new SessionConfiguration.Builder().build()).beginReadTransaction(
                     paramBuilder.mNewRev);
             mOldRtx =
-                paramBuilder.mDb.getSession(new SessionConfiguration()).beginReadTransaction(
+                paramBuilder.mDb.getSession(new SessionConfiguration.Builder().build()).beginReadTransaction(
                     paramBuilder.mOldRev);
             mHashKind = paramBuilder.mDb.getDatabaseConf().mHashKind;
         }
@@ -328,18 +328,18 @@ abstract class AbsDiff extends AbsDiffObservable {
         case ROOT_KIND:
         case TEXT_KIND:
         case ELEMENT_KIND:
-//            // ///DEBUG CODE STARTS HERE!!!!!!!
-//            mNewRtx.moveToFirstChild();
-//            mOldRtx.moveToFirstChild();
-//            mNewRtx.moveToFirstChild();
-//            mOldRtx.moveToFirstChild();
-//
-//            mNewRtx.moveToParent();
-//            mNewRtx.moveToParent();
-//            mOldRtx.moveToParent();
-//            mOldRtx.moveToParent();
-//
-//            // ///DEBUG CODE ENDS HERE!!!!!!!
+            // // ///DEBUG CODE STARTS HERE!!!!!!!
+            // mNewRtx.moveToFirstChild();
+            // mOldRtx.moveToFirstChild();
+            // mNewRtx.moveToFirstChild();
+            // mOldRtx.moveToFirstChild();
+            //
+            // mNewRtx.moveToParent();
+            // mNewRtx.moveToParent();
+            // mOldRtx.moveToParent();
+            // mOldRtx.moveToParent();
+            //
+            // // ///DEBUG CODE ENDS HERE!!!!!!!
 
             if (paramNewRtx.getNode().getNodeKey() != paramOldRtx.getNode().getNodeKey()
                 || paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {

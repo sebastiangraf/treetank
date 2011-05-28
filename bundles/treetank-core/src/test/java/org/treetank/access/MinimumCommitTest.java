@@ -58,7 +58,7 @@ public class MinimumCommitTest {
     @Test
     public void test() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        ISession session = database.getSession(new SessionConfiguration());
+        ISession session = database.getSession(new SessionConfiguration.Builder().build());
         IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
         wtx.commit();
@@ -66,7 +66,7 @@ public class MinimumCommitTest {
         wtx.close();
         session.close();
 
-        session = database.getSession(new SessionConfiguration());
+        session = database.getSession(new SessionConfiguration.Builder().build());
         wtx = session.beginWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
@@ -88,7 +88,7 @@ public class MinimumCommitTest {
     @Test
     public void testTimestamp() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionTimestamp());
         wtx.commit();

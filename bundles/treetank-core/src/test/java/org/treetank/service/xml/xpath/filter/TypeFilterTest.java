@@ -72,7 +72,7 @@ public class TypeFilterTest {
 
         // Verify.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IReadTransaction rtx = session.beginReadTransaction();
         final AbsAxis axis = new XPathAxis(rtx, "a");
         final IReadTransaction xtx = axis.getTransaction();

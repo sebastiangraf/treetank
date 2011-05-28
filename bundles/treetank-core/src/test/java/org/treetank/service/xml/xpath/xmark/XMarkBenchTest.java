@@ -76,7 +76,7 @@ public class XMarkBenchTest {
             TestHelper.deleteEverything();
             XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
             database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            session = database.getSession(new SessionConfiguration());
+            session = database.getSession(new SessionConfiguration.Builder().build());
             rtx = session.beginReadTransaction();
         } catch (Exception e) {
             e.printStackTrace();

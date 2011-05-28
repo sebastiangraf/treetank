@@ -81,7 +81,7 @@ public class StAXSerializerTest {
         try {
             // Setup test file.
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession(new SessionConfiguration());
+            final ISession session = database.getSession(new SessionConfiguration.Builder().build());
             final IWriteTransaction wtx = session.beginWriteTransaction();
             DocumentCreater.create(wtx);
             wtx.commit();
