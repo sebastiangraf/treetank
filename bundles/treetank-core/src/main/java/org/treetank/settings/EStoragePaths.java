@@ -32,7 +32,7 @@ import java.io.File;
 /**
  * 
  * Enumeration for determining all storage relevant stuff like paths to
- * different databases, etc.
+ * different resources, etc.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 

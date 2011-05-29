@@ -71,7 +71,6 @@ public final class FileDatabase implements IDatabase {
     private FileDatabase(final File paramFile, final DatabaseConfiguration paramDBConf) throws AbsTTException {
         this.mFile = paramFile;
         this.mDatabaseConfiguration = paramDBConf;
-        this.checkStorage();
     }
 
     /**
@@ -90,15 +89,14 @@ public final class FileDatabase implements IDatabase {
     public static synchronized boolean createDatabase(final File paramFile,
         final DatabaseConfiguration paramConf) throws TTIOException {
         try {
-            final File file = paramFile;
             boolean returnVal = true;
-            if (file.exists()) {
+            if (paramFile.exists()) {
                 returnVal = false;
             } else {
-                returnVal = file.mkdirs();
+                returnVal = paramFile.mkdirs();
                 if (returnVal) {
                     for (EStoragePaths paths : EStoragePaths.values()) {
-                        final File toCreate = new File(file, paths.getFile().getName());
+                        final File toCreate = new File(paramFile, paths.getFile().getName());
                         if (paths.isFolder()) {
                             returnVal = toCreate.mkdir();
                         } else {
@@ -113,7 +111,7 @@ public final class FileDatabase implements IDatabase {
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
-                recursiveDelete(file);
+                recursiveDelete(paramFile);
             }
             return returnVal;
         } catch (final IOException exc) {
@@ -223,13 +221,17 @@ public final class FileDatabase implements IDatabase {
         return new Session(this.mDatabaseConfiguration, paramSessionConfiguration);
     }
 
+    private final void generateResource() {
+
+    }
+
     /**
      * Checking if storage is valid.
      * 
      * @throws TTUsageException
      *             if storage is not valid
      */
-    private void checkStorage() throws TTUsageException {
+    private void checkResource() throws TTUsageException {
         final int compareStructure = EStoragePaths.compareStructure(mFile);
         if (compareStructure != 0) {
             throw new TTUsageException("Storage has no valid storage structure."
