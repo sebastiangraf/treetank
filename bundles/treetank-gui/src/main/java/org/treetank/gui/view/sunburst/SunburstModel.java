@@ -114,7 +114,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        shutdownAndAwaitTermination(executor);
+        shutdown(executor);
     }
 
     /** Traverse a tree (single revision). */
@@ -241,13 +241,13 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
             if (indexToParent > -1) {
                 childExtension = extension * (float)descendantCount / ((float)parDescendantCount - 1f);
             } 
-//            LOGWRAPPER.debug("ITEM: " + paramIndex);
-//            LOGWRAPPER.debug("descendantCount: " + descendantCount);
-//            LOGWRAPPER.debug("parentDescCount: " + parDescendantCount);
-//            LOGWRAPPER.debug("indexToParent: " + indexToParent);
-//            LOGWRAPPER.debug("extension: " + childExtension);
-//            LOGWRAPPER.debug("depth: " + depth);
-//            LOGWRAPPER.debug("angle: " + angle);
+            LOGWRAPPER.debug("ITEM: " + paramIndex);
+            LOGWRAPPER.debug("descendantCount: " + descendantCount);
+            LOGWRAPPER.debug("parentDescCount: " + parDescendantCount);
+            LOGWRAPPER.debug("indexToParent: " + indexToParent);
+            LOGWRAPPER.debug("extension: " + childExtension);
+            LOGWRAPPER.debug("depth: " + depth);
+            LOGWRAPPER.debug("angle: " + angle);
 
             // Set node relations.
             String text = null;
@@ -420,13 +420,17 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
                                     firstNode = false;
                                     mMaxDescendantCount = submit.get();
                                 }
+                                System.out.println(submit.isDone());
                                 descendants.add(submit);
                             } catch (TTIOException e) {
                                 LOGWRAPPER.error(e.getMessage(), e);
                             }
                         }
                     }
-                    shutdownAndAwaitTermination(executor);
+                    mModel.shutdown(executor);
+//                    for (Future<Integer> future : descendants) {
+//                        System.out.println(future.isDone());
+//                    }
                     break;
                 }
                 rtx.close();

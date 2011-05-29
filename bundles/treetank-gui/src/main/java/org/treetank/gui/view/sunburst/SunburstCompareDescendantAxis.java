@@ -156,7 +156,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** Last diff. */
     private transient EDiff mLastDiff;
 
-    /** Determines if one must be subtracted. */
+    /** Determines if {@link ITraverseModel#FACTOR} must be subtracted in the model for the parent item. */
     private transient boolean mSubtract;
 
     /** {@link Diff} instance. */
@@ -358,31 +358,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                 }
 
                 // Modify stacks.
-                boolean first = true;
-                while (!getTransaction().getStructuralNode().hasRightSibling()) {
-                    if (getTransaction().getStructuralNode().hasParent()
-                        && getTransaction().getNode().getNodeKey() != mNextKey) {
-                        getTransaction().moveToParent();
-                        mMoved = EMoved.ANCHESTSIBL;
-                        if (first) {
-                            // Do not pop from stack if it's a leaf node.
-                            first = false;
-                        } else {
-                            mDiffStack.pop();
-                            mAngleStack.pop();
-                            mExtensionStack.pop();
-                            mParentStack.pop();
-                            mDescendantsStack.pop();
-                        }
-                        mDepth--;
-                    } else {
-                        break;
-                    }
-                }
+                moveToNextSibling();
             }
         }
-
-        // getTransaction().moveTo(mNextKey);
 
         // Fail if there is no node anymore.
         if (mNextKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
@@ -467,7 +445,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                                  * above but
                                  * between the next node and the current node.
                                  */
-                                moveToNextNode();
+                                moveToNextSibling();
                             }
                         } else {
                             mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
@@ -539,7 +517,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                  * the next node. This has been done because deletes can occur some depths/levels above but
                  * between the next node and the current node.
                  */
-                moveToNextNode();
+                moveToNextSibling();
             }
 
             mLastDiff = mDiff;
@@ -574,29 +552,27 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /**
      * Simulate move to next sibling node to adapt stacks.
      */
-    private void moveToNextNode() {
+    private void moveToNextSibling() {
         final long currNodeKey = getTransaction().getNode().getNodeKey();
         boolean first = true;
-        do {
-            if (getTransaction().getStructuralNode().hasParent()
-                && getTransaction().getNode().getNodeKey() != mNextKey) {
-                if (first) {
-                    // Do not pop from stack if it's a leaf node.
-                    first = false;
-                } else {
-                    mDiffStack.pop();
-                    mAngleStack.pop();
-                    mExtensionStack.pop();
-                    mParentStack.pop();
-                    mDescendantsStack.pop();
-                }
-
-                getTransaction().moveToParent();
-                mDepth--;
+        while (!getTransaction().getStructuralNode().hasRightSibling()
+            && getTransaction().getStructuralNode().hasParent()
+            && getTransaction().getNode().getNodeKey() != mNextKey &&
+            getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
+            getTransaction().moveToParent();
+            mMoved = EMoved.ANCHESTSIBL;
+            if (first) {
+                // Do not pop from stack if it's a leaf node.
+                first = false;
             } else {
-                break;
+                mDiffStack.pop();
+                mAngleStack.pop();
+                mExtensionStack.pop();
+                mParentStack.pop();
+                mDescendantsStack.pop();
             }
-        } while (!getTransaction().getStructuralNode().hasRightSibling());
+            mDepth--;
+        }
         getTransaction().moveTo(currNodeKey);
     }
 
@@ -604,25 +580,18 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * Calculates new depth for modifications and back to "normal" depth.
      */
     private void calculateDepth() {
-        if (mDiff != EDiff.SAME && mLastDiff == EDiff.SAME) {
-            /* FIXME: Deletes/Updates/Inserts after SAME nodes after an UPDATE doesn't have
-            /* to adjust the depth. 
-             * Already fixed? */
-            if (mDepth < mMaxDepth + 2) {
-                mDepth = mMaxDepth + 2;
-                if (mDiff == EDiff.DELETED) {
-                    final IStructuralItem node = mDiffCont.getOldNode();
-                    setTempKey(node);
-                } else {
-                    final IStructuralItem node = mDiffCont.getNewNode();
-                    setTempKey(node);
-                }
-            }
-        } else if (mDiff != EDiff.SAME && mDepth < mMaxDepth + 2) {
-            // Used for subsequent deletes, which might occur some levels above the first delete.
+        if (mDiff != EDiff.SAME && mDepth < mMaxDepth + 2) {
             mDepth = mMaxDepth + 2;
-        } else if (mDiff == EDiff.SAME && mLastDiff != EDiff.SAME
-             && mDiffCont.getNewNode().getNodeKey() == mTempKey) {
+
+            if (mDiff == EDiff.DELETED) {
+                final IStructuralItem node = mDiffCont.getOldNode();
+                setTempKey(node);
+            } else {
+                final IStructuralItem node = mDiffCont.getNewNode();
+                setTempKey(node);
+            }
+        } else if (mDiff == EDiff.SAME// && mLastDiff != EDiff.SAME
+            && mDiffCont.getNewNode().getNodeKey() == mTempKey) {
             mDepth = mDiffCont.getDepth().getNewDepth() - mInitDepth;
         }
     }
@@ -678,6 +647,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
      * @return modified diff counter
      */
     private int incrDiffCounter(final int paramIndex, final int paramDiffCounts) {
+        assert paramIndex >= 0;
+        assert paramDiffCounts >= 0;
         int diffCounts = paramDiffCounts;
         if (paramIndex == 0) {
             mCurrDiff = mDiff;
@@ -700,7 +671,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     private int countDiffs() {
         int index = 0;
         int diffCounts = 0;
-        Diff diffCont = null;
         mSubtract = false;
         final long nodeKey = getTransaction().getNode().getNodeKey();
         if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND) {
@@ -715,106 +685,58 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         }
 
         if (mDiff != null && mDiff == EDiff.DELETED) {
+            // Current node has been deleted which means simply count all descendants in old transaction.
             for (final org.treetank.axis.AbsAxis axis = new DescendantAxis(getTransaction()); axis.hasNext(); axis
                 .next()) {
                 diffCounts++;
             }
         } else if (getTransaction().getStructuralNode().getChildCount() > 0) {
+            /*
+             * Current node has children, thus traverse tree, count EDiff != SAME nodes and remember to count
+             * deleted nodes as well.
+             */
             do {
                 if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
-                    if (index - 1 < mDiffs.size()) {
-                        diffCont = mDiffs.get(index - 1);
-                    }
-                    while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
-                        mCurrDiff = EDiff.DELETED;
-                        if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
-                            .getOldDepth()
-                            && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
-                                .getOldDepth()) {
-                            diffCounts++;
-                        } else {
-                            break;
-                        }
-                        index++;
-                    }
+                    int[] retVal = checkDeletes(index, diffCounts);
+                    index = retVal[0];
+                    diffCounts = retVal[1];
                     getTransaction().moveToFirstChild();
                     diffCounts = incrDiffCounter(index, diffCounts);
                     index++;
-                    if (index - 1 < mDiffs.size()) {
-                        diffCont = mDiffs.get(index - 1);
-                    }
-                    while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
-                        mCurrDiff = EDiff.DELETED;
-                        if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
-                            .getOldDepth()
-                            && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
-                                .getOldDepth()) {
-                            diffCounts++;
-                        } else {
-                            break;
-                        }
-                        index++;
-                    }
+                    int[] ret = checkDeletes(index, diffCounts);
+                    index = ret[0];
+                    diffCounts = ret[1];
                 } else {
-                    while (!((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
-                        if (((AbsStructNode)getTransaction().getNode()).hasParent()
-                            && getTransaction().getNode().getNodeKey() != nodeKey) {
-                            getTransaction().moveToParent();
-
-                            if (index - 1 < mDiffs.size()) {
-                                diffCont = mDiffs.get(index - 1);
-                            }
-                            while (index - 1 < mDiffs.size()
-                                && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
-                                mCurrDiff = EDiff.DELETED;
-                                if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
-                                    .getOldDepth()
-                                    && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
-                                        .getOldDepth()) {
-                                    diffCounts++;
-                                } else {
-                                    break;
-                                }
-                                index++;
-                            }
-                        } else {
-                            break;
-                        }
+                    while (!getTransaction().getStructuralNode().hasRightSibling()
+                        && getTransaction().getStructuralNode().hasParent()
+                        && getTransaction().getNode().getNodeKey() != nodeKey) {
+                        getTransaction().moveToParent();
+                        int[] retVal = checkDeletes(index, diffCounts);
+                        index = retVal[0];
+                        diffCounts = retVal[1];
                     }
                     if (getTransaction().getNode().getNodeKey() != nodeKey) {
                         getTransaction().moveToRightSibling();
                         diffCounts = incrDiffCounter(index, diffCounts);
                         index++;
-                        if (index - 1 < mDiffs.size()) {
-                            diffCont = mDiffs.get(index - 1);
-                        }
-                        while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
-                            mCurrDiff = EDiff.DELETED;
-                            if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth()
-                                .getOldDepth()
-                                && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth()
-                                    .getOldDepth()) {
-                                diffCounts++;
-                            } else {
-                                break;
-                            }
-                            index++;
-                        }
+                        int[] retVal = checkDeletes(index, diffCounts);
+                        index = retVal[0];
+                        diffCounts = retVal[1];
                     }
                 }
             } while (getTransaction().getNode().getNodeKey() != nodeKey);
             getTransaction().moveTo(nodeKey);
         } else if (0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED) {
-            // && 1 < mDiffs.size()
-            // && mDiffs.get(1).getDepth().getOldDepth() > mDiffs.get(0).getDepth().getNewDepth()) {
+            // Current node has no children but might have several deleted children with subtrees.
             mOldRtx.moveTo(mDiffs.get(0).getOldNode().getNodeKey());
 
             int diffIndex = 0;
             do {
-                final long key = mOldRtx.getStructuralNode().getNodeKey();
+                final long key = mOldRtx.getNode().getNodeKey();
 
                 if (mDiffCont.getDepth().getNewDepth() == (mDiffs.get(diffIndex).getDepth().getOldDepth() - 1)) {
-                    if (diffCounts == 1) {
+                    // Make sure that subtract is true if current node has changed.
+                    if (diffCounts == 1 && mDiff != EDiff.SAME) {
                         mSubtract = true;
                     }
                     for (final org.treetank.axis.AbsAxis axis = new DescendantAxis(mOldRtx, true); axis
@@ -830,20 +752,41 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             } while (mOldRtx.getStructuralNode().hasRightSibling() && mOldRtx.moveToRightSibling());
         }
 
-        boolean moved = false;
-        if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND
-            && ((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
-            moved = getTransaction().moveToFirstChild();
-        }
-
-        final int retVal = ITraverseModel.FACTOR * diffCounts + mDescendantCount;
-
-        if (moved) {
-            getTransaction().moveToParent();
-        }
-        return retVal;
+        // Add a factor to add some weighting to the diffCounts.
+        return ITraverseModel.FACTOR * diffCounts + mDescendantCount;
     }
 
+    /**
+     * Check for deletes and increment diffCount if applicable.
+     * 
+     * @param paramIndex
+     *            index in {@link List} of {@link EDiff}s
+     * @param paramDiffCounts
+     *            determines how many diffs have been counted (diff != EDiff.SAME)
+     * @return integer array with two entries: arr[0] = index; arr[1] = diffCounts
+     */
+    private int[] checkDeletes(final int paramIndex, final int paramDiffCounts) {
+        int index = paramIndex;
+        int diffCounts = paramDiffCounts;
+        if (index - 1 < mDiffs.size()) {
+            final Diff diffCont = mDiffs.get(index - 1);
+            while (index - 1 < mDiffs.size() && mDiffs.get(index - 1).getDiff() == EDiff.DELETED) {
+                mCurrDiff = EDiff.DELETED;
+                if (diffCont.getDepth().getNewDepth() <= mDiffs.get(index - 1).getDepth().getOldDepth()
+                    && mDiffCont.getDepth().getNewDepth() < mDiffs.get(index - 1).getDepth().getOldDepth()) {
+                    diffCounts++;
+                } else {
+                    break;
+                }
+                index++;
+            }
+        }
+        return new int[] {
+            index, diffCounts
+        };
+    }
+
+    /** Decrement item index used for pruning. */
     public void decrementIndex() {
         mIndex--;
     }

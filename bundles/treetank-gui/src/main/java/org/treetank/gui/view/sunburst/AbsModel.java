@@ -129,29 +129,8 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
      * @param paramPool
      *            thread pool; {@link ExecutorService} instance
      */
-    static void shutdownAndAwaitTermination(final ExecutorService paramPool) {
+    void shutdown(final ExecutorService paramPool) {
         paramPool.shutdown(); // Disable new tasks from being submitted.
-//        try {
-//            paramPool.awaitTermination(5, TimeUnit.SECONDS);
-//        } catch (final InterruptedException e) {
-//            LOGWRAPPER.error(e.getMessage(), e);
-//            return;
-//        }
-//        try {
-//            // Wait a while for existing tasks to terminate.
-//            if (!paramPool.awaitTermination(60, TimeUnit.SECONDS)) {
-//                paramPool.shutdownNow(); // Cancel currently executing tasks.
-//                // Wait a while for tasks to respond to being cancelled.
-//                if (!paramPool.awaitTermination(60, TimeUnit.SECONDS)) {
-//                    LOGWRAPPER.error("Pool did not terminate");
-//                }
-//            }
-//        } catch (final InterruptedException ie) {
-//            // (Re-)Cancel if current thread also interrupted.
-//            paramPool.shutdownNow();
-//            // Preserve interrupt status.
-//            Thread.currentThread().interrupt();
-//        }
     }
 
     /**
@@ -333,14 +312,7 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
                     executor.submit(new XPathSublistEvaluation(nodeKeys, mItems.subList(fromIndex, toIndex)));
                 }
 
-                executor.shutdown();
-                try {
-                    executor.awaitTermination(5, TimeUnit.SECONDS);
-                } catch (final InterruptedException exc) {
-                    exc.printStackTrace();
-                    return;
-                }
-
+                shutdown(executor);
                 firePropertyChange("done", null, true);
             } catch (final TTXPathException exc) {
                 exc.printStackTrace();
