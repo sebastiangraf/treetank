@@ -48,6 +48,8 @@ public final class SessionConfiguration {
     public final static int COMMIT_THRESHOLD = 262144;
     /** Default User. */
     public final static String DEFAULT_USER = "ALL";
+    /** Folder for tmp-database. */
+    public final static String INTRINSICTEMP = "tmp";
     // END STATIC STANDARD FIELDS
 
     /** Numbers of allowed IWriteTransaction Instances. */
@@ -62,17 +64,21 @@ public final class SessionConfiguration {
     /** User for this session. */
     public final String mUser;
 
+    /** Name for the resource to be associated. */
+    public final String mName;
+
     /**
      * Convenience constructor using the standard settings.
      * 
      * @throws TTUsageException
      *             if session is not valid
      */
-    private SessionConfiguration(final SessionConfiguration.Builder paramBuilder) {
+    private SessionConfiguration(final SessionConfiguration.Builder paramBuilder, final String paramName) {
         this.mWtxAllowed = paramBuilder.mWtxAllowed;
         this.mRtxAllowed = paramBuilder.mRtxAllowed;
         this.mCommitThreshold = paramBuilder.mCommitThreshold;
         this.mUser = paramBuilder.mUser;
+        this.mName = paramName;
     }
 
     /**
@@ -138,7 +144,18 @@ public final class SessionConfiguration {
          * @return a new {@link SessionConfiguration} instance
          */
         public SessionConfiguration build() {
-            return new SessionConfiguration(this);
+            return new SessionConfiguration(this, INTRINSICTEMP);
+        }
+
+        /**
+         * Builder method to generate new configuration
+         * 
+         * @param resourceName
+         *            name of the resource where the data should be persisted to
+         * @return a new {@link SessionConfiguration} instance
+         */
+        public SessionConfiguration build(final String resourceName) {
+            return new SessionConfiguration(this, resourceName);
         }
     }
 
