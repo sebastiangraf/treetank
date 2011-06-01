@@ -36,7 +36,7 @@ import java.beans.PropertyChangeSupport;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-abstract class AbsComponent {
+public abstract class AbsComponent {
 
     /** {@link PropertyChangeSupport} to register listeners. */
     private final PropertyChangeSupport mPropertyChangeSupport;
@@ -44,7 +44,7 @@ abstract class AbsComponent {
     /**
      * Constructor.
      */
-    AbsComponent() {
+    public AbsComponent() {
         mPropertyChangeSupport = new PropertyChangeSupport(this);
     }
 
@@ -78,7 +78,7 @@ abstract class AbsComponent {
      * @param paramNewValue
      *            New value.
      */
-    protected final void firePropertyChange(final String paramPropertyName, final Object paramOldValue,
+    public final void firePropertyChange(final String paramPropertyName, final Object paramOldValue,
         final Object paramNewValue) {
         mPropertyChangeSupport.firePropertyChange(paramPropertyName, paramOldValue, paramNewValue);
     }

@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,22 +27,31 @@
 
 package org.treetank.gui.view;
 
+import java.io.File;
+import java.util.Calendar;
+
 import javax.xml.namespace.QName;
+
+import org.treetank.access.FileDatabase;
+import org.treetank.access.SessionConfiguration;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.gui.ReadDB;
 
 /**
  * Provides some helper methods for views, which couldn't otherwise be encapsulated together.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public final class ViewUtilities {
-    
+
     /** Private constructor. */
     private ViewUtilities() {
         // Just in case of a helper method tries to invoke the constructor.
         throw new AssertionError();
     }
-    
+
     /**
      * Serialization compatible String representation of a {@link QName} reference.
      * 
@@ -61,5 +70,42 @@ public final class ViewUtilities {
         }
 
         return retVal;
+    }
+
+    /**
+     * Refresh resource with latest revision.
+     * 
+     * @param paramDb
+     *            {@link ReadDB} instance
+     */
+    public static void refreshResource(ReadDB paramDb) {
+        assert paramDb != null;
+        long revision = 0;
+        try {
+            final IReadTransaction rtx =
+                paramDb.getDatabase().getSession(new SessionConfiguration()).beginReadTransaction();
+            revision = rtx.getRevisionNumber();
+            rtx.close();
+        } catch (final AbsTTException exc) {
+            exc.printStackTrace();
+        }
+        final File file = ((FileDatabase)paramDb.getDatabase()).mFile;
+        if (paramDb != null) {
+            paramDb.close();
+        }
+        try {
+            paramDb = new ReadDB(file, revision);
+        } catch (final AbsTTException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Format a timestamp.
+     * 
+     * @return Formatted timestamp.
+     */
+    public static String timestamp() {
+        return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
     }
 }

@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst;
+package org.treetank.gui.view.sunburst.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,6 +46,10 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.sunburst.AbsComponent;
+import org.treetank.gui.view.sunburst.EXPathState;
+import org.treetank.gui.view.sunburst.SunburstContainer;
+import org.treetank.gui.view.sunburst.SunburstItem;
 import org.treetank.node.ENodes;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.xpath.XPathAxis;
@@ -59,13 +63,13 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-abstract class AbsModel extends AbsComponent implements IModel, Iterator<SunburstItem> {
+public abstract class AbsModel extends AbsComponent implements IModel, Iterator<SunburstItem> {
 
     /** {@link List} of {@link SunburstItem}s. */
     transient List<SunburstItem> mItems;
 
     /** The processing {@link PApplet} core library. */
-    final PApplet mParent;
+    public final PApplet mParent;
 
     /** Treetank {@link IReadTransaction}. */
     transient IReadTransaction mRtx;
@@ -138,8 +142,12 @@ abstract class AbsModel extends AbsComponent implements IModel, Iterator<Sunburs
      * 
      * @param paramDb
      *            {@link IDatabase} instance
+     * @param paramContainer
+     *            {@link SunburstContainer} reference with options
      */
-    void updateDb(final ReadDB paramDb, final SunburstContainer paramContainer) {
+    public void updateDb(final ReadDB paramDb, final SunburstContainer paramContainer) {
+        assert paramDb != null;
+        assert paramContainer != null;
         mDb = paramDb;
         try {
             mSession = paramDb.getSession();

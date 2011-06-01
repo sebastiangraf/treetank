@@ -186,7 +186,7 @@ public enum EDraw {
                 paramGraphic.stroke(120, 100, paramGUI.mDotBrightness, 30);
                 break;
             }
-            final SunburstItem item = paramGUI.mModel.getItem(paramItem.getIndexToParent());
+            final SunburstItem item = paramGUI.mControl.mModel.getItem(paramItem.getIndexToParent());
             for (int i = item.getDepth() + 1; i < paramGUI.mOldDepthMax + 1; i++) {
                 float radius = paramGUI.calcEqualAreaRadius(i, paramGUI.mDepthMax);
                 final float depthWeight = paramGUI.calcEqualAreaRadius(i + 1, paramGUI.mDepthMax) - radius;

@@ -37,41 +37,38 @@ import org.treetank.diff.DiffFactory.EDiff;
  */
 public final class Item {
 
-    /** Item instance. */
-    public static final Item ITEM = new Item();
-
     /** Builder instance. */
     public static final Builder BUILDER = new Builder();
 
     /** Start angle. */
-    transient float mAngle;
+    public transient float mAngle;
 
     /** End angle. */
-    transient float mExtension;
+    public transient float mExtension;
 
     /** Index to the parent item. */
-    transient int mIndexToParent;
+    public transient int mIndexToParent;
 
     /** Descendant count. */
-    transient int mDescendantCount;
+    public transient int mDescendantCount;
 
     /** Parent descendant count. */
-    transient int mParentDescendantCount;
+    public transient int mParentDescendantCount;
 
     /** Modification count on a node (counts subtree modifications). */
-    transient int mModificationCount;
+    public transient int mModificationCount;
 
     /** Modification count on the parent node (counts subtree modifications). */
-    transient int mParentModificationCount;
+    public transient int mParentModificationCount;
 
     /** Determines if 1 must be subtracted. */
-    transient boolean mSubtract;
+    public final boolean mSubtract;
     
     /** Kind of diff of the current node. */
-    transient EDiff mDiff;
+    public final EDiff mDiff;
 
     /** Builder to simplify item constructor. */
-    static final class Builder {
+    public static final class Builder {
 
         /** Start angle. */
         transient float mAngle;
@@ -118,7 +115,7 @@ public final class Item {
          *            index to the parent item
          * @return this builder
          */
-        Builder set(final float paramAngle, final float paramExtension, final int paramIndexToParent) {
+        public Builder set(final float paramAngle, final float paramExtension, final int paramIndexToParent) {
             assert paramAngle >= 0f;
             assert paramExtension >= 0f;
             assert paramIndexToParent >= -1;
@@ -135,7 +132,7 @@ public final class Item {
          *            determines if one must be subtracted
          * @return this builder
          */
-        Builder setSubtract(final boolean paramSubtract) {
+        public Builder setSubtract(final boolean paramSubtract) {
             mSubtract = paramSubtract;
             return this;
         }
@@ -147,7 +144,8 @@ public final class Item {
          *            descendant count
          * @return this builder
          */
-        Builder setDescendantCount(final int paramDescendantCount) {
+        public Builder setDescendantCount(final int paramDescendantCount) {
+            assert paramDescendantCount >= 1;
             mDescendantCount = paramDescendantCount;
             return this;
         }
@@ -159,7 +157,8 @@ public final class Item {
          *            parent descendant count
          * @return this builder
          */
-        Builder setParentDescendantCount(final int paramParentDescCount) {
+        public Builder setParentDescendantCount(final int paramParentDescCount) {
+            assert paramParentDescCount >= 1;
             mParentDescendantCount = paramParentDescCount;
             return this;
         }
@@ -171,7 +170,8 @@ public final class Item {
          *            modification count
          * @return this builder
          */
-        Builder setModificationCount(final int paramModificationCount) {
+        public Builder setModificationCount(final int paramModificationCount) {
+            assert paramModificationCount >= 1;
             mModificationCount = paramModificationCount;
             return this;
         }
@@ -183,7 +183,8 @@ public final class Item {
          *            parent modification count
          * @return this builder
          */
-        Builder setParentModificationCount(final int paramParentModificationCount) {
+        public Builder setParentModificationCount(final int paramParentModificationCount) {
+            assert paramParentModificationCount >= 1;
             mParentModificationCount = paramParentModificationCount;
             return this;
         }
@@ -195,25 +196,21 @@ public final class Item {
          *            {@link EDiff} -- kind of diff
          * @return this builder
          */
-        Builder setDiff(final EDiff paramDiff) {
+        public Builder setDiff(final EDiff paramDiff) {
+            assert paramDiff != null;
             mDiff = paramDiff;
             return this;
         }
 
         /**
          * Setup item.
+         * 
+         * @return {@link Item} instance
          */
-        void set() {
+        public Item build() {
             assert mDescendantCount != -1;
-            ITEM.setAll(this);
+            return new Item(this);
         }
-    }
-
-    /**
-     * Private constructor to prevent instantiation other then via the public
-     * Item instance.
-     */
-    private Item() {
     }
 
     /**
@@ -222,7 +219,7 @@ public final class Item {
      * @param paramBuilder
      *            the builder
      */
-    void setAll(final Builder paramBuilder) {
+    private Item(final Builder paramBuilder) {
         mAngle = paramBuilder.mAngle;
         mExtension = paramBuilder.mExtension;
         mIndexToParent = paramBuilder.mIndexToParent;

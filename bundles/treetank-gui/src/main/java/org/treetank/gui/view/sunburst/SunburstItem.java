@@ -37,6 +37,8 @@ import org.treetank.gui.view.EHover;
 import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
+import org.treetank.gui.view.sunburst.model.AbsModel;
+import org.treetank.gui.view.sunburst.SunburstView.Embedded;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -54,7 +56,7 @@ import processing.core.PGraphics;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstItem implements IVisualItem {
+public final class SunburstItem implements IVisualItem {
 
     /** Current {@link IItem} in Treetank. */
     private final IItem mNode;
@@ -130,7 +132,7 @@ final class SunburstItem implements IVisualItem {
     private final long mMaxDescendantCount;
 
     /** Structural kind of node. */
-    enum EStructType {
+    public enum EStructType {
         /** Node is a leaf node. */
         ISLEAFNODE,
 
@@ -169,7 +171,7 @@ final class SunburstItem implements IVisualItem {
     private transient int mModifications;
 
     /** Builder to setup the Items. */
-    static final class Builder {
+    public static final class Builder {
         /** {@link PApplet} representing the core processing library. */
         private final PApplet mParent;
 
@@ -229,7 +231,7 @@ final class SunburstItem implements IVisualItem {
          * @param paramReadDB
          *            {@link ReadDB} instance
          */
-        Builder(final PApplet paramApplet, final AbsModel paramModel, final float paramAngleStart,
+        public Builder(final PApplet paramApplet, final AbsModel paramModel, final float paramAngleStart,
             final float paramExtension, final NodeRelations paramRelations, final ReadDB paramReadDB) {
             mParent = paramApplet;
             mModel = paramModel;
@@ -246,7 +248,7 @@ final class SunburstItem implements IVisualItem {
          *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}
          * @return this builder
          */
-        Builder setNode(final IItem paramNode) {
+        public Builder setNode(final IItem paramNode) {
             assert paramNode != null;
             mNode = paramNode;
             return this;
@@ -260,7 +262,7 @@ final class SunburstItem implements IVisualItem {
          * 
          * @return this builder
          */
-        Builder setModifcations(final int paramModifications) {
+        public Builder setModifcations(final int paramModifications) {
             assert paramModifications >= 0;
             mModifications = paramModifications;
             return this;
@@ -273,7 +275,7 @@ final class SunburstItem implements IVisualItem {
          *            {@link QName} of the current node.
          * @return this builder
          */
-        Builder setQName(final QName paramQName) {
+        public Builder setQName(final QName paramQName) {
             assert paramQName != null;
             mQName = paramQName;
             return this;
@@ -286,7 +288,7 @@ final class SunburstItem implements IVisualItem {
          *            {@link QName} of the current node.
          * @return this builder
          */
-        Builder setOldQName(final QName paramOldQName) {
+        public Builder setOldQName(final QName paramOldQName) {
             assert paramOldQName != null;
             mOldQName = paramOldQName;
             return this;
@@ -299,7 +301,7 @@ final class SunburstItem implements IVisualItem {
          *            text string in case of a text node
          * @return this builder
          */
-        Builder setText(final String paramText) {
+        public Builder setText(final String paramText) {
             assert paramText != null;
             mText = paramText;
             return this;
@@ -308,11 +310,11 @@ final class SunburstItem implements IVisualItem {
         /**
          * Set old character content.
          * 
-         * @param paramText
+         * @param paramOldText
          *            text string in case of a text node
          * @return this builder
          */
-        Builder setOldText(final String paramOldText) {
+        public Builder setOldText(final String paramOldText) {
             assert paramOldText != null;
             mOldText = paramOldText;
             return this;
@@ -325,7 +327,7 @@ final class SunburstItem implements IVisualItem {
          *            {@link EDiff}
          * @return this builder
          */
-        Builder setDiff(final EDiff paramDiff) {
+        public Builder setDiff(final EDiff paramDiff) {
             assert paramDiff != null;
             mDiff = paramDiff;
             return this;
@@ -336,7 +338,7 @@ final class SunburstItem implements IVisualItem {
          * 
          * @return a new sunburst item
          */
-        SunburstItem build() {
+        public SunburstItem build() {
             assert mNode != null;
             assert mQName != null || mText != null;
             return new SunburstItem(this);
@@ -351,7 +353,9 @@ final class SunburstItem implements IVisualItem {
      */
     private SunburstItem(final Builder paramBuilder) {
         // Returns GUI singleton instance.
-        mGUI = SunburstGUI.getInstance(paramBuilder.mParent, paramBuilder.mModel, paramBuilder.mReadDB);
+        mGUI =
+            SunburstGUI.getInstance(paramBuilder.mParent, ((Embedded)paramBuilder.mParent).getController(),
+                paramBuilder.mReadDB);
 
         mNode = paramBuilder.mNode;
         mQName = paramBuilder.mQName;
@@ -469,10 +473,10 @@ final class SunburstItem implements IVisualItem {
             mC1X = PApplet.cos(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
             mC1Y = PApplet.sin(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
 
-            mC2X = PApplet.cos(mGUI.mModel.getItem(mIndexToParent).mAngleCenter);
+            mC2X = PApplet.cos(mGUI.mControl.mModel.getItem(mIndexToParent).mAngleCenter);
             mC2X *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
 
-            mC2Y = PApplet.sin(mGUI.mModel.getItem(mIndexToParent).mAngleCenter);
+            mC2Y = PApplet.sin(mGUI.mControl.mModel.getItem(mIndexToParent).mAngleCenter);
             mC2Y *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
         }
     }
@@ -706,11 +710,11 @@ final class SunburstItem implements IVisualItem {
             }
             mGraphic.strokeWeight(mLineWeight);
             if (mGUI.mParent.recorder != null) {
-                mGUI.mParent.recorder.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
-                    mGUI.mModel.getItem(mIndexToParent).mY);
+                mGUI.mParent.recorder.line(mX, mY, mGUI.mControl.mModel.getItem(mIndexToParent).mX,
+                    mGUI.mControl.mModel.getItem(mIndexToParent).mY);
             }
-            mGraphic.line(mX, mY, mGUI.mModel.getItem(mIndexToParent).mX,
-                mGUI.mModel.getItem(mIndexToParent).mY);
+            mGraphic.line(mX, mY, mGUI.mControl.mModel.getItem(mIndexToParent).mX,
+                mGUI.mControl.mModel.getItem(mIndexToParent).mY);
         }
     }
 
@@ -730,7 +734,7 @@ final class SunburstItem implements IVisualItem {
                 mGUI.mParent.recorder.strokeWeight(mLineWeight);
             }
             mGraphic.strokeWeight(mLineWeight);
-            final SunburstItem item = mGUI.mModel.getItem(mIndexToParent);
+            final SunburstItem item = mGUI.mControl.mModel.getItem(mIndexToParent);
             if (mGUI.mParent.recorder != null) {
                 mGUI.mParent.recorder.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, item.mX, item.mY);
             }
@@ -781,7 +785,7 @@ final class SunburstItem implements IVisualItem {
      * @param paramState
      *            set state to this value
      */
-    void setXPathState(final EXPathState paramState) {
+    public void setXPathState(final EXPathState paramState) {
         mXPathState = paramState;
     }
 
@@ -818,7 +822,7 @@ final class SunburstItem implements IVisualItem {
      * 
      * @return true if one has to be subtracted
      */
-    boolean getSubtract() {
+    public boolean getSubtract() {
         return mSubtract;
     }
 
@@ -892,7 +896,7 @@ final class SunburstItem implements IVisualItem {
      */
     public void calcNewExtension() {
         mDescendantCount--;
-        final SunburstItem parent = mGUI.mModel.getItem(mIndexToParent);
+        final SunburstItem parent = mGUI.mControl.mModel.getItem(mIndexToParent);
         // Calculate extension.
         float extension = 2 * PConstants.PI;
         float parentModificationCount = parent.getModificationCount();
@@ -957,5 +961,11 @@ final class SunburstItem implements IVisualItem {
     public void setAngleEnd(final float paramAngleEnd) {
         assert paramAngleEnd > 0f;
         mAngleEnd = paramAngleEnd;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public long getNodeKey() {
+        return mNode.getNodeKey();
     }
 }

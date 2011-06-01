@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst;
+package org.treetank.gui.view.sunburst.axis;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +44,12 @@ import org.treetank.utils.FastStack;
 import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
+import org.treetank.gui.view.sunburst.Diff;
+import org.treetank.gui.view.sunburst.EMoved;
+import org.treetank.gui.view.sunburst.Item;
 import org.treetank.gui.view.sunburst.Item.Builder;
+import org.treetank.gui.view.sunburst.model.IModel;
+import org.treetank.gui.view.sunburst.model.ITraverseModel;
 
 import processing.core.PConstants;
 
@@ -101,9 +106,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
 
     /** Current item. */
     private transient Item mItem;
-
-    /** Builder for an item. */
-    private transient Builder mBuilder;
 
     /** Stack for remembering next nodeKey in document order. */
     private transient FastStack<Long> mRightSiblingKeyStack;
@@ -237,8 +239,6 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         mParExtension = PConstants.TWO_PI;
         mExtension = PConstants.TWO_PI;
         mIndex = -1;
-        mItem = Item.ITEM;
-        mBuilder = Item.BUILDER;
         mLastDiff = EDiff.SAME;
     }
 
@@ -622,9 +622,9 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         } catch (final ExecutionException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        mBuilder.set(mAngle, mParExtension, mIndexToParent).setDescendantCount(mDescendantCount)
+        mItem = Item.BUILDER.set(mAngle, mParExtension, mIndexToParent).setDescendantCount(mDescendantCount)
             .setParentDescendantCount(mParentDescendantCount).setModificationCount(countDiffs())
-            .setParentModificationCount(mParentModificationCount).setSubtract(mSubtract).setDiff(mDiff).set();
+            .setParentModificationCount(mParentModificationCount).setSubtract(mSubtract).setDiff(mDiff).build();
         mMoved.processCompareMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mDescendantsStack,
             mParentStack, mDiffStack);
         mModificationCount = mItem.mModificationCount;
@@ -681,10 +681,11 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         index++;
 
         if (diffCounts == 1 && getTransaction().getStructuralNode().hasFirstChild()) {
+            // Current node is modified and has at least one child.
             mSubtract = true;
         }
 
-        if (mDiff != null && mDiff == EDiff.DELETED) {
+        if (mDiff == EDiff.DELETED) {
             // Current node has been deleted which means simply count all descendants in old transaction.
             for (final org.treetank.axis.AbsAxis axis = new DescendantAxis(getTransaction()); axis.hasNext(); axis
                 .next()) {
@@ -703,15 +704,15 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                     getTransaction().moveToFirstChild();
                     diffCounts = incrDiffCounter(index, diffCounts);
                     index++;
-                    int[] ret = checkDeletes(index, diffCounts);
-                    index = ret[0];
-                    diffCounts = ret[1];
+                    retVal = checkDeletes(index, diffCounts);
+                    index = retVal[0];
+                    diffCounts = retVal[1];
                 } else {
                     while (!getTransaction().getStructuralNode().hasRightSibling()
                         && getTransaction().getStructuralNode().hasParent()
                         && getTransaction().getNode().getNodeKey() != nodeKey) {
                         getTransaction().moveToParent();
-                        int[] retVal = checkDeletes(index, diffCounts);
+                        final int[] retVal = checkDeletes(index, diffCounts);
                         index = retVal[0];
                         diffCounts = retVal[1];
                     }
@@ -719,7 +720,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
                         getTransaction().moveToRightSibling();
                         diffCounts = incrDiffCounter(index, diffCounts);
                         index++;
-                        int[] retVal = checkDeletes(index, diffCounts);
+                        final int[] retVal = checkDeletes(index, diffCounts);
                         index = retVal[0];
                         diffCounts = retVal[1];
                     }
@@ -727,18 +728,21 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             } while (getTransaction().getNode().getNodeKey() != nodeKey);
             getTransaction().moveTo(nodeKey);
         } else if (0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED) {
-            // Current node has no children but might have several deleted children with subtrees.
+            /* 
+             * Current node has no children but might have several deleted children with subtrees (the node 
+             * has at least one deleted node).
+             */
             mOldRtx.moveTo(mDiffs.get(0).getOldNode().getNodeKey());
 
+            // Make sure that subtract is true if current node has changed.
+            if (mDiff != EDiff.SAME) {
+                mSubtract = true;
+            }
             int diffIndex = 0;
             do {
                 final long key = mOldRtx.getNode().getNodeKey();
 
                 if (mDiffCont.getDepth().getNewDepth() == (mDiffs.get(diffIndex).getDepth().getOldDepth() - 1)) {
-                    // Make sure that subtract is true if current node has changed.
-                    if (diffCounts == 1 && mDiff != EDiff.SAME) {
-                        mSubtract = true;
-                    }
                     for (final org.treetank.axis.AbsAxis axis = new DescendantAxis(mOldRtx, true); axis
                         .hasNext(); axis.next()) {
                         diffCounts++;

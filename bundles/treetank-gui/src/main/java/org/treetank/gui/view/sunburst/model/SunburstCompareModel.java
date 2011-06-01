@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst;
+package org.treetank.gui.view.sunburst.model;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -56,8 +56,10 @@ import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.sunburst.*;
 import org.treetank.gui.view.sunburst.SunburstItem.Builder;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
+import org.treetank.gui.view.sunburst.axis.SunburstCompareDescendantAxis;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -83,7 +85,7 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
      * @param paramDb
      *            {@link ReadDB} reference
      */
-    SunburstCompareModel(final PApplet paramApplet, final ReadDB paramDb) {
+    public SunburstCompareModel(final PApplet paramApplet, final ReadDB paramDb) {
         super(paramApplet, paramDb);
     }
 
@@ -604,7 +606,6 @@ public final class SunburstCompareModel extends AbsModel implements IModel, Iter
             final List<Future<Integer>> descendants = new LinkedList<Future<Integer>>();
             final ExecutorService executor =
                 Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-//                Executors.newCachedThreadPool();
             boolean firstNode = true;
             int index = 0;
             final int depth = mDiffs.get(0).getDepth().getNewDepth();

@@ -57,9 +57,13 @@ import org.gicentre.utils.move.ZoomPanListener;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.IProcessingGUI;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
+import org.treetank.gui.view.sunburst.model.AbsModel;
+import org.treetank.gui.view.sunburst.model.SunburstCompareModel;
+import org.treetank.gui.view.sunburst.model.SunburstModel;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -77,15 +81,12 @@ import processing.core.PVector;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstGUI implements PropertyChangeListener, ControlListener {
+final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
 
     /**
      * Serial version UID.
      */
     private static final long serialVersionUID = -4747210906900567484L;
-
-    /** Path to save visualization as a PDF or PNG file. */
-    private static final String SAVEPATH = "target" + File.separator;
 
     /** Amount of effect in the fisheye transformation. */
     private static final float EFFECT_AMOUNT = 0.9f;
@@ -165,9 +166,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Leaf node arc scale. */
     transient float mLeafArcScale = 1.0f;
 
-    /** {@link AbsModel}. */
-    transient volatile AbsModel mModel;
-
     /** Current angle of the mouse cursor to y axis. */
     transient float mAngle;
 
@@ -178,7 +176,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private volatile Semaphore mLock = new Semaphore(1);
 
     /** Determines if zooming or panning is resetted. */
-    private transient boolean mZoomPanReset;
+    transient boolean mZoomPanReset;
 
     /** Image to draw. */
     private volatile PImage mImg;
@@ -187,16 +185,16 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     transient float mBackgroundBrightness = 100f;
 
     /** Color mapping mode. */
-    private transient int mMappingMode = 3;
+    transient int mMappingMode = 3;
 
     /** Determines if fisheye should be used. */
     private transient boolean mFisheye;
 
     /** Determines if current state should be saved as a PDF-file. */
-    private transient boolean mSavePDF;
+    transient boolean mSavePDF;
 
     /** Zoom into or out. */
-    private volatile ZoomPan mZoomer;
+    volatile ZoomPan mZoomer;
 
     /** X position of the mouse cursor. */
     private transient float mX;
@@ -205,10 +203,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private transient float mY;
 
     /** {@link ControlP5} reference. */
-    private transient ControlP5 mControlP5;
+    transient ControlP5 mControlP5;
 
     /** Determines if SunburstGUI interface should be shown. */
-    private transient boolean mShowGUI;
+    transient boolean mShowGUI;
 
     /** {@link ControlP5} sliders. */
     private transient List<Slider> mSliders;
@@ -220,7 +218,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     private transient List<Toggle> mToggles;
 
     /** {@link ControlP5} text field. */
-    private transient Textfield mXPathField;
+    transient Textfield mXPathField;
 
     /** Parent {@link PApplet}. */
     final Embedded mParent;
@@ -238,7 +236,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     volatile ReadDB mDb;
 
     /** {@link DropdownList} of available revisions, which are newer than the currently opened revision. */
-    private volatile DropdownList mRevisions;
+    volatile DropdownList mRevisions;
 
     /** Selected revision from the {@link DropdownList} to compare. */
     volatile int mSelectedRev;
@@ -247,10 +245,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     volatile int mOldDepthMax;
 
     /** {@link ControlGroup} to encapsulate the components to insert XML fragments. */
-    private transient ControlGroup mCtrl;
+    transient ControlGroup mCtrl;
 
     /** {@link Textfield} to insert an XML fragment. */
-    private transient Textfield mTextArea;
+    transient Textfield mTextArea;
 
     /** Determines if it is currently zooming or panning or has been in the past. */
     private transient boolean mIsZoomingPanning;
@@ -261,28 +259,27 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     /** Determines if GUI has been initialized. */
     transient boolean mInitialized;
 
-    private transient int mRad;
+    transient int mRad;
 
-    private transient boolean mRadChanged;
+    transient boolean mRadChanged;
+    
+    final SunburstControl mControl;
 
     /**
      * Private constructor.
      * 
      * @param paramParentApplet
      *            parent processing applet
-     * @param paramModel
-     *            the model
      * @param paramReadDB
      *            read database
      */
-    private SunburstGUI(final PApplet paramParentApplet, final AbsModel paramModel, final ReadDB paramReadDB) {
+    private SunburstGUI(final PApplet paramParentApplet, final SunburstControl paramControl, final ReadDB paramReadDB) {
         mDb = paramReadDB;
+        mControl = paramControl;
         mParent = (Embedded)paramParentApplet;
-        mModel = paramModel;
         mZoomer = new ZoomPan(paramParentApplet);
         mZoomer.setMouseMask(PConstants.CONTROL);
         mZoomer.addZoomPanListener(new MyListener());
-        mModel.addPropertyChangeListener(this);
     }
 
     /**
@@ -291,18 +288,15 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * 
      * @param paramParentApplet
      *            parent processing applet
-     * @param paramModel
-     *            the model
      * @param paramReadDB
      *            read database
      * @return a {@link SunburstGUI} singleton
      */
-    static SunburstGUI getInstance(final PApplet paramParentApplet, final AbsModel paramModel,
-        final ReadDB paramReadDB) {
+    static SunburstGUI getInstance(final PApplet paramParentApplet, final SunburstControl paramControl, final ReadDB paramReadDB) {
         if (mGUI == null) {
             synchronized (SunburstGUI.class) {
                 if (mGUI == null) {
-                    mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
+                    mGUI = new SunburstGUI(paramParentApplet, paramControl, paramReadDB);
                     mGUI.setupGUI();
                 }
             }
@@ -320,7 +314,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
         final int activeColor = mParent.color(0, 130, 164);
         mControlP5 = new ControlP5(mParent);
-        mControlP5.addListener(this);
         mControlP5.setColorActive(activeColor);
         mControlP5.setColorBackground(mParent.color(170));
         mControlP5.setColorForeground(mParent.color(50));
@@ -498,77 +491,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     }
 
     /**
-     * Called on every change of the GUI.
-     * 
-     * @param paramControlEvent
-     *            the {@link ControlEvent}
-     */
-    @Override
-    public void controlEvent(final ControlEvent paramControlEvent) {
-        if (paramControlEvent.isController()) {
-            if (paramControlEvent.controller().name().equals("leaf node hue range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mHueStart = f[0];
-                mHueEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("leaf node saturation range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mSaturationStart = f[0];
-                mSaturationEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("leaf node brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mBrightnessStart = f[0];
-                mBrightnessEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("inner node brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mInnerNodeBrightnessStart = f[0];
-                mInnerNodeBrightnessEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("inner node stroke brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mInnerNodeStrokeBrightnessStart = f[0];
-                mInnerNodeStrokeBrightnessEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("stroke weight range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mStrokeWeightStart = f[0];
-                mStrokeWeightEnd = f[1];
-            }
-
-            update();
-        } else if (paramControlEvent.isGroup()) {
-            if (paramControlEvent.group().name().equals("Compare revision")) {
-                mParent.noLoop();
-                mSelectedRev = (int)paramControlEvent.group().value();
-                mModel = new SunburstCompareModel(mParent, mDb);
-                mModel.addPropertyChangeListener(this);
-                final SunburstContainer container = new SunburstContainer();
-                if (mUsePruning) {
-                    container.setPruning(EPruning.TRUE);
-                } else {
-                    container.setPruning(EPruning.FALSE);
-                }
-                mModel.traverseTree(container.setRevision(mSelectedRev).setModWeight(mModificationWeight));
-            }
-        }
-    }
-
-    /**
-     * XPath expression.
-     * 
-     * @param paramXPath
-     *            the XPath expression
-     */
-    public void xpath(final String paramXPath) {
-        mModel.evaluateXPath(paramXPath);
-    }
-
-    /**
      * Implements the {@link PApplet} draw() method.
      */
-    void draw() {
+    @Override
+    public void draw() {
         if (mControlP5 != null) {
             mParent.pushMatrix();
 
@@ -595,14 +521,17 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
                 if (mDone) {
                     drawItems(EDraw.DRAW);
                 }
+                mBuffer.stroke(0);
+                mBuffer.strokeWeight(2f);
+                mBuffer.line(0, 0, mParent.width, 0);
             } else if (mDone) {
                 // LOGWRAPPER.debug("Buffered image!");
-                
+
                 if (mRadChanged) {
                     mRadChanged = false;
                     update();
                 }
-                
+
                 try {
                     mLock.acquire();
                     mParent.image(mImg, 0, 0);
@@ -858,200 +787,6 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
     }
 
     /**
-     * Is getting called from processings keyRealeased-method and implements it.
-     * 
-     * @see processing.core.PApplet#keyReleased()
-     */
-    void keyReleased() {
-        if (!mXPathField.isFocus() && !mCtrl.isOpen()) {
-            switch (mParent.key) {
-            case 'r':
-            case 'R':
-                mZoomer.reset();
-                mZoomPanReset = true;
-                break;
-            case 's':
-            case 'S':
-                // Save PNG.
-                mParent.saveFrame(SAVEPATH + timestamp() + "_##.png");
-                break;
-            case 'p':
-            case 'P':
-                // Save PDF.
-                mSavePDF = true;
-                PApplet.println("\n" + "saving to pdf – starting");
-                mParent.beginRecord(PConstants.PDF, SAVEPATH + timestamp() + ".pdf");
-                mParent.textMode(PConstants.SHAPE);
-                mParent.textFont(mParent.createFont("src" + File.separator + "main" + File.separator
-                    + "resources" + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
-                break;
-            case '\b':
-                // Backspace.
-                mModel.undo();
-                update();
-                break;
-            case '1':
-                mMappingMode = 1;
-                break;
-            case '2':
-                mMappingMode = 2;
-                break;
-            case '3':
-                mMappingMode = 3;
-                break;
-            case 'o':
-            case 'O':
-                if (!mUseDiffView) {
-                    mRevisions =
-                        mControlP5.addDropdownList("Compare revision", mParent.width - 250, 100, 100, 120);
-                    assert mDb != null;
-                    try {
-                        for (long i = mDb.getRevisionNumber() + 1, newestRev =
-                            mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
-                            mRevisions.addItem("Revision " + i, (int)i);
-                        }
-                    } catch (final AbsTTException exc) {
-                        exc.printStackTrace();
-                    }
-                }
-                break;
-            default:
-                // Do nothing.
-            }
-
-            switch (mParent.key) {
-            case '1':
-            case '2':
-            case '3':
-                update();
-                break;
-            case 'm':
-            case 'M':
-                mShowGUI = mControlP5.group("menu").isOpen();
-                mShowGUI = !mShowGUI;
-                break;
-            default:
-                // No action.
-            }
-
-            if (mShowGUI) {
-                mControlP5.group("menu").open();
-            } else {
-                mControlP5.group("menu").close();
-            }
-
-            if (mParent.keyCode == PConstants.RIGHT) {
-                mRad += 5;
-                mRadChanged = true;
-            } else if (mParent.keyCode == PConstants.LEFT) {
-                mRad -= 5;
-                mRadChanged = true;
-            }
-        }
-    }
-
-    /**
-     * Implements processing mouseMoved.
-     * 
-     * @param paramEvent
-     *            The {@link MouseEvent}.
-     * 
-     * @see processing.core.PApplet#mouseMoved
-     */
-    void mouseMoved(final MouseEvent paramEvent) {
-        // draw();
-    }
-
-    /**
-     * Implements processing mouseEntered.
-     * 
-     * @param paramEvent
-     *            The {@link MouseEvent}.
-     * 
-     * @see processing.core.PApplet#mouseEntered
-     */
-    void mouseEntered(final MouseEvent paramEvent) {
-        if (mDone) {
-            mParent.loop();
-        }
-    }
-
-    /**
-     * Implements processing mouseExited.
-     * 
-     * @param paramEvent
-     *            The {@link MouseEvent}.
-     * 
-     * @see processing.core.PApplet#mouseExited
-     */
-    void mouseExited(final MouseEvent paramEvent) {
-        mParent.noLoop();
-    }
-
-    /**
-     * Implements processing mousePressed.
-     * 
-     * @param paramEvent
-     *            The {@link MouseEvent}.
-     * 
-     * @see processing.core.PApplet#mousePressed
-     */
-    void mousePressed(final MouseEvent paramEvent) {
-        mControlP5.controlWindow.mouseEvent(paramEvent);
-        mZoomer.mouseEvent(paramEvent);
-
-        mShowGUI = mControlP5.group("menu").isOpen();
-
-        if (!mShowGUI) {
-            boolean doMouseOver = true;
-            if (mRevisions != null && mRevisions.isOpen()) {
-                doMouseOver = false;
-            }
-
-            if (doMouseOver) {
-                // Mouse rollover.
-                if (!mParent.keyPressed) {
-                    rollover();
-
-                    if (mHitTestIndex != -1) {
-                        // Bug in processing's mousbotton, thus used SwingUtilities.
-                        if (SwingUtilities.isLeftMouseButton(paramEvent) && !mCtrl.isOpen()) {
-                            final SunburstContainer container = new SunburstContainer();
-                            if (mUsePruning) {
-                                container.setPruning(EPruning.TRUE);
-                            } else {
-                                container.setPruning(EPruning.FALSE);
-                            }
-                            if (mUseDiffView) {
-                                final SunburstItem item = mModel.getItem(mHitTestIndex);
-                                if (item.mDiff == EDiff.SAME) {
-                                    mDone = false;
-                                    mModel.update(container.setAll(mSelectedRev, item.getDepth(),
-                                        mModificationWeight).setKey(item.getNode().getNodeKey()));
-                                }
-                            } else {
-                                mDone = false;
-                                final SunburstItem item = mModel.getItem(mHitTestIndex);
-                                mModel.update(container.setKey(item.getNode().getNodeKey()));
-                            }
-                        } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
-                            if (!mUseDiffView) {
-                                try {
-                                    ((SunburstModel)mModel).popupMenu(paramEvent, mCtrl, mHitTestIndex);
-                                } catch (final AbsTTException exc) {
-                                    exc.printStackTrace();
-                                    JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: "
-                                        + exc.getMessage());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Calculate area so that radiuses have equal areas in each depth.
      * 
      * @param paramDepth
@@ -1086,17 +821,9 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
         return mMappingMode;
     }
 
-    /**
-     * Format a timestamp.
-     * 
-     * @return Formatted timestamp.
-     */
-    private static String timestamp() {
-        return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
-    }
-
     /** Update items as well as the buffered offscreen image. */
-    void update() {
+    @Override
+    public void update() {
         // LOGWRAPPER.debug("[update()]: Available permits: " + mLock.availablePermits());
         // LOGWRAPPER.debug("parent width: " + mParent.width + " parent height: " + mParent.height);
         mZoomer.reset();
@@ -1134,6 +861,10 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
 
         // Draw items.
         drawItems(EDraw.UPDATEBUFFER);
+
+        mBuffer.stroke(0);
+        mBuffer.strokeWeight(2f);
+        mBuffer.line(0, 0, mParent.width, 0);
 
         mBuffer.popMatrix();
     }
@@ -1178,14 +909,14 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      * 
      * @return true, if found, false otherwise
      */
-    private boolean rollover() {
+    boolean rollover() {
         boolean retVal = false;
         mHitTestIndex = -1;
         mHitItem = null;
 
         rolloverInit();
         int index = 0;
-        for (final SunburstItem item : mModel) {
+        for (final SunburstItem item : mControl.mModel) {
             // Hittest, which arc is the closest to the mouse.
             if (item.getDepth() == mDepth && mAngle > item.getAngleStart() + PApplet.radians(mRad)
                 && mAngle < item.getAngleEnd() + PApplet.radians(mRad)) {
@@ -1211,7 +942,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             paramDraw.drawRings(this);
         }
 
-        for (final SunburstItem item : mModel) {
+        for (final SunburstItem item : mControl.mModel) {
             paramDraw.update(this, item);
 
             if (mUseDiffView) {
@@ -1226,11 +957,11 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
             paramDraw.drawNewRevision(this);
             paramDraw.drawOldRevision(this);
 
-            for (final SunburstItem item : mModel) {
+            for (final SunburstItem item : mControl.mModel) {
                 paramDraw.drawRelation(this, item);
             }
 
-            for (final SunburstItem item : mModel) {
+            for (final SunburstItem item : mControl.mModel) {
                 paramDraw.drawDot(this, item);
             }
         }
@@ -1243,8 +974,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      *            change value
      */
     public void cancel(final int paramValue) {
-        mTextArea.clear();
-        mCtrl.setVisible(false);
+        mControl.cancel(paramValue);
     }
 
     /**
@@ -1258,19 +988,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      *             if the XML fragment isn't well formed
      */
     public void submit(final int paramValue) throws XMLStreamException {
-        try {
-            assert mModel instanceof SunburstModel;
-            mCtrl.setVisible(false);
-            mCtrl.setOpen(false);
-            ((SunburstModel)mModel).shredder(mTextArea.getText());
-            mTextArea.clear();
-        } catch (final FactoryConfigurationError exc) {
-            exc.printStackTrace();
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
-        } catch (final AbsTTException exc) {
-            exc.printStackTrace();
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
-        }
+        mControl.submit(paramValue);
     }
 
     /**
@@ -1282,21 +1000,7 @@ final class SunburstGUI implements PropertyChangeListener, ControlListener {
      *             if the XML fragment isn't well formed
      */
     public void commit(final int paramValue) throws XMLStreamException {
-        try {
-            assert mModel instanceof SunburstModel;
-            mCtrl.setVisible(false);
-            mCtrl.setOpen(false);
-            ((SunburstModel)mModel).shredder(mTextArea.getText());
-            ((SunburstModel)mModel).commit();
-            mTextArea.clear();
-        } catch (final FactoryConfigurationError exc) {
-            exc.printStackTrace();
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
-        } catch (final AbsTTException exc) {
-            exc.printStackTrace();
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
-        }
-        mParent.refresh();
+        mControl.commit(paramValue);
     }
 
     /**

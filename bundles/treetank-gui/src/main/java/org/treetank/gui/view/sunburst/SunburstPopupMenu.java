@@ -40,6 +40,8 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
+import org.treetank.gui.view.sunburst.model.AbsModel;
+import org.treetank.gui.view.sunburst.model.IModel;
 
 import processing.core.PApplet;
 
@@ -49,7 +51,7 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstPopupMenu extends JPopupMenu {
+public final class SunburstPopupMenu extends JPopupMenu {
 
     /** Model which implements {@link IModel}. */
     private final AbsModel mModel;
@@ -101,7 +103,7 @@ final class SunburstPopupMenu extends JPopupMenu {
      *            control group for XML input
      * @return singleton {@link SunburstPopupMenu} instance
      */
-    static synchronized SunburstPopupMenu getInstance(final AbsModel paramModel, final IWriteTransaction paramWtx,
+    public static synchronized SunburstPopupMenu getInstance(final AbsModel paramModel, final IWriteTransaction paramWtx,
         final ControlGroup paramCtrl) {
         if (mSunburstPopupMenu == null || !paramWtx.equals(mWtx)) {
             mSunburstPopupMenu = new SunburstPopupMenu(paramModel, paramWtx, paramCtrl);

@@ -25,10 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst;
+package org.treetank.gui.view.sunburst.model;
 
 import java.util.List;
 
+import org.treetank.gui.view.sunburst.SunburstContainer;
+import org.treetank.gui.view.sunburst.SunburstItem;
+import org.treetank.gui.view.sunburst.SunburstView;
 import org.treetank.service.xml.shredder.EShredderInsert;
 
 import processing.core.PApplet;
@@ -39,7 +42,7 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-interface IModel extends Iterable<SunburstItem> {
+public interface IModel extends Iterable<SunburstItem> {
     /**
      * Get the {@link SunburstItem} at the specified index.
      * 
@@ -55,7 +58,7 @@ interface IModel extends Iterable<SunburstItem> {
      * Traverse the tree and create a {@link List} of {@link SunburstItem}s.
      * 
      * @param paramContainer
-     *            simple container
+     *            {@link container} reference with options
      */
     void traverseTree(final SunburstContainer paramContainer);
 
@@ -66,7 +69,7 @@ interface IModel extends Iterable<SunburstItem> {
      * Update root of the tree with the node currently clicked.
      * 
      * @param paramContainer
-     *            simple container
+     *            {@link container} reference with options
      */
     void update(final SunburstContainer paramContainer);
 
