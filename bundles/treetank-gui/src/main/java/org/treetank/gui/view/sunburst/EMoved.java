@@ -38,7 +38,7 @@ import org.treetank.node.AbsStructNode;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-enum EMoved {
+public enum EMoved {
 
     /** Start of traversal or cursor moved to a right sibling of a node. */
     STARTRIGHTSIBL {
@@ -46,7 +46,7 @@ enum EMoved {
          * {@inheritDoc}
          */
         @Override
-        void processMove(final IReadTransaction paramRtx, final Item paramItem,
+        public void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
             final Stack<Integer> paramParentStack, final Stack<Integer> paramDescendantsStack) {
             // Do nothing.
@@ -56,7 +56,7 @@ enum EMoved {
          * {@inheritDoc}
          */
         @Override
-        void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
+        public void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
             final Stack<Integer> paramDescendants, final Stack<Integer> paramParentStack,
             final Stack<Integer> paramModificationStack) {
@@ -70,7 +70,7 @@ enum EMoved {
          * {@inheritDoc}
          */
         @Override
-        void processMove(final IReadTransaction paramRtx, final Item paramItem,
+        public void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
             final Stack<Integer> paramParentStack, final Stack<Integer> paramDescendantsStack) {
             assert !paramAngleStack.empty();
@@ -87,7 +87,7 @@ enum EMoved {
          * {@inheritDoc}
          */
         @Override
-        void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
+        public void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
             final Stack<Integer> paramDescendantsStack, final Stack<Integer> paramParentStack,
             final Stack<Integer> paramModificationStack) {
@@ -110,7 +110,7 @@ enum EMoved {
          * {@inheritDoc}
          */
         @Override
-        void processMove(final IReadTransaction paramRtx, final Item paramItem,
+        public void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
             final Stack<Integer> paramParentStack, final Stack<Integer> paramDescendantsStack) {
             assert !paramAngleStack.empty();
@@ -133,7 +133,7 @@ enum EMoved {
          * {@inheritDoc}
          */
         @Override
-        void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
+        public void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
             final Stack<Integer> paramDescendantsStack, final Stack<Integer> paramParentStack,
             final Stack<Integer> paramModificationStack) {
@@ -174,7 +174,7 @@ enum EMoved {
      * @param paramDescendantsStack
      *            stack for descendants
      */
-    abstract void processMove(final IReadTransaction paramRtx, final Item paramItem,
+    public abstract void processMove(final IReadTransaction paramRtx, final Item paramItem,
         final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
         final Stack<Integer> paramParentStack, final Stack<Integer> paramDescendantsStack);
 
@@ -196,7 +196,7 @@ enum EMoved {
      * @param paramModificationStack
      *            stack for modifications
      */
-    abstract void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
+    public abstract void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
         final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
         final Stack<Integer> paramDescendantsStack, final Stack<Integer> paramParentStack,
         final Stack<Integer> paramModificationStack);

@@ -37,6 +37,7 @@ import javax.swing.JPopupMenu;
 import controlP5.ControlGroup;
 
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
+import org.treetank.gui.view.sunburst.model.AbsModel;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderInsert;

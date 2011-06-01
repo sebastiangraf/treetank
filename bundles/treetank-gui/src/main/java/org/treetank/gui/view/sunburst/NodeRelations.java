@@ -40,27 +40,27 @@ import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class NodeRelations {
+public final class NodeRelations {
     /** Depth in the tree. */
-    transient int mDepth;
+    public transient int mDepth;
 
     /** Determines the structural kind of the node. */
-    transient EStructType mStructKind;
+    public transient EStructType mStructKind;
 
     /** Descendant count of the node. */
-    transient int mDescendantCount;
+    public transient int mDescendantCount;
 
     /** Global minimum descendant count. */
-    transient int mMinDescendantCount;
+    public transient int mMinDescendantCount;
 
     /** Global maximum descendant count. */
-    transient int mMaxDescendantCount;
+    public transient int mMaxDescendantCount;
 
     /** Index to the parent item. */
-    transient int mIndexToParent;
+    public transient int mIndexToParent;
     
     /** Determines if one must be subtracted. */
-    transient boolean mSubtract;
+    public transient boolean mSubtract;
 
     /**
      * Set all fields.
@@ -79,7 +79,7 @@ final class NodeRelations {
      *            index to the parent item
      * @return NodeRelations instance.
      */
-    NodeRelations setAll(final int paramDepth, final EStructType paramStructKind,
+    public NodeRelations setAll(final int paramDepth, final EStructType paramStructKind,
         final int paramDescendantCount, final int paramMinDescendantCount,
         final int paramMaxDescendantCount, final int paramIndexToParent) {
         assert paramDepth >= 0;
@@ -104,7 +104,7 @@ final class NodeRelations {
      *            determines if one must be subtracted
      * @return this relation
      */
-    NodeRelations setSubtract(final boolean paramSubtract) {
+    public NodeRelations setSubtract(final boolean paramSubtract) {
         mSubtract = paramSubtract;
         return this;
     }

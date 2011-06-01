@@ -58,6 +58,7 @@ import org.treetank.gui.GUI;
 import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
+import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewNotifier;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.node.ElementNode;
@@ -631,5 +632,14 @@ public final class TextView extends JScrollPane implements IView {
         assert mGUI != null;
         final Dimension mainFrame = mGUI.getSize();
         return new Dimension(1000, 300);
+    }
+
+    /* (non-Javadoc)
+     * @see org.treetank.gui.view.IView#hover(org.treetank.gui.view.IVisualItem)
+     */
+    @Override
+    public void hover(IVisualItem paramItem) {
+        // TODO Auto-generated method stub
+        
     }
 }

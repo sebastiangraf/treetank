@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst;
+package org.treetank.gui.view.sunburst.model;
 
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -54,7 +54,10 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.sunburst.*;
+import org.treetank.gui.view.sunburst.SunburstItem.Builder;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
+import org.treetank.gui.view.sunburst.axis.SunburstDescendantAxis;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.service.xml.shredder.EShredderCommit;
@@ -76,7 +79,7 @@ import processing.core.PConstants;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, PropertyChangeListener {
+public final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, PropertyChangeListener {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));
@@ -92,7 +95,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
      * @param paramDb
      *            {@link ReadDB} reference
      */
-    SunburstModel(final PApplet paramApplet, final ReadDB paramDb) {
+    public SunburstModel(final PApplet paramApplet, final ReadDB paramDb) {
         super(paramApplet, paramDb);
     }
 
@@ -547,7 +550,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
      * @param paramTextBytes
      *            XML fragment to shredder (might be text as well)
      */
-    void shredder(final String paramText) throws AbsTTException, XMLStreamException {
+    public void shredder(final String paramText) throws AbsTTException, XMLStreamException {
         try {
             if (paramText.startsWith("<")) {
                 final XMLEventReader reader =
@@ -574,7 +577,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
     /**
      * Commit changes.
      */
-    void commit() throws AbsTTException {
+    public void commit() throws AbsTTException {
         mWtx.commit();
         mWtx.close();
     }
@@ -589,7 +592,7 @@ final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, Pr
      * @param paramHitTestIndex
      *            the index of the {@link SunburstItem} which is currently hovered
      */
-    void popupMenu(final MouseEvent paramEvent, final ControlGroup paramCtrl, final int paramHitTestIndex)
+    public void popupMenu(final MouseEvent paramEvent, final ControlGroup paramCtrl, final int paramHitTestIndex)
         throws AbsTTException {
         if (mWtx == null || mWtx.isClosed()) {
             mWtx = mDb.getSession().beginWriteTransaction();

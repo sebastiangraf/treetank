@@ -38,7 +38,7 @@ import org.treetank.diff.DiffFactory.EDiff;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-class Diff {
+public class Diff {
     /** {@link EDiff} which specifies the kind of diff between two nodes. */
     private transient EDiff mDiff;
 
@@ -81,7 +81,7 @@ class Diff {
      * 
      * @return the kind of diff
      */
-    EDiff getDiff() {
+    public EDiff getDiff() {
         return mDiff;
     }
 
@@ -90,7 +90,7 @@ class Diff {
      * 
      * @return the new node
      */
-    IStructuralItem getNewNode() {
+    public IStructuralItem getNewNode() {
         return mNewNode;
     }
 
@@ -99,7 +99,7 @@ class Diff {
      * 
      * @return the old node
      */
-    IStructuralItem getOldNode() {
+    public IStructuralItem getOldNode() {
         return mOldNode;
     }
 
@@ -108,7 +108,7 @@ class Diff {
      * 
      * @return the depth
      */
-    DiffDepth getDepth() {
+    public DiffDepth getDepth() {
         return mDepth;
     }
 

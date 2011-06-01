@@ -25,13 +25,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst;
+package org.treetank.gui.view.sunburst.model;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.treetank.api.IReadTransaction;
+import org.treetank.gui.view.sunburst.Item;
+import org.treetank.gui.view.sunburst.SunburstItem;
+import org.treetank.gui.view.sunburst.axis.SunburstDescendantAxis;
 
 /**
  * Interface which has to be implemented from TraverseTree inner classes inside the

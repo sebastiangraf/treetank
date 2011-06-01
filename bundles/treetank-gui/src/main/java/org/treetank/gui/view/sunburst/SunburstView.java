@@ -46,8 +46,10 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.gui.GUI;
 import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
-import org.treetank.gui.view.IView;
-import org.treetank.gui.view.ViewNotifier;
+import org.treetank.gui.controls.IControl;
+import org.treetank.gui.view.*;
+import org.treetank.gui.view.sunburst.model.IModel;
+import org.treetank.gui.view.sunburst.model.SunburstModel;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -69,7 +71,6 @@ public final class SunburstView extends JScrollPane implements IView {
      */
     private static final long serialVersionUID = 1L;
 
-
     /** Name of the sunburst view. */
     private static final String NAME = "SunburstView";
 
@@ -84,9 +85,6 @@ public final class SunburstView extends JScrollPane implements IView {
 
     /** Processing {@link PApplet} reference. */
     private transient Embedded mEmbed;
-
-    /** This container. */
-    private final JComponent mContainer = this;
 
     /** {@link GUI} reference. */
     private final GUI mGUI;
@@ -112,7 +110,7 @@ public final class SunburstView extends JScrollPane implements IView {
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // Create instance of processing innerclass.
-        mEmbed = new Embedded();
+        mEmbed = new Embedded(this, mNotifier);
 
         mGUI.addWindowStateListener(new WindowStateListener() {
             @Override
@@ -158,10 +156,11 @@ public final class SunburstView extends JScrollPane implements IView {
 
         return mView;
     }
-    
+
     /** Update window size. */
     void updateWindowSize() {
         assert mEmbed != null;
+        assert mGUI != null;
         final Dimension dim = mGUI.getSize();
         getViewport().setSize(dim.width, dim.height - 42);
         mEmbed.update();
@@ -215,7 +214,7 @@ public final class SunburstView extends JScrollPane implements IView {
          * that other internal variables are properly set.
          */
         mEmbed.init();
-        mEmbed.refreshUpdate();
+        mEmbed.refreshInit();
     }
 
     /**
@@ -223,24 +222,7 @@ public final class SunburstView extends JScrollPane implements IView {
      */
     @Override
     public void refreshUpdate() {
-        long revision = 0;
-        try {
-            final IReadTransaction rtx =
-                mDB.getDatabase().getSession(new SessionConfiguration()).beginReadTransaction();
-            revision = rtx.getRevisionNumber();
-            rtx.close();
-        } catch (final AbsTTException exc) {
-            exc.printStackTrace(); 
-        }
-        final File file = ((FileDatabase)mDB.getDatabase()).mFile;
-        if (mDB != null) {
-            mDB.close();
-        }
-        try {
-            mDB = new ReadDB(file, revision);
-        } catch (final AbsTTException e) {
-            e.printStackTrace();
-        }
+        ViewUtilities.refreshResource(mDB);
         mEmbed.refreshUpdate();
     }
 
@@ -265,6 +247,7 @@ public final class SunburstView extends JScrollPane implements IView {
 
     /** Embedded processing view. */
     final class Embedded extends PApplet {
+
         /**
          * Serial UID.
          */
@@ -276,93 +259,96 @@ public final class SunburstView extends JScrollPane implements IView {
         /** The Treetank {@link SunburstModel}. */
         private transient SunburstModel mModel;
 
+        private transient ProcessingEmbeddedView mEmbeddedView;
+
+        private final IView mView;
+
+        private final ViewNotifier mViewNotifier;
+        
+        private transient SunburstControl mControl;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramView
+         * @param paramViewNotifier
+         */
+        public Embedded(final IView paramView, final ViewNotifier paramViewNotifier) {
+            assert paramView != null;
+            assert paramViewNotifier != null;
+            mView = paramView;
+            mViewNotifier = paramViewNotifier;
+        }
+
         /** {@inheritDoc} */
         @Override
         public void setup() {
-            size(mGUI.getSize().width, mGUI.getSize().height - 42, PConstants.JAVA2D);
-            handleHLWeight();
+            size(mViewNotifier.getGUI().getSize().width, mViewNotifier.getGUI().getSize().height - 42,
+                PConstants.JAVA2D);
+        }
+
+        /** Setup processing view. */
+        public void refreshInit() {
+            // Initialization with no draw() loop.
+            noLoop();
+
+            // Frame rate reduced to 30.
+            frameRate(30);
+
+            // Create Model.
+            mModel = new SunburstModel(this, mDB);
+
+            // Create Controller.
+            mControl = SunburstControl.getInstance(this, mModel, mDB);
+
+            // Use embedded view.
+            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.mGUI, mControl, mViewNotifier);
         }
 
         /** {@inheritDoc} */
         @Override
         public void draw() {
-            if (mSunburstGUI != null) {
-                mSunburstGUI.draw();
-                handleHLWeight();
+            if (mEmbeddedView != null) {
+                mEmbeddedView.draw();
             }
         }
 
         /** {@inheritDoc} */
         @Override
         public void mouseEntered(final MouseEvent paramEvent) {
-            if (mSunburstGUI != null) {
-                mSunburstGUI.mouseEntered(paramEvent);
-                handleHLWeight();
+            if (mEmbeddedView != null) {
+                mEmbeddedView.mouseEntered(paramEvent);
             }
         }
 
         /** {@inheritDoc} */
         @Override
         public void mouseExited(final MouseEvent paramEvent) {
-            if (mSunburstGUI != null) {
-                mSunburstGUI.mouseExited(paramEvent);
-                handleHLWeight();
+            if (mEmbeddedView != null) {
+                mEmbeddedView.mouseExited(paramEvent);
             }
         }
 
         /** {@inheritDoc} */
         @Override
         public void keyReleased() {
-            if (mSunburstGUI != null) {
-                mSunburstGUI.keyReleased();
-                handleHLWeight();
+            if (mEmbeddedView != null) {
+                mEmbeddedView.keyReleased();
             }
         }
 
         /** {@inheritDoc} */
         @Override
         public void mousePressed(final MouseEvent paramEvent) {
-            if (mSunburstGUI != null) {
-                mSunburstGUI.mousePressed(paramEvent);
-                handleHLWeight();
+            if (mEmbeddedView != null) {
+                mEmbeddedView.mousePressed(paramEvent);
             }
         }
 
         /** Refresh. */
         void refreshUpdate() {
-            if (mModel == null || mSunburstGUI == null) {
-                noLoop();
-
-                // Initial.
-                frameRate(30);
-
-                // Create Model.
-                mModel = new SunburstModel(this, mDB);
-
-                // Create GUI.
-                mSunburstGUI = SunburstGUI.getInstance(this, mModel, mDB);
-                mSunburstGUI.mDone = false;
-                mSunburstGUI.mUseDiffView = false;
-                mSunburstGUI.mInitialized = false;
-
-                // Traverse.
-                mModel.traverseTree(new SunburstContainer().setKey(mDB.getNodeKey()).setPruning(
-                    EPruning.FALSE));
-            } else {
-                // Database change.
-                mSunburstGUI.mDone = false;
-                mSunburstGUI.mUseDiffView = false;
-                final SunburstContainer container = new SunburstContainer().setKey(mDB.getNodeKey());
-                if (mSunburstGUI.mUsePruning) {
-                    container.setPruning(EPruning.TRUE);
-                } else {
-                    container.setPruning(EPruning.FALSE);
-                }
-                mModel.updateDb(mDB, container);
-                mSunburstGUI.updateDb(mDB);
-            }
-
-            handleHLWeight();
+            mControl.refreshUpdate();
+            mEmbeddedView.handleHLWeight();
         }
 
         /** Refresh. Thus Treetank storage has been updated to a new revision. */
@@ -370,22 +356,21 @@ public final class SunburstView extends JScrollPane implements IView {
             mNotifier.update();
         }
 
+        /** Update Processing GUI. */
         void update() {
-            if (mSunburstGUI != null) {
-                mSunburstGUI.update();
+            if (mEmbeddedView != null) {
+                mEmbeddedView.updateGUI();
             }
         }
+        
+        SunburstControl getController() {
+            return mControl;
+        }
+    }
 
-        /** Handle mix of heavyweight ({@link PApplet}) and leightweight ({@link JMenuBar}) components. */
-        private void handleHLWeight() {
-            final Container parent = mContainer.getParent();
-            if (parent instanceof JComponent) {
-                ((JComponent)parent).revalidate();
-            }
-            final Window window = SwingUtilities.getWindowAncestor(this);
-            if (window != null) {
-                window.validate();
-            }
-        }
+    /** {@inheritDoc} */
+    @Override
+    public void hover(final IVisualItem paramItem) {
+
     }
 }

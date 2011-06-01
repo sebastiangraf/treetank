@@ -44,6 +44,7 @@ import org.treetank.gui.GUI;
 import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
+import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewNotifier;
 
 /**
@@ -210,5 +211,14 @@ public final class TreeView extends JScrollPane implements IView {
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(300, 500);
+    }
+
+    /* (non-Javadoc)
+     * @see org.treetank.gui.view.IView#hover(org.treetank.gui.view.IVisualItem)
+     */
+    @Override
+    public void hover(IVisualItem paramItem) {
+        // TODO Auto-generated method stub
+        
     }
 }

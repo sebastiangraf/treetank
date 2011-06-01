@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.overview;
+package org.treetank.gui.view.smallmultiples;
 
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.treetank.gui.GUI;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
+import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewNotifier;
 import org.treetank.utils.LogWrapper;
 
@@ -44,7 +45,7 @@ import org.treetank.utils.LogWrapper;
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public class OverView extends JScrollPane implements IView {
+public class SmallMultiplesView extends JScrollPane implements IView {
 
     /**
      * SerialUID.
@@ -52,13 +53,13 @@ public class OverView extends JScrollPane implements IView {
     private static final long serialVersionUID = 1L;
 
     /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(OverView.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SmallMultiplesView.class));
 
     /** Name of the sunburst view. */
     private static final String NAME = "OverView";
 
     /** {@link SunburstView} instance. */
-    private static OverView mView;
+    private static SmallMultiplesView mView;
 
     /** {@link ViewNotifier} to notify views of changes. */
     private final ViewNotifier mNotifier;
@@ -75,7 +76,7 @@ public class OverView extends JScrollPane implements IView {
      * @param paramNotifier
      *            {@link ViewNotifier} instance.
      */
-    private OverView(final ViewNotifier paramNotifier) {
+    private SmallMultiplesView(final ViewNotifier paramNotifier) {
         mNotifier = paramNotifier;
 
         // Add view to notifier.
@@ -93,11 +94,11 @@ public class OverView extends JScrollPane implements IView {
      * 
      * @param paramNotifier
      *            {@link ViewNotifier} to notify views of changes etc.pp.
-     * @return {@link OverView} instance
+     * @return {@link SmallMultiplesView} instance
      */
-    public static synchronized OverView getInstance(final ViewNotifier paramNotifier) {
+    public static synchronized SmallMultiplesView getInstance(final ViewNotifier paramNotifier) {
         if (mView == null) {
-            mView = new OverView(paramNotifier);
+            mView = new SmallMultiplesView(paramNotifier);
         }
 
         return mView;
@@ -135,6 +136,15 @@ public class OverView extends JScrollPane implements IView {
     public JComponent component() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.treetank.gui.view.IView#hover(org.treetank.gui.view.IVisualItem)
+     */
+    @Override
+    public void hover(IVisualItem paramItem) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

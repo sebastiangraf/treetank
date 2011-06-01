@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst;
+package org.treetank.gui.view.sunburst.axis;
 
 import java.util.List;
 import java.util.Stack;
@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.gui.view.sunburst.Item.Builder;
+import org.treetank.gui.view.sunburst.model.ITraverseModel;
+import org.treetank.gui.view.sunburst.EMoved;
+import org.treetank.gui.view.sunburst.EPruning;
 import org.treetank.gui.view.sunburst.Item;
 import org.treetank.node.AbsStructNode;
 import org.treetank.settings.EFixed;
@@ -97,9 +100,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
 
     /** Current item. */
     private transient Item mItem;
-
-    /** Builder for an item. */
-    private transient Builder mBuilder;
 
     /** Stack for remembering next nodeKey in document order. */
     private transient FastStack<Long> mRightSiblingKeyStack;
@@ -171,8 +171,6 @@ public final class SunburstDescendantAxis extends AbsAxis {
         mExtension = PConstants.TWO_PI;
         mChildExtension = PConstants.TWO_PI;
         mIndex = -1;
-        mItem = Item.ITEM;
-        mBuilder = Item.BUILDER;
     }
 
     /**
@@ -353,8 +351,8 @@ public final class SunburstDescendantAxis extends AbsAxis {
     /** Process movement. */
     private void processMove() {
         try {
-            mBuilder.set(mAngle, mExtension, mIndexToParent).setParentDescendantCount(mParDescendantCount)
-                .setDescendantCount(mDescendants.get(mIndex + 1).get()).set();
+            mItem = Item.BUILDER.set(mAngle, mExtension, mIndexToParent).setParentDescendantCount(mParDescendantCount)
+                .setDescendantCount(mDescendants.get(mIndex + 1).get()).build();
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final ExecutionException e) {

@@ -39,7 +39,7 @@ import processing.core.PGraphics;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-enum EXPathState {
+public enum EXPathState {
     
     /** Item is found. */
     ISFOUND {
@@ -47,7 +47,7 @@ enum EXPathState {
          * {@inheritDoc}
          */
         @Override
-        void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover) {
+        public void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover) {
             if (paramRecorder != null) {
                 paramRecorder.stroke(1);
             }
@@ -61,7 +61,7 @@ enum EXPathState {
          * {@inheritDoc}
          */
         @Override
-        void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover) {
+        public void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover) {
             if (paramRecorder != null) {
                 if (paramHover == EHover.TRUE) {
                     paramRecorder.colorMode(PConstants.RGB);
@@ -91,5 +91,5 @@ enum EXPathState {
      * @param paramColor
      *            the color to use
      */
-    abstract void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover);
+    public abstract void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover);
 }

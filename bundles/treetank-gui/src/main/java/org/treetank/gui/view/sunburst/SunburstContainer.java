@@ -33,25 +33,25 @@ package org.treetank.gui.view.sunburst;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstContainer {
+public final class SunburstContainer {
 
     /** Index of currently clicked {@link SunburstItem}. */
-    transient int mHitTestIndex;
+    public transient int mHitTestIndex;
     
     /** Revision to compare. */
-    transient long mRevision;
+    public transient long mRevision;
 
     /** Max depth in the tree. */
-    transient int mDepth;
+    public transient int mDepth;
 
     /** Modification weight. */
-    transient float mModWeight;
+    public transient float mModWeight;
 
     /** Node key to start from. */
-    transient long mKey;
+    public transient long mKey;
 
     /** Determines if pruning should be enabled or not. */
-    transient EPruning mPruning;
+    public transient EPruning mPruning;
 
     /**
      * Set start key.
@@ -60,7 +60,7 @@ final class SunburstContainer {
      *            node key to start from
      * @return this
      */
-    SunburstContainer setKey(final long paramKey) {
+    public SunburstContainer setKey(final long paramKey) {
         assert paramKey >= 0;
         mKey = paramKey;
         return this;
@@ -73,7 +73,7 @@ final class SunburstContainer {
      *            the Revision to set
      * @return this
      */
-    SunburstContainer setRevision(final long paramRevision) {
+    public SunburstContainer setRevision(final long paramRevision) {
         assert paramRevision > 0;
         mRevision = paramRevision;
         return this;
@@ -86,7 +86,7 @@ final class SunburstContainer {
      *            the index of the {@link SunburstItem} currently selected
      * @return this
      */
-    SunburstContainer setHitItem(final int paramHitTestIndex) {
+    public SunburstContainer setHitItem(final int paramHitTestIndex) {
         assert paramHitTestIndex >= 0;
         mHitTestIndex = paramHitTestIndex;
         return this;
@@ -99,7 +99,7 @@ final class SunburstContainer {
      *            the modWeight to set
      * @return this
      */
-    SunburstContainer setModWeight(final float paramModWeight) {
+    public SunburstContainer setModWeight(final float paramModWeight) {
         assert paramModWeight >= 0;
         mModWeight = paramModWeight;
         return this;
@@ -116,7 +116,7 @@ final class SunburstContainer {
      *            weighting of modifications
      * @return this
      */
-    SunburstContainer setAll(final long paramRevision, final int paramDepth,
+    public SunburstContainer setAll(final long paramRevision, final int paramDepth,
         final float paramModificationWeight) {
         assert paramRevision >= 0;
         assert paramDepth >= 0;
@@ -133,7 +133,7 @@ final class SunburstContainer {
      * @param paramPruning
      *            determines if tree should be pruned or not
      */
-    SunburstContainer setPruning(final EPruning paramPruning) {
+    public SunburstContainer setPruning(final EPruning paramPruning) {
         assert paramPruning != null;
         mPruning = paramPruning;
         return this;

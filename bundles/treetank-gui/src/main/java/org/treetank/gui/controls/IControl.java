@@ -224,6 +224,18 @@ public interface IControl extends EventListener, MouseListener, MouseMotionListe
      */
     @Override
     public void keyReleased(KeyEvent paramEvent);
+    
+    /** 
+     * Invoked when a key has been pressed (for processing), while the mouse is NOT
+     * over a VisualItem.
+     */
+    public void keyPressed();
+    
+    /** 
+     * Invoked when a key has been released (for processing), while the mouse is NOT
+     * over a VisualItem.
+     */
+    public void keyReleased();
 
     /**
      * Invoked when a key has been typed, while the mouse is NOT
