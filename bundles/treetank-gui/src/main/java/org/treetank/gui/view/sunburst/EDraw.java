@@ -27,8 +27,7 @@
 
 package org.treetank.gui.view.sunburst;
 
-import java.util.List;
-
+import org.treetank.gui.GUI;
 import org.treetank.gui.view.EHover;
 
 import processing.core.PApplet;
@@ -186,7 +185,7 @@ public enum EDraw {
                 paramGraphic.stroke(120, 100, paramGUI.mDotBrightness, 30);
                 break;
             }
-            final SunburstItem item = paramGUI.mControl.mModel.getItem(paramItem.getIndexToParent());
+            final SunburstItem item = (SunburstItem)paramGUI.mControl.getModel().getItem(paramItem.getIndexToParent());
             for (int i = item.getDepth() + 1; i < paramGUI.mOldDepthMax + 1; i++) {
                 float radius = paramGUI.calcEqualAreaRadius(i, paramGUI.mDepthMax);
                 final float depthWeight = paramGUI.calcEqualAreaRadius(i + 1, paramGUI.mDepthMax) - radius;

@@ -32,6 +32,8 @@ import java.util.Calendar;
 
 import javax.xml.namespace.QName;
 
+import controlP5.ControlP5;
+
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IReadTransaction;
@@ -77,29 +79,19 @@ public final class ViewUtilities {
      * 
      * @param paramDb
      *            {@link ReadDB} instance
+     * @return {@link ReadDB} instance
+     * @throws AbsTTException 
+     *          if something went wrong while reading the newest revision
      */
-    public static void refreshResource(ReadDB paramDb) {
+    public static ReadDB refreshResource(final ReadDB paramDb) throws AbsTTException {
         assert paramDb != null;
-        long revision = 0;
-        try {
-            final IReadTransaction rtx =
-                paramDb.getDatabase().getSession(new SessionConfiguration()).beginReadTransaction();
-            revision = rtx.getRevisionNumber();
-            rtx.close();
-        } catch (final AbsTTException exc) {
-            exc.printStackTrace();
-        }
         final File file = ((FileDatabase)paramDb.getDatabase()).mFile;
         if (paramDb != null) {
             paramDb.close();
         }
-        try {
-            paramDb = new ReadDB(file, revision);
-        } catch (final AbsTTException e) {
-            e.printStackTrace();
-        }
+        return new ReadDB(file);
     }
-    
+
     /**
      * Format a timestamp.
      * 
@@ -107,5 +99,16 @@ public final class ViewUtilities {
      */
     public static String timestamp() {
         return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
+    }
+
+    /**
+     * Draw controlP5 GUI.
+     * 
+     * @param paramControlP5
+     *            {@link ControlP5} instance
+     */
+    public static void drawGUI(final ControlP5 paramControlP5) {
+        paramControlP5.show();
+        paramControlP5.draw();
     }
 }

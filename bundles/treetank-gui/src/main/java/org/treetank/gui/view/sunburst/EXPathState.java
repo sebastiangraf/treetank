@@ -90,6 +90,8 @@ public enum EXPathState {
      *             {@link PGraphics} instance for recording PDFs
      * @param paramColor
      *            the color to use
+     * @param paramHover 
+     *            determines if current item should be hovered or not
      */
     public abstract void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, final int paramColor, final EHover paramHover);
 }

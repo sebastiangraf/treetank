@@ -1,12 +1,39 @@
 /**
- * 
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the University of Konstanz nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.treetank.gui.controls;
 
 import java.awt.event.*;
 import java.util.EventListener;
 
+import controlP5.ControlEvent;
+import controlP5.ControlListener;
+
 import org.treetank.gui.view.IVisualItem;
+import org.treetank.gui.view.model.IModel;
 
 /**
  * Listener interface for processing user interface events on a Display.
@@ -14,7 +41,7 @@ import org.treetank.gui.view.IVisualItem;
  * @author Johannes Lichtenberger, University of Konstanz
  */
 public interface IControl extends EventListener, MouseListener, MouseMotionListener, MouseWheelListener,
-    KeyListener {
+    KeyListener, ControlListener {
     /** Represents the use of the left mouse button */
     public static final int LEFT_MOUSE_BUTTON = InputEvent.BUTTON1_MASK;
     /** Represents the use of the middle mouse button */
@@ -224,14 +251,14 @@ public interface IControl extends EventListener, MouseListener, MouseMotionListe
      */
     @Override
     public void keyReleased(KeyEvent paramEvent);
-    
-    /** 
+
+    /**
      * Invoked when a key has been pressed (for processing), while the mouse is NOT
      * over a VisualItem.
      */
     public void keyPressed();
-    
-    /** 
+
+    /**
      * Invoked when a key has been released (for processing), while the mouse is NOT
      * over a VisualItem.
      */
@@ -243,4 +270,15 @@ public interface IControl extends EventListener, MouseListener, MouseMotionListe
      */
     @Override
     public void keyTyped(KeyEvent paramEvent);
+
+    /** {@inheritDoc} */
+    @Override
+    public void controlEvent(ControlEvent paramControlEvent);
+
+    /**
+     * Get model.
+     * 
+     * @return Model associated with the Controller
+     */
+    public IModel getModel();
 }

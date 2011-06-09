@@ -40,8 +40,8 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
-import org.treetank.gui.view.sunburst.model.AbsModel;
-import org.treetank.gui.view.sunburst.model.IModel;
+import org.treetank.gui.view.model.AbsModel;
+import org.treetank.gui.view.model.IModel;
 
 import processing.core.PApplet;
 

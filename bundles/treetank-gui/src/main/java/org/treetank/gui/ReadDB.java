@@ -65,6 +65,18 @@ public final class ReadDB {
      * 
      * @param paramFile
      *            The {@link File} to open.
+     * @throws AbsTTException
+     *             if anything went wrong while opening a file
+     */
+    public ReadDB(final File paramFile) throws AbsTTException {
+        this(paramFile, -1, 0);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param paramFile
+     *            The {@link File} to open.
      * @param paramRevision
      *            The revision to open.
      * @throws AbsTTException
@@ -88,10 +100,20 @@ public final class ReadDB {
      */
     public ReadDB(final File paramFile, final long paramRevision, final long paramNodekeyToStart)
         throws AbsTTException {
+        assert paramFile != null;
+        assert paramRevision >= -1;
+        assert paramNodekeyToStart >= 0;
+
         // Initialize database.
         mDatabase = FileDatabase.openDatabase(paramFile);
         mSession = mDatabase.getSession(new SessionConfiguration());
-        mRtx = mSession.beginReadTransaction(paramRevision);
+
+        if (paramRevision == -1) {
+            // Open newest revision.
+            mRtx = mSession.beginReadTransaction();
+        } else {
+            mRtx = mSession.beginReadTransaction(paramRevision);
+        }
         mRtx.moveTo(paramNodekeyToStart);
         mRevision = mRtx.getRevisionNumber();
     }
@@ -153,4 +175,17 @@ public final class ReadDB {
             exc.printStackTrace();
         }
     }
+//
+//    /**
+//     * Close current {@link IReadTransaction} and open {@link IReadTransaction} on newest revision.
+//     */
+//    public void refreshRtx() {
+//        try {
+//            mRtx.close();
+//            mRtx = mSession.beginReadTransaction();
+//            mRevision = mRtx.getRevisionNumber();
+//        } catch (final AbsTTException exc) {
+//            exc.printStackTrace();
+//        }
+//    }
 }

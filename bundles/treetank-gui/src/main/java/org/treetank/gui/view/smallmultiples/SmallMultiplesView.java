@@ -27,19 +27,31 @@
 
 package org.treetank.gui.view.smallmultiples;
 
+import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.gui.GUI;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
 import org.treetank.gui.view.IVisualItem;
+import org.treetank.gui.view.ProcessingEmbeddedView;
 import org.treetank.gui.view.ViewNotifier;
+import org.treetank.gui.view.sunburst.SunburstControl;
+import org.treetank.gui.view.sunburst.model.SunburstModel;
 import org.treetank.utils.LogWrapper;
+
+import processing.core.PApplet;
+import processing.core.PConstants;
 
 /**
  * @author Johannes Lichtenberger, University of Konstanz
@@ -55,8 +67,8 @@ public class SmallMultiplesView extends JScrollPane implements IView {
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SmallMultiplesView.class));
 
-    /** Name of the sunburst view. */
-    private static final String NAME = "OverView";
+    /** Name of the view. */
+    private static final String NAME = "SmallMultiplesView";
 
     /** {@link SunburstView} instance. */
     private static SmallMultiplesView mView;
@@ -69,6 +81,8 @@ public class SmallMultiplesView extends JScrollPane implements IView {
     
     /** {@link GUI} reference. */
     private final GUI mGUI;
+
+    private Embedded mEmbed;
     
     /**
      * Constructor.
@@ -77,6 +91,7 @@ public class SmallMultiplesView extends JScrollPane implements IView {
      *            {@link ViewNotifier} instance.
      */
     private SmallMultiplesView(final ViewNotifier paramNotifier) {
+        assert paramNotifier != null;
         mNotifier = paramNotifier;
 
         // Add view to notifier.
@@ -86,7 +101,41 @@ public class SmallMultiplesView extends JScrollPane implements IView {
         mGUI = mNotifier.getGUI();
 
         // Simple scroll mode, because we are adding a heavyweight component (PApplet to the JScrollPane).
-        // getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        // Create instance of processing innerclass.
+        mEmbed = new Embedded(this, mNotifier);
+
+        mGUI.addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                updateWindowSize();
+            }
+        });
+
+        mGUI.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(final ComponentEvent paramEvt) {
+                updateWindowSize();
+            }
+
+            @Override
+            public void componentHidden(final ComponentEvent paramEvt) {
+
+            }
+
+            @Override
+            public void componentMoved(final ComponentEvent paramEvt) {
+
+            }
+
+            @Override
+            public void componentShown(final ComponentEvent paramEvt) {
+
+            }
+        });
     }
 
     /**
@@ -102,6 +151,15 @@ public class SmallMultiplesView extends JScrollPane implements IView {
         }
 
         return mView;
+    }
+    
+    /** Update window size. */
+    void updateWindowSize() {
+        assert mEmbed != null;
+        assert mGUI != null;
+        final Dimension dim = mGUI.getSize();
+        getViewport().setSize(dim.width, dim.height - 42);
+        mEmbed.update();
     }
     
     /** {@inheritDoc} */
@@ -136,6 +194,126 @@ public class SmallMultiplesView extends JScrollPane implements IView {
     public JComponent component() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    /** Embedded processing view. */
+    final class Embedded extends PApplet {
+
+        /**
+         * Serial UID.
+         */
+        private static final long serialVersionUID = 1L;
+
+        /** The Treetank {@link SunburstModel}. */
+        private transient SmallMultiplesModel mModel;
+
+        private transient ProcessingEmbeddedView mEmbeddedView;
+
+        private final IView mView;
+
+        private final ViewNotifier mViewNotifier;
+        
+        private transient SmallMultiplesControl mControl;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramView
+         * @param paramViewNotifier
+         */
+        public Embedded(final IView paramView, final ViewNotifier paramViewNotifier) {
+            assert paramView != null;
+            assert paramViewNotifier != null;
+            mView = paramView;
+            mViewNotifier = paramViewNotifier;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void setup() {
+            size(mViewNotifier.getGUI().getSize().width, mViewNotifier.getGUI().getSize().height - 42,
+                PConstants.JAVA2D);
+        }
+
+        /** Setup processing view. */
+        public void refreshInit() {
+            // Initialization with no draw() loop.
+            noLoop();
+
+            // Frame rate reduced to 30.
+            frameRate(30);
+
+            // Create Model.
+            mModel = new SmallMultiplesModel(this, mDB);
+
+            // Create Controller.
+            mControl = SmallMultiplesControl.getInstance(this, mModel, mDB);
+
+            // Use embedded view.
+            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.mGUI, mControl, mViewNotifier);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void draw() {
+            if (mEmbeddedView != null) {
+                mEmbeddedView.draw();
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void mouseEntered(final MouseEvent paramEvent) {
+            if (mEmbeddedView != null) {
+                mEmbeddedView.mouseEntered(paramEvent);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void mouseExited(final MouseEvent paramEvent) {
+            if (mEmbeddedView != null) {
+                mEmbeddedView.mouseExited(paramEvent);
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void keyReleased() {
+            if (mEmbeddedView != null) {
+                mEmbeddedView.keyReleased();
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void mousePressed(final MouseEvent paramEvent) {
+            if (mEmbeddedView != null) {
+                mEmbeddedView.mousePressed(paramEvent);
+            }
+        }
+
+        /** Refresh. */
+        void refreshUpdate() {
+            mControl.refreshUpdate();
+            mEmbeddedView.handleHLWeight();
+        }
+
+        /** Refresh. Thus Treetank storage has been updated to a new revision. */
+        void refresh() {
+            mNotifier.update();
+        }
+
+        /** Update Processing GUI. */
+        void update() {
+            if (mEmbeddedView != null) {
+                mEmbeddedView.updateGUI();
+            }
+        }
+        
+        SmallMultiplesControl getController() {
+            return mControl;
+        }
     }
 
     /* (non-Javadoc)

@@ -25,10 +25,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst.model;
+package org.treetank.gui.view.model;
 
+import java.beans.PropertyChangeListener;
+import java.util.Iterator;
 import java.util.List;
 
+import org.treetank.exception.AbsTTException;
+import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.sunburst.SunburstContainer;
 import org.treetank.gui.view.sunburst.SunburstItem;
 import org.treetank.gui.view.sunburst.SunburstView;
@@ -40,11 +45,12 @@ import processing.core.PApplet;
  * Interface which models of the {@link SunburstView} have to implement.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
+ * @param <T>
  * 
  */
-public interface IModel extends Iterable<SunburstItem> {
+public interface IModel<T extends IVisualItem> extends Iterable<T>, Iterator<T>, PropertyChangeListener {
     /**
-     * Get the {@link SunburstItem} at the specified index.
+     * Get the {@link IVisualItem} implementation at the specified index.
      * 
      * @param paramIndex
      *            the index
@@ -52,15 +58,15 @@ public interface IModel extends Iterable<SunburstItem> {
      * @throws IndexOutOfBoundsException
      *             if index > mItems.size() - 1 or < 0
      */
-    SunburstItem getItem(final int paramIndex) throws IndexOutOfBoundsException;
+    T getItem(final int paramIndex) throws IndexOutOfBoundsException;
 
     /**
      * Traverse the tree and create a {@link List} of {@link SunburstItem}s.
      * 
      * @param paramContainer
-     *            {@link container} reference with options
+     *            {@link IContainer} implementation with options
      */
-    void traverseTree(final SunburstContainer paramContainer);
+    void traverseTree(final IContainer paramContainer);
 
     /** Undo operation. */
     void undo();
@@ -69,9 +75,9 @@ public interface IModel extends Iterable<SunburstItem> {
      * Update root of the tree with the node currently clicked.
      * 
      * @param paramContainer
-     *            {@link container} reference with options
+     *            {@link IContainer} reference with options
      */
-    void update(final SunburstContainer paramContainer);
+    void update(final IContainer paramContainer);
 
     /**
      * XPath evaluation.
@@ -88,4 +94,43 @@ public interface IModel extends Iterable<SunburstItem> {
      *            determines how to insert an XMl fragment
      */
     void setInsert(final EShredderInsert paramInsert);
+
+    /**
+     * Update {@link ReadDB} instance.
+     * 
+     * @param paramDB
+     *            new {@link ReadDB} instance
+     * @param paramContainer
+     *            {@link IContainer} instance
+     */
+    void updateDb(final ReadDB paramDB, final IContainer paramContainer);
+
+    /**
+     * Add a {@link PropertyChangeListener}.
+     * 
+     * @param paramListener
+     *            the listener to add
+     */
+    void addPropertyChangeListener(final PropertyChangeListener paramListener);
+
+    /**
+     * Remove a {@link PropertyChangeListener}.
+     * 
+     * @param paramListener
+     *            the listener to remove
+     */
+    void removePropertyChangeListener(final PropertyChangeListener paramListener);
+
+    /**
+     * Fire a property change.
+     * 
+     * @param paramPropertyName
+     *            name of the property
+     * @param paramOldValue
+     *            old value
+     * @param paramNewValue
+     *            new value
+     */
+    void firePropertyChange(final String paramPropertyName, final Object paramOldValue,
+        final Object paramNewValue);
 }

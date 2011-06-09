@@ -48,7 +48,6 @@ import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.controls.IControl;
 import org.treetank.gui.view.*;
-import org.treetank.gui.view.sunburst.model.IModel;
 import org.treetank.gui.view.sunburst.model.SunburstModel;
 
 import processing.core.PApplet;
@@ -96,6 +95,7 @@ public final class SunburstView extends JScrollPane implements IView {
      *            {@link ViewNotifier} instance.
      */
     private SunburstView(final ViewNotifier paramNotifier) {
+        assert paramNotifier != null;
         mNotifier = paramNotifier;
 
         // Add view to notifier.
@@ -222,7 +222,11 @@ public final class SunburstView extends JScrollPane implements IView {
      */
     @Override
     public void refreshUpdate() {
-        ViewUtilities.refreshResource(mDB);
+        try {
+            mDB = ViewUtilities.refreshResource(mDB);
+        } catch (final AbsTTException e) {
+            e.printStackTrace();
+        }
         mEmbed.refreshUpdate();
     }
 
@@ -302,7 +306,7 @@ public final class SunburstView extends JScrollPane implements IView {
             mControl = SunburstControl.getInstance(this, mModel, mDB);
 
             // Use embedded view.
-            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.mGUI, mControl, mViewNotifier);
+            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.getGUI(), mControl, mViewNotifier);
         }
 
         /** {@inheritDoc} */
@@ -347,7 +351,7 @@ public final class SunburstView extends JScrollPane implements IView {
 
         /** Refresh. */
         void refreshUpdate() {
-            mControl.refreshUpdate();
+            mControl.refreshUpdate(mDB);
             mEmbeddedView.handleHLWeight();
         }
 

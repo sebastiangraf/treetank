@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst.model;
+package org.treetank.gui.view.model;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

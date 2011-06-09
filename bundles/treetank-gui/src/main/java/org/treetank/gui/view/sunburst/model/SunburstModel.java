@@ -54,6 +54,11 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.AbsObservableComponent;
+import org.treetank.gui.view.model.AbsModel;
+import org.treetank.gui.view.model.IChangeModel;
+import org.treetank.gui.view.model.IContainer;
+import org.treetank.gui.view.model.ITraverseModel;
 import org.treetank.gui.view.sunburst.*;
 import org.treetank.gui.view.sunburst.SunburstItem.Builder;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
@@ -79,7 +84,7 @@ import processing.core.PConstants;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SunburstModel extends AbsModel implements Iterator<SunburstItem>, PropertyChangeListener {
+public final class SunburstModel extends AbsModel<SunburstItem> implements IChangeModel {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));
@@ -101,7 +106,7 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
 
     /** {@inheritDoc} */
     @Override
-    public void update(final SunburstContainer paramContainer) {
+    public void update(final IContainer paramContainer) {
         mLastItems.push(new ArrayList<SunburstItem>(mItems));
         mLastDepths.push(mLastMaxDepth);
         traverseTree(paramContainer);
@@ -109,11 +114,13 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
 
     /** {@inheritDoc} */
     @Override
-    public void traverseTree(final SunburstContainer paramContainer) {
-        assert paramContainer.mKey >= 0;
+    public void traverseTree(final IContainer paramContainer) {
+        assert paramContainer != null;
+        final SunburstContainer container = (SunburstContainer)paramContainer;
+        assert container.mKey >= 0;
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         try {
-            executor.submit(new TraverseTree(paramContainer.mKey, paramContainer.mPruning, this));
+            executor.submit(new TraverseTree(container.mKey, container.mPruning, this));
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
@@ -121,7 +128,7 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
     }
 
     /** Traverse a tree (single revision). */
-    private static final class TraverseTree extends AbsComponent implements Callable<Void>,
+    private static final class TraverseTree extends AbsObservableComponent implements Callable<Void>,
         ITraverseModel {
         /** Key from which to start traversal. */
         private transient long mKey;
@@ -161,7 +168,7 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
 
         /** Determines if tree should be pruned or not. */
         private transient EPruning mPruning;
-        
+
         /** Determines if current item has been pruned or not. */
         private transient boolean mPruned;
 
@@ -183,11 +190,11 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
             mModel = paramModel;
             addPropertyChangeListener(mModel);
             mPruning = paramPruning;
-            mDb = mModel.mDb;
+            mDb = mModel.getDb();
 
-            mRtx = mModel.mDb.getSession().beginReadTransaction(mModel.mDb.getRevisionNumber());
+            mRtx = mModel.getDb().getSession().beginReadTransaction(mModel.getDb().getRevisionNumber());
             mRtx.moveTo(mKey);
-            mParent = mModel.mParent;
+            mParent = mModel.getParent();
             mRelations = new NodeRelations();
             mItems = new LinkedList<SunburstItem>();
         }
@@ -243,7 +250,7 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
             float childExtension = 2 * PConstants.PI;
             if (indexToParent > -1) {
                 childExtension = extension * (float)descendantCount / ((float)parDescendantCount - 1f);
-            } 
+            }
             LOGWRAPPER.debug("ITEM: " + paramIndex);
             LOGWRAPPER.debug("descendantCount: " + descendantCount);
             LOGWRAPPER.debug("parentDescCount: " + parDescendantCount);
@@ -258,7 +265,7 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
                 mRelations.setAll(depth, structKind, mRtx.getValueOfCurrentNode().length(), mMinTextLength,
                     mMaxTextLength, indexToParent);
                 text = mRtx.getValueOfCurrentNode();
-//                LOGWRAPPER.debug("text: " + text);
+                // LOGWRAPPER.debug("text: " + text);
             } else {
                 mRelations.setAll(depth, structKind, descendantCount, 0, mMaxDescendantCount, indexToParent);
             }
@@ -268,7 +275,7 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
                 mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
                     .setNode(node).setText(text).build());
             } else {
-//                LOGWRAPPER.debug("QName: " + mRtx.getQNameOfCurrentNode());
+                // LOGWRAPPER.debug("QName: " + mRtx.getQNameOfCurrentNode());
                 mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
                     .setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
             }
@@ -278,7 +285,7 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
 
             return childExtension;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public int getMaxDescendantCount() {
@@ -431,9 +438,9 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
                         }
                     }
                     mModel.shutdown(executor);
-//                    for (Future<Integer> future : descendants) {
-//                        System.out.println(future.isDone());
-//                    }
+                    // for (Future<Integer> future : descendants) {
+                    // System.out.println(future.isDone());
+                    // }
                     break;
                 }
                 rtx.close();
@@ -519,9 +526,9 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
                 assert !paramSession.isClosed();
                 assert paramRevision >= 0;
                 try {
-//                    synchronized (paramSession) {
-                        mRtx = paramSession.beginReadTransaction(paramRevision);
-//                    }
+                    // synchronized (paramSession) {
+                    mRtx = paramSession.beginReadTransaction(paramRevision);
+                    // }
                 } catch (final TTIOException e) {
                     LOGWRAPPER.error(e.getMessage(), e);
                 } catch (final AbsTTException e) {
@@ -547,36 +554,46 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
     /**
      * Shredder XML fragment input.
      * 
-     * @param paramTextBytes
+     * @param paramFragment
      *            XML fragment to shredder (might be text as well)
+     * @throws AbsTTException
+     *             if shredding in treetank fails
+     * @throws XMLStreamException
+     *             if parser can't parse the XML fragment
      */
-    public void shredder(final String paramText) throws AbsTTException, XMLStreamException {
-        try {
-            if (paramText.startsWith("<")) {
-                final XMLEventReader reader =
-                    XMLInputFactory.newInstance().createXMLEventReader(
-                        new ByteArrayInputStream(paramText.getBytes()));
-                final ExecutorService service = Executors.newSingleThreadExecutor();
-                service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.NOCOMMIT));
-                service.shutdown();
-                service.awaitTermination(60, TimeUnit.SECONDS);
-            } else {
-                switch (mInsert) {
-                case ADDASFIRSTCHILD:
-                    mWtx.insertTextAsFirstChild(paramText);
-                    break;
-                case ADDASRIGHTSIBLING:
-                    mWtx.insertTextAsRightSibling(paramText);
+    public void addXMLFragment(final String paramFragment) throws AbsTTException, XMLStreamException {
+        if (!paramFragment.isEmpty()) {
+            try {
+                if (paramFragment.startsWith("<")) {
+                    final XMLEventReader reader =
+                        XMLInputFactory.newInstance().createXMLEventReader(
+                            new ByteArrayInputStream(paramFragment.getBytes()));
+                    final ExecutorService service = Executors.newSingleThreadExecutor();
+                    service.submit(new XMLShredder(mWtx, reader, mInsert, EShredderCommit.NOCOMMIT));
+                    service.shutdown();
+                    service.awaitTermination(60, TimeUnit.SECONDS);
+                } else {
+                    switch (mInsert) {
+                    case ADDASFIRSTCHILD:
+                        mWtx.insertTextAsFirstChild(paramFragment);
+                        break;
+                    case ADDASRIGHTSIBLING:
+                        mWtx.insertTextAsRightSibling(paramFragment);
+                    }
                 }
+            } catch (final InterruptedException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
             }
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
         }
     }
 
     /**
      * Commit changes.
+     * 
+     * @throws AbsTTException
+     *             if commiting or closeing transaction fails
      */
+    @Override
     public void commit() throws AbsTTException {
         mWtx.commit();
         mWtx.close();
@@ -591,14 +608,15 @@ public final class SunburstModel extends AbsModel implements Iterator<SunburstIt
      *            {@link ControlGroup} to insert XML fragment
      * @param paramHitTestIndex
      *            the index of the {@link SunburstItem} which is currently hovered
+     * @throws AbsTTException
      */
-    public void popupMenu(final MouseEvent paramEvent, final ControlGroup paramCtrl, final int paramHitTestIndex)
-        throws AbsTTException {
+    public void popupMenu(final MouseEvent paramEvent, final ControlGroup paramCtrl,
+        final int paramHitTestIndex) throws AbsTTException {
         if (mWtx == null || mWtx.isClosed()) {
-            mWtx = mDb.getSession().beginWriteTransaction();
-            mWtx.revertTo(mDb.getRevisionNumber());
+            mWtx = getDb().getSession().beginWriteTransaction();
+            mWtx.revertTo(getDb().getRevisionNumber());
         }
-        mWtx.moveTo(getItem(paramHitTestIndex).getNode().getNodeKey());
+        mWtx.moveTo(((SunburstItem)getItem(paramHitTestIndex)).getNode().getNodeKey());
         final SunburstPopupMenu menu = SunburstPopupMenu.getInstance(this, mWtx, paramCtrl);
         menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
     }

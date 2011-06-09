@@ -63,7 +63,7 @@ interface IGUICommand {
     /**
      * Returns if view is selected.
      * 
-     * @return if view is selected
+     * @return true if view is selected, false otherwise
      */
     boolean selected();
 }

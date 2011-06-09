@@ -32,6 +32,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -57,11 +58,15 @@ import org.gicentre.utils.move.ZoomPanListener;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.controls.IControl;
 import org.treetank.gui.view.IProcessingGUI;
+import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
-import org.treetank.gui.view.sunburst.model.AbsModel;
+import org.treetank.gui.view.model.AbsModel;
+import org.treetank.gui.view.model.IModel;
+import org.treetank.gui.view.sunburst.control.ISunburstControl;
 import org.treetank.gui.view.sunburst.model.SunburstCompareModel;
 import org.treetank.gui.view.sunburst.model.SunburstModel;
 
@@ -81,7 +86,7 @@ import processing.core.PVector;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
+public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListener {
 
     /**
      * Serial version UID.
@@ -94,77 +99,8 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
     /** The GUI of the Sunburst view. */
     private static volatile SunburstGUI mGUI;
 
-    /** Hue start value. */
-    transient float mHueStart = 323;
-
-    /** Hue end value. */
-    transient float mHueEnd = 273;
-
-    /** Saturation start value. */
-    transient float mSaturationStart = 100;
-
-    /** Saturation end value. */
-    transient float mSaturationEnd = 73;
-
-    /** Brightness start value. */
-    transient float mBrightnessStart = 77;
-
-    /** Brightness end value. */
-    transient float mBrightnessEnd = 33;
-
-    /** Inner node brightness start value. */
-    transient float mInnerNodeBrightnessStart = 90;
-
-    /** Inner node brightness end value. */
-    transient float mInnerNodeBrightnessEnd = 20;
-
-    /** Inner node stroke brightness start value. */
-    transient float mInnerNodeStrokeBrightnessStart = 90;
-
-    /** Inner node stroke brightness end value. */
-    transient float mInnerNodeStrokeBrightnessEnd = 20;
-
-    /** Inner node arc scale. */
-    transient float mInnerNodeArcScale = 0.9f;
-
-    /** Modification weight. */
-    transient float mModificationWeight = 0.7f;
-
-    /** Stroke weight start. */
-    transient float mStrokeWeightStart = 0.2f;
-
-    /** Stroke weight end. */
-    transient float mStrokeWeightEnd = 4.0f;
-
-    /** Dot size. */
-    transient float mDotSize = 3f;
-
-    /** Dot brightness. */
-    transient float mDotBrightness = 80f;
-
-    /** Show arcs. */
-    transient boolean mShowArcs = true;
-
-    /** Maximum depth in the tree. */
-    volatile int mDepthMax;
-
-    /** Determines if arcs should be used (Default: true). */
-    transient boolean mUseArc = true;
-
     /** Determines if diff view is used. */
     transient boolean mUseDiffView;
-
-    /** Determines if bezier lines for connections between parent/child should be used (Default: true). */
-    transient boolean mUseBezierLine = true;
-
-    /** Determines if line connextions between parent/child should be drawn. */
-    transient boolean mShowLines = true;
-
-    /** Buffered image. */
-    transient PGraphics mBuffer;
-
-    /** Leaf node arc scale. */
-    transient float mLeafArcScale = 1.0f;
 
     /** Current angle of the mouse cursor to y axis. */
     transient float mAngle;
@@ -172,17 +108,11 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
     /** Current depth of the mouse cursor. */
     transient int mDepth;
 
-    /** {@link Sempahore} to block re-initializing sunburst item list until draw() is finished(). */
-    private volatile Semaphore mLock = new Semaphore(1);
-
     /** Determines if zooming or panning is resetted. */
     transient boolean mZoomPanReset;
 
     /** Image to draw. */
     private volatile PImage mImg;
-
-    /** Background brightness. */
-    transient float mBackgroundBrightness = 100f;
 
     /** Color mapping mode. */
     transient int mMappingMode = 3;
@@ -193,35 +123,17 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
     /** Determines if current state should be saved as a PDF-file. */
     transient boolean mSavePDF;
 
-    /** Zoom into or out. */
-    volatile ZoomPan mZoomer;
-
     /** X position of the mouse cursor. */
     private transient float mX;
 
     /** Y position of the mouse cursor. */
     private transient float mY;
 
-    /** {@link ControlP5} reference. */
-    transient ControlP5 mControlP5;
-
     /** Determines if SunburstGUI interface should be shown. */
     transient boolean mShowGUI;
 
-    /** {@link ControlP5} sliders. */
-    private transient List<Slider> mSliders;
-
-    /** {@link ControlP5} ranges. */
-    private transient List<Range> mRanges;
-
-    /** {@link ControlP5} toggles. */
-    private transient List<Toggle> mToggles;
-
     /** {@link ControlP5} text field. */
     transient Textfield mXPathField;
-
-    /** Parent {@link PApplet}. */
-    final Embedded mParent;
 
     /** Determines if model has done the work. */
     volatile boolean mDone;
@@ -231,9 +143,6 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
 
     /** Hit test index. */
     transient int mHitTestIndex = -1;
-
-    /** {@link ReadDB} reference. */
-    volatile ReadDB mDb;
 
     /** {@link DropdownList} of available revisions, which are newer than the currently opened revision. */
     volatile DropdownList mRevisions;
@@ -259,27 +168,20 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
     /** Determines if GUI has been initialized. */
     transient boolean mInitialized;
 
-    transient int mRad;
-
     transient boolean mRadChanged;
-    
-    final SunburstControl mControl;
 
     /**
      * Private constructor.
      * 
-     * @param paramParentApplet
+     * @param paramApplet
      *            parent processing applet
      * @param paramReadDB
      *            read database
      */
-    private SunburstGUI(final PApplet paramParentApplet, final SunburstControl paramControl, final ReadDB paramReadDB) {
+    private SunburstGUI(final PApplet paramApplet, final ISunburstControl paramControl,
+        final ReadDB paramReadDB) {
+        super(paramApplet, paramControl, paramReadDB);
         mDb = paramReadDB;
-        mControl = paramControl;
-        mParent = (Embedded)paramParentApplet;
-        mZoomer = new ZoomPan(paramParentApplet);
-        mZoomer.setMouseMask(PConstants.CONTROL);
-        mZoomer.addZoomPanListener(new MyListener());
     }
 
     /**
@@ -288,11 +190,14 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
      * 
      * @param paramParentApplet
      *            parent processing applet
+     * @param paramControl
+     *            associated controller
      * @param paramReadDB
      *            read database
      * @return a {@link SunburstGUI} singleton
      */
-    static SunburstGUI getInstance(final PApplet paramParentApplet, final SunburstControl paramControl, final ReadDB paramReadDB) {
+    public static SunburstGUI getInstance(final PApplet paramParentApplet,
+        final ISunburstControl paramControl, final ReadDB paramReadDB) {
         if (mGUI == null) {
             synchronized (SunburstGUI.class) {
                 if (mGUI == null) {
@@ -304,8 +209,9 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
         return mGUI;
     }
 
-    /** Initial setup of the GUI. */
-    void setupGUI() {
+    /** {@inheritDoc} */
+    @Override
+    protected void setupGUI() {
         mParent.smooth();
         mParent.background(255f);
 
@@ -313,12 +219,11 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
             + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
 
         final int activeColor = mParent.color(0, 130, 164);
-        mControlP5 = new ControlP5(mParent);
-        mControlP5.setColorActive(activeColor);
-        mControlP5.setColorBackground(mParent.color(170));
-        mControlP5.setColorForeground(mParent.color(50));
-        mControlP5.setColorLabel(mParent.color(50));
-        mControlP5.setColorValue(mParent.color(255));
+        getControlP5().setColorActive(activeColor);
+        getControlP5().setColorBackground(mParent.color(170));
+        getControlP5().setColorForeground(mParent.color(50));
+        getControlP5().setColorLabel(mParent.color(50));
+        getControlP5().setColorValue(mParent.color(255));
 
         mSliders = new LinkedList<Slider>();
         mRanges = new LinkedList<Range>();
@@ -333,67 +238,67 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
         int ti = 0;
         int posY = 0;
 
-        mRanges.add(ri++, mControlP5.addRange("leaf node hue range", 0, 360, mHueStart, mHueEnd, left, top
+        mRanges.add(ri++, getControlP5().addRange("leaf node hue range", 0, 360, getHueStart(), mHueEnd, left, top
             + posY + 0, len, 15));
-        mRanges.add(ri++, mControlP5.addRange("leaf node saturation range", 0, 100, mSaturationStart,
-            mSaturationEnd, left, top + posY + 20, len, 15));
-        mRanges.add(ri++, mControlP5.addRange("leaf node brightness range", 0, 100, mBrightnessStart,
-            mBrightnessEnd, left, top + posY + 40, len, 15));
+        mRanges.add(ri++, getControlP5().addRange("leaf node saturation range", 0, 100, getSaturationStart(),
+            getSaturationEnd(), left, top + posY + 20, len, 15));
+        mRanges.add(ri++, getControlP5().addRange("leaf node brightness range", 0, 100, getBrightnessStart(),
+            getBrightnessEnd(), left, top + posY + 40, len, 15));
         posY += 70;
 
-        mRanges.add(ri++, mControlP5.addRange("inner node brightness range", 0, 100,
-            mInnerNodeBrightnessStart, mInnerNodeBrightnessEnd, left, top + posY + 0, len, 15));
-        mRanges.add(ri++, mControlP5.addRange("inner node stroke brightness range", 0, 100,
-            mInnerNodeStrokeBrightnessStart, mInnerNodeStrokeBrightnessEnd, left, top + posY + 20, len, 15));
+        mRanges.add(ri++, getControlP5().addRange("inner node brightness range", 0, 100,
+            getInnerNodeBrightnessStart(), getInnerNodeBrightnessEnd(), left, top + posY + 0, len, 15));
+        mRanges.add(ri++, getControlP5().addRange("inner node stroke brightness range", 0, 100,
+            getInnerNodeStrokeBrightnessStart(), getInnerNodeStrokeBrightnessEnd(), left, top + posY + 20, len, 15));
         posY += 50;
 
         // name, minimum, maximum, default value (float), x, y, width, height
-        mSliders.add(si, mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
+        mSliders.add(si, getControlP5().addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
             + posY + 0, len, 15));
         mSliders.get(si++).setLabel("innerNodeArcScale");
         mSliders.add(si,
-            mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
+            getControlP5().addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
         mSliders.get(si++).setLabel("leafNodeArcScale");
         posY += 50;
-        mSliders.add(si, mControlP5.addSlider("mModificationWeight", 0, 1, mModificationWeight, left, top
+        mSliders.add(si, getControlP5().addSlider("mModificationWeight", 0, 1, mModificationWeight, left, top
             + posY + 0, len, 15));
         mSliders.get(si++).setLabel("modification weight");
         posY += 50;
 
         mRanges.add(
             ri++,
-            mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart, mStrokeWeightEnd, left, top
+            getControlP5().addRange("stroke weight range", 0, 10, getStrokeWeightStart(), getStrokeWeightEnd(), left, top
                 + posY + 0, len, 15));
         posY += 30;
 
-        mSliders.add(si, mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
+        mSliders.add(si, getControlP5().addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
         mSliders.get(si++).setLabel("dotSize");
         mSliders.add(si,
-            mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15));
+            getControlP5().addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15));
         mSliders.get(si++).setLabel("dotBrightness");
         posY += 50;
 
-        mSliders.add(si, mControlP5.addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left,
+        mSliders.add(si, getControlP5().addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left,
             top + posY + 0, len, 15));
         mSliders.get(si++).setLabel("backgroundBrightness");
         posY += 50;
 
-        mToggles.add(ti, mControlP5.addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15));
+        mToggles.add(ti, getControlP5().addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15));
         mToggles.get(ti++).setLabel("show Arcs");
-        mToggles.add(ti, mControlP5.addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
+        mToggles.add(ti, getControlP5().addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
         mToggles.get(ti++).setLabel("show Lines");
         mToggles.add(ti,
-            mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15));
+            getControlP5().addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15));
         mToggles.get(ti++).setLabel("Bezier / Line");
-        mToggles.add(ti, mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
+        mToggles.add(ti, getControlP5().addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
         mToggles.get(ti++).setLabel("Arc / Rect");
-        mToggles.add(ti, mControlP5.addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
+        mToggles.add(ti, getControlP5().addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
         mToggles.get(ti++).setLabel("Fisheye lense");
         mToggles
-            .add(ti, mControlP5.addToggle("mUsePruning", mUsePruning, left + 0, top + posY + 100, 15, 15));
+            .add(ti, getControlP5().addToggle("mUsePruning", mUsePruning, left + 0, top + posY + 100, 15, 15));
         mToggles.get(ti++).setLabel("Pruning");
 
-        mXPathField = mControlP5.addTextfield("xpath", mParent.width - 250, top + 20, 200, 20);
+        mXPathField = getControlP5().addTextfield("xpath", mParent.width - 250, top + 20, 200, 20);
         mXPathField.setLabel("XPath expression");
         mXPathField.setFocus(false);
         mXPathField.setAutoClear(false);
@@ -402,92 +307,26 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
         mXPathField.plugTo(this);
 
         // Add textfield for XML fragment input.
-        mCtrl = mControlP5.addGroup("add XML fragment", 150, 25, 115);
+        mCtrl = getControlP5().addGroup("add XML fragment", 150, 25, 115);
         mCtrl.setVisible(false);
         mCtrl.close();
 
-        mTextArea = mControlP5.addTextfield("Add XML fragment", 0, 20, 400, 100);
+        mTextArea = getControlP5().addTextfield("Add XML fragment", 0, 20, 400, 100);
         mTextArea.setColorBackground(mParent.color(0)); // black
         mTextArea.setColorForeground(mParent.color(255)); // white
         mTextArea.setGroup(mCtrl);
 
-        final Button submit = mControlP5.addButton("submit", 20, 0, 140, 80, 19);
+        final Button submit = getControlP5().addButton("submit", 20, 0, 140, 80, 19);
         submit.plugTo(this);
         submit.setGroup(mCtrl);
-        final Button commit = mControlP5.addButton("commit", 20, 120, 140, 80, 19);
+        final Button commit = getControlP5().addButton("commit", 20, 120, 140, 80, 19);
         commit.plugTo(this);
         commit.setGroup(mCtrl);
-        final Button cancel = mControlP5.addButton("cancel", 20, 240, 140, 80, 19);
+        final Button cancel = getControlP5().addButton("cancel", 20, 240, 140, 80, 19);
         cancel.plugTo(this);
         cancel.setGroup(mCtrl);
-
+        
         style(si, ri, ti);
-    }
-
-    /**
-     * Style menu.
-     * 
-     * @param paramSi
-     *            Last slider index.
-     * @param paramRi
-     *            Last ranges index.
-     * @param paramTi
-     *            Last toggles index.
-     */
-    private void style(final int paramSi, final int paramRi, final int paramTi) {
-        final ControlGroup ctrl = mControlP5.addGroup("menu", 15, 25, 35);
-        ctrl.setColorLabel(mParent.color(255));
-        ctrl.close();
-
-        int i = 0;
-        for (final Slider slider : mSliders) {
-            slider.setGroup(ctrl);
-            slider.setId(i);
-            slider.captionLabel().toUpperCase(true);
-            slider.captionLabel().style().padding(4, 0, 1, 3);
-            slider.captionLabel().style().marginTop = -4;
-            slider.captionLabel().style().marginLeft = 0;
-            slider.captionLabel().style().marginRight = -14;
-            slider.captionLabel().setColorBackground(0x99ffffff);
-            slider.plugTo(this);
-            i++;
-        }
-
-        i = 0;
-        for (final Range range : mRanges) {
-            range.setGroup(ctrl);
-            range.setId(i);
-            range.captionLabel().toUpperCase(true);
-            range.captionLabel().style().padding(4, 0, 1, 3);
-            range.captionLabel().style().marginTop = -4;
-            range.captionLabel().setColorBackground(0x99ffffff);
-            range.plugTo(this);
-            i++;
-        }
-
-        i = 0;
-        for (final Toggle toggle : mToggles) {
-            toggle.setGroup(ctrl);
-            toggle.setId(i);
-            toggle.captionLabel().style().padding(4, 3, 1, 3);
-            toggle.captionLabel().style().marginTop = -19;
-            toggle.captionLabel().style().marginLeft = 18;
-            toggle.captionLabel().style().marginRight = 5;
-            toggle.captionLabel().setColorBackground(0x99ffffff);
-            toggle.plugTo(this);
-            i++;
-        }
-
-        mParent.colorMode(PConstants.HSB, 360, 100, 100);
-        mParent.textLeading(14);
-        mParent.textAlign(PConstants.LEFT, PConstants.TOP);
-        mParent.cursor(PConstants.CROSS);
-    }
-
-    /** Draw controlP5 GUI. */
-    private void drawGUI() {
-        mControlP5.show();
-        mControlP5.draw();
     }
 
     /**
@@ -495,15 +334,15 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
      */
     @Override
     public void draw() {
-        if (mControlP5 != null) {
+        if (getControlP5() != null) {
             mParent.pushMatrix();
 
-            if (mZoomer.isZooming() || mZoomer.isPanning()) {
+            if (getZoomer().isZooming() || getZoomer().isPanning()) {
                 mIsZoomingPanning = true;
             }
 
             // This enables zooming/panning.
-            mZoomer.transform();
+            getZoomer().transform();
 
             mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
             mParent.noFill();
@@ -620,19 +459,19 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
             }
 
             if (mShowArcs) {
-                mParent.fill(mHueStart, mSaturationStart, mBrightnessStart);
+                mParent.fill(getHueStart(), getSaturationStart(), getBrightnessStart());
                 mParent.rect(20f, mParent.height - 70f, 50, 17);
                 color();
                 mParent.text("-", 78, mParent.height - 70f);
-                mParent.fill(mHueEnd, mSaturationEnd, mBrightnessEnd);
+                mParent.fill(mHueEnd, getSaturationEnd(), getBrightnessEnd());
                 mParent.rect(90f, mParent.height - 70f, 50, 17);
                 color();
                 mParent.text("text length", 150f, mParent.height - 70f);
-                mParent.fill(0, 0, mInnerNodeBrightnessStart);
+                mParent.fill(0, 0, getInnerNodeBrightnessStart());
                 mParent.rect(20f, mParent.height - 50f, 50, 17);
                 color();
                 mParent.text("-", 78, mParent.height - 50f);
-                mParent.fill(0, 0, mInnerNodeBrightnessEnd);
+                mParent.fill(0, 0, getInnerNodeBrightnessEnd());
                 mParent.rect(90f, mParent.height - 50f, 50, 17);
                 color();
                 mParent.text("descendants per node", 150f, mParent.height - 50f);
@@ -645,7 +484,7 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
                 PApplet.println("saving to pdf – done");
             }
 
-            drawGUI();
+            ViewUtilities.drawGUI(getControlP5());
         }
     }
 
@@ -715,7 +554,7 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
     private void rolloverInit() {
         mHitTestIndex = -1;
 
-        final PVector mousePosition = mZoomer.getMouseCoord();
+        final PVector mousePosition = getZoomer().getMouseCoord();
         mX = mousePosition.x - mParent.width / 2;
         mY = mousePosition.y - mParent.height / 2;
 
@@ -826,7 +665,7 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
     public void update() {
         // LOGWRAPPER.debug("[update()]: Available permits: " + mLock.availablePermits());
         // LOGWRAPPER.debug("parent width: " + mParent.width + " parent height: " + mParent.height);
-        mZoomer.reset();
+        getZoomer().reset();
         mBuffer = mParent.createGraphics(mParent.width, mParent.height, PConstants.JAVA2D);
         mBuffer.beginDraw();
         updateBuffer();
@@ -869,41 +708,6 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
         mBuffer.popMatrix();
     }
 
-    /** Class for responding to the end of a zoom or pan action. */
-    private final class MyListener implements ZoomPanListener {
-        @Override
-        public void panEnded() {
-            // LOGWRAPPER.debug("Pan ended!");
-        }
-
-        @Override
-        public void zoomEnded() {
-            // LOGWRAPPER.debug("Zoom ended!");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void propertyChange(final PropertyChangeEvent paramEvent) {
-        if (paramEvent.getPropertyName().equals("maxDepth")) {
-            assert paramEvent.getNewValue() instanceof Integer;
-            mDepthMax = (Integer)paramEvent.getNewValue();
-
-            if (mUseDiffView) {
-                mDepthMax += 2;
-            }
-        } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
-            assert paramEvent.getNewValue() instanceof Integer;
-            mOldDepthMax = (Integer)paramEvent.getNewValue();
-            mUseDiffView = true;
-        } else if (paramEvent.getPropertyName().equals("done")) {
-            mDone = false;
-            update();
-            assert paramEvent.getNewValue() instanceof Boolean;
-            mDone = true;
-        }
-    }
-
     /**
      * Rollover test.
      * 
@@ -916,7 +720,10 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
 
         rolloverInit();
         int index = 0;
-        for (final SunburstItem item : mControl.mModel) {
+        @SuppressWarnings("unchecked")
+        final Iterable<SunburstItem> items = (Iterable<SunburstItem>)mControl.getModel();
+        for (final IVisualItem visualItem : items) {
+            final SunburstItem item = (SunburstItem)visualItem;
             // Hittest, which arc is the closest to the mouse.
             if (item.getDepth() == mDepth && mAngle > item.getAngleStart() + PApplet.radians(mRad)
                 && mAngle < item.getAngleEnd() + PApplet.radians(mRad)) {
@@ -931,18 +738,16 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
         return retVal;
     }
 
-    /**
-     * Draw items.
-     * 
-     * @param paramDraw
-     *            determines the drawing strategy
-     */
-    private void drawItems(final EDraw paramDraw) {
+    /** {@inheritDoc} */
+    @Override
+    void drawItems(final EDraw paramDraw) {
         if (!mShowArcs) {
             paramDraw.drawRings(this);
         }
 
-        for (final SunburstItem item : mControl.mModel) {
+        @SuppressWarnings("unchecked")
+        final Iterable<SunburstItem> items = (Iterable<SunburstItem>)mControl.getModel();
+        for (final SunburstItem item : items) {
             paramDraw.update(this, item);
 
             if (mUseDiffView) {
@@ -957,11 +762,11 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
             paramDraw.drawNewRevision(this);
             paramDraw.drawOldRevision(this);
 
-            for (final SunburstItem item : mControl.mModel) {
+            for (final SunburstItem item : items) {
                 paramDraw.drawRelation(this, item);
             }
 
-            for (final SunburstItem item : mControl.mModel) {
+            for (final SunburstItem item : items) {
                 paramDraw.drawDot(this, item);
             }
         }
@@ -1003,13 +808,24 @@ final class SunburstGUI implements IProcessingGUI, PropertyChangeListener {
         mControl.commit(paramValue);
     }
 
-    /**
-     * Set database instance.
-     * 
-     * @param paramDb
-     *            the {@link ReadDB} instance to set
-     */
-    void updateDb(final ReadDB paramDb) {
-        mDb = paramDb;
+    /** {@inheritDoc} */
+    @Override
+    public void propertyChange(final PropertyChangeEvent paramEvent) {
+        if (paramEvent.getPropertyName().equals("maxDepth")) {
+            assert paramEvent.getNewValue() instanceof Integer;
+            mDepthMax = (Integer)paramEvent.getNewValue();
+
+            if (mUseDiffView) {
+                mDepthMax += 2;
+            }
+        } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
+            assert paramEvent.getNewValue() instanceof Integer;
+            mOldDepthMax = (Integer)paramEvent.getNewValue();
+            mUseDiffView = true;
+        } else if (paramEvent.getPropertyName().equals("done")) {
+            update();
+            assert paramEvent.getNewValue() instanceof Boolean;
+            mDone = true;
+        }
     }
 }
