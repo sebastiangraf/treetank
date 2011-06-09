@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst;
+package org.treetank.gui.view;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -36,7 +36,7 @@ import java.beans.PropertyChangeSupport;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public abstract class AbsComponent {
+public abstract class AbsObservableComponent {
 
     /** {@link PropertyChangeSupport} to register listeners. */
     private final PropertyChangeSupport mPropertyChangeSupport;
@@ -44,7 +44,7 @@ public abstract class AbsComponent {
     /**
      * Constructor.
      */
-    public AbsComponent() {
+    public AbsObservableComponent() {
         mPropertyChangeSupport = new PropertyChangeSupport(this);
     }
 

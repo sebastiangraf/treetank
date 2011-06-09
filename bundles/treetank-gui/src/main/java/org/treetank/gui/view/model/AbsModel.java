@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.gui.view.sunburst.model;
+package org.treetank.gui.view.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,7 +46,8 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.gui.ReadDB;
-import org.treetank.gui.view.sunburst.AbsComponent;
+import org.treetank.gui.view.AbsObservableComponent;
+import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.sunburst.EXPathState;
 import org.treetank.gui.view.sunburst.SunburstContainer;
 import org.treetank.gui.view.sunburst.SunburstItem;
@@ -61,45 +62,46 @@ import processing.core.PApplet;
  * implementations.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
+ * @param <T>
  * 
  */
-public abstract class AbsModel extends AbsComponent implements IModel, Iterator<SunburstItem> {
+public abstract class AbsModel<T extends IVisualItem> extends AbsObservableComponent implements IModel<T> {
 
     /** {@link List} of {@link SunburstItem}s. */
-    transient List<SunburstItem> mItems;
+    protected transient List<T> mItems;
 
     /** The processing {@link PApplet} core library. */
-    public final PApplet mParent;
+    private final PApplet mParent;
 
     /** Treetank {@link IReadTransaction}. */
-    transient IReadTransaction mRtx;
+    protected transient IReadTransaction mRtx;
 
     /** Treetank {@link ISession}. */
-    transient ISession mSession;
+    protected transient ISession mSession;
 
     /** {@link ReadDB} instance. */
-    transient ReadDB mDb;
+    private transient ReadDB mDb;
 
     /** Index of the current {@link SunburstItem} for the iterator. */
     private transient int mIndex;
 
-    /** {@link Stack} with {@link List}s of {@link SunburstItem}s for undo operation. */
-    transient Stack<List<SunburstItem>> mLastItems;
+    /** {@link Stack} with {@link List}s of a {@link IVisualItem} implementation for undo operation. */
+    protected transient Stack<List<T>> mLastItems;
 
     /** {@link Stack} with depths for undo operation. */
-    transient Stack<Integer> mLastDepths;
+    protected transient Stack<Integer> mLastDepths;
 
     /** {@link Stack} with depths for undo operation. */
-    transient Stack<Integer> mLastOldDepths;
+    protected transient Stack<Integer> mLastOldDepths;
 
     /** The last maximum depth. */
-    transient int mLastMaxDepth;
+    protected transient int mLastMaxDepth;
 
     /** The last maximum depth in the old revision. */
-    transient int mLastOldMaxDepth;
+    protected transient int mLastOldMaxDepth;
 
     /** Determines if XML fragments should be inserted as first child or as right sibling of the current node. */
-    transient EShredderInsert mInsert;
+    protected transient EShredderInsert mInsert;
 
     /**
      * Constructor.
@@ -109,7 +111,7 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
      * @param paramDb
      *            {@link ReadDB} reference
      */
-    AbsModel(final PApplet paramApplet, final ReadDB paramDb) {
+    protected AbsModel(final PApplet paramApplet, final ReadDB paramDb) {
         assert paramApplet != null;
         assert paramDb != null;
         mParent = paramApplet;
@@ -120,8 +122,8 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
         } catch (final AbsTTException exc) {
             exc.printStackTrace();
         }
-        mItems = new ArrayList<SunburstItem>();
-        mLastItems = new Stack<List<SunburstItem>>();
+        mItems = new ArrayList<T>();
+        mLastItems = new Stack<List<T>>();
         mLastDepths = new Stack<Integer>();
         mLastOldDepths = new Stack<Integer>();
         mDb = paramDb;
@@ -133,22 +135,16 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
      * @param paramPool
      *            thread pool; {@link ExecutorService} instance
      */
-    void shutdown(final ExecutorService paramPool) {
+    public void shutdown(final ExecutorService paramPool) {
         paramPool.shutdown(); // Disable new tasks from being submitted.
     }
 
-    /**
-     * Update {@link IDatabase} instance.
-     * 
-     * @param paramDb
-     *            {@link IDatabase} instance
-     * @param paramContainer
-     *            {@link SunburstContainer} reference with options
-     */
-    public void updateDb(final ReadDB paramDb, final SunburstContainer paramContainer) {
+    /** {@inheritDoc} */
+    @Override
+    public void updateDb(final ReadDB paramDb, final IContainer paramContainer) {
         assert paramDb != null;
         assert paramContainer != null;
-        mDb = paramDb;
+        setDb(paramDb);
         try {
             mSession = paramDb.getSession();
             mRtx = mSession.beginReadTransaction(paramDb.getRevisionNumber());
@@ -156,8 +152,8 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
         } catch (final AbsTTException exc) {
             exc.printStackTrace();
         }
-        mItems = new ArrayList<SunburstItem>();
-        mLastItems = new Stack<List<SunburstItem>>();
+        mItems = new ArrayList<T>();
+        mLastItems = new Stack<List<T>>();
         mLastDepths = new Stack<Integer>();
         traverseTree(paramContainer);
     }
@@ -168,8 +164,8 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
         assert paramXPathExpression != null;
 
         // Initialize all items to ISNOTFOUND.
-        for (final SunburstItem item : mItems) {
-            item.setXPathState(EXPathState.ISNOTFOUND);
+        for (final T item : mItems) {
+            ((SunburstItem)item).setXPathState(EXPathState.ISNOTFOUND);
         }
 
         if (!paramXPathExpression.isEmpty()) {
@@ -195,17 +191,9 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
         }
     }
 
-    /**
-     * Get {@link SunburstItem} at the specified index.
-     * 
-     * @param paramIndex
-     *            index of the item
-     * @return the {@link SunburstItem} found at the index
-     * @throws IndexOutOfBoundsException
-     *             if index > mItems.size() - 1 or < 0
-     */
+    /** {@inheritDoc} */
     @Override
-    public SunburstItem getItem(final int paramIndex) throws IndexOutOfBoundsException {
+    public T getItem(final int paramIndex) throws IndexOutOfBoundsException {
         return mItems.get(paramIndex);
     }
 
@@ -221,8 +209,8 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
 
     /** {@inheritDoc} */
     @Override
-    public SunburstItem next() {
-        SunburstItem item = null;
+    public T next() {
+        T item = null;
         if (mIndex > mItems.size()) {
             throw new NoSuchElementException();
         }
@@ -241,7 +229,7 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<SunburstItem> iterator() {
+    public Iterator<T> iterator() {
         return mItems.iterator();
     }
 
@@ -334,8 +322,8 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
         /** Treetank {@link IReadTransaction}. */
         private transient IReadTransaction mRTX;
 
-        /** {@link List} of {@link SunburstItem}s. */
-        private final List<SunburstItem> mSunburstItems;
+        /** {@link List} of a {@link IVisualItem} implementation. */
+        private final List<T> mItems;
 
         /** {@link List} of node keys which are in the result. */
         private final Set<Long> mKeys;
@@ -348,10 +336,10 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
          * @param paramSublist
          *            Sublist which has to be searched for matches
          */
-        private XPathSublistEvaluation(final Set<Long> paramNodeKeys, final List<SunburstItem> paramSublist) {
+        private XPathSublistEvaluation(final Set<Long> paramNodeKeys, final List<T> paramSublist) {
             assert paramNodeKeys != null && paramSublist != null;
             mKeys = paramNodeKeys;
-            mSunburstItems = paramSublist;
+            mItems = paramSublist;
             try {
                 mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
                 mRTX.moveTo(mRtx.getNode().getNodeKey());
@@ -362,10 +350,10 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
 
         @Override
         public void run() {
-            for (final SunburstItem item : mSunburstItems) {
+            for (final T item : mItems) {
                 for (final long key : mKeys) {
-                    if (item.getNode().getNodeKey() == key) {
-                        item.setXPathState(EXPathState.ISFOUND);
+                    if (((SunburstItem)item).getNode().getNodeKey() == key) {
+                        ((SunburstItem)item).setXPathState(EXPathState.ISFOUND);
                     }
                 }
             }
@@ -381,5 +369,34 @@ public abstract class AbsModel extends AbsComponent implements IModel, Iterator<
     @Override
     public void setInsert(final EShredderInsert paramInsert) {
         mInsert = paramInsert;
+    }
+
+    /**
+     * Get the parent.
+     * 
+     * @return the parent
+     */
+    public PApplet getParent() {
+        return mParent;
+    }
+
+    /**
+     * Set new {@link ReadDB} instance.
+     * 
+     * @param paramDb
+     *            the {@link ReadDB} instance to set
+     */
+    public void setDb(final ReadDB paramDb) {
+        mDb.close();
+        mDb = paramDb;
+    }
+
+    /**
+     * Get database handle.
+     * 
+     * @return the database access
+     */
+    public ReadDB getDb() {
+        return mDb;
     }
 }

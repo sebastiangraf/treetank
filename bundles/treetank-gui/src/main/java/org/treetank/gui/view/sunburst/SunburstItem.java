@@ -37,7 +37,7 @@ import org.treetank.gui.view.EHover;
 import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
-import org.treetank.gui.view.sunburst.model.AbsModel;
+import org.treetank.gui.view.model.AbsModel;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
 
 import processing.core.PApplet;
@@ -441,7 +441,7 @@ public final class SunburstItem implements IVisualItem {
             switch (mNode.getKind()) {
             case ELEMENT_KIND:
                 float bright =
-                    PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, percent);
+                    PApplet.lerp(mGUI.getInnerNodeBrightnessStart(), mGUI.getInnerNodeBrightnessEnd(), percent);
                 mCol = paramGraphic.color(0, 0, bright);
 
                 // bright =
@@ -453,8 +453,8 @@ public final class SunburstItem implements IVisualItem {
             case COMMENT_KIND:
             case PROCESSING_KIND:
                 final int from =
-                    paramGraphic.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
-                final int to = paramGraphic.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
+                    paramGraphic.color(mGUI.getHueStart(), mGUI.getSaturationStart(), mGUI.getBrightnessStart());
+                final int to = paramGraphic.color(mGUI.mHueEnd, mGUI.getSaturationEnd(), mGUI.getBrightnessEnd());
                 mCol = paramGraphic.lerpColor(from, to, percent);
 
                 mLineCol = mCol;
@@ -464,7 +464,7 @@ public final class SunburstItem implements IVisualItem {
             }
 
             // Calculate stroke weight for relations line.
-            mLineWeight = PApplet.map(mDepth, 0, depthMax, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
+            mLineWeight = PApplet.map(mDepth, 0, depthMax, mGUI.getStrokeWeightStart(), mGUI.getStrokeWeightEnd());
             if (mArcLength < mLineWeight) {
                 mLineWeight = mArcLength * 0.93f;
             }
@@ -473,10 +473,10 @@ public final class SunburstItem implements IVisualItem {
             mC1X = PApplet.cos(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
             mC1Y = PApplet.sin(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
 
-            mC2X = PApplet.cos(mGUI.mControl.mModel.getItem(mIndexToParent).mAngleCenter);
+            mC2X = PApplet.cos(((SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent)).mAngleCenter);
             mC2X *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
 
-            mC2Y = PApplet.sin(mGUI.mControl.mModel.getItem(mIndexToParent).mAngleCenter);
+            mC2Y = PApplet.sin(((SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent)).mAngleCenter);
             mC2Y *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
         }
     }
@@ -710,11 +710,12 @@ public final class SunburstItem implements IVisualItem {
             }
             mGraphic.strokeWeight(mLineWeight);
             if (mGUI.mParent.recorder != null) {
-                mGUI.mParent.recorder.line(mX, mY, mGUI.mControl.mModel.getItem(mIndexToParent).mX,
-                    mGUI.mControl.mModel.getItem(mIndexToParent).mY);
+                mGUI.mParent.recorder.line(mX, mY,
+                    ((SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent)).mX,
+                    ((SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent)).mY);
             }
-            mGraphic.line(mX, mY, mGUI.mControl.mModel.getItem(mIndexToParent).mX,
-                mGUI.mControl.mModel.getItem(mIndexToParent).mY);
+            mGraphic.line(mX, mY, ((SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent)).mX,
+                ((SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent)).mY);
         }
     }
 
@@ -734,7 +735,7 @@ public final class SunburstItem implements IVisualItem {
                 mGUI.mParent.recorder.strokeWeight(mLineWeight);
             }
             mGraphic.strokeWeight(mLineWeight);
-            final SunburstItem item = mGUI.mControl.mModel.getItem(mIndexToParent);
+            final SunburstItem item = (SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent);
             if (mGUI.mParent.recorder != null) {
                 mGUI.mParent.recorder.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, item.mX, item.mY);
             }
@@ -896,7 +897,7 @@ public final class SunburstItem implements IVisualItem {
      */
     public void calcNewExtension() {
         mDescendantCount--;
-        final SunburstItem parent = mGUI.mControl.mModel.getItem(mIndexToParent);
+        final SunburstItem parent = (SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent);
         // Calculate extension.
         float extension = 2 * PConstants.PI;
         float parentModificationCount = parent.getModificationCount();

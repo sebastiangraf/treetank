@@ -46,8 +46,8 @@ public final class GUIProp {
         /** Show text view. */
         SHOWTEXT(false),
 
-        /** Show treemap view. */
-        SHOWTREEMAP(false),
+        /** Show small multiples view. */
+        SHOWSMALLMULTIPLES(false),
 
         /** Show sunburst view. */
         SHOWSUNBURST(true);

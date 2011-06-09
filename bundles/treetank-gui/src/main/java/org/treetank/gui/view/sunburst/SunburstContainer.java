@@ -27,13 +27,15 @@
 
 package org.treetank.gui.view.sunburst;
 
+import org.treetank.gui.view.model.IContainer;
+
 /**
  * Contains settings used for updating the model.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SunburstContainer {
+public final class SunburstContainer implements IContainer {
 
     /** Index of currently clicked {@link SunburstItem}. */
     public transient int mHitTestIndex;
@@ -53,14 +55,9 @@ public final class SunburstContainer {
     /** Determines if pruning should be enabled or not. */
     public transient EPruning mPruning;
 
-    /**
-     * Set start key.
-     * 
-     * @param paramKey
-     *            node key to start from
-     * @return this
-     */
-    public SunburstContainer setKey(final long paramKey) {
+    /** {@inheritDoc} */
+    @Override
+    public SunburstContainer setStartKey(final long paramKey) {
         assert paramKey >= 0;
         mKey = paramKey;
         return this;
@@ -127,12 +124,8 @@ public final class SunburstContainer {
         return this;
     }
 
-    /**
-     * Determines if tree should be pruned or not.
-     * 
-     * @param paramPruning
-     *            determines if tree should be pruned or not
-     */
+    /** {@inheritDoc} */
+    @Override
     public SunburstContainer setPruning(final EPruning paramPruning) {
         assert paramPruning != null;
         mPruning = paramPruning;

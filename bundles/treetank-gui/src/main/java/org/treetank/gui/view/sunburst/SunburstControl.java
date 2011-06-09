@@ -20,8 +20,10 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.controls.AbsControl;
 import org.treetank.gui.view.ViewUtilities;
-import org.treetank.gui.view.sunburst.model.AbsModel;
-import org.treetank.gui.view.sunburst.model.IModel;
+import org.treetank.gui.view.model.AbsModel;
+import org.treetank.gui.view.model.IModel;
+import org.treetank.gui.view.sunburst.SunburstView.Embedded;
+import org.treetank.gui.view.sunburst.control.AbsSunburstControl;
 import org.treetank.gui.view.sunburst.model.SunburstCompareModel;
 import org.treetank.gui.view.sunburst.model.SunburstModel;
 
@@ -34,33 +36,46 @@ import processing.core.PConstants;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class SunburstControl extends AbsControl implements ControlListener {
+public class SunburstControl extends AbsSunburstControl {
 
     /** Path to save visualization as a PDF or PNG file. */
     private static final String SAVEPATH = "target" + File.separator;
 
-    final SunburstGUI mGUI;
-
-    AbsModel mModel;
-
-    private final ReadDB mDb;
-
+    /** {@link SunburstControl} instance. */
     private static SunburstControl mControl;
 
-    private SunburstControl(final PApplet paramParent, final AbsModel paramModel, final ReadDB paramDb) {
-        assert paramModel != null;
-        // Create GUI.
-        mGUI = SunburstGUI.getInstance(paramParent, this, paramDb);
-        mGUI.mControlP5.addListener(this);
-        mModel = paramModel;
-        mModel.addPropertyChangeListener(mGUI);
-        mDb = paramDb;
-        // Traverse model.
-        mModel.traverseTree(new SunburstContainer().setKey(mDb.getNodeKey()).setPruning(EPruning.FALSE));
+    /** {@link SunburstGUI} instance. */
+    private final SunburstGUI mSunburstGUI;
+
+    /**
+     * Constructor.
+     * 
+     * @param paramParent
+     *            parent processing {@link PApplet}
+     * @param paramModel
+     *            an {@link IModel} implementation
+     * @param paramDb
+     *            {@link ReadDB} instance
+     */
+    private SunburstControl(final PApplet paramParent, final IModel paramModel, final ReadDB paramDb) {
+        super(paramParent, paramModel, paramDb);
+        assert paramParent != null;
+        mSunburstGUI = (SunburstGUI)getGUI();
     }
 
+    /**
+     * Get instance.
+     * 
+     * @param paramParent
+     *            parent processing {@link PApplet}
+     * @param paramModel
+     *            an {@link IModel} implementation
+     * @param paramDb
+     *            {@link ReadDB} instance
+     * @return {@link SunburstControl} instance
+     */
     public static synchronized SunburstControl getInstance(final PApplet paramParent,
-        final AbsModel paramModel, final ReadDB paramDb) {
+        final IModel paramModel, final ReadDB paramDb) {
         assert paramParent != null;
         assert paramModel != null;
         assert paramDb != null;
@@ -72,6 +87,34 @@ public class SunburstControl extends AbsControl implements ControlListener {
         return mControl;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected AbsSunburstGUI getGUIInstance() {
+        return SunburstGUI.getInstance(mParent, this, mDb);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void controlEvent(final ControlEvent paramControlEvent) {
+        super.controlEvent(paramControlEvent);
+        if (paramControlEvent.isGroup()) {
+            if (paramControlEvent.group().name().equals("Compare revision")) {
+                mSunburstGUI.mParent.noLoop();
+                mSunburstGUI.mSelectedRev = (int)paramControlEvent.group().value();
+                mModel = new SunburstCompareModel(mSunburstGUI.mParent, mSunburstGUI.mDb);
+                mModel.addPropertyChangeListener(mSunburstGUI);
+                final SunburstContainer container = new SunburstContainer();
+                if (mSunburstGUI.mUsePruning) {
+                    container.setPruning(EPruning.TRUE);
+                } else {
+                    container.setPruning(EPruning.FALSE);
+                }
+                mModel.traverseTree(container.setRevision(mSunburstGUI.mSelectedRev).setModWeight(
+                    mSunburstGUI.mModificationWeight));
+            }
+        }
+    }
+
     /**
      * Is getting called from processings keyRealeased-method and implements it.
      * 
@@ -79,54 +122,53 @@ public class SunburstControl extends AbsControl implements ControlListener {
      */
     @Override
     public void keyReleased() {
-        if (!mGUI.mXPathField.isFocus() && !mGUI.mCtrl.isOpen()) {
-            switch (mGUI.mParent.key) {
+        if (!mSunburstGUI.mXPathField.isFocus() && !mSunburstGUI.mCtrl.isOpen()) {
+            switch (mSunburstGUI.mParent.key) {
             case 'r':
             case 'R':
-                mGUI.mZoomer.reset();
-                mGUI.mZoomPanReset = true;
+                mSunburstGUI.getZoomer().reset();
+                mSunburstGUI.mZoomPanReset = true;
                 break;
             case 's':
             case 'S':
                 // Save PNG.
-                mGUI.mParent.saveFrame(SAVEPATH + ViewUtilities.timestamp() + "_##.png");
+                mSunburstGUI.mParent.saveFrame(SAVEPATH + ViewUtilities.timestamp() + "_##.png");
                 break;
             case 'p':
             case 'P':
                 // Save PDF.
-                mGUI.mSavePDF = true;
+                mSunburstGUI.mSavePDF = true;
                 PApplet.println("\n" + "saving to pdf – starting");
-                mGUI.mParent.beginRecord(PConstants.PDF, SAVEPATH + ViewUtilities.timestamp() + ".pdf");
-                mGUI.mParent.textMode(PConstants.SHAPE);
-                mGUI.mParent.textFont(mGUI.mParent.createFont("src" + File.separator + "main"
-                    + File.separator + "resources" + File.separator + "data" + File.separator
-                    + "miso-regular.ttf", 15));
+                mSunburstGUI.mParent.beginRecord(PConstants.PDF, SAVEPATH + ViewUtilities.timestamp() + ".pdf");
+                mSunburstGUI.mParent.textMode(PConstants.SHAPE);
+                mSunburstGUI.mParent.textFont(mSunburstGUI.mParent.createFont("src" + File.separator + "main" + File.separator
+                    + "resources" + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
                 break;
             case '\b':
                 // Backspace.
                 mModel.undo();
-                mGUI.update();
+                mSunburstGUI.update();
                 break;
             case '1':
-                mGUI.mMappingMode = 1;
+                mSunburstGUI.mMappingMode = 1;
                 break;
             case '2':
-                mGUI.mMappingMode = 2;
+                mSunburstGUI.mMappingMode = 2;
                 break;
             case '3':
-                mGUI.mMappingMode = 3;
+                mSunburstGUI.mMappingMode = 3;
                 break;
             case 'o':
             case 'O':
-                if (!mGUI.mUseDiffView) {
-                    mGUI.mRevisions =
-                        mGUI.mControlP5.addDropdownList("Compare revision", mGUI.mParent.width - 250, 100,
+                if (!mSunburstGUI.mUseDiffView) {
+                    mSunburstGUI.mRevisions =
+                        mSunburstGUI.getControlP5().addDropdownList("Compare revision", mSunburstGUI.mParent.width - 250, 100,
                             100, 120);
-                    assert mGUI.mDb != null;
+                    assert mSunburstGUI.mDb != null;
                     try {
-                        for (long i = mGUI.mDb.getRevisionNumber() + 1, newestRev =
-                            mGUI.mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
-                            mGUI.mRevisions.addItem("Revision " + i, (int)i);
+                        for (long i = mSunburstGUI.mDb.getRevisionNumber() + 1, newestRev =
+                            mSunburstGUI.mDb.getSession().beginReadTransaction().getRevisionNumber(); i <= newestRev; i++) {
+                            mSunburstGUI.mRevisions.addItem("Revision " + i, (int)i);
                         }
                     } catch (final AbsTTException exc) {
                         exc.printStackTrace();
@@ -137,33 +179,33 @@ public class SunburstControl extends AbsControl implements ControlListener {
                 // Do nothing.
             }
 
-            switch (mGUI.mParent.key) {
+            switch (mSunburstGUI.mParent.key) {
             case '1':
             case '2':
             case '3':
-                mGUI.update();
+                mSunburstGUI.update();
                 break;
             case 'm':
             case 'M':
-                mGUI.mShowGUI = mGUI.mControlP5.group("menu").isOpen();
-                mGUI.mShowGUI = !mGUI.mShowGUI;
+                mSunburstGUI.mShowGUI = mSunburstGUI.getControlP5().group("menu").isOpen();
+                mSunburstGUI.mShowGUI = !mSunburstGUI.mShowGUI;
                 break;
             default:
                 // No action.
             }
 
-            if (mGUI.mShowGUI) {
-                mGUI.mControlP5.group("menu").open();
+            if (mSunburstGUI.mShowGUI) {
+                mSunburstGUI.getControlP5().group("menu").open();
             } else {
-                mGUI.mControlP5.group("menu").close();
+                mSunburstGUI.getControlP5().group("menu").close();
             }
 
-            if (mGUI.mParent.keyCode == PConstants.RIGHT) {
-                mGUI.mRad += 5;
-                mGUI.mRadChanged = true;
-            } else if (mGUI.mParent.keyCode == PConstants.LEFT) {
-                mGUI.mRad -= 5;
-                mGUI.mRadChanged = true;
+            if (mSunburstGUI.mParent.keyCode == PConstants.RIGHT) {
+                mSunburstGUI.mRad += 5;
+                mSunburstGUI.mRadChanged = true;
+            } else if (mSunburstGUI.mParent.keyCode == PConstants.LEFT) {
+                mSunburstGUI.mRad -= 5;
+                mSunburstGUI.mRadChanged = true;
             }
         }
     }
@@ -178,8 +220,8 @@ public class SunburstControl extends AbsControl implements ControlListener {
      */
     @Override
     public void mouseEntered(final MouseEvent paramEvent) {
-        if (mGUI.mDone) {
-            mGUI.mParent.loop();
+        if (mSunburstGUI.mDone) {
+            mSunburstGUI.mParent.loop();
         }
     }
 
@@ -193,7 +235,7 @@ public class SunburstControl extends AbsControl implements ControlListener {
      */
     @Override
     public void mouseExited(final MouseEvent paramEvent) {
-        mGUI.mParent.noLoop();
+        mSunburstGUI.mParent.noLoop();
     }
 
     /**
@@ -206,116 +248,57 @@ public class SunburstControl extends AbsControl implements ControlListener {
      */
     @Override
     public void mousePressed(final MouseEvent paramEvent) {
-        mGUI.mControlP5.controlWindow.mouseEvent(paramEvent);
-        mGUI.mZoomer.mouseEvent(paramEvent);
+        mSunburstGUI.getControlP5().controlWindow.mouseEvent(paramEvent);
+        mSunburstGUI.getZoomer().mouseEvent(paramEvent);
 
-        mGUI.mShowGUI = mGUI.mControlP5.group("menu").isOpen();
+        mSunburstGUI.mShowGUI = mSunburstGUI.getControlP5().group("menu").isOpen();
 
-        if (!mGUI.mShowGUI) {
+        if (!mSunburstGUI.mShowGUI) {
             boolean doMouseOver = true;
-            if (mGUI.mRevisions != null && mGUI.mRevisions.isOpen()) {
+            if (mSunburstGUI.mRevisions != null && mSunburstGUI.mRevisions.isOpen()) {
                 doMouseOver = false;
             }
 
             if (doMouseOver) {
                 // Mouse rollover.
-                if (!mGUI.mParent.keyPressed) {
-                    mGUI.rollover();
+                if (!mSunburstGUI.mParent.keyPressed) {
+                    mSunburstGUI.rollover();
 
-                    if (mGUI.mHitTestIndex != -1) {
+                    if (mSunburstGUI.mHitTestIndex != -1) {
                         // Bug in processing's mousbotton, thus used SwingUtilities.
-                        if (SwingUtilities.isLeftMouseButton(paramEvent) && !mGUI.mCtrl.isOpen()) {
+                        if (SwingUtilities.isLeftMouseButton(paramEvent) && !mSunburstGUI.mCtrl.isOpen()) {
                             final SunburstContainer container = new SunburstContainer();
-                            if (mGUI.mUsePruning) {
+                            if (mSunburstGUI.mUsePruning) {
                                 container.setPruning(EPruning.TRUE);
                             } else {
                                 container.setPruning(EPruning.FALSE);
                             }
-                            if (mGUI.mUseDiffView) {
-                                final SunburstItem item = mModel.getItem(mGUI.mHitTestIndex);
+                            if (mSunburstGUI.mUseDiffView) {
+                                final SunburstItem item = (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
-                                    mGUI.mDone = false;
-                                    mModel.update(container.setAll(mGUI.mSelectedRev, item.getDepth(),
-                                        mGUI.mModificationWeight).setKey(item.getNode().getNodeKey()));
+                                    mSunburstGUI.mDone = false;
+                                    mModel.update(container.setAll(mSunburstGUI.mSelectedRev, item.getDepth(),
+                                        mSunburstGUI.mModificationWeight).setStartKey(item.getNode().getNodeKey()));
                                 }
                             } else {
-                                mGUI.mDone = false;
-                                final SunburstItem item = mModel.getItem(mGUI.mHitTestIndex);
-                                mModel.update(container.setKey(item.getNode().getNodeKey()));
+                                mSunburstGUI.mDone = false;
+                                final SunburstItem item = (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
+                                mModel.update(container.setStartKey(item.getNode().getNodeKey()));
                             }
                         } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
-                            if (!mGUI.mUseDiffView) {
+                            if (!mSunburstGUI.mUseDiffView) {
                                 try {
-                                    ((SunburstModel)mModel).popupMenu(paramEvent, mGUI.mCtrl,
-                                        mGUI.mHitTestIndex);
+                                    ((SunburstModel)mModel).popupMenu(paramEvent, mSunburstGUI.mCtrl,
+                                        mSunburstGUI.mHitTestIndex);
                                 } catch (final AbsTTException exc) {
                                     exc.printStackTrace();
-                                    JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: "
+                                    JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: "
                                         + exc.getMessage());
                                 }
                             }
                         }
                     }
                 }
-            }
-        }
-    }
-
-    /**
-     * Called on every change of the GUI.
-     * 
-     * @param paramControlEvent
-     *            the {@link ControlEvent}
-     */
-    @Override
-    public void controlEvent(final ControlEvent paramControlEvent) {
-        if (paramControlEvent.isController()) {
-            if (paramControlEvent.controller().name().equals("leaf node hue range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mGUI.mHueStart = f[0];
-                mGUI.mHueEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("leaf node saturation range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mGUI.mSaturationStart = f[0];
-                mGUI.mSaturationEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("leaf node brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mGUI.mBrightnessStart = f[0];
-                mGUI.mBrightnessEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("inner node brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mGUI.mInnerNodeBrightnessStart = f[0];
-                mGUI.mInnerNodeBrightnessEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("inner node stroke brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mGUI.mInnerNodeStrokeBrightnessStart = f[0];
-                mGUI.mInnerNodeStrokeBrightnessEnd = f[1];
-            }
-            if (paramControlEvent.controller().name().equals("stroke weight range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                mGUI.mStrokeWeightStart = f[0];
-                mGUI.mStrokeWeightEnd = f[1];
-            }
-
-            mGUI.update();
-        } else if (paramControlEvent.isGroup()) {
-            if (paramControlEvent.group().name().equals("Compare revision")) {
-                mGUI.mParent.noLoop();
-                mGUI.mSelectedRev = (int)paramControlEvent.group().value();
-                mModel = new SunburstCompareModel(mGUI.mParent, mGUI.mDb);
-                mModel.addPropertyChangeListener(mGUI);
-                final SunburstContainer container = new SunburstContainer();
-                if (mGUI.mUsePruning) {
-                    container.setPruning(EPruning.TRUE);
-                } else {
-                    container.setPruning(EPruning.FALSE);
-                }
-                mModel.traverseTree(container.setRevision(mGUI.mSelectedRev).setModWeight(
-                    mGUI.mModificationWeight));
             }
         }
     }
@@ -336,9 +319,10 @@ public class SunburstControl extends AbsControl implements ControlListener {
      * @param paramValue
      *            change value
      */
+    @Override
     public void cancel(final int paramValue) {
-        mGUI.mTextArea.clear();
-        mGUI.mCtrl.setVisible(false);
+        mSunburstGUI.mTextArea.clear();
+        mSunburstGUI.mCtrl.setVisible(false);
     }
 
     /**
@@ -351,62 +335,74 @@ public class SunburstControl extends AbsControl implements ControlListener {
      * @throws XMLStreamException
      *             if the XML fragment isn't well formed
      */
+    @Override
     public void submit(final int paramValue) throws XMLStreamException {
         try {
             assert mModel instanceof SunburstModel;
-            mGUI.mCtrl.setVisible(false);
-            mGUI.mCtrl.setOpen(false);
-            ((SunburstModel)mModel).shredder(mGUI.mTextArea.getText());
-            mGUI.mTextArea.clear();
+            mSunburstGUI.mCtrl.setVisible(false);
+            mSunburstGUI.mCtrl.setOpen(false);
+            ((SunburstModel)mModel).addXMLFragment(mSunburstGUI.mTextArea.getText());
+            mSunburstGUI.mTextArea.clear();
         } catch (final FactoryConfigurationError exc) {
             exc.printStackTrace();
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
+            JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: " + exc.getMessage());
         } catch (final AbsTTException exc) {
             exc.printStackTrace();
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
+            JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: " + exc.getMessage());
         }
     }
 
     /**
-     * Method to process event for submit-button.
+     * Method to process event for commit-button.
      * 
      * @param paramValue
      *            change value
      * @throws XMLStreamException
      *             if the XML fragment isn't well formed
      */
+    @Override
     public void commit(final int paramValue) throws XMLStreamException {
         try {
             assert mModel instanceof SunburstModel;
-            mGUI.mCtrl.setVisible(false);
-            mGUI.mCtrl.setOpen(false);
-            ((SunburstModel)mModel).shredder(mGUI.mTextArea.getText());
+            mSunburstGUI.mCtrl.setVisible(false);
+            mSunburstGUI.mCtrl.setOpen(false);
+            ((SunburstModel)mModel).addXMLFragment(mSunburstGUI.mTextArea.getText());
             ((SunburstModel)mModel).commit();
-            mGUI.mTextArea.clear();
+            mSunburstGUI.mTextArea.clear();
         } catch (final FactoryConfigurationError exc) {
             exc.printStackTrace();
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
+            JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: " + exc.getMessage());
         } catch (final AbsTTException exc) {
             exc.printStackTrace();
-            JOptionPane.showMessageDialog(mGUI.mParent, "Failed to commit change: " + exc.getMessage());
+            JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: " + exc.getMessage());
         }
-        mGUI.mParent.refresh();
+        ((Embedded)mSunburstGUI.mParent).refresh();
     }
 
     /**
      * Refresh storage after an update.
+     * 
+     * @param paramDB
+     *            {@link ReadDB} instance
      */
-    public void refreshUpdate() {
-        // Database change.
-        mGUI.mDone = false;
-        mGUI.mUseDiffView = false;
-        final SunburstContainer container = new SunburstContainer().setKey(mDb.getNodeKey());
-        if (mGUI.mUsePruning) {
+    public void refreshUpdate(final ReadDB paramDB) {
+        assert paramDB != null;
+        mDb = paramDB;
+        mSunburstGUI.mDone = false;
+        mSunburstGUI.mUseDiffView = false;
+        final SunburstContainer container = new SunburstContainer().setStartKey(mDb.getNodeKey());
+        if (mSunburstGUI.mUsePruning) {
             container.setPruning(EPruning.TRUE);
         } else {
             container.setPruning(EPruning.FALSE);
         }
         mModel.updateDb(mDb, container);
-        mGUI.updateDb(mDb);
+        mSunburstGUI.updateDb(mDb);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public IModel getModel() {
+        return mModel;
     }
 }

@@ -239,20 +239,20 @@ public enum GUICommands implements IGUICommand {
     },
 
     /**
-     * Show treemap view.
+     * Show small multiples view.
      */
-    DIFFOVERVIEW("Diff overview", EMenu.CHECKBOXITEM) {
+    SMALLMULTIPLES("Small multiples", EMenu.CHECKBOXITEM) {
         /** {@inheritDoc} */
         @Override
         public boolean selected() {
-            return GUIProp.EShowViews.SHOWTREEMAP.getValue();
+            return GUIProp.EShowViews.SHOWSMALLMULTIPLES.getValue();
         }
 
         /** {@inheritDoc} */
         @Override
         public void execute(final GUI paramGUI) {
             assert paramGUI != null;
-            GUIProp.EShowViews.SHOWTREE.invert();
+            GUIProp.EShowViews.SHOWSMALLMULTIPLES.invert();
             paramGUI.getViewContainer().layoutViews();
         }
     },

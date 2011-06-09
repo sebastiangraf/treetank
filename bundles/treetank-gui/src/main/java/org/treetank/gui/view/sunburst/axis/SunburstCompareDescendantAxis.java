@@ -44,12 +44,11 @@ import org.treetank.utils.FastStack;
 import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
+import org.treetank.gui.view.model.ITraverseModel;
 import org.treetank.gui.view.sunburst.Diff;
 import org.treetank.gui.view.sunburst.EMoved;
 import org.treetank.gui.view.sunburst.Item;
 import org.treetank.gui.view.sunburst.Item.Builder;
-import org.treetank.gui.view.sunburst.model.IModel;
-import org.treetank.gui.view.sunburst.model.ITraverseModel;
 
 import processing.core.PConstants;
 
