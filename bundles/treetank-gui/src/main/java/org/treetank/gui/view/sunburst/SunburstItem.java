@@ -454,7 +454,7 @@ public final class SunburstItem implements IVisualItem {
             case PROCESSING_KIND:
                 final int from =
                     paramGraphic.color(mGUI.getHueStart(), mGUI.getSaturationStart(), mGUI.getBrightnessStart());
-                final int to = paramGraphic.color(mGUI.mHueEnd, mGUI.getSaturationEnd(), mGUI.getBrightnessEnd());
+                final int to = paramGraphic.color(mGUI.getHueEnd(), mGUI.getSaturationEnd(), mGUI.getBrightnessEnd());
                 mCol = paramGraphic.lerpColor(from, to, percent);
 
                 mLineCol = mCol;
@@ -624,7 +624,7 @@ public final class SunburstItem implements IVisualItem {
      *            determines if item currently is hovered or not
      */
     void drawDot(final EHover paramHover) {
-        float diameter = mGUI.mDotSize;
+        float diameter = mGUI.getDotSize();
 
         if (paramHover == EHover.TRUE) {
             diameter = diameter * 2f;
@@ -642,21 +642,21 @@ public final class SunburstItem implements IVisualItem {
             switch (mDiff) {
             case INSERTED:
                 if (mGUI.mParent.recorder != null) {
-                    mGUI.mParent.recorder.fill(200, 100, mGUI.mDotBrightness);
+                    mGUI.mParent.recorder.fill(200, 100, mGUI.getDotBrightness());
                 }
-                mGraphic.fill(200, 100, mGUI.mDotBrightness);
+                mGraphic.fill(200, 100, mGUI.getDotBrightness());
                 break;
             case DELETED:
                 if (mGUI.mParent.recorder != null) {
-                    mGUI.mParent.recorder.fill(360, 100, mGUI.mDotBrightness);
+                    mGUI.mParent.recorder.fill(360, 100, mGUI.getDotBrightness());
                 }
-                mGraphic.fill(360, 100, mGUI.mDotBrightness);
+                mGraphic.fill(360, 100, mGUI.getDotBrightness());
                 break;
             case UPDATED:
                 if (mGUI.mParent.recorder != null) {
-                    mGUI.mParent.recorder.fill(120, 100, mGUI.mDotBrightness);
+                    mGUI.mParent.recorder.fill(120, 100, mGUI.getDotBrightness());
                 }
-                mGraphic.fill(120, 100, mGUI.mDotBrightness);
+                mGraphic.fill(120, 100, mGUI.getDotBrightness());
                 break;
             default:
                 // EDiff.SAME.
@@ -682,14 +682,14 @@ public final class SunburstItem implements IVisualItem {
      */
     private void dot() {
         if (mGUI.mParent.recorder != null) {
-            if (mGUI.mBackgroundBrightness < 30) {
+            if (mGUI.getBackgroundBrightness() < 30) {
                 mGUI.mParent.recorder.fill(0, 0, 20);
             } else {
                 mGUI.mParent.recorder.fill(0, 0, 0);
             }
         }
 
-        if (mGUI.mBackgroundBrightness < 30) {
+        if (mGUI.getBackgroundBrightness() < 30) {
             mGraphic.fill(0, 0, 20);
         } else {
             mGraphic.fill(0, 0, 0);
@@ -840,14 +840,14 @@ public final class SunburstItem implements IVisualItem {
     @Override
     public void hover() {
         mGraphic = mParent.g;
-        if (mGUI.mShowArcs && !mGUI.mShowLines) {
+        if (mGUI.isShowArcs() && !mGUI.isShowLines()) {
             if (mGUI.mUseArc) {
-                drawArc(mGUI.mInnerNodeArcScale, mGUI.mLeafArcScale, EHover.TRUE);
+                drawArc(mGUI.getInnerNodeArcScale(), mGUI.getLeafArcScale(), EHover.TRUE);
             } else {
-                drawRect(mGUI.mInnerNodeArcScale, mGUI.mLeafArcScale, EHover.TRUE);
+                drawRect(mGUI.getInnerNodeArcScale(), mGUI.getLeafArcScale(), EHover.TRUE);
             }
 
-            if (mGUI.mUseBezierLine) {
+            if (mGUI.isUseBezierLine()) {
                 drawRelationBezier();
             } else {
                 drawRelationLine();
@@ -872,7 +872,7 @@ public final class SunburstItem implements IVisualItem {
         } else {
             float tmpLineWeight = mLineWeight;
             mLineWeight += 5f;
-            if (mGUI.mUseBezierLine) {
+            if (mGUI.isUseBezierLine()) {
                 drawRelationBezier();
             } else {
                 drawRelationLine();
@@ -907,9 +907,9 @@ public final class SunburstItem implements IVisualItem {
             }
             float parExtension = parent.getAngleEnd() - parent.getAngleStart();
             extension =
-                (1 - mGUI.mModificationWeight)
+                (1 - mGUI.getModificationWeight())
                     * (parExtension * (float)mDescendantCount / ((float)parent.getDescendantCount() - 1f))
-                    + mGUI.mModificationWeight
+                    + mGUI.getModificationWeight()
                     * (parExtension * (float)mModifications / ((float)parentModificationCount - 1f));
         }
         mAngleEnd = mAngleStart + extension;
@@ -922,6 +922,7 @@ public final class SunburstItem implements IVisualItem {
      *            new modification count
      */
     public void setModificationCount(final int paramModificationCount) {
+        assert paramModificationCount >= 1;
         mModifications = paramModificationCount;
     }
 
@@ -938,9 +939,10 @@ public final class SunburstItem implements IVisualItem {
      * Set descendant count.
      * 
      * @param paramDescendantCount
-     *            new descendant count
+     *            new descendant count (actually descendant-or-self)
      */
     public void setDescendantCount(final int paramDescendantCount) {
+        assert paramDescendantCount >= 1;
         mDescendantCount = paramDescendantCount;
     }
 

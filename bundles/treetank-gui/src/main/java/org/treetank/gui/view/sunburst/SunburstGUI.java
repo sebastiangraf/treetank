@@ -97,7 +97,16 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     private static final float EFFECT_AMOUNT = 0.9f;
 
     /** The GUI of the Sunburst view. */
-    private static volatile SunburstGUI mGUI;
+    private static SunburstGUI mGUI;
+
+//    /** {@link List} of {@link Slider}s. */
+//    protected final List<Slider> mSliders;
+//
+//    /** {@link List} of {@link Range}s. */
+//    protected final List<Range> mRanges;
+//
+//    /** {@link List} of {@link Toggle}s. */
+//    protected final List<Toggle> mToggles;
 
     /** Determines if diff view is used. */
     transient boolean mUseDiffView;
@@ -110,9 +119,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
 
     /** Determines if zooming or panning is resetted. */
     transient boolean mZoomPanReset;
-
-    /** Image to draw. */
-    private volatile PImage mImg;
 
     /** Color mapping mode. */
     transient int mMappingMode = 3;
@@ -182,6 +188,10 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         final ReadDB paramReadDB) {
         super(paramApplet, paramControl, paramReadDB);
         mDb = paramReadDB;
+//        mSliders = new LinkedList<Slider>();
+//        mRanges = new LinkedList<Range>();
+//        mToggles = new LinkedList<Toggle>();
+        
     }
 
     /**
@@ -202,7 +212,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             synchronized (SunburstGUI.class) {
                 if (mGUI == null) {
                     mGUI = new SunburstGUI(paramParentApplet, paramControl, paramReadDB);
-                    mGUI.setupGUI();
                 }
             }
         }
@@ -211,94 +220,18 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
 
     /** {@inheritDoc} */
     @Override
-    protected void setupGUI() {
-        mParent.smooth();
-        mParent.background(255f);
+    protected void setup() {
+        final Toggle toggleArc = getControlP5().addToggle("mUseArc", mUseArc, LEFT + 0, TOP + mPosY + 60, 15, 15);
+        toggleArc.setLabel("Arc / Rect");
+        mToggles.add(toggleArc);
+        final Toggle toggleFisheye = getControlP5().addToggle("mFisheye", mFisheye, LEFT + 0, TOP + mPosY + 80, 15, 15);
+        toggleFisheye.setLabel("Fisheye lense");
+        mToggles.add(toggleFisheye);
+        final Toggle togglePruning = getControlP5().addToggle("mUsePruning", mUsePruning, LEFT + 0, TOP + mPosY + 100, 15, 15);
+        togglePruning.setLabel("Pruning");
+        mToggles.add(togglePruning);
 
-        mParent.textFont(mParent.createFont("src" + File.separator + "main" + File.separator + "resources"
-            + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
-
-        final int activeColor = mParent.color(0, 130, 164);
-        getControlP5().setColorActive(activeColor);
-        getControlP5().setColorBackground(mParent.color(170));
-        getControlP5().setColorForeground(mParent.color(50));
-        getControlP5().setColorLabel(mParent.color(50));
-        getControlP5().setColorValue(mParent.color(255));
-
-        mSliders = new LinkedList<Slider>();
-        mRanges = new LinkedList<Range>();
-        mToggles = new LinkedList<Toggle>();
-
-        final int left = 0;
-        final int top = 5;
-        final int len = 300;
-
-        int si = 0;
-        int ri = 0;
-        int ti = 0;
-        int posY = 0;
-
-        mRanges.add(ri++, getControlP5().addRange("leaf node hue range", 0, 360, getHueStart(), mHueEnd, left, top
-            + posY + 0, len, 15));
-        mRanges.add(ri++, getControlP5().addRange("leaf node saturation range", 0, 100, getSaturationStart(),
-            getSaturationEnd(), left, top + posY + 20, len, 15));
-        mRanges.add(ri++, getControlP5().addRange("leaf node brightness range", 0, 100, getBrightnessStart(),
-            getBrightnessEnd(), left, top + posY + 40, len, 15));
-        posY += 70;
-
-        mRanges.add(ri++, getControlP5().addRange("inner node brightness range", 0, 100,
-            getInnerNodeBrightnessStart(), getInnerNodeBrightnessEnd(), left, top + posY + 0, len, 15));
-        mRanges.add(ri++, getControlP5().addRange("inner node stroke brightness range", 0, 100,
-            getInnerNodeStrokeBrightnessStart(), getInnerNodeStrokeBrightnessEnd(), left, top + posY + 20, len, 15));
-        posY += 50;
-
-        // name, minimum, maximum, default value (float), x, y, width, height
-        mSliders.add(si, getControlP5().addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
-            + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("innerNodeArcScale");
-        mSliders.add(si,
-            getControlP5().addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
-        mSliders.get(si++).setLabel("leafNodeArcScale");
-        posY += 50;
-        mSliders.add(si, getControlP5().addSlider("mModificationWeight", 0, 1, mModificationWeight, left, top
-            + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("modification weight");
-        posY += 50;
-
-        mRanges.add(
-            ri++,
-            getControlP5().addRange("stroke weight range", 0, 10, getStrokeWeightStart(), getStrokeWeightEnd(), left, top
-                + posY + 0, len, 15));
-        posY += 30;
-
-        mSliders.add(si, getControlP5().addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("dotSize");
-        mSliders.add(si,
-            getControlP5().addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15));
-        mSliders.get(si++).setLabel("dotBrightness");
-        posY += 50;
-
-        mSliders.add(si, getControlP5().addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left,
-            top + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("backgroundBrightness");
-        posY += 50;
-
-        mToggles.add(ti, getControlP5().addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15));
-        mToggles.get(ti++).setLabel("show Arcs");
-        mToggles.add(ti, getControlP5().addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
-        mToggles.get(ti++).setLabel("show Lines");
-        mToggles.add(ti,
-            getControlP5().addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15));
-        mToggles.get(ti++).setLabel("Bezier / Line");
-        mToggles.add(ti, getControlP5().addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
-        mToggles.get(ti++).setLabel("Arc / Rect");
-        mToggles.add(ti, getControlP5().addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
-        mToggles.get(ti++).setLabel("Fisheye lense");
-        mToggles
-            .add(ti, getControlP5().addToggle("mUsePruning", mUsePruning, left + 0, top + posY + 100, 15, 15));
-        mToggles.get(ti++).setLabel("Pruning");
-
-        mXPathField = getControlP5().addTextfield("xpath", mParent.width - 250, top + 20, 200, 20);
+        mXPathField = getControlP5().addTextfield("xpath", mParent.width - 250, TOP + 20, 200, 20);
         mXPathField.setLabel("XPath expression");
         mXPathField.setFocus(false);
         mXPathField.setAutoClear(false);
@@ -326,8 +259,68 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         cancel.plugTo(this);
         cancel.setGroup(mCtrl);
         
-        style(si, ri, ti);
+//        style(this);
     }
+
+//    /**
+//     * Style menu.
+//     * 
+//     * @param paramSi
+//     *            Last slider index.
+//     * @param paramRi
+//     *            Last ranges index.
+//     * @param paramTi
+//     *            Last toggles index.
+//     */
+//    protected void style(final int paramSi, final int paramRi, final int paramTi) {
+//        final ControlGroup ctrl = getControlP5().addGroup("menu", 15, 25, 35);
+//        ctrl.setColorLabel(mParent.color(255));
+//        ctrl.close();
+//
+//        int i = 0;
+//        for (final Slider slider : mSliders) {
+//            slider.setGroup(ctrl);
+//            slider.setId(i);
+//            slider.captionLabel().toUpperCase(true);
+//            slider.captionLabel().style().padding(4, 0, 1, 3);
+//            slider.captionLabel().style().marginTop = -4;
+//            slider.captionLabel().style().marginLeft = 0;
+//            slider.captionLabel().style().marginRight = -14;
+//            slider.captionLabel().setColorBackground(0x99ffffff);
+//            slider.plugTo(this);
+//            i++;
+//        }
+//
+//        i = 0;
+//        for (final Range range : mRanges) {
+//            range.setGroup(ctrl);
+//            range.setId(i);
+//            range.captionLabel().toUpperCase(true);
+//            range.captionLabel().style().padding(4, 0, 1, 3);
+//            range.captionLabel().style().marginTop = -4;
+//            range.captionLabel().setColorBackground(0x99ffffff);
+//            range.plugTo(this);
+//            i++;
+//        }
+//
+//        i = 0;
+//        for (final Toggle toggle : mToggles) {
+//            toggle.setGroup(ctrl);
+//            toggle.setId(i);
+//            toggle.captionLabel().style().padding(4, 3, 1, 3);
+//            toggle.captionLabel().style().marginTop = -19;
+//            toggle.captionLabel().style().marginLeft = 18;
+//            toggle.captionLabel().style().marginRight = 5;
+//            toggle.captionLabel().setColorBackground(0x99ffffff);
+//            toggle.plugTo(this);
+//            i++;
+//        }
+//
+//        mParent.colorMode(PConstants.HSB, 360, 100, 100);
+//        mParent.textLeading(14);
+//        mParent.textAlign(PConstants.LEFT, PConstants.TOP);
+//        mParent.cursor(PConstants.CROSS);
+//    }
 
     /**
      * Implements the {@link PApplet} draw() method.
@@ -354,7 +347,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
 
             if (mIsZoomingPanning || mSavePDF || mFisheye) {
                 // LOGWRAPPER.debug("Without buffered image!");
-                mParent.background(0, 0, mBackgroundBrightness);
+                mParent.background(0, 0, getBackgroundBrightness());
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
                 mParent.rotate(PApplet.radians(mRad));
                 if (mDone) {
@@ -438,16 +431,16 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             mParent.translate(0, 0);
             mParent.strokeWeight(0);
             if (mUseDiffView) {
-                if (mDotSize > 0) {
-                    mParent.fill(200, 100, mDotBrightness);
+                if (getDotSize() > 0) {
+                    mParent.fill(200, 100, getDotBrightness());
                     mParent.ellipse(mParent.width - 160f, mParent.height - 90f, 8, 8);
                     color();
                     mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
-                    mParent.fill(360, 100, mDotBrightness);
+                    mParent.fill(360, 100, getDotBrightness());
                     mParent.ellipse(mParent.width - 160f, mParent.height - 67f, 8, 8);
                     color();
                     mParent.text("node deleted", mParent.width - 140f, mParent.height - 77f);
-                    mParent.fill(120, 100, mDotBrightness);
+                    mParent.fill(120, 100, getDotBrightness());
                     mParent.ellipse(mParent.width - 160f, mParent.height - 44f, 8, 8);
                     color();
                     mParent.text("node updated", mParent.width - 140f, mParent.height - 54f);
@@ -458,12 +451,12 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                     mParent.height - 50f);
             }
 
-            if (mShowArcs) {
+            if (isShowArcs()) {
                 mParent.fill(getHueStart(), getSaturationStart(), getBrightnessStart());
                 mParent.rect(20f, mParent.height - 70f, 50, 17);
                 color();
                 mParent.text("-", 78, mParent.height - 70f);
-                mParent.fill(mHueEnd, getSaturationEnd(), getBrightnessEnd());
+                mParent.fill(getHueEnd(), getSaturationEnd(), getBrightnessEnd());
                 mParent.rect(90f, mParent.height - 70f, 50, 17);
                 color();
                 mParent.text("text length", 150f, mParent.height - 70f);
@@ -492,7 +485,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
      * Fill color which changes to white or black depending on the background brightness.
      */
     private void color() {
-        if (mBackgroundBrightness > 40f) {
+        if (getBackgroundBrightness() > 40f) {
             mParent.fill(0, 0, 0);
         } else {
             mParent.fill(360, 0, 100);
@@ -660,54 +653,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         return mMappingMode;
     }
 
-    /** Update items as well as the buffered offscreen image. */
-    @Override
-    public void update() {
-        // LOGWRAPPER.debug("[update()]: Available permits: " + mLock.availablePermits());
-        // LOGWRAPPER.debug("parent width: " + mParent.width + " parent height: " + mParent.height);
-        getZoomer().reset();
-        mBuffer = mParent.createGraphics(mParent.width, mParent.height, PConstants.JAVA2D);
-        mBuffer.beginDraw();
-        updateBuffer();
-        mBuffer.endDraw();
-        mParent.noLoop();
-
-        try {
-            mLock.acquire();
-            mImg = mBuffer.get(0, 0, mBuffer.width, mBuffer.height);
-        } catch (final InterruptedException exc) {
-            exc.printStackTrace();
-        } finally {
-            mLock.release();
-            mParent.loop();
-        }
-    }
-
-    /**
-     * Draws into an off-screen buffer.
-     */
-    private void updateBuffer() {
-        mBuffer.pushMatrix();
-        // mZoomer.transform();
-        mBuffer.colorMode(PConstants.HSB, 360, 100, 100, 100);
-        mBuffer.background(0, 0, mBackgroundBrightness);
-        mBuffer.noFill();
-        mBuffer.ellipseMode(PConstants.RADIUS);
-        mBuffer.strokeCap(PConstants.SQUARE);
-        mBuffer.smooth();
-        mBuffer.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
-        mBuffer.rotate(PApplet.radians(mRad));
-
-        // Draw items.
-        drawItems(EDraw.UPDATEBUFFER);
-
-        mBuffer.stroke(0);
-        mBuffer.strokeWeight(2f);
-        mBuffer.line(0, 0, mParent.width, 0);
-
-        mBuffer.popMatrix();
-    }
-
     /**
      * Rollover test.
      * 
@@ -741,7 +686,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     /** {@inheritDoc} */
     @Override
     void drawItems(final EDraw paramDraw) {
-        if (!mShowArcs) {
+        if (!isShowArcs()) {
             paramDraw.drawRings(this);
         }
 
@@ -828,4 +773,14 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             mDone = true;
         }
     }
+//
+//    /**
+//     * Set show arcs.
+//     * 
+//     * @param paramFlag
+//     *            true if arcs should be shown, false otherwise
+//     */
+//    public void mShowArcs(final boolean paramFlag) {
+//        setShowArcs(paramFlag);
+//    }
 }

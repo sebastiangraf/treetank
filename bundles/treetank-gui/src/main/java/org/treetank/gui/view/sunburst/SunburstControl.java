@@ -110,7 +110,7 @@ public class SunburstControl extends AbsSunburstControl {
                     container.setPruning(EPruning.FALSE);
                 }
                 mModel.traverseTree(container.setRevision(mSunburstGUI.mSelectedRev).setModWeight(
-                    mSunburstGUI.mModificationWeight));
+                    mSunburstGUI.getModificationWeight()));
             }
         }
     }
@@ -278,7 +278,7 @@ public class SunburstControl extends AbsSunburstControl {
                                 if (item.mDiff == EDiff.SAME) {
                                     mSunburstGUI.mDone = false;
                                     mModel.update(container.setAll(mSunburstGUI.mSelectedRev, item.getDepth(),
-                                        mSunburstGUI.mModificationWeight).setStartKey(item.getNode().getNodeKey()));
+                                        mSunburstGUI.getModificationWeight()).setStartKey(item.getNode().getNodeKey()));
                                 }
                             } else {
                                 mSunburstGUI.mDone = false;
