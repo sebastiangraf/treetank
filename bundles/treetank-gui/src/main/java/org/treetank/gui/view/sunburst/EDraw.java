@@ -173,16 +173,16 @@ public enum EDraw {
 
     private static void drawStaticModifcationRel(final SunburstGUI paramGUI, final SunburstItem paramItem,
         final PGraphics paramGraphic) {
-        if (paramGUI.mShowArcs && paramItem.getDepth() == paramGUI.mOldDepthMax + 2) {
+        if (paramGUI.isShowArcs() && paramItem.getDepth() == paramGUI.mOldDepthMax + 2) {
             switch (paramItem.mDiff) {
             case INSERTED:
-                paramGraphic.stroke(200, 100, paramGUI.mDotBrightness, 30);
+                paramGraphic.stroke(200, 100, paramGUI.getDotBrightness(), 30);
                 break;
             case DELETED:
-                paramGraphic.stroke(360, 100, paramGUI.mDotBrightness, 30);
+                paramGraphic.stroke(360, 100, paramGUI.getDotBrightness(), 30);
                 break;
             case UPDATED:
-                paramGraphic.stroke(120, 100, paramGUI.mDotBrightness, 30);
+                paramGraphic.stroke(120, 100, paramGUI.getDotBrightness(), 30);
                 break;
             }
             final SunburstItem item = (SunburstItem)paramGUI.mControl.getModel().getItem(paramItem.getIndexToParent());
@@ -350,11 +350,11 @@ public enum EDraw {
      *            {@link SunburstItem} instance
      */
     protected void drawArc(final SunburstGUI paramGUI, final SunburstItem paramItem) {
-        if (paramGUI.mShowArcs) {
+        if (paramGUI.isShowArcs()) {
             if (paramGUI.mUseArc) {
-                paramItem.drawArc(paramGUI.mInnerNodeArcScale, paramGUI.mLeafArcScale, EHover.FALSE);
+                paramItem.drawArc(paramGUI.getInnerNodeArcScale(), paramGUI.getLeafArcScale(), EHover.FALSE);
             } else {
-                paramItem.drawRect(paramGUI.mInnerNodeArcScale, paramGUI.mLeafArcScale, EHover.FALSE);
+                paramItem.drawRect(paramGUI.getInnerNodeArcScale(), paramGUI.getLeafArcScale(), EHover.FALSE);
             }
         }
     }
@@ -368,8 +368,8 @@ public enum EDraw {
      *            {@link SunburstItem} instance
      */
     protected void drawRelation(final SunburstGUI paramGUI, final SunburstItem paramItem) {
-        if (paramGUI.mShowLines) {
-            if (paramGUI.mUseBezierLine) {
+        if (paramGUI.isShowLines()) {
+            if (paramGUI.isUseBezierLine()) {
                 paramItem.drawRelationBezier();
             } else {
                 paramItem.drawRelationLine();

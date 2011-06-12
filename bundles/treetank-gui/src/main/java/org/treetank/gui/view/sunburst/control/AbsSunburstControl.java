@@ -8,6 +8,9 @@ import java.awt.event.MouseEvent;
 import javax.xml.stream.XMLStreamException;
 
 import controlP5.ControlEvent;
+import controlP5.Range;
+import controlP5.Slider;
+import controlP5.Toggle;
 
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.controls.AbsControl;
@@ -30,13 +33,13 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
 
     /** {@link IModel} implementation. */
     protected IModel mModel;
-    
+
     /** {@link ReadDB} reference. */
     protected transient ReadDB mDb;
-    
+
     /** The GUI. */
     private final AbsSunburstGUI mGUI;
-    
+
     protected final PApplet mParent;
 
     /**
@@ -56,11 +59,10 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
         mParent = paramParent;
         mDb = paramDb;
         mGUI = getGUIInstance();
-        getGUI().getControlP5().addListener(this);
+        mGUI.getControlP5().addListener(this);
         mModel = paramModel;
-        mModel.addPropertyChangeListener(getGUI());
+        mModel.addPropertyChangeListener(mGUI);
         mModel.traverseTree(new SunburstContainer().setStartKey(mDb.getNodeKey()).setPruning(EPruning.FALSE));
- 
     }
 
     /**
@@ -92,35 +94,74 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
     public void controlEvent(final ControlEvent paramControlEvent) {
         assert paramControlEvent != null;
         if (paramControlEvent.isController()) {
-            if (paramControlEvent.controller().name().equals("leaf node hue range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                getGUI().setHueStart(f[0]);
-                getGUI().setHueEnd(f[1]);
-            }
-            if (paramControlEvent.controller().name().equals("leaf node saturation range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                getGUI().setSaturationStart(f[0]);
-                getGUI().setSaturationEnd(f[1]);
-            }
-            if (paramControlEvent.controller().name().equals("leaf node brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                getGUI().setBrightnessStart(f[0]);
-                getGUI().setBrightnessEnd(f[1]);
-            }
-            if (paramControlEvent.controller().name().equals("inner node brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                getGUI().setInnerNodeBrightnessStart(f[0]);
-                getGUI().setInnerNodeBrightnessEnd(f[1]);
-            }
-            if (paramControlEvent.controller().name().equals("inner node stroke brightness range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                getGUI().setInnerNodeStrokeBrightnessStart(f[0]);
-                getGUI().setInnerNodeStrokeBrightnessEnd(f[1]);
-            }
-            if (paramControlEvent.controller().name().equals("stroke weight range")) {
-                final float[] f = paramControlEvent.controller().arrayValue();
-                getGUI().setStrokeWeightStart(f[0]);
-                getGUI().setStrokeWeightEnd(f[1]);
+            if (paramControlEvent.controller() instanceof Toggle) {
+                final Toggle toggle = (Toggle)paramControlEvent.controller();
+                switch (paramControlEvent.controller().id()) {
+                case 0:
+                    getGUI().setShowArcs(toggle.getState());
+                    break;
+                case 1:
+                    getGUI().setShowLines(toggle.getState());
+                    break;
+                case 2:
+                    getGUI().setUseBezierLine(toggle.getState());
+                    break;
+                }
+            } else if (paramControlEvent.controller() instanceof Slider) {
+                switch (paramControlEvent.controller().id()) {
+                case 0:
+                    getGUI().setInnerNodeArcScale(paramControlEvent.controller().value());
+                    break;
+                case 1:
+                    getGUI().setLeafArcScale(paramControlEvent.controller().value());
+                    break;
+                case 2:
+                    getGUI().setModificationWeight(paramControlEvent.controller().value());
+                    break;
+                case 3:
+                    getGUI().setDotSize(paramControlEvent.controller().value());
+                    break;
+                case 4:
+                    getGUI().setDotBrightness(paramControlEvent.controller().value());
+                    break;
+                case 5:
+                    getGUI().setBackgroundBrightness(paramControlEvent.controller().value());
+                    break;
+                }
+            } else if (paramControlEvent.controller() instanceof Range) {
+                float[] f;
+                switch (paramControlEvent.controller().id()) {
+                case 0:
+                    f = paramControlEvent.controller().arrayValue();
+                    getGUI().setHueStart(f[0]);
+                    getGUI().setHueEnd(f[1]);
+                    break;
+                case 1:
+                    f = paramControlEvent.controller().arrayValue();
+                    getGUI().setSaturationStart(f[0]);
+                    getGUI().setSaturationEnd(f[1]);
+                    break;
+                case 2:
+                    f = paramControlEvent.controller().arrayValue();
+                    getGUI().setBrightnessStart(f[0]);
+                    getGUI().setBrightnessEnd(f[1]);
+                    break;
+                case 3:
+                    f = paramControlEvent.controller().arrayValue();
+                    getGUI().setInnerNodeBrightnessStart(f[0]);
+                    getGUI().setInnerNodeBrightnessEnd(f[1]);
+                    break;
+                case 4:
+                    f = paramControlEvent.controller().arrayValue();
+                    getGUI().setInnerNodeStrokeBrightnessStart(f[0]);
+                    getGUI().setInnerNodeStrokeBrightnessEnd(f[1]);
+                    break;
+                case 5:
+                    f = paramControlEvent.controller().arrayValue();
+                    getGUI().setStrokeWeightStart(f[0]);
+                    getGUI().setStrokeWeightEnd(f[1]);
+                    break;
+                }
             }
 
             getGUI().update();

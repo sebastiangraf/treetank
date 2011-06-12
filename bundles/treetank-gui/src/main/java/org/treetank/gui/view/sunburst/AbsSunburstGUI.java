@@ -6,6 +6,7 @@ package org.treetank.gui.view.sunburst;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -29,22 +30,27 @@ import processing.core.PImage;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeListener, ControlListener {
+public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeListener {
 
-    /** {@link ControlP5} sliders. */
-    protected transient List<Slider> mSliders;
+    public static final int LEFT = 0;
+    public static final int TOP = 5;
 
-    /** {@link ControlP5} ranges. */
-    protected transient List<Range> mRanges;
+    protected transient int mPosY;
 
-    /** {@link ControlP5} toggles. */
-    protected transient List<Toggle> mToggles;
-    
+    /** {@link List} of {@link Slider}s. */
+    protected final List<Slider> mSliders;
+
+    /** {@link List} of {@link Range}s. */
+    protected final List<Range> mRanges;
+
+    /** {@link List} of {@link Toggle}s. */
+    protected final List<Toggle> mToggles;
+
     /** Hue start value. */
     private transient float mHueStart = 323;
 
     /** Hue end value. */
-    protected transient float mHueEnd = 273;
+    private transient float mHueEnd = 273;
 
     /** Saturation start value. */
     private transient float mSaturationStart = 100;
@@ -71,10 +77,10 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     private transient float mInnerNodeStrokeBrightnessEnd = 20;
 
     /** Inner node arc scale. */
-    protected transient float mInnerNodeArcScale = 0.9f;
+    private transient float mInnerNodeArcScale = 0.9f;
 
     /** Modification weight. */
-    protected transient float mModificationWeight = 0.7f;
+    private transient float mModificationWeight = 0.7f;
 
     /** Stroke weight start. */
     private transient float mStrokeWeightStart = 0.2f;
@@ -83,28 +89,28 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     private transient float mStrokeWeightEnd = 4.0f;
 
     /** Dot size. */
-    protected transient float mDotSize = 3f;
+    transient float mDotSize = 3f;
 
     /** Dot brightness. */
-    protected transient float mDotBrightness = 80f;
+    private transient float mDotBrightness = 80f;
 
     /** Show arcs. */
-    protected transient boolean mShowArcs = true;
+    public boolean mShowArcs = true;
 
     /** Maximum depth in the tree. */
     protected transient int mDepthMax;
 
     /** Determines if arcs should be used (Default: true). */
-    protected transient boolean mUseArc = true;
+    public transient boolean mUseArc = true;
 
     /** {@link ZoomPan} instance to zoom in or out. */
     private transient ZoomPan mZoomer;
 
     /** Background brightness. */
-    protected transient float mBackgroundBrightness = 100f;
+    private transient float mBackgroundBrightness = 100f;
 
     /** Leaf node arc scale. */
-    protected transient float mLeafArcScale = 1.0f;
+    private transient float mLeafArcScale = 1.0f;
 
     /** {@link PGraphics} offscreen buffer. */
     protected transient PGraphics mBuffer;
@@ -122,11 +128,11 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     protected transient int mRad;
 
     /** Determines if bezier lines for connections between parent/child should be used (Default: true). */
-    protected transient boolean mUseBezierLine = true;
+    private transient boolean mUseBezierLine = true;
 
     /** Determines if line connextions between parent/child should be drawn. */
-    protected transient boolean mShowLines = true;
-    
+    private transient boolean mShowLines = true;
+
     /** {@link ControlP5} instance. */
     private final ControlP5 mControlP5;
 
@@ -134,7 +140,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     protected transient ReadDB mDb;
 
     /** {@link ISunburstControl} implementation. */
-    protected final ISunburstControl mControl;
+    public final ISunburstControl mControl;
 
     /**
      * Constructor.
@@ -146,7 +152,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      * @param paramDb
      *            {@link ReadDB} instance
      */
-    public AbsSunburstGUI(final PApplet paramApplet, final ISunburstControl paramControl, final ReadDB paramDb) {
+    protected AbsSunburstGUI(final PApplet paramApplet, final ISunburstControl paramControl,
+        final ReadDB paramDb) {
         assert paramApplet != null;
         assert paramControl != null;
         assert paramDb != null;
@@ -156,23 +163,133 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         mZoomer = new ZoomPan(mParent);
         mZoomer.setMouseMask(PConstants.CONTROL);
         mControlP5 = new ControlP5(mParent);
+        mControlP5.addListener(mControl);
+        mSliders = new LinkedList<Slider>();
+        mRanges = new LinkedList<Range>();
+        mToggles = new LinkedList<Toggle>();
+        setupGUI();
+
+        for (Field f : AbsSunburstGUI.class.getDeclaredFields()) {
+            System.out.println(f.toString());
+        }
     }
-    
+
     /** Initial setup of the GUI. */
-    abstract void setupGUI();
+    private void setupGUI() {
+        mParent.smooth();
+        mParent.background(255f);
+
+        mParent.textFont(mParent.createFont("src" + File.separator + "main" + File.separator + "resources"
+            + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
+
+        final int activeColor = mParent.color(0, 130, 164);
+        mControlP5.setColorActive(activeColor);
+        mControlP5.setColorBackground(mParent.color(170));
+        mControlP5.setColorForeground(mParent.color(50));
+        mControlP5.setColorLabel(mParent.color(50));
+        mControlP5.setColorValue(mParent.color(255));
+
+        final int len = 300;
+        int id = 0;
+
+        final Range hueRange = mControlP5.addRange("leaf node hue range", 0, 360, getHueStart(), getHueEnd(), LEFT, TOP + mPosY
+            + 0, len, 15);
+        hueRange.setId(id++);
+        mRanges.add(hueRange);
+        final Range saturationRange = mControlP5.addRange("leaf node saturation range", 0, 100, getSaturationStart(),
+            getSaturationEnd(), LEFT, TOP + mPosY + 20, len, 15);
+        saturationRange.setId(id++);
+        mRanges.add(saturationRange);
+        final Range brightnessRange =  mControlP5.addRange("leaf node brightness range", 0, 100, getBrightnessStart(),
+            getBrightnessEnd(), LEFT, TOP + mPosY + 40, len, 15);
+        brightnessRange.setId(id++);
+        mRanges.add(brightnessRange);
+
+        mPosY += 70;
+
+        final Range innerNodebrightnessRange = mControlP5.addRange("inner node brightness range", 0, 100,
+            getInnerNodeBrightnessStart(), getInnerNodeBrightnessEnd(), LEFT, TOP + mPosY + 0, len, 15);
+        innerNodebrightnessRange.setId(id++);
+        mRanges.add(innerNodebrightnessRange);
+        final Range innerNodeStrokeBrightnessRange = mControlP5.addRange("inner node stroke brightness range", 0, 100,
+            getInnerNodeStrokeBrightnessStart(), getInnerNodeStrokeBrightnessEnd(), LEFT, TOP + mPosY + 20,
+            len, 15);
+        innerNodeStrokeBrightnessRange.setId(id++);
+        mRanges.add(innerNodeStrokeBrightnessRange);
+
+        mPosY += 50;
+
+        // name, minimum, maximum, default value (float), x, y, width, height
+        final Slider innerNodeArcScale = mControlP5.addSlider("setInnerNodeArcScale", 0, 1, getInnerNodeArcScale(), LEFT, TOP
+            + mPosY + 0, len, 15);
+        innerNodeArcScale.setLabel("innerNodeArcScale");
+        innerNodeArcScale.setId(id++);
+        mSliders.add(innerNodeArcScale);
+        final Slider leafNodeArcScale = mControlP5.addSlider("setLeafArcScale", 0, 1, getInnerNodeArcScale(), LEFT, TOP
+            + mPosY + 0, len, 15);
+        leafNodeArcScale.setLabel("leafNodeArcScale");
+        leafNodeArcScale.setId(id++);
+        mSliders.add(leafNodeArcScale);
+        mPosY += 50;
+        final Slider modWeight = mControlP5.addSlider("setModificationWeight", 0, 1, getModificationWeight(), LEFT, TOP
+            + mPosY + 0, len, 15);
+        modWeight.setLabel("modification weight");
+        modWeight.setId(id++);
+        mSliders.add(modWeight); 
+        mPosY += 50;
+
+        final Range strokeWeight = mControlP5.addRange("stroke weight range", 0, 10, getStrokeWeightStart(),
+            getStrokeWeightEnd(), LEFT, TOP + mPosY + 0, len, 15);
+        strokeWeight.setId(id++);
+        mRanges.add(strokeWeight);
+        mPosY += 30;
+
+        final Slider dotSize = mControlP5.addSlider("setDotSize", 0, 10, mDotSize, LEFT, TOP + mPosY + 0, len, 15);
+        dotSize.setLabel("dot size");
+        dotSize.setId(id++);
+        mSliders.add(dotSize); 
+        final Slider dotBrightness = mControlP5.addSlider("setDotBrightness", 0, 100, mDotBrightness, LEFT, TOP + mPosY + 20,
+            len, 15);
+        dotBrightness.setLabel("dot brightness");
+        dotBrightness.setId(id++);
+        mSliders.add(dotBrightness); 
+        mPosY += 50;
+
+        final Slider backgroundBrightness = mControlP5.addSlider("setBackgroundBrightness", 0, 100, getBackgroundBrightness(), LEFT, TOP
+            + mPosY + 0, len, 15);
+        backgroundBrightness.setLabel("background brightness");
+        backgroundBrightness.setId(id++);
+        mSliders.add(backgroundBrightness); 
+        mPosY += 50;
+
+        final Toggle showArcs = mControlP5.addToggle("isShowArcs", isShowArcs(), LEFT + 0, TOP + mPosY, 15, 15);
+        showArcs.setLabel("show arcs");
+        showArcs.setId(id++);
+        mToggles.add(showArcs);
+        final Toggle showLines = mControlP5.addToggle("isShowLines", isShowLines(), LEFT + 0, TOP + mPosY + 20, 15, 15);
+        showLines.setLabel("show lines");
+        showLines.setId(id++);
+        mToggles.add(showLines);
+        final Toggle useBezier = mControlP5.addToggle("isUseBezierLine", isUseBezierLine(), LEFT + 0, TOP + mPosY + 40, 15, 15);
+        useBezier.setLabel("Bezier / Line");
+        useBezier.setId(id++);
+        mToggles.add(useBezier);
+
+        setup();
+
+        style();
+    }
+
+    /**
+     * Template method. Allows additional GUI setup.
+     */
+    protected abstract void setup();
 
     /**
      * Style menu.
-     * 
-     * @param paramSi
-     *            Last slider index.
-     * @param paramRi
-     *            Last ranges index.
-     * @param paramTi
-     *            Last toggles index.
      */
-    protected void style(final int paramSi, final int paramRi, final int paramTi) {
-        final ControlGroup ctrl = getControlP5().addGroup("menu", 15, 25, 35);
+    protected void style() {
+        final ControlGroup ctrl = mControlP5.addGroup("menu", 15, 25, 35);
         ctrl.setColorLabel(mParent.color(255));
         ctrl.close();
 
@@ -186,7 +303,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
             slider.captionLabel().style().marginLeft = 0;
             slider.captionLabel().style().marginRight = -14;
             slider.captionLabel().setColorBackground(0x99ffffff);
-            slider.plugTo(this);
+            slider.plugTo(mControl);
             i++;
         }
 
@@ -198,7 +315,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
             range.captionLabel().style().padding(4, 0, 1, 3);
             range.captionLabel().style().marginTop = -4;
             range.captionLabel().setColorBackground(0x99ffffff);
-            range.plugTo(this);
+            range.plugTo(mControl);
             i++;
         }
 
@@ -211,7 +328,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
             toggle.captionLabel().style().marginLeft = 18;
             toggle.captionLabel().style().marginRight = 5;
             toggle.captionLabel().setColorBackground(0x99ffffff);
-            toggle.plugTo(this);
+            toggle.plugTo(mControl);
             i++;
         }
 
@@ -251,7 +368,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         mBuffer.pushMatrix();
         // mZoomer.transform();
         mBuffer.colorMode(PConstants.HSB, 360, 100, 100, 100);
-        mBuffer.background(0, 0, mBackgroundBrightness);
+        mBuffer.background(0, 0, getBackgroundBrightness());
         mBuffer.noFill();
         mBuffer.ellipseMode(PConstants.RADIUS);
         mBuffer.strokeCap(PConstants.SQUARE);
@@ -268,7 +385,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
         mBuffer.popMatrix();
     }
-    
+
     /**
      * Set database instance.
      * 
@@ -281,17 +398,6 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * Called on every change of the GUI.
-     * 
-     * @param paramControlEvent
-     *            the {@link ControlEvent}
-     */
-    @Override
-    public void controlEvent(final ControlEvent paramControlEvent) {
-        mControl.controlEvent(paramControlEvent);
-    }
-
-    /**
      * Draw {@link IVisualItem} instances on the screen.
      * 
      * @param paramDraw
@@ -300,9 +406,10 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     abstract void drawItems(final EDraw paramDraw);
 
     // =============================== Setter and Getter ================================
-    
+
     /**
-     * @param mHueStart the mHueStart to set
+     * @param mHueStart
+     *            the mHueStart to set
      */
     public void setHueStart(float mHueStart) {
         this.mHueStart = mHueStart;
@@ -316,15 +423,23 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param f
+     * @return
      */
-    public void setHueEnd(float f) {
-        // TODO Auto-generated method stub
-        
+    public float getHueEnd() {
+        return mHueEnd;
     }
 
     /**
-     * @param mSaturationStart the mSaturationStart to set
+     * @param paramHueEnd
+     */
+    public void setHueEnd(final float paramHueEnd) {
+        mHueEnd = paramHueEnd;
+
+    }
+
+    /**
+     * @param mSaturationStart
+     *            the mSaturationStart to set
      */
     public void setSaturationStart(float mSaturationStart) {
         this.mSaturationStart = mSaturationStart;
@@ -338,7 +453,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mBrightnessStart the mBrightnessStart to set
+     * @param mBrightnessStart
+     *            the mBrightnessStart to set
      */
     public void setBrightnessStart(float mBrightnessStart) {
         this.mBrightnessStart = mBrightnessStart;
@@ -352,7 +468,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mSaturationEnd the mSaturationEnd to set
+     * @param mSaturationEnd
+     *            the mSaturationEnd to set
      */
     public void setSaturationEnd(float mSaturationEnd) {
         this.mSaturationEnd = mSaturationEnd;
@@ -366,7 +483,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mInnerNodeBrightnessStart the mInnerNodeBrightnessStart to set
+     * @param mInnerNodeBrightnessStart
+     *            the mInnerNodeBrightnessStart to set
      */
     public void setInnerNodeBrightnessStart(float mInnerNodeBrightnessStart) {
         this.mInnerNodeBrightnessStart = mInnerNodeBrightnessStart;
@@ -380,7 +498,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mInnerNodeStrokeBrightnessStart the mInnerNodeStrokeBrightnessStart to set
+     * @param mInnerNodeStrokeBrightnessStart
+     *            the mInnerNodeStrokeBrightnessStart to set
      */
     public void setInnerNodeStrokeBrightnessStart(float mInnerNodeStrokeBrightnessStart) {
         this.mInnerNodeStrokeBrightnessStart = mInnerNodeStrokeBrightnessStart;
@@ -394,7 +513,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mStrokeWeightStart the mStrokeWeightStart to set
+     * @param mStrokeWeightStart
+     *            the mStrokeWeightStart to set
      */
     public void setStrokeWeightStart(float mStrokeWeightStart) {
         this.mStrokeWeightStart = mStrokeWeightStart;
@@ -408,7 +528,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mStrokeWeightEnd the mStrokeWeightEnd to set
+     * @param mStrokeWeightEnd
+     *            the mStrokeWeightEnd to set
      */
     public void setStrokeWeightEnd(float mStrokeWeightEnd) {
         this.mStrokeWeightEnd = mStrokeWeightEnd;
@@ -422,7 +543,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mInnerNodeStrokeBrightnessEnd the mInnerNodeStrokeBrightnessEnd to set
+     * @param mInnerNodeStrokeBrightnessEnd
+     *            the mInnerNodeStrokeBrightnessEnd to set
      */
     public void setInnerNodeStrokeBrightnessEnd(float mInnerNodeStrokeBrightnessEnd) {
         this.mInnerNodeStrokeBrightnessEnd = mInnerNodeStrokeBrightnessEnd;
@@ -436,7 +558,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mBrightnessEnd the mBrightnessEnd to set
+     * @param mBrightnessEnd
+     *            the mBrightnessEnd to set
      */
     public void setBrightnessEnd(float mBrightnessEnd) {
         this.mBrightnessEnd = mBrightnessEnd;
@@ -450,7 +573,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mInnerNodeBrightnessEnd the mInnerNodeBrightnessEnd to set
+     * @param mInnerNodeBrightnessEnd
+     *            the mInnerNodeBrightnessEnd to set
      */
     public void setInnerNodeBrightnessEnd(float mInnerNodeBrightnessEnd) {
         this.mInnerNodeBrightnessEnd = mInnerNodeBrightnessEnd;
@@ -475,5 +599,148 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      */
     public ZoomPan getZoomer() {
         return mZoomer;
+    }
+
+    /**
+     * @param mModificationWeight
+     *            the mModificationWeight to set
+     */
+    public void setModificationWeight(float mModificationWeight) {
+        this.mModificationWeight = mModificationWeight;
+    }
+
+    /**
+     * @return the mModificationWeight
+     */
+    public float getModificationWeight() {
+        return mModificationWeight;
+    }
+
+    /**
+     * @param mUseBezierLine
+     *            the mUseBezierLine to set
+     */
+    public void setUseBezierLine(boolean mUseBezierLine) {
+        this.mUseBezierLine = mUseBezierLine;
+    }
+
+    /**
+     * @return the mUseBezierLine
+     */
+    public boolean isUseBezierLine() {
+        return mUseBezierLine;
+    }
+
+    /**
+     * @param mShowArcs
+     *            the mShowArcs to set
+     */
+    public void setShowArcs(boolean mShowArcs) {
+        this.mShowArcs = mShowArcs;
+    }
+
+    /**
+     * @return the mShowArcs
+     */
+    public boolean isShowArcs() {
+        return mShowArcs;
+    }
+
+    /**
+     * @param mShowLines
+     *            the mShowLines to set
+     */
+    public void setShowLines(boolean mShowLines) {
+        this.mShowLines = mShowLines;
+    }
+
+    /**
+     * @return the mShowLines
+     */
+    public boolean isShowLines() {
+        return mShowLines;
+    }
+
+    /**
+     * @param mInnerNodeArcScale
+     *            the mInnerNodeArcScale to set
+     */
+    public void setInnerNodeArcScale(float mInnerNodeArcScale) {
+        this.mInnerNodeArcScale = mInnerNodeArcScale;
+    }
+
+    /**
+     * @return the mInnerNodeArcScale
+     */
+    public float getInnerNodeArcScale() {
+        return mInnerNodeArcScale;
+    }
+
+    /**
+     * @param mLeafArcScale
+     *            the mLeafArcScale to set
+     */
+    public void setLeafArcScale(float mLeafArcScale) {
+        this.mLeafArcScale = mLeafArcScale;
+    }
+
+    /**
+     * @return the mLeafArcScale
+     */
+    public float getLeafArcScale() {
+        return mLeafArcScale;
+    }
+
+    /**
+     * @param mDotSize
+     *            the mDotSize to set
+     */
+    public void setDotSize(float mDotSize) {
+        this.mDotSize = mDotSize;
+    }
+
+    /**
+     * @param mDotSize
+     *            the mDotSize to set
+     */
+    public void mDotSize(float mDotSize) {
+        this.mDotSize = mDotSize;
+    }
+
+    /**
+     * @return the mDotSize
+     */
+    public float getDotSize() {
+        return mDotSize;
+    }
+
+    /**
+     * @param mDotBrightness
+     *            the mDotBrightness to set
+     */
+    public void setDotBrightness(float mDotBrightness) {
+        this.mDotBrightness = mDotBrightness;
+    }
+
+    /**
+     * @return the mDotBrightness
+     */
+    public float getDotBrightness() {
+        return mDotBrightness;
+    }
+
+    /**
+     * @param mBackgroundBrightness
+     *            the mBackgroundBrightness to set
+     */
+    public void setBackgroundBrightness(float mBackgroundBrightness) {
+        this.mBackgroundBrightness = mBackgroundBrightness;
+    }
+
+    /**
+     * @return the mBackgroundBrightness
+     */
+    public float getBackgroundBrightness() {
+        return mBackgroundBrightness;
     }
 }

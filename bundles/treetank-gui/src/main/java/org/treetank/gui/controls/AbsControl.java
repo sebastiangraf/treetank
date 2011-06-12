@@ -174,9 +174,4 @@ public abstract class AbsControl implements IControl {
     @Override
     public void keyTyped(KeyEvent paramEvent) {
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public void controlEvent(ControlEvent paramControlEvent) {
-    }
 }

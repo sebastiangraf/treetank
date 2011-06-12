@@ -271,10 +271,6 @@ public interface IControl extends EventListener, MouseListener, MouseMotionListe
     @Override
     public void keyTyped(KeyEvent paramEvent);
 
-    /** {@inheritDoc} */
-    @Override
-    public void controlEvent(ControlEvent paramControlEvent);
-
     /**
      * Get model.
      * 
