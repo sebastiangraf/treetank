@@ -97,16 +97,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     private static final float EFFECT_AMOUNT = 0.9f;
 
     /** The GUI of the Sunburst view. */
-    private static SunburstGUI mGUI;
-
-//    /** {@link List} of {@link Slider}s. */
-//    protected final List<Slider> mSliders;
-//
-//    /** {@link List} of {@link Range}s. */
-//    protected final List<Range> mRanges;
-//
-//    /** {@link List} of {@link Toggle}s. */
-//    protected final List<Toggle> mToggles;
+    private static volatile SunburstGUI mGUI;
 
     /** Determines if diff view is used. */
     transient boolean mUseDiffView;
@@ -120,11 +111,8 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     /** Determines if zooming or panning is resetted. */
     transient boolean mZoomPanReset;
 
-    /** Color mapping mode. */
-    transient int mMappingMode = 3;
-
     /** Determines if fisheye should be used. */
-    private transient boolean mFisheye;
+    transient boolean mFisheye;
 
     /** Determines if current state should be saved as a PDF-file. */
     transient boolean mSavePDF;
@@ -188,10 +176,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         final ReadDB paramReadDB) {
         super(paramApplet, paramControl, paramReadDB);
         mDb = paramReadDB;
-//        mSliders = new LinkedList<Slider>();
-//        mRanges = new LinkedList<Range>();
-//        mToggles = new LinkedList<Toggle>();
-        
     }
 
     /**
@@ -221,13 +205,16 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     /** {@inheritDoc} */
     @Override
     protected void setup() {
-        final Toggle toggleArc = getControlP5().addToggle("mUseArc", mUseArc, LEFT + 0, TOP + mPosY + 60, 15, 15);
+        final Toggle toggleArc =
+            getControlP5().addToggle("mUseArc", mUseArc, LEFT + 0, TOP + mPosY + 60, 15, 15);
         toggleArc.setLabel("Arc / Rect");
         mToggles.add(toggleArc);
-        final Toggle toggleFisheye = getControlP5().addToggle("mFisheye", mFisheye, LEFT + 0, TOP + mPosY + 80, 15, 15);
+        final Toggle toggleFisheye =
+            getControlP5().addToggle("mFisheye", mFisheye, LEFT + 0, TOP + mPosY + 80, 15, 15);
         toggleFisheye.setLabel("Fisheye lense");
         mToggles.add(toggleFisheye);
-        final Toggle togglePruning = getControlP5().addToggle("mUsePruning", mUsePruning, LEFT + 0, TOP + mPosY + 100, 15, 15);
+        final Toggle togglePruning =
+            getControlP5().addToggle("mUsePruning", mUsePruning, LEFT + 0, TOP + mPosY + 100, 15, 15);
         togglePruning.setLabel("Pruning");
         mToggles.add(togglePruning);
 
@@ -258,69 +245,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         final Button cancel = getControlP5().addButton("cancel", 20, 240, 140, 80, 19);
         cancel.plugTo(this);
         cancel.setGroup(mCtrl);
-        
-//        style(this);
     }
-
-//    /**
-//     * Style menu.
-//     * 
-//     * @param paramSi
-//     *            Last slider index.
-//     * @param paramRi
-//     *            Last ranges index.
-//     * @param paramTi
-//     *            Last toggles index.
-//     */
-//    protected void style(final int paramSi, final int paramRi, final int paramTi) {
-//        final ControlGroup ctrl = getControlP5().addGroup("menu", 15, 25, 35);
-//        ctrl.setColorLabel(mParent.color(255));
-//        ctrl.close();
-//
-//        int i = 0;
-//        for (final Slider slider : mSliders) {
-//            slider.setGroup(ctrl);
-//            slider.setId(i);
-//            slider.captionLabel().toUpperCase(true);
-//            slider.captionLabel().style().padding(4, 0, 1, 3);
-//            slider.captionLabel().style().marginTop = -4;
-//            slider.captionLabel().style().marginLeft = 0;
-//            slider.captionLabel().style().marginRight = -14;
-//            slider.captionLabel().setColorBackground(0x99ffffff);
-//            slider.plugTo(this);
-//            i++;
-//        }
-//
-//        i = 0;
-//        for (final Range range : mRanges) {
-//            range.setGroup(ctrl);
-//            range.setId(i);
-//            range.captionLabel().toUpperCase(true);
-//            range.captionLabel().style().padding(4, 0, 1, 3);
-//            range.captionLabel().style().marginTop = -4;
-//            range.captionLabel().setColorBackground(0x99ffffff);
-//            range.plugTo(this);
-//            i++;
-//        }
-//
-//        i = 0;
-//        for (final Toggle toggle : mToggles) {
-//            toggle.setGroup(ctrl);
-//            toggle.setId(i);
-//            toggle.captionLabel().style().padding(4, 3, 1, 3);
-//            toggle.captionLabel().style().marginTop = -19;
-//            toggle.captionLabel().style().marginLeft = 18;
-//            toggle.captionLabel().style().marginRight = 5;
-//            toggle.captionLabel().setColorBackground(0x99ffffff);
-//            toggle.plugTo(this);
-//            i++;
-//        }
-//
-//        mParent.colorMode(PConstants.HSB, 360, 100, 100);
-//        mParent.textLeading(14);
-//        mParent.textAlign(PConstants.LEFT, PConstants.TOP);
-//        mParent.cursor(PConstants.CROSS);
-//    }
 
     /**
      * Implements the {@link PApplet} draw() method.
@@ -573,7 +498,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
      * @param paramRadius
      *            the radius to use
      */
-    void fisheye(final int paramXPos, final int paramYPos, final int paramRadius) {
+    private void fisheye(final int paramXPos, final int paramYPos, final int paramRadius) {
         // Start point of rectangle to grab.
         final int tlx = paramXPos - paramRadius;
         final int tly = paramYPos - paramRadius;
@@ -610,50 +535,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     }
 
     /**
-     * Get initial radius.
-     * 
-     * @return initial radius
-     */
-    private float getInitialRadius() {
-        return mParent.height / 2.2f;
-    }
-
-    /**
-     * Calculate area so that radiuses have equal areas in each depth.
-     * 
-     * @param paramDepth
-     *            the actual depth
-     * @param paramDepthMax
-     *            the maximum depth
-     * @return calculated area
-     */
-    float calcEqualAreaRadius(final int paramDepth, final int paramDepthMax) {
-        return PApplet.sqrt(paramDepth * PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
-    }
-
-    /**
-     * Calculate area radius in a linear way.
-     * 
-     * @param paramDepth
-     *            The actual depth.
-     * @param paramDepthMax
-     *            The maximum depth.
-     * @return calculated area
-     */
-    float calcAreaRadius(final int paramDepth, final int paramDepthMax) {
-        return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, getInitialRadius());
-    }
-
-    /**
-     * Get mapping mode.
-     * 
-     * @return mappingMode
-     */
-    int getMappingMode() {
-        return mMappingMode;
-    }
-
-    /**
      * Rollover test.
      * 
      * @return true, if found, false otherwise
@@ -685,7 +566,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
 
     /** {@inheritDoc} */
     @Override
-    void drawItems(final EDraw paramDraw) {
+    public void drawItems(final EDraw paramDraw) {
         if (!isShowArcs()) {
             paramDraw.drawRings(this);
         }
@@ -773,14 +654,34 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             mDone = true;
         }
     }
-//
-//    /**
-//     * Set show arcs.
-//     * 
-//     * @param paramFlag
-//     *            true if arcs should be shown, false otherwise
-//     */
-//    public void mShowArcs(final boolean paramFlag) {
-//        setShowArcs(paramFlag);
-//    }
+
+    /**
+     * Set fisheye lense.
+     * 
+     * @param paramState
+     *            true if fisheye lense should be used, false otherwise
+     */
+    public void setFisheye(final boolean paramState) {
+        mFisheye = paramState;
+    }
+
+    /**
+     * Set use arcs.
+     * 
+     * @param paramState
+     *            true if arcs should be used, false otherwise
+     */
+    public void setUseArc(final boolean paramState) {
+        mUseArc = paramState;
+    }
+
+    /**
+     * Set pruning.
+     * 
+     * @param paramstate
+     *            true if pruning should be used, false otherwise
+     */
+    public void setPruning(final boolean paramState) {
+        mUsePruning = paramState;
+    }
 }

@@ -32,9 +32,13 @@ import processing.core.PImage;
  */
 public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeListener {
 
+    /** Pixels from the left border of the processing view. */
     public static final int LEFT = 0;
+    
+    /** Pixels from the top border of the processing view. */
     public static final int TOP = 5;
 
+    /** Y-position from the top. */
     protected transient int mPosY;
 
     /** {@link List} of {@link Slider}s. */
@@ -45,6 +49,9 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
     /** {@link List} of {@link Toggle}s. */
     protected final List<Toggle> mToggles;
+    
+    /** Color mapping mode. */
+    private transient int mMappingMode = 3;
 
     /** Hue start value. */
     private transient float mHueStart = 323;
@@ -163,15 +170,10 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         mZoomer = new ZoomPan(mParent);
         mZoomer.setMouseMask(PConstants.CONTROL);
         mControlP5 = new ControlP5(mParent);
-        mControlP5.addListener(mControl);
         mSliders = new LinkedList<Slider>();
         mRanges = new LinkedList<Range>();
         mToggles = new LinkedList<Toggle>();
         setupGUI();
-
-        for (Field f : AbsSunburstGUI.class.getDeclaredFields()) {
-            System.out.println(f.toString());
-        }
     }
 
     /** Initial setup of the GUI. */
@@ -190,31 +192,25 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         mControlP5.setColorValue(mParent.color(255));
 
         final int len = 300;
-        int id = 0;
 
         final Range hueRange = mControlP5.addRange("leaf node hue range", 0, 360, getHueStart(), getHueEnd(), LEFT, TOP + mPosY
             + 0, len, 15);
-        hueRange.setId(id++);
         mRanges.add(hueRange);
         final Range saturationRange = mControlP5.addRange("leaf node saturation range", 0, 100, getSaturationStart(),
             getSaturationEnd(), LEFT, TOP + mPosY + 20, len, 15);
-        saturationRange.setId(id++);
         mRanges.add(saturationRange);
         final Range brightnessRange =  mControlP5.addRange("leaf node brightness range", 0, 100, getBrightnessStart(),
             getBrightnessEnd(), LEFT, TOP + mPosY + 40, len, 15);
-        brightnessRange.setId(id++);
         mRanges.add(brightnessRange);
 
         mPosY += 70;
 
         final Range innerNodebrightnessRange = mControlP5.addRange("inner node brightness range", 0, 100,
             getInnerNodeBrightnessStart(), getInnerNodeBrightnessEnd(), LEFT, TOP + mPosY + 0, len, 15);
-        innerNodebrightnessRange.setId(id++);
         mRanges.add(innerNodebrightnessRange);
         final Range innerNodeStrokeBrightnessRange = mControlP5.addRange("inner node stroke brightness range", 0, 100,
             getInnerNodeStrokeBrightnessStart(), getInnerNodeStrokeBrightnessEnd(), LEFT, TOP + mPosY + 20,
             len, 15);
-        innerNodeStrokeBrightnessRange.setId(id++);
         mRanges.add(innerNodeStrokeBrightnessRange);
 
         mPosY += 50;
@@ -223,56 +219,45 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         final Slider innerNodeArcScale = mControlP5.addSlider("setInnerNodeArcScale", 0, 1, getInnerNodeArcScale(), LEFT, TOP
             + mPosY + 0, len, 15);
         innerNodeArcScale.setLabel("innerNodeArcScale");
-        innerNodeArcScale.setId(id++);
         mSliders.add(innerNodeArcScale);
-        final Slider leafNodeArcScale = mControlP5.addSlider("setLeafArcScale", 0, 1, getInnerNodeArcScale(), LEFT, TOP
-            + mPosY + 0, len, 15);
+        final Slider leafNodeArcScale = mControlP5.addSlider("setLeafArcScale", 0, 1, getLeafArcScale(), LEFT, TOP + mPosY + 20, len, 15);
         leafNodeArcScale.setLabel("leafNodeArcScale");
-        leafNodeArcScale.setId(id++);
         mSliders.add(leafNodeArcScale);
         mPosY += 50;
         final Slider modWeight = mControlP5.addSlider("setModificationWeight", 0, 1, getModificationWeight(), LEFT, TOP
             + mPosY + 0, len, 15);
         modWeight.setLabel("modification weight");
-        modWeight.setId(id++);
         mSliders.add(modWeight); 
         mPosY += 50;
 
         final Range strokeWeight = mControlP5.addRange("stroke weight range", 0, 10, getStrokeWeightStart(),
             getStrokeWeightEnd(), LEFT, TOP + mPosY + 0, len, 15);
-        strokeWeight.setId(id++);
         mRanges.add(strokeWeight);
         mPosY += 30;
 
         final Slider dotSize = mControlP5.addSlider("setDotSize", 0, 10, mDotSize, LEFT, TOP + mPosY + 0, len, 15);
         dotSize.setLabel("dot size");
-        dotSize.setId(id++);
         mSliders.add(dotSize); 
         final Slider dotBrightness = mControlP5.addSlider("setDotBrightness", 0, 100, mDotBrightness, LEFT, TOP + mPosY + 20,
             len, 15);
         dotBrightness.setLabel("dot brightness");
-        dotBrightness.setId(id++);
         mSliders.add(dotBrightness); 
         mPosY += 50;
 
         final Slider backgroundBrightness = mControlP5.addSlider("setBackgroundBrightness", 0, 100, getBackgroundBrightness(), LEFT, TOP
             + mPosY + 0, len, 15);
         backgroundBrightness.setLabel("background brightness");
-        backgroundBrightness.setId(id++);
         mSliders.add(backgroundBrightness); 
         mPosY += 50;
 
         final Toggle showArcs = mControlP5.addToggle("isShowArcs", isShowArcs(), LEFT + 0, TOP + mPosY, 15, 15);
         showArcs.setLabel("show arcs");
-        showArcs.setId(id++);
         mToggles.add(showArcs);
         final Toggle showLines = mControlP5.addToggle("isShowLines", isShowLines(), LEFT + 0, TOP + mPosY + 20, 15, 15);
         showLines.setLabel("show lines");
-        showLines.setId(id++);
         mToggles.add(showLines);
         final Toggle useBezier = mControlP5.addToggle("isUseBezierLine", isUseBezierLine(), LEFT + 0, TOP + mPosY + 40, 15, 15);
         useBezier.setLabel("Bezier / Line");
-        useBezier.setId(id++);
         mToggles.add(useBezier);
 
         setup();
@@ -366,7 +351,6 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      */
     private void updateBuffer() {
         mBuffer.pushMatrix();
-        // mZoomer.transform();
         mBuffer.colorMode(PConstants.HSB, 360, 100, 100, 100);
         mBuffer.background(0, 0, getBackgroundBrightness());
         mBuffer.noFill();
@@ -403,7 +387,51 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      * @param paramDraw
      *            drawing strategy
      */
-    abstract void drawItems(final EDraw paramDraw);
+    protected abstract void drawItems(final EDraw paramDraw);
+    
+    /**
+     * Get initial radius.
+     * 
+     * @return initial radius
+     */
+    protected float getInitialRadius() {
+        return mParent.height / 2.2f;
+    }
+
+    /**
+     * Calculate area so that radiuses have equal areas in each depth.
+     * 
+     * @param paramDepth
+     *            the actual depth
+     * @param paramDepthMax
+     *            the maximum depth
+     * @return calculated area
+     */
+    protected float calcEqualAreaRadius(final int paramDepth, final int paramDepthMax) {
+        return PApplet.sqrt(paramDepth * PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
+    }
+
+    /**
+     * Calculate area radius in a linear way.
+     * 
+     * @param paramDepth
+     *            The actual depth.
+     * @param paramDepthMax
+     *            The maximum depth.
+     * @return calculated area
+     */
+    protected float calcAreaRadius(final int paramDepth, final int paramDepthMax) {
+        return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, getInitialRadius());
+    }
+
+    /**
+     * Get mapping mode.
+     * 
+     * @return mappingMode
+     */
+    public int getMappingMode() {
+        return mMappingMode;
+    }
 
     // =============================== Setter and Getter ================================
 
@@ -742,5 +770,12 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      */
     public float getBackgroundBrightness() {
         return mBackgroundBrightness;
+    }
+
+    /**
+     * @param mMappingMode the mMappingMode to set
+     */
+    public void setMappingMode(int mMappingMode) {
+        this.mMappingMode = mMappingMode;
     }
 }

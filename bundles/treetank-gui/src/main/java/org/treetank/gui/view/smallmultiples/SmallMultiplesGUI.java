@@ -10,23 +10,33 @@ import org.gicentre.utils.move.ZoomPan;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IProcessingGUI;
 import org.treetank.gui.view.smallmultiples.SmallMultiplesView.Embedded;
+import org.treetank.gui.view.sunburst.AbsSunburstGUI;
+import org.treetank.gui.view.sunburst.EDraw;
 import org.treetank.gui.view.sunburst.SunburstControl;
 import org.treetank.gui.view.sunburst.SunburstGUI;
+import org.treetank.gui.view.sunburst.control.AbsSunburstControl;
+import org.treetank.gui.view.sunburst.control.ISunburstControl;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 
 /**
+ * GUI of the {@link SmallMultiplesView}.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class SmallMultiplesGUI implements IProcessingGUI, PropertyChangeListener {
-    private static SmallMultiplesGUI mGUI;
+public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeListener {
+    /** Instance of this class. */
+    private static volatile SmallMultiplesGUI mGUI;
 
+    /** {@link SmallMultiplesControl} reference. */
     private final SmallMultiplesControl mControl;
 
+    /** {@link ReadDB} reference. */
     private transient ReadDB mDb;
 
+    /** {@link SmallMultiplesControl} reference. */
     private final Embedded mParent;
 
     private final ZoomPan mZoomer;
@@ -34,43 +44,46 @@ public class SmallMultiplesGUI implements IProcessingGUI, PropertyChangeListener
     private transient int mDepthMax;
 
     private transient int mOldDepthMax;
-    
+
+    /** Instance of the {@link SunburstGUI} used for composition. */
     private final SunburstGUI mSunburstGUI;
 
     /**
      * Private constructor.
      * 
-     * @param paramEmbedded
+     * @param paramApplet
      *            parent processing applet
      * @param paramReadDB
      *            {@link ReadDB} instance
      */
-    private SmallMultiplesGUI(final Embedded paramEmbedded, final SmallMultiplesControl paramControl,
+    private SmallMultiplesGUI(final PApplet paramEmbedded, final ISunburstControl paramControl,
         final ReadDB paramReadDB) {
+        super (paramEmbedded, paramControl, paramReadDB);
         mSunburstGUI = SunburstGUI.getInstance(paramEmbedded, paramControl, paramReadDB);
         mDb = paramReadDB;
-        mControl = paramControl;
-        mParent = paramEmbedded;
+        mControl = (SmallMultiplesControl)paramControl;
+        mParent = (Embedded)paramEmbedded;
         mZoomer = new ZoomPan(paramEmbedded);
         mZoomer.setMouseMask(PConstants.CONTROL);
     }
 
     /**
-     * Factory method (Singleton). Note that it's always called from the animation thread, thus it doesn't
-     * need to be synchronized.
+     * Factory method (Singleton).
      * 
-     * @param paramEmbedded
+     * @param paramApplet
      *            parent processing applet
+     * @param paramControl
+     *            {@link ISunburstControl} implementation
      * @param paramReadDB
      *            {@link ReadDB} instance
      * @return a {@link SunburstGUI} singleton
      */
-    static SmallMultiplesGUI getInstance(final Embedded paramEmbedded, final SmallMultiplesControl paramControl,
+    public static SmallMultiplesGUI getInstance(final PApplet paramApplet, final ISunburstControl paramControl,
         final ReadDB paramReadDB) {
         if (mGUI == null) {
             synchronized (SmallMultiplesGUI.class) {
                 if (mGUI == null) {
-                    mGUI = new SmallMultiplesGUI(paramEmbedded, paramControl, paramReadDB);
+                    mGUI = new SmallMultiplesGUI(paramApplet, paramControl, paramReadDB);
                 }
             }
         }
@@ -80,7 +93,7 @@ public class SmallMultiplesGUI implements IProcessingGUI, PropertyChangeListener
     /** {@inheritDoc} */
     @Override
     public void draw() {
-        
+
     }
 
     /** {@inheritDoc} */
@@ -88,7 +101,7 @@ public class SmallMultiplesGUI implements IProcessingGUI, PropertyChangeListener
     public void update() {
         mSunburstGUI.update();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void propertyChange(final PropertyChangeEvent paramEvent) {
@@ -103,5 +116,16 @@ public class SmallMultiplesGUI implements IProcessingGUI, PropertyChangeListener
             update();
             assert paramEvent.getNewValue() instanceof Boolean;
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void setup() {       
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void drawItems(final EDraw paramDraw) {
+        
     }
 }

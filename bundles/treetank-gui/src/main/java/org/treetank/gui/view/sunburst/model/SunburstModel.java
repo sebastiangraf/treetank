@@ -117,10 +117,10 @@ public final class SunburstModel extends AbsModel<SunburstItem> implements IChan
     public void traverseTree(final IContainer paramContainer) {
         assert paramContainer != null;
         final SunburstContainer container = (SunburstContainer)paramContainer;
-        assert container.mKey >= 0;
+        assert container.getStartKey() >= 0;
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         try {
-            executor.submit(new TraverseTree(container.mKey, container.mPruning, this));
+            executor.submit(new TraverseTree(container.getStartKey(), container.getPruning(), this));
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }

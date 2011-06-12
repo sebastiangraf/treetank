@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamException;
 
 import controlP5.ControlEvent;
 import controlP5.ControlListener;
+import controlP5.Toggle;
 
 import org.datanucleus.util.ViewUtils;
 import org.treetank.diff.DiffFactory.EDiff;
@@ -112,6 +113,22 @@ public class SunburstControl extends AbsSunburstControl {
                 mModel.traverseTree(container.setRevision(mSunburstGUI.mSelectedRev).setModWeight(
                     mSunburstGUI.getModificationWeight()));
             }
+        } else if (paramControlEvent.isController()) {
+            if (paramControlEvent.controller() instanceof Toggle) {
+                final Toggle toggle = (Toggle)paramControlEvent.controller();
+
+                switch (toggle.id()) {
+                case 3:
+                    mSunburstGUI.setUseArc(toggle.getState());
+                    break;
+                case 4:
+                    mSunburstGUI.setFisheye(toggle.getState());
+                    break;
+                case 5:
+                    mSunburstGUI.setPruning(toggle.getState());
+                    break;
+                }
+            }
         }
     }
 
@@ -139,10 +156,12 @@ public class SunburstControl extends AbsSunburstControl {
                 // Save PDF.
                 mSunburstGUI.mSavePDF = true;
                 PApplet.println("\n" + "saving to pdf – starting");
-                mSunburstGUI.mParent.beginRecord(PConstants.PDF, SAVEPATH + ViewUtilities.timestamp() + ".pdf");
+                mSunburstGUI.mParent.beginRecord(PConstants.PDF, SAVEPATH + ViewUtilities.timestamp()
+                    + ".pdf");
                 mSunburstGUI.mParent.textMode(PConstants.SHAPE);
-                mSunburstGUI.mParent.textFont(mSunburstGUI.mParent.createFont("src" + File.separator + "main" + File.separator
-                    + "resources" + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
+                mSunburstGUI.mParent.textFont(mSunburstGUI.mParent.createFont("src" + File.separator + "main"
+                    + File.separator + "resources" + File.separator + "data" + File.separator
+                    + "miso-regular.ttf", 15));
                 break;
             case '\b':
                 // Backspace.
@@ -150,20 +169,20 @@ public class SunburstControl extends AbsSunburstControl {
                 mSunburstGUI.update();
                 break;
             case '1':
-                mSunburstGUI.mMappingMode = 1;
+                mSunburstGUI.setMappingMode(1);
                 break;
             case '2':
-                mSunburstGUI.mMappingMode = 2;
+                mSunburstGUI.setMappingMode(2);
                 break;
             case '3':
-                mSunburstGUI.mMappingMode = 3;
+                mSunburstGUI.setMappingMode(3);
                 break;
             case 'o':
             case 'O':
                 if (!mSunburstGUI.mUseDiffView) {
                     mSunburstGUI.mRevisions =
-                        mSunburstGUI.getControlP5().addDropdownList("Compare revision", mSunburstGUI.mParent.width - 250, 100,
-                            100, 120);
+                        mSunburstGUI.getControlP5().addDropdownList("Compare revision",
+                            mSunburstGUI.mParent.width - 250, 100, 100, 120);
                     assert mSunburstGUI.mDb != null;
                     try {
                         for (long i = mSunburstGUI.mDb.getRevisionNumber() + 1, newestRev =
@@ -274,15 +293,18 @@ public class SunburstControl extends AbsSunburstControl {
                                 container.setPruning(EPruning.FALSE);
                             }
                             if (mSunburstGUI.mUseDiffView) {
-                                final SunburstItem item = (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
+                                final SunburstItem item =
+                                    (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
                                     mSunburstGUI.mDone = false;
-                                    mModel.update(container.setAll(mSunburstGUI.mSelectedRev, item.getDepth(),
-                                        mSunburstGUI.getModificationWeight()).setStartKey(item.getNode().getNodeKey()));
+                                    mModel.update(container.setAll(mSunburstGUI.mSelectedRev,
+                                        item.getDepth(), mSunburstGUI.getModificationWeight()).setStartKey(
+                                        item.getNode().getNodeKey()));
                                 }
                             } else {
                                 mSunburstGUI.mDone = false;
-                                final SunburstItem item = (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
+                                final SunburstItem item =
+                                    (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
                                 mModel.update(container.setStartKey(item.getNode().getNodeKey()));
                             }
                         } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
@@ -292,8 +314,8 @@ public class SunburstControl extends AbsSunburstControl {
                                         mSunburstGUI.mHitTestIndex);
                                 } catch (final AbsTTException exc) {
                                     exc.printStackTrace();
-                                    JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: "
-                                        + exc.getMessage());
+                                    JOptionPane.showMessageDialog(mSunburstGUI.mParent,
+                                        "Failed to commit change: " + exc.getMessage());
                                 }
                             }
                         }
@@ -345,10 +367,12 @@ public class SunburstControl extends AbsSunburstControl {
             mSunburstGUI.mTextArea.clear();
         } catch (final FactoryConfigurationError exc) {
             exc.printStackTrace();
-            JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: " + exc.getMessage());
+            JOptionPane.showMessageDialog(mSunburstGUI.mParent,
+                "Failed to commit change: " + exc.getMessage());
         } catch (final AbsTTException exc) {
             exc.printStackTrace();
-            JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: " + exc.getMessage());
+            JOptionPane.showMessageDialog(mSunburstGUI.mParent,
+                "Failed to commit change: " + exc.getMessage());
         }
     }
 
@@ -371,10 +395,12 @@ public class SunburstControl extends AbsSunburstControl {
             mSunburstGUI.mTextArea.clear();
         } catch (final FactoryConfigurationError exc) {
             exc.printStackTrace();
-            JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: " + exc.getMessage());
+            JOptionPane.showMessageDialog(mSunburstGUI.mParent,
+                "Failed to commit change: " + exc.getMessage());
         } catch (final AbsTTException exc) {
             exc.printStackTrace();
-            JOptionPane.showMessageDialog(mSunburstGUI.mParent, "Failed to commit change: " + exc.getMessage());
+            JOptionPane.showMessageDialog(mSunburstGUI.mParent,
+                "Failed to commit change: " + exc.getMessage());
         }
         ((Embedded)mSunburstGUI.mParent).refresh();
     }

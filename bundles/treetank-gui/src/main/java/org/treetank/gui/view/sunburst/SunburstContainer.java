@@ -38,29 +38,63 @@ import org.treetank.gui.view.model.IContainer;
 public final class SunburstContainer implements IContainer {
 
     /** Index of currently clicked {@link SunburstItem}. */
-    public transient int mHitTestIndex;
-    
+    private transient int mHitTestIndex;
+
     /** Revision to compare. */
-    public transient long mRevision;
+    private transient long mRevision;
 
     /** Max depth in the tree. */
-    public transient int mDepth;
+    private transient int mDepth;
 
     /** Modification weight. */
-    public transient float mModWeight;
+    private transient float mModWeight;
 
     /** Node key to start from. */
-    public transient long mKey;
+    private transient long mKey;
 
     /** Determines if pruning should be enabled or not. */
-    public transient EPruning mPruning;
+    private transient EPruning mPruning;
+
+    /** GUI which extends {@link AbsSunburstGUI}. */
+    private transient AbsSunburstGUI mGUI;
+
+    /**
+     * Set the GUI.
+     * 
+     * @param paramGUI
+     *            GUI which extends {@link AbsSunburstGUI}
+     * @return instance of this class
+     * */
+    public SunburstContainer setGUI(final AbsSunburstGUI paramGUI) {
+        assert paramGUI != null;
+        mGUI = paramGUI;
+        return this;
+    }
+
+    /**
+     * Get GUI.
+     * 
+     * @return GUI which extends {@link AbsSunburstGUI}
+     */
+    public AbsSunburstGUI getGUI() {
+        return mGUI;
+    }
 
     /** {@inheritDoc} */
     @Override
     public SunburstContainer setStartKey(final long paramKey) {
-        assert paramKey >= 0;
+//        assert paramKey >= 0;
         mKey = paramKey;
         return this;
+    }
+
+    /**
+     * Get start key.
+     * 
+     * @return the key
+     */
+    public long getStartKey() {
+        return mKey;
     }
 
     /**
@@ -68,25 +102,19 @@ public final class SunburstContainer implements IContainer {
      * 
      * @param paramRevision
      *            the Revision to set
-     * @return this
+     * @return instance of this class
      */
     public SunburstContainer setRevision(final long paramRevision) {
-        assert paramRevision > 0;
+//        assert paramRevision >= 0;
         mRevision = paramRevision;
         return this;
     }
-    
+
     /**
-     * Set hit test item.
-     * 
-     * @param paramHitTestIndex
-     *            the index of the {@link SunburstItem} currently selected
-     * @return this
+     * @return the mRevision
      */
-    public SunburstContainer setHitItem(final int paramHitTestIndex) {
-        assert paramHitTestIndex >= 0;
-        mHitTestIndex = paramHitTestIndex;
-        return this;
+    public long getRevision() {
+        return mRevision;
     }
 
     /**
@@ -94,10 +122,10 @@ public final class SunburstContainer implements IContainer {
      * 
      * @param paramModWeight
      *            the modWeight to set
-     * @return this
+     * @return instance of this class
      */
     public SunburstContainer setModWeight(final float paramModWeight) {
-        assert paramModWeight >= 0;
+//        assert paramModWeight >= 0;
         mModWeight = paramModWeight;
         return this;
     }
@@ -111,16 +139,26 @@ public final class SunburstContainer implements IContainer {
      *            Depth in the tree
      * @param paramModificationWeight
      *            weighting of modifications
-     * @return this
+     * @return instance of this class
      */
     public SunburstContainer setAll(final long paramRevision, final int paramDepth,
         final float paramModificationWeight) {
-        assert paramRevision >= 0;
-        assert paramDepth >= 0;
-        assert paramModificationWeight >= 0;
-        mRevision = paramRevision;
+        setRevision(paramRevision);
+        setDepth(paramDepth);
+        setModWeight(paramModificationWeight);
+        return this;
+    }
+
+    /**
+     * Set depth.
+     * 
+     * @param paramDepth
+     *            the depth to set
+     * @return instance of this class
+     */
+    public SunburstContainer setDepth(final int paramDepth) {
+//        assert paramDepth >= 0;
         mDepth = paramDepth;
-        mModWeight = paramModificationWeight;
         return this;
     }
 
@@ -130,5 +168,52 @@ public final class SunburstContainer implements IContainer {
         assert paramPruning != null;
         mPruning = paramPruning;
         return this;
+    }
+
+    /**
+     * Get pruning.
+     * 
+     * @return pruning method
+     */
+    public EPruning getPruning() {
+        return mPruning;
+    }
+
+    /**
+     * Get the depth.
+     * 
+     * @return the depth
+     */
+    public int getDepth() {
+        return mDepth;
+    }
+
+    /**
+     * Get modification weight.
+     * 
+     * @return the modification weight
+     */
+    public float getModWeight() {
+        return mModWeight;
+    }
+
+    /**
+     * Set hit test index.
+     * 
+     * @param paramHitTestIndex
+     *            the hitTestIndex to set
+     * @return instance of this class
+     */
+    public SunburstContainer setHitTestIndex(final int paramHitTestIndex) {
+//        assert paramHitTestIndex >= -1;
+        mHitTestIndex = paramHitTestIndex;
+        return this;
+    }
+
+    /**
+     * @return the mHitTestIndex
+     */
+    public int getHitTestIndex() {
+        return mHitTestIndex;
     }
 }
