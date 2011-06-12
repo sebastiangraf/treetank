@@ -107,14 +107,14 @@ public final class SunburstCompareModel extends AbsModel<SunburstItem> implement
         assert paramContainer != null;
         
         final SunburstContainer container = (SunburstContainer)paramContainer;
-        assert container.mRevision >= 0;
-        assert container.mKey >= 0;
-        assert container.mDepth >= 0;
-        assert container.mModWeight >= 0;
+        assert container.getRevision() >= 0;
+        assert container.getStartKey() >= 0;
+        assert container.getDepth() >= 0;
+        assert container.getModWeight() >= 0;
 
         final ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(new TraverseCompareTree(container.mRevision, getDb().getRevisionNumber(),
-            container.mKey, container.mDepth, container.mModWeight, container.mPruning,
+        executor.submit(new TraverseCompareTree(container.getRevision(), getDb().getRevisionNumber(),
+            container.getStartKey(), container.getDepth(), container.getModWeight(), container.getPruning(),
             this));
         shutdown(executor);
     }
