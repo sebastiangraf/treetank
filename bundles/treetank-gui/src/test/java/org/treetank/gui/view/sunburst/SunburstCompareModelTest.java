@@ -109,7 +109,7 @@ public class SunburstCompareModelTest {
         final ReadDB db = new ReadDB(secondRev, 1);
         final AbsModel model = new SunburstCompareModel(null, db);
         rtx.moveTo(db.getNodeKey());
-        model.traverseTree(new SunburstContainer().setRevision(rtx.getRevisionNumber()).setModWeight(0.7f));
+//        model.traverseTree(new SunburstContainer().setRevision(rtx.getRevisionNumber()).setModWeight(0.7f));
         verify(mock);
         db.close();
     }

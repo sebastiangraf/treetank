@@ -59,6 +59,17 @@ public final class SunburstContainer implements IContainer {
     private transient AbsSunburstGUI mGUI;
 
     /**
+     * Constructor.
+     * 
+     * @param paramGUI
+     *            GUI which extends {@link AbsSunburstGUI}
+     */
+    public SunburstContainer(final AbsSunburstGUI paramGUI) {
+        assert paramGUI != null;
+        mGUI = paramGUI;
+    }
+
+    /**
      * Set the GUI.
      * 
      * @param paramGUI
@@ -83,7 +94,7 @@ public final class SunburstContainer implements IContainer {
     /** {@inheritDoc} */
     @Override
     public SunburstContainer setStartKey(final long paramKey) {
-//        assert paramKey >= 0;
+        assert paramKey >= 0;
         mKey = paramKey;
         return this;
     }
@@ -105,7 +116,7 @@ public final class SunburstContainer implements IContainer {
      * @return instance of this class
      */
     public SunburstContainer setRevision(final long paramRevision) {
-//        assert paramRevision >= 0;
+        assert paramRevision > 0;
         mRevision = paramRevision;
         return this;
     }
@@ -125,7 +136,7 @@ public final class SunburstContainer implements IContainer {
      * @return instance of this class
      */
     public SunburstContainer setModWeight(final float paramModWeight) {
-//        assert paramModWeight >= 0;
+        assert paramModWeight >= 0;
         mModWeight = paramModWeight;
         return this;
     }
@@ -157,7 +168,7 @@ public final class SunburstContainer implements IContainer {
      * @return instance of this class
      */
     public SunburstContainer setDepth(final int paramDepth) {
-//        assert paramDepth >= 0;
+        assert paramDepth >= 0;
         mDepth = paramDepth;
         return this;
     }
@@ -205,7 +216,7 @@ public final class SunburstContainer implements IContainer {
      * @return instance of this class
      */
     public SunburstContainer setHitTestIndex(final int paramHitTestIndex) {
-//        assert paramHitTestIndex >= -1;
+        assert paramHitTestIndex > -1;
         mHitTestIndex = paramHitTestIndex;
         return this;
     }

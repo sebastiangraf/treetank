@@ -52,7 +52,7 @@ import org.treetank.node.AbsNode;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.utils.LogWrapper;
+//import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.gui.ReadDB;
@@ -76,9 +76,9 @@ import processing.core.PConstants;
  */
 public final class SunburstCompareModel extends AbsModel<SunburstItem> implements PropertyChangeListener {
 
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(
-        LoggerFactory.getLogger(SunburstCompareModel.class));
+//    /** {@link LogWrapper}. */
+//    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+//        LoggerFactory.getLogger(SunburstCompareModel.class));
 
     /**
      * Constructor.
@@ -115,7 +115,7 @@ public final class SunburstCompareModel extends AbsModel<SunburstItem> implement
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(new TraverseCompareTree(container.getRevision(), getDb().getRevisionNumber(),
             container.getStartKey(), container.getDepth(), container.getModWeight(), container.getPruning(),
-            this));
+            container.getGUI(), this));
         shutdown(executor);
     }
 
@@ -133,6 +133,7 @@ public final class SunburstCompareModel extends AbsModel<SunburstItem> implement
             firePropertyChange("done", null, true);
         } else if (paramEvent.getPropertyName().equals("items")) {
             mItems = (List<SunburstItem>)paramEvent.getNewValue();
+            firePropertyChange("items", null, mItems);
         }
     }
 }

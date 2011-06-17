@@ -62,7 +62,7 @@ import processing.core.PApplet;
  * implementations.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- * @param <T>
+ * @param <T> type of Items
  * 
  */
 public abstract class AbsModel<T extends IVisualItem> extends AbsObservableComponent implements IModel<T> {

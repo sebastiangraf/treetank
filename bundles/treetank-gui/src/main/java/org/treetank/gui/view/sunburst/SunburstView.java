@@ -46,8 +46,8 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.gui.GUI;
 import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
-import org.treetank.gui.controls.IControl;
 import org.treetank.gui.view.*;
+import org.treetank.gui.view.controls.IControl;
 import org.treetank.gui.view.sunburst.model.SunburstModel;
 
 import processing.core.PApplet;
@@ -252,23 +252,22 @@ public final class SunburstView extends JScrollPane implements IView {
     /** Embedded processing view. */
     final class Embedded extends PApplet {
 
-        /**
-         * Serial UID.
-         */
+        /** Serial UID. */
         private static final long serialVersionUID = 1L;
-
-        /** {@link SunburstGUI} which represents the GUI interface of the Sunburst view. */
-        private transient SunburstGUI mSunburstGUI;
 
         /** The Treetank {@link SunburstModel}. */
         private transient SunburstModel mModel;
 
+        /** {@link ProcessingEmbeddedView} to support composition. */
         private transient ProcessingEmbeddedView mEmbeddedView;
 
+        /** The actual view. */
         private final IView mView;
 
+        /** {@link ViewNotifier} which notifies views of changes. */
         private final ViewNotifier mViewNotifier;
         
+        /** {@link SunburstControl} reference for user interaction. */
         private transient SunburstControl mControl;
 
         /**
@@ -306,7 +305,7 @@ public final class SunburstView extends JScrollPane implements IView {
             mControl = SunburstControl.getInstance(this, mModel, mDB);
 
             // Use embedded view.
-            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.getGUI(), mControl, mViewNotifier);
+            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.getGUIInstance(), mControl, mViewNotifier);
         }
 
         /** {@inheritDoc} */

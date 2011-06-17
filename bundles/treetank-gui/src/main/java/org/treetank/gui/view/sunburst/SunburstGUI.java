@@ -58,12 +58,12 @@ import org.gicentre.utils.move.ZoomPanListener;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
-import org.treetank.gui.controls.IControl;
 import org.treetank.gui.view.IProcessingGUI;
 import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
+import org.treetank.gui.view.controls.IControl;
 import org.treetank.gui.view.model.AbsModel;
 import org.treetank.gui.view.model.IModel;
 import org.treetank.gui.view.sunburst.control.ISunburstControl;
@@ -278,9 +278,9 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 if (mDone) {
                     drawItems(EDraw.DRAW);
                 }
-                mBuffer.stroke(0);
-                mBuffer.strokeWeight(2f);
-                mBuffer.line(0, 0, mParent.width, 0);
+                getBuffer().stroke(0);
+                getBuffer().strokeWeight(2f);
+                getBuffer().line(0, 0, mParent.width, 0);
             } else if (mDone) {
                 // LOGWRAPPER.debug("Buffered image!");
 
@@ -678,7 +678,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     /**
      * Set pruning.
      * 
-     * @param paramstate
+     * @param paramState
      *            true if pruning should be used, false otherwise
      */
     public void setPruning(final boolean paramState) {

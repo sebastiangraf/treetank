@@ -120,7 +120,8 @@ public final class SunburstModel extends AbsModel<SunburstItem> implements IChan
         assert container.getStartKey() >= 0;
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         try {
-            executor.submit(new TraverseTree(container.getStartKey(), container.getPruning(), this));
+            executor.submit(new TraverseTree(container.getStartKey(), container.getPruning(), container
+                .getGUI(), this));
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
@@ -172,6 +173,9 @@ public final class SunburstModel extends AbsModel<SunburstItem> implements IChan
         /** Determines if current item has been pruned or not. */
         private transient boolean mPruned;
 
+        /** GUI which extends the {@link SunburstGUI}. */
+        private final AbsSunburstGUI mGUI;
+
         /**
          * Constructor.
          * 
@@ -181,11 +185,14 @@ public final class SunburstModel extends AbsModel<SunburstItem> implements IChan
          *            Pruning of nodes.
          * @param paramModel
          *            The {@link SunburstModel}.
+         * @param paramGUI
+         *            GUI which extends the {@link SunburstGUI}
          */
-        private TraverseTree(final long paramKey, final EPruning paramPruning, final SunburstModel paramModel)
-            throws AbsTTException {
+        private TraverseTree(final long paramKey, final EPruning paramPruning, final AbsSunburstGUI paramGUI,
+            final SunburstModel paramModel) throws AbsTTException {
             assert paramKey >= 0;
             assert paramModel != null;
+            assert paramGUI != null;
             mKey = paramKey == 0 ? paramKey + 1 : paramKey;
             mModel = paramModel;
             addPropertyChangeListener(mModel);
@@ -197,6 +204,7 @@ public final class SunburstModel extends AbsModel<SunburstItem> implements IChan
             mParent = mModel.getParent();
             mRelations = new NodeRelations();
             mItems = new LinkedList<SunburstItem>();
+            mGUI = paramGUI;
         }
 
         /**
@@ -272,12 +280,12 @@ public final class SunburstModel extends AbsModel<SunburstItem> implements IChan
 
             // Build item.
             if (text != null) {
-                mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
-                    .setNode(node).setText(text).build());
+                mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb,
+                    mGUI).setNode(node).setText(text).build());
             } else {
                 // LOGWRAPPER.debug("QName: " + mRtx.getQNameOfCurrentNode());
-                mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb)
-                    .setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
+                mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension, mRelations, mDb,
+                    mGUI).setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
             }
 
             // Set depth max.
@@ -632,6 +640,7 @@ public final class SunburstModel extends AbsModel<SunburstItem> implements IChan
             firePropertyChange("done", null, true);
         } else if (paramEvent.getPropertyName().equals("items")) {
             mItems = (List<SunburstItem>)paramEvent.getNewValue();
+            firePropertyChange("items", null, mItems);
         }
     }
 }

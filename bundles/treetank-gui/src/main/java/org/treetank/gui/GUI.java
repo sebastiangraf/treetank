@@ -41,6 +41,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.gui.view.IView;
 import org.treetank.gui.view.ViewContainer;
 import org.treetank.gui.view.ViewNotifier;
+import org.treetank.gui.view.smallmultiples.SmallMultiplesView;
 import org.treetank.gui.view.sunburst.SunburstView;
 import org.treetank.gui.view.text.TextView;
 import org.treetank.gui.view.tree.TreeView;
@@ -109,7 +110,7 @@ public final class GUI extends JFrame {
         // Create views.
         mNotifier = new ViewNotifier(this);
         mContainer = ViewContainer.getInstance(this, TreeView.getInstance(mNotifier), TextView.getInstance(mNotifier),
-                SunburstView.getInstance(mNotifier));
+                SmallMultiplesView.getInstance(mNotifier), SunburstView.getInstance(mNotifier));
         mContainer.layoutViews();
         top.add(mContainer, BorderLayout.CENTER);
         getContentPane().add(top);

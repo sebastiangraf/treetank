@@ -40,12 +40,14 @@ import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 
 import org.slf4j.LoggerFactory;
+import org.treetank.exception.AbsTTException;
 import org.treetank.gui.GUI;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
 import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ProcessingEmbeddedView;
 import org.treetank.gui.view.ViewNotifier;
+import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.SunburstControl;
 import org.treetank.gui.view.sunburst.model.SunburstModel;
 import org.treetank.utils.LogWrapper;
@@ -54,6 +56,8 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 /**
+ * SmallMultiples view.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
@@ -168,32 +172,61 @@ public class SmallMultiplesView extends JScrollPane implements IView {
         return NAME;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void refreshInit() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void refreshUpdate() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void dispose() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public JComponent component() {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void refreshInit() {
+        mDB = mNotifier.getGUI().getReadDB();
+        setViewportView(mEmbed);
+
+        /*
+         * Important to call this whenever embedding a PApplet.
+         * It ensures that the animation thread is started and
+         * that other internal variables are properly set.
+         */
+        mEmbed.init();
+        mEmbed.refreshInit();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void refreshUpdate() {
+        try {
+            mDB = ViewUtilities.refreshResource(mDB);
+        } catch (final AbsTTException e) {
+            e.printStackTrace();
+        }
+        mEmbed.refreshUpdate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        if (mEmbed != null) {
+            mEmbed.noLoop();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        final Dimension parentFrame = mGUI.getSize();
+        return new Dimension(parentFrame.width, parentFrame.height - 21);
     }
     
     /** Embedded processing view. */
@@ -250,12 +283,13 @@ public class SmallMultiplesView extends JScrollPane implements IView {
             mControl = SmallMultiplesControl.getInstance(this, mModel, mDB);
 
             // Use embedded view.
-            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.mGUI, mControl, mViewNotifier);
+            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.getGUIInstance(), mControl, mViewNotifier);
         }
 
         /** {@inheritDoc} */
         @Override
         public void draw() {
+            System.out.println("draaaw!");
             if (mEmbeddedView != null) {
                 mEmbeddedView.draw();
             }
