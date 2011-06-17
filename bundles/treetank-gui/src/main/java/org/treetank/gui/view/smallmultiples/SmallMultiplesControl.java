@@ -4,12 +4,15 @@
 package org.treetank.gui.view.smallmultiples;
 
 import org.treetank.gui.ReadDB;
-import org.treetank.gui.controls.AbsControl;
 import org.treetank.gui.view.IProcessingGUI;
+import org.treetank.gui.view.controls.AbsControl;
 import org.treetank.gui.view.model.IModel;
 import org.treetank.gui.view.smallmultiples.SmallMultiplesView.Embedded;
 import org.treetank.gui.view.sunburst.AbsSunburstGUI;
+import org.treetank.gui.view.sunburst.EPruning;
+import org.treetank.gui.view.sunburst.SunburstContainer;
 import org.treetank.gui.view.sunburst.SunburstControl;
+import org.treetank.gui.view.sunburst.SunburstGUI;
 import org.treetank.gui.view.sunburst.control.AbsSunburstControl;
 
 import processing.core.PApplet;
@@ -18,52 +21,60 @@ import processing.core.PApplet;
  * Controller for the SmallMultiples view.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public class SmallMultiplesControl extends AbsSunburstControl {
 
+    /** {@link SmallMultiplesControl} singleton instance. */
+    private static SmallMultiplesControl mControl;
+
     /**
+     * Private constructor.
+     * 
      * @param paramParent
+     *            parent {@link Embedded} reference
      * @param paramModel
+     *            model which implements the {@link IModel} interface
      * @param paramDb
+     *            {@link ReadDB} reference
      */
-    public SmallMultiplesControl(PApplet paramParent, IModel paramModel, ReadDB paramDb) {
-        super(paramParent, paramModel, paramDb);
-        // TODO Auto-generated constructor stub
+    private SmallMultiplesControl(final Embedded paramParent, final IModel paramModel, final ReadDB paramDB) {
+        super(paramParent, paramModel, paramDB);
+        
+        // Initial traversal of tree.
+        mModel.traverseTree(new SunburstContainer(getGUIInstance()).setStartKey(mDb.getNodeKey())
+            .setPruning(EPruning.FALSE).setModWeight(getGUIInstance().getModificationWeight()).setRevision(1)
+            .setDepth(0));
     }
 
-    IProcessingGUI mGUI;
-
     /**
-     * @param embedded
-     * @param mModel
-     * @param mDB
-     * @return
+     * Get singleton instance.
+     * 
+     * @param paramParent
+     *            reference of class which extends {@link PApplet}
+     * @param paramModel
+     *            {@link IModel} reference
+     * @param paramDB
+     *            {@link ReadDB} reference
+     * @return singelton instance of this class
      */
-    public static SmallMultiplesControl getInstance(Embedded embedded, SmallMultiplesModel mModel, ReadDB mDB) {
-        // TODO Auto-generated method stub
-        return null;
+    public static synchronized SmallMultiplesControl getInstance(final Embedded paramParent,
+        final SmallMultiplesModel paramModel, final ReadDB paramDB) {
+        if (mControl == null) {
+            mControl = new SmallMultiplesControl(paramParent, paramModel, paramDB);
+        }
+        return mControl;
     }
 
     /** {@inheritDoc} */
     public void refreshUpdate() {
         // TODO Auto-generated method stub
-        
+
     }
 
     /** {@inheritDoc} */
     @Override
-    public IModel getModel() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.sunburst.control.AbsSunburstControl#getGUIInstance()
-     */
-    @Override
     protected AbsSunburstGUI getGUIInstance() {
-        // TODO Auto-generated method stub
-        return null;
+        return SmallMultiplesGUI.getInstance(mParent, this, mDb);
     }
 }

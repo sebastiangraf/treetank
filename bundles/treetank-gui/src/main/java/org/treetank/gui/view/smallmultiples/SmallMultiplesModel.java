@@ -48,13 +48,13 @@ import processing.core.PApplet;
  * Small multiples model. Can be easily extended through the usage of composition.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public class SmallMultiplesModel extends AbsModel implements PropertyChangeListener {
 
     /** {@link SunbburstCompareModel} instance. */
-    private final SunburstCompareModel model; 
-    
+    private final SunburstCompareModel model;
+
     /**
      * Constructor.
      * 
@@ -66,6 +66,7 @@ public class SmallMultiplesModel extends AbsModel implements PropertyChangeListe
     public SmallMultiplesModel(final PApplet paramApplet, final ReadDB paramDb) {
         super(paramApplet, paramDb);
         model = new SunburstCompareModel(paramApplet, paramDb);
+        model.addPropertyChangeListener(this);
     }
 
     /** {@inheritDoc} */
@@ -81,8 +82,19 @@ public class SmallMultiplesModel extends AbsModel implements PropertyChangeListe
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     @Override
     public void propertyChange(final PropertyChangeEvent paramEvent) {
-        model.propertyChange(paramEvent);
+        if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
+            mLastOldMaxDepth = (Integer)paramEvent.getNewValue();
+            firePropertyChange("oldMaxDepth", null, mLastOldMaxDepth);
+        } else if (paramEvent.getPropertyName().equals("maxDepth")) {
+            mLastMaxDepth = (Integer)paramEvent.getNewValue();
+            firePropertyChange("maxDepth", null, mLastMaxDepth);
+        } else if (paramEvent.getPropertyName().equals("done")) {
+            firePropertyChange("done", null, true);
+        } else if (paramEvent.getPropertyName().equals("items")) {
+            mItems = (List<SunburstItem>)paramEvent.getNewValue();
+        }
     }
 }

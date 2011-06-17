@@ -102,25 +102,25 @@ public enum EDraw {
             if (paramGUI.mParent.recorder != null) {
                 drawStaticRings(paramGUI, paramGUI.mParent.recorder);
             }
-            drawStaticRings(paramGUI, paramGUI.mBuffer);
+            drawStaticRings(paramGUI, paramGUI.getBuffer());
         }
 
         /** {@inheritDoc} */
         @Override
         void update(final SunburstGUI paramGUI, final SunburstItem paramItem) {
-            paramItem.update(paramGUI.getMappingMode(), paramGUI.mBuffer);
+            paramItem.update(paramGUI.getMappingMode(), paramGUI.getBuffer());
         }
 
         /** {@inheritDoc} */
         @Override
         void drawOldRevision(final SunburstGUI paramGUI) {
-            drawStaticOldRevision(paramGUI, paramGUI.mBuffer);
+            drawStaticOldRevision(paramGUI, paramGUI.getBuffer());
         }
 
         /** {@inheritDoc} */
         @Override
         void drawNewRevision(final SunburstGUI paramGUI) {
-            drawStaticNewRevision(paramGUI, paramGUI.mBuffer);
+            drawStaticNewRevision(paramGUI, paramGUI.getBuffer());
         }
 
         /** {@inheritDoc} */
@@ -129,7 +129,7 @@ public enum EDraw {
             if (paramGUI.mParent.recorder != null) {
                 drawStaticModifcationRel(paramGUI, paramItem, paramGUI.mParent.recorder);
             }
-            drawStaticModifcationRel(paramGUI, paramItem, paramGUI.mBuffer);
+            drawStaticModifcationRel(paramGUI, paramItem, paramGUI.getBuffer());
         }
     };
 

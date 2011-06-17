@@ -12,7 +12,7 @@ import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
 
 import org.treetank.gui.GUI;
-import org.treetank.gui.controls.IControl;
+import org.treetank.gui.view.controls.IControl;
 import org.treetank.gui.view.sunburst.model.SunburstModel;
 
 import processing.core.PApplet;

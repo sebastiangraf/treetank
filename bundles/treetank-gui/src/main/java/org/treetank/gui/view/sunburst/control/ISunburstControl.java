@@ -8,7 +8,7 @@ import javax.xml.stream.XMLStreamException;
 import controlP5.ControlEvent;
 import controlP5.ControlListener;
 
-import org.treetank.gui.controls.IControl;
+import org.treetank.gui.view.controls.IControl;
 
 /**
  * Interface for SunburstControllers which adds specific methods to {@link IControl}.

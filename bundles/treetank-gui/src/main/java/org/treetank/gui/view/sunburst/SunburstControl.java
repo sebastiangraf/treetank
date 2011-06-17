@@ -19,8 +19,8 @@ import org.datanucleus.util.ViewUtils;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
-import org.treetank.gui.controls.AbsControl;
 import org.treetank.gui.view.ViewUtilities;
+import org.treetank.gui.view.controls.AbsControl;
 import org.treetank.gui.view.model.AbsModel;
 import org.treetank.gui.view.model.IModel;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
@@ -61,7 +61,9 @@ public class SunburstControl extends AbsSunburstControl {
     private SunburstControl(final PApplet paramParent, final IModel paramModel, final ReadDB paramDb) {
         super(paramParent, paramModel, paramDb);
         assert paramParent != null;
-        mSunburstGUI = (SunburstGUI)getGUI();
+        mSunburstGUI = (SunburstGUI)getGUIInstance();
+        mModel.traverseTree(new SunburstContainer(getGUIInstance()).setStartKey(mDb.getNodeKey()).setPruning(
+            EPruning.FALSE));
     }
 
     /**
@@ -104,7 +106,7 @@ public class SunburstControl extends AbsSunburstControl {
                 mSunburstGUI.mSelectedRev = (int)paramControlEvent.group().value();
                 mModel = new SunburstCompareModel(mSunburstGUI.mParent, mSunburstGUI.mDb);
                 mModel.addPropertyChangeListener(mSunburstGUI);
-                final SunburstContainer container = new SunburstContainer();
+                final SunburstContainer container = new SunburstContainer(mSunburstGUI);
                 if (mSunburstGUI.mUsePruning) {
                     container.setPruning(EPruning.TRUE);
                 } else {
@@ -286,7 +288,7 @@ public class SunburstControl extends AbsSunburstControl {
                     if (mSunburstGUI.mHitTestIndex != -1) {
                         // Bug in processing's mousbotton, thus used SwingUtilities.
                         if (SwingUtilities.isLeftMouseButton(paramEvent) && !mSunburstGUI.mCtrl.isOpen()) {
-                            final SunburstContainer container = new SunburstContainer();
+                            final SunburstContainer container = new SunburstContainer(mSunburstGUI);
                             if (mSunburstGUI.mUsePruning) {
                                 container.setPruning(EPruning.TRUE);
                             } else {
@@ -416,7 +418,7 @@ public class SunburstControl extends AbsSunburstControl {
         mDb = paramDB;
         mSunburstGUI.mDone = false;
         mSunburstGUI.mUseDiffView = false;
-        final SunburstContainer container = new SunburstContainer().setStartKey(mDb.getNodeKey());
+        final SunburstContainer container = new SunburstContainer(mSunburstGUI).setStartKey(mDb.getNodeKey());
         if (mSunburstGUI.mUsePruning) {
             container.setPruning(EPruning.TRUE);
         } else {

@@ -113,6 +113,9 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
 
     /** {@link SunburstCompareDescendantAxis} instance. */
     private transient SunburstCompareDescendantAxis mAxis;
+    
+    /** GUI which extends {@link AbsSunburstGUI}. */
+    private final AbsSunburstGUI mGUI;
 
     /**
      * Constructor.
@@ -132,16 +135,19 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
      *            determines if tree should be pruned or not
      * @param paramModel
      *            the {@link SunburstModel}
+     * @param paramGUI
+     *            GUI which extends the {@link SunburstGUI}
      */
     public TraverseCompareTree(final long paramNewRevision, final long paramCurrRevision,
         final long paramKey, final int paramDepth, final float paramModificationWeight,
-        final EPruning paramPrune, final AbsModel paramModel) {
+        final EPruning paramPrune, final AbsSunburstGUI paramGUI, final AbsModel paramModel) {
         assert paramNewRevision >= 0;
         assert paramKey >= 0;
         assert paramDepth >= 0;
         assert paramModificationWeight >= 0;
         assert paramPrune != null;
         assert paramModel != null;
+        assert paramGUI != null;
 
         if (paramNewRevision < paramCurrRevision) {
             throw new IllegalArgumentException(
@@ -153,11 +159,13 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
         mDb = mModel.getDb();
 
         try {
+            mNewRtx = mDb.getSession().beginReadTransaction(paramNewRevision);
             mRtx = mModel.getDb().getSession().beginReadTransaction(paramCurrRevision);
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
 
+        mGUI = paramGUI;
         mRevision = paramNewRevision;
         mKey = paramKey == 0 ? paramKey + 1 : paramKey;
         mModWeight = paramModificationWeight;
@@ -168,6 +176,7 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
         mParent = mModel.getParent();
         mDepth = paramDepth;
         mRtx.moveTo(mKey);
+        mNewRtx.moveTo(mKey);
         mPrune = paramPrune;
     }
 
@@ -204,8 +213,6 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
             mDepthMax = getDepthMax(mRtx);
             // stackTraces();
 
-            mNewRtx = mDb.getSession().beginReadTransaction(mRevision);
-            mNewRtx.moveTo(mKey);
             for (mAxis =
                 new SunburstCompareDescendantAxis(true, this, mNewRtx, mRtx, mDiffs, mDepthMax, mDepth); mAxis
                 .hasNext(); mAxis.next())
@@ -469,7 +476,7 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
 
             // Build item.
             final SunburstItem.Builder builder =
-                new SunburstItem.Builder(mParent, mModel, angle, extension, mRelations, mDb).setNode(node)
+                new SunburstItem.Builder(mParent, mModel, angle, extension, mRelations, mDb, mGUI).setNode(node)
                     .setDiff(diff);
             if (modificationCount > descendantCount) {
                 final int diffCounts = (modificationCount - descendantCount) / ITraverseModel.FACTOR;

@@ -147,7 +147,7 @@ public final class SunburstItem implements IVisualItem {
     private transient EXPathState mXPathState = EXPathState.ISNOTFOUND;
 
     /** Singleton {@link SunburstGUI} instance. */
-    private transient SunburstGUI mGUI;
+    private transient AbsSunburstGUI mGUI;
 
     /** Text string. */
     final String mText;
@@ -215,6 +215,9 @@ public final class SunburstItem implements IVisualItem {
         /** Modification count. */
         private transient int mModifications;
 
+        /** GUI which extends {@link AbsSunburstGUI}. */
+        private transient AbsSunburstGUI mGUI;
+
         /**
          * Constructor.
          * 
@@ -230,15 +233,19 @@ public final class SunburstItem implements IVisualItem {
          *            {@link NodeRelations} instance
          * @param paramReadDB
          *            {@link ReadDB} instance
+         * @param paramGUI
+         *            GUI which extends {@link AbsSunburstGUI}
          */
         public Builder(final PApplet paramApplet, final AbsModel paramModel, final float paramAngleStart,
-            final float paramExtension, final NodeRelations paramRelations, final ReadDB paramReadDB) {
+            final float paramExtension, final NodeRelations paramRelations, final ReadDB paramReadDB,
+            final AbsSunburstGUI paramGUI) {
             mParent = paramApplet;
             mModel = paramModel;
             mAngleStart = paramAngleStart;
             mExtension = paramExtension;
             mRelations = paramRelations;
             mReadDB = paramReadDB;
+            mGUI = paramGUI;
         }
 
         /**
@@ -352,11 +359,7 @@ public final class SunburstItem implements IVisualItem {
      *            The Builder to build a new sunburst item.
      */
     private SunburstItem(final Builder paramBuilder) {
-        // Returns GUI singleton instance.
-        mGUI =
-            SunburstGUI.getInstance(paramBuilder.mParent, ((Embedded)paramBuilder.mParent).getController(),
-                paramBuilder.mReadDB);
-
+        mGUI = paramBuilder.mGUI;
         mNode = paramBuilder.mNode;
         mQName = paramBuilder.mQName;
         mOldQName = paramBuilder.mOldQName;
@@ -441,7 +444,8 @@ public final class SunburstItem implements IVisualItem {
             switch (mNode.getKind()) {
             case ELEMENT_KIND:
                 float bright =
-                    PApplet.lerp(mGUI.getInnerNodeBrightnessStart(), mGUI.getInnerNodeBrightnessEnd(), percent);
+                    PApplet.lerp(mGUI.getInnerNodeBrightnessStart(), mGUI.getInnerNodeBrightnessEnd(),
+                        percent);
                 mCol = paramGraphic.color(0, 0, bright);
 
                 // bright =
@@ -453,8 +457,10 @@ public final class SunburstItem implements IVisualItem {
             case COMMENT_KIND:
             case PROCESSING_KIND:
                 final int from =
-                    paramGraphic.color(mGUI.getHueStart(), mGUI.getSaturationStart(), mGUI.getBrightnessStart());
-                final int to = paramGraphic.color(mGUI.getHueEnd(), mGUI.getSaturationEnd(), mGUI.getBrightnessEnd());
+                    paramGraphic.color(mGUI.getHueStart(), mGUI.getSaturationStart(),
+                        mGUI.getBrightnessStart());
+                final int to =
+                    paramGraphic.color(mGUI.getHueEnd(), mGUI.getSaturationEnd(), mGUI.getBrightnessEnd());
                 mCol = paramGraphic.lerpColor(from, to, percent);
 
                 mLineCol = mCol;
@@ -464,7 +470,8 @@ public final class SunburstItem implements IVisualItem {
             }
 
             // Calculate stroke weight for relations line.
-            mLineWeight = PApplet.map(mDepth, 0, depthMax, mGUI.getStrokeWeightStart(), mGUI.getStrokeWeightEnd());
+            mLineWeight =
+                PApplet.map(mDepth, 0, depthMax, mGUI.getStrokeWeightStart(), mGUI.getStrokeWeightEnd());
             if (mArcLength < mLineWeight) {
                 mLineWeight = mArcLength * 0.93f;
             }
@@ -638,7 +645,7 @@ public final class SunburstItem implements IVisualItem {
             mGUI.mParent.recorder.noStroke();
         }
         mGraphic.noStroke();
-        if (mGUI.mUseDiffView) {
+        if (mGUI instanceof SunburstGUI && ((SunburstGUI)mGUI).mUseDiffView) {
             switch (mDiff) {
             case INSERTED:
                 if (mGUI.mParent.recorder != null) {

@@ -120,7 +120,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     private transient float mLeafArcScale = 1.0f;
 
     /** {@link PGraphics} offscreen buffer. */
-    protected transient PGraphics mBuffer;
+    private transient PGraphics mBuffer;
 
     /** {@link PApplet} instance. */
     protected final PApplet mParent;
@@ -329,15 +329,15 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         // LOGWRAPPER.debug("[update()]: Available permits: " + mLock.availablePermits());
         // LOGWRAPPER.debug("parent width: " + mParent.width + " parent height: " + mParent.height);
         getZoomer().reset();
-        mBuffer = mParent.createGraphics(mParent.width, mParent.height, PConstants.JAVA2D);
-        mBuffer.beginDraw();
+        setBuffer(mParent.createGraphics(mParent.width, mParent.height, PConstants.JAVA2D));
+        getBuffer().beginDraw();
         updateBuffer();
-        mBuffer.endDraw();
+        getBuffer().endDraw();
         mParent.noLoop();
 
         try {
             mLock.acquire();
-            mImg = mBuffer.get(0, 0, mBuffer.width, mBuffer.height);
+            mImg = getBuffer().get(0, 0, getBuffer().width, getBuffer().height);
         } catch (final InterruptedException exc) {
             exc.printStackTrace();
         } finally {
@@ -350,24 +350,24 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      * Draws into an off-screen buffer.
      */
     private void updateBuffer() {
-        mBuffer.pushMatrix();
-        mBuffer.colorMode(PConstants.HSB, 360, 100, 100, 100);
-        mBuffer.background(0, 0, getBackgroundBrightness());
-        mBuffer.noFill();
-        mBuffer.ellipseMode(PConstants.RADIUS);
-        mBuffer.strokeCap(PConstants.SQUARE);
-        mBuffer.smooth();
-        mBuffer.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
-        mBuffer.rotate(PApplet.radians(mRad));
+        getBuffer().pushMatrix();
+        getBuffer().colorMode(PConstants.HSB, 360, 100, 100, 100);
+        getBuffer().background(0, 0, getBackgroundBrightness());
+        getBuffer().noFill();
+        getBuffer().ellipseMode(PConstants.RADIUS);
+        getBuffer().strokeCap(PConstants.SQUARE);
+        getBuffer().smooth();
+        getBuffer().translate((float)mParent.width / 2f, (float)mParent.height / 2f);
+        getBuffer().rotate(PApplet.radians(mRad));
 
         // Draw items.
         drawItems(EDraw.UPDATEBUFFER);
 
-        mBuffer.stroke(0);
-        mBuffer.strokeWeight(2f);
-        mBuffer.line(0, 0, mParent.width, 0);
+        getBuffer().stroke(0);
+        getBuffer().strokeWeight(2f);
+        getBuffer().line(0, 0, mParent.width, 0);
 
-        mBuffer.popMatrix();
+        getBuffer().popMatrix();
     }
 
     /**
@@ -777,5 +777,19 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      */
     public void setMappingMode(int mMappingMode) {
         this.mMappingMode = mMappingMode;
+    }
+
+    /**
+     * @param mBuffer the mBuffer to set
+     */
+    public void setBuffer(PGraphics mBuffer) {
+        this.mBuffer = mBuffer;
+    }
+
+    /**
+     * @return the mBuffer
+     */
+    public PGraphics getBuffer() {
+        return mBuffer;
     }
 }

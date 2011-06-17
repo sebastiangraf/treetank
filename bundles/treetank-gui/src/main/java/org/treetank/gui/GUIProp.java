@@ -47,10 +47,10 @@ public final class GUIProp {
         SHOWTEXT(false),
 
         /** Show small multiples view. */
-        SHOWSMALLMULTIPLES(false),
+        SHOWSMALLMULTIPLES(true),
 
         /** Show sunburst view. */
-        SHOWSUNBURST(true);
+        SHOWSUNBURST(false);
 
         /** Determines if view should be shown. */
         private boolean mShow;
