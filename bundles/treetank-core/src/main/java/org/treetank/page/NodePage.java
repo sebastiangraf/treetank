@@ -70,7 +70,9 @@ public class NodePage extends AbsPage {
 
         if (NODE_ENCRYPTION) {
             for (int i = 0; i < mNodes.length; i++) {
-                final int mRightKey = mIn.readInt();
+                final long mRightKey = mIn.readLong();
+                final int mRevision = mIn.readInt();
+                final int mVersion = mIn.readInt();
 
                 if (mRightKey == 1 || mRightKey == -1) {
                     final int mElementKind = mIn.readInt();
@@ -217,13 +219,17 @@ public class NodePage extends AbsPage {
                 mNodeOut = new NodeOutputSink();
 
                 if (node != null) {
-                    mOut.writeInt(1); // write right key (in that case 1 for all)
+                    mOut.writeLong(1); // right key / unique id of key selector
+                    mOut.writeInt(0); //  revision of right node the node is encrypted with
+                    mOut.writeInt(0); // version of right node the node is encrypted with
                     final int kind = node.getKind().getNodeIdentifier();
                     mOut.writeInt(kind);
                     node.serialize(mNodeOut);
 
                 } else {
-                    mOut.writeInt(-1); // empty node in page has right -1
+                    mOut.writeLong(-1); // empty node in page has right -1;
+                    mOut.writeInt(-1); // empty node in page has revision -1;
+                    mOut.writeInt(-1); //empty node in page has version -1;
                     mOut.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
                 }
 
