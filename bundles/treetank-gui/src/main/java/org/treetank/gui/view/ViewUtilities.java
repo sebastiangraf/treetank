@@ -28,7 +28,10 @@
 package org.treetank.gui.view;
 
 import java.io.File;
+import java.lang.Thread.State;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -48,6 +51,9 @@ import org.treetank.gui.ReadDB;
  */
 public final class ViewUtilities {
 
+    /** Path to save visualization as a PDF or PNG file. */
+    public static final String SAVEPATH = "target" + File.separator;
+    
     /** Private constructor. */
     private ViewUtilities() {
         // Just in case of a helper method tries to invoke the constructor.
@@ -80,8 +86,8 @@ public final class ViewUtilities {
      * @param paramDb
      *            {@link ReadDB} instance
      * @return {@link ReadDB} instance
-     * @throws AbsTTException 
-     *          if something went wrong while reading the newest revision
+     * @throws AbsTTException
+     *             if something went wrong while reading the newest revision
      */
     public static ReadDB refreshResource(final ReadDB paramDb) throws AbsTTException {
         assert paramDb != null;
@@ -110,5 +116,48 @@ public final class ViewUtilities {
     public static void drawGUI(final ControlP5 paramControlP5) {
         paramControlP5.show();
         paramControlP5.draw();
+    }
+
+    /** Debugging threads. */
+    public static void stackTraces() {
+        Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();
+        Iterator<Thread> itr = map.keySet().iterator();
+        while (itr.hasNext()) {
+            Thread t = itr.next();
+            StackTraceElement[] elem = map.get(t);
+            System.out.print("\"" + t.getName() + "\"");
+            System.out.print(" prio=" + t.getPriority());
+            System.out.print(" tid=" + t.getId());
+            State s = t.getState();
+            String state = null;
+            switch (s) {
+            case NEW:
+                state = "NEW";
+                break;
+            case BLOCKED:
+                state = "BLOCKED";
+                break;
+            case RUNNABLE:
+                state = "RUNNABLE";
+                break;
+            case TERMINATED:
+                state = "TERMINATED";
+                break;
+            case TIMED_WAITING:
+                state = "TIME WAITING";
+                break;
+            case WAITING:
+                state = "WAITING";
+                break;
+            }
+            System.out.println(" " + state + "\n");
+            for (int i = 0; i < elem.length; i++) {
+                System.out.println("  at ");
+                System.out.print(elem[i].toString());
+                System.out.println("\n");
+            }
+            System.out.println("----------------------------\n");
+        }
+
     }
 }

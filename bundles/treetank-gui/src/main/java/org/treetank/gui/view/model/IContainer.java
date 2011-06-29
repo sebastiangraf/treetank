@@ -3,6 +3,7 @@
  */
 package org.treetank.gui.view.model;
 
+import org.treetank.gui.view.sunburst.AbsSunburstGUI;
 import org.treetank.gui.view.sunburst.EPruning;
 
 /**
@@ -32,13 +33,4 @@ public interface IContainer<T> {
      * @return instance
      */
     T setPruning(final EPruning paramPruning);
-
-    /**
-     * Set revision to compare.
-     * 
-     * @param paramRevision
-     *            the Revision to set
-     * @return this
-     */
-
 }

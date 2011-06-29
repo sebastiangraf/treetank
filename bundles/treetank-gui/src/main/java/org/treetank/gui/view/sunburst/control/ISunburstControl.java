@@ -3,6 +3,8 @@
  */
 package org.treetank.gui.view.sunburst.control;
 
+import java.util.concurrent.Semaphore;
+
 import javax.xml.stream.XMLStreamException;
 
 import controlP5.ControlEvent;

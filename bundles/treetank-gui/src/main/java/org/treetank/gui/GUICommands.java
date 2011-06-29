@@ -52,6 +52,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
+import org.treetank.gui.view.smallmultiples.SmallMultiplesView;
 import org.treetank.gui.view.sunburst.SunburstView;
 import org.treetank.gui.view.text.TextView;
 import org.treetank.gui.view.tree.TreeView;
@@ -141,7 +142,7 @@ public enum GUICommands implements IGUICommand {
                         final FileOutputStream outputStream = new FileOutputStream(target);
 
                         final IDatabase db = FileDatabase.openDatabase(source);
-                        final ISession session = db.getSession(new SessionConfiguration());
+                        final ISession session = db.getSession(new SessionConfiguration.Builder().build());
 
                         final ExecutorService executor = Executors.newSingleThreadExecutor();
                         final XMLSerializer serializer =
@@ -253,6 +254,9 @@ public enum GUICommands implements IGUICommand {
         public void execute(final GUI paramGUI) {
             assert paramGUI != null;
             GUIProp.EShowViews.SHOWSMALLMULTIPLES.invert();
+            if (!GUIProp.EShowViews.SHOWSMALLMULTIPLES.getValue()) {
+                SmallMultiplesView.getInstance(paramGUI.getNotifier()).dispose();
+            }
             paramGUI.getViewContainer().layoutViews();
         }
     },
@@ -374,7 +378,7 @@ public enum GUICommands implements IGUICommand {
                     try {
                         final IDatabase db = FileDatabase.openDatabase(tmpDir);
                         final IReadTransaction rtx =
-                            db.getSession(new SessionConfiguration()).beginReadTransaction();
+                            db.getSession(new SessionConfiguration.Builder().build()).beginReadTransaction();
                         revNumber = rtx.getRevisionNumber();
                         rtx.close();
                     } catch (final AbsTTException e) {
@@ -427,7 +431,7 @@ public enum GUICommands implements IGUICommand {
 
                 try {
                     final IDatabase database = FileDatabase.openDatabase(target);
-                    final ISession session = database.getSession(new SessionConfiguration());
+                    final ISession session = database.getSession(new SessionConfiguration.Builder().build());
                     final IReadTransaction rtx = session.beginReadTransaction();
                     final long rev = rtx.getRevisionNumber();
                     rtx.close();

@@ -35,6 +35,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 
 import javax.swing.JOptionPane;
@@ -99,9 +100,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     /** The GUI of the Sunburst view. */
     private static volatile SunburstGUI mGUI;
 
-    /** Determines if diff view is used. */
-    transient boolean mUseDiffView;
-
     /** Current angle of the mouse cursor to y axis. */
     transient float mAngle;
 
@@ -114,17 +112,11 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     /** Determines if fisheye should be used. */
     transient boolean mFisheye;
 
-    /** Determines if current state should be saved as a PDF-file. */
-    transient boolean mSavePDF;
-
     /** X position of the mouse cursor. */
     private transient float mX;
 
     /** Y position of the mouse cursor. */
     private transient float mY;
-
-    /** Determines if SunburstGUI interface should be shown. */
-    transient boolean mShowGUI;
 
     /** {@link ControlP5} text field. */
     transient Textfield mXPathField;
@@ -140,12 +132,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
 
     /** {@link DropdownList} of available revisions, which are newer than the currently opened revision. */
     volatile DropdownList mRevisions;
-
-    /** Selected revision from the {@link DropdownList} to compare. */
-    volatile int mSelectedRev;
-
-    /** Old maximum depth. */
-    volatile int mOldDepthMax;
 
     /** {@link ControlGroup} to encapsulate the components to insert XML fragments. */
     transient ControlGroup mCtrl;
@@ -270,7 +256,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             mParent.textAlign(PConstants.LEFT, PConstants.TOP);
             mParent.smooth();
 
-            if (mIsZoomingPanning || mSavePDF || mFisheye) {
+            if (mIsZoomingPanning || isSavePDF() || mFisheye) {
                 // LOGWRAPPER.debug("Without buffered image!");
                 mParent.background(0, 0, getBackgroundBrightness());
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
@@ -302,7 +288,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             }
 
             // Mouse rollover.
-            if (!mShowGUI && !mCtrl.isVisible() && mDone) {
+            if (!isShowGUI() && !mCtrl.isVisible() && mDone) {
                 boolean doMouseOver = true;
                 if (mRevisions != null && mRevisions.isOpen()) {
                     doMouseOver = false;
@@ -310,7 +296,10 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
 
                 if (doMouseOver) {
                     // Mouse rollover, arc hittest vars.
-                    rollover();
+                    final boolean itemHit = rollover();
+                    if (itemHit) {
+                        ((Embedded) mParent).getView().hover(mControl.getModel().getItem(mHitTestIndex));
+                    }
 
                     // Depth level focus.
                     if (mDepth <= mDepthMax) {
@@ -324,7 +313,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
 
                     mParent.pushMatrix();
                     if (mHitItem != null) {
-                        if (!mIsZoomingPanning && !mSavePDF && !mFisheye) {
+                        if (!mIsZoomingPanning && !isSavePDF() && !mFisheye) {
                             mParent.rotate(PApplet.radians(mRad));
                         }
                         mHitItem.hover();
@@ -332,7 +321,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                     mParent.popMatrix();
 
                     // Rollover text.
-                    if (mIsZoomingPanning || mSavePDF || mFisheye) {
+                    if (mIsZoomingPanning || isSavePDF() || mFisheye) {
                         mParent.rotate(-PApplet.radians(mRad));
                     }
                     textMouseOver();
@@ -340,7 +329,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             }
 
             // Fisheye view.
-            if (mDone && mFisheye && !mSavePDF) { // In PDF mode cannot make pixel based transformations.
+            if (mDone && mFisheye && !isSavePDF()) { // In PDF mode cannot make pixel based transformations.
                 // Fisheye transormation.
                 fisheye(mParent.mouseX, mParent.mouseY, 120);
             }
@@ -395,9 +384,9 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 mParent.text("descendants per node", 150f, mParent.height - 50f);
             }
 
-            if (mSavePDF) {
+            if (isSavePDF()) {
                 mParent.translate(mParent.width / 2, mParent.height / 2);
-                mSavePDF = false;
+                setSavePDF(false);
                 mParent.endRecord();
                 PApplet.println("saving to pdf – done");
             }
@@ -564,40 +553,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         return retVal;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void drawItems(final EDraw paramDraw) {
-        if (!isShowArcs()) {
-            paramDraw.drawRings(this);
-        }
-
-        @SuppressWarnings("unchecked")
-        final Iterable<SunburstItem> items = (Iterable<SunburstItem>)mControl.getModel();
-        for (final SunburstItem item : items) {
-            paramDraw.update(this, item);
-
-            if (mUseDiffView) {
-                paramDraw.drawModificationRel(this, item);
-                paramDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
-            } else {
-                paramDraw.drawStrategy(this, item, EDrawSunburst.NORMAL);
-            }
-        }
-
-        if (mUseDiffView) {
-            paramDraw.drawNewRevision(this);
-            paramDraw.drawOldRevision(this);
-
-            for (final SunburstItem item : items) {
-                paramDraw.drawRelation(this, item);
-            }
-
-            for (final SunburstItem item : items) {
-                paramDraw.drawDot(this, item);
-            }
-        }
-    }
-
     /**
      * Method to process event for cancel-button.
      * 
@@ -683,5 +638,10 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
      */
     public void setPruning(final boolean paramState) {
         mUsePruning = paramState;
+    }
+    
+    public void relocate() {
+        mXPathField.setPosition(mParent.width - 250, TOP + 20);
+        mRevisions.setPosition(mParent.width - 250, 100);
     }
 }

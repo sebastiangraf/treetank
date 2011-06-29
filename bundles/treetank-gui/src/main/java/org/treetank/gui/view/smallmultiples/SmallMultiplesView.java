@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -42,6 +42,7 @@ import javax.swing.ScrollPaneConstants;
 import org.slf4j.LoggerFactory;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.GUI;
+import org.treetank.gui.GUIProp;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IView;
 import org.treetank.gui.view.IVisualItem;
@@ -59,7 +60,7 @@ import processing.core.PConstants;
  * SmallMultiples view.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public class SmallMultiplesView extends JScrollPane implements IView {
 
@@ -69,7 +70,8 @@ public class SmallMultiplesView extends JScrollPane implements IView {
     private static final long serialVersionUID = 1L;
 
     /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SmallMultiplesView.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(SmallMultiplesView.class));
 
     /** Name of the view. */
     private static final String NAME = "SmallMultiplesView";
@@ -82,12 +84,13 @@ public class SmallMultiplesView extends JScrollPane implements IView {
 
     /** {@link ReadDB} instance to interact with Treetank. */
     private transient ReadDB mDB;
-    
+
     /** {@link GUI} reference. */
     private final GUI mGUI;
 
-    private Embedded mEmbed;
-    
+    /** Embedded processing view. */
+    private transient Embedded mEmbed;
+
     /**
      * Constructor.
      * 
@@ -156,16 +159,38 @@ public class SmallMultiplesView extends JScrollPane implements IView {
 
         return mView;
     }
-    
+
     /** Update window size. */
     void updateWindowSize() {
         assert mEmbed != null;
         assert mGUI != null;
         final Dimension dim = mGUI.getSize();
         getViewport().setSize(dim.width, dim.height - 42);
-        mEmbed.update();
+        if (mEmbed.focused) {
+            mEmbed.size(dim.width, dim.height - 42, PConstants.JAVA2D);
+            mEmbed.mControl.refreshTraversal();
+        }
+//        mEmbed.update();
     }
-    
+
+    /**
+     * Not supported.
+     * 
+     * @see Object#clone()
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isVisible() {
+        return GUIProp.EShowViews.SHOWSMALLMULTIPLES.getValue();
+    }
+
     /** {@inheritDoc} */
     @Override
     public String name() {
@@ -228,7 +253,7 @@ public class SmallMultiplesView extends JScrollPane implements IView {
         final Dimension parentFrame = mGUI.getSize();
         return new Dimension(parentFrame.width, parentFrame.height - 21);
     }
-    
+
     /** Embedded processing view. */
     final class Embedded extends PApplet {
 
@@ -245,7 +270,7 @@ public class SmallMultiplesView extends JScrollPane implements IView {
         private final IView mView;
 
         private final ViewNotifier mViewNotifier;
-        
+
         private transient SmallMultiplesControl mControl;
 
         /**
@@ -273,8 +298,8 @@ public class SmallMultiplesView extends JScrollPane implements IView {
             // Initialization with no draw() loop.
             noLoop();
 
-            // Frame rate reduced to 30.
-            frameRate(30);
+            // Frame rate reduced to 1 per sec.
+            frameRate(1);
 
             // Create Model.
             mModel = new SmallMultiplesModel(this, mDB);
@@ -283,13 +308,13 @@ public class SmallMultiplesView extends JScrollPane implements IView {
             mControl = SmallMultiplesControl.getInstance(this, mModel, mDB);
 
             // Use embedded view.
-            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.getGUIInstance(), mControl, mViewNotifier);
+            mEmbeddedView =
+                ProcessingEmbeddedView.getInstance(mView, mControl.getGUIInstance(), mControl, mViewNotifier);
         }
 
         /** {@inheritDoc} */
         @Override
         public void draw() {
-            System.out.println("draaaw!");
             if (mEmbeddedView != null) {
                 mEmbeddedView.draw();
             }
@@ -344,19 +369,15 @@ public class SmallMultiplesView extends JScrollPane implements IView {
                 mEmbeddedView.updateGUI();
             }
         }
-        
+
         SmallMultiplesControl getController() {
             return mControl;
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.IView#hover(org.treetank.gui.view.IVisualItem)
-     */
+    /** {@inheritDoc} */
     @Override
-    public void hover(IVisualItem paramItem) {
-        // TODO Auto-generated method stub
-        
+    public void hover(final IVisualItem paramItem) {
+        mNotifier.hover(paramItem);
     }
-
 }

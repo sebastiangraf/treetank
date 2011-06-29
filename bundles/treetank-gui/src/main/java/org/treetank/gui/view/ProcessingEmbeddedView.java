@@ -151,6 +151,7 @@ public class ProcessingEmbeddedView extends PApplet {
     public void updateGUI() {
         if (mProcessingGUI != null) {
             mProcessingGUI.update();
+            mProcessingGUI.relocate();
         }
     }
 
@@ -164,5 +165,15 @@ public class ProcessingEmbeddedView extends PApplet {
         if (window != null) {
             window.validate();
         }
+    }
+    
+    /**
+     * Provide hovering mechanisms for the current {@link IVisualItem} implementation.
+     * 
+     * @param paramItem
+     *            {@link IVisualItem} implementation
+     */
+    public void hover(final IVisualItem paramItem) {
+        mView.hover(paramItem);
     }
 }

@@ -16,6 +16,7 @@ import controlP5.*;
 import org.gicentre.utils.move.ZoomPan;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IProcessingGUI;
+import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
 import org.treetank.gui.view.sunburst.control.ISunburstControl;
 
@@ -120,7 +121,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     private transient float mLeafArcScale = 1.0f;
 
     /** {@link PGraphics} offscreen buffer. */
-    private transient PGraphics mBuffer;
+    protected transient PGraphics mBuffer;
 
     /** {@link PApplet} instance. */
     protected final PApplet mParent;
@@ -148,6 +149,21 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
     /** {@link ISunburstControl} implementation. */
     public final ISunburstControl mControl;
+
+    /** Selected revision to compare. */
+    protected transient long mSelectedRev;
+
+    /** Old maximum depth. */
+    protected transient int mOldDepthMax;
+
+    /** Determines if diff view should be used or not. */
+    protected transient boolean mUseDiffView;
+    
+    /** Determines if current state should be saved as a PDF-file. */
+    private transient boolean mSavePDF;
+    
+    /** Determines if SunburstGUI interface should be shown. */
+    private transient boolean mShowGUI;
 
     /**
      * Constructor.
@@ -387,7 +403,37 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      * @param paramDraw
      *            drawing strategy
      */
-    protected abstract void drawItems(final EDraw paramDraw);
+    protected void drawItems(final EDraw paramDraw) {
+        if (!isShowArcs()) {
+            paramDraw.drawRings(this);
+        }
+
+        @SuppressWarnings("unchecked")
+        final Iterable<SunburstItem> items = (Iterable<SunburstItem>)mControl.getModel();
+        for (final SunburstItem item : items) {
+            paramDraw.update(this, item);
+
+            if (mUseDiffView) {
+                paramDraw.drawModificationRel(this, item);
+                paramDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
+            } else {
+                paramDraw.drawStrategy(this, item, EDrawSunburst.NORMAL);
+            }
+        }
+
+        if (mUseDiffView) {
+            paramDraw.drawNewRevision(this);
+            paramDraw.drawOldRevision(this);
+
+            for (final SunburstItem item : items) {
+                paramDraw.drawRelation(this, item);
+            }
+
+            for (final SunburstItem item : items) {
+                paramDraw.drawDot(this, item);
+            }
+        }
+    }
     
     /**
      * Get initial radius.
@@ -791,5 +837,37 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      */
     public PGraphics getBuffer() {
         return mBuffer;
+    }
+    
+    public PApplet getParent() {
+        return mParent;
+    }
+
+    /**
+     * @param mSavePDF the mSavePDF to set
+     */
+    public void setSavePDF(boolean mSavePDF) {
+        this.mSavePDF = mSavePDF;
+    }
+
+    /**
+     * @return the mSavePDF
+     */
+    public boolean isSavePDF() {
+        return mSavePDF;
+    }
+
+    /**
+     * @param mShowGUI the mShowGUI to set
+     */
+    public void setShowGUI(boolean mShowGUI) {
+        this.mShowGUI = mShowGUI;
+    }
+
+    /**
+     * @return the mShowGUI
+     */
+    public boolean isShowGUI() {
+        return mShowGUI;
     }
 }

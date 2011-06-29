@@ -94,7 +94,7 @@ public final class GUIConstants {
     };
 
     /**
-     * Constructor.
+     * Private constructor.
      */
     private GUIConstants() {
         // No instance allowed.

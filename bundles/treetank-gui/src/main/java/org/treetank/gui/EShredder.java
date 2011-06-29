@@ -67,7 +67,7 @@ enum EShredder {
                 FileDatabase.truncateDatabase(paramTarget);
                 FileDatabase.createDatabase(paramTarget, new DatabaseConfiguration.Builder().build());
                 final IDatabase database = FileDatabase.openDatabase(paramTarget);
-                final ISession session = database.getSession(new SessionConfiguration());
+                final ISession session = database.getSession(new SessionConfiguration.Builder().build());
                 final IWriteTransaction wtx = session.beginWriteTransaction();
 
                 final XMLEventReader reader = XMLShredder.createReader(paramSource);
@@ -103,7 +103,7 @@ enum EShredder {
             boolean retVal = true;
             try {
                 final IDatabase database = FileDatabase.openDatabase(paramTarget);
-                final ISession session = database.getSession(new SessionConfiguration());
+                final ISession session = database.getSession(new SessionConfiguration.Builder().build());
                 final IWriteTransaction wtx = session.beginWriteTransaction();
 
                 final XMLEventReader reader = XMLShredder.createReader(paramSource);

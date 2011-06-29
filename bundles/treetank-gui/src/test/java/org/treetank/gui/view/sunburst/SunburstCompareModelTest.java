@@ -92,7 +92,7 @@ public class SunburstCompareModelTest {
         mock.createSunburstItem(builder.build(), 0, -1);
         replay(mock);
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final File firstRev = new File(XMLDELETESECOND + File.separator + "1.xml");
         XMLShredder shredder =
