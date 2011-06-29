@@ -27,6 +27,8 @@
 
 package org.treetank.gui.view.sunburst;
 
+import java.util.concurrent.Semaphore;
+
 import org.treetank.gui.view.model.IContainer;
 
 /**
@@ -58,6 +60,9 @@ public final class SunburstContainer implements IContainer {
     /** GUI which extends {@link AbsSunburstGUI}. */
     private transient AbsSunburstGUI mGUI;
 
+    /** Lock, such that the GUI doesn't receive notifications from many Models at the same time. */
+    private transient Semaphore mLock = new Semaphore(1);
+
     /**
      * Constructor.
      * 
@@ -67,6 +72,11 @@ public final class SunburstContainer implements IContainer {
     public SunburstContainer(final AbsSunburstGUI paramGUI) {
         assert paramGUI != null;
         mGUI = paramGUI;
+    }
+    
+    public SunburstContainer setLock(final Semaphore paramLock) {
+        mLock = paramLock;
+        return this;
     }
 
     /**
@@ -222,9 +232,20 @@ public final class SunburstContainer implements IContainer {
     }
 
     /**
-     * @return the mHitTestIndex
+     * Get hit test index.
+     * 
+     * @return the hitTestIndex
      */
     public int getHitTestIndex() {
         return mHitTestIndex;
+    }
+
+    /**
+     * Get lock.
+     * 
+     * @return semaphore initialized to one
+     */
+    public Semaphore getLock() {
+        return mLock;
     }
 }

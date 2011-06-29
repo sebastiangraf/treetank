@@ -54,6 +54,9 @@ public class SmallMultiplesModel extends AbsModel implements PropertyChangeListe
 
     /** {@link SunbburstCompareModel} instance. */
     private final SunburstCompareModel model;
+    
+    /** {@link SunburstContainer} reference. */
+    private transient SunburstContainer mContainer;
 
     /**
      * Constructor.
@@ -78,6 +81,8 @@ public class SmallMultiplesModel extends AbsModel implements PropertyChangeListe
     /** {@inheritDoc} */
     @Override
     public void traverseTree(final IContainer paramContainer) {
+        assert paramContainer != null;
+        mContainer = (SunburstContainer) paramContainer;
         model.traverseTree(paramContainer);
     }
 
@@ -92,6 +97,7 @@ public class SmallMultiplesModel extends AbsModel implements PropertyChangeListe
             mLastMaxDepth = (Integer)paramEvent.getNewValue();
             firePropertyChange("maxDepth", null, mLastMaxDepth);
         } else if (paramEvent.getPropertyName().equals("done")) {
+            firePropertyChange("newRev", null, mContainer.getRevision());
             firePropertyChange("done", null, true);
         } else if (paramEvent.getPropertyName().equals("items")) {
             mItems = (List<SunburstItem>)paramEvent.getNewValue();

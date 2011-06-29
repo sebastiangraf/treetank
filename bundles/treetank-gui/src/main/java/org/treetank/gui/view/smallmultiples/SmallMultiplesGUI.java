@@ -6,7 +6,10 @@ package org.treetank.gui.view.smallmultiples;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 import org.gicentre.utils.move.ZoomPan;
 import org.treetank.gui.ReadDB;
@@ -17,6 +20,8 @@ import org.treetank.gui.view.sunburst.AbsSunburstGUI;
 import org.treetank.gui.view.sunburst.EDraw;
 import org.treetank.gui.view.sunburst.SunburstControl;
 import org.treetank.gui.view.sunburst.SunburstGUI;
+import org.treetank.gui.view.sunburst.SunburstItem;
+import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.control.AbsSunburstControl;
 import org.treetank.gui.view.sunburst.control.ISunburstControl;
 
@@ -35,19 +40,20 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
     /** Instance of this class. */
     private static volatile SmallMultiplesGUI mGUI;
 
-    private final SunburstGUI mSunburstGUI;
-
     /** {@link SmallMultiplesControl} reference. */
     private final ISunburstControl mControl;
 
     /** {@link ReadDB} reference. */
     private transient ReadDB mDb;
 
-    /** {@link SmallMultiplesControl} reference. */
-    private final Embedded mParent;
+    /** {@link List} of {@link PGraphics} to buffer {@link SunburstItem}s. */
+    private final List<PGraphics> mBufferedImages = new LinkedList<PGraphics>();
 
-    /** {@link Set} of {@link PGraphics} to buffer {@link SunburstItem}s. */
-    private final Set<PGraphics> mBufferedImages = new HashSet<PGraphics>();
+    /** X value of left upper coordinate. */
+    private transient int mX;
+
+    /** Y value of left upper coordinate. */
+    private transient int mY;
 
     /**
      * Private constructor.
@@ -60,10 +66,9 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
     private SmallMultiplesGUI(final PApplet paramEmbedded, final ISunburstControl paramControl,
         final ReadDB paramReadDB) {
         super(paramEmbedded, paramControl, paramReadDB);
-        mSunburstGUI = SunburstGUI.getInstance(paramEmbedded, paramControl, paramReadDB);
         mDb = paramReadDB;
         mControl = paramControl;
-        mParent = (Embedded)paramEmbedded;
+        mUseDiffView = true;
     }
 
     /**
@@ -92,7 +97,6 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
     /** {@inheritDoc} */
     @Override
     public void draw() {
-        System.out.println("DRAW!");
         mParent.pushMatrix();
         mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
         mParent.noFill();
@@ -102,17 +106,33 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
         mParent.textAlign(PConstants.LEFT, PConstants.TOP);
         mParent.smooth();
 
-        for (final PGraphics buffer : mBufferedImages) {
-            try {
-                mLock.acquire();
-                mParent.image(buffer, 0, 0);
-            } catch (final InterruptedException exc) {
-                exc.printStackTrace();
-            } finally {
-                mLock.release();
-                // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
+        int i = 1;
+        mX = 0;
+        mY = 0;
+
+        try {
+            mLock.acquire();
+            System.out.println(getBufferedImages().size());
+            for (final PGraphics buffer : getBufferedImages()) {
+                mParent.image(buffer, mX, mY, buffer.width / 2, buffer.height / 2);
+                mX += buffer.width / 2;
+                if (i % 2 == 0) {
+                    mX = 0;
+                    mY = buffer.height / 2 + 1;
+                }
+                i++;
             }
-            mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
+        } catch (final InterruptedException exc) {
+            exc.printStackTrace();
+        } finally {
+            mLock.release();
+            // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
+        }
+        
+        if (isSavePDF()) {
+            setSavePDF(false);
+            mParent.endRecord();
+            PApplet.println("saving to pdf – done");
         }
 
         mParent.popMatrix();
@@ -121,22 +141,25 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
 
     /** {@inheritDoc} */
     @Override
-    public void update() {
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void propertyChange(final PropertyChangeEvent paramEvent) {
-        mSunburstGUI.propertyChange(paramEvent);
         if (paramEvent.getPropertyName().equals("maxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
             mDepthMax = (Integer)paramEvent.getNewValue();
             mDepthMax += 2;
+        } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
+            assert paramEvent.getNewValue() instanceof Integer;
+            mOldDepthMax = (Integer)paramEvent.getNewValue();
         } else if (paramEvent.getPropertyName().equals("done")) {
-            // FIXME: quick hack
-            while (mSunburstGUI.getBuffer() == null)
-                ;
-            mBufferedImages.add(mSunburstGUI.getBuffer());
+            update();
+            assert paramEvent.getNewValue() instanceof Boolean;
+            mLock.acquireUninterruptibly();
+            getBufferedImages().add(mBuffer);
+            mLock.release();
+            ((SmallMultiplesControl)mControl).releaseLock();
+            // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
+        } else if (paramEvent.getPropertyName().equals("newRev")) {
+            assert paramEvent.getNewValue() instanceof Long;
+            mSelectedRev = (Long)paramEvent.getNewValue();
         }
     }
 
@@ -147,7 +170,15 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
 
     /** {@inheritDoc} */
     @Override
-    protected void drawItems(final EDraw paramDraw) {
-        mSunburstGUI.drawItems(paramDraw);
+    public void relocate() {
+    }
+
+    /**
+     * Get buffered images.
+     * 
+     * @return {@link List} of {@link PGraphics}
+     */
+    public List<PGraphics> getBufferedImages() {
+        return mBufferedImages;
     }
 }

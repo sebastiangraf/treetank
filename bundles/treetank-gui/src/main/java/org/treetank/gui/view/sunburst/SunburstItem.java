@@ -645,7 +645,7 @@ public final class SunburstItem implements IVisualItem {
             mGUI.mParent.recorder.noStroke();
         }
         mGraphic.noStroke();
-        if (mGUI instanceof SunburstGUI && ((SunburstGUI)mGUI).mUseDiffView) {
+        if (mGUI.mUseDiffView) {
             switch (mDiff) {
             case INSERTED:
                 if (mGUI.mParent.recorder != null) {

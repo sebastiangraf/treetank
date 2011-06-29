@@ -4,6 +4,7 @@
 package org.treetank.gui.view.sunburst.control;
 
 import java.awt.event.MouseEvent;
+import java.util.concurrent.Semaphore;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -38,8 +39,9 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
     protected transient ReadDB mDb;
 
     /** The GUI. */
-    private final AbsSunburstGUI mGUI;
+    protected final AbsSunburstGUI mGUI;
 
+    /** Processing {@link PApplet}. */
     protected final PApplet mParent;
 
     /**
@@ -79,8 +81,8 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
      */
     @Override
     public void mousePressed(final MouseEvent paramEvent) {
-        getGUIInstance().getControlP5().controlWindow.mouseEvent(paramEvent);
-        getGUIInstance().getZoomer().mouseEvent(paramEvent);
+        mGUI.getControlP5().controlWindow.mouseEvent(paramEvent);
+        mGUI.getZoomer().mouseEvent(paramEvent);
     }
 
     /**
@@ -97,34 +99,34 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
                 final Toggle toggle = (Toggle)paramControlEvent.controller();
                 switch (paramControlEvent.controller().id()) {
                 case 0:
-                    getGUIInstance().setShowArcs(toggle.getState());
+                    mGUI.setShowArcs(toggle.getState());
                     break;
                 case 1:
-                    getGUIInstance().setShowLines(toggle.getState());
+                    mGUI.setShowLines(toggle.getState());
                     break;
                 case 2:
-                    getGUIInstance().setUseBezierLine(toggle.getState());
+                    mGUI.setUseBezierLine(toggle.getState());
                     break;
                 }
             } else if (paramControlEvent.controller() instanceof Slider) {
                 switch (paramControlEvent.controller().id()) {
                 case 0:
-                    getGUIInstance().setInnerNodeArcScale(paramControlEvent.controller().value());
+                    mGUI.setInnerNodeArcScale(paramControlEvent.controller().value());
                     break;
                 case 1:
-                    getGUIInstance().setLeafArcScale(paramControlEvent.controller().value());
+                    mGUI.setLeafArcScale(paramControlEvent.controller().value());
                     break;
                 case 2:
-                    getGUIInstance().setModificationWeight(paramControlEvent.controller().value());
+                    mGUI.setModificationWeight(paramControlEvent.controller().value());
                     break;
                 case 3:
-                    getGUIInstance().setDotSize(paramControlEvent.controller().value());
+                    mGUI.setDotSize(paramControlEvent.controller().value());
                     break;
                 case 4:
-                    getGUIInstance().setDotBrightness(paramControlEvent.controller().value());
+                    mGUI.setDotBrightness(paramControlEvent.controller().value());
                     break;
                 case 5:
-                    getGUIInstance().setBackgroundBrightness(paramControlEvent.controller().value());
+                    mGUI.setBackgroundBrightness(paramControlEvent.controller().value());
                     break;
                 }
             } else if (paramControlEvent.controller() instanceof Range) {
@@ -132,38 +134,38 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
                 switch (paramControlEvent.controller().id()) {
                 case 0:
                     f = paramControlEvent.controller().arrayValue();
-                    getGUIInstance().setHueStart(f[0]);
-                    getGUIInstance().setHueEnd(f[1]);
+                    mGUI.setHueStart(f[0]);
+                    mGUI.setHueEnd(f[1]);
                     break;
                 case 1:
                     f = paramControlEvent.controller().arrayValue();
-                    getGUIInstance().setSaturationStart(f[0]);
-                    getGUIInstance().setSaturationEnd(f[1]);
+                    mGUI.setSaturationStart(f[0]);
+                    mGUI.setSaturationEnd(f[1]);
                     break;
                 case 2:
                     f = paramControlEvent.controller().arrayValue();
-                    getGUIInstance().setBrightnessStart(f[0]);
-                    getGUIInstance().setBrightnessEnd(f[1]);
+                    mGUI.setBrightnessStart(f[0]);
+                    mGUI.setBrightnessEnd(f[1]);
                     break;
                 case 3:
                     f = paramControlEvent.controller().arrayValue();
-                    getGUIInstance().setInnerNodeBrightnessStart(f[0]);
-                    getGUIInstance().setInnerNodeBrightnessEnd(f[1]);
+                    mGUI.setInnerNodeBrightnessStart(f[0]);
+                    mGUI.setInnerNodeBrightnessEnd(f[1]);
                     break;
                 case 4:
                     f = paramControlEvent.controller().arrayValue();
-                    getGUIInstance().setInnerNodeStrokeBrightnessStart(f[0]);
-                    getGUIInstance().setInnerNodeStrokeBrightnessEnd(f[1]);
+                    mGUI.setInnerNodeStrokeBrightnessStart(f[0]);
+                    mGUI.setInnerNodeStrokeBrightnessEnd(f[1]);
                     break;
                 case 5:
                     f = paramControlEvent.controller().arrayValue();
-                    getGUIInstance().setStrokeWeightStart(f[0]);
-                    getGUIInstance().setStrokeWeightEnd(f[1]);
+                    mGUI.setStrokeWeightStart(f[0]);
+                    mGUI.setStrokeWeightEnd(f[1]);
                     break;
                 }
             }
 
-            getGUIInstance().update();
+            mGUI.update();
         }
     }
 

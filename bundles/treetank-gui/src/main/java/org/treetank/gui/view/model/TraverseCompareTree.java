@@ -1,5 +1,28 @@
 /**
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * All rights reserved.
  * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.treetank.gui.view.model;
 
@@ -9,6 +32,7 @@ import java.util.concurrent.*;
 
 import javax.xml.namespace.QName;
 
+import org.datanucleus.util.ViewUtils;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -24,6 +48,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.AbsObservableComponent;
+import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.*;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
 import org.treetank.gui.view.sunburst.axis.SunburstCompareDescendantAxis;
@@ -41,15 +66,18 @@ import processing.core.PConstants;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class TraverseCompareTree extends AbsObservableComponent implements Callable<Void>, IDiffObserver,
-    ITraverseModel {
+public final class TraverseCompareTree extends AbsObservableComponent implements Callable<Void>,
+    IDiffObserver, ITraverseModel {
+
+    /** Locking changes which are fired. */
+    private final Semaphore mLock;
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(
         LoggerFactory.getLogger(TraverseCompareTree.class));
 
     /** Timeout for {@link CountDownLatch}. */
-    private static final long TIMEOUT_S = 200000;
+    private static final long TIMEOUT_S = 100000;
 
     /** {@link CountDownLatch} to wait until {@link List} of {@link EDiff}s has been created. */
     private final CountDownLatch mStart;
@@ -113,43 +141,34 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
 
     /** {@link SunburstCompareDescendantAxis} instance. */
     private transient SunburstCompareDescendantAxis mAxis;
-    
+
     /** GUI which extends {@link AbsSunburstGUI}. */
     private final AbsSunburstGUI mGUI;
 
     /**
      * Constructor.
      * 
-     * @param paramNewRevision
-     *            new revision number
+     * @param paramContainer
+     *            {@link SunburstContainer} reference
      * @param paramCurrRevision
      *            current revision number
-     * @param paramKey
-     *            key from which to start traversal
-     * @param paramDepth
-     *            depth to prune
-     * @param paramModificationWeight
-     *            determines how much modifications are weighted to compute the extension angle of each
-     *            {@link SunburstItem}
-     * @param paramPrune
-     *            determines if tree should be pruned or not
      * @param paramModel
      *            the {@link SunburstModel}
      * @param paramGUI
      *            GUI which extends the {@link SunburstGUI}
      */
-    public TraverseCompareTree(final long paramNewRevision, final long paramCurrRevision,
-        final long paramKey, final int paramDepth, final float paramModificationWeight,
-        final EPruning paramPrune, final AbsSunburstGUI paramGUI, final AbsModel paramModel) {
-        assert paramNewRevision >= 0;
-        assert paramKey >= 0;
-        assert paramDepth >= 0;
-        assert paramModificationWeight >= 0;
-        assert paramPrune != null;
+    public TraverseCompareTree(final SunburstContainer paramContainer, final long paramCurrRevision,
+        final AbsSunburstGUI paramGUI, final AbsModel paramModel) {
+        assert paramContainer != null;
+        assert paramContainer.getRevision() >= 0;
+        assert paramContainer.getStartKey() >= 0;
+        assert paramContainer.getDepth() >= 0;
+        assert paramContainer.getModWeight() >= 0;
+        assert paramContainer.getPruning() != null;
         assert paramModel != null;
         assert paramGUI != null;
 
-        if (paramNewRevision < paramCurrRevision) {
+        if (paramContainer.getRevision() < paramCurrRevision) {
             throw new IllegalArgumentException(
                 "paramNewRevision must be greater than the currently opened revision!");
         }
@@ -159,25 +178,28 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
         mDb = mModel.getDb();
 
         try {
-            mNewRtx = mDb.getSession().beginReadTransaction(paramNewRevision);
+            mNewRtx = mDb.getSession().beginReadTransaction(paramContainer.getRevision());
             mRtx = mModel.getDb().getSession().beginReadTransaction(paramCurrRevision);
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
 
         mGUI = paramGUI;
-        mRevision = paramNewRevision;
-        mKey = paramKey == 0 ? paramKey + 1 : paramKey;
-        mModWeight = paramModificationWeight;
+        mRevision = paramContainer.getRevision();
+        mKey =
+            paramContainer.getStartKey() == 0 ? paramContainer.getStartKey() + 1 : paramContainer
+                .getStartKey();
+        mModWeight = paramContainer.getModWeight();
         mRelations = new NodeRelations();
         mDiffs = new LinkedList<Diff>();
         mStart = new CountDownLatch(1);
         mItems = new LinkedList<SunburstItem>();
         mParent = mModel.getParent();
-        mDepth = paramDepth;
+        mDepth = paramContainer.getDepth();
         mRtx.moveTo(mKey);
         mNewRtx.moveTo(mKey);
-        mPrune = paramPrune;
+        mPrune = paramContainer.getPruning();
+        mLock = paramContainer.getLock();
     }
 
     @Override
@@ -201,22 +223,27 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
                 .getRevisionNumber(), EDiffOptimized.NO, observer).setNewDepth(mDepth).setOldDepth(mDepth));
 
             // Wait for diff list to complete.
-            mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-
-            for (final Diff diff : mDiffs) {
-                final EDiff diffEnum = diff.getDiff();
-
-                LOGWRAPPER.debug("diff: " + diffEnum);
+            final boolean done = mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
+            if (!done) {
+                LOGWRAPPER.error("Diff failed - Timeout occured after " + TimeUnit.SECONDS + " seconds!");
             }
+
+            // for (final Diff diff : mDiffs) {
+            // final EDiff diffEnum = diff.getDiff();
+            //
+            // LOGWRAPPER.debug("diff: " + diffEnum);
+            // }
 
             // Maximum depth in old revision.
             mDepthMax = getDepthMax(mRtx);
-            // stackTraces();
+//            ViewUtilities.stackTraces();
 
+            mLock.acquireUninterruptibly();
             for (mAxis =
                 new SunburstCompareDescendantAxis(true, this, mNewRtx, mRtx, mDiffs, mDepthMax, mDepth); mAxis
                 .hasNext(); mAxis.next())
                 ;
+            mLock.release();
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final InterruptedException e) {
@@ -225,63 +252,23 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
 
         try {
             mRtx.close();
+            mNewRtx.close();
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
         LOGWRAPPER.debug("oldMaxDepth: " + mDepthMax);
 
+        mLock.acquireUninterruptibly();
         firePropertyChange("oldMaxDepth", null, mDepthMax);
         firePropertyChange("maxDepth", null, mNewDepthMax);
         firePropertyChange("items", null, mItems);
         firePropertyChange("done", null, true);
 
+        LOGWRAPPER.debug("Property changes sent!");
+        // Lock is released in the controller.
+
         return null;
-    }
-
-    /**
-     * 
-     */
-    private void stackTraces() {
-        Map<Thread, StackTraceElement[]> map = Thread.getAllStackTraces();
-        Iterator<Thread> itr = map.keySet().iterator();
-        while (itr.hasNext()) {
-            Thread t = itr.next();
-            StackTraceElement[] elem = map.get(t);
-            System.out.print("\"" + t.getName() + "\"");
-            System.out.print(" prio=" + t.getPriority());
-            System.out.print(" tid=" + t.getId());
-            State s = t.getState();
-            String state = null;
-            switch (s) {
-            case NEW:
-                state = "NEW";
-                break;
-            case BLOCKED:
-                state = "BLOCKED";
-                break;
-            case RUNNABLE:
-                state = "RUNNABLE";
-                break;
-            case TERMINATED:
-                state = "TERMINATED";
-                break;
-            case TIMED_WAITING:
-                state = "TIME WAITING";
-                break;
-            case WAITING:
-                state = "WAITING";
-                break;
-            }
-            System.out.println(" " + state + "\n");
-            for (int i = 0; i < elem.length; i++) {
-                System.out.println("  at ");
-                System.out.print(elem[i].toString());
-                System.out.println("\n");
-            }
-            System.out.println("----------------------------\n");
-        }
-
     }
 
     /** {@inheritDoc} */
@@ -475,30 +462,33 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
             }
 
             // Build item.
-            final SunburstItem.Builder builder =
-                new SunburstItem.Builder(mParent, mModel, angle, extension, mRelations, mDb, mGUI).setNode(node)
-                    .setDiff(diff);
-            if (modificationCount > descendantCount) {
-                final int diffCounts = (modificationCount - descendantCount) / ITraverseModel.FACTOR;
-                LOGWRAPPER.debug("modCount: " + diffCounts);
-                builder.setModifcations(diffCounts);
-            }
+            synchronized (mModel) {
+                final SunburstItem.Builder builder =
+                    new SunburstItem.Builder(mParent, mModel, angle, extension, mRelations, mDb, mGUI)
+                        .setNode(node).setDiff(diff);
 
-            if (text != null) {
-                LOGWRAPPER.debug("text: " + text);
-                builder.setText(text);
-            } else {
-                QName name = null;
-                if (diff == EDiff.DELETED) {
-                    name = mRtx.getQNameOfCurrentNode();
-                } else {
-                    name = mNewRtx.getQNameOfCurrentNode();
+                if (modificationCount > descendantCount) {
+                    final int diffCounts = (modificationCount - descendantCount) / ITraverseModel.FACTOR;
+                    LOGWRAPPER.debug("modCount: " + diffCounts);
+                    builder.setModifcations(diffCounts);
                 }
-                LOGWRAPPER.debug("name: " + name.getLocalPart());
-                builder.setQName(name);
+
+                if (text != null) {
+                    LOGWRAPPER.debug("text: " + text);
+                    builder.setText(text);
+                } else {
+                    QName name = null;
+                    if (diff == EDiff.DELETED) {
+                        name = mRtx.getQNameOfCurrentNode();
+                    } else {
+                        name = mNewRtx.getQNameOfCurrentNode();
+                    }
+                    LOGWRAPPER.debug("name: " + name.getLocalPart());
+                    builder.setQName(name);
+                }
+                updated(diff, builder);
+                mItems.add(builder.build());
             }
-            updated(diff, builder);
-            mItems.add(builder.build());
 
             // Set depth max.
             mNewDepthMax = Math.max(depth, mNewDepthMax);
@@ -579,7 +569,7 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        mModel.shutdown(executor);
+        executor.shutdown();
 
         return descendants;
     }

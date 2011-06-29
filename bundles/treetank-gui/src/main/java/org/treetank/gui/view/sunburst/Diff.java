@@ -40,16 +40,16 @@ import org.treetank.diff.DiffFactory.EDiff;
  */
 public class Diff {
     /** {@link EDiff} which specifies the kind of diff between two nodes. */
-    private transient EDiff mDiff;
+    private final EDiff mDiff;
 
     /** {@link IStructuralItem} in new revision. */
-    private transient IStructuralItem mNewNode;
+    private final IStructuralItem mNewNode;
 
     /** {@link IStructuralItem} in old revision. */
-    private transient IStructuralItem mOldNode;
+    private final IStructuralItem mOldNode;
 
     /** {@link DiffDepth} instance. */
-    private transient DiffDepth mDepth;
+    private final DiffDepth mDepth;
 
     /**
      * Constructor.

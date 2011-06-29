@@ -45,14 +45,14 @@ public enum EDraw {
     DRAW {
         /** {@inheritDoc} */
         @Override
-        void drawStrategy(final SunburstGUI paramGUI, final SunburstItem paramItem,
+        public void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
             final EDrawSunburst paramDraw) {
             paramDraw.drawStrategy(paramGUI, paramItem, this);
         }
 
         /** {@inheritDoc} */
         @Override
-        void drawRings(final SunburstGUI paramGUI) {
+        public void drawRings(final AbsSunburstGUI paramGUI) {
             if (paramGUI.mParent.recorder != null) {
                 drawStaticRings(paramGUI, paramGUI.mParent.recorder);
             }
@@ -61,25 +61,25 @@ public enum EDraw {
 
         /** {@inheritDoc} */
         @Override
-        void update(final SunburstGUI paramGUI, final SunburstItem paramItem) {
+        public void update(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
             paramItem.update(paramGUI.getMappingMode(), paramGUI.mParent.g);
         }
 
         /** {@inheritDoc} */
         @Override
-        void drawOldRevision(final SunburstGUI paramGUI) {
+        public void drawOldRevision(final AbsSunburstGUI paramGUI) {
             drawStaticOldRevision(paramGUI, paramGUI.mParent.g);
         }
 
         /** {@inheritDoc} */
         @Override
-        void drawNewRevision(final SunburstGUI paramGUI) {
+        public void drawNewRevision(final AbsSunburstGUI paramGUI) {
             drawStaticNewRevision(paramGUI, paramGUI.mParent.g);
         }
 
         /** {@inheritDoc} */
         @Override
-        void drawModificationRel(final SunburstGUI paramGUI, final SunburstItem paramItem) {
+        public void drawModificationRel(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
             if (paramGUI.mParent.recorder != null) {
                 drawStaticModifcationRel(paramGUI, paramItem, paramGUI.mParent.recorder);
             }
@@ -91,14 +91,14 @@ public enum EDraw {
     UPDATEBUFFER {
         /** {@inheritDoc} */
         @Override
-        void drawStrategy(final SunburstGUI paramGUI, final SunburstItem paramItem,
+        public void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
             final EDrawSunburst paramDraw) {
             paramDraw.drawStrategy(paramGUI, paramItem, this);
         }
 
         /** {@inheritDoc} */
         @Override
-        void drawRings(final SunburstGUI paramGUI) {
+        public void drawRings(final AbsSunburstGUI paramGUI) {
             if (paramGUI.mParent.recorder != null) {
                 drawStaticRings(paramGUI, paramGUI.mParent.recorder);
             }
@@ -107,25 +107,25 @@ public enum EDraw {
 
         /** {@inheritDoc} */
         @Override
-        void update(final SunburstGUI paramGUI, final SunburstItem paramItem) {
+        public void update(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
             paramItem.update(paramGUI.getMappingMode(), paramGUI.getBuffer());
         }
 
         /** {@inheritDoc} */
         @Override
-        void drawOldRevision(final SunburstGUI paramGUI) {
+        public void drawOldRevision(final AbsSunburstGUI paramGUI) {
             drawStaticOldRevision(paramGUI, paramGUI.getBuffer());
         }
 
         /** {@inheritDoc} */
         @Override
-        void drawNewRevision(final SunburstGUI paramGUI) {
+        public void drawNewRevision(final AbsSunburstGUI paramGUI) {
             drawStaticNewRevision(paramGUI, paramGUI.getBuffer());
         }
 
         /** {@inheritDoc} */
         @Override
-        void drawModificationRel(final SunburstGUI paramGUI, final SunburstItem paramItem) {
+        public void drawModificationRel(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
             if (paramGUI.mParent.recorder != null) {
                 drawStaticModifcationRel(paramGUI, paramItem, paramGUI.mParent.recorder);
             }
@@ -141,7 +141,7 @@ public enum EDraw {
      * @param paramGraphic
      *            {@link PGraphics} instance
      */
-    private static void drawStaticOldRevision(final SunburstGUI paramGUI, final PGraphics paramGraphic) {
+    private static void drawStaticOldRevision(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         paramGraphic.pushMatrix();
         final float arcRadius = calculateOldRadius(paramGUI, paramGraphic);
         drawRevision(paramGUI, paramGraphic, arcRadius);
@@ -160,7 +160,7 @@ public enum EDraw {
      * @param paramGraphic
      *            {@link PGraphics} instance
      */
-    private static void drawStaticNewRevision(final SunburstGUI paramGUI, final PGraphics paramGraphic) {
+    private static void drawStaticNewRevision(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         paramGraphic.pushMatrix();
         final float arcRadius = calculateNewRadius(paramGUI, paramGraphic);
         drawRevision(paramGUI, paramGraphic, arcRadius);
@@ -171,7 +171,7 @@ public enum EDraw {
         paramGraphic.popMatrix();
     }
 
-    private static void drawStaticModifcationRel(final SunburstGUI paramGUI, final SunburstItem paramItem,
+    private static void drawStaticModifcationRel(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
         final PGraphics paramGraphic) {
         if (paramGUI.isShowArcs() && paramItem.getDepth() == paramGUI.mOldDepthMax + 2) {
             switch (paramItem.mDiff) {
@@ -185,7 +185,8 @@ public enum EDraw {
                 paramGraphic.stroke(120, 100, paramGUI.getDotBrightness(), 30);
                 break;
             }
-            final SunburstItem item = (SunburstItem)paramGUI.mControl.getModel().getItem(paramItem.getIndexToParent());
+            final SunburstItem item =
+                (SunburstItem)paramGUI.mControl.getModel().getItem(paramItem.getIndexToParent());
             for (int i = item.getDepth() + 1; i < paramGUI.mOldDepthMax + 1; i++) {
                 float radius = paramGUI.calcEqualAreaRadius(i, paramGUI.mDepthMax);
                 final float depthWeight = paramGUI.calcEqualAreaRadius(i + 1, paramGUI.mDepthMax) - radius;
@@ -206,7 +207,7 @@ public enum EDraw {
      * @param paramDraw
      *            determines the drawing strategy
      */
-    private static void drawStaticRings(final SunburstGUI paramGUI, final PGraphics paramGraphic) {
+    private static void drawStaticRings(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         int depthMax = paramGUI.mDepthMax;
         if (!paramGUI.mUseDiffView) {
             depthMax += 1;
@@ -230,7 +231,7 @@ public enum EDraw {
      * @param paramRadius
      *            arc radius
      */
-    static void draw(final SunburstGUI paramGUI, final PGraphics paramGraphic, final String paramText,
+    static void draw(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic, final String paramText,
         final float paramArcRadius) {
         // We must keep track of our position along the curve.
         float arclength = 0;
@@ -286,7 +287,7 @@ public enum EDraw {
      *            {@link PGraphics} instance
      * @return calculated radius
      */
-    private static float calculateOldRadius(final SunburstGUI paramGUI, final PGraphics paramGraphic) {
+    private static float calculateOldRadius(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         final int revisionDepth = paramGUI.mOldDepthMax + 1;
         final float radius = paramGUI.calcEqualAreaRadius(revisionDepth, paramGUI.mDepthMax);
         final float depthWeight =
@@ -307,7 +308,7 @@ public enum EDraw {
      *            {@link PGraphics} instance
      * @return calculated radius
      */
-    private static float calculateNewRadius(final SunburstGUI paramGUI, final PGraphics paramGraphic) {
+    private static float calculateNewRadius(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         final int revisionDepth = paramGUI.mDepthMax - 1;
         final float radius = paramGUI.calcEqualAreaRadius(revisionDepth, paramGUI.mDepthMax);
         final float depthWeight =
@@ -329,7 +330,7 @@ public enum EDraw {
      * @param paramArcRadius
      *            arc radius
      */
-    private static void drawRevision(final SunburstGUI paramGUI, final PGraphics paramGraphic,
+    private static void drawRevision(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic,
         final float paramArcRadius) {
         if (paramGUI.mParent.recorder != null) {
             paramGUI.mParent.recorder.stroke(200f);
@@ -349,7 +350,7 @@ public enum EDraw {
      * @param paramItem
      *            {@link SunburstItem} instance
      */
-    protected void drawArc(final SunburstGUI paramGUI, final SunburstItem paramItem) {
+    protected void drawArc(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
         if (paramGUI.isShowArcs()) {
             if (paramGUI.mUseArc) {
                 paramItem.drawArc(paramGUI.getInnerNodeArcScale(), paramGUI.getLeafArcScale(), EHover.FALSE);
@@ -367,7 +368,7 @@ public enum EDraw {
      * @param paramItem
      *            {@link SunburstItem} instance
      */
-    protected void drawRelation(final SunburstGUI paramGUI, final SunburstItem paramItem) {
+    public void drawRelation(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
         if (paramGUI.isShowLines()) {
             if (paramGUI.isUseBezierLine()) {
                 paramItem.drawRelationBezier();
@@ -385,7 +386,7 @@ public enum EDraw {
      * @param paramItem
      *            {@link SunburstItem} instance
      */
-    protected void drawDot(final SunburstGUI paramGUI, final SunburstItem paramItem) {
+    public void drawDot(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
         paramItem.drawDot(EHover.FALSE);
     }
 
@@ -397,7 +398,7 @@ public enum EDraw {
      * @param paramItem
      *            {@link SunburstItem} to update
      */
-    abstract void update(final SunburstGUI paramGUI, final SunburstItem paramItem);
+    public abstract void update(final AbsSunburstGUI paramGUI, final SunburstItem paramItem);
 
     /**
      * Drawing strategy.
@@ -406,8 +407,9 @@ public enum EDraw {
      *            {@link SunburstGUI} instance
      * @param paramItem
      *            {@link SunburstItem} to draw
+     * @param paramDraw
      */
-    abstract void drawStrategy(final SunburstGUI paramGUI, final SunburstItem paramItem,
+    public abstract void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
         final EDrawSunburst paramDraw);
 
     /**
@@ -416,7 +418,7 @@ public enum EDraw {
      * @param paramGUI
      *            {@link SunburstGUI} instance
      */
-    abstract void drawOldRevision(final SunburstGUI paramGUI);
+    public abstract void drawOldRevision(final AbsSunburstGUI paramGUI);
 
     /**
      * Draw new revision ring.
@@ -424,7 +426,7 @@ public enum EDraw {
      * @param paramGUI
      *            {@link SunburstGUI} instance
      */
-    abstract void drawNewRevision(final SunburstGUI paramGUI);
+    public abstract void drawNewRevision(final AbsSunburstGUI paramGUI);
 
     /**
      * Drawing hierarchy rings.
@@ -432,9 +434,9 @@ public enum EDraw {
      * @param paramGUI
      *            {@link SunburstGUI} instance
      */
-    abstract void drawRings(final SunburstGUI paramGUI);
+    public abstract void drawRings(final AbsSunburstGUI paramGUI);
 
-    abstract void drawModificationRel(final SunburstGUI paramGUI, final SunburstItem paramItem);
+    public abstract void drawModificationRel(final AbsSunburstGUI paramGUI, final SunburstItem paramItem);
 
     /** Determines how to draw. */
     public enum EDrawSunburst {
@@ -442,7 +444,8 @@ public enum EDraw {
         NORMAL {
             /** {@inheritDoc} */
             @Override
-            void drawStrategy(final SunburstGUI paramGUI, final SunburstItem paramItem, final EDraw paramDraw) {
+            void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
+                final EDraw paramDraw) {
                 paramDraw.drawArc(paramGUI, paramItem);
                 paramDraw.drawRelation(paramGUI, paramItem);
                 paramDraw.drawDot(paramGUI, paramItem);
@@ -453,7 +456,8 @@ public enum EDraw {
         COMPARE {
             /** {@inheritDoc} */
             @Override
-            void drawStrategy(final SunburstGUI paramGUI, final SunburstItem paramItem, final EDraw paramDraw) {
+            void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
+                final EDraw paramDraw) {
                 paramDraw.drawArc(paramGUI, paramItem);
             }
         };
@@ -468,7 +472,7 @@ public enum EDraw {
          * @param paramDraw
          *            determines if it has to be drawn into an offscreen buffer or directly to the screen
          */
-        abstract void drawStrategy(final SunburstGUI paramGUI, final SunburstItem paramItem,
+        abstract void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
             final EDraw paramDraw);
     }
 }

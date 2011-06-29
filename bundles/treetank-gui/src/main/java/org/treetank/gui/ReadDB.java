@@ -106,7 +106,7 @@ public final class ReadDB {
 
         // Initialize database.
         mDatabase = FileDatabase.openDatabase(paramFile);
-        mSession = mDatabase.getSession(new SessionConfiguration());
+        mSession = mDatabase.getSession(new SessionConfiguration.Builder().build());
 
         if (paramRevision == -1) {
             // Open newest revision.

@@ -88,6 +88,9 @@ public final class SunburstView extends JScrollPane implements IView {
     /** {@link GUI} reference. */
     private final GUI mGUI;
 
+    /** {@link IVisualItem} implementation. */
+    private transient IVisualItem mItem;
+
     /**
      * Constructor.
      * 
@@ -159,11 +162,14 @@ public final class SunburstView extends JScrollPane implements IView {
 
     /** Update window size. */
     void updateWindowSize() {
-        assert mEmbed != null;
         assert mGUI != null;
+        assert mEmbed != null;
         final Dimension dim = mGUI.getSize();
         getViewport().setSize(dim.width, dim.height - 42);
-        mEmbed.update();
+        if (mEmbed.focused) {
+            mEmbed.size(dim.width, dim.height - 42, PConstants.JAVA2D);
+            mEmbed.update();
+        }
     }
 
     /**
@@ -266,7 +272,7 @@ public final class SunburstView extends JScrollPane implements IView {
 
         /** {@link ViewNotifier} which notifies views of changes. */
         private final ViewNotifier mViewNotifier;
-        
+
         /** {@link SunburstControl} reference for user interaction. */
         private transient SunburstControl mControl;
 
@@ -305,7 +311,8 @@ public final class SunburstView extends JScrollPane implements IView {
             mControl = SunburstControl.getInstance(this, mModel, mDB);
 
             // Use embedded view.
-            mEmbeddedView = ProcessingEmbeddedView.getInstance(mView, mControl.getGUIInstance(), mControl, mViewNotifier);
+            mEmbeddedView =
+                ProcessingEmbeddedView.getInstance(mView, mControl.getGUIInstance(), mControl, mViewNotifier);
         }
 
         /** {@inheritDoc} */
@@ -365,15 +372,33 @@ public final class SunburstView extends JScrollPane implements IView {
                 mEmbeddedView.updateGUI();
             }
         }
-        
+
+        /**
+         * Get controller.
+         * 
+         * @return {@link SunburstControl} reference
+         */
         SunburstControl getController() {
             return mControl;
+        }
+
+        /**
+         * Get view.
+         * 
+         * @return {@link IView} reference
+         */
+        IView getView() {
+            return mView;
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public void hover(final IVisualItem paramItem) {
-
+        assert paramItem != null;
+        if (mItem == null || mItem != paramItem) {
+            mItem = paramItem;
+            mNotifier.hover(paramItem);
+        }
     }
 }

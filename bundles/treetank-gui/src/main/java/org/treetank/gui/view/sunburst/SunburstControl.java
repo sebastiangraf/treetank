@@ -38,10 +38,7 @@ import processing.core.PConstants;
  * 
  */
 public class SunburstControl extends AbsSunburstControl {
-
-    /** Path to save visualization as a PDF or PNG file. */
-    private static final String SAVEPATH = "target" + File.separator;
-
+    
     /** {@link SunburstControl} instance. */
     private static SunburstControl mControl;
 
@@ -58,10 +55,10 @@ public class SunburstControl extends AbsSunburstControl {
      * @param paramDb
      *            {@link ReadDB} instance
      */
-    private SunburstControl(final PApplet paramParent, final IModel paramModel, final ReadDB paramDb) {
+    private SunburstControl(final Embedded paramParent, final IModel paramModel, final ReadDB paramDb) {
         super(paramParent, paramModel, paramDb);
         assert paramParent != null;
-        mSunburstGUI = (SunburstGUI)getGUIInstance();
+        mSunburstGUI = (SunburstGUI) mGUI;
         mModel.traverseTree(new SunburstContainer(getGUIInstance()).setStartKey(mDb.getNodeKey()).setPruning(
             EPruning.FALSE));
     }
@@ -77,7 +74,7 @@ public class SunburstControl extends AbsSunburstControl {
      *            {@link ReadDB} instance
      * @return {@link SunburstControl} instance
      */
-    public static synchronized SunburstControl getInstance(final PApplet paramParent,
+    public static synchronized SunburstControl getInstance(final Embedded paramParent,
         final IModel paramModel, final ReadDB paramDb) {
         assert paramParent != null;
         assert paramModel != null;
@@ -93,7 +90,7 @@ public class SunburstControl extends AbsSunburstControl {
     /** {@inheritDoc} */
     @Override
     protected AbsSunburstGUI getGUIInstance() {
-        return SunburstGUI.getInstance(mParent, this, mDb);
+        return SunburstGUI.getInstance((Embedded) mParent, this, mDb);
     }
 
     /** {@inheritDoc} */
@@ -114,6 +111,7 @@ public class SunburstControl extends AbsSunburstControl {
                 }
                 mModel.traverseTree(container.setRevision(mSunburstGUI.mSelectedRev).setModWeight(
                     mSunburstGUI.getModificationWeight()));
+                mSunburstGUI.mUseDiffView = true;
             }
         } else if (paramControlEvent.isController()) {
             if (paramControlEvent.controller() instanceof Toggle) {
@@ -151,14 +149,14 @@ public class SunburstControl extends AbsSunburstControl {
             case 's':
             case 'S':
                 // Save PNG.
-                mSunburstGUI.mParent.saveFrame(SAVEPATH + ViewUtilities.timestamp() + "_##.png");
+                mSunburstGUI.mParent.saveFrame(ViewUtilities.SAVEPATH + ViewUtilities.timestamp() + "_##.png");
                 break;
             case 'p':
             case 'P':
                 // Save PDF.
-                mSunburstGUI.mSavePDF = true;
+                mSunburstGUI.setSavePDF(true);
                 PApplet.println("\n" + "saving to pdf – starting");
-                mSunburstGUI.mParent.beginRecord(PConstants.PDF, SAVEPATH + ViewUtilities.timestamp()
+                mSunburstGUI.mParent.beginRecord(PConstants.PDF, ViewUtilities.SAVEPATH + ViewUtilities.timestamp()
                     + ".pdf");
                 mSunburstGUI.mParent.textMode(PConstants.SHAPE);
                 mSunburstGUI.mParent.textFont(mSunburstGUI.mParent.createFont("src" + File.separator + "main"
@@ -208,14 +206,14 @@ public class SunburstControl extends AbsSunburstControl {
                 break;
             case 'm':
             case 'M':
-                mSunburstGUI.mShowGUI = mSunburstGUI.getControlP5().group("menu").isOpen();
-                mSunburstGUI.mShowGUI = !mSunburstGUI.mShowGUI;
+                mSunburstGUI.setShowGUI(mSunburstGUI.getControlP5().group("menu").isOpen());
+                mSunburstGUI.setShowGUI(!mSunburstGUI.isShowGUI());
                 break;
             default:
                 // No action.
             }
 
-            if (mSunburstGUI.mShowGUI) {
+            if (mSunburstGUI.isShowGUI()) {
                 mSunburstGUI.getControlP5().group("menu").open();
             } else {
                 mSunburstGUI.getControlP5().group("menu").close();
@@ -272,9 +270,9 @@ public class SunburstControl extends AbsSunburstControl {
         mSunburstGUI.getControlP5().controlWindow.mouseEvent(paramEvent);
         mSunburstGUI.getZoomer().mouseEvent(paramEvent);
 
-        mSunburstGUI.mShowGUI = mSunburstGUI.getControlP5().group("menu").isOpen();
+        mSunburstGUI.setShowGUI(mSunburstGUI.getControlP5().group("menu").isOpen());
 
-        if (!mSunburstGUI.mShowGUI) {
+        if (!mSunburstGUI.isShowGUI()) {
             boolean doMouseOver = true;
             if (mSunburstGUI.mRevisions != null && mSunburstGUI.mRevisions.isOpen()) {
                 doMouseOver = false;
