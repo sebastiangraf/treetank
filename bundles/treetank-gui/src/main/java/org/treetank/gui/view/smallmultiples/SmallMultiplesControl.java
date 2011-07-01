@@ -65,7 +65,7 @@ public class SmallMultiplesControl extends AbsSunburstControl {
      */
     public void refreshTraversal() {
         try {
-            mSmallMultiplesGUI.getBufferedImages().clear();
+//            mSmallMultiplesGUI.getBufferedImages().clear();
             final IReadTransaction rtx = mDb.getSession().beginReadTransaction();
             final long lastRevision = rtx.getRevisionNumber();
             rtx.close();

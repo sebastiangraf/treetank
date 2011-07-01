@@ -5,10 +5,7 @@ package org.treetank.gui.view.smallmultiples;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 import org.gicentre.utils.move.ZoomPan;
@@ -46,14 +43,20 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
     /** {@link ReadDB} reference. */
     private transient ReadDB mDb;
 
-    /** {@link List} of {@link PGraphics} to buffer {@link SunburstItem}s. */
-    private final List<PGraphics> mBufferedImages = new LinkedList<PGraphics>();
-
     /** X value of left upper coordinate. */
     private transient int mX;
 
     /** Y value of left upper coordinate. */
     private transient int mY;
+
+    /** {@link List} of {@link PGraphics} to buffer {@link SunburstItem}s. */
+    private final List<ImageStore> mBufferedImages;
+
+    /** {@link List} of revisions. */
+    private final List<Long> mRevisions;
+
+    /** {@link ImageStore} reference. */
+    private transient ImageStore mImage;
 
     /**
      * Private constructor.
@@ -69,6 +72,9 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
         mDb = paramReadDB;
         mControl = paramControl;
         mUseDiffView = true;
+        // ArrayLists because of sorting.
+        mBufferedImages = new ArrayList<ImageStore>();
+        mRevisions = new ArrayList<Long>();
     }
 
     /**
@@ -112,8 +118,8 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
 
         try {
             mLock.acquire();
-            System.out.println(getBufferedImages().size());
-            for (final PGraphics buffer : getBufferedImages()) {
+            for (final ImageStore imageStore : mBufferedImages) {
+                final PGraphics buffer = imageStore.mBufferedImage;
                 mParent.image(buffer, mX, mY, buffer.width / 2, buffer.height / 2);
                 mX += buffer.width / 2;
                 if (i % 2 == 0) {
@@ -128,7 +134,7 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
             mLock.release();
             // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
         }
-        
+
         if (isSavePDF()) {
             setSavePDF(false);
             mParent.endRecord();
@@ -153,7 +159,9 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
             update();
             assert paramEvent.getNewValue() instanceof Boolean;
             mLock.acquireUninterruptibly();
-            getBufferedImages().add(mBuffer);
+            mImage = new ImageStore(mBuffer, mSelectedRev);
+            mBufferedImages.add(mImage);
+            Collections.sort(mBufferedImages, mImage);
             mLock.release();
             ((SmallMultiplesControl)mControl).releaseLock();
             // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
@@ -173,12 +181,41 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
     public void relocate() {
     }
 
-    /**
-     * Get buffered images.
-     * 
-     * @return {@link List} of {@link PGraphics}
-     */
-    public List<PGraphics> getBufferedImages() {
-        return mBufferedImages;
+    /** Stores an image buffer with it's revision for sorting. */
+    private static final class ImageStore implements Comparator {
+
+        /** {@link PGraphics} to buffer {@link SunburstItem}. */
+        final PGraphics mBufferedImage;
+
+        /** Revision. */
+        final long mRevision;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramBuffer
+         *              {@link PGraphics} reference
+         * @param paramRevision
+         *              current revision
+         */
+        ImageStore(final PGraphics paramBuffer, final long paramRevision) {
+            assert paramBuffer != null;
+            assert paramRevision >= 0;
+            mBufferedImage = paramBuffer;
+            mRevision = paramRevision;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int compare(final Object paramFirstObject, final Object paramSecondObject) {
+            if (((ImageStore)paramFirstObject).mRevision < ((ImageStore)paramSecondObject).mRevision) {
+                return -1;
+            } else if (((ImageStore)paramFirstObject).mRevision > ((ImageStore)paramSecondObject).mRevision) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
     }
 }

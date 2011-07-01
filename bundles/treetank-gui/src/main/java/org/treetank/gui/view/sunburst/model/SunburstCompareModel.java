@@ -115,7 +115,9 @@ public final class SunburstCompareModel extends AbsModel<SunburstItem> implement
     @SuppressWarnings("unchecked")
     @Override
     public void propertyChange(final PropertyChangeEvent paramEvent) {
-        if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
+        if (paramEvent.getPropertyName().equals("newRev")) {
+            firePropertyChange("newRev", null, (Long) paramEvent.getNewValue());
+        } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
             mLastOldMaxDepth = (Integer)paramEvent.getNewValue();
             firePropertyChange("oldMaxDepth", null, mLastOldMaxDepth);
         } else if (paramEvent.getPropertyName().equals("maxDepth")) {
@@ -123,7 +125,6 @@ public final class SunburstCompareModel extends AbsModel<SunburstItem> implement
             firePropertyChange("maxDepth", null, mLastMaxDepth);
         } else if (paramEvent.getPropertyName().equals("done")) {
             firePropertyChange("done", null, true);
-            
         } else if (paramEvent.getPropertyName().equals("items")) {
             mItems = (List<SunburstItem>)paramEvent.getNewValue();
             firePropertyChange("items", null, mItems);
