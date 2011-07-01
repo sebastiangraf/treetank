@@ -90,14 +90,15 @@ public class SmallMultiplesModel extends AbsModel implements PropertyChangeListe
     @SuppressWarnings("unchecked")
     @Override
     public void propertyChange(final PropertyChangeEvent paramEvent) {
-        if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
+        if (paramEvent.getPropertyName().equals("newRev")) {
+            firePropertyChange("newRev", null, (Long) paramEvent.getNewValue());
+        } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
             mLastOldMaxDepth = (Integer)paramEvent.getNewValue();
             firePropertyChange("oldMaxDepth", null, mLastOldMaxDepth);
         } else if (paramEvent.getPropertyName().equals("maxDepth")) {
             mLastMaxDepth = (Integer)paramEvent.getNewValue();
             firePropertyChange("maxDepth", null, mLastMaxDepth);
         } else if (paramEvent.getPropertyName().equals("done")) {
-            firePropertyChange("newRev", null, mContainer.getRevision());
             firePropertyChange("done", null, true);
         } else if (paramEvent.getPropertyName().equals("items")) {
             mItems = (List<SunburstItem>)paramEvent.getNewValue();

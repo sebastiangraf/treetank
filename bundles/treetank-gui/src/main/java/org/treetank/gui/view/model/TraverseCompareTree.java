@@ -236,6 +236,7 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
 
             // Maximum depth in old revision.
             mDepthMax = getDepthMax(mRtx);
+            
 //            ViewUtilities.stackTraces();
 
             mLock.acquireUninterruptibly();
@@ -260,6 +261,7 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
         LOGWRAPPER.debug("oldMaxDepth: " + mDepthMax);
 
         mLock.acquireUninterruptibly();
+        firePropertyChange("newRev", null, mRevision);
         firePropertyChange("oldMaxDepth", null, mDepthMax);
         firePropertyChange("maxDepth", null, mNewDepthMax);
         firePropertyChange("items", null, mItems);
