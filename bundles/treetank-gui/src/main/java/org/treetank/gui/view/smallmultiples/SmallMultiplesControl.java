@@ -65,16 +65,16 @@ public class SmallMultiplesControl extends AbsSunburstControl {
      */
     public void refreshTraversal() {
         try {
-//            mSmallMultiplesGUI.getBufferedImages().clear();
             final IReadTransaction rtx = mDb.getSession().beginReadTransaction();
             final long lastRevision = rtx.getRevisionNumber();
             rtx.close();
             
             for (long j = mDb.getRevisionNumber() + 1, i = mDb.getRevisionNumber() + 1; i < lastRevision && i < j + 4; i++) {
-                mContainer = new SunburstContainer(getGUIInstance());
+                mContainer = new SunburstContainer(mSmallMultiplesGUI);
                 mModel.traverseTree(mContainer.setLock(mLock).setStartKey(mDb.getNodeKey())
-                    .setPruning(EPruning.FALSE).setModWeight(getGUIInstance().getModificationWeight())
+                    .setPruning(EPruning.FALSE).setModWeight(mSmallMultiplesGUI.getModificationWeight())
                     .setRevision(i).setDepth(0));
+//                mModel.traverseTree(mContainer.setOldRevision(i-1));
             }
         } catch (final AbsTTException e) {
 

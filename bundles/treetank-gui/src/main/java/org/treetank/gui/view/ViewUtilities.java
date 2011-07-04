@@ -42,6 +42,9 @@ import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
+import org.treetank.gui.view.sunburst.AbsSunburstGUI;
+
+import processing.core.PApplet;
 
 /**
  * Provides some helper methods for views, which couldn't otherwise be encapsulated together.
@@ -159,5 +162,74 @@ public final class ViewUtilities {
             System.out.println("----------------------------\n");
         }
 
+    }
+    
+    public static void legend(final AbsSunburstGUI paramGUI, final PApplet paramApplet) {
+        paramApplet.translate(0, 0);
+        paramApplet.strokeWeight(0);
+
+        if (paramGUI.isShowArcs()) {
+            paramApplet.fill(paramGUI.getHueStart(), paramGUI.getSaturationStart(), paramGUI.getBrightnessStart());
+            paramApplet.rect(20f, paramApplet.height - 70f, 50, 17);
+            color(paramGUI, paramApplet);
+            paramApplet.text("-", 78, paramApplet.height - 70f);
+            paramApplet.fill(paramGUI.getHueEnd(), paramGUI.getSaturationEnd(), paramGUI.getBrightnessEnd());
+            paramApplet.rect(90f, paramApplet.height - 70f, 50, 17);
+            color(paramGUI, paramApplet);
+            paramApplet.text("text length", 150f, paramApplet.height - 70f);
+            paramApplet.fill(0, 0, paramGUI.getInnerNodeBrightnessStart());
+            paramApplet.rect(20f, paramApplet.height - 50f, 50, 17);
+            color(paramGUI, paramApplet);
+            paramApplet.text("-", 78, paramApplet.height - 50f);
+            paramApplet.fill(0, 0, paramGUI.getInnerNodeBrightnessEnd());
+            paramApplet.rect(90f, paramApplet.height - 50f, 50, 17);
+            color(paramGUI, paramApplet);
+            paramApplet.text("descendants per node", 150f, paramApplet.height - 50f);
+        }
+
+        if (paramGUI.isSavePDF()) {
+            paramApplet.translate(paramApplet.width / 2, paramApplet.height / 2);
+            paramGUI.setSavePDF(false);
+            paramApplet.endRecord();
+            PApplet.println("saving to pdf – done");
+        }
+    }
+    
+
+    /**
+     * Fill color which changes to white or black depending on the background brightness.
+     */
+    public static void color(final AbsSunburstGUI paramGUI, final PApplet paramApplet) {
+        assert paramGUI != null;
+        assert paramApplet != null;
+        if (paramGUI.getBackgroundBrightness() > 40f) {
+            paramApplet.fill(0, 0, 0);
+        } else {
+            paramApplet.fill(360, 0, 100);
+        }
+    }
+
+    /**
+     * @param smallMultiplesGUI
+     * @param paramApplet
+     */
+    public static void compareLegend(final AbsSunburstGUI paramGUI, final PApplet paramApplet) {
+        assert paramGUI != null;
+        assert paramApplet != null;
+        if (paramGUI.getDotSize() > 0) {
+            paramApplet.fill(200, 100, paramGUI.getDotBrightness());
+            paramApplet.ellipse(paramApplet.width - 160f, paramApplet.height - 90f, 8, 8);
+            color(paramGUI, paramApplet);
+            paramApplet.text("node inserted", paramApplet.width - 140f, paramApplet.height - 100f);
+            paramApplet.fill(360, 100, paramGUI.getDotBrightness());
+            paramApplet.ellipse(paramApplet.width - 160f, paramApplet.height - 67f, 8, 8);
+            color(paramGUI, paramApplet);
+            paramApplet.text("node deleted", paramApplet.width - 140f, paramApplet.height - 77f);
+            paramApplet.fill(120, 100, paramGUI.getDotBrightness());
+            paramApplet.ellipse(paramApplet.width - 160f, paramApplet.height - 44f, 8, 8);
+            color(paramGUI, paramApplet);
+            paramApplet.text("node updated", paramApplet.width - 140f, paramApplet.height - 54f);
+        }
+        
     }
 }

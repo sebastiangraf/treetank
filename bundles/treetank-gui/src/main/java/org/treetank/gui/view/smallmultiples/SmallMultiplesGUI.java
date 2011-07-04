@@ -135,13 +135,10 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
             // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
         }
 
-        if (isSavePDF()) {
-            setSavePDF(false);
-            mParent.endRecord();
-            PApplet.println("saving to pdf – done");
-        }
-
         mParent.popMatrix();
+        
+        ViewUtilities.compareLegend(this, mParent);
+        ViewUtilities.legend(this, mParent);
         ViewUtilities.drawGUI(getControlP5());
     }
 
