@@ -42,6 +42,9 @@ public final class SunburstContainer implements IContainer {
     /** Index of currently clicked {@link SunburstItem}. */
     private transient int mHitTestIndex;
 
+    /** Old revision. */
+    private transient long mOldRevision;
+    
     /** Revision to compare. */
     private transient long mRevision;
 
@@ -128,6 +131,19 @@ public final class SunburstContainer implements IContainer {
     public SunburstContainer setRevision(final long paramRevision) {
         assert paramRevision > 0;
         mRevision = paramRevision;
+        return this;
+    }
+    
+    /**
+     * Set old revision.
+     * 
+     * @param paramRevision
+     *            the old revision to set
+     * @return instance of this class
+     */
+    public SunburstContainer setOldRevision(final long paramRevision) {
+        assert paramRevision > 0;
+        mOldRevision = paramRevision;
         return this;
     }
 

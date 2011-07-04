@@ -298,8 +298,8 @@ public class SmallMultiplesView extends JScrollPane implements IView {
             // Initialization with no draw() loop.
             noLoop();
 
-            // Frame rate reduced to 1 per sec.
-            frameRate(1);
+            // Frame rate reduced to 5 per sec.
+            frameRate(5);
 
             // Create Model.
             mModel = new SmallMultiplesModel(this, mDB);

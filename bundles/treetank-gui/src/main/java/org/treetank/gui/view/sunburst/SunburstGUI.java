@@ -345,64 +345,15 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             mParent.translate(0, 0);
             mParent.strokeWeight(0);
             if (mUseDiffView) {
-                if (getDotSize() > 0) {
-                    mParent.fill(200, 100, getDotBrightness());
-                    mParent.ellipse(mParent.width - 160f, mParent.height - 90f, 8, 8);
-                    color();
-                    mParent.text("node inserted", mParent.width - 140f, mParent.height - 100f);
-                    mParent.fill(360, 100, getDotBrightness());
-                    mParent.ellipse(mParent.width - 160f, mParent.height - 67f, 8, 8);
-                    color();
-                    mParent.text("node deleted", mParent.width - 140f, mParent.height - 77f);
-                    mParent.fill(120, 100, getDotBrightness());
-                    mParent.ellipse(mParent.width - 160f, mParent.height - 44f, 8, 8);
-                    color();
-                    mParent.text("node updated", mParent.width - 140f, mParent.height - 54f);
-                }
+                ViewUtilities.compareLegend(this, mParent);
             } else {
-                color();
+                ViewUtilities.color(this, mParent);
                 mParent.text("Press 'o' to get a list of revisions to compare!", mParent.width - 300f,
                     mParent.height - 50f);
             }
 
-            if (isShowArcs()) {
-                mParent.fill(getHueStart(), getSaturationStart(), getBrightnessStart());
-                mParent.rect(20f, mParent.height - 70f, 50, 17);
-                color();
-                mParent.text("-", 78, mParent.height - 70f);
-                mParent.fill(getHueEnd(), getSaturationEnd(), getBrightnessEnd());
-                mParent.rect(90f, mParent.height - 70f, 50, 17);
-                color();
-                mParent.text("text length", 150f, mParent.height - 70f);
-                mParent.fill(0, 0, getInnerNodeBrightnessStart());
-                mParent.rect(20f, mParent.height - 50f, 50, 17);
-                color();
-                mParent.text("-", 78, mParent.height - 50f);
-                mParent.fill(0, 0, getInnerNodeBrightnessEnd());
-                mParent.rect(90f, mParent.height - 50f, 50, 17);
-                color();
-                mParent.text("descendants per node", 150f, mParent.height - 50f);
-            }
-
-            if (isSavePDF()) {
-                mParent.translate(mParent.width / 2, mParent.height / 2);
-                setSavePDF(false);
-                mParent.endRecord();
-                PApplet.println("saving to pdf – done");
-            }
-
+            ViewUtilities.legend(this, mParent);
             ViewUtilities.drawGUI(getControlP5());
-        }
-    }
-
-    /**
-     * Fill color which changes to white or black depending on the background brightness.
-     */
-    private void color() {
-        if (getBackgroundBrightness() > 40f) {
-            mParent.fill(0, 0, 0);
-        } else {
-            mParent.fill(360, 0, 100);
         }
     }
 
@@ -640,6 +591,8 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         mUsePruning = paramState;
     }
     
+    /** {@inheritDoc} */
+    @Override
     public void relocate() {
         mXPathField.setPosition(mParent.width - 250, TOP + 20);
         mRevisions.setPosition(mParent.width - 250, 100);
