@@ -77,23 +77,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.datanucleus</groupId>
-				<artifactId>maven-datanucleus-plugin</artifactId>
-				<version>2.2.1</version>
-				<configuration>
-					<log4jConfiguration>${basedir}/log4j.properties</log4jConfiguration>
-					<verbose>true</verbose>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>enhance</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
@@ -133,18 +116,6 @@
 			<version>3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.datanucleus</groupId>
-			<artifactId>datanucleus-xml</artifactId>
-			<version>2.1.2</version>
-		</dependency>
-		<!-- <dependency> <groupId>org.datanucleus</groupId> <artifactId>datanucleus-odf</artifactId> 
-			<version>2.1.2</version> </dependency> -->
-		<dependency>
-			<groupId>org.datanucleus</groupId>
-			<artifactId>datanucleus-core</artifactId>
-			<version>2.2.4</version>
-		</dependency>
-		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>1.6.10</version>
@@ -160,10 +131,4 @@
 			<version>3.0.5.RELEASE</version>
 		</dependency>
 	</dependencies>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>DataNucleus_2</id>
-			<url>http://www.datanucleus.org/downloads/maven2/</url>
-		</pluginRepository>
-	</pluginRepositories>
 </project>
