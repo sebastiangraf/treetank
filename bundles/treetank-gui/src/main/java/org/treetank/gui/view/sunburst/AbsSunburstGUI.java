@@ -152,6 +152,9 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
     /** Selected revision to compare. */
     protected transient long mSelectedRev;
+    
+    /** Selected revision to compare. */
+    protected transient long mOldSelectedRev;
 
     /** Old maximum depth. */
     protected transient int mOldDepthMax;
@@ -373,15 +376,18 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         getBuffer().ellipseMode(PConstants.RADIUS);
         getBuffer().strokeCap(PConstants.SQUARE);
         getBuffer().smooth();
-        getBuffer().translate((float)mParent.width / 2f, (float)mParent.height / 2f);
+        getBuffer().translate((float)getBuffer().width / 2f, (float)getBuffer().height / 2f);
         getBuffer().rotate(PApplet.radians(mRad));
 
         // Draw items.
+        System.out.println(mDepthMax);
+        System.out.println(mBuffer.width);
+        System.out.println(mBuffer.height);
         drawItems(EDraw.UPDATEBUFFER);
 
         getBuffer().stroke(0);
         getBuffer().strokeWeight(2f);
-        getBuffer().line(0, 0, mParent.width, 0);
+        getBuffer().line(0, 0, getBuffer().width, 0);
 
         getBuffer().popMatrix();
     }
@@ -431,6 +437,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
             for (final SunburstItem item : items) {
                 paramDraw.drawDot(this, item);
+                paramDraw.drawLabel(this, item);
             }
         }
     }
@@ -451,7 +458,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      *            the actual depth
      * @param paramDepthMax
      *            the maximum depth
-     * @return calculated area
+     * @return calculated radius
      */
     protected float calcEqualAreaRadius(final int paramDepth, final int paramDepthMax) {
         return PApplet.sqrt(paramDepth * PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
@@ -464,7 +471,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      *            The actual depth.
      * @param paramDepthMax
      *            The maximum depth.
-     * @return calculated area
+     * @return calculated radius
      */
     protected float calcAreaRadius(final int paramDepth, final int paramDepthMax) {
         return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, getInitialRadius());

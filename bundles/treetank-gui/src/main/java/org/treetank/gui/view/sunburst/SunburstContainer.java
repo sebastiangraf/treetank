@@ -30,6 +30,8 @@ package org.treetank.gui.view.sunburst;
 import java.util.concurrent.Semaphore;
 
 import org.treetank.gui.view.model.IContainer;
+import org.treetank.gui.view.model.IModel;
+import org.treetank.gui.view.smallmultiples.ECompare;
 
 /**
  * Contains settings used for updating the model.
@@ -43,8 +45,8 @@ public final class SunburstContainer implements IContainer {
     private transient int mHitTestIndex;
 
     /** Old revision. */
-    private transient long mOldRevision;
-    
+    private transient long mOldRevision = -1;
+
     /** Revision to compare. */
     private transient long mRevision;
 
@@ -66,17 +68,34 @@ public final class SunburstContainer implements IContainer {
     /** Lock, such that the GUI doesn't receive notifications from many Models at the same time. */
     private transient Semaphore mLock = new Semaphore(1);
 
+    /** Determines how to compare trees. */
+    private transient ECompare mCompare = ECompare.DIFFERENTIAL;
+    
+    /** {@link IModel} implementation. */
+    private final IModel mModel;
+
     /**
      * Constructor.
      * 
      * @param paramGUI
      *            GUI which extends {@link AbsSunburstGUI}
+     * @param paramModel
+     *            {@link IModel} implementation
      */
-    public SunburstContainer(final AbsSunburstGUI paramGUI) {
+    public SunburstContainer(final AbsSunburstGUI paramGUI, final IModel paramModel) {
         assert paramGUI != null;
+        assert paramModel != null;
         mGUI = paramGUI;
+        mModel = paramModel;
     }
-    
+
+    /**
+     * Set lock.
+     * 
+     * @param paramLock
+     *            shared semaphore
+     * @return instance of this class
+     */
     public SunburstContainer setLock(final Semaphore paramLock) {
         mLock = paramLock;
         return this;
@@ -133,7 +152,7 @@ public final class SunburstContainer implements IContainer {
         mRevision = paramRevision;
         return this;
     }
-    
+
     /**
      * Set old revision.
      * 
@@ -142,7 +161,7 @@ public final class SunburstContainer implements IContainer {
      * @return instance of this class
      */
     public SunburstContainer setOldRevision(final long paramRevision) {
-        assert paramRevision > 0;
+        assert paramRevision >= 0;
         mOldRevision = paramRevision;
         return this;
     }
@@ -263,5 +282,45 @@ public final class SunburstContainer implements IContainer {
      */
     public Semaphore getLock() {
         return mLock;
+    }
+
+    /**
+     * Set compare method.
+     * 
+     * @param paramCompare
+     *            determines of to compare trees
+     * @return instance of this class
+     */
+    public SunburstContainer setCompare(final ECompare paramCompare) {
+        assert paramCompare != null;
+        mCompare = paramCompare;
+        return this;
+    }
+    
+    /**
+     * Get compare method.
+     * 
+     * @return the compare method
+     */
+    public ECompare getCompare() {
+        return mCompare;
+    }
+    
+    /**
+     * Get old revision.
+     * 
+     * @return old revision
+     */
+    public long getOldRevision() {
+        return mOldRevision;
+    }
+
+    /**
+     * Get model.
+     * 
+     * @return {@link IModel} implementation
+     */
+    public IModel getModel() {
+        return mModel;
     }
 }

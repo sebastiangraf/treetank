@@ -27,8 +27,10 @@
 
 package org.treetank.gui.view.sunburst;
 
+import org.apache.commons.lang3.StringUtils;
 import org.treetank.gui.GUI;
 import org.treetank.gui.view.EHover;
+import org.treetank.gui.view.ViewUtilities;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -85,6 +87,28 @@ public enum EDraw {
             }
             drawStaticModifcationRel(paramGUI, paramItem, paramGUI.mParent.g);
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public void drawLabel(AbsSunburstGUI paramGUI, SunburstItem paramItem) {
+            if (paramGUI.isShowArcs() && !paramGUI.isShowLines()) {
+                if (paramGUI.mParent.recorder != null) {
+                    drawStaticLabel(paramGUI, paramGUI.mParent.recorder, paramItem);
+                }
+                drawStaticLabel(paramGUI, paramGUI.mParent.g, paramItem);
+            }
+        }
+
+        @Override
+        public void drawHover(AbsSunburstGUI paramGUI, SunburstItem paramItem) {
+            if (paramGUI.mParent.recorder != null) {
+                paramItem.hover(paramGUI.mParent.recorder);
+                drawStaticLabel(paramGUI, paramGUI.mParent.recorder, paramItem);
+            }
+            paramItem.hover(paramGUI.mParent.g);
+            drawStaticLabel(paramGUI, paramGUI.mParent.g, paramItem);
+            
+        }
     },
 
     /** Draw into buffer. */
@@ -131,7 +155,59 @@ public enum EDraw {
             }
             drawStaticModifcationRel(paramGUI, paramItem, paramGUI.getBuffer());
         }
+
+        /** {@inheritDoc} */
+        @Override
+        public void drawLabel(AbsSunburstGUI paramGUI, SunburstItem paramItem) {
+            if (paramGUI.isShowArcs() && !paramGUI.isShowLines()) {
+                if (paramGUI.mParent.recorder != null) {
+                    drawStaticLabel(paramGUI, paramGUI.mParent.recorder, paramItem);
+                }
+                drawStaticLabel(paramGUI, paramGUI.getBuffer(), paramItem);
+            }
+        }
+
+        @Override
+        public void drawHover(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
+            if (paramGUI.mParent.recorder != null) {
+                paramItem.hover(paramGUI.mParent.recorder);
+                drawStaticLabel(paramGUI, paramGUI.mParent.recorder, paramItem);
+            }
+            paramItem.hover(paramGUI.mParent.g);
+            drawStaticLabel(paramGUI, paramGUI.mParent.g, paramItem);
+        }
     };
+
+    private static void drawStaticLabel(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic,
+        final SunburstItem paramItem) {
+        final int depth = paramItem.getDepth();
+        final float startAngle = paramItem.getAngleStart();
+        final float endAngle = paramItem.getAngleEnd();
+        final String text =
+            paramItem.mQName == null ? paramItem.mText : ViewUtilities.qNameToString(paramItem.mQName);
+        float arcRadius = paramGUI.calcEqualAreaRadius(depth, paramGUI.mDepthMax);
+        float arc = draw(paramGraphic, text, arcRadius, startAngle, EDisplay.NO, EReverseDirection.NO);
+        if (arc < endAngle) {
+            if (paramItem.getDepth() == 0) {
+                paramGraphic.pushMatrix();
+                paramGraphic.fill(0);
+                paramGraphic.text(text, 0 - paramGraphic.textWidth(text) / 2f, -12f);
+                paramGraphic.popMatrix();
+                paramGraphic.noFill();
+                // arc = draw(paramGraphic, text, arcRadius, 0, EDisplay.NO);
+                // final float theta = PConstants.PI + 0.5f * PConstants.PI - 0.5f * arc;
+                // draw(paramGraphic, text, arcRadius, theta, EDisplay.YES);
+            } else if (startAngle < PConstants.PI - 0.1) {
+                arcRadius += (paramGUI.calcEqualAreaRadius(depth + 1, paramGUI.mDepthMax) - arcRadius) / 2;
+                draw(paramGraphic, text, arcRadius, endAngle - ((endAngle - arc) * 0.5f), EDisplay.YES,
+                    EReverseDirection.YES);
+            } else {
+                arcRadius += (paramGUI.calcEqualAreaRadius(depth + 1, paramGUI.mDepthMax) - arcRadius) / 3;
+                draw(paramGraphic, text, arcRadius, (endAngle - arc) * 0.5f + startAngle, EDisplay.YES,
+                    EReverseDirection.NO);
+            }
+        }
+    }
 
     /**
      * Drawing old revision ring.
@@ -143,12 +219,23 @@ public enum EDraw {
      */
     private static void drawStaticOldRevision(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         paramGraphic.pushMatrix();
-        final float arcRadius = calculateOldRadius(paramGUI, paramGraphic);
+        float arcRadius = calculateOldRadius(paramGUI, paramGraphic);
+        if (paramGUI.mParent.recorder != null) {
+            drawRevision(paramGUI, paramGUI.mParent.recorder, arcRadius);
+        }
         drawRevision(paramGUI, paramGraphic, arcRadius);
         final String text =
-            new StringBuilder("matching nodes in revision ").append(paramGUI.mDb.getRevisionNumber())
+            new StringBuilder("matching nodes in revision ").append(paramGUI.mOldSelectedRev)
                 .append(" and revision ").append(paramGUI.mSelectedRev).toString();
-        draw(paramGUI, paramGraphic, text, arcRadius);
+        arcRadius = paramGUI.calcEqualAreaRadius(paramGUI.mOldDepthMax + 1, paramGUI.mDepthMax);
+        arcRadius +=
+            (paramGUI.calcEqualAreaRadius(paramGUI.mOldDepthMax + 2, paramGUI.mDepthMax) - arcRadius) / 3;
+        final float arc = draw(paramGraphic, text, arcRadius, 0, EDisplay.NO, EReverseDirection.NO);
+        final float theta = PConstants.PI + 0.5f * PConstants.PI - 0.5f * arc;
+        if (paramGUI.mParent.recorder != null) {
+            draw(paramGUI.mParent.recorder, text, arcRadius, theta, EDisplay.YES, EReverseDirection.NO);
+        }
+        draw(paramGraphic, text, arcRadius, theta, EDisplay.YES, EReverseDirection.NO);
         paramGraphic.popMatrix();
     }
 
@@ -162,12 +249,23 @@ public enum EDraw {
      */
     private static void drawStaticNewRevision(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         paramGraphic.pushMatrix();
-        final float arcRadius = calculateNewRadius(paramGUI, paramGraphic);
+        float arcRadius = calculateNewRadius(paramGUI, paramGraphic);
+        if (paramGUI.mParent.recorder != null) {
+            drawRevision(paramGUI, paramGUI.mParent.recorder, arcRadius);
+        }
         drawRevision(paramGUI, paramGraphic, arcRadius);
         final String text =
             new StringBuilder("changed nodes in revision ").append(paramGUI.mSelectedRev)
-                .append(" from revision ").append(paramGUI.mDb.getRevisionNumber()).toString();
-        draw(paramGUI, paramGraphic, text, arcRadius);
+                .append(" from revision ").append(paramGUI.mOldSelectedRev).toString();
+        arcRadius = paramGUI.calcEqualAreaRadius(paramGUI.mDepthMax - 1, paramGUI.mDepthMax) + 5;
+        arcRadius +=
+            (paramGUI.calcEqualAreaRadius(paramGUI.mDepthMax - 1, paramGUI.mDepthMax) - arcRadius) / 5;
+        final float arc = draw(paramGraphic, text, arcRadius, 0, EDisplay.NO, EReverseDirection.NO);
+        final float theta = PConstants.PI + 0.5f * PConstants.PI - 0.5f * arc;
+        if (paramGUI.mParent.recorder != null) {
+            draw(paramGUI.mParent.recorder, text, arcRadius, theta, EDisplay.YES, EReverseDirection.NO);
+        }
+        draw(paramGraphic, text, arcRadius, theta, EDisplay.YES, EReverseDirection.NO);
         paramGraphic.popMatrix();
     }
 
@@ -222,60 +320,64 @@ public enum EDraw {
     /**
      * Draw revision text.
      * 
-     * @param paramGUI
-     *            {@link GUI} instance
      * @param paramGraphic
      *            {@link PGraphics} instance
      * @param paramItem
      *            {@link SunburstItem} instance
      * @param paramRadius
      *            arc radius
+     * @param paramTheta
+     *            angle in radians where text starts
+     * @param paramDisplay
+     *            determines if text should be displayed or not
+     * @param paramReverseDirection
+     *            determines if text should be in the reverse direction or not
      */
-    static void draw(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic, final String paramText,
-        final float paramArcRadius) {
+    private static float draw(final PGraphics paramGraphic, final String paramText,
+        final float paramArcRadius, final float paramTheta, final EDisplay paramDisplay,
+        final EReverseDirection paramReverseDrawDirection) {
+        float retVal = paramTheta;
+
+        assert paramTheta >= 0f && paramTheta <= PConstants.PI * 2;
+        String text = paramText;
+
         // We must keep track of our position along the curve.
         float arclength = 0;
-        // For every box
-        for (int i = 0; i < paramText.length(); i++) {
+        // For every box.
+        for (int i = 0; i < text.length(); i++) {
             // Instead of a constant width, we check the width of each character.
-            final char currentChar = paramText.charAt(i);
-            final float w = 7f;// paramGUI.mParent.textWidth(currentChar);
+            final char currentChar = text.charAt(i);
+            final float w = paramGraphic.textWidth(currentChar + "") + 1; // Work around.
 
             // Each box is centered so we move half the width.
-            arclength += w / 2;
+            arclength += currentChar != 'i' ? w / 2 : w;
             // Angle in radians is the arclength divided by the radius.
             // Starting on the left side of the circle by adding PI.
-            final float theta = PConstants.PI + PConstants.PI / 3 + arclength / paramArcRadius;
+            final float theta =
+                paramReverseDrawDirection == EReverseDirection.YES ? paramTheta - arclength / paramArcRadius
+                    : paramTheta + arclength / paramArcRadius;
+            retVal += (arclength / paramArcRadius);
 
-            if (paramGUI.mParent.recorder != null) {
-                paramGUI.mParent.recorder.pushMatrix();
-                // Polar to cartesian coordinate conversion.
-                paramGUI.mParent.recorder.translate(paramArcRadius * PApplet.cos(theta), paramArcRadius
-                    * PApplet.sin(theta));
-                // Rotate the box.
-                paramGUI.mParent.recorder.rotate(theta + PConstants.PI / 2); // rotation is offset by 90
-                                                                             // degrees
-                // Display the character.
-                paramGUI.mParent.recorder.fill(0);
-                paramGUI.mParent.recorder.text(currentChar, 0, 0);
-                paramGUI.mParent.recorder.popMatrix();
-            }
             paramGraphic.pushMatrix();
             // Polar to cartesian coordinate conversion.
             paramGraphic.translate(paramArcRadius * PApplet.cos(theta), paramArcRadius * PApplet.sin(theta));
             // Rotate the box.
-            paramGraphic.rotate(theta + PConstants.PI / 2); // rotation is offset by 90 degrees
-            // Display the character.
-            paramGraphic.fill(0);
-            paramGraphic.text(currentChar, 0, 0);
+            if (paramReverseDrawDirection == EReverseDirection.YES) {
+                paramGraphic.rotate(theta - PConstants.PI / 2); // rotation is offset by 90 degrees
+            } else {
+                paramGraphic.rotate(theta + PConstants.PI / 2); // rotation is offset by 90 degrees
+            }
+            if (paramDisplay == EDisplay.YES) {
+                // Display the character.
+                paramGraphic.fill(0);
+                paramGraphic.text(currentChar, 0, 0);
+            }
             paramGraphic.popMatrix();
             // Move halfway again.
             arclength += w / 2;
         }
-        if (paramGUI.mParent.recorder != null) {
-            paramGUI.mParent.recorder.noFill();
-        }
         paramGraphic.noFill();
+        return retVal = paramTheta + arclength / paramArcRadius;
     }
 
     /**
@@ -332,11 +434,6 @@ public enum EDraw {
      */
     private static void drawRevision(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic,
         final float paramArcRadius) {
-        if (paramGUI.mParent.recorder != null) {
-            paramGUI.mParent.recorder.stroke(200f);
-            paramGUI.mParent.recorder.arc(0, 0, paramArcRadius, paramArcRadius, 0, 2 * PConstants.PI);
-            paramGUI.mParent.recorder.stroke(0f);
-        }
         paramGraphic.stroke(200f);
         paramGraphic.arc(0, 0, paramArcRadius, paramArcRadius, 0, 2 * PConstants.PI);
         paramGraphic.stroke(0f);
@@ -411,6 +508,18 @@ public enum EDraw {
      */
     public abstract void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
         final EDrawSunburst paramDraw);
+    
+    /**
+     * Drawing strategy for hovering.
+     * 
+     * @param paramGUI
+     *            {@link SunburstGUI} instance
+     * @param paramItem
+     *            {@link SunburstItem} to draw
+     * @param paramDraw
+     */
+    public abstract void drawHover(final AbsSunburstGUI paramGUI, final SunburstItem paramItem);
+
 
     /**
      * Draw old revision ring.
@@ -427,6 +536,16 @@ public enum EDraw {
      *            {@link SunburstGUI} instance
      */
     public abstract void drawNewRevision(final AbsSunburstGUI paramGUI);
+
+    /**
+     * Draw label.
+     * 
+     * @param paramItem
+     *            {@link SunburstItem} instance
+     * @param paramGUI
+     *            {@link AbsSunburstGUI} reference
+     */
+    public abstract void drawLabel(final AbsSunburstGUI paramGUI, final SunburstItem paramItem);
 
     /**
      * Drawing hierarchy rings.
@@ -449,6 +568,7 @@ public enum EDraw {
                 paramDraw.drawArc(paramGUI, paramItem);
                 paramDraw.drawRelation(paramGUI, paramItem);
                 paramDraw.drawDot(paramGUI, paramItem);
+                paramDraw.drawLabel(paramGUI, paramItem);
             }
         },
 
@@ -474,5 +594,23 @@ public enum EDraw {
          */
         abstract void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
             final EDraw paramDraw);
+    }
+
+    /** Determines if text should be displayed or not. */
+    private enum EDisplay {
+        /** Yes it should be displayed. */
+        YES,
+
+        /** No it shouldn't be displayed. */
+        NO
+    }
+
+    /** Determines if text direction should be reversed or not. */
+    private enum EReverseDirection {
+        /** Yes it should be displayed. */
+        YES,
+
+        /** No it shouldn't be displayed. */
+        NO
     }
 }

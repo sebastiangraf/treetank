@@ -572,6 +572,7 @@ public final class SunburstModel extends AbsModel<SunburstItem> implements IChan
     public void addXMLFragment(final String paramFragment) throws AbsTTException, XMLStreamException {
         if (!paramFragment.isEmpty()) {
             try {
+                // Very simple heuristic to determine if it's character input or an XML fragment.
                 if (paramFragment.startsWith("<")) {
                     final XMLEventReader reader =
                         XMLInputFactory.newInstance().createXMLEventReader(

@@ -24,7 +24,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.treetank.gui.view.model;
 
 import java.util.ArrayList;
@@ -62,7 +61,8 @@ import processing.core.PApplet;
  * implementations.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- * @param <T> type of Items
+ * @param <T>
+ *            type of Items
  * 
  */
 public abstract class AbsModel<T extends IVisualItem> extends AbsObservableComponent implements IModel<T> {
@@ -305,7 +305,7 @@ public abstract class AbsModel<T extends IVisualItem> extends AbsObservableCompo
                     if (toIndex >= mItems.size()) {
                         toIndex = mItems.size() - 1;
                     }
-                    executor.submit(new XPathSublistEvaluation(nodeKeys, mItems.subList(fromIndex, toIndex)));
+                    executor.submit(new XPathSublistEvaluation<T>(nodeKeys, mItems.subList(fromIndex, toIndex)));
                 }
 
                 shutdown(executor);
@@ -317,13 +317,13 @@ public abstract class AbsModel<T extends IVisualItem> extends AbsObservableCompo
     }
 
     /** XPath sublist evaluation. */
-    private final class XPathSublistEvaluation implements Runnable {
+    private final class XPathSublistEvaluation<S extends IVisualItem> implements Runnable {
 
         /** Treetank {@link IReadTransaction}. */
         private transient IReadTransaction mRTX;
 
         /** {@link List} of a {@link IVisualItem} implementation. */
-        private final List<T> mItems;
+        private final List<S> mItems;
 
         /** {@link List} of node keys which are in the result. */
         private final Set<Long> mKeys;
@@ -336,7 +336,7 @@ public abstract class AbsModel<T extends IVisualItem> extends AbsObservableCompo
          * @param paramSublist
          *            Sublist which has to be searched for matches
          */
-        private XPathSublistEvaluation(final Set<Long> paramNodeKeys, final List<T> paramSublist) {
+        private XPathSublistEvaluation(final Set<Long> paramNodeKeys, final List<S> paramSublist) {
             assert paramNodeKeys != null && paramSublist != null;
             mKeys = paramNodeKeys;
             mItems = paramSublist;
@@ -350,10 +350,10 @@ public abstract class AbsModel<T extends IVisualItem> extends AbsObservableCompo
 
         @Override
         public void run() {
-            for (final T item : mItems) {
+            for (final S item : mItems) {
                 for (final long key : mKeys) {
-                    if (((SunburstItem)item).getNode().getNodeKey() == key) {
-                        ((SunburstItem)item).setXPathState(EXPathState.ISFOUND);
+                    if (item.getNodeKey() == key) {
+                        item.setXPathState(EXPathState.ISFOUND);
                     }
                 }
             }
@@ -368,6 +368,7 @@ public abstract class AbsModel<T extends IVisualItem> extends AbsObservableCompo
      */
     @Override
     public void setInsert(final EShredderInsert paramInsert) {
+        assert paramInsert != null;
         mInsert = paramInsert;
     }
 
@@ -377,6 +378,7 @@ public abstract class AbsModel<T extends IVisualItem> extends AbsObservableCompo
      * @return the parent
      */
     public PApplet getParent() {
+        assert mParent != null;
         return mParent;
     }
 
@@ -387,8 +389,13 @@ public abstract class AbsModel<T extends IVisualItem> extends AbsObservableCompo
      *            the {@link ReadDB} instance to set
      */
     public void setDb(final ReadDB paramDb) {
-        mDb.close();
-        mDb = paramDb;
+        assert paramDb != null;
+
+        // In case someone tries to get the database handle during reinitialization.
+        synchronized (mDb) {
+            mDb.close();
+            mDb = paramDb;
+        }
     }
 
     /**
@@ -396,7 +403,9 @@ public abstract class AbsModel<T extends IVisualItem> extends AbsObservableCompo
      * 
      * @return the database access
      */
+    @Override
     public ReadDB getDb() {
+        assert mDb != null;
         return mDb;
     }
 }

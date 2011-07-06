@@ -262,6 +262,8 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
                 mParent.rotate(PApplet.radians(mRad));
                 if (mDone) {
+                    System.out.println(mParent.g.width);
+                    System.out.println(mParent.g.height);
                     drawItems(EDraw.DRAW);
                 }
                 getBuffer().stroke(0);
@@ -300,6 +302,14 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                     if (itemHit) {
                         ((Embedded) mParent).getView().hover(mControl.getModel().getItem(mHitTestIndex));
                     }
+                    mParent.pushMatrix();
+                    if (mHitItem != null) {
+                        if (!mIsZoomingPanning && !isSavePDF() && !mFisheye) {
+                            mParent.rotate(PApplet.radians(mRad));
+                        }
+                        EDraw.DRAW.drawHover(this, mHitItem);
+                    }
+                    mParent.popMatrix();
 
                     // Depth level focus.
                     if (mDepth <= mDepthMax) {
@@ -311,14 +321,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                         mParent.ellipse(0, 0, secondRad, secondRad);
                     }
 
-                    mParent.pushMatrix();
-                    if (mHitItem != null) {
-                        if (!mIsZoomingPanning && !isSavePDF() && !mFisheye) {
-                            mParent.rotate(PApplet.radians(mRad));
-                        }
-                        mHitItem.hover();
-                    }
-                    mParent.popMatrix();
+
 
                     // Rollover text.
                     if (mIsZoomingPanning || isSavePDF() || mFisheye) {

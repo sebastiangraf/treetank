@@ -3,6 +3,7 @@
  */
 package org.treetank.gui.view.sunburst.control;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 
 import javax.xml.stream.XMLStreamException;
@@ -19,7 +20,6 @@ import org.treetank.gui.view.controls.IControl;
  *
  */
 public interface ISunburstControl extends IControl, ControlListener {
-    
     /**
      * Method to process event for submit-button.
      * 

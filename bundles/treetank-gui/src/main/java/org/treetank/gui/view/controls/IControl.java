@@ -28,6 +28,7 @@ package org.treetank.gui.view.controls;
 
 import java.awt.event.*;
 import java.util.EventListener;
+import java.util.concurrent.CountDownLatch;
 
 import controlP5.ControlEvent;
 import controlP5.ControlListener;
