@@ -1,5 +1,28 @@
 /**
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * All rights reserved.
  * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.treetank.gui.view.smallmultiples;
 
@@ -116,27 +139,22 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
         mX = 0;
         mY = 0;
 
-        try {
-            mLock.acquire();
-            for (final ImageStore imageStore : mBufferedImages) {
-                final PGraphics buffer = imageStore.mBufferedImage;
-                mParent.image(buffer, mX, mY, buffer.width / 2, buffer.height / 2);
-                mX += buffer.width / 2;
-                if (i % 2 == 0) {
-                    mX = 0;
-                    mY = buffer.height / 2 + 1;
-                }
-                i++;
+        mLock.acquireUninterruptibly();
+        for (final ImageStore imageStore : mBufferedImages) {
+            final PGraphics buffer = imageStore.mBufferedImage;
+            mParent.image(buffer, mX, mY, buffer.width / 2, buffer.height / 2);
+            mX += buffer.width / 2;
+            if (i % 2 == 0) {
+                mX = 0;
+                mY = buffer.height / 2 + 1;
             }
-        } catch (final InterruptedException exc) {
-            exc.printStackTrace();
-        } finally {
-            mLock.release();
-            // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
+            i++;
         }
+        mLock.release();
+        // LOGWRAPPER.debug("[draw()]: Available permits: " + mLock.availablePermits());
 
         mParent.popMatrix();
-        
+
         ViewUtilities.compareLegend(this, mParent);
         ViewUtilities.legend(this, mParent);
         ViewUtilities.drawGUI(getControlP5());
@@ -165,6 +183,9 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
         } else if (paramEvent.getPropertyName().equals("newRev")) {
             assert paramEvent.getNewValue() instanceof Long;
             mSelectedRev = (Long)paramEvent.getNewValue();
+        } else if (paramEvent.getPropertyName().equals("oldRev")) {
+            assert paramEvent.getNewValue() instanceof Long;
+            mOldSelectedRev = (Long)paramEvent.getNewValue();
         }
     }
 
@@ -179,7 +200,7 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
     }
 
     /** Stores an image buffer with it's revision for sorting. */
-    private static final class ImageStore implements Comparator {
+    private static final class ImageStore implements Comparator<ImageStore> {
 
         /** {@link PGraphics} to buffer {@link SunburstItem}. */
         final PGraphics mBufferedImage;
@@ -191,9 +212,9 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
          * Constructor.
          * 
          * @param paramBuffer
-         *              {@link PGraphics} reference
+         *            {@link PGraphics} reference
          * @param paramRevision
-         *              current revision
+         *            current revision
          */
         ImageStore(final PGraphics paramBuffer, final long paramRevision) {
             assert paramBuffer != null;
@@ -204,15 +225,11 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
 
         /** {@inheritDoc} */
         @Override
-        public int compare(final Object paramFirstObject, final Object paramSecondObject) {
-            if (((ImageStore)paramFirstObject).mRevision < ((ImageStore)paramSecondObject).mRevision) {
-                return -1;
-            } else if (((ImageStore)paramFirstObject).mRevision > ((ImageStore)paramSecondObject).mRevision) {
-                return 1;
-            } else {
-                return 0;
-            }
+        public int compare(final ImageStore paramFirst, final ImageStore paramSecond) {
+            assert paramFirst != null;
+            assert paramSecond != null;
+            return paramFirst.mRevision > paramSecond.mRevision ? 1
+                : paramFirst.mRevision == paramSecond.mRevision ? 0 : -1;
         }
-
     }
 }

@@ -49,6 +49,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.AbsObservableComponent;
 import org.treetank.gui.view.ViewUtilities;
+import org.treetank.gui.view.smallmultiples.ECompare;
 import org.treetank.gui.view.sunburst.*;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
 import org.treetank.gui.view.sunburst.axis.SunburstCompareDescendantAxis;
@@ -82,14 +83,17 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
     /** {@link CountDownLatch} to wait until {@link List} of {@link EDiff}s has been created. */
     private final CountDownLatch mStart;
 
-    /** Revision to compare. */
+    /** New revision to compare. */
     private final long mRevision;
+
+    /** Old revision to compare. */
+    private final long mOldRevision;
 
     /** Key from which to start traversal. */
     private final long mKey;
 
-    /** {@link SunburstCompareModel}. */
-    private final SunburstCompareModel mModel;
+    /** {@link IModel} implementation. */
+    private final IModel mModel;
 
     /** {@link List} of {@link SunburstItem}s. */
     private final List<SunburstItem> mItems;
@@ -145,46 +149,44 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
     /** GUI which extends {@link AbsSunburstGUI}. */
     private final AbsSunburstGUI mGUI;
 
+    // /** Determines how to compare the two trees. */
+    // private final ECompare mCompare;
+
     /**
      * Constructor.
      * 
      * @param paramContainer
      *            {@link SunburstContainer} reference
-     * @param paramCurrRevision
-     *            current revision number
-     * @param paramModel
-     *            the {@link SunburstModel}
-     * @param paramGUI
-     *            GUI which extends the {@link SunburstGUI}
      */
-    public TraverseCompareTree(final SunburstContainer paramContainer, final long paramCurrRevision,
-        final AbsSunburstGUI paramGUI, final AbsModel paramModel) {
+    public TraverseCompareTree(final SunburstContainer paramContainer) {
         assert paramContainer != null;
         assert paramContainer.getRevision() >= 0;
         assert paramContainer.getStartKey() >= 0;
         assert paramContainer.getDepth() >= 0;
         assert paramContainer.getModWeight() >= 0;
         assert paramContainer.getPruning() != null;
-        assert paramModel != null;
-        assert paramGUI != null;
+        assert paramContainer.getGUI() != null;
+        assert paramContainer.getModel() != null;
 
-        if (paramContainer.getRevision() < paramCurrRevision) {
+        if (paramContainer.getRevision() <= paramContainer.getOldRevision()) {
             throw new IllegalArgumentException(
                 "paramNewRevision must be greater than the currently opened revision!");
         }
 
-        mModel = (SunburstCompareModel)paramModel;
+        mModel = paramContainer.getModel();
         addPropertyChangeListener(mModel);
         mDb = mModel.getDb();
+        mOldRevision =
+            paramContainer.getOldRevision() != -1 ? paramContainer.getOldRevision() : mDb.getRevisionNumber();
 
         try {
             mNewRtx = mDb.getSession().beginReadTransaction(paramContainer.getRevision());
-            mRtx = mModel.getDb().getSession().beginReadTransaction(paramCurrRevision);
+            mRtx = mModel.getDb().getSession().beginReadTransaction(mOldRevision);
         } catch (final AbsTTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
 
-        mGUI = paramGUI;
+        mGUI = paramContainer.getGUI();
         mRevision = paramContainer.getRevision();
         mKey =
             paramContainer.getStartKey() == 0 ? paramContainer.getStartKey() + 1 : paramContainer
@@ -194,7 +196,7 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
         mDiffs = new LinkedList<Diff>();
         mStart = new CountDownLatch(1);
         mItems = new LinkedList<SunburstItem>();
-        mParent = mModel.getParent();
+        mParent = ((AbsModel)mModel).getParent();
         mDepth = paramContainer.getDepth();
         mRtx.moveTo(mKey);
         mNewRtx.moveTo(mKey);
@@ -205,9 +207,6 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
     @Override
     public Void call() {
         LOGWRAPPER.debug("Build sunburst items.");
-
-        // Remove all elements from item list.
-        mItems.clear();
 
         try {
             // Get min and max textLength of both revisions.
@@ -225,8 +224,10 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
             // Wait for diff list to complete.
             final boolean done = mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
             if (!done) {
-                LOGWRAPPER.error("Diff failed - Timeout occured after " + TimeUnit.SECONDS + " seconds!");
+                LOGWRAPPER.error("Diff failed - Timeout occured after " + TIMEOUT_S + " seconds!");
             }
+            
+            System.out.println("Diff Size: " + mDiffs.size());
 
             // for (final Diff diff : mDiffs) {
             // final EDiff diffEnum = diff.getDiff();
@@ -236,8 +237,6 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
 
             // Maximum depth in old revision.
             mDepthMax = getDepthMax(mRtx);
-            
-//            ViewUtilities.stackTraces();
 
             mLock.acquireUninterruptibly();
             for (mAxis =
@@ -261,6 +260,9 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
         LOGWRAPPER.debug("oldMaxDepth: " + mDepthMax);
 
         mLock.acquireUninterruptibly();
+        System.out.println("old rev: " + mOldRevision);
+        System.out.println("new rev" + mRevision);
+        firePropertyChange("oldRev", null, mOldRevision);
         firePropertyChange("newRev", null, mRevision);
         firePropertyChange("oldMaxDepth", null, mDepthMax);
         firePropertyChange("maxDepth", null, mNewDepthMax);

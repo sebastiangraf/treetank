@@ -133,4 +133,11 @@ public interface IModel<T extends IVisualItem> extends Iterable<T>, Iterator<T>,
      */
     void firePropertyChange(final String paramPropertyName, final Object paramOldValue,
         final Object paramNewValue);
+
+    /**
+     * Get the database handle.
+     * 
+     * @return {@link ReadDB} reference
+     */
+    ReadDB getDb();
 }

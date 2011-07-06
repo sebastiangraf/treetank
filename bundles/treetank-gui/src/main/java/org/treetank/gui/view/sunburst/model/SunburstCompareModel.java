@@ -105,9 +105,11 @@ public final class SunburstCompareModel extends AbsModel<SunburstItem> implement
     public void traverseTree(final IContainer paramContainer) {
         assert paramContainer != null;
         final SunburstContainer container = (SunburstContainer) paramContainer;
+        if (container.getOldRevision() == -1) {
+            container.setOldRevision(getDb().getRevisionNumber());
+        }
         final ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(new TraverseCompareTree(container, getDb().getRevisionNumber(), container.getGUI(),
-            this));
+        executor.submit(new TraverseCompareTree(container));
         shutdown(executor);
     }
 
@@ -115,7 +117,9 @@ public final class SunburstCompareModel extends AbsModel<SunburstItem> implement
     @SuppressWarnings("unchecked")
     @Override
     public void propertyChange(final PropertyChangeEvent paramEvent) {
-        if (paramEvent.getPropertyName().equals("newRev")) {
+        if (paramEvent.getPropertyName().equals("oldRev")) {
+            firePropertyChange("oldRev", null, (Long) paramEvent.getNewValue());
+        } else if (paramEvent.getPropertyName().equals("newRev")) {
             firePropertyChange("newRev", null, (Long) paramEvent.getNewValue());
         } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
             mLastOldMaxDepth = (Integer)paramEvent.getNewValue();

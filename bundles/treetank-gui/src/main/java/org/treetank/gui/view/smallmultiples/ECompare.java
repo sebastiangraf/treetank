@@ -24,67 +24,53 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package org.treetank.gui.view;
-
-import org.treetank.diff.DiffFactory.EDiff;
-import org.treetank.gui.view.sunburst.EGreyState;
-import org.treetank.gui.view.sunburst.EXPathState;
-
-import processing.core.PGraphics;
+package org.treetank.gui.view.smallmultiples;
 
 /**
- * Interface for a visual item.
+ * Determines how the {@link TraverseCompareModel} compares trees.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public interface IVisualItem extends Comparable<IVisualItem> {
+public enum ECompare {
+    /** Incremental comparsion. */
+    INCREMENTAL(false),
+
+    /** Differential comparsion. */
+    DIFFERENTIAL(false),
+
+    /** Hybrid comparsion. */
+    HYBRID(true);
+
+    /** Determines if it's the first run. */
+    private transient boolean mValue;
+    
     /**
-     * Update an item.
+     * Constructor
      * 
-     * @param paramMappingMode
-     *            determines how to normalize
-     * @param paramGraphics
-     *            the {@link PGraphics} instance to write to
+     * @param paramValue
+     *            value to set
      */
-    void update(final int paramMappingMode, final PGraphics paramGraphics);
+    ECompare(final boolean paramValue) {
+        mValue = paramValue;
+    }
 
     /**
-     * Item hovered.
+     * Get value.
      * 
-     * @param paramGraphic
-     *            {@link PGraphics} instance
+     * @return value
      */
-    void hover(final PGraphics paramGraphic);
+    boolean getValue() {
+        return mValue;
+    }
 
     /**
-     * Get node key.
+     * Set value.
      * 
-     * @return node key
+     * @param paramValue
+     *            value to set
      */
-    long getNodeKey();
-
-    /**
-     * Set XPath state.
-     * 
-     * @param paramState
-     *            {@link EXPathState} value
-     */
-    void setXPathState(final EXPathState paramState);
-
-    /**
-     * Set grey state.
-     * 
-     * @param paramState
-     *            {@link EGreyState} value
-     */
-    void setGreyState(final EGreyState paramState);
-
-    /**
-     * Get type of diff.
-     * 
-     * @return type of diff
-     */
-    EDiff getDiff();
+    void setValue(final boolean paramValue) {
+        mValue = paramValue;
+    }
 }

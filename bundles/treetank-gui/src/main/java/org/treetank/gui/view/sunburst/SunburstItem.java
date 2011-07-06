@@ -38,6 +38,7 @@ import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.model.AbsModel;
+import org.treetank.gui.view.model.IModel;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
 
 import processing.core.PApplet;
@@ -170,13 +171,16 @@ public final class SunburstItem implements IVisualItem {
     /** Modification count. */
     private transient int mModifications;
 
+    /** Determines if item has to be greyed out or not. */
+    private transient EGreyState mGreyState = EGreyState.NO;
+
     /** Builder to setup the Items. */
     public static final class Builder {
         /** {@link PApplet} representing the core processing library. */
         private final PApplet mParent;
 
-        /** {@link AbsModel}. */
-        private final AbsModel mModel;
+        /** {@link IModel} implementation. */
+        private final IModel mModel;
 
         /** Current {@link IItem} in Treetank. */
         private transient IItem mNode;
@@ -224,7 +228,7 @@ public final class SunburstItem implements IVisualItem {
          * @param paramApplet
          *            the processing core library @see PApplet
          * @param paramModel
-         *            the {@link AbsModel}
+         *            model which implements {@link IModel} interface
          * @param paramAngleStart
          *            the start degree
          * @param paramExtension
@@ -236,7 +240,7 @@ public final class SunburstItem implements IVisualItem {
          * @param paramGUI
          *            GUI which extends {@link AbsSunburstGUI}
          */
-        public Builder(final PApplet paramApplet, final AbsModel paramModel, final float paramAngleStart,
+        public Builder(final PApplet paramApplet, final IModel paramModel, final float paramAngleStart,
             final float paramExtension, final NodeRelations paramRelations, final ReadDB paramReadDB,
             final AbsSunburstGUI paramGUI) {
             mParent = paramApplet;
@@ -524,6 +528,7 @@ public final class SunburstItem implements IVisualItem {
         }
 
         mXPathState.setStroke(mGraphic, mGUI.mParent.recorder, mCol, paramHover);
+        mGreyState.setStroke(mGraphic, mGUI.mParent.recorder, mCol, paramHover);
         if (paramHover == EHover.TRUE) {
             if (mGUI.mParent.recorder != null) {
                 mGUI.mParent.recorder.noFill();
@@ -648,22 +653,25 @@ public final class SunburstItem implements IVisualItem {
         if (mGUI.mUseDiffView) {
             switch (mDiff) {
             case INSERTED:
+                final int blue = mParent.color(200, 100, mGUI.getDotBrightness());
                 if (mGUI.mParent.recorder != null) {
-                    mGUI.mParent.recorder.fill(200, 100, mGUI.getDotBrightness());
+                    mGUI.mParent.recorder.fill(blue);
                 }
-                mGraphic.fill(200, 100, mGUI.getDotBrightness());
+                mGraphic.fill(blue);
                 break;
             case DELETED:
+                final int red = mParent.color(360, 100, mGUI.getDotBrightness());
                 if (mGUI.mParent.recorder != null) {
-                    mGUI.mParent.recorder.fill(360, 100, mGUI.getDotBrightness());
+                    mGUI.mParent.recorder.fill(red);
                 }
-                mGraphic.fill(360, 100, mGUI.getDotBrightness());
+                mGraphic.fill(red);
                 break;
             case UPDATED:
+                final int green = mParent.color(120, 100, mGUI.getDotBrightness());
                 if (mGUI.mParent.recorder != null) {
-                    mGUI.mParent.recorder.fill(120, 100, mGUI.getDotBrightness());
+                    mGUI.mParent.recorder.fill(green);
                 }
-                mGraphic.fill(120, 100, mGUI.getDotBrightness());
+                mGraphic.fill(green);
                 break;
             default:
                 // EDiff.SAME.
@@ -793,8 +801,19 @@ public final class SunburstItem implements IVisualItem {
      * @param paramState
      *            set state to this value
      */
+    @Override
     public void setXPathState(final EXPathState paramState) {
         mXPathState = paramState;
+    }
+
+    /**
+     * Set greyout value.
+     * 
+     * @param paramState
+     *            set state to this value
+     */
+    public void setGreyState(final EGreyState paramState) {
+        mGreyState = paramState;
     }
 
     // Getter ==========================================
@@ -845,8 +864,10 @@ public final class SunburstItem implements IVisualItem {
 
     /** {@inheritDoc} */
     @Override
-    public void hover() {
-        mGraphic = mParent.g;
+    public void hover(final PGraphics paramGraphic) {
+        assert paramGraphic != null;
+        final PGraphics graphic = mGraphic;
+        mGraphic = paramGraphic;
         if (mGUI.isShowArcs() && !mGUI.isShowLines()) {
             if (mGUI.mUseArc) {
                 drawArc(mGUI.getInnerNodeArcScale(), mGUI.getLeafArcScale(), EHover.TRUE);
@@ -860,22 +881,7 @@ public final class SunburstItem implements IVisualItem {
                 drawRelationLine();
             }
             drawDot(EHover.TRUE);
-            //
-            // for (int index = mGUI.mHitTestIndex + 1;; index++) {
-            // if (index < mGUI.mModel.mItems.size()) {
-            // final SunburstItem item = mGUI.mModel.getItem(index);
-            // if (item.mDepth == mDepth + 1 && mGUI.mShowLines) {
-            // if (mGUI.mUseBezierLine) {
-            // item.drawRelationBezier();
-            // } else {
-            // item.drawRelationLine();
-            // }
-            // } else {
-            // break;
-            // }
-            // }
-            // }
-            //
+            
         } else {
             float tmpLineWeight = mLineWeight;
             mLineWeight += 5f;
@@ -886,8 +892,8 @@ public final class SunburstItem implements IVisualItem {
             }
             mLineWeight = tmpLineWeight;
             drawDot(EHover.TRUE);
-
         }
+        mGraphic = graphic;
     }
 
     /**
@@ -899,28 +905,28 @@ public final class SunburstItem implements IVisualItem {
         return mIndexToParent;
     }
 
-    /**
-     * Calculate new extension.
-     */
-    public void calcNewExtension() {
-        mDescendantCount--;
-        final SunburstItem parent = (SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent);
-        // Calculate extension.
-        float extension = 2 * PConstants.PI;
-        float parentModificationCount = parent.getModificationCount();
-        if (mIndexToParent > -1) {
-            if (parent.getSubtract()) {
-                parentModificationCount -= 1;
-            }
-            float parExtension = parent.getAngleEnd() - parent.getAngleStart();
-            extension =
-                (1 - mGUI.getModificationWeight())
-                    * (parExtension * (float)mDescendantCount / ((float)parent.getDescendantCount() - 1f))
-                    + mGUI.getModificationWeight()
-                    * (parExtension * (float)mModifications / ((float)parentModificationCount - 1f));
-        }
-        mAngleEnd = mAngleStart + extension;
-    }
+//    /**
+//     * Calculate new extension.
+//     */
+//    public void calcNewExtension() {
+//        mDescendantCount--;
+//        final SunburstItem parent = (SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent);
+//        // Calculate extension.
+//        float extension = 2 * PConstants.PI;
+//        float parentModificationCount = parent.getModificationCount();
+//        if (mIndexToParent > -1) {
+//            if (parent.getSubtract()) {
+//                parentModificationCount -= 1;
+//            }
+//            float parExtension = parent.getAngleEnd() - parent.getAngleStart();
+//            extension =
+//                (1 - mGUI.getModificationWeight())
+//                    * (parExtension * (float)mDescendantCount / ((float)parent.getDescendantCount() - 1f))
+//                    + mGUI.getModificationWeight()
+//                    * (parExtension * (float)mModifications / ((float)parentModificationCount - 1f));
+//        }
+//        mAngleEnd = mAngleStart + extension;
+//    }
 
     /**
      * Set modification count.
@@ -977,5 +983,43 @@ public final class SunburstItem implements IVisualItem {
     @Override
     public long getNodeKey() {
         return mNode.getNodeKey();
+    }
+
+    /**
+     * Note that this compareTo(Object) method doesn't reflect
+     * document order of the nodes.
+     * 
+     * @see Comparable#compareTo(Object)
+     */
+    @Override
+    public int compareTo(final IVisualItem paramItem) {
+        assert paramItem != null;
+        return this.getNodeKey() > paramItem.getNodeKey() ? 1 : this.getNodeKey() == paramItem.getNodeKey()
+            ? 0 : -1;
+    }
+
+    /**
+     * @return
+     */
+    public EGreyState getGreyState() {
+        // TODO Auto-generated method stub
+        return mGreyState;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public EDiff getDiff() {
+        return mDiff;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object paramObj) {
+        if (!(paramObj instanceof SunburstItem)) {
+            return false;
+        }
+        final SunburstItem item = (SunburstItem)paramObj;
+        return this.getNodeKey() == item.getNodeKey() && this.getDiff() == item.getDiff()
+            && this.getDepth() == item.getDepth();
     }
 }

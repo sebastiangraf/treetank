@@ -4,6 +4,7 @@
 package org.treetank.gui.view.sunburst.control;
 
 import java.awt.event.MouseEvent;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 
 import javax.xml.stream.XMLStreamException;
@@ -43,6 +44,9 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
 
     /** Processing {@link PApplet}. */
     protected final PApplet mParent;
+    
+    /** Used for the hybrid comparsion. */
+    public static CountDownLatch mLatch = new CountDownLatch(1);
 
     /**
      * Constructor.
