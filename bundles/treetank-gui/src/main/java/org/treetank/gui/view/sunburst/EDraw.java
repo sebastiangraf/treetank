@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.treetank.gui.GUI;
 import org.treetank.gui.view.EHover;
 import org.treetank.gui.view.ViewUtilities;
+import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -99,6 +100,7 @@ public enum EDraw {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void drawHover(AbsSunburstGUI paramGUI, SunburstItem paramItem) {
             if (paramGUI.mParent.recorder != null) {
@@ -107,7 +109,7 @@ public enum EDraw {
             }
             paramItem.hover(paramGUI.mParent.g);
             drawStaticLabel(paramGUI, paramGUI.mParent.g, paramItem);
-            
+
         }
     },
 
@@ -167,14 +169,15 @@ public enum EDraw {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void drawHover(final AbsSunburstGUI paramGUI, final SunburstItem paramItem) {
             if (paramGUI.mParent.recorder != null) {
                 paramItem.hover(paramGUI.mParent.recorder);
                 drawStaticLabel(paramGUI, paramGUI.mParent.recorder, paramItem);
             }
-            paramItem.hover(paramGUI.mParent.g);
-            drawStaticLabel(paramGUI, paramGUI.mParent.g, paramItem);
+            paramItem.hover(paramGUI.getBuffer());
+            drawStaticLabel(paramGUI, paramGUI.getBuffer(), paramItem);
         }
     };
 
@@ -183,28 +186,51 @@ public enum EDraw {
         final int depth = paramItem.getDepth();
         final float startAngle = paramItem.getAngleStart();
         final float endAngle = paramItem.getAngleEnd();
-        final String text =
-            paramItem.mQName == null ? paramItem.mText : ViewUtilities.qNameToString(paramItem.mQName);
-        float arcRadius = paramGUI.calcEqualAreaRadius(depth, paramGUI.mDepthMax);
-        float arc = draw(paramGraphic, text, arcRadius, startAngle, EDisplay.NO, EReverseDirection.NO);
-        if (arc < endAngle) {
-            if (paramItem.getDepth() == 0) {
-                paramGraphic.pushMatrix();
-                paramGraphic.fill(0);
-                paramGraphic.text(text, 0 - paramGraphic.textWidth(text) / 2f, -12f);
-                paramGraphic.popMatrix();
-                paramGraphic.noFill();
-                // arc = draw(paramGraphic, text, arcRadius, 0, EDisplay.NO);
-                // final float theta = PConstants.PI + 0.5f * PConstants.PI - 0.5f * arc;
-                // draw(paramGraphic, text, arcRadius, theta, EDisplay.YES);
-            } else if (startAngle < PConstants.PI - 0.1) {
-                arcRadius += (paramGUI.calcEqualAreaRadius(depth + 1, paramGUI.mDepthMax) - arcRadius) / 2;
-                draw(paramGraphic, text, arcRadius, endAngle - ((endAngle - arc) * 0.5f), EDisplay.YES,
-                    EReverseDirection.YES);
-            } else {
-                arcRadius += (paramGUI.calcEqualAreaRadius(depth + 1, paramGUI.mDepthMax) - arcRadius) / 3;
-                draw(paramGraphic, text, arcRadius, (endAngle - arc) * 0.5f + startAngle, EDisplay.YES,
-                    EReverseDirection.NO);
+        final float scale =
+            paramItem.getStructKind() == EStructType.ISINNERNODE ? paramGUI.getInnerNodeArcScale() : paramGUI
+                .getLeafArcScale();
+        if (scale >= 0.7) {
+            final float fontHeight = paramGUI.mParent.textAscent() + paramGUI.mParent.textDescent();
+            final float size = PApplet.map(depth, 0, paramGUI.mDepthMax, 13, 11);
+            paramGraphic.textSize(size);
+            paramGraphic.textLeading(0f);
+            final String text =
+                paramItem.mQName == null ? paramItem.mText : ViewUtilities.qNameToString(paramItem.mQName);
+            float arcRadius = paramGUI.calcEqualAreaRadius(depth, paramGUI.mDepthMax);
+            float arc = draw(paramGraphic, text, arcRadius, startAngle, EDisplay.NO, EReverseDirection.NO);
+            if (arc < endAngle) {
+                // paramGraphic.textSize(12f);
+                // PApplet.map(paramGraphic.textSize, 12, 12, 12, 10);
+                if (depth == 0) {
+                    // Must be the root-Element.
+                    paramGraphic.pushMatrix();
+                    paramGraphic.fill(0);
+                    paramGraphic.text(text, 0 - paramGraphic.textWidth(text) / 2f, -12f);
+                    paramGraphic.popMatrix();
+                    paramGraphic.noFill();
+                    // arc = draw(paramGraphic, text, arcRadius, 0, EDisplay.NO, EReverseDirection.NO);
+                    // final float theta = PConstants.PI + 0.5f * PConstants.PI - 0.5f * arc;
+                    // draw(paramGraphic, text, arcRadius, theta, EDisplay.YES, EReverseDirection.NO);
+                } else if ((startAngle + endAngle) / 2 < PConstants.PI) {
+                    // Bottom half.
+                    float radius = (paramGUI.calcEqualAreaRadius(depth + 1, paramGUI.mDepthMax) - arcRadius);
+                    radius *= scale;
+                    final float depthDiff = depth < 5 ? radius + 0.5f * fontHeight : radius + 0.4f * fontHeight;
+                    arcRadius += (0.5f * depthDiff);
+//                        (((radius + paramGUI.mParent.textAscent()) / 2) - paramGUI.mParent.textAscent() / 2);
+
+                    draw(paramGraphic, text, arcRadius, endAngle - ((endAngle - arc) * 0.5f), EDisplay.YES,
+                        EReverseDirection.YES);
+                } else {
+                    // Top half.
+                    float radius = (paramGUI.calcEqualAreaRadius(depth + 1, paramGUI.mDepthMax) - arcRadius);
+                    radius *= scale;
+                    final float depthDiff = depth < 5 ? radius - 0.7f * fontHeight : radius - 0.5f * fontHeight;
+                    arcRadius += (0.5f * depthDiff);
+
+                    draw(paramGraphic, text, arcRadius, (endAngle - arc) * 0.5f + startAngle, EDisplay.YES,
+                        EReverseDirection.NO);
+                }
             }
         }
     }
@@ -271,7 +297,8 @@ public enum EDraw {
 
     private static void drawStaticModifcationRel(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
         final PGraphics paramGraphic) {
-        if (paramGUI.isShowArcs() && paramItem.getDepth() == paramGUI.mOldDepthMax + 2) {
+        if (paramGUI.mUseDiffView && paramGUI.isShowArcs()
+            && paramItem.getDepth() == paramGUI.mOldDepthMax + 2) {
             switch (paramItem.mDiff) {
             case INSERTED:
                 paramGraphic.stroke(200, 100, paramGUI.getDotBrightness(), 30);
@@ -508,7 +535,7 @@ public enum EDraw {
      */
     public abstract void drawStrategy(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
         final EDrawSunburst paramDraw);
-    
+
     /**
      * Drawing strategy for hovering.
      * 
@@ -519,7 +546,6 @@ public enum EDraw {
      * @param paramDraw
      */
     public abstract void drawHover(final AbsSunburstGUI paramGUI, final SunburstItem paramItem);
-
 
     /**
      * Draw old revision ring.

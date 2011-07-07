@@ -98,7 +98,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     private static final float EFFECT_AMOUNT = 0.9f;
 
     /** The GUI of the Sunburst view. */
-    private static volatile SunburstGUI mGUI;
+    private static transient SunburstGUI mGUI;
 
     /** Current angle of the mouse cursor to y axis. */
     transient float mAngle;
@@ -121,9 +121,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     /** {@link ControlP5} text field. */
     transient Textfield mXPathField;
 
-    /** Determines if model has done the work. */
-    volatile boolean mDone;
-
     /** Item, which is currently clicked. */
     private transient SunburstItem mHitItem;
 
@@ -131,7 +128,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     transient int mHitTestIndex = -1;
 
     /** {@link DropdownList} of available revisions, which are newer than the currently opened revision. */
-    volatile DropdownList mRevisions;
+    transient DropdownList mRevisions;
 
     /** {@link ControlGroup} to encapsulate the components to insert XML fragments. */
     transient ControlGroup mCtrl;
@@ -300,14 +297,14 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                     // Mouse rollover, arc hittest vars.
                     final boolean itemHit = rollover();
                     if (itemHit) {
-                        ((Embedded) mParent).getView().hover(mControl.getModel().getItem(mHitTestIndex));
+                        ((Embedded)mParent).getView().hover(mControl.getModel().getItem(mHitTestIndex));
                     }
                     mParent.pushMatrix();
                     if (mHitItem != null) {
                         if (!mIsZoomingPanning && !isSavePDF() && !mFisheye) {
                             mParent.rotate(PApplet.radians(mRad));
                         }
-                        EDraw.DRAW.drawHover(this, mHitItem);
+                        EDraw.UPDATEBUFFER.drawHover(this, mHitItem);
                     }
                     mParent.popMatrix();
 
@@ -320,8 +317,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                         mParent.ellipse(0, 0, firstRad, firstRad);
                         mParent.ellipse(0, 0, secondRad, secondRad);
                     }
-
-
 
                     // Rollover text.
                     if (mIsZoomingPanning || isSavePDF() || mFisheye) {
@@ -424,9 +419,10 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
 
         if (mAngle < 0) {
             mAngle = PApplet.map(mAngle, -PConstants.PI, 0, PConstants.PI, PConstants.TWO_PI);
-        } else {
-            mAngle = PApplet.map(mAngle, 0, PConstants.PI, 0, PConstants.PI);
         }
+//        } else {
+//            mAngle = PApplet.map(mAngle, 0, PConstants.PI, 0, PConstants.PI);
+//        }
         // Calc mouse depth with mouse radius ... transformation of calcEqualAreaRadius()
         mDepth = PApplet.floor(PApplet.pow(radius, 2) * (mDepthMax + 1) / PApplet.pow(getInitialRadius(), 2));
     }
@@ -494,8 +490,21 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         for (final IVisualItem visualItem : items) {
             final SunburstItem item = (SunburstItem)visualItem;
             // Hittest, which arc is the closest to the mouse.
-            if (item.getDepth() == mDepth && mAngle > item.getAngleStart() + PApplet.radians(mRad)
-                && mAngle < item.getAngleEnd() + PApplet.radians(mRad)) {
+            System.out.println("radians: " + PApplet.radians(mRad));
+            float angleStart =  item.getAngleStart() + PApplet.radians(mRad);
+            // FIXME.
+            System.out.println("angleStart: " + item.getAngleStart());
+            if (angleStart > PConstants.TWO_PI) {
+                angleStart -= PConstants.TWO_PI;
+                System.out.println("start: " + angleStart);
+            }
+            float angleEnd = item.getAngleEnd() + PApplet.radians(mRad);
+            if (angleEnd > PConstants.TWO_PI) {
+                angleEnd -= PConstants.TWO_PI;
+                System.out.println("end: " + angleEnd);
+            }
+            if (item.getDepth() == mDepth && mAngle > angleStart
+                && mAngle < angleEnd) {
                 mHitTestIndex = index;
                 mHitItem = item;
                 retVal = true;
@@ -593,7 +602,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     public void setPruning(final boolean paramState) {
         mUsePruning = paramState;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void relocate() {
