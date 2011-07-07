@@ -159,9 +159,6 @@ public class SunburstControl extends AbsSunburstControl {
                 mSunburstGUI.mParent.beginRecord(PConstants.PDF, ViewUtilities.SAVEPATH + ViewUtilities.timestamp()
                     + ".pdf");
                 mSunburstGUI.mParent.textMode(PConstants.SHAPE);
-                mSunburstGUI.mParent.textFont(mSunburstGUI.mParent.createFont("src" + File.separator + "main"
-                    + File.separator + "resources" + File.separator + "data" + File.separator
-                    + "miso-regular.ttf", 15));
                 break;
             case '\b':
                 // Backspace.
@@ -180,6 +177,7 @@ public class SunburstControl extends AbsSunburstControl {
             case 'o':
             case 'O':
                 if (!mSunburstGUI.mUseDiffView) {
+                    mSunburstGUI.mUseDiffView = true;
                     mSunburstGUI.mRevisions =
                         mSunburstGUI.getControlP5().addDropdownList("Compare revision",
                             mSunburstGUI.mParent.width - 250, 100, 100, 120);
@@ -239,9 +237,9 @@ public class SunburstControl extends AbsSunburstControl {
      */
     @Override
     public void mouseEntered(final MouseEvent paramEvent) {
-        if (mSunburstGUI.mDone) {
+//        if (mSunburstGUI.mDone) {
             mSunburstGUI.mParent.loop();
-        }
+//        }
     }
 
     /**

@@ -650,7 +650,7 @@ public final class SunburstItem implements IVisualItem {
             mGUI.mParent.recorder.noStroke();
         }
         mGraphic.noStroke();
-        if (mGUI.mUseDiffView) {
+        if (mGUI.mUseDiffView && mGUI.mSelectedRev != 0) {
             switch (mDiff) {
             case INSERTED:
                 final int blue = mParent.color(200, 100, mGUI.getDotBrightness());
@@ -1021,5 +1021,22 @@ public final class SunburstItem implements IVisualItem {
         final SunburstItem item = (SunburstItem)paramObj;
         return this.getNodeKey() == item.getNodeKey() && this.getDiff() == item.getDiff()
             && this.getDepth() == item.getDepth();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return super.hashCode();
+    }
+    
+    /**
+     * Get kind of structure node.
+     * 
+     * @return kind of structure of current item
+     */
+    public EStructType getStructKind() {
+        assert mStructKind != null;
+        return mStructKind;
     }
 }

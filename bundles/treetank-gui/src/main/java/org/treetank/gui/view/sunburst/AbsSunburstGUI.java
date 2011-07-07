@@ -167,6 +167,9 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     
     /** Determines if SunburstGUI interface should be shown. */
     private transient boolean mShowGUI;
+    
+    /** Determines if model has done the work. */
+    protected volatile boolean mDone;
 
     /**
      * Constructor.
@@ -197,6 +200,9 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
     /** Initial setup of the GUI. */
     private void setupGUI() {
+        mParent.textFont(mParent.createFont("src" + File.separator + "main"
+            + File.separator + "resources" + File.separator + "data" + File.separator
+            + "miso-regular.ttf", 15));
         mParent.smooth();
         mParent.background(255f);
 
