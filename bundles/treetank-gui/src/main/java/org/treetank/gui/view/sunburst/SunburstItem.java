@@ -650,7 +650,7 @@ public final class SunburstItem implements IVisualItem {
             mGUI.mParent.recorder.noStroke();
         }
         mGraphic.noStroke();
-        if (mGUI.mUseDiffView && mGUI.mSelectedRev != 0) {
+        if (mGUI.mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue() && mGUI.mSelectedRev != 0) {
             switch (mDiff) {
             case INSERTED:
                 final int blue = mParent.color(200, 100, mGUI.getDotBrightness());

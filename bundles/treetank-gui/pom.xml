@@ -41,17 +41,6 @@
 			<url>http://download.java.net/maven/2</url>
 		</repository>
 		<repository>
-			<id>jlibs-repository</id>
-			<name>JLibs Repository</name>
-			<url>http://dl.dropbox.com/u/326301/repository</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>apache-commons-lang-repository</id>
-			<name>Apache Commons-Lang Repository</name>
-			<url>https://repository.apache.org/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
 			<id>disyInternal</id>
 			<name>Internal Repository for the Distributed System Group</name>
 			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
@@ -136,13 +125,6 @@
 			<artifactId>easymock</artifactId>
 			<version>3.0</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.0-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

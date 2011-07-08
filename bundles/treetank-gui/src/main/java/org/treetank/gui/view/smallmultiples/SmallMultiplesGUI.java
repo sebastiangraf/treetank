@@ -36,11 +36,7 @@ import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IProcessingGUI;
 import org.treetank.gui.view.ViewUtilities;
 import org.treetank.gui.view.smallmultiples.SmallMultiplesView.Embedded;
-import org.treetank.gui.view.sunburst.AbsSunburstGUI;
-import org.treetank.gui.view.sunburst.EDraw;
-import org.treetank.gui.view.sunburst.SunburstControl;
-import org.treetank.gui.view.sunburst.SunburstGUI;
-import org.treetank.gui.view.sunburst.SunburstItem;
+import org.treetank.gui.view.sunburst.*;
 import org.treetank.gui.view.sunburst.EDraw.EDrawSunburst;
 import org.treetank.gui.view.sunburst.control.AbsSunburstControl;
 import org.treetank.gui.view.sunburst.control.ISunburstControl;
@@ -94,7 +90,8 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
         super(paramEmbedded, paramControl, paramReadDB);
         mDb = paramReadDB;
         mControl = paramControl;
-        mUseDiffView = true;
+        mUseDiffView = EDiffView.DIFF;
+        EDiffView.DIFF.setValue(true);
         // ArrayLists because of sorting.
         mBufferedImages = new ArrayList<ImageStore>();
         mRevisions = new ArrayList<Long>();

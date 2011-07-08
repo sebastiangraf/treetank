@@ -27,7 +27,6 @@
 
 package org.treetank.gui.view.sunburst;
 
-import org.apache.commons.lang3.StringUtils;
 import org.treetank.gui.GUI;
 import org.treetank.gui.view.EHover;
 import org.treetank.gui.view.ViewUtilities;
@@ -191,7 +190,7 @@ public enum EDraw {
                 .getLeafArcScale();
         if (scale >= 0.7) {
             final float fontHeight = paramGUI.mParent.textAscent() + paramGUI.mParent.textDescent();
-            final float size = PApplet.map(depth, 0, paramGUI.mDepthMax, 13, 11);
+            final float size = depth == 0 ? 15 : PApplet.map(depth, 0, paramGUI.mDepthMax, 13, 11);
             paramGraphic.textSize(size);
             paramGraphic.textLeading(0f);
             final String text =
@@ -199,10 +198,9 @@ public enum EDraw {
             float arcRadius = paramGUI.calcEqualAreaRadius(depth, paramGUI.mDepthMax);
             float arc = draw(paramGraphic, text, arcRadius, startAngle, EDisplay.NO, EReverseDirection.NO);
             if (arc < endAngle) {
-                // paramGraphic.textSize(12f);
-                // PApplet.map(paramGraphic.textSize, 12, 12, 12, 10);
                 if (depth == 0) {
                     // Must be the root-Element.
+                    System.out.println("BLAAAAAAAAAAAAAAAAAAAAAAAAa");
                     paramGraphic.pushMatrix();
                     paramGraphic.fill(0);
                     paramGraphic.text(text, 0 - paramGraphic.textWidth(text) / 2f, -12f);
@@ -215,9 +213,10 @@ public enum EDraw {
                     // Bottom half.
                     float radius = (paramGUI.calcEqualAreaRadius(depth + 1, paramGUI.mDepthMax) - arcRadius);
                     radius *= scale;
-                    final float depthDiff = depth < 5 ? radius + 0.5f * fontHeight : radius + 0.4f * fontHeight;
+                    final float depthDiff =
+                        depth < 5 ? radius + 0.5f * fontHeight : radius + 0.4f * fontHeight;
                     arcRadius += (0.5f * depthDiff);
-//                        (((radius + paramGUI.mParent.textAscent()) / 2) - paramGUI.mParent.textAscent() / 2);
+                    // (((radius + paramGUI.mParent.textAscent()) / 2) - paramGUI.mParent.textAscent() / 2);
 
                     draw(paramGraphic, text, arcRadius, endAngle - ((endAngle - arc) * 0.5f), EDisplay.YES,
                         EReverseDirection.YES);
@@ -225,7 +224,8 @@ public enum EDraw {
                     // Top half.
                     float radius = (paramGUI.calcEqualAreaRadius(depth + 1, paramGUI.mDepthMax) - arcRadius);
                     radius *= scale;
-                    final float depthDiff = depth < 5 ? radius - 0.7f * fontHeight : radius - 0.5f * fontHeight;
+                    final float depthDiff =
+                        depth < 5 ? radius - 0.7f * fontHeight : radius - 0.5f * fontHeight;
                     arcRadius += (0.5f * depthDiff);
 
                     draw(paramGraphic, text, arcRadius, (endAngle - arc) * 0.5f + startAngle, EDisplay.YES,
@@ -297,7 +297,7 @@ public enum EDraw {
 
     private static void drawStaticModifcationRel(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
         final PGraphics paramGraphic) {
-        if (paramGUI.mUseDiffView && paramGUI.isShowArcs()
+        if (paramGUI.mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue() && paramGUI.isShowArcs()
             && paramItem.getDepth() == paramGUI.mOldDepthMax + 2) {
             switch (paramItem.mDiff) {
             case INSERTED:
@@ -334,7 +334,7 @@ public enum EDraw {
      */
     private static void drawStaticRings(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         int depthMax = paramGUI.mDepthMax;
-        if (!paramGUI.mUseDiffView) {
+        if (paramGUI.mUseDiffView == EDiffView.NODIFF) {
             depthMax += 1;
         }
         for (int depth = 0; depth < depthMax; depth++) {
@@ -365,7 +365,8 @@ public enum EDraw {
         final EReverseDirection paramReverseDrawDirection) {
         float retVal = paramTheta;
 
-        assert paramTheta >= 0f && paramTheta <= PConstants.PI * 2;
+        assert paramTheta >= 0f && paramTheta <= PConstants.TWO_PI;
+        System.out.println(paramTheta);
         String text = paramText;
 
         // We must keep track of our position along the curve.
