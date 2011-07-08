@@ -38,7 +38,7 @@ import processing.core.PConstants;
  * 
  */
 public class SunburstControl extends AbsSunburstControl {
-    
+
     /** {@link SunburstControl} instance. */
     private static SunburstControl mControl;
 
@@ -58,9 +58,9 @@ public class SunburstControl extends AbsSunburstControl {
     private SunburstControl(final Embedded paramParent, final IModel paramModel, final ReadDB paramDb) {
         super(paramParent, paramModel, paramDb);
         assert paramParent != null;
-        mSunburstGUI = (SunburstGUI) mGUI;
-        mModel.traverseTree(new SunburstContainer(mSunburstGUI, mModel).setStartKey(mDb.getNodeKey()).setPruning(
-            EPruning.FALSE));
+        mSunburstGUI = (SunburstGUI)mGUI;
+        mModel.traverseTree(new SunburstContainer(mSunburstGUI, mModel).setStartKey(mDb.getNodeKey())
+            .setPruning(EPruning.FALSE));
     }
 
     /**
@@ -90,7 +90,7 @@ public class SunburstControl extends AbsSunburstControl {
     /** {@inheritDoc} */
     @Override
     protected AbsSunburstGUI getGUIInstance() {
-        return SunburstGUI.getInstance((Embedded) mParent, this, mDb);
+        return SunburstGUI.getInstance((Embedded)mParent, this, mDb);
     }
 
     /** {@inheritDoc} */
@@ -111,7 +111,8 @@ public class SunburstControl extends AbsSunburstControl {
                 }
                 mModel.traverseTree(container.setRevision(mSunburstGUI.mSelectedRev).setModWeight(
                     mSunburstGUI.getModificationWeight()));
-                mSunburstGUI.mUseDiffView = true;
+                mSunburstGUI.mUseDiffView = EDiffView.DIFF;
+                mSunburstGUI.mUseDiffView.setValue(true);
             }
         } else if (paramControlEvent.isController()) {
             if (paramControlEvent.controller() instanceof Toggle) {
@@ -149,15 +150,16 @@ public class SunburstControl extends AbsSunburstControl {
             case 's':
             case 'S':
                 // Save PNG.
-                mSunburstGUI.mParent.saveFrame(ViewUtilities.SAVEPATH + ViewUtilities.timestamp() + "_##.png");
+                mSunburstGUI.mParent
+                    .saveFrame(ViewUtilities.SAVEPATH + ViewUtilities.timestamp() + "_##.png");
                 break;
             case 'p':
             case 'P':
                 // Save PDF.
                 mSunburstGUI.setSavePDF(true);
                 PApplet.println("\n" + "saving to pdf – starting");
-                mSunburstGUI.mParent.beginRecord(PConstants.PDF, ViewUtilities.SAVEPATH + ViewUtilities.timestamp()
-                    + ".pdf");
+                mSunburstGUI.mParent.beginRecord(PConstants.PDF,
+                    ViewUtilities.SAVEPATH + ViewUtilities.timestamp() + ".pdf");
                 mSunburstGUI.mParent.textMode(PConstants.SHAPE);
                 break;
             case '\b':
@@ -176,8 +178,8 @@ public class SunburstControl extends AbsSunburstControl {
                 break;
             case 'o':
             case 'O':
-                if (!mSunburstGUI.mUseDiffView) {
-                    mSunburstGUI.mUseDiffView = true;
+                if (mSunburstGUI.mUseDiffView == EDiffView.NODIFF) {
+                    mSunburstGUI.mUseDiffView.setValue(true);
                     mSunburstGUI.mRevisions =
                         mSunburstGUI.getControlP5().addDropdownList("Compare revision",
                             mSunburstGUI.mParent.width - 250, 100, 100, 120);
@@ -237,9 +239,9 @@ public class SunburstControl extends AbsSunburstControl {
      */
     @Override
     public void mouseEntered(final MouseEvent paramEvent) {
-//        if (mSunburstGUI.mDone) {
-            mSunburstGUI.mParent.loop();
-//        }
+        // if (mSunburstGUI.mDone) {
+        mSunburstGUI.mParent.loop();
+        // }
     }
 
     /**
@@ -290,7 +292,7 @@ public class SunburstControl extends AbsSunburstControl {
                             } else {
                                 container.setPruning(EPruning.FALSE);
                             }
-                            if (mSunburstGUI.mUseDiffView) {
+                            if (mSunburstGUI.mUseDiffView == EDiffView.DIFF) {
                                 final SunburstItem item =
                                     (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
@@ -301,12 +303,12 @@ public class SunburstControl extends AbsSunburstControl {
                                 }
                             } else {
                                 mSunburstGUI.mDone = false;
-                                final SunburstItem item =
+                                final SunburstItem hitItem =
                                     (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
-                                mModel.update(container.setStartKey(item.getNode().getNodeKey()));
+                                mModel.update(container.setStartKey(hitItem.getNode().getNodeKey()));
                             }
                         } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
-                            if (!mSunburstGUI.mUseDiffView) {
+                            if (mSunburstGUI.mUseDiffView == EDiffView.NODIFF) {
                                 try {
                                     ((SunburstModel)mModel).popupMenu(paramEvent, mSunburstGUI.mCtrl,
                                         mSunburstGUI.mHitTestIndex);
@@ -413,8 +415,9 @@ public class SunburstControl extends AbsSunburstControl {
         assert paramDB != null;
         mDb = paramDB;
         mSunburstGUI.mDone = false;
-        mSunburstGUI.mUseDiffView = false;
-        final SunburstContainer container = new SunburstContainer(mSunburstGUI, mModel).setStartKey(mDb.getNodeKey());
+        mSunburstGUI.mUseDiffView = EDiffView.NODIFF;
+        final SunburstContainer container =
+            new SunburstContainer(mSunburstGUI, mModel).setStartKey(mDb.getNodeKey());
         if (mSunburstGUI.mUsePruning) {
             container.setPruning(EPruning.TRUE);
         } else {

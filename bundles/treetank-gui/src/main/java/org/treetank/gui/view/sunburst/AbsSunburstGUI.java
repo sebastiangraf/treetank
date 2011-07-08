@@ -35,7 +35,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
     /** Pixels from the left border of the processing view. */
     public static final int LEFT = 0;
-    
+
     /** Pixels from the top border of the processing view. */
     public static final int TOP = 5;
 
@@ -50,7 +50,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
     /** {@link List} of {@link Toggle}s. */
     protected final List<Toggle> mToggles;
-    
+
     /** Color mapping mode. */
     private transient int mMappingMode = 3;
 
@@ -138,8 +138,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     /** Determines if bezier lines for connections between parent/child should be used (Default: true). */
     private transient boolean mUseBezierLine = true;
 
-    /** Determines if line connextions between parent/child should be drawn. */
-    private transient boolean mShowLines = true;
+    /** Determines if line relations between parent/child should be drawn. */
+    private transient boolean mShowLines;
 
     /** {@link ControlP5} instance. */
     private final ControlP5 mControlP5;
@@ -152,7 +152,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
     /** Selected revision to compare. */
     protected transient long mSelectedRev;
-    
+
     /** Selected revision to compare. */
     protected transient long mOldSelectedRev;
 
@@ -160,14 +160,14 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     protected transient int mOldDepthMax;
 
     /** Determines if diff view should be used or not. */
-    protected transient boolean mUseDiffView;
-    
+    protected transient EDiffView mUseDiffView = EDiffView.NODIFF;
+
     /** Determines if current state should be saved as a PDF-file. */
     private transient boolean mSavePDF;
-    
+
     /** Determines if SunburstGUI interface should be shown. */
     private transient boolean mShowGUI;
-    
+
     /** Determines if model has done the work. */
     protected volatile boolean mDone;
 
@@ -200,9 +200,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
     /** Initial setup of the GUI. */
     private void setupGUI() {
-        mParent.textFont(mParent.createFont("src" + File.separator + "main"
-            + File.separator + "resources" + File.separator + "data" + File.separator
-            + "miso-regular.ttf", 15));
+        mParent.textFont(mParent.createFont("src" + File.separator + "main" + File.separator + "resources"
+            + File.separator + "data" + File.separator + "miso-regular.ttf", 15));
         mParent.smooth();
         mParent.background(255f);
 
@@ -218,70 +217,84 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
 
         final int len = 300;
 
-        final Range hueRange = mControlP5.addRange("leaf node hue range", 0, 360, getHueStart(), getHueEnd(), LEFT, TOP + mPosY
-            + 0, len, 15);
+        final Range hueRange =
+            mControlP5.addRange("leaf node hue range", 0, 360, getHueStart(), getHueEnd(), LEFT, TOP + mPosY
+                + 0, len, 15);
         mRanges.add(hueRange);
-        final Range saturationRange = mControlP5.addRange("leaf node saturation range", 0, 100, getSaturationStart(),
-            getSaturationEnd(), LEFT, TOP + mPosY + 20, len, 15);
+        final Range saturationRange =
+            mControlP5.addRange("leaf node saturation range", 0, 100, getSaturationStart(),
+                getSaturationEnd(), LEFT, TOP + mPosY + 20, len, 15);
         mRanges.add(saturationRange);
-        final Range brightnessRange =  mControlP5.addRange("leaf node brightness range", 0, 100, getBrightnessStart(),
-            getBrightnessEnd(), LEFT, TOP + mPosY + 40, len, 15);
+        final Range brightnessRange =
+            mControlP5.addRange("leaf node brightness range", 0, 100, getBrightnessStart(),
+                getBrightnessEnd(), LEFT, TOP + mPosY + 40, len, 15);
         mRanges.add(brightnessRange);
 
         mPosY += 70;
 
-        final Range innerNodebrightnessRange = mControlP5.addRange("inner node brightness range", 0, 100,
-            getInnerNodeBrightnessStart(), getInnerNodeBrightnessEnd(), LEFT, TOP + mPosY + 0, len, 15);
+        final Range innerNodebrightnessRange =
+            mControlP5.addRange("inner node brightness range", 0, 100, getInnerNodeBrightnessStart(),
+                getInnerNodeBrightnessEnd(), LEFT, TOP + mPosY + 0, len, 15);
         mRanges.add(innerNodebrightnessRange);
-        final Range innerNodeStrokeBrightnessRange = mControlP5.addRange("inner node stroke brightness range", 0, 100,
-            getInnerNodeStrokeBrightnessStart(), getInnerNodeStrokeBrightnessEnd(), LEFT, TOP + mPosY + 20,
-            len, 15);
+        final Range innerNodeStrokeBrightnessRange =
+            mControlP5.addRange("inner node stroke brightness range", 0, 100,
+                getInnerNodeStrokeBrightnessStart(), getInnerNodeStrokeBrightnessEnd(), LEFT, TOP + mPosY
+                    + 20, len, 15);
         mRanges.add(innerNodeStrokeBrightnessRange);
 
         mPosY += 50;
 
         // name, minimum, maximum, default value (float), x, y, width, height
-        final Slider innerNodeArcScale = mControlP5.addSlider("setInnerNodeArcScale", 0, 1, getInnerNodeArcScale(), LEFT, TOP
-            + mPosY + 0, len, 15);
+        final Slider innerNodeArcScale =
+            mControlP5.addSlider("setInnerNodeArcScale", 0, 1, getInnerNodeArcScale(), LEFT, TOP + mPosY + 0,
+                len, 15);
         innerNodeArcScale.setLabel("innerNodeArcScale");
         mSliders.add(innerNodeArcScale);
-        final Slider leafNodeArcScale = mControlP5.addSlider("setLeafArcScale", 0, 1, getLeafArcScale(), LEFT, TOP + mPosY + 20, len, 15);
+        final Slider leafNodeArcScale =
+            mControlP5.addSlider("setLeafArcScale", 0, 1, getLeafArcScale(), LEFT, TOP + mPosY + 20, len, 15);
         leafNodeArcScale.setLabel("leafNodeArcScale");
         mSliders.add(leafNodeArcScale);
         mPosY += 50;
-        final Slider modWeight = mControlP5.addSlider("setModificationWeight", 0, 1, getModificationWeight(), LEFT, TOP
-            + mPosY + 0, len, 15);
+        final Slider modWeight =
+            mControlP5.addSlider("setModificationWeight", 0, 1, getModificationWeight(), LEFT, TOP + mPosY
+                + 0, len, 15);
         modWeight.setLabel("modification weight");
-        mSliders.add(modWeight); 
+        mSliders.add(modWeight);
         mPosY += 50;
 
-        final Range strokeWeight = mControlP5.addRange("stroke weight range", 0, 10, getStrokeWeightStart(),
-            getStrokeWeightEnd(), LEFT, TOP + mPosY + 0, len, 15);
+        final Range strokeWeight =
+            mControlP5.addRange("stroke weight range", 0, 10, getStrokeWeightStart(), getStrokeWeightEnd(),
+                LEFT, TOP + mPosY + 0, len, 15);
         mRanges.add(strokeWeight);
         mPosY += 30;
 
-        final Slider dotSize = mControlP5.addSlider("setDotSize", 0, 10, mDotSize, LEFT, TOP + mPosY + 0, len, 15);
+        final Slider dotSize =
+            mControlP5.addSlider("setDotSize", 0, 10, mDotSize, LEFT, TOP + mPosY + 0, len, 15);
         dotSize.setLabel("dot size");
-        mSliders.add(dotSize); 
-        final Slider dotBrightness = mControlP5.addSlider("setDotBrightness", 0, 100, mDotBrightness, LEFT, TOP + mPosY + 20,
-            len, 15);
+        mSliders.add(dotSize);
+        final Slider dotBrightness =
+            mControlP5.addSlider("setDotBrightness", 0, 100, mDotBrightness, LEFT, TOP + mPosY + 20, len, 15);
         dotBrightness.setLabel("dot brightness");
-        mSliders.add(dotBrightness); 
+        mSliders.add(dotBrightness);
         mPosY += 50;
 
-        final Slider backgroundBrightness = mControlP5.addSlider("setBackgroundBrightness", 0, 100, getBackgroundBrightness(), LEFT, TOP
-            + mPosY + 0, len, 15);
+        final Slider backgroundBrightness =
+            mControlP5.addSlider("setBackgroundBrightness", 0, 100, getBackgroundBrightness(), LEFT, TOP
+                + mPosY + 0, len, 15);
         backgroundBrightness.setLabel("background brightness");
-        mSliders.add(backgroundBrightness); 
+        mSliders.add(backgroundBrightness);
         mPosY += 50;
 
-        final Toggle showArcs = mControlP5.addToggle("isShowArcs", isShowArcs(), LEFT + 0, TOP + mPosY, 15, 15);
+        final Toggle showArcs =
+            mControlP5.addToggle("isShowArcs", isShowArcs(), LEFT + 0, TOP + mPosY, 15, 15);
         showArcs.setLabel("show arcs");
         mToggles.add(showArcs);
-        final Toggle showLines = mControlP5.addToggle("isShowLines", isShowLines(), LEFT + 0, TOP + mPosY + 20, 15, 15);
+        final Toggle showLines =
+            mControlP5.addToggle("isShowLines", isShowLines(), LEFT + 0, TOP + mPosY + 20, 15, 15);
         showLines.setLabel("show lines");
         mToggles.add(showLines);
-        final Toggle useBezier = mControlP5.addToggle("isUseBezierLine", isUseBezierLine(), LEFT + 0, TOP + mPosY + 40, 15, 15);
+        final Toggle useBezier =
+            mControlP5.addToggle("isUseBezierLine", isUseBezierLine(), LEFT + 0, TOP + mPosY + 40, 15, 15);
         useBezier.setLabel("Bezier / Line");
         mToggles.add(useBezier);
 
@@ -404,9 +417,27 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      * @param paramDb
      *            the {@link ReadDB} instance to set
      */
-    void updateDb(final ReadDB paramDb) {
+    protected void updateDb(final ReadDB paramDb) {
         mDb.close();
         mDb = paramDb;
+    }
+
+    /**
+     * Draw an arrow.
+     * 
+     * @param paramX
+     * @param paramY
+     * @param paramLen
+     * @param paramAngle
+     */
+    protected void drawArrow(final int paramX, final int paramY, final int paramLen, final float paramAngle) {
+        mParent.pushMatrix();
+        mParent.translate(paramX, paramY);
+        mParent.rotate(paramAngle);
+        mParent.line(0, 0, paramLen, 0);
+        mParent.line(paramLen, 0, paramLen - 8, -8);
+        mParent.line(paramLen, 0, paramLen - 8, 8);
+        mParent.popMatrix();
     }
 
     /**
@@ -425,7 +456,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         for (final SunburstItem item : items) {
             paramDraw.update(this, item);
 
-            if (mUseDiffView) {
+            if (mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue()) {
                 paramDraw.drawModificationRel(this, item);
                 paramDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
             } else {
@@ -433,7 +464,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
             }
         }
 
-        if (mUseDiffView) {
+        if (mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue()) {
             paramDraw.drawNewRevision(this);
             paramDraw.drawOldRevision(this);
 
@@ -447,7 +478,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
             }
         }
     }
-    
+
     /**
      * Get initial radius.
      * 
@@ -832,14 +863,16 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mMappingMode the mMappingMode to set
+     * @param mMappingMode
+     *            the mMappingMode to set
      */
     public void setMappingMode(int mMappingMode) {
         this.mMappingMode = mMappingMode;
     }
 
     /**
-     * @param mBuffer the mBuffer to set
+     * @param mBuffer
+     *            the mBuffer to set
      */
     public void setBuffer(PGraphics mBuffer) {
         this.mBuffer = mBuffer;
@@ -851,13 +884,14 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     public PGraphics getBuffer() {
         return mBuffer;
     }
-    
+
     public PApplet getParent() {
         return mParent;
     }
 
     /**
-     * @param mSavePDF the mSavePDF to set
+     * @param mSavePDF
+     *            the mSavePDF to set
      */
     public void setSavePDF(boolean mSavePDF) {
         this.mSavePDF = mSavePDF;
@@ -871,7 +905,8 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     }
 
     /**
-     * @param mShowGUI the mShowGUI to set
+     * @param mShowGUI
+     *            the mShowGUI to set
      */
     public void setShowGUI(boolean mShowGUI) {
         this.mShowGUI = mShowGUI;

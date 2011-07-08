@@ -21,7 +21,10 @@ public enum EGreyState {
         @Override
         public void setStroke(final PGraphics paramGraphic, final PGraphics paramRecorder, int paramColor,
             EHover paramHover) {
-            // Do nothing.
+            if (paramRecorder != null) {
+                paramGraphic.stroke(paramColor);
+            }
+            paramGraphic.stroke(paramColor);
         }
     },
 
@@ -32,6 +35,9 @@ public enum EGreyState {
         @Override
         public void setStroke(PGraphics paramGraphic, PGraphics paramRecorder, int paramColor,
             EHover paramHover) {
+            if (paramRecorder != null) {
+                paramGraphic.stroke(0);
+            }
             paramGraphic.stroke(0);
         }
     };

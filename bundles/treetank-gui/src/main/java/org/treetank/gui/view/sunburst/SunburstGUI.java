@@ -338,16 +338,30 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 mIsZoomingPanning = false;
             }
 
+            if (mDone) {
+                mParent.strokeWeight(2);
+                mParent.stroke(0);
+                mParent.textSize(16f);
+                mParent.fill(0f);
+                // mParent.translate(mParent.width * 0.5f, mParent.height * 0.5f);
+                mParent.text("end", mParent.width * 0.5f - 60f, -28f);
+                mParent.text("start", mParent.width * 0.5f - 60f, 10f);
+                drawArrow((int)Math.round(mParent.width * 0.5 - 80), 0, 50, PConstants.PI * 0.5f);
+            }
+
             mParent.popMatrix();
 
+            mParent.textSize(15f);
             mParent.translate(0, 0);
             mParent.strokeWeight(0);
-            if (mUseDiffView) {
+            if (mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue()) {
                 ViewUtilities.compareLegend(this, mParent);
             } else {
                 ViewUtilities.color(this, mParent);
-                mParent.text("Press 'o' to get a list of revisions to compare!", mParent.width - 300f,
-                    mParent.height - 50f);
+                if (mUseDiffView == EDiffView.NODIFF && !mUseDiffView.getValue()) {
+                    mParent.text("Press 'o' to get a list of revisions to compare!", mParent.width - 300f,
+                        mParent.height - 50f);
+                }
             }
 
             ViewUtilities.legend(this, mParent);
@@ -380,7 +394,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 } else {
                     builder.append(" Text: ").append(mHitItem.mText.substring(0, 20)).append("...");
                 }
-                if (mUseDiffView) {
+                if (mUseDiffView == EDiffView.DIFF) {
                     mHitItem.updated(builder);
                 }
                 builder.append(" NodeKey: ").append(mHitItem.getNode().getNodeKey()).append("]");
@@ -403,6 +417,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 mParent.fill(0, 0, 100);
                 mParent.text(text, mX + offset + 2, mY + offset + 2);
             }
+            mParent.noFill();
         }
     }
 
@@ -420,9 +435,9 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         if (mAngle < 0) {
             mAngle = PApplet.map(mAngle, -PConstants.PI, 0, PConstants.PI, PConstants.TWO_PI);
         }
-//        } else {
-//            mAngle = PApplet.map(mAngle, 0, PConstants.PI, 0, PConstants.PI);
-//        }
+        // } else {
+        // mAngle = PApplet.map(mAngle, 0, PConstants.PI, 0, PConstants.PI);
+        // }
         // Calc mouse depth with mouse radius ... transformation of calcEqualAreaRadius()
         mDepth = PApplet.floor(PApplet.pow(radius, 2) * (mDepthMax + 1) / PApplet.pow(getInitialRadius(), 2));
     }
@@ -490,21 +505,20 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
         for (final IVisualItem visualItem : items) {
             final SunburstItem item = (SunburstItem)visualItem;
             // Hittest, which arc is the closest to the mouse.
-            System.out.println("radians: " + PApplet.radians(mRad));
-            float angleStart =  item.getAngleStart() + PApplet.radians(mRad);
+            // System.out.println("radians: " + PApplet.radians(mRad));
+            float angleStart = item.getAngleStart() + PApplet.radians(mRad);
             // FIXME.
-            System.out.println("angleStart: " + item.getAngleStart());
-            if (angleStart > PConstants.TWO_PI) {
-                angleStart -= PConstants.TWO_PI;
-                System.out.println("start: " + angleStart);
-            }
+            // System.out.println("angleStart: " + item.getAngleStart());
+            // if (angleStart > PConstants.TWO_PI) {
+            // angleStart -= PConstants.TWO_PI;
+            // System.out.println("start: " + angleStart);
+            // }
             float angleEnd = item.getAngleEnd() + PApplet.radians(mRad);
-            if (angleEnd > PConstants.TWO_PI) {
-                angleEnd -= PConstants.TWO_PI;
-                System.out.println("end: " + angleEnd);
-            }
-            if (item.getDepth() == mDepth && mAngle > angleStart
-                && mAngle < angleEnd) {
+            // if (angleEnd > PConstants.TWO_PI) {
+            // angleEnd -= PConstants.TWO_PI;
+            // System.out.println("end: " + angleEnd);
+            // }
+            if (item.getDepth() == mDepth && mAngle > angleStart && mAngle < angleEnd) {
                 mHitTestIndex = index;
                 mHitItem = item;
                 retVal = true;
@@ -559,13 +573,13 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             assert paramEvent.getNewValue() instanceof Integer;
             mDepthMax = (Integer)paramEvent.getNewValue();
 
-            if (mUseDiffView) {
+            if (mUseDiffView == EDiffView.DIFF) {
                 mDepthMax += 2;
             }
         } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
             mOldDepthMax = (Integer)paramEvent.getNewValue();
-            mUseDiffView = true;
+            mUseDiffView = EDiffView.DIFF;
         } else if (paramEvent.getPropertyName().equals("done")) {
             update();
             assert paramEvent.getNewValue() instanceof Boolean;
@@ -606,7 +620,11 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
     /** {@inheritDoc} */
     @Override
     public void relocate() {
-        mXPathField.setPosition(mParent.width - 250, TOP + 20);
-        mRevisions.setPosition(mParent.width - 250, 100);
+        if (mXPathField != null) {
+            mXPathField.setPosition(mParent.width - 250, TOP + 20);
+        }
+        if (mRevisions != null) {
+            mRevisions.setPosition(mParent.width - 250, 100);
+        }
     }
 }

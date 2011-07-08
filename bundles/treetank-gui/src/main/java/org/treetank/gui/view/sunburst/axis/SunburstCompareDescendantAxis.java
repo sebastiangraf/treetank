@@ -198,8 +198,10 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         mOldRtx = paramOldRtx;
         try {
             mDescendants = mModel.getDescendants(getTransaction());
+            LOGWRAPPER.debug("DIFFS size: " + mDescendants.size());
             mParentDescendantCount = mModel.getMaxDescendantCount();
             mDescendantCount = mParentDescendantCount;
+            LOGWRAPPER.debug("DESCENDANT size: " + mDescendants.size());
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final ExecutionException e) {
@@ -403,7 +405,7 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             }
 
             if (getTransaction().getStructuralNode().hasFirstChild()
-                && getTransaction().getStructuralNode().hasRightSibling()) {
+                && getTransaction().getStructuralNode().hasRightSibling() && mDepth != 0) {
                 mRightSiblingKeyStack.push(getTransaction().getStructuralNode().getRightSiblingKey());
             }
 
@@ -538,10 +540,15 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             mMoved = EMoved.ANCHESTSIBL;
         }
         mExtension = mModel.createSunburstItem(mItem, mDepth, mIndex);
-        if (0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED
-            && mDepth > mDiffs.get(0).getDepth().getNewDepth()) {
-            // Must be anchestsibl movement to pop in the delete step from the stacks.
+        if (0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED) {
             mMoved = EMoved.ANCHESTSIBL;
+//            if (mDepth > mDiffs.get(0).getDepth().getOldDepth()) {
+//                // Must be anchestsibl movement to pop in the delete step from the stacks.
+//                mMoved = EMoved.ANCHESTSIBL;
+//            } else {
+//                mMoved = EMoved.STARTRIGHTSIBL;
+//                mAngle += mExtension;
+//            }
         }
         mLastDiff = mDiff;
         mLastDiffCont = mDiffCont;
@@ -556,8 +563,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
         boolean first = true;
         while (!getTransaction().getStructuralNode().hasRightSibling()
             && getTransaction().getStructuralNode().hasParent()
-            && getTransaction().getNode().getNodeKey() != mNextKey &&
-            getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
+            && getTransaction().getNode().getNodeKey() != mNextKey
+            && getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
             getTransaction().moveToParent();
             mMoved = EMoved.ANCHESTSIBL;
             if (first) {
@@ -615,15 +622,19 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
     /** Process movement. */
     private void processMove() {
         try {
+            assert mDescendants.size() > 0;
             mDescendantCount = mDescendants.remove(0).get();
         } catch (final InterruptedException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final ExecutionException e) {
             LOGWRAPPER.error(e.getMessage(), e);
+            System.out.println(e.getCause());
         }
-        mItem = Item.BUILDER.set(mAngle, mParExtension, mIndexToParent).setDescendantCount(mDescendantCount)
-            .setParentDescendantCount(mParentDescendantCount).setModificationCount(countDiffs())
-            .setParentModificationCount(mParentModificationCount).setSubtract(mSubtract).setDiff(mDiff).build();
+        mItem =
+            Item.BUILDER.set(mAngle, mParExtension, mIndexToParent).setDescendantCount(mDescendantCount)
+                .setParentDescendantCount(mParentDescendantCount).setModificationCount(countDiffs())
+                .setParentModificationCount(mParentModificationCount).setSubtract(mSubtract).setDiff(mDiff)
+                .build();
         mMoved.processCompareMove(getTransaction(), mItem, mAngleStack, mExtensionStack, mDescendantsStack,
             mParentStack, mDiffStack);
         mModificationCount = mItem.mModificationCount;
@@ -727,8 +738,8 @@ public final class SunburstCompareDescendantAxis extends AbsAxis {
             } while (getTransaction().getNode().getNodeKey() != nodeKey);
             getTransaction().moveTo(nodeKey);
         } else if (0 < mDiffs.size() && mDiffs.get(0).getDiff() == EDiff.DELETED) {
-            /* 
-             * Current node has no children but might have several deleted children with subtrees (the node 
+            /*
+             * Current node has no children but might have several deleted children with subtrees (the node
              * has at least one deleted node).
              */
             mOldRtx.moveTo(mDiffs.get(0).getOldNode().getNodeKey());

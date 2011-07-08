@@ -226,7 +226,7 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
             if (!done) {
                 LOGWRAPPER.error("Diff failed - Timeout occured after " + TIMEOUT_S + " seconds!");
             }
-            
+
             System.out.println("Diff Size: " + mDiffs.size());
 
             // for (final Diff diff : mDiffs) {
@@ -461,7 +461,7 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
                 mRelations.setSubtract(subtract).setAll(depth, structKind, text.length(), mMinTextLength,
                     mMaxTextLength, indexToParent);
             } else {
-                mRelations.setSubtract(subtract).setAll(depth, structKind, descendantCount, 0,
+                mRelations.setSubtract(subtract).setAll(depth, structKind, descendantCount, 1,
                     mMaxDescendantCount, indexToParent);
             }
 
@@ -540,23 +540,24 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         boolean firstNode = true;
         int index = 0;
-        final int depth = mDiffs.get(0).getDepth().getNewDepth();
+        final List<Diff> diffs = new LinkedList<Diff>(mDiffs);
+        final int depth = diffs.get(0).getDepth().getNewDepth();
         try {
             final IReadTransaction newRtx =
                 mDb.getSession().beginReadTransaction(paramRtx.getRevisionNumber());
             newRtx.moveTo(paramRtx.getNode().getNodeKey());
 
-            for (final AbsAxis axis = new DescendantAxis(newRtx, true); index < mDiffs.size()
-                && mDiffs.get(index).getDiff() == EDiff.DELETED
-                && depth < mDiffs.get(index).getDepth().getOldDepth() || axis.hasNext();) {
+            for (final AbsAxis axis = new DescendantAxis(newRtx, true); index < diffs.size()
+                && diffs.get(index).getDiff() == EDiff.DELETED
+                && depth < diffs.get(index).getDepth().getOldDepth() || axis.hasNext();) {
                 if (axis.getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
-                    if (mDiffs.get(index).getDiff() != EDiff.DELETED) {
+                    if (diffs.get(index).getDiff() != EDiff.DELETED) {
                         axis.next();
                     }
 
                     Future<Integer> submit =
                         executor.submit(new Descendants(newRtx.getRevisionNumber(), mRtx.getRevisionNumber(),
-                            axis.getTransaction().getNode().getNodeKey(), mDb.getSession(), index));
+                            axis.getTransaction().getNode().getNodeKey(), mDb.getSession(), index, diffs));
                     if (firstNode) {
                         firstNode = false;
                         mMaxDescendantCount = submit.get();
@@ -579,15 +580,17 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
     }
 
     /** Counts descendants. */
-    private final class Descendants implements Callable<Integer> {
+    private final static class Descendants implements Callable<Integer> {
         /** Treetank {@link IReadTransaction} on new revision. */
-        private transient IReadTransaction mNewRtx;
+        private transient IReadTransaction mNewTransaction;
 
         /** Treetank {@link IReadTransaction} on old revision. */
-        private transient IReadTransaction mOldRtx;
+        private transient IReadTransaction mOldTransaction;
 
         /** Index of current diff. */
         private int mIndex;
+        
+        private List<Diff> mDiffList;
 
         /**
          * Constructor.
@@ -606,42 +609,46 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
          *            {@link List} of {@link Diff}s
          */
         Descendants(final long paramNewRevision, final long paramOldRevision, final long paramKey,
-            final ISession paramSession, final int paramIndex) {
+            final ISession paramSession, final int paramIndex, final List<Diff> paramDiffs) {
             assert paramNewRevision > 0;
             assert paramOldRevision >= 0;
             assert paramNewRevision > paramOldRevision;
             assert paramSession != null;
             assert paramIndex > -1;
             try {
-                mNewRtx = paramSession.beginReadTransaction(paramNewRevision);
-                mOldRtx = paramSession.beginReadTransaction(paramOldRevision);
+                mNewTransaction = paramSession.beginReadTransaction(paramNewRevision);
+                mOldTransaction = paramSession.beginReadTransaction(paramOldRevision);
             } catch (final TTIOException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             } catch (final AbsTTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
-            mNewRtx.moveTo(paramKey);
+            mNewTransaction.moveTo(paramKey);
             mIndex = paramIndex;
+            mDiffList = paramDiffs;//new LinkedList<Diff>(paramDiffs);
         }
 
         @Override
         public Integer call() throws AbsTTException {
             int retVal = 0;
 
-            final Diff diff = mDiffs.get(mIndex);
+            System.out.println(mDiffList.size());
+            assert mIndex < mDiffList.size() : "index must be less than the diff Size";
+            final Diff diff = mDiffList.get(mIndex);
             if (diff.getDiff() == EDiff.DELETED) {
-                mOldRtx.moveTo(diff.getOldNode().getNodeKey());
+                mOldTransaction.moveTo(diff.getOldNode().getNodeKey());
 
-                for (final AbsAxis axis = new DescendantAxis(mOldRtx, true); axis.hasNext(); axis.next()) {
+                for (final AbsAxis axis = new DescendantAxis(mOldTransaction, true); axis.hasNext(); axis
+                    .next()) {
                     retVal++;
                 }
             } else {
                 final int depth = diff.getDepth().getNewDepth();
-                final long nodeKey = mNewRtx.getNode().getNodeKey();
+                final long nodeKey = mNewTransaction.getNode().getNodeKey();
 
                 // Be sure we are on the root node.
-                if (mNewRtx.getNode().getKind() == ENodes.ROOT_KIND) {
-                    mNewRtx.moveToFirstChild();
+                if (mNewTransaction.getNode().getKind() == ENodes.ROOT_KIND) {
+                    mNewTransaction.moveToFirstChild();
                 }
 
                 // // Root node has been deleted.
@@ -652,46 +659,47 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
                 // Root node.
                 retVal++;
 
-                if (mNewRtx.getStructuralNode().getChildCount() > 0) {
+                if (mNewTransaction.getStructuralNode().getChildCount() > 0) {
                     // Current "root"-node of the subtree has children.
                     do {
-                        if (mNewRtx.getStructuralNode().hasFirstChild()) {
+                        if (mNewTransaction.getStructuralNode().hasFirstChild()) {
                             retVal = countDeletes(retVal, depth);
-                            mNewRtx.moveToFirstChild();
+                            mNewTransaction.moveToFirstChild();
                             retVal++;
                         } else {
-                            while (!mNewRtx.getStructuralNode().hasRightSibling()
-                                && mNewRtx.getNode().hasParent() && mNewRtx.getNode().getNodeKey() != nodeKey) {
+                            while (!mNewTransaction.getStructuralNode().hasRightSibling()
+                                && mNewTransaction.getNode().hasParent()
+                                && mNewTransaction.getNode().getNodeKey() != nodeKey) {
                                 retVal = countDeletes(retVal, depth);
-                                mNewRtx.moveToParent();
+                                mNewTransaction.moveToParent();
                             }
-                            if (mNewRtx.getNode().getNodeKey() != nodeKey) {
+                            if (mNewTransaction.getNode().getNodeKey() != nodeKey) {
                                 retVal = countDeletes(retVal, depth);
-                                mNewRtx.moveToRightSibling();
+                                mNewTransaction.moveToRightSibling();
                                 retVal++;
                             }
                         }
-                    } while (mNewRtx.getNode().getNodeKey() != nodeKey);
-                    mNewRtx.moveTo(nodeKey);
+                    } while (mNewTransaction.getNode().getNodeKey() != nodeKey);
+                    mNewTransaction.moveTo(nodeKey);
                 } else
                 // Remember deleted subtrees of the current "root" node of the subtree.
-                if (mIndex + 1 < mDiffs.size()
+                if (mIndex + 1 < mDiffList.size()
                     && retVal == 1
-                    && mDiffs.get(mIndex + 1).getDiff() == EDiff.DELETED
-                    && mDiffs.get(mIndex + 1).getDepth().getOldDepth() > mDiffs.get(mIndex).getDepth()
+                    && mDiffList.get(mIndex + 1).getDiff() == EDiff.DELETED
+                    && mDiffList.get(mIndex + 1).getDepth().getOldDepth() > mDiffList.get(mIndex).getDepth()
                         .getNewDepth()) {
-                    mOldRtx.moveTo(mDiffs.get(mIndex + 1).getOldNode().getNodeKey());
+                    mOldTransaction.moveTo(mDiffList.get(mIndex + 1).getOldNode().getNodeKey());
 
                     int diffIndex = mIndex;
                     do {
-                        final long key = mOldRtx.getStructuralNode().getNodeKey();
+                        final long key = mOldTransaction.getStructuralNode().getNodeKey();
 
-                        if (diffIndex + 1 < mDiffs.size()
-                            && mDiffs.get(mIndex).getDepth().getNewDepth() == (mDiffs.get(diffIndex + 1)
+                        if (diffIndex + 1 < mDiffList.size()
+                            && mDiffList.get(mIndex).getDepth().getNewDepth() == (mDiffList.get(diffIndex + 1)
                                 .getDepth().getOldDepth() - 1)) {
                             // For each child of the current "root" node of the subtree.
-                            for (final AbsAxis axis = new DescendantAxis(mOldRtx, true); axis.hasNext(); axis
-                                .next()) {
+                            for (final AbsAxis axis = new DescendantAxis(mOldTransaction, true); axis
+                                .hasNext(); axis.next()) {
                                 diffIndex++;
                                 retVal++;
                             }
@@ -699,15 +707,16 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
                             break;
                         }
 
-                        mOldRtx.moveTo(key);
-                    } while (mOldRtx.getStructuralNode().hasRightSibling() && mOldRtx.moveToRightSibling());
+                        mOldTransaction.moveTo(key);
+                    } while (mOldTransaction.getStructuralNode().hasRightSibling()
+                        && mOldTransaction.moveToRightSibling());
 
                     mIndex++;
                 }
             }
 
-            mNewRtx.close();
-            mOldRtx.close();
+            mNewTransaction.close();
+            mOldTransaction.close();
             return retVal;
         }
 
@@ -722,8 +731,8 @@ public final class TraverseCompareTree extends AbsObservableComponent implements
          */
         private int countDeletes(final int paramCount, final int paramDepth) {
             int retVal = paramCount;
-            while (mIndex + retVal < mDiffs.size() && mDiffs.get(mIndex + retVal).getDiff() == EDiff.DELETED
-                && paramDepth < mDiffs.get(mIndex + retVal).getDepth().getOldDepth()) {
+            while (mIndex + retVal < mDiffList.size() && mDiffList.get(mIndex + retVal).getDiff() == EDiff.DELETED
+                && paramDepth < mDiffList.get(mIndex + retVal).getDepth().getOldDepth()) {
                 retVal++;
             }
             return retVal;
