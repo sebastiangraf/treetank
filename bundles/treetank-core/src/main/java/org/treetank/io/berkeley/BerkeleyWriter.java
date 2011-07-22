@@ -49,35 +49,35 @@ import org.treetank.page.PageReference;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class BerkeleyWriter implements IWriter {
+public final class BerkeleyWriter implements IWriter {
 
     /** Current {@link Database} to write to. */
-    private transient final Database mDatabase;
+    private final Database mDatabase;
 
     /** Current {@link Transaction} to write with. */
-    private transient Transaction mTxn;
+    private final Transaction mTxn;
 
     /** Current {@link BerkeleyReader} to read with. */
-    private transient final BerkeleyReader mReader;
+    private final BerkeleyReader mReader;
 
+    /** Key of nodepage. */
     private long mNodepagekey;
 
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Database}.
      * 
-     * @param mEnv
-     *            for the write
-     * @param mDatabase
-     *            where the data should be written to
+     * @param paramEnv
+     *            {@link Environment} reference for the write
+     * @param paramDatabase
+     *            {@link Database} reference where the data should be written to
      * @throws TTIOException
-     *             if something off happens
+     *             if something odd happens
      */
-    public BerkeleyWriter(final Environment mEnv, final Database mDatabase) throws TTIOException {
-
+    public BerkeleyWriter(final Environment paramEnv, final Database paramDatabase) throws TTIOException {
         try {
-            this.mTxn = mEnv.beginTransaction(null, null);
-            this.mDatabase = mDatabase;
-            this.mNodepagekey = getLastNodePage();
+            mTxn = paramEnv.beginTransaction(null, null);
+            mDatabase = paramDatabase;
+            mNodepagekey = getLastNodePage();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -88,6 +88,7 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws TTIOException {
         try {
             setLastNodePage(mNodepagekey);
@@ -100,6 +101,7 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final PageReference pageReference) throws TTIOException {
         final AbsPage page = pageReference.getPage();
 
@@ -129,21 +131,20 @@ public class BerkeleyWriter implements IWriter {
     /**
      * Setting the last nodePage to the persistent storage.
      * 
+     * @param paramData
+     *            key to be stored
      * @throws TTIOException
      *             If can't set last Node page
-     * @param mData
-     *            key to be stored
      */
-    private void setLastNodePage(final Long mData) throws TTIOException {
+    private void setLastNodePage(final Long paramData) throws TTIOException {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         final DatabaseEntry valueEntry = new DatabaseEntry();
 
         final BerkeleyKey key = BerkeleyKey.getDataInfoKey();
         BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
-        BerkeleyFactory.DATAINFO_VAL_B.objectToEntry(mData, valueEntry);
+        BerkeleyFactory.DATAINFO_VAL_B.objectToEntry(paramData, valueEntry);
         try {
             mDatabase.put(mTxn, keyEntry, valueEntry);
-
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -181,14 +182,15 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void writeFirstReference(final PageReference pageReference) throws TTIOException {
-        write(pageReference);
+    @Override
+    public void writeFirstReference(final PageReference paramPageReference) throws TTIOException {
+        write(paramPageReference);
 
         final DatabaseEntry keyEntry = new DatabaseEntry();
         BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(), keyEntry);
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
-        BerkeleyFactory.FIRST_REV_VAL_B.objectToEntry(pageReference, valueEntry);
+        BerkeleyFactory.FIRST_REV_VAL_B.objectToEntry(paramPageReference, valueEntry);
 
         try {
             mDatabase.put(mTxn, keyEntry, valueEntry);
@@ -201,6 +203,7 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AbsPage read(final PageReference pageReference) throws TTIOException {
         return mReader.read(pageReference);
     }
@@ -208,6 +211,7 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PageReference readFirstReference() throws TTIOException {
         return mReader.readFirstReference();
     }

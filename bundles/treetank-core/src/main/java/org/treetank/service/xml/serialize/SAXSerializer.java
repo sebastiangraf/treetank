@@ -75,6 +75,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         mContHandler = paramHandler;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void emitStartElement(final IReadTransaction rtx) {
         switch (rtx.getNode().getKind()) {
@@ -91,6 +92,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void emitEndElement(final IReadTransaction rtx) {
         final String mURI = rtx.nameForKey(rtx.getNode().getURIKey());
@@ -102,6 +104,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void emitStartManualElement(final long revision) {
         final AttributesImpl atts = new AttributesImpl();
@@ -114,6 +117,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void emitEndManualElement(final long revision) {
         try {
@@ -161,7 +165,6 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
             }
 
             // Create SAX events.
-
             final QName qName = paramRtx.getQNameOfCurrentNode();
             mContHandler.startElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()),
                 qName.getLocalPart(), WriteTransactionState.buildName(qName), atts);
@@ -182,9 +185,9 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      * @param mRtx
      *            Read Transaction.
      */
-    private void generateText(final IReadTransaction mRtx) {
+    private void generateText(final IReadTransaction paramRtx) {
         try {
-            mContHandler.characters(mRtx.getValueOfCurrentNode().toCharArray(), 0, mRtx
+            mContHandler.characters(paramRtx.getValueOfCurrentNode().toCharArray(), 0, paramRtx
                 .getValueOfCurrentNode().length());
         } catch (final SAXException exc) {
             exc.printStackTrace();
@@ -287,39 +290,39 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /* Implements XMLReader method. */
     @Override
-    public void setContentHandler(final ContentHandler mContent) {
-        mContHandler = mContent;
+    public void setContentHandler(final ContentHandler paramContentHandler) {
+        mContHandler = paramContentHandler;
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setDTDHandler(final DTDHandler mHandler) {
+    public void setDTDHandler(final DTDHandler paramHandler) {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setEntityResolver(final EntityResolver resolver) {
+    public void setEntityResolver(final EntityResolver paramResolver) {
         throw new UnsupportedOperationException("Not supported by Treetank!");
 
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setErrorHandler(final ErrorHandler mHandler) {
+    public void setErrorHandler(final ErrorHandler paramHandler) {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setFeature(final String mName, final boolean mValue) throws SAXNotRecognizedException,
+    public void setFeature(final String paramName, final boolean paramValue) throws SAXNotRecognizedException,
         SAXNotSupportedException {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setProperty(final String mName, final Object mValue) throws SAXNotRecognizedException,
+    public void setProperty(final String paramName, final Object paramValue) throws SAXNotRecognizedException,
         SAXNotSupportedException {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }

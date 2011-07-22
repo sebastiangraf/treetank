@@ -32,7 +32,7 @@ import org.treetank.io.ITTSource;
 
 /**
  * Key for reference the data in the berkeley-db. The key is also the
- * soft-reference of the pages regarading the PageReference.
+ * soft-reference of the pages regarding the PageReference.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -52,11 +52,11 @@ public class BerkeleyKey extends AbsKey {
     /**
      * Public constructor.
      * 
-     * @param mKey
-     *            , coming from the application
+     * @param paramKey
+     *            key coming from the application
      */
-    public BerkeleyKey(final long mKey) {
-        super(mKey);
+    public BerkeleyKey(final long paramKey) {
+        super(paramKey);
     }
 
     /**

@@ -65,6 +65,7 @@ public interface IWriter extends IReader {
      * @throws TTIOException
      *             if closing fails
      */
+    @Override
     void close() throws TTIOException;
 
 }
