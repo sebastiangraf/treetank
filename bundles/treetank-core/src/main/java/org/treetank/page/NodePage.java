@@ -341,16 +341,15 @@ public class NodePage extends AbsPage {
     @Override
     public final String toString() {
         final StringBuilder returnString = new StringBuilder();
-        returnString.append(": nodePageKey=");
+        returnString.append("pagekey=");
         returnString.append(mNodePageKey);
-        returnString.append(" nodes: \n");
+        returnString.append(", nodes: ");
         for (final AbsNode node : getNodes()) {
             if (node != null) {
                 returnString.append(node.getNodeKey());
                 returnString.append(",");
             }
         }
-        returnString.append("\n");
         return returnString.toString();
     }
 

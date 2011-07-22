@@ -86,4 +86,11 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     public void putPersistent(final long mKey, final NodePageContainer mPage) throws TTIOException {
         mFirstCache.put(mKey, mPage);
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.mFirstCache.toString();
+    }
 }

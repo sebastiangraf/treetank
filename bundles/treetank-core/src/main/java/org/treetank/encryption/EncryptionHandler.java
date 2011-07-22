@@ -33,7 +33,7 @@ public final class EncryptionHandler {
      * Helper variable for current logged user.
      */
     private final String mUser = "TESTUSER1";
-    // später Schnittstelle um aktuellen User zu erhalten
+    // spaeter Schnittstelle um aktuellen User zu erhalten
 
     /**
      * Instance of KeySelectorDatabase holding key selection stuff.
@@ -226,14 +226,14 @@ public final class EncryptionHandler {
                                         mMaterial.getSecretKey();
 
                                     // TODO:
-                                    // 1) prüfen ob cache für user existiert, falls ja ziehe parent key
+                                    // 1) pruefen ob cache fuer user existiert, falls ja ziehe parent key
                                     // heraus, falls nein, nehme inital keys und ziehe parent key raus
-                                    // 2) verschlüssele parent key mit user secret key
-                                    // 3) füge den parent key als neuen node in material db ein
-                                    // 4) ersetze den verschlüsselten parent key mit letzter position in
+                                    // 2) verschluessele parent key mit user secret key
+                                    // 3) fuege den parent key als neuen node in material db ein
+                                    // 4) ersetze den verschluesselten parent key mit letzter position in
                                     // mcachelist
-                                    // 5) füge die erste position der mcachelist in tek liste ein
-                                    // 6) schreibe mcacheliste als letzter änderung in lru cache
+                                    // 5) fuege die erste position der mcachelist in tek liste ein
+                                    // 6) schreibe mcacheliste als letzter aenderung in lru cache
 
                                     // uncrypted secret key of parent
 
@@ -266,7 +266,7 @@ public final class EncryptionHandler {
      *            name of goup the user leaves.
      */
     public void leaveGroup(final String paramUser, final String paramGroup) {
-        // Operationen auf db und cache ebene wenn user gelöscht wird
+        // Operationen auf db und cache ebene wenn user geloescht wird
         System.out.println("i do");
 
     }

@@ -28,6 +28,7 @@
 package org.treetank.access;
 
 import java.io.File;
+import java.util.Stack;
 
 import javax.xml.namespace.QName;
 
@@ -365,71 +366,71 @@ public final class WriteTransactionState extends ReadTransactionState {
         // // // /////////////
         // // // New code starts here
         // // // /////////////
-        // final Stack<PageReference> refs = new Stack<PageReference>();
-        // refs.push(uberPageReference);
-        //
-        // final Stack<Integer> refIndex = new Stack<Integer>();
-        // refIndex.push(0);
-        // refIndex.push(0);
-        //
-        // do {
-        //
-        // assert refs.size() + 1 == refIndex.size();
-        //
-        // // Getting the next ref
-        // final PageReference currentRef = refs.peek();
-        // final int currentIndex = refIndex.pop();
-        //
-        // // Check if referenced page is valid, if not, continue
-        // AbstractPage page = log.get(currentRef.getNodePageKey());
-        // boolean continueFlag = true;
-        // if (page == null) {
-        // if (currentRef.isInstantiated()) {
-        // page = currentRef.getPage();
-        // } else {
-        // continueFlag = false;
-        // }
-        // } else {
-        // currentRef.setPage(page);
-        // }
-        //
-        // if (continueFlag) {
-        //
-        // if (currentIndex + 1 <= page.getReferences().length) {
-        // // go down
-        //
-        // refIndex.push(currentIndex + 1);
-        //
-        // refs.push(page.getReference(currentIndex));
-        // refIndex.push(0);
-        //
-        // } else {
-        //
-        // mPageWriter.write(currentRef);
-        // refs.pop();
-        // }
-        //
-        // } // ref is not designated to be serialized
-        // else {
-        // refs.pop();
-        // }
-        //
-        // } while (!refs.empty());
+//        final Stack<PageReference> refs = new Stack<PageReference>();
+//        refs.push(uberPageReference);
+//
+//        final Stack<Integer> refIndex = new Stack<Integer>();
+//        refIndex.push(0);
+//        refIndex.push(0);
+//
+//        do {
+//
+//            assert refs.size() + 1 == refIndex.size();
+//
+//            // Getting the next ref
+//            final PageReference currentRef = refs.peek();
+//            final int currentIndex = refIndex.pop();
+//
+//            // Check if referenced page is valid, if not, continue
+//            AbsPage page = mLog.get(currentRef.getNodePageKey()).getModified();
+//            boolean continueFlag = true;
+//            if (page == null) {
+//                if (currentRef.isInstantiated()) {
+//                    page = currentRef.getPage();
+//                } else {
+//                    continueFlag = false;
+//                }
+//            } else {
+//                currentRef.setPage(page);
+//            }
+//
+//            if (continueFlag) {
+//
+//                if (currentIndex + 1 <= page.getReferences().length) {
+//                    // go down
+//
+//                    refIndex.push(currentIndex + 1);
+//
+//                    refs.push(page.getReference(currentIndex));
+//                    refIndex.push(0);
+//
+//                } else {
+//
+//                    mPageWriter.write(currentRef);
+//                    refs.pop();
+//                }
+//
+//            } // ref is not designated to be serialized
+//            else {
+//                refs.pop();
+//            }
+//
+//        } while (!refs.empty());
         //
         // // // ///////////////
         // // // New code ends here
         // // // ///////////////
 
-        // Recursively write indirectely referenced pages.
-        uberPage.commit(this);
-
-        uberPageReference.setPage(uberPage);
-        mPageWriter.writeFirstReference(uberPageReference);
-        uberPageReference.setPage(null);
-
-        mSessionState.waitForFinishedSync(mTransactionID);
-        // mPageWriter.close();
-        mSessionState.mCommitLock.unlock();
+//         Recursively write indirectely referenced pages.
+         uberPage.commit(this);
+        
+         uberPageReference.setPage(uberPage);
+         mPageWriter.writeFirstReference(uberPageReference);
+         uberPageReference.setPage(null);
+        
+         mSessionState.waitForFinishedSync(mTransactionID);
+         // mPageWriter.close();
+         mSessionState.mCommitLock.unlock();
         return uberPage;
     }
 

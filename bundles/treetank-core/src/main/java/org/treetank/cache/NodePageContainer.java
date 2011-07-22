@@ -157,7 +157,7 @@ public final class NodePageContainer {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder("NodePageContainer has pagekey =");
+        final StringBuilder builder = new StringBuilder("Pagekey: ");
         builder.append(mComplete.getNodePageKey());
         builder.append("\nComplete page: ");
         builder.append(mComplete.toString());
