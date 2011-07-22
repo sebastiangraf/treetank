@@ -46,17 +46,6 @@ import org.treetank.io.file.FileFactory;
  */
 public abstract class AbsIOFactory {
 
-    /** Type for different storages. */
-    public enum StorageType {
-        /** File Storage. */
-        File,
-        /** Berkeley Storage. */
-        Berkeley
-    }
-
-    /** Folder to store the data */
-    public final File mFile;
-
     /**
      * Concurrent storage for all avaliable databases in runtime.
      */
@@ -67,16 +56,29 @@ public abstract class AbsIOFactory {
      * Config for the session holding information about the settings of the
      * session.
      */
-    protected final transient SessionConfiguration mSessionConfig;
+    protected final SessionConfiguration mSessionConfig;
 
     /**
      * Config for the database holding information about the location of the storage.
      */
-    protected final transient DatabaseConfiguration mDatabaseConfig;
+    protected final DatabaseConfiguration mDatabaseConfig;
+    
+    /** Type for different storages. */
+    public enum StorageType {
+        /** File Storage. */
+        File,
+        /** Berkeley Storage. */
+        Berkeley
+    }
+
+    /** Folder to store the data. */
+    public final File mFile;
 
     /**
      * Protected constructor, just setting the sessionconfiguration.
      * 
+     * @param paramFile
+     *            to be set
      * @param paramSession
      *            to be set
      * @param paramDatabase
@@ -84,9 +86,9 @@ public abstract class AbsIOFactory {
      */
     protected AbsIOFactory(final File paramFile, final DatabaseConfiguration paramDatabase,
         final SessionConfiguration paramSession) {
-        this.mSessionConfig = paramSession;
-        this.mDatabaseConfig = paramDatabase;
-        this.mFile = paramFile;
+        mSessionConfig = paramSession;
+        mDatabaseConfig = paramDatabase;
+        mFile = paramFile;
     }
 
     /**
@@ -150,12 +152,10 @@ public abstract class AbsIOFactory {
      * Getting an AbstractIOFactory instance.
      * !!!MUST CALL REGISTERINSTANCE BEFOREHAND!!!!
      * 
-     * @param paramDatabaseConf
-     *            with settings for the storage.
      * @param paramSessionConf
-     *            with settings for the session
+     *            settings for the session
      * @throws TTIOException
-     *             If error
+     *             if an I/O error occurs
      * @return an instance of this factory based on the kind in the conf
      */
     public static final AbsIOFactory getInstance(final SessionConfiguration paramSessionConf)
@@ -172,8 +172,9 @@ public abstract class AbsIOFactory {
      */
     public abstract boolean exists() throws TTIOException;
 
+    /** {@inheritDoc} */
     @Override
-    public String toString() {
+    public final String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("factory keys: ").append(FACTORIES.keySet()).append("\n");
         builder.append("DatabaseConfig: ").append(mDatabaseConfig.toString()).append("\n");

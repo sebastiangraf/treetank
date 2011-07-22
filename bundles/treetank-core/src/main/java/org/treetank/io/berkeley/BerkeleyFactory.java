@@ -30,16 +30,8 @@ package org.treetank.io.berkeley;
 import java.io.File;
 
 import com.sleepycat.bind.tuple.TupleBinding;
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseConfig;
-import com.sleepycat.je.DatabaseEntry;
-import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.LockMode;
-import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.*;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.TTIOException;
@@ -79,33 +71,35 @@ public final class BerkeleyFactory extends AbsIOFactory {
     public static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding.getPrimitiveBinding(Long.class);
 
     /**
+     * Name for the database.
+     */
+    private static final String NAME = "berkeleyDatabase";
+    
+    /**
      * Berkeley Environment for the database.
      */
-    private transient final Environment mEnv;
+    private final Environment mEnv;
 
     /**
      * Database instance per session.
      */
-    private transient final Database mDatabase;
-
-    /**
-     * Name for the database.
-     */
-    private final static String NAME = "berkeleyDatabase";
+    private final Database mDatabase;
 
     /**
      * Private constructor.
      * 
-     * @param mParamDatabase
+     * @param paramFile
+     *            the file associated with the database
+     * @param paramDatabase
      *            for the Database settings
      * @param paramSession
      *            for the settings
      * @throws TTIOException
      *             of something odd happens while database-connection
      */
-    public BerkeleyFactory(final File paramFile, final DatabaseConfiguration mParamDatabase,
+    public BerkeleyFactory(final File paramFile, final DatabaseConfiguration paramDatabase,
         final SessionConfiguration paramSession) throws TTIOException {
-        super(paramFile, mParamDatabase, paramSession);
+        super(paramFile, paramDatabase, paramSession);
 
         final DatabaseConfig conf = new DatabaseConfig();
         conf.setTransactional(true);

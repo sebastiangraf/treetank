@@ -42,7 +42,7 @@ package org.treetank.io;
 public abstract class AbsKey {
 
     /** All keys. */
-    private final transient long[] mKeys;
+    private final long[] mKeys;
 
     /**
      * Protected constructor, just setting the keys.
@@ -51,6 +51,7 @@ public abstract class AbsKey {
      *            setting the keys
      */
     protected AbsKey(final long... paramKeys) {
+        assert paramKeys.length > 0;
         mKeys = paramKeys;
     }
 

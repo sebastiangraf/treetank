@@ -32,7 +32,7 @@ import org.treetank.page.AbsPage;
 import org.treetank.page.PageReference;
 
 /**
- * Interface for Reading the stored pages in every backend.
+ * Interface for reading the stored pages in every backend.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 

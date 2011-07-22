@@ -48,57 +48,56 @@ import org.treetank.page.UberPage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class BerkeleyReader implements IReader {
+public final class BerkeleyReader implements IReader {
 
     /** Link to the {@link Database}. */
-    private transient final Database mDatabase;
+    private final Database mDatabase;
 
     /** Link to the {@link Transaction}. */
-    private transient final Transaction mTxn;
+    private final Transaction mTxn;
 
     /**
      * Constructor.
      * 
-     * @param mDatabase
-     *            to be connected to
-     * @param mTxn
-     *            transaction to be used
+     * @param paramDatabase
+     *            {@link Database} reference to be connected to
+     * @param paramTxn
+     *            {@link Transaction} to be used
      */
-    public BerkeleyReader(final Database mDatabase, final Transaction mTxn) {
-        this.mTxn = mTxn;
-        this.mDatabase = mDatabase;
-
+    public BerkeleyReader(final Database paramDatabase, final Transaction paramTxn) {
+        mTxn = paramTxn;
+        mDatabase = paramDatabase;
     }
 
     /**
      * Constructor.
      * 
-     * @param mEnv
-     *            to be used
-     * @param mDatabase
-     *            to be connected to
+     * @param paramEnv
+     *            {@link Envirenment} to be used
+     * @param paramDatabase
+     *            {@link Database} to be connected to
      * @throws DatabaseException
      *             if something weird happens
      */
-    public BerkeleyReader(final Environment mEnv, final Database mDatabase) throws DatabaseException {
-        this(mDatabase, mEnv.beginTransaction(null, null));
+    public BerkeleyReader(final Environment paramEnv, final Database paramDatabase) throws DatabaseException {
+        this(paramDatabase, paramEnv.beginTransaction(null, null));
     }
 
     /**
      * {@inheritDoc}
      */
-    public AbsPage read(final PageReference pageReference) throws TTIOException {
+    @Override
+    public AbsPage read(final PageReference paramPageReference) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
-        BerkeleyFactory.KEY.objectToEntry(pageReference.getKey(), keyEntry);
+        BerkeleyFactory.KEY.objectToEntry(paramPageReference.getKey(), keyEntry);
 
         AbsPage page = null;
         try {
             final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             if (status == OperationStatus.SUCCESS) {
                 page = BerkeleyFactory.PAGE_VAL_B.entryToObject(valueEntry);
-
             }
             return page;
         } catch (final DatabaseException exc) {
@@ -110,6 +109,7 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PageReference readFirstReference() throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -119,7 +119,6 @@ public class BerkeleyReader implements IReader {
             final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             PageReference uberPageReference = null;
             if (status == OperationStatus.SUCCESS) {
-
                 uberPageReference = BerkeleyFactory.FIRST_REV_VAL_B.entryToObject(valueEntry);
             }
             final UberPage page = (UberPage)read(uberPageReference);
@@ -138,12 +137,12 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws TTIOException {
         try {
             mTxn.abort();
         } catch (final DatabaseException e) {
             throw new TTIOException(e);
-
         }
     }
 
@@ -163,14 +162,14 @@ public class BerkeleyReader implements IReader {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object mObj) {
+    public boolean equals(final Object paramObj) {
         boolean returnVal = true;
-        if (mObj == null) {
+        if (paramObj == null) {
             returnVal = false;
-        } else if (getClass() != mObj.getClass()) {
+        } else if (getClass() != paramObj.getClass()) {
             returnVal = false;
         }
-        final BerkeleyReader other = (BerkeleyReader)mObj;
+        final BerkeleyReader other = (BerkeleyReader)paramObj;
         if (mDatabase == null) {
             if (other.mDatabase != null) {
                 returnVal = false;

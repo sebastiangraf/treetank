@@ -39,7 +39,7 @@ import org.treetank.io.ITTSource;
 public final class TupleInputSource implements ITTSource {
 
     /** {@link TupleInput} to be wrapped. */
-    private transient final TupleInput mInput;
+    private final TupleInput mInput;
 
     /**
      * Constructor.
@@ -54,6 +54,7 @@ public final class TupleInputSource implements ITTSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public byte readByte() {
         return mInput.readByte();
     }
@@ -61,6 +62,7 @@ public final class TupleInputSource implements ITTSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long readLong() {
         return mInput.readLong();
     }
@@ -68,6 +70,7 @@ public final class TupleInputSource implements ITTSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int readInt() {
         return mInput.readInt();
     }
