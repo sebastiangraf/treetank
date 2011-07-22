@@ -154,10 +154,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
     }
-    
-    public synchronized long moveAttribute(final long paramFromKey) {
-        return 0;
-    }
 
     /**
      * {@inheritDoc}
@@ -172,7 +168,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         if (nodeToMove instanceof AbsStructNode && getCurrentNode().getKind() == ENodes.ELEMENT_KIND) {
             checkAccessAndCommit();
-            
+
             final ElementNode nodeAnchor = (ElementNode)getCurrentNode();
             setCurrentNode(nodeToMove);
             adaptHashesWithRemove();
@@ -186,8 +182,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         }
     }
 
-    
-    
     /**
      * {@inheritDoc}
      */
@@ -264,33 +258,69 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         // Modify nodes where the subtree has been moved to.
         // ==============================================================================
-        final AbsStructNode newParent =
-            (AbsStructNode)getTransactionState().prepareNodeForModification(paramToElement.getNodeKey());
         if (paramInsert == EInsert.ASFIRSTCHILD) {
-            newParent.incrementChildCount();
-            if (newParent.hasFirstChild()) {
+            if (paramToElement.hasFirstChild()) {
                 // Adapt left sibling key of former first child.
                 final AbsStructNode oldFirstChild =
                     (AbsStructNode)getTransactionState().prepareNodeForModification(
                         paramToElement.getNodeKey());
                 oldFirstChild.setLeftSiblingKey(paramFromElement.getNodeKey());
                 getTransactionState().finishNodeModification(oldFirstChild);
+                
+                // Adapt right sibling key of moved node.
+                final AbsStructNode moved =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
+                moved.setRightSiblingKey(oldFirstChild.getNodeKey());
+                getTransactionState().finishNodeModification(moved);
+            } else {
+                // Adapt right sibling key of moved node.
+                final AbsStructNode moved =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
+                moved.setRightSiblingKey((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+                getTransactionState().finishNodeModification(moved);
             }
-            // Adapt first child key of parent where the subtree has to be inserted.
+            
+            // Adapt first child key and childCount of parent where the subtree has to be inserted.
+            final AbsStructNode newParent =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(paramToElement.getNodeKey());
+            newParent.incrementChildCount();
             newParent.setFirstChildKey(paramFromElement.getNodeKey());
+            getTransactionState().finishNodeModification(newParent);
+            
+            // Adapt left sibling key of moved node.
+            final AbsStructNode moved =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
+            moved.setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+            getTransactionState().finishNodeModification(moved);
+            
         } else {
-            if (newParent.hasRightSibling()) {
+            final AbsStructNode insertAnchor =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(paramToElement.getNodeKey());
+            // Adapt right sibling key of node where the subtree has to be inserted.
+            insertAnchor.setRightSiblingKey(paramFromElement.getNodeKey());
+            getTransactionState().finishNodeModification(insertAnchor);
+            
+            if (insertAnchor.hasRightSibling()) {
                 // Adapt left sibling key of former right sibling.
                 final AbsStructNode oldRightSibling =
                     (AbsStructNode)getTransactionState().prepareNodeForModification(
-                        newParent.getRightSiblingKey());
+                        insertAnchor.getRightSiblingKey());
                 oldRightSibling.setLeftSiblingKey(paramFromElement.getNodeKey());
                 getTransactionState().finishNodeModification(oldRightSibling);
+
+                // Adapt right sibling key of moved node.
+                final AbsStructNode moved =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
+                moved.setRightSiblingKey(oldRightSibling.getNodeKey());
+                getTransactionState().finishNodeModification(moved);
             }
-            // Adapt right sibling key of node where the subtree has to be inserted.
-            newParent.setRightSiblingKey(paramFromElement.getNodeKey());
+            
+            // Adapt left sibling key of moved node.
+            final AbsStructNode moved =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
+            moved.setLeftSiblingKey(insertAnchor.getNodeKey());
+            getTransactionState().finishNodeModification(moved);
         }
-        getTransactionState().finishNodeModification(newParent);
     }
 
     /**
@@ -410,8 +440,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertNamespace(final QName paramQName)
-        throws AbsTTException {
+    public synchronized long insertNamespace(final QName paramQName) throws AbsTTException {
         if (paramQName == null) {
             throw new IllegalArgumentException("QName may not be null!");
         }
@@ -420,7 +449,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             checkAccessAndCommit();
 
             final int uriKey = getTransactionState().createNameKey(paramQName.getNamespaceURI());
-            final String name = paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" + paramQName.getPrefix();
+            final String name =
+                paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" + paramQName.getPrefix();
             final int prefixKey = getTransactionState().createNameKey(paramQName.getPrefix());
             final long elementKey = getCurrentNode().getNodeKey();
 
@@ -516,7 +546,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         setCurrentNode(node);
         adaptHashedWithUpdate(oldHash);
-
     }
 
     /**
