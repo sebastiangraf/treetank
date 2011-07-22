@@ -34,6 +34,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
+import org.treetank.api.IStructuralItem;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
@@ -225,7 +226,29 @@ public class UpdateTest {
         assertFalse(rtx.getStructuralNode().hasFirstChild());
         assertFalse(rtx.getStructuralNode().hasLeftSibling());
         assertFalse(rtx.getStructuralNode().hasRightSibling());
-        assertEquals(rtx.getValueOfCurrentNode(), "foo");
+        assertEquals("foo", rtx.getValueOfCurrentNode());
+        rtx.close();
+    }
+    
+    @Test
+    public void testMoveToRightSibling() throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.moveTo(7);
+        wtx.moveSubtreeToRightSibling(6);
+        wtx.commit();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.moveTo(7));
+        assertFalse(rtx.getStructuralNode().hasLeftSibling());
+        assertTrue(rtx.getStructuralNode().hasRightSibling());
+        assertTrue(rtx.moveToRightSibling());
+        assertEquals(6L, rtx.getNode().getNodeKey());
+        assertEquals("foo", rtx.getValueOfCurrentNode());
+        assertTrue(rtx.getStructuralNode().hasLeftSibling());
+        assertEquals(7L, rtx.getStructuralNode().getLeftSiblingKey());
         rtx.close();
     }
 
