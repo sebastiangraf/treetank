@@ -111,6 +111,7 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * 
      * @return first child's key
      */
+    @Override
     public long getFirstChildKey() {
         return readLongPointer(FIRST_CHILD_KEY);
     }
@@ -120,6 +121,7 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * 
      * @return left sibling key
      */
+    @Override
     public long getLeftSiblingKey() {
         return readLongPointer(LEFT_SIBLING_KEY);
     }
@@ -129,6 +131,7 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * 
      * @return right sibling key
      */
+    @Override
     public long getRightSiblingKey() {
         return readLongPointer(RIGHT_SIBLING_KEY);
     }
@@ -138,6 +141,7 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * 
      * @return true, if item has a first child
      */
+    @Override
     public boolean hasFirstChild() {
         return readLongPointer(FIRST_CHILD_KEY) != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
@@ -147,7 +151,8 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * 
      * @return true, if item has a left sibling
      */
-    public boolean hasLeftSibling() {
+    @Override
+    public final boolean hasLeftSibling() {
         return readLongPointer(LEFT_SIBLING_KEY) != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
@@ -156,7 +161,8 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * 
      * @return true, if item has a right sibling
      */
-    public boolean hasRightSibling() {
+    @Override
+    public final boolean hasRightSibling() {
         return readLongPointer(RIGHT_SIBLING_KEY) != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
@@ -165,7 +171,8 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * 
      * @return item's number of children
      */
-    public long getChildCount() {
+    @Override
+    public final long getChildCount() {
         return readLongPointer(CHILD_COUNT);
     }
 
@@ -175,8 +182,8 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * @param paramChildCount
      *            to be set.
      */
-    public void setChildCount(final long mChildCount) {
-        writeLongPointer(CHILD_COUNT, mChildCount);
+    public void setChildCount(final long paramChildCount) {
+        writeLongPointer(CHILD_COUNT, paramChildCount);
     }
 
     /**
@@ -191,7 +198,7 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * Decrementing the child count.
      */
     public void decrementChildCount() {
-        long curChildCount = readLongPointer(CHILD_COUNT);
+        final long curChildCount = readLongPointer(CHILD_COUNT);
         writeLongPointer(CHILD_COUNT, curChildCount-1);
     }
 

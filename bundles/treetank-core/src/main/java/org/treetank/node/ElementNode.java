@@ -55,28 +55,28 @@ public final class ElementNode extends AbsStructNode {
     protected static final int NAMESPACE_COUNT = 16;
 
     /** Keys of attributes. */
-    private List<Long> mAttributeKeys;
+    private final List<Long> mAttributeKeys;
 
     /** Keys of namespace declarations. */
-    private List<Long> mNamespaceKeys;
+    private final List<Long> mNamespaceKeys;
 
     /**
      * Creating new element.
      * 
-     * @param mLongBuilder
-     *            array with longs
-     * @param mIntBuilder
-     *            array with ints
-     * @param mAttributeKeys
+     * @param paramByteBuilder
+     *            array with bytes
+     * @param paramPointerBuilder
+     *            array with pointers
+     * @param paramAttributeKeys
      *            attr keys
-     * @param mNamespaceKeys
+     * @param paramNamespaceKeys
      *            namespace keys
      */
-    ElementNode(final byte[] mByteBuilder, final byte[] mPointerBuilder, final List<Long> mAttributeKeys,
-        final List<Long> mNamespaceKeys) {
-        super(mByteBuilder, mPointerBuilder);
-        this.mAttributeKeys = mAttributeKeys;
-        this.mNamespaceKeys = mNamespaceKeys;
+    ElementNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder, final List<Long> paramAttributeKeys,
+        final List<Long> paramNamespaceKeys) {
+        super(paramByteBuilder, paramPointerBuilder);
+        mAttributeKeys = paramAttributeKeys;
+        mNamespaceKeys = paramNamespaceKeys;
     }
 
     /**
@@ -103,7 +103,7 @@ public final class ElementNode extends AbsStructNode {
     }
 
     /**
-     * Inserting a namespace.
+     * Inserting an attribute.
      * 
      * @param paramAttributeKey
      *            the new attribute key
@@ -111,7 +111,7 @@ public final class ElementNode extends AbsStructNode {
     public void insertAttribute(final long paramAttributeKey) {
         mAttributeKeys.add(paramAttributeKey);
 
-        int curAttrCount = readIntBytes(ATTRIBUTE_COUNT);
+        final int curAttrCount = readIntBytes(ATTRIBUTE_COUNT);
         writeIntBytes(ATTRIBUTE_COUNT, curAttrCount + 1);
     }
 
@@ -124,7 +124,7 @@ public final class ElementNode extends AbsStructNode {
     public void removeAttribute(final long paramAttributeKey) {
         mAttributeKeys.remove(paramAttributeKey);
 
-        int curAttrCount = readIntBytes(ATTRIBUTE_COUNT);
+        final int curAttrCount = readIntBytes(ATTRIBUTE_COUNT);
         writeIntBytes(ATTRIBUTE_COUNT, curAttrCount - 1);
     }
 
@@ -160,7 +160,7 @@ public final class ElementNode extends AbsStructNode {
     public void insertNamespace(final long paramNamespaceKey) {
         mNamespaceKeys.add(paramNamespaceKey);
 
-        int curNSCount = readIntBytes(NAMESPACE_COUNT);
+        final int curNSCount = readIntBytes(NAMESPACE_COUNT);
         writeIntBytes(NAMESPACE_COUNT, curNSCount + 1);
     }
 
@@ -173,7 +173,7 @@ public final class ElementNode extends AbsStructNode {
     public void removeNamespace(final long paramNamespaceKey) {
         mAttributeKeys.remove(paramNamespaceKey);
 
-        int curNSCount = readIntBytes(NAMESPACE_COUNT);
+        final int curNSCount = readIntBytes(NAMESPACE_COUNT);
         writeIntBytes(NAMESPACE_COUNT, curNSCount - 1);
     }
 

@@ -45,10 +45,10 @@ public final class DummyNode extends AbsStructNode {
     /**
      * Creating a dummy node.
      * 
-     * @param paramLongBuilder
-     *            long array with data
-     * @param paramIntBuilder
-     *            int array with data
+     * @param paramByteBuilder
+     *            byte array with data
+     * @param paramPointerBuilder
+     *            byte array with data
      */
     public DummyNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder) {
         super(paramByteBuilder, paramPointerBuilder);

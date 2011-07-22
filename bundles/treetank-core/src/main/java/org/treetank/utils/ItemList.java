@@ -60,15 +60,14 @@ public final class ItemList implements IItemList {
      * Constructor. Initializes the list.
      */
     public ItemList() {
-
         mList = new ArrayList<IItem>();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public int addItem(final IItem mItem) {
-
         final int key = mList.size();
         mItem.setNodeKey(key);
         // TODO: +2 is necessary, because key -1 is the NULL_NODE
@@ -82,8 +81,8 @@ public final class ItemList implements IItemList {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IItem getItem(final long mKey) {
-
         assert mKey <= Integer.MAX_VALUE;
 
         int index = (int)mKey; // cast to integer, because the list only accepts
@@ -102,6 +101,7 @@ public final class ItemList implements IItemList {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return new StringBuilder("ItemList: ").append(mList.toString()).toString();
     }

@@ -27,11 +27,8 @@
 
 package org.treetank.node;
 
-import java.io.IOException;
 import java.util.Arrays;
 
-import org.treetank.api.IItem;
-import org.treetank.api.IReadTransaction;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 
@@ -56,99 +53,80 @@ public final class AttributeNode extends AbsNode {
     /**
      * Creating an attribute.
      * 
-     * @param mLongBuilder
-     *            long array with data
-     * @param mIntBuilder
-     *            int array with data
-     * @param mValue
+     * @param paramByteBuilder
+     *            byte array with data
+     * @param paramPointerBuilder
+     *            byte array with data
+     * @param paramValue
      *            value for the node
      */
-    AttributeNode(final byte[] mByteBuilder, final byte[] mPointerBuilder, final byte[] mValue) {
-        super(mByteBuilder, mPointerBuilder);
-        this.mValue = mValue;
+    AttributeNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder, final byte[] paramValue) {
+        super(paramByteBuilder, paramPointerBuilder);
+        mValue = paramValue;
         writeIntBytes(VALUE_LENGTH, mValue.length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int getNameKey() {
         return readIntBytes(NAME_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public void setNameKey(final int mNameKey) {
-        writeIntBytes(NAME_KEY, mNameKey);
+    public void setNameKey(final int paramNameKey) {
+        writeIntBytes(NAME_KEY, paramNameKey);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean hasParent() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int getURIKey() {
         return readIntBytes(URI_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public void setURIKey(final int mUriKey) {
-        writeIntBytes(URI_KEY, mUriKey);
+    public void setURIKey(final int paramUriKey) {
+        writeIntBytes(URI_KEY, paramUriKey);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public byte[] getRawValue() {
         return mValue;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public void setValue(final int mValueType, final byte[] mValue) {
-        writeIntBytes(TYPE_KEY, mValueType);
-        writeIntBytes(VALUE_LENGTH, mValue.length);
+    public void setValue(final int paramValueType, final byte[] paramValue) {
+        writeIntBytes(TYPE_KEY, paramValueType);
+        writeIntBytes(VALUE_LENGTH, paramValue.length);
 
-        this.mValue = mValue;
+        mValue = paramValue;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public ENodes getKind() {
         return ENodes.ATTRIBUTE_KIND;
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws IOException
-     */
+    /** {@inheritDoc} */
     @Override
-    public void serialize(final ITTSink mNodeOut) {
-        super.serialize(mNodeOut);
+    public void serialize(final ITTSink paramNodeOut) {
+        super.serialize(paramNodeOut);
         for (final byte byteVal : mValue) {
-            mNodeOut.writeByte(byteVal);
+            paramNodeOut.writeByte(byteVal);
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public AbsNode clone() {
         final AbsNode toClone = new AttributeNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData), ENodes.cloneData(mValue));
@@ -190,6 +168,7 @@ public final class AttributeNode extends AbsNode {
         return new AttributeNode(byteData, pointerData, mValue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         final int valLength = readIntBytes(VALUE_LENGTH);
@@ -199,6 +178,7 @@ public final class AttributeNode extends AbsNode {
             .toString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         final int prime = 44819;
@@ -212,9 +192,5 @@ public final class AttributeNode extends AbsNode {
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
         paramVisitor.visit(this);
-    }
-
-    public long getNodeKey() {
-        return super.getNodeKey();
     }
 }

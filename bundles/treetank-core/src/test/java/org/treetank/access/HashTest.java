@@ -253,7 +253,7 @@ public class HashTest {
         wtx.moveToFirstChild();
         wtx.moveToFirstChild();
         final long hashLeaf1 = wtx.getNode().getHash();
-        wtx.setName(NAME2);
+        wtx.setQName(new QName(NAME2));
         final long hashLeaf2 = wtx.getNode().getHash();
         wtx.moveToDocumentRoot();
         wtx.moveToFirstChild();
@@ -262,7 +262,7 @@ public class HashTest {
         assertFalse(hashLeaf1 == hashLeaf2);
         wtx.moveToFirstChild();
         wtx.moveToFirstChild();
-        wtx.setName(NAME1);
+        wtx.setQName(new QName(NAME1));
         final long hashLeaf3 = wtx.getNode().getHash();
         assertEquals(hashLeaf1, hashLeaf3);
         wtx.moveToDocumentRoot();
@@ -273,7 +273,7 @@ public class HashTest {
         // Testing root inheritance
         wtx.moveToDocumentRoot();
         wtx.moveToFirstChild();
-        wtx.setName(NAME2);
+        wtx.setQName(new QName(NAME2));
         final long hashRoot4 = wtx.getNode().getHash();
         assertFalse(hashRoot4 == hashRoot2);
         assertFalse(hashRoot4 == hashRoot1);

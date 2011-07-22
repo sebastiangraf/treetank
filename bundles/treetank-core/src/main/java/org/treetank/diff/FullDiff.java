@@ -47,6 +47,7 @@ final class FullDiff extends AbsDiff {
      * @param paramBuilder
      *            {@link Builder} reference
      * @throws AbsTTException
+     *             if anything goes wrong while setting up Treetank transactions
      */
     FullDiff(final Builder paramBuilder) throws AbsTTException {
         super(paramBuilder);

@@ -116,83 +116,103 @@ public interface IWriteTransaction extends IReadTransaction {
 
     // --- Node Modifiers
     // --------------------------------------------------------
+    
+    /**
+     * Move a subtree rooted at paramToKey to the first child rooted at paramToKey.
+     * 
+     * @param paramFromKey
+     *            root node key of the subtree to move
+     * @return key of rooted subtree
+     * @throws AbsTTException
+     *             if move adaption fails
+     */
+    long moveSubtreeToFirstChild(final long paramFromKey) throws AbsTTException;
+    
+    /**
+     * Move a subtree rooted at paramToKey to the right sibling of the node at paramToKey.
+     * 
+     * @param paramFromKey
+     *            root node key of the subtree to move
+     * @return key of rooted subtree
+     * @throws AbsTTException
+     *             if move adaption fails
+     */
+    long moveSubtreeToRightSibling(final long paramFromKey) throws AbsTTException;
 
     /**
      * Insert new element node as first child of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param mQname
-     *            Qualified name of inserted node.
+     * @param mQName
+     *            {@link QName} of node to insert
      * @throws AbsTTException
-     *             If can't insert Element as first child.
-     * @return Key of inserted node. already has a first child.
+     *             if element node couldn't be inserted as first child
+     * @return key of inserted node
      */
-    long insertElementAsFirstChild(final QName mQname) throws AbsTTException;
+    long insertElementAsFirstChild(final QName mQName) throws AbsTTException;
 
     /**
      * Insert new text node as first child of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param mValue
-     *            Value of inserted node.
+     * @param paramValue
+     *            value of node to insert
      * @throws AbsTTException
-     *             If can't insert Text node as first child.
-     * @return Key of inserted node. already has a first child.
+     *             if text node couldn't be inserted as first child.
+     * @return Key of inserted node. Already has a first child.
      */
-    long insertTextAsFirstChild(final String mValue) throws AbsTTException;
+    long insertTextAsFirstChild(final String paramValue) throws AbsTTException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param mQname
-     *            name of the new node
+     * @param paramQName
+     *            {@link QName} of the new node
      * @throws AbsTTException
-     *             If can't insert Element node as right sibling.
-     * @return Key of inserted node. already has a first child.
+     *             if element node couldn't be inserted as right sibling
+     * @return Key of inserted node. Already has a first child.
      */
-    long insertElementAsRightSibling(final QName mQname) throws AbsTTException;
+    long insertElementAsRightSibling(final QName paramQName) throws AbsTTException;
 
     /**
      * Insert new text node as right sibling of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param mValue
-     *            Value of inserted node.
+     * @param paramValue
+     *            value of node to insert
      * @throws AbsTTException
-     *             If can't insert Text node as right sibling.
+     *             if text node couldn't be inserted as right sibling
      * @return Key of inserted node. the root node which is not allowed to have
      *         right siblings.
      */
-    long insertTextAsRightSibling(final String mValue) throws AbsTTException;
+    long insertTextAsRightSibling(final String paramValue) throws AbsTTException;
 
     /**
      * Insert attribute in currently selected node. The cursor is moved to the
      * inserted node.
      * 
-     * @param mQname
-     *            qname
-     * @param mValue
-     *            Value of inserted node.
+     * @param paramQName
+     *            {@link QName} reference
+     * @param paramValue
+     *            value of inserted node
      * @throws AbsTTException
-     *             If can't insert Attribute to node.
-     * @return Key of inserted node.
+     *             if attribute couldn't be inserted.
+     * @return key of inserted node
      */
-    long insertAttribute(final QName mQname, final String mValue) throws AbsTTException;
+    long insertAttribute(final QName paramQName, final String paramValue) throws AbsTTException;
 
     /**
      * Insert namespace declaration in currently selected node. The cursor is
      * moved to the inserted node.
      * 
-     * @param mUri
-     *            URI of inserted node.
-     * @param mName
-     *            Prefix of inserted node.
+     * @param paramQName
+     *            {@link QName} reference
      * @throws AbsTTException
-     *             If can't insert Namespace to node.
-     * @return Key of inserted node.
+     *             if attribute couldn't be inserted.
+     * @return key of inserted node
      */
-    long insertNamespace(final String mUri, final String mName) throws AbsTTException;
+    long insertNamespace(final QName paramQName) throws AbsTTException;
 
     /**
      * Remove currently selected node. This does automatically remove
@@ -203,7 +223,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * sibling, it is located at the former parent.
      * 
      * @throws AbsTTException
-     *             If can't remove node.
+     *             if node couldn't be removed
      */
     void remove() throws AbsTTException;
 
@@ -211,53 +231,53 @@ public interface IWriteTransaction extends IReadTransaction {
     // -----------------------------------------------------------
 
     /**
-     * Set local part of node.
+     * Set QName of node.
      * 
-     * @param mName
+     * @param paramName
      *            New qualified name of node.
      * @throws TTIOException
      *             If can't set Name in node.
      */
-    void setName(final String mName) throws TTIOException;
+    void setQName(final QName paramName) throws TTIOException;
 
     /**
      * Set URI of node.
      * 
-     * @param mUri
-     *            New URI of node.
+     * @param paramUri
+     *            new URI of node
      * @throws TTIOException
-     *             If can't set URI in node.
+     *             if URI of node couldn't be set
      */
-    void setURI(final String mUri) throws TTIOException;
+    void setURI(final String paramUri) throws TTIOException;
 
     /**
      * Set value of node.
      * 
-     * @param mValueType
-     *            Type of value.
-     * @param mValue
-     *            New value of node.
+     * @param paramValueType
+     *            type of value
+     * @param paramValue
+     *            new value of node
      * @throws TTIOException
-     *             If can't set Value in node.
+     *             if value couldn't be set
      */
-    void setValue(final int mValueType, final byte[] mValue) throws TTIOException;
+    void setValue(final int paramValueType, final byte[] paramValue) throws TTIOException;
 
     /**
      * Set value of node.
      * 
-     * @param mValue
-     *            New value of node.
+     * @param paramValue
+     *            new value of node
      * @throws TTIOException
-     *             If can't set Value in node.
+     *             if value couldn't be set
      */
-    void setValue(final String mValue) throws TTIOException;
+    void setValue(final String paramValue) throws TTIOException;
 
     /**
      * Commit all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
      * 
      * @throws AbsTTException
-     *             If can't commit this revision.
+     *             if this revision couldn't be commited
      */
     void commit() throws AbsTTException;
 
@@ -265,7 +285,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * Abort all modifications of the exclusive write transaction.
      * 
      * @throws TTIOException
-     *             If can't abort modification.
+     *             if this revision couldn't be aborted
      */
     void abort() throws TTIOException;
 
@@ -276,7 +296,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @param revision
      *            revert for the revision
      * @throws AbsTTException
-     *             If can't revert to revision.
+     *             if couldn't revert to revision
      */
     void revertTo(final long revision) throws AbsTTException;
 
@@ -284,7 +304,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * Closing current WriteTransaction.
      * 
      * @throws AbsTTException
-     *             If can't close Write Transaction.
+     *             if write transaction couldn't be closed
      */
     @Override
     void close() throws AbsTTException;

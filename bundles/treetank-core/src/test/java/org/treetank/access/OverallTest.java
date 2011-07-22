@@ -99,16 +99,16 @@ public final class OverallTest {
             if (ran.nextBoolean()) {
                 switch (wtx.getNode().getKind()) {
                 case ELEMENT_KIND:
-                    wtx.setName(getString());
+                    wtx.setQName(new QName(getString()));
                     wtx.setURI(getString());
                     break;
                 case ATTRIBUTE_KIND:
-                    wtx.setName(getString());
+                    wtx.setQName(new QName(getString()));
                     wtx.setURI(getString());
                     wtx.setValue(getString());
                     break;
                 case NAMESPACE_KIND:
-                    wtx.setName(getString());
+                    wtx.setQName(new QName(getString()));
                     wtx.setURI(getString());
                     break;
                 case TEXT_KIND:
@@ -128,7 +128,7 @@ public final class OverallTest {
                         wtx.moveToParent();
                     }
                     while (ran.nextBoolean()) {
-                        wtx.insertNamespace(getString(), getString());
+                        wtx.insertNamespace(new QName(getString(), getString()));
                         wtx.moveToParent();
                     }
                 }

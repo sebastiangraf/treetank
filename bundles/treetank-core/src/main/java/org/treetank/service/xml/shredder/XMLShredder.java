@@ -36,6 +36,7 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -89,6 +90,9 @@ public class XMLShredder implements Callable<Long> {
     /** Determines if changes are going to be commit right after shredding. */
     private transient EShredderCommit mCommit;
 
+    /** {@link CountDownLatch} reference to allow other threads to wait for the shredding to finish. */
+    private transient CountDownLatch mLatch;
+
     /**
      * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
      * 
@@ -135,6 +139,7 @@ public class XMLShredder implements Callable<Long> {
         mReader = paramReader;
         mFirstChildAppend = paramAddAsFirstChild;
         mCommit = paramCommit;
+        mLatch = new CountDownLatch(1);
     }
 
     /**
@@ -253,7 +258,7 @@ public class XMLShredder implements Callable<Long> {
         // Parse namespaces.
         for (final Iterator<?> it = paramEvent.getNamespaces(); it.hasNext();) {
             final Namespace namespace = (Namespace)it.next();
-            mWtx.insertNamespace(namespace.getNamespaceURI(), namespace.getPrefix());
+            mWtx.insertNamespace(new QName(namespace.getNamespaceURI(), "", namespace.getPrefix()));
             mWtx.moveTo(key);
         }
 
@@ -387,5 +392,9 @@ public class XMLShredder implements Callable<Long> {
             throw new IllegalArgumentException("paramEvents may not be null!");
         }
         return new ListEventReader(paramEvents);
+    }
+    
+    public CountDownLatch getLatch() {
+        return mLatch;
     }
 }

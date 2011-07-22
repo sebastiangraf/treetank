@@ -72,6 +72,9 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
      *            transaction to operate with
      */
     public AbsAxis(final IReadTransaction paramRtx) {
+        if (paramRtx == null) {
+            throw new IllegalArgumentException("Transaction may not be null!");
+        }
         mRTX = paramRtx;
         mIncludeSelf = false;
         reset(paramRtx.getNode().getNodeKey());
