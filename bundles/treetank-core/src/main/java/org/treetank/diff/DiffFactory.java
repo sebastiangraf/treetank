@@ -214,8 +214,7 @@ public final class DiffFactory {
      * @param paramBuilder
      *            {@link Builder} reference
      */
-    public static void invokeFullDiff(final Builder paramBuilder) {
-        checkParams(paramBuilder);
+    public static synchronized void invokeFullDiff(final Builder paramBuilder) {
         paramBuilder.setDiffKind(DiffKind.FULL);
         final ExecutorService exes = Executors.newSingleThreadExecutor();
         exes.submit(new Invoke(paramBuilder));
@@ -228,29 +227,11 @@ public final class DiffFactory {
      * @param paramBuilder
      *            {@link Builder} reference
      */
-    public static void invokeStructuralDiff(final Builder paramBuilder) {
-        checkParams(paramBuilder);
+    public static synchronized void invokeStructuralDiff(final Builder paramBuilder) {
         paramBuilder.setDiffKind(DiffKind.STRUCTURAL);
         final ExecutorService exes = Executors.newSingleThreadExecutor();
         exes.submit(new Invoke(paramBuilder));
         exes.shutdown();
-    }
-
-    /**
-     * Check parameters for validity and assign global static variables.
-     * 
-     * @param paramBuilder
-     *            {@link Builder} reference
-     */
-    private static void checkParams(final Builder paramBuilder) {
-        if (paramBuilder.mDb == null || paramBuilder.mKey < -1L || paramBuilder.mNewRev < 0
-            || paramBuilder.mOldRev < 0 || paramBuilder.mObservers == null || paramBuilder.mKind == null) {
-            throw new IllegalArgumentException("No valid arguments specified!");
-        }
-        if (paramBuilder.mNewRev == paramBuilder.mOldRev || paramBuilder.mNewRev < paramBuilder.mOldRev) {
-            throw new IllegalArgumentException(
-                "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
-        }
     }
 
     /** Invoke diff. */
@@ -266,14 +247,37 @@ public final class DiffFactory {
          *            {@link Builder} reference
          */
         Invoke(final Builder paramBuilder) {
+            assert paramBuilder != null;
+            checkParams(paramBuilder);
             mBuilder = paramBuilder;
         }
 
         @Override
         public Void call() throws AbsTTException {
-            mBuilder.mDiffKind.invoke(mBuilder);
+            final DiffKind kind = mBuilder.mDiffKind;
+            kind.invoke(mBuilder);
+//            final StructuralDiff diff = new StructuralDiff(mBuilder);
+//            diff.diffMovement();
             return null;
         }
+        
+        /**
+         * Check parameters for validity and assign global static variables.
+         * 
+         * @param paramBuilder
+         *            {@link Builder} reference
+         */
+        private static void checkParams(final Builder paramBuilder) {
+            if (paramBuilder.mDb == null || paramBuilder.mKey < -1L || paramBuilder.mNewRev < 0
+                || paramBuilder.mOldRev < 0 || paramBuilder.mObservers == null || paramBuilder.mKind == null) {
+                throw new IllegalArgumentException("No valid arguments specified!");
+            }
+            if (paramBuilder.mNewRev == paramBuilder.mOldRev || paramBuilder.mNewRev < paramBuilder.mOldRev) {
+                throw new IllegalArgumentException(
+                    "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
+            }
+        }
+
     }
 
 }

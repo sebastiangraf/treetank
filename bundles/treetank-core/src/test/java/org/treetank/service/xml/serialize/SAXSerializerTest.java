@@ -36,6 +36,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
+import org.treetank.access.WriteTransactionState;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -97,6 +98,11 @@ public class SAXSerializerTest extends XMLTestCase {
 
                     strBuilder.append(">");
                 }
+                
+//                @Override
+//                public void startPrefixMapping(final String prefix, final String uri) throws SAXException {
+//                    strBuilder.append(" " + prefix + "=\"" + uri + "\"");
+//                };
 
                 @Override
                 public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -115,6 +121,7 @@ public class SAXSerializerTest extends XMLTestCase {
             final SAXSerializer serializer = new SAXSerializer(session, contHandler);
             serializer.call();
 
+            System.out.println(strBuilder.toString());
             assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
         } catch (final AbsTTException e) {
             fail("Treetank exception occured!");

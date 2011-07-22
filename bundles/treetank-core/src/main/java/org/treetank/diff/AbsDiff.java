@@ -100,6 +100,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      */
     AbsDiff(final Builder paramBuilder) throws AbsTTException {
         assert paramBuilder != null;
+
         mDiffKind = paramBuilder.mKind;
         synchronized (paramBuilder.mDb) {
             mNewRtx =
@@ -122,6 +123,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         mDiff = EDiff.SAME;
         mDiffKind = paramBuilder.mKind;
         mDepth = new DepthCounter(paramBuilder.mNewDepth, paramBuilder.mOldDepth);
+//        System.out.println("NEW REV: " + paramBuilder.mNewRev + " new rev: " + mNewRtx.getRevisionNumber());
     }
 
     /**

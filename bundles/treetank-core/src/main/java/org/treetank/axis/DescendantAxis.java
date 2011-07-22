@@ -39,7 +39,7 @@ import org.treetank.utils.FastStack;
  * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class DescendantAxis extends AbsAxis {
+public final class DescendantAxis extends AbsAxis {
 
     /** Stack for remembering next nodeKey in document order. */
     private FastStack<Long> mRightSiblingKeyStack;
@@ -73,7 +73,7 @@ public class DescendantAxis extends AbsAxis {
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long mNodeKey) {
+    public void reset(final long mNodeKey) {
         super.reset(mNodeKey);
         mRightSiblingKeyStack = new FastStack<Long>();
         if (isSelfIncluded()) {
@@ -87,7 +87,7 @@ public class DescendantAxis extends AbsAxis {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasNext() {
+    public boolean hasNext() {
         resetToLastKey();
 
         // Fail if there is no node anymore.

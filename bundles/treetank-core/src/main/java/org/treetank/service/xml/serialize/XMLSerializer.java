@@ -117,8 +117,6 @@ public final class XMLSerializer extends AbsSerializer {
 
     /**
      * Emit node (start element or characters).
-     * 
-     * @throws IOException
      */
     @Override
     protected void emitStartElement(final IReadTransaction paramRTX) {
@@ -202,7 +200,6 @@ public final class XMLSerializer extends AbsSerializer {
      * 
      * @param paramRTX
      *            Read Transaction
-     * @throws IOException
      */
     @Override
     protected void emitEndElement(final IReadTransaction paramRTX) {
@@ -219,6 +216,7 @@ public final class XMLSerializer extends AbsSerializer {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void emitStartDocument() {
         try {
@@ -233,6 +231,7 @@ public final class XMLSerializer extends AbsSerializer {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void emitEndDocument() {
         try {
@@ -246,6 +245,7 @@ public final class XMLSerializer extends AbsSerializer {
 
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void emitStartManualElement(final long mVersion) {
         try {
@@ -258,6 +258,7 @@ public final class XMLSerializer extends AbsSerializer {
 
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void emitEndManualElement(final long mVersion) {
         try {

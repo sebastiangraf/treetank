@@ -31,17 +31,29 @@ import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.EDiff;
 
 /**
- * Interface for observers, which are listening for diffs.
+ * Container for diffs.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public interface IDiffObserver {
+public final class Diff {
+    /** {@link EDiff} which specifies the kind of diff between two nodes. */
+    private final EDiff mDiff;
+
+    /** {@link IStructuralItem} in new revision. */
+    private final IStructuralItem mNewNode;
+
+    /** {@link IStructuralItem} in old revision. */
+    private final IStructuralItem mOldNode;
+
+    /** {@link DiffDepth} instance. */
+    private final DiffDepth mDepth;
+
     /**
-     * Called for every node comparsion.
+     * Constructor.
      * 
      * @param paramDiff
-     *            the {@link EDiff} type
+     *            {@link EDiff} which specifies the kind of diff between two nodes
      * @param paramNewNode
      *            {@link IStructuralItem} in new revision
      * @param paramOldNode
@@ -49,9 +61,58 @@ public interface IDiffObserver {
      * @param paramDepth
      *            current {@link DiffDepth} instance
      */
-    void diffListener(final EDiff paramDiff, final IStructuralItem paramNewNode, final IStructuralItem paramOldNode,
-        final DiffDepth paramDepth);
-    
-    /** Signals that the diff calculation is done. */
-    void diffDone();
+    public Diff(final EDiff paramDiff, final IStructuralItem paramNewNode, final IStructuralItem paramOldNode,
+        final DiffDepth paramDepth) {
+        assert paramDiff != null;
+        assert paramNewNode != null;
+        assert paramOldNode != null;
+        assert paramDepth != null;
+
+        mDiff = paramDiff;
+        mNewNode = paramNewNode;
+        mOldNode = paramOldNode;
+        mDepth = paramDepth;
+    }
+
+    /**
+     * Get diff.
+     * 
+     * @return the kind of diff
+     */
+    public EDiff getDiff() {
+        return mDiff;
+    }
+
+    /**
+     * Get new node.
+     * 
+     * @return the new node
+     */
+    public IStructuralItem getNewNode() {
+        return mNewNode;
+    }
+
+    /**
+     * Get old node.
+     * 
+     * @return the old node
+     */
+    public IStructuralItem getOldNode() {
+        return mOldNode;
+    }
+
+    /**
+     * Get depth.
+     * 
+     * @return the depth
+     */
+    public DiffDepth getDepth() {
+        return mDepth;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder("diff: ").append(mDiff).append(" new node: ").append(mNewNode).append(
+            " old node: ").append(mOldNode).toString();
+    }
 }

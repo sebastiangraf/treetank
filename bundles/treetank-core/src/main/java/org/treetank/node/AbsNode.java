@@ -77,6 +77,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long getNodeKey() {
         return readLongPointer(NODE_KEY);
     }
@@ -84,14 +85,16 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasParent() {
-        long mParentKey = readLongPointer(PARENT_KEY);
+        final long mParentKey = readLongPointer(PARENT_KEY);
         return mParentKey != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getNameKey() {
         return (Integer)EFixed.NULL_INT_KEY.getStandardProperty();
     }
@@ -99,6 +102,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long getParentKey() {
         return readLongPointer(PARENT_KEY);
     }
@@ -106,6 +110,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ENodes getKind() {
         return ENodes.UNKOWN_KIND;
     }
@@ -113,6 +118,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getURIKey() {
         return (Integer)EFixed.NULL_INT_KEY.getStandardProperty();
     }
@@ -120,6 +126,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getTypeKey() {
         return readIntBytes(TYPE_KEY);
     }
@@ -127,6 +134,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long getHash() {
         return readLongPointer(HASHCODE);
     }
@@ -141,6 +149,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public byte[] getRawValue() {
         return null;
     }
@@ -170,6 +179,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setNodeKey(final long mNodeKey) {
         writeLongPointer(NODE_KEY, mNodeKey);
     }
@@ -200,6 +210,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      * @param paramHash
      *            to be set
      */
+    @Override
     public final void setHash(final long mHashcode) {
         writeLongPointer(HASHCODE, mHashcode);
     }

@@ -24,66 +24,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.treetank.axis;
 
-package org.treetank.cache;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
 
-import java.io.File;
-
-import org.treetank.access.DatabaseConfiguration;
-import org.treetank.exception.TTIOException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Transactionlog for storing all upcoming nodes in either the ram cache or a
- * persistent second cache.
+ * Test {@link BreathFirstAxis}.
  * 
- * @author Sebastian Graf, University of Konstanz
- * 
+ * @author Johannes Lichtenberger, University of Konstanz
+ *
  */
-public final class TransactionLogCache extends AbstractPersistenceCache {
-
-    /**
-     * RAM-Based first cache.
-     */
-    private transient final LRUCache mFirstCache;
-
-    /**
-     * Constructor including the {@link DatabaseConfiguration} for persistent
-     * storage.
-     * 
-     * @param paramFile
-     *            the config for having a storage-place
-     * @param paramRevision
-     *            revision number
-     * @throws TTIOException
-     *             Exception if IO is not successful
-     */
-    public TransactionLogCache(final File paramFile, final long paramRevision) throws TTIOException {
-        super(paramFile);
-        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(paramFile, paramRevision);
-        mFirstCache = new LRUCache(secondCache);
+public class BreathFirstAxisTest {
+    @Before
+    public void setUp() throws AbsTTException {
+        TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clearPersistent() throws TTIOException {
-        mFirstCache.clear();
+    
+    @Test
+    public void testAxisConventions() throws AbsTTException {
+        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final IReadTransaction rtx = holder.rtx;
+        
+        rtx.moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new BreathFirstAxis(rtx), new long[] {
+            12L
+        });
+        rtx.moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new BreathFirstAxis(rtx, true), new long[] {
+            11L, 12L
+        });
+        rtx.moveTo(0L);
+        AbsAxisTest.testIAxisConventions(new BreathFirstAxis(rtx, true), new long[] {
+            0L, 1L, 4L, 5L, 8L, 9L, 13L, 6L, 7L, 11L, 12L
+        });
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodePageContainer getPersistent(final long mKey) throws TTIOException {
-        return mFirstCache.get(mKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TTIOException {
-        mFirstCache.put(mKey, mPage);
+    
+    @After
+    public void tearDown() throws AbsTTException {
+        TestHelper.closeEverything();
     }
 }

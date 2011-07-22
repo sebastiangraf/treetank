@@ -96,6 +96,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     private static final String XMLALLEIGHTH = RESOURCES + File.separator + "revXMLsAll7";
 
     private static final String XMLALLNINETH = RESOURCES + File.separator + "revXMLsAll8";
+    
+    private static final String XMLLINGUISTICS = RESOURCES + File.separator + "linguistics";
 
     static {
         XMLUnit.setIgnoreComments(true);
@@ -198,6 +200,11 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     public void testAllNineth() throws Exception {
         test(XMLALLNINETH);
     }
+    
+//    @Test
+//    public void testLinguistics() throws Exception {
+//        test(XMLLINGUISTICS);
+//    }
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -258,11 +265,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
 
+                System.out.println(out.toString());
                 final Diff diff = new Diff(sBuilder.toString(), out.toString());
-                assertTrue("pieces of XML are similar " + diff, diff.similar());
-                assertTrue("but are they identical? " + diff, diff.identical());
-                wtx.close();
-
                 final DetailedDiff detDiff = new DetailedDiff(diff);
                 @SuppressWarnings("unchecked")
                 final List<Difference> differences = detDiff.getAllDifferences();
@@ -271,6 +275,10 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                     System.out.println(difference);
                     System.out.println("***********************");
                 }
+
+                assertTrue("pieces of XML are similar " + diff, diff.similar());
+                assertTrue("but are they identical? " + diff, diff.identical());
+                wtx.close();
             }
         }
     }

@@ -242,7 +242,6 @@ public final class WriteTransactionState extends ReadTransactionState {
         mNodePageCon.getModified().setNode(nodePageOffset(mNode.getNodeKey()), delNode);
         mNodePageCon.getComplete().setNode(nodePageOffset(mNode.getNodeKey()), delNode);
         finishNodeModification(mNode);
-
     }
 
     /**

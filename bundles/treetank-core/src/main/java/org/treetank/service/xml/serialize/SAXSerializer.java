@@ -32,19 +32,10 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.DTDHandler;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLReader;
+import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransactionState;
@@ -135,46 +126,50 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     /**
      * Generate a start element event.
      * 
-     * @param mRtx
+     * @param paramRtx
      *            Read Transaction
      */
-    private void generateElement(final IReadTransaction mRtx) {
+    private void generateElement(final IReadTransaction paramRtx) {
         final AttributesImpl atts = new AttributesImpl();
-        final long key = mRtx.getNode().getNodeKey();
+        final long key = paramRtx.getNode().getNodeKey();
 
-        // Process namespace nodes.
-        for (int i = 0, namesCount = ((ElementNode)mRtx.getNode()).getNamespaceCount(); i < namesCount; i++) {
-            mRtx.moveToNamespace(i);
-            final String mURI = mRtx.nameForKey(mRtx.getNode().getURIKey());
-            if (mRtx.nameForKey(mRtx.getNode().getNameKey()).length() == 0) {
-                atts.addAttribute(mURI, "xmlns", "xmlns", "CDATA", mURI);
-            } else {
-                atts.addAttribute(mURI, "xmlns", "xmlns:" + mRtx.getQNameOfCurrentNode().getLocalPart(),
-                    "CDATA", mURI);
-            }
-            mRtx.moveTo(key);
-        }
-
-        // Process attributes.
-        for (int i = 0, attCount = ((ElementNode)mRtx.getNode()).getAttributeCount(); i < attCount; i++) {
-            mRtx.moveToAttribute(i);
-            final String mURI = mRtx.nameForKey(mRtx.getNode().getURIKey());
-            final QName qName = mRtx.getQNameOfCurrentNode();
-            atts.addAttribute(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName), mRtx
-                .getTypeOfCurrentNode(), mRtx.getValueOfCurrentNode());
-            mRtx.moveTo(key);
-        }
-
-        // Create SAX events.
         try {
-            final QName qName = mRtx.getQNameOfCurrentNode();
-            mContHandler.startElement(mRtx.nameForKey(mRtx.getNode().getURIKey()), qName.getLocalPart(),
-                WriteTransactionState.buildName(qName), atts);
+            // Process namespace nodes.
+            for (int i = 0, namesCount = ((ElementNode)paramRtx.getNode()).getNamespaceCount(); i < namesCount; i++) {
+                paramRtx.moveToNamespace(i);
+                final QName qName = paramRtx.getQNameOfCurrentNode();
+                mContHandler.startPrefixMapping(qName.getPrefix(), qName.getNamespaceURI());
+                final String mURI = paramRtx.nameForKey(paramRtx.getNode().getURIKey());
+                if (paramRtx.nameForKey(paramRtx.getNode().getNameKey()).length() == 0) {
+//                if (qName.getPrefix() == null || qName.getPrefix() == "") {
+                    atts.addAttribute(mURI, "xmlns", "xmlns", "CDATA", mURI);
+                } else {
+                    atts.addAttribute(mURI, "xmlns", "xmlns:"
+                        + paramRtx.getQNameOfCurrentNode().getLocalPart(), "CDATA", mURI);
+                }
+                paramRtx.moveTo(key);
+            }
+
+            // Process attributes.
+            for (int i = 0, attCount = ((ElementNode)paramRtx.getNode()).getAttributeCount(); i < attCount; i++) {
+                paramRtx.moveToAttribute(i);
+                final String mURI = paramRtx.nameForKey(paramRtx.getNode().getURIKey());
+                final QName qName = paramRtx.getQNameOfCurrentNode();
+                atts.addAttribute(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName),
+                    paramRtx.getTypeOfCurrentNode(), paramRtx.getValueOfCurrentNode());
+                paramRtx.moveTo(key);
+            }
+
+            // Create SAX events.
+
+            final QName qName = paramRtx.getQNameOfCurrentNode();
+            mContHandler.startElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()),
+                qName.getLocalPart(), WriteTransactionState.buildName(qName), atts);
 
             // Empty elements.
-            if (!((ElementNode)mRtx.getNode()).hasFirstChild()) {
-                mContHandler.endElement(mRtx.nameForKey(mRtx.getNode().getURIKey()), qName.getLocalPart(),
-                    WriteTransactionState.buildName(qName));
+            if (!((ElementNode)paramRtx.getNode()).hasFirstChild()) {
+                mContHandler.endElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()),
+                    qName.getLocalPart(), WriteTransactionState.buildName(qName));
             }
         } catch (final SAXException exc) {
             exc.printStackTrace();

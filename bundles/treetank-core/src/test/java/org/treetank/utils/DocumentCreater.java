@@ -149,7 +149,7 @@ public final class DocumentCreater {
         secondWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
         secondWtx.insertAttribute(new QName("i"), "j");
         assertTrue(secondWtx.moveToParent());
-        secondWtx.insertNamespace("ns", "p");
+        secondWtx.insertNamespace(new QName("ns", "xmlns", "p"));
         assertTrue(secondWtx.moveToParent());
 
         secondWtx.insertTextAsFirstChild("oops1");

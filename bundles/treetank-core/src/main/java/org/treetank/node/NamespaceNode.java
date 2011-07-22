@@ -156,10 +156,4 @@ public final class NamespaceNode extends AbsNode {
     public void acceptVisitor(final IVisitor paramVisitor) {
         paramVisitor.visit(this);
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public long getNodeKey() {
-        return super.getNodeKey();
-    }
 }

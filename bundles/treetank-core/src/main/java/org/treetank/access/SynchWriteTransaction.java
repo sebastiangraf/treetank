@@ -97,10 +97,10 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertNamespace(final String mUri, final String mPrefix)
+    public synchronized long insertNamespace(final QName paramQName)
         throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
-        return super.insertNamespace(mUri, mPrefix);
+        return super.insertNamespace(paramQName);
     }
 
     /**
@@ -116,9 +116,9 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setName(final String mName) throws TTIOException {
+    public synchronized void setQName(final QName paramName) throws TTIOException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
-        super.setName(mName);
+        super.setQName(paramName);
     }
 
     /**
