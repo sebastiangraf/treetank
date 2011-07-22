@@ -173,6 +173,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             setCurrentNode(nodeToMove);
             adaptHashesWithRemove();
             adaptForMove((AbsStructNode)nodeToMove, nodeAnchor, EInsert.ASFIRSTCHILD);
+            setCurrentNode(nodeAnchor);
             adaptHashesWithAdd();
 
             return nodeToMove.getNodeKey();
@@ -199,7 +200,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             final AbsStructNode nodeAnchor = (AbsStructNode)getCurrentNode();
             setCurrentNode(nodeToMove);
             adaptHashesWithRemove();
-            adaptForMove((AbsStructNode)nodeToMove, nodeAnchor, EInsert.ASFIRSTCHILD);
+            adaptForMove((AbsStructNode)nodeToMove, nodeAnchor, EInsert.ASRIGHTSIBLING);
+            setCurrentNode(nodeAnchor);
             adaptHashesWithAdd();
 
             return nodeToMove.getNodeKey();
@@ -258,7 +260,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         // Modify nodes where the subtree has been moved to.
         // ==============================================================================
-        if (paramInsert == EInsert.ASFIRSTCHILD) {
+        switch (paramInsert) {
+        case ASFIRSTCHILD:
             if (paramToElement.hasFirstChild()) {
                 // Adapt left sibling key of former first child.
                 final AbsStructNode oldFirstChild =
@@ -292,8 +295,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                 (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
             moved.setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
             getTransactionState().finishNodeModification(moved);
-            
-        } else {
+            break;
+        case ASRIGHTSIBLING:
             final AbsStructNode insertAnchor =
                 (AbsStructNode)getTransactionState().prepareNodeForModification(paramToElement.getNodeKey());
             // Adapt right sibling key of node where the subtree has to be inserted.
@@ -309,17 +312,18 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                 getTransactionState().finishNodeModification(oldRightSibling);
 
                 // Adapt right sibling key of moved node.
-                final AbsStructNode moved =
+                final AbsStructNode movedNode =
                     (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
-                moved.setRightSiblingKey(oldRightSibling.getNodeKey());
-                getTransactionState().finishNodeModification(moved);
+                movedNode.setRightSiblingKey(oldRightSibling.getNodeKey());
+                getTransactionState().finishNodeModification(movedNode);
             }
             
             // Adapt left sibling key of moved node.
-            final AbsStructNode moved =
+            final AbsStructNode movedNode =
                 (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
-            moved.setLeftSiblingKey(insertAnchor.getNodeKey());
-            getTransactionState().finishNodeModification(moved);
+            movedNode.setLeftSiblingKey(insertAnchor.getNodeKey());
+            getTransactionState().finishNodeModification(movedNode);
+            break;
         }
     }
 
