@@ -36,6 +36,7 @@ import java.util.concurrent.Future;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IStructuralItem;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.diff.Diff;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
@@ -45,7 +46,6 @@ import org.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.gui.view.model.ITraverseModel;
-import org.treetank.gui.view.sunburst.Diff;
 import org.treetank.gui.view.sunburst.EMoved;
 import org.treetank.gui.view.sunburst.Item;
 import org.treetank.gui.view.sunburst.Item.Builder;

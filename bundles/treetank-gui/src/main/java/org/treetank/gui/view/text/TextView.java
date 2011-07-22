@@ -231,6 +231,9 @@ public final class TextView extends JScrollPane implements IView {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void refreshInit() {
         refreshUpdate();
@@ -272,6 +275,9 @@ public final class TextView extends JScrollPane implements IView {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void refreshUpdate() {
         assert mGUI != null;
@@ -634,12 +640,10 @@ public final class TextView extends JScrollPane implements IView {
         return new Dimension(1000, 300);
     }
 
-    /* (non-Javadoc)
-     * @see org.treetank.gui.view.IView#hover(org.treetank.gui.view.IVisualItem)
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public void hover(IVisualItem paramItem) {
-        // TODO Auto-generated method stub
-        
+    public void hover(final IVisualItem paramItem) {
     }
 }

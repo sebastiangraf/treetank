@@ -172,6 +172,35 @@ public abstract class AbsSunburstControl extends AbsControl implements ISunburst
             mGUI.update();
         }
     }
+    
+    /**
+     * Implements processing mouseEntered.
+     * 
+     * @param paramEvent
+     *            The {@link MouseEvent}.
+     * 
+     * @see processing.core.PApplet#mouseEntered
+     */
+    @Override
+    public void mouseEntered(final MouseEvent paramEvent) {
+        // if (mSunburstGUI.mDone) {
+        mGUI.getParent().loop();
+        // }
+    }
+
+    /**
+     * Implements processing mouseExited.
+     * 
+     * @param paramEvent
+     *            The {@link MouseEvent}.
+     * 
+     * @see processing.core.PApplet#mouseExited
+     */
+    @Override
+    public void mouseExited(final MouseEvent paramEvent) {
+        mGUI.getParent().noLoop();
+//        mGUI.draw();
+    }
 
     /** {@inheritDoc} */
     @Override
