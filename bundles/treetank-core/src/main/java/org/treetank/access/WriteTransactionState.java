@@ -129,7 +129,8 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected AbsNode prepareNodeForModification(final long paramNodeKey) throws TTIOException {
         if (mNodePageCon != null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                "Another node page container is currently in the cache for updates!");
         }
 
         final long nodePageKey = nodePageKey(paramNodeKey);

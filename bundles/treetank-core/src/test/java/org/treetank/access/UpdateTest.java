@@ -46,6 +46,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -202,6 +203,30 @@ public class UpdateTest {
         assertEquals(13, rtx.getNode().getNodeKey());
         rtx.close();
         session.close();
+    }
+    
+    @Test
+    public void testMoveToFirstChild() throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.moveTo(7);
+        wtx.moveSubtreeToFirstChild(6);
+        wtx.commit();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.moveTo(4));
+        assertEquals(rtx.getValueOfCurrentNode(), "oops1");
+        assertTrue(rtx.moveTo(7));
+        assertFalse(rtx.getStructuralNode().hasLeftSibling());
+        assertTrue(rtx.getStructuralNode().hasFirstChild());
+        assertTrue(rtx.moveToFirstChild());
+        assertFalse(rtx.getStructuralNode().hasFirstChild());
+        assertFalse(rtx.getStructuralNode().hasLeftSibling());
+        assertFalse(rtx.getStructuralNode().hasRightSibling());
+        assertEquals(rtx.getValueOfCurrentNode(), "foo");
+        rtx.close();
     }
 
 }
