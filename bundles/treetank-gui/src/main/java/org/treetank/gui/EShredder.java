@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.stream.XMLEventReader;
@@ -108,11 +109,13 @@ enum EShredder {
 
                 final XMLEventReader reader = XMLShredder.createReader(paramSource);
                 final ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.submit(new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD,
-                    paramSource, EShredderCommit.COMMIT));
+                final XMLUpdateShredder shredder = new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD,
+                    paramSource, EShredderCommit.COMMIT);
+                executor.submit(shredder);
                 executor.shutdown();
                 executor.awaitTermination(5, TimeUnit.SECONDS);
-
+                
+                shredder.getLatch().await();
                 wtx.close();
                 session.close();
             } catch (final InterruptedException e) {

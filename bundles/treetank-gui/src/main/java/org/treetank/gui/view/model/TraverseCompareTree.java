@@ -26,35 +26,33 @@
  */
 package org.treetank.gui.view.model;
 
-import java.lang.Thread.State;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 
 import javax.xml.namespace.QName;
 
-import org.datanucleus.util.ViewUtils;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IStructuralItem;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.diff.Diff;
 import org.treetank.diff.DiffDepth;
 import org.treetank.diff.DiffFactory;
-import org.treetank.diff.IDiffObserver;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffOptimized;
+import org.treetank.diff.IDiffObserver;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.AbsObservableComponent;
-import org.treetank.gui.view.ViewUtilities;
-import org.treetank.gui.view.smallmultiples.ECompare;
 import org.treetank.gui.view.sunburst.*;
 import org.treetank.gui.view.sunburst.SunburstItem.EStructType;
 import org.treetank.gui.view.sunburst.axis.SunburstCompareDescendantAxis;
-import org.treetank.gui.view.sunburst.model.SunburstCompareModel;
-import org.treetank.gui.view.sunburst.model.SunburstModel;
 import org.treetank.node.ENodes;
 import org.treetank.utils.LogWrapper;
 

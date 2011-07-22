@@ -168,7 +168,10 @@ public final class SunburstView extends JScrollPane implements IView {
         getViewport().setSize(dim.width, dim.height - 42);
         if (mEmbed.focused) {
             mEmbed.size(dim.width, dim.height - 42, PConstants.JAVA2D);
-            mEmbed.update();
+
+            if (mEmbed.mControl.getGUIInstance().mDone) {
+                mEmbed.update();
+            }
         }
     }
 

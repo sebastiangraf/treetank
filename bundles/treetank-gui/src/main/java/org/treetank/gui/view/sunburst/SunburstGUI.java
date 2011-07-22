@@ -338,17 +338,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 mIsZoomingPanning = false;
             }
 
-            if (mDone) {
-                mParent.strokeWeight(2);
-                mParent.stroke(0);
-                mParent.textSize(16f);
-                mParent.fill(0f);
-                // mParent.translate(mParent.width * 0.5f, mParent.height * 0.5f);
-                mParent.text("end", mParent.width * 0.5f - 60f, -28f);
-                mParent.text("start", mParent.width * 0.5f - 60f, 10f);
-                drawArrow((int)Math.round(mParent.width * 0.5 - 80), 0, 50, PConstants.PI * 0.5f);
-            }
-
             mParent.popMatrix();
 
             mParent.textSize(15f);

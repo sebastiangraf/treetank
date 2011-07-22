@@ -399,14 +399,17 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         getBuffer().rotate(PApplet.radians(mRad));
 
         // Draw items.
-        System.out.println(mDepthMax);
-        System.out.println(mBuffer.width);
-        System.out.println(mBuffer.height);
         drawItems(EDraw.UPDATEBUFFER);
 
         getBuffer().stroke(0);
         getBuffer().strokeWeight(2f);
         getBuffer().line(0, 0, getBuffer().width, 0);
+        getBuffer().textSize(14f);
+        getBuffer().fill(0f);
+        // mParent.translate(mParent.width * 0.5f, mParent.height * 0.5f);
+        getBuffer().text("end", getBuffer().width * 0.5f - 60f, -20f + getBuffer().textAscent() - 2f); // 2f because of the stroke weight.
+        getBuffer().text("start", getBuffer().width * 0.5f - 60f, 20f);
+        drawArrow((int)Math.round(getBuffer().width * 0.5f - 80), 0, 30, PConstants.PI * 0.5f);
 
         getBuffer().popMatrix();
     }
@@ -431,13 +434,13 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
      * @param paramAngle
      */
     protected void drawArrow(final int paramX, final int paramY, final int paramLen, final float paramAngle) {
-        mParent.pushMatrix();
-        mParent.translate(paramX, paramY);
-        mParent.rotate(paramAngle);
-        mParent.line(0, 0, paramLen, 0);
-        mParent.line(paramLen, 0, paramLen - 8, -8);
-        mParent.line(paramLen, 0, paramLen - 8, 8);
-        mParent.popMatrix();
+        getBuffer().pushMatrix();
+        getBuffer().translate(paramX, paramY);
+        getBuffer().rotate(paramAngle);
+        getBuffer().line(0, 0, paramLen, 0);
+        getBuffer().line(paramLen, 0, paramLen - 8, -8);
+        getBuffer().line(paramLen, 0, paramLen - 8, 8);
+        getBuffer().popMatrix();
     }
 
     /**

@@ -4,7 +4,6 @@
 package org.treetank.gui.view.sunburst;
 
 import java.awt.event.MouseEvent;
-import java.io.File;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -12,16 +11,12 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
 import controlP5.ControlEvent;
-import controlP5.ControlListener;
 import controlP5.Toggle;
 
-import org.datanucleus.util.ViewUtils;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.ViewUtilities;
-import org.treetank.gui.view.controls.AbsControl;
-import org.treetank.gui.view.model.AbsModel;
 import org.treetank.gui.view.model.IModel;
 import org.treetank.gui.view.sunburst.SunburstView.Embedded;
 import org.treetank.gui.view.sunburst.control.AbsSunburstControl;
@@ -230,34 +225,6 @@ public class SunburstControl extends AbsSunburstControl {
     }
 
     /**
-     * Implements processing mouseEntered.
-     * 
-     * @param paramEvent
-     *            The {@link MouseEvent}.
-     * 
-     * @see processing.core.PApplet#mouseEntered
-     */
-    @Override
-    public void mouseEntered(final MouseEvent paramEvent) {
-        // if (mSunburstGUI.mDone) {
-        mSunburstGUI.mParent.loop();
-        // }
-    }
-
-    /**
-     * Implements processing mouseExited.
-     * 
-     * @param paramEvent
-     *            The {@link MouseEvent}.
-     * 
-     * @see processing.core.PApplet#mouseExited
-     */
-    @Override
-    public void mouseExited(final MouseEvent paramEvent) {
-        mSunburstGUI.mParent.noLoop();
-    }
-
-    /**
      * Implements processing mousePressed.
      * 
      * @param paramEvent
@@ -272,7 +239,7 @@ public class SunburstControl extends AbsSunburstControl {
 
         mSunburstGUI.setShowGUI(mSunburstGUI.getControlP5().group("menu").isOpen());
 
-        if (!mSunburstGUI.isShowGUI()) {
+        if (!mSunburstGUI.isShowGUI() && mSunburstGUI.mDone) {
             boolean doMouseOver = true;
             if (mSunburstGUI.mRevisions != null && mSunburstGUI.mRevisions.isOpen()) {
                 doMouseOver = false;

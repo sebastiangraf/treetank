@@ -428,7 +428,7 @@ public enum GUICommands implements IGUICommand {
                 final File target = fc.getSelectedFile();
 
                 paramShredding.shred(source, target);
-
+                
                 try {
                     final IDatabase database = FileDatabase.openDatabase(target);
                     final ISession session = database.getSession(new SessionConfiguration.Builder().build());
