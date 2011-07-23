@@ -59,13 +59,13 @@ public final class BreathFirstAxis extends AbsAxis {
     /**
      * Constructor initializing internal state.
      * 
-     * @param rtx
+     * @param paramRtx
      *            exclusive (immutable) trx to iterate with
-     * @param mIncludeSelf
+     * @param paramIncludeSelf
      *            determines if self included
      */
-    public BreathFirstAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
-        super(rtx, mIncludeSelf);
+    public BreathFirstAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf) {
+        super(paramRtx, paramIncludeSelf);
     }
 
     /**

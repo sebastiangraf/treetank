@@ -51,7 +51,7 @@ import org.treetank.exception.TTXPathException;
 public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<Long> {
 
     /** Iterate over transaction exclusive to this step. */
-    public final IReadTransaction mRTX;
+    private final IReadTransaction mRTX;
 
     /** Key of last found node. */
     private long mKey;
@@ -89,6 +89,9 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
      *            determines if self is included
      */
     public AbsAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf) {
+        if (paramRtx == null) {
+            throw new IllegalArgumentException("Transaction may not be null!");
+        }
         mRTX = paramRtx;
         mIncludeSelf = paramIncludeSelf;
         reset(paramRtx.getNode().getNodeKey());
@@ -125,7 +128,7 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
     }
 
     /**
-     * Resetting the nodekey of this axis to a given nodekey
+     * Resetting the nodekey of this axis to a given nodekey.
      * 
      * @param paramNodeKey
      *            the nodekey where the reset should occur to.
@@ -206,7 +209,5 @@ public abstract class AbsAxis implements IExpression, Iterator<Long>, Iterable<L
             next();
         }
     }
-    
-    
 
 }

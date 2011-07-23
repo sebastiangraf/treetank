@@ -161,7 +161,6 @@ public final class Matching {
 
         mRtxNew.moveTo(paramNodeX.getNodeKey());
         for (final AbsAxis axis = new DescendantAxis(mRtxNew); axis.hasNext(); axis.next()) {
-            
             retVal += mIsInSubtree.get(paramNodeY, partner(mRtxNew.getNode())) ? 1 : 0;
         }
 

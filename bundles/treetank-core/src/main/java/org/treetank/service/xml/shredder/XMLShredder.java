@@ -69,11 +69,12 @@ import org.treetank.utils.TypedValue;
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
  * stream is added as a subtree.
- * Based on a boolean which identifies the point of insertion, the subtree is
- * either added as subtree or as rightsibling.
+ * Based on an enum which identifies the point of insertion, the subtree is
+ * either added as first child or as right sibling.
  * 
  * @author Marc Kramis, Seabix
  * @author Sebastian Graf, University of Konstanz
+ * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 public class XMLShredder implements Callable<Long> {
@@ -308,26 +309,25 @@ public class XMLShredder implements Callable<Long> {
     /**
      * Main method.
      * 
-     * @param mArgs
-     *            Input and output files.
+     * @param paramArgs
+     *            input and output files
      * @throws Exception
-     *             In case of any exception.
+     *             if any exception occurs
      */
-    public static void main(final String... mArgs) throws Exception {
-        if (mArgs.length != 2) {
-            System.out.println("Usage: XMLShredder input.xml output.tnk");
-            System.exit(1);
+    public static void main(final String... paramArgs) throws Exception {
+        if (paramArgs.length != 2) {
+            throw new IllegalArgumentException("Usage: XMLShredder input.xml output.tnk");
         }
 
-        System.out.print("Shredding '" + mArgs[0] + "' to '" + mArgs[1] + "' ... ");
+        System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1] + "' ... ");
         final long time = System.currentTimeMillis();
-        final File target = new File(mArgs[1]);
+        final File target = new File(paramArgs[1]);
         FileDatabase.truncateDatabase(target);
         FileDatabase.createDatabase(target, new DatabaseConfiguration.Builder().build());
         final IDatabase db = FileDatabase.openDatabase(target);
         final ISession session = db.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLEventReader reader = createReader(new File(mArgs[0]));
+        final XMLEventReader reader = createReader(new File(paramArgs[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
 
@@ -393,8 +393,13 @@ public class XMLShredder implements Callable<Long> {
         }
         return new ListEventReader(paramEvents);
     }
-    
-    public CountDownLatch getLatch() {
+
+    /**
+     * Get latch.
+     * 
+     * @return {@link CountDownLatch} reference
+     */
+    public final CountDownLatch getLatch() {
         return mLatch;
     }
 }

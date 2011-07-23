@@ -44,7 +44,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     /**
      * RAM-Based first cache.
      */
-    private transient final LRUCache mFirstCache;
+    private final LRUCache mFirstCache;
 
     /**
      * Constructor including the {@link DatabaseConfiguration} for persistent
@@ -75,22 +75,23 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer getPersistent(final long mKey) throws TTIOException {
-        return mFirstCache.get(mKey);
+    public NodePageContainer getPersistent(final long paramKey) throws TTIOException {
+        return mFirstCache.get(paramKey);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TTIOException {
-        mFirstCache.put(mKey, mPage);
+    public void putPersistent(final long paramKey, final NodePageContainer paramPage) throws TTIOException {
+        mFirstCache.put(paramKey, paramPage);
     }
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return this.mFirstCache.toString();
+        return mFirstCache.toString();
     }
 }

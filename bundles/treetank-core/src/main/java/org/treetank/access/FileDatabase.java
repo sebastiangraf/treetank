@@ -82,7 +82,7 @@ public final class FileDatabase implements IDatabase {
      *            the file where the storage is
      * @param paramConf
      *            which are used for the database
-     * @return true of creation is valid, false otherwise
+     * @return true if creation is valid, false otherwise
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
@@ -144,8 +144,6 @@ public final class FileDatabase implements IDatabase {
      * @param paramFile
      *            where the database is located sessionConf a {@link SessionConfiguration} object to set up
      *            the session
-     * @param paramSessionConf
-     *            session conf for the new session
      * @return {@link IDatabase} instance.
      * @throws AbsTTException
      *             if something odd happens
