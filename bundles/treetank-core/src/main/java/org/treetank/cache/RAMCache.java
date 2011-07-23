@@ -40,7 +40,7 @@ public final class RAMCache implements ICache {
     /**
      * Local instance.
      */
-    private final transient FastWeakHashMap<Long, NodePageContainer> mMap;
+    private final FastWeakHashMap<Long, NodePageContainer> mMap;
 
     /**
      * Simple constructor.
@@ -61,16 +61,16 @@ public final class RAMCache implements ICache {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer get(final long mKey) {
-        return mMap.get(mKey);
+    public NodePageContainer get(final long paramKey) {
+        return mMap.get(paramKey);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void put(final long mKey, final NodePageContainer mPage) {
-        mMap.put(mKey, mPage);
+    public void put(final long paramKey, final NodePageContainer paramPage) {
+        mMap.put(paramKey, paramPage);
     }
 
     /**

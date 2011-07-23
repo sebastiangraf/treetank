@@ -39,6 +39,8 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.node.*;
 
 /**
+ * Initialize data structures.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
@@ -49,7 +51,7 @@ public final class FMESVisitor extends AbsVisitorSupport {
 
     /** Determines if nodes are in order. */
     private Map<IItem, Boolean> mInOrder;
-    
+
     /** Descendant count per node. */
     private Map<IItem, Long> mDescendants;
 
@@ -65,7 +67,8 @@ public final class FMESVisitor extends AbsVisitorSupport {
      * @throws AbsTTException
      *             if setting up treetank fails
      */
-    public FMESVisitor(final ISession paramSession, final Map<IItem, Boolean> paramInOrder, final Map<IItem, Long> paramDescendants) throws AbsTTException {
+    public FMESVisitor(final ISession paramSession, final Map<IItem, Boolean> paramInOrder,
+        final Map<IItem, Long> paramDescendants) throws AbsTTException {
         assert paramSession != null;
         assert paramInOrder != null;
         assert paramDescendants != null;
@@ -81,15 +84,24 @@ public final class FMESVisitor extends AbsVisitorSupport {
         mRtx.moveTo(nodeKey);
         for (int i = 0; i < paramNode.getAttributeCount(); i++) {
             mRtx.moveToAttribute(i);
-            mInOrder.put(mRtx.getNode(), true);
+            fillDataStructures();
             mRtx.moveTo(nodeKey);
         }
         for (int i = 0; i < paramNode.getNamespaceCount(); i++) {
             mRtx.moveToNamespace(i);
-            mInOrder.put(mRtx.getNode(), true);
+            fillDataStructures();
             mRtx.moveTo(nodeKey);
         }
         countDescendants();
+    }
+
+    /**
+     * Fill data structures.
+     */
+    private void fillDataStructures() {
+        final IItem node = mRtx.getNode();
+        mInOrder.put(node, true);
+        mDescendants.put(node, 1L);
     }
 
     /**
@@ -100,11 +112,9 @@ public final class FMESVisitor extends AbsVisitorSupport {
         final long nodeKey = mRtx.getNode().getNodeKey();
         if (mRtx.getStructuralNode().hasFirstChild()) {
             mRtx.moveToFirstChild();
-            descendants += mDescendants.get(mRtx.getNode());
-            while (mRtx.getStructuralNode().hasRightSibling()) {
-                mRtx.moveToRightSibling();
+            do {
                 descendants += mDescendants.get(mRtx.getNode());
-            }
+            } while (mRtx.getStructuralNode().hasRightSibling() && mRtx.moveToRightSibling());
         }
         mRtx.moveTo(nodeKey);
         mDescendants.put(mRtx.getNode(), descendants);

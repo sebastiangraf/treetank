@@ -51,6 +51,10 @@ import org.treetank.exception.TTIOException;
  */
 public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
+    /**
+     * Name for the database.
+     */
+    private static final String NAME = "berkeleyCache";
 
     /**
      * Berkeley database.
@@ -61,11 +65,6 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * Berkeley Environment for the database.
      */
     private final transient Environment mEnv;
-
-    /**
-     * Name for the database.
-     */
-    private static final String NAME = "berkeleyCache";
 
     /**
      * Binding for the key, which is the nodepage.

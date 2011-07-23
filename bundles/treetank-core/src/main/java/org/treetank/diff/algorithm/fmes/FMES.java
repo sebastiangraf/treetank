@@ -27,19 +27,19 @@
 package org.treetank.diff.algorithm.fmes;
 
 import java.io.File;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.FileDatabase;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransactionState;
 import org.treetank.api.*;
-import org.treetank.axis.*;
-import org.treetank.diff.export.EditScript;
+import org.treetank.axis.AbsAxis;
+import org.treetank.axis.BreathFirstAxis;
+import org.treetank.axis.ChildAxis;
+import org.treetank.axis.DescendantAxis;
+import org.treetank.axis.PostOrderAxis;
+import org.treetank.diff.algorithm.IImportDiff;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
@@ -53,13 +53,16 @@ import org.treetank.node.ElementNode;
  * FMES is used by the <a href="http://www.logilab.org/projects/xmldiff">python
  * script</a> xmldiff from Logilab. <br>
  * 
- * Based on the FMES version of Daniel Höttinger and
+ * Based on the FMES version of Daniel Hottinger and Franziska Meyer.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class FMES {
+public final class FMES implements IImportDiff {
 
+    /** Algorithm name. */
+    private static final String NAME = "Fast Matching / Edit Script";
+    
     /**
      * Matching Criterion 1.
      * For the "good matching problem", the following
@@ -171,6 +174,7 @@ public final class FMES {
      * @param paramRtx
      *            {@link IReadTransaction} implementation reference on new revision
      */
+    @Override
     public void diff(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         init(paramWtx, paramRtx);
         mFastMatching = fastMatch(paramWtx, paramRtx);
@@ -335,8 +339,8 @@ public final class FMES {
         }
 
         // 2
-        final List<IItem> first = commonChildren(paramW, paramX, EReverseMap.FALSE);
-        final List<IItem> second = commonChildren(paramX, paramW, EReverseMap.TRUE);
+        final List<IItem> first = commonChildren(paramW, paramX, paramWtx, paramRtx, EReverseMap.FALSE);
+        final List<IItem> second = commonChildren(paramX, paramW, paramRtx, paramWtx, EReverseMap.TRUE);
         // 3 && 4
         List<Pair<IItem, IItem>> s = Util.longestCommonSubsequence(first, second, new IComparator<IItem>() {
             /** {@inheritDoc} */
@@ -369,14 +373,50 @@ public final class FMES {
      * The sequence of children of n whose partners are children of o.
      * This is used by alignChildren().
      * 
-     * @param paramW
-     * @param paramX
-     * @param false1
-     * @return
+     * @param paramN
+     *            parent node in a document tree
+     * @param paramO
+     *            corresponding parent node in the other tree
+     * @param paramFirstRtx
+     *            {@link IReadTransaction} on paramN node
+     * @param paramSecondRtx
+     *            {@link IReadTransaction} on paramO node
+     * @param paramReverse
+     *            determines if...
+     * @return {@link List} of common child nodes
      */
-    private List<IItem> commonChildren(IItem paramW, IItem paramX, EReverseMap false1) {
-        // TODO Auto-generated method stub
-        return null;
+    private List<IItem> commonChildren(final IItem paramN, final IItem paramO,
+        final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx,
+        final EReverseMap paramReverse) {
+        assert paramN != null;
+        assert paramO != null;
+        assert paramFirstRtx != null;
+        assert paramSecondRtx != null;
+        assert paramReverse != null;
+        final List<IItem> retVal = new LinkedList<IItem>();
+        paramFirstRtx.moveTo(paramN.getNodeKey());
+        if (paramFirstRtx.getStructuralNode().hasFirstChild()) {
+            paramFirstRtx.moveToFirstChild();
+
+            do {
+                IItem partner;
+                if (paramReverse == EReverseMap.TRUE) {
+                    partner = mTotalMatching.reversePartner(paramFirstRtx.getNode());
+                } else {
+                    partner = mTotalMatching.partner(paramFirstRtx.getNode());
+                }
+
+                if (partner != null) {
+                    paramSecondRtx.moveTo(partner.getNodeKey());
+                    paramSecondRtx.moveToParent();
+                    if (paramSecondRtx.getNode().equals(paramO)) {
+                        retVal.add(paramFirstRtx.getNode());
+                    }
+                }
+            } while (paramFirstRtx.getStructuralNode().hasRightSibling()
+                && paramFirstRtx.moveToRightSibling());
+        }
+        return retVal;
     }
 
     /**
@@ -740,7 +780,7 @@ public final class FMES {
     /**
      * Creates a flat list of all nodes by doing an in-order-traversal.
      * NOTE: Since this is not a binary tree, we use post-order-traversal (wrong in paper).
-     * For each node type (element, attribute, text, comment, ..., there is
+     * For each node type (element, attribute, text, comment, ...) there is
      * a separate list.
      * 
      * @param paramRtx
@@ -781,7 +821,7 @@ public final class FMES {
         final String a = getNodeValue(paramX, paramWtx);
         final String b = getNodeValue(paramY, paramRtx);
 
-        return a != null ? a.equals(b) : b == null;
+        return a == null ? b == null : a.equals(b);
     }
 
     /**
@@ -898,7 +938,7 @@ public final class FMES {
             if (paramFirstNode.getKind() == ENodes.ATTRIBUTE_KIND
                 && nodeValuesEqual(paramFirstNode, paramSecondNode, mWtx, mRtx)) {
                 // This allows us to detect the update of values for attributes
-                // because when a value is chaned, 100% of the children have changed
+                // because when a value is changed, 100% of the children have changed
                 // and the attribute node would not be considered to be same.
                 common = 1;
             } else {
@@ -909,6 +949,12 @@ public final class FMES {
                 Math.max(mDescendants.get(paramFirstNode), mDescendants.get(paramSecondNode));
             return (2.5 * common / maxFamilySize) >= FMESTHRESHOLD;
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getName() {
+        return NAME;
     }
 
 }
