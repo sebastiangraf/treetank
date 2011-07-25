@@ -106,7 +106,7 @@ public class SunburstControl extends AbsSunburstControl {
                 }
                 mModel.traverseTree(container.setRevision(mSunburstGUI.mSelectedRev).setModWeight(
                     mSunburstGUI.getModificationWeight()));
-                mSunburstGUI.mUseDiffView = EDiffView.DIFF;
+                mSunburstGUI.mUseDiffView = EView.DIFF;
                 mSunburstGUI.mUseDiffView.setValue(true);
             }
         } else if (paramControlEvent.isController()) {
@@ -173,7 +173,7 @@ public class SunburstControl extends AbsSunburstControl {
                 break;
             case 'o':
             case 'O':
-                if (mSunburstGUI.mUseDiffView == EDiffView.NODIFF) {
+                if (mSunburstGUI.mUseDiffView == EView.NODIFF) {
                     mSunburstGUI.mUseDiffView.setValue(true);
                     mSunburstGUI.mRevisions =
                         mSunburstGUI.getControlP5().addDropdownList("Compare revision",
@@ -259,7 +259,7 @@ public class SunburstControl extends AbsSunburstControl {
                             } else {
                                 container.setPruning(EPruning.FALSE);
                             }
-                            if (mSunburstGUI.mUseDiffView == EDiffView.DIFF) {
+                            if (mSunburstGUI.mUseDiffView == EView.DIFF) {
                                 final SunburstItem item =
                                     (SunburstItem)mModel.getItem(mSunburstGUI.mHitTestIndex);
                                 if (item.mDiff == EDiff.SAME) {
@@ -275,7 +275,7 @@ public class SunburstControl extends AbsSunburstControl {
                                 mModel.update(container.setStartKey(hitItem.getNode().getNodeKey()));
                             }
                         } else if (SwingUtilities.isRightMouseButton(paramEvent)) {
-                            if (mSunburstGUI.mUseDiffView == EDiffView.NODIFF) {
+                            if (mSunburstGUI.mUseDiffView == EView.NODIFF) {
                                 try {
                                     ((SunburstModel)mModel).popupMenu(paramEvent, mSunburstGUI.mCtrl,
                                         mSunburstGUI.mHitTestIndex);
@@ -382,7 +382,7 @@ public class SunburstControl extends AbsSunburstControl {
         assert paramDB != null;
         mDb = paramDB;
         mSunburstGUI.mDone = false;
-        mSunburstGUI.mUseDiffView = EDiffView.NODIFF;
+        mSunburstGUI.mUseDiffView = EView.NODIFF;
         final SunburstContainer container =
             new SunburstContainer(mSunburstGUI, mModel).setStartKey(mDb.getNodeKey());
         if (mSunburstGUI.mUsePruning) {

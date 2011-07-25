@@ -343,11 +343,11 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             mParent.textSize(15f);
             mParent.translate(0, 0);
             mParent.strokeWeight(0);
-            if (mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue()) {
+            if (mUseDiffView == EView.DIFF && EView.DIFF.getValue()) {
                 ViewUtilities.compareLegend(this, mParent);
             } else {
                 ViewUtilities.color(this, mParent);
-                if (mUseDiffView == EDiffView.NODIFF && !mUseDiffView.getValue()) {
+                if (mUseDiffView == EView.NODIFF && !mUseDiffView.getValue()) {
                     mParent.text("Press 'o' to get a list of revisions to compare!", mParent.width - 300f,
                         mParent.height - 50f);
                 }
@@ -383,7 +383,7 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 } else {
                     builder.append(" Text: ").append(mHitItem.mText.substring(0, 20)).append("...");
                 }
-                if (mUseDiffView == EDiffView.DIFF) {
+                if (mUseDiffView == EView.DIFF) {
                     mHitItem.updated(builder);
                 }
                 builder.append(" NodeKey: ").append(mHitItem.getNode().getNodeKey()).append("]");
@@ -562,13 +562,13 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
             assert paramEvent.getNewValue() instanceof Integer;
             mDepthMax = (Integer)paramEvent.getNewValue();
 
-            if (mUseDiffView == EDiffView.DIFF) {
+            if (mUseDiffView == EView.DIFF) {
                 mDepthMax += 2;
             }
         } else if (paramEvent.getPropertyName().equals("oldMaxDepth")) {
             assert paramEvent.getNewValue() instanceof Integer;
             mOldDepthMax = (Integer)paramEvent.getNewValue();
-            mUseDiffView = EDiffView.DIFF;
+            mUseDiffView = EView.DIFF;
         } else if (paramEvent.getPropertyName().equals("done")) {
             update();
             assert paramEvent.getNewValue() instanceof Boolean;
