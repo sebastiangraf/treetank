@@ -169,19 +169,8 @@ public class SmallMultiplesModel extends AbsModel<SunburstItem> implements Prope
         }
         final List<SunburstItem> secondList = new ArrayList<SunburstItem>(paramSecond);
 
-        // secondList.addAll(paramSecond);
-        // secondList.removeAll(paramFirst);
-        //
-        // for (final SunburstItem item: secondList) {
-        // item.setGreyState(EGreyState.YES);
-        // }
-
         Collections.sort(paramFirst);
         Collections.sort(secondList);
-        // System.out.println("old rev: " + mContainer.getOldRevision());
-        // System.out.println("new rev: " + mContainer.getRevision());
-        System.out.println("first: " + paramFirst.size());
-        System.out.println("second: " + secondList.size());
 
         int i = 0;
         int j = 0;
@@ -193,26 +182,7 @@ public class SmallMultiplesModel extends AbsModel<SunburstItem> implements Prope
                 i++;
                 j++;
                 secondItem.setGreyState(EGreyState.NO);
-//            } else if (firstItem.getDiff() == EDiff.UPDATED && firstItem.getDiff() == secondItem.getDiff()
-//                && firstItem.getNode() instanceof AbsStructNode
-//                && secondItem.getNode() instanceof AbsStructNode) {
-//                final AbsStructNode first = (AbsStructNode)firstItem.getNode();
-//                final AbsStructNode second = (AbsStructNode)secondItem.getNode();
-//
-//                if (first.getParentKey() == second.getParentKey()
-//                    && first.getLeftSiblingKey() == second.getLeftSiblingKey()
-//                    && first.getRightSiblingKey() == second.getRightSiblingKey()) {
-//                    // Replaced.
-//                    equals = true;
-//                    i++;
-//                    j++;
-//                }
-//            }
-
             } else {
-                // Set secondItem to grey.
-//                secondItem.setGreyState(EGreyState.YES);
-
                 if (firstItem.getNodeKey() > secondItem.getNodeKey()) {
                     System.out.println("firstItem: " + firstItem);
                     System.out.println("secondItem: " + secondItem);
@@ -220,20 +190,6 @@ public class SmallMultiplesModel extends AbsModel<SunburstItem> implements Prope
                 } else {
                     i++;
                 }
-            }
-        }
-
-        while (j < paramSecond.size() - 1) {
-            // Set secondItem to grey.
-            paramSecond.get(j).setGreyState(EGreyState.YES);
-            j++;
-        }
-
-        int k = 0;
-        for (final SunburstItem item : secondList) {
-            if (item.getGreyState() == EGreyState.YES) {
-                System.out.println(k + "juhu");
-                k++;
             }
         }
     }
