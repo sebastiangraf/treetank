@@ -184,8 +184,6 @@ public class SmallMultiplesModel extends AbsModel<SunburstItem> implements Prope
                 secondItem.setGreyState(EGreyState.NO);
             } else {
                 if (firstItem.getNodeKey() > secondItem.getNodeKey()) {
-                    System.out.println("firstItem: " + firstItem);
-                    System.out.println("secondItem: " + secondItem);
                     j++;
                 } else {
                     i++;
