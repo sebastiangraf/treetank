@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.treetank.api.IItem;
+import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.gui.ReadDB;
 import org.treetank.gui.view.IVisualItem;
 import org.treetank.gui.view.model.AbsModel;
@@ -47,6 +49,7 @@ import org.treetank.gui.view.sunburst.SunburstItem;
 import org.treetank.gui.view.sunburst.control.AbsSunburstControl;
 import org.treetank.gui.view.sunburst.control.ISunburstControl;
 import org.treetank.gui.view.sunburst.model.SunburstCompareModel;
+import org.treetank.node.AbsStructNode;
 
 import processing.core.PApplet;
 
@@ -162,7 +165,7 @@ public class SmallMultiplesModel extends AbsModel<SunburstItem> implements Prope
         assert paramFirst != null;
         assert paramSecond != null;
         for (final SunburstItem item : paramSecond) {
-            item.setGreyState(EGreyState.NO);
+            item.setGreyState(EGreyState.YES);
         }
         final List<SunburstItem> secondList = new ArrayList<SunburstItem>(paramSecond);
 
@@ -188,12 +191,31 @@ public class SmallMultiplesModel extends AbsModel<SunburstItem> implements Prope
 
             if (firstItem.equals(secondItem)) {
                 i++;
-                j++;    
+                j++;
+                secondItem.setGreyState(EGreyState.NO);
+//            } else if (firstItem.getDiff() == EDiff.UPDATED && firstItem.getDiff() == secondItem.getDiff()
+//                && firstItem.getNode() instanceof AbsStructNode
+//                && secondItem.getNode() instanceof AbsStructNode) {
+//                final AbsStructNode first = (AbsStructNode)firstItem.getNode();
+//                final AbsStructNode second = (AbsStructNode)secondItem.getNode();
+//
+//                if (first.getParentKey() == second.getParentKey()
+//                    && first.getLeftSiblingKey() == second.getLeftSiblingKey()
+//                    && first.getRightSiblingKey() == second.getRightSiblingKey()) {
+//                    // Replaced.
+//                    equals = true;
+//                    i++;
+//                    j++;
+//                }
+//            }
+
             } else {
                 // Set secondItem to grey.
-                secondItem.setGreyState(EGreyState.YES);
+//                secondItem.setGreyState(EGreyState.YES);
 
                 if (firstItem.getNodeKey() > secondItem.getNodeKey()) {
+                    System.out.println("firstItem: " + firstItem);
+                    System.out.println("secondItem: " + secondItem);
                     j++;
                 } else {
                     i++;

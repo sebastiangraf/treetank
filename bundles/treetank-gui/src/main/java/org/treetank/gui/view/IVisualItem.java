@@ -27,6 +27,7 @@
 
 package org.treetank.gui.view;
 
+import org.treetank.api.IItem;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.gui.view.sunburst.EGreyState;
 import org.treetank.gui.view.sunburst.EXPathState;
@@ -87,4 +88,11 @@ public interface IVisualItem extends Comparable<IVisualItem> {
      * @return type of diff
      */
     EDiff getDiff();
+
+    /**
+     * Get item.
+     * 
+     * @return item
+     */
+    IItem getNode();
 }

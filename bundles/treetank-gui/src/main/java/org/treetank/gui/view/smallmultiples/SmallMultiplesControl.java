@@ -87,7 +87,7 @@ public class SmallMultiplesControl extends AbsSunburstControl {
     private SmallMultiplesControl(final Embedded paramParent, final IModel paramModel, final ReadDB paramDB) {
         super(paramParent, paramModel, paramDB);
         mSmallMultiplesGUI = (SmallMultiplesGUI)mGUI;
-        refreshDifferentialTraversal();
+        refreshHybridTraversal();
     }
 
     /**

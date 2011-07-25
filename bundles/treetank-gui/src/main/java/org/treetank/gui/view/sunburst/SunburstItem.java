@@ -853,11 +853,8 @@ public final class SunburstItem implements IVisualItem {
         return mSubtract;
     }
 
-    /**
-     * Get node.
-     * 
-     * @return the Node
-     */
+    /** {@inheritDoc} */
+    @Override
     public IItem getNode() {
         return mNode;
     }
@@ -881,7 +878,7 @@ public final class SunburstItem implements IVisualItem {
                 drawRelationLine();
             }
             drawDot(EHover.TRUE);
-            
+
         } else {
             float tmpLineWeight = mLineWeight;
             mLineWeight += 5f;
@@ -905,28 +902,28 @@ public final class SunburstItem implements IVisualItem {
         return mIndexToParent;
     }
 
-//    /**
-//     * Calculate new extension.
-//     */
-//    public void calcNewExtension() {
-//        mDescendantCount--;
-//        final SunburstItem parent = (SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent);
-//        // Calculate extension.
-//        float extension = 2 * PConstants.PI;
-//        float parentModificationCount = parent.getModificationCount();
-//        if (mIndexToParent > -1) {
-//            if (parent.getSubtract()) {
-//                parentModificationCount -= 1;
-//            }
-//            float parExtension = parent.getAngleEnd() - parent.getAngleStart();
-//            extension =
-//                (1 - mGUI.getModificationWeight())
-//                    * (parExtension * (float)mDescendantCount / ((float)parent.getDescendantCount() - 1f))
-//                    + mGUI.getModificationWeight()
-//                    * (parExtension * (float)mModifications / ((float)parentModificationCount - 1f));
-//        }
-//        mAngleEnd = mAngleStart + extension;
-//    }
+    // /**
+    // * Calculate new extension.
+    // */
+    // public void calcNewExtension() {
+    // mDescendantCount--;
+    // final SunburstItem parent = (SunburstItem)mGUI.mControl.getModel().getItem(mIndexToParent);
+    // // Calculate extension.
+    // float extension = 2 * PConstants.PI;
+    // float parentModificationCount = parent.getModificationCount();
+    // if (mIndexToParent > -1) {
+    // if (parent.getSubtract()) {
+    // parentModificationCount -= 1;
+    // }
+    // float parExtension = parent.getAngleEnd() - parent.getAngleStart();
+    // extension =
+    // (1 - mGUI.getModificationWeight())
+    // * (parExtension * (float)mDescendantCount / ((float)parent.getDescendantCount() - 1f))
+    // + mGUI.getModificationWeight()
+    // * (parExtension * (float)mModifications / ((float)parentModificationCount - 1f));
+    // }
+    // mAngleEnd = mAngleStart + extension;
+    // }
 
     /**
      * Set modification count.
@@ -999,10 +996,11 @@ public final class SunburstItem implements IVisualItem {
     }
 
     /**
-     * @return
+     * Get grey state.
+     * 
+     * @return grey state
      */
     public EGreyState getGreyState() {
-        // TODO Auto-generated method stub
         return mGreyState;
     }
 
@@ -1015,15 +1013,31 @@ public final class SunburstItem implements IVisualItem {
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Object paramObj) {
-        if (paramObj != this) {
-            return false;
+        if (paramObj == this) {
+            return true;
         }
         if (!(paramObj instanceof SunburstItem)) {
             return false;
         }
         final SunburstItem item = (SunburstItem)paramObj;
-        return this.getNodeKey() == item.getNodeKey() && this.getDiff() == item.getDiff()
-            && this.getDepth() == item.getDepth();
+        if ((item.mQName == null && this.mQName != null) || (this.mQName == null && item.mQName != null)) {
+            return false;
+        }
+        if ((item.mText == null && this.mText != null) || (this.mText == null && item.mText != null)) {
+            return false;
+        }
+
+        boolean retVal = this.getNodeKey() == item.getNodeKey() && this.mDiff == item.mDiff
+            && this.mDepth == item.mDepth;
+        
+        if (this.mQName != null && item.mQName != null) {
+            retVal = retVal && this.mQName.equals(item.mQName);
+        }
+        if (this.mText != null && item.mText != null) {
+            retVal = retVal && this.mText.equals(item.mText);
+        }
+        
+        return retVal;
     }
 
     /** {@inheritDoc} */
@@ -1033,9 +1047,15 @@ public final class SunburstItem implements IVisualItem {
         result = (int)(31 * result + getNodeKey());
         result = 31 * result + mDiff.hashCode();
         result = 31 * result + mDepth;
+        if (mQName != null) {
+            result = 31 * result + mQName.hashCode();
+        }
+        if (mText != null) {
+            result = 31 * result + mText.hashCode();
+        }
         return result;
     }
-    
+
     /**
      * Get kind of structure node.
      * 
