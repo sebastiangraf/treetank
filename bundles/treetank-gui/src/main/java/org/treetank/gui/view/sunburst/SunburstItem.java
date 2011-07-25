@@ -1020,11 +1020,11 @@ public final class SunburstItem implements IVisualItem {
             return false;
         }
         final SunburstItem item = (SunburstItem)paramObj;
-        boolean retVal = (this.mQName == null ? item.mQName == null : this.mQName.equals(item.mQName));
-        retVal = retVal && (this.mText == null ? item.mText == null : this.mText.equals(item.mText));
-        retVal = retVal && (this.getNodeKey() == item.getNodeKey() && this.mDiff == item.mDiff
-            && this.mDepth == item.mDepth);
-        
+        boolean retVal = (mQName == null ? item.mQName == null : mQName.equals(item.mQName));
+        retVal = retVal && (mText == null ? item.mText == null : mText.equals(item.mText));
+        retVal =
+            retVal && (getNodeKey() == item.getNodeKey() && mDiff == item.mDiff && mDepth == item.mDepth);
+
         return retVal;
     }
 
