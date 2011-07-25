@@ -160,7 +160,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
     protected transient int mOldDepthMax;
 
     /** Determines if diff view should be used or not. */
-    protected transient EDiffView mUseDiffView = EDiffView.NODIFF;
+    protected transient EView mUseDiffView = EView.NODIFF;
 
     /** Determines if current state should be saved as a PDF-file. */
     private transient boolean mSavePDF;
@@ -459,7 +459,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
         for (final SunburstItem item : items) {
             paramDraw.update(this, item);
 
-            if (mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue()) {
+            if (mUseDiffView == EView.DIFF && EView.DIFF.getValue()) {
                 paramDraw.drawModificationRel(this, item);
                 paramDraw.drawStrategy(this, item, EDrawSunburst.COMPARE);
             } else {
@@ -467,7 +467,7 @@ public abstract class AbsSunburstGUI implements IProcessingGUI, PropertyChangeLi
             }
         }
 
-        if (mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue()) {
+        if (mUseDiffView == EView.DIFF && EView.DIFF.getValue()) {
             paramDraw.drawNewRevision(this);
             paramDraw.drawOldRevision(this);
 

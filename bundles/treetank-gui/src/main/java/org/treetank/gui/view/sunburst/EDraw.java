@@ -297,7 +297,7 @@ public enum EDraw {
 
     private static void drawStaticModifcationRel(final AbsSunburstGUI paramGUI, final SunburstItem paramItem,
         final PGraphics paramGraphic) {
-        if (paramGUI.mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue() && paramGUI.isShowArcs()
+        if (paramGUI.mUseDiffView == EView.DIFF && EView.DIFF.getValue() && paramGUI.isShowArcs()
             && paramItem.getDepth() == paramGUI.mOldDepthMax + 2) {
             switch (paramItem.mDiff) {
             case INSERTED:
@@ -334,7 +334,7 @@ public enum EDraw {
      */
     private static void drawStaticRings(final AbsSunburstGUI paramGUI, final PGraphics paramGraphic) {
         int depthMax = paramGUI.mDepthMax;
-        if (paramGUI.mUseDiffView == EDiffView.NODIFF) {
+        if (paramGUI.mUseDiffView == EView.NODIFF) {
             depthMax += 1;
         }
         for (int depth = 0; depth < depthMax; depth++) {

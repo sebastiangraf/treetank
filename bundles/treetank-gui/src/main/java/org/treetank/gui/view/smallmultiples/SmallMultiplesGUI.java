@@ -90,8 +90,8 @@ public class SmallMultiplesGUI extends AbsSunburstGUI implements PropertyChangeL
         super(paramEmbedded, paramControl, paramReadDB);
         mDb = paramReadDB;
         mControl = paramControl;
-        mUseDiffView = EDiffView.DIFF;
-        EDiffView.DIFF.setValue(true);
+        mUseDiffView = EView.DIFF;
+        EView.DIFF.setValue(true);
         // ArrayLists because of sorting.
         mBufferedImages = new ArrayList<ImageStore>();
         mRevisions = new ArrayList<Long>();

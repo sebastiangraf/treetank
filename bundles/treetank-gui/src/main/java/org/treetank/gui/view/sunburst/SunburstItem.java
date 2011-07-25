@@ -650,7 +650,7 @@ public final class SunburstItem implements IVisualItem {
             mGUI.mParent.recorder.noStroke();
         }
         mGraphic.noStroke();
-        if (mGUI.mUseDiffView == EDiffView.DIFF && EDiffView.DIFF.getValue() && mGUI.mSelectedRev != 0) {
+        if (mGUI.mUseDiffView == EView.DIFF && EView.DIFF.getValue() && mGUI.mSelectedRev != 0) {
             switch (mDiff) {
             case INSERTED:
                 final int blue = mParent.color(200, 100, mGUI.getDotBrightness());
@@ -1015,6 +1015,9 @@ public final class SunburstItem implements IVisualItem {
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Object paramObj) {
+        if (paramObj != this) {
+            return false;
+        }
         if (!(paramObj instanceof SunburstItem)) {
             return false;
         }
@@ -1026,8 +1029,11 @@ public final class SunburstItem implements IVisualItem {
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return super.hashCode();
+        int result = 17;
+        result = (int)(31 * result + getNodeKey());
+        result = 31 * result + mDiff.hashCode();
+        result = 31 * result + mDepth;
+        return result;
     }
     
     /**
