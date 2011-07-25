@@ -259,8 +259,6 @@ public class SunburstGUI extends AbsSunburstGUI implements PropertyChangeListene
                 mParent.translate((float)mParent.width / 2f, (float)mParent.height / 2f);
                 mParent.rotate(PApplet.radians(mRad));
                 if (mDone) {
-                    System.out.println(mParent.g.width);
-                    System.out.println(mParent.g.height);
                     drawItems(EDraw.DRAW);
                 }
                 getBuffer().stroke(0);

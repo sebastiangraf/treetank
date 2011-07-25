@@ -200,7 +200,6 @@ public enum EDraw {
             if (arc < endAngle) {
                 if (depth == 0) {
                     // Must be the root-Element.
-                    System.out.println("BLAAAAAAAAAAAAAAAAAAAAAAAAa");
                     paramGraphic.pushMatrix();
                     paramGraphic.fill(0);
                     paramGraphic.text(text, 0 - paramGraphic.textWidth(text) / 2f, -12f);
@@ -366,7 +365,6 @@ public enum EDraw {
         float retVal = paramTheta;
 
         assert paramTheta >= 0f && paramTheta <= PConstants.TWO_PI;
-        System.out.println(paramTheta);
         String text = paramText;
 
         // We must keep track of our position along the curve.
