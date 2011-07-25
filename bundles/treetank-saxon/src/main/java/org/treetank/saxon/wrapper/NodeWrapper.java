@@ -895,7 +895,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 }
             } else {
                 try {
-                    mAxis.mRTX.close();
+                    mAxis.getTransaction().close();
                 } catch (AbsTTException exc) {
                     LOGGER.error(exc.toString());
                 }
