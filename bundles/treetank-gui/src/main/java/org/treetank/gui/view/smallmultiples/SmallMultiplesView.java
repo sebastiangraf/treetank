@@ -168,9 +168,9 @@ public class SmallMultiplesView extends JScrollPane implements IView {
         getViewport().setSize(dim.width, dim.height - 42);
         if (mEmbed.focused) {
             mEmbed.size(dim.width, dim.height - 42, PConstants.JAVA2D);
-//            mEmbed.mControl.refreshTraversal();
+            // mEmbed.mControl.refreshTraversal();
         }
-//        mEmbed.update();
+        // mEmbed.update();
     }
 
     /**
@@ -265,12 +265,16 @@ public class SmallMultiplesView extends JScrollPane implements IView {
         /** The Treetank {@link SunburstModel}. */
         private transient SmallMultiplesModel mModel;
 
+        /** {@link ProcessingEmbeddedView} reference. */
         private transient ProcessingEmbeddedView mEmbeddedView;
 
+        /** Reference on {@link IView} implementation. */
         private final IView mView;
 
+        /** {@link ViewNotifier} reference. */
         private final ViewNotifier mViewNotifier;
 
+        /** {@link SmallMultiplesControl} reference. */
         private transient SmallMultiplesControl mControl;
 
         /**
@@ -370,6 +374,11 @@ public class SmallMultiplesView extends JScrollPane implements IView {
             }
         }
 
+        /**
+         * Get controller.
+         * 
+         * @return {@link SmallMultiplesControl} reference
+         */
         SmallMultiplesControl getController() {
             return mControl;
         }
