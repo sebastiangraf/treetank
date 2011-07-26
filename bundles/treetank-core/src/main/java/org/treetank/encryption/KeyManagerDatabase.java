@@ -2,6 +2,7 @@ package org.treetank.encryption;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 import com.sleepycat.je.DatabaseConfig;
@@ -106,16 +107,13 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
      *            user for primary key.
      * 
      * @param paramInitialKeys
-     *            user's initial keys.
-     * 
-     * @param paramFirstTek
-     *            user's first TEK.
+     *            map of all key trails a user has.
      */
     public final void putPersistent(final String paramUser,
-        final List<Long> paramInitialKeys, final long paramFirstTek) {
+        final Map<Long, List<Long>> paramInitialKeys) {
 
         final KeyManager entity =
-            new KeyManager(paramUser, paramInitialKeys, paramFirstTek);
+            new KeyManager(paramUser, paramInitialKeys);
 
         PrimaryIndex<String, KeyManager> primaryIndex;
         try {

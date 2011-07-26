@@ -1,7 +1,9 @@
 package org.treetank.encryption;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
@@ -24,7 +26,7 @@ public class KeyManager {
     /**
      * Initial trace of keys the user gets for entry a group.
      */
-    private List<Long> mInitialKeys;
+    private Map<Long, List<Long>> mInitialKeys;
 
     /**
      * List of all TEKs the user owns.
@@ -44,16 +46,25 @@ public class KeyManager {
      * @param paramUser
      *            user.
      * @param paramInitial
-     *            initial keys.
-     * @param paramFirstTek
-     *            first tek.
+     *            map of all key trails.
      */
-    public KeyManager(final String paramUser, final List<Long> paramInitial,
-        final long paramFirstTek) {
+    public KeyManager(final String paramUser,
+        final Map<Long, List<Long>> paramInitial) {
         this.mUser = paramUser;
         this.mInitialKeys = paramInitial;
         this.mTekKeys = new LinkedList<Long>();
-        mTekKeys.add(paramFirstTek);
+
+        final Iterator iter = paramInitial.keySet().iterator();
+        while (iter.hasNext()) {
+            final long mMapKey = (Long) iter.next();
+            final List<Long> mKeyTrail = paramInitial.get(mMapKey);
+            final int mKeyTrailSize = mKeyTrail.size() - 1;
+            final long mTek = mKeyTrail.get(mKeyTrailSize);
+            mTekKeys.add(mTek);
+            // break after first iteration since 
+            // tek is identical to all key trails
+            break;
+        }
     }
 
     /**
@@ -72,7 +83,7 @@ public class KeyManager {
      * @return
      *         list of initial keys.
      */
-    public final List<Long> getInitialKeys() {
+    public final Map<Long, List<Long>> getInitialKeys() {
         return mInitialKeys;
     }
 
