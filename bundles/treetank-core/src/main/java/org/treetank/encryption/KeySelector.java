@@ -1,5 +1,7 @@
 package org.treetank.encryption;
 
+import java.util.LinkedList;
+import java.util.List;
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 
@@ -24,9 +26,9 @@ public class KeySelector {
     private String mName;
 
     /**
-     * Name of parent node.
+     * List of parent nodes.
      */
-    private String mParent;
+    private List<Long> mParents;
 
     /**
      * Current revision of node.
@@ -50,13 +52,11 @@ public class KeySelector {
      * 
      * @param paramName
      *            node name.
-     * @param paramParent
-     *            parent node name.
      */
-    public KeySelector(final String paramName, final String paramParent) {
+    public KeySelector(final String paramName) {
         this.mKeyId = RightKey.getInstance().newSelectorKey();
         this.mName = paramName;
-        this.mParent = paramParent;
+        this.mParents = new LinkedList<Long>();
         this.mRevision = 0;
         this.mVersion = 0;
     }
@@ -82,13 +82,23 @@ public class KeySelector {
     }
 
     /**
-     * Returns name of parent node.
+     * Returns a set of parent nodes for node.
      * 
      * @return
-     *         name of parent node.
+     *         set of parent nodes.
      */
-    public final String getParent() {
-        return mParent;
+    public final List<Long> getParents() {
+        return mParents;
+    }
+
+    /**
+     * Add a new parent node to the set.
+     * 
+     * @param paramParent
+     *            parent to add to set.
+     */
+    public final void addParent(final long paramParent) {
+        mParents.add(paramParent);
     }
 
     /**

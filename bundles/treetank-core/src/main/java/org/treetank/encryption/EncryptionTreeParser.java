@@ -1,12 +1,13 @@
 package org.treetank.encryption;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
+import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -14,6 +15,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.treetank.exception.TTEncryptionException;
 
 /**
  * Class for parsing the initial given right tree and storing
@@ -31,31 +34,6 @@ public class EncryptionTreeParser extends DefaultHandler {
         + "righttreestructure.xml";
 
     /**
-     * Linked list for storing all parsed right nodes.
-     */
-    private List<RightNode> mNodeList = new LinkedList<RightNode>();
-
-    /**
-     * Helper to identifying current tree level.
-     */
-    private List<Integer> mLevelList = new LinkedList<Integer>();
-
-    /**
-     * Stack for storing all parsed right nodes.
-     */
-    private List<String> mNodeStack = new LinkedList<String>();
-
-    /**
-     * Current tree level.
-     */
-    private int mLevel = -1;
-
-    /**
-     * Root right node instance.
-     */
-    private RightNode mRoot = null;
-
-    /**
      * Instance for {@link KeySelectorDatabase}.
      */
     private static KeySelectorDatabase mSelectorDb;
@@ -71,10 +49,41 @@ public class EncryptionTreeParser extends DefaultHandler {
     private static KeyManagerDatabase mManagerDb;
 
     /**
-     * Helper for storing the parsed node types (group or user).
+     * Node declaration in initial right tree XML file.
      */
-    private final Map<String, String> mNodeTypeMap =
-        new HashMap<String, String>();
+    private final String mNodeDec = "NODE";
+
+    /**
+     * Edge declaration in initial right tree XML file.
+     */
+    private final String mEdgeDec = "EDGE";
+
+    /**
+     * User type declaration in initial right tree XML file.
+     */
+    private final String mTypeUser = "user";
+
+    /**
+     * Stack holding all parsed nodes.
+     */
+    private final Stack<Long> mNodeStack = new Stack<Long>();
+
+    /**
+     * Map holding all node names and its corresponding node ids.
+     */
+    private final Map<String, Long> mNodeIds = new HashMap<String, Long>();
+
+    /**
+     * List of all parsed users.
+     */
+    private final List<String> mUsers = new ArrayList<String>();
+
+    /**
+     * Just a helper map for user that has parent that hasn't been parsed 
+     * and written to the database yet.
+     */
+    private final Map<Long, List<String>> mUserParents =
+        new HashMap<Long, List<String>>();
 
     /**
      * Start tree parsing process.
@@ -100,10 +109,6 @@ public class EncryptionTreeParser extends DefaultHandler {
 
             saxParser.parse(FILENAME, new EncryptionTreeParser());
 
-            new RightTree(mRoot);
-            // RightTree tree = new RightTree(mRoot);
-            // tree.traverse();
-
         } catch (final Exception mExp) {
             mExp.printStackTrace();
         }
@@ -116,22 +121,43 @@ public class EncryptionTreeParser extends DefaultHandler {
     public final void startElement(final String namespaceURI,
         final String localName, final String qName, final Attributes atts)
         throws SAXException {
-        mNodeTypeMap.put(qName, atts.getValue(0));
-        mLevel++;
 
-        final String parentNode;
-        if (mNodeStack.size() > 0) {
-            int pos = mNodeStack.size() - 1;
-            parentNode = mNodeStack.get(pos);
-        } else {
-            parentNode = null;
+        final String mNodeName = atts.getValue(0);
+        if (qName.equals(mNodeDec)) {
+
+            if (mNodeStack.size() > 0) {
+                mNodeStack.pop();
+            }
+            final KeySelector mSelector = new KeySelector(mNodeName);
+
+            mNodeStack.add(mSelector.getKeyId());
+            mNodeIds.put(mNodeName, mSelector.getKeyId());
+
+            mSelectorDb.putPersistent(mSelector);
+            mMaterialDb.putPersistent(mSelector);
+
+            if (atts.getValue(1).equals(mTypeUser)) {
+                mUsers.add(mNodeName);
+            }
+
+        } else if (qName.equals(mEdgeDec)) {
+            long mNodeId = mNodeStack.peek();
+            KeySelector mSelector = mSelectorDb.getPersistent(mNodeId);
+
+            if (mNodeIds.containsKey(mNodeName)) {
+                mSelector.addParent(mNodeIds.get(mNodeName));
+                mSelectorDb.putPersistent(mSelector);
+            } else {
+                if (mUserParents.containsKey(mNodeId)) {
+                    List<String> mNameList = mUserParents.get(mNodeId);
+                    mNameList.add(mNodeName);
+                } else {
+                    List<String> mNameList = new LinkedList<String>();
+                    mNameList.add(mNodeName);
+                    mUserParents.put(mNodeId, mNameList);
+                }
+            }
         }
-
-        mNodeStack.add(qName);
-        KeySelector mSelector = new KeySelector(qName, parentNode);
-
-        mSelectorDb.putPersistent(mSelector);
-        mMaterialDb.putPersistent(mSelector);
     }
 
     /**
@@ -140,54 +166,100 @@ public class EncryptionTreeParser extends DefaultHandler {
     @Override
     public final void endElement(final String namespaceURI,
         final String localName, final String qName) throws SAXException {
-
-        int mLevelSize = mLevelList.size();
-        RightNode mCurNode;
-
-        if (mLevelSize >= 2
-            && (mLevelList.get(mLevelSize - 1) == mLevelList
-                .get(mLevelSize - 2))) {
-
-            mLevelList.remove(mLevelSize - 1);
-            mLevelList.remove(mLevelSize - 2);
-
-            int lastObjPos = mNodeList.size() - 1;
-            RightNode mRightChild = mNodeList.remove(lastObjPos);
-            lastObjPos = mNodeList.size() - 1;
-            RightNode mLeftChild = mNodeList.remove(lastObjPos);
-
-            mCurNode = new RightNode(qName, mLeftChild, mRightChild);
-            mNodeStack.remove(qName);
-
-        } else {
-            // Node is a leaf node
-            mCurNode = new RightNode(qName, null, null);
-
-            mNodeStack.remove(qName);
-            if (mNodeTypeMap.get(qName).equals("user")) {
-                // get node ids of key trace
-                List<Long> keyTrail = new LinkedList<Long>();
-                final SortedMap<Long, KeySelector> sMap =
-                    mSelectorDb.getEntries();
-
-                for (String name : mNodeStack) {
-                    Iterator iter = sMap.keySet().iterator();
-                    while (iter.hasNext()) {
-                        KeySelector selector = sMap.get(iter.next());
-                        if (selector.getName().equals(name)) {
-                            keyTrail.add(selector.getKeyId());
-                            break;
-                        }
-
-                    }
-                }
-                mManagerDb.putPersistent(qName, keyTrail, keyTrail.get(0));
-            }
-        }
-        mNodeList.add(mCurNode);
-        mLevelList.add(mLevel);
-        mRoot = mCurNode;
-        mLevel--;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void endDocument() throws SAXException {
+        /*
+         * add not yet stored edges as parents to the nodes respectively
+         */
+        Iterator iter = mUserParents.keySet().iterator();
+        while (iter.hasNext()) {
+            final long mMapKey = (Long) iter.next();
+            final KeySelector mSelector = mSelectorDb.getPersistent(mMapKey);
+            final List<String> mNameList = mUserParents.get(mMapKey);
+
+            for (int i = 0; i < mNameList.size(); i++) {
+                final String mName = mNameList.get(i);
+                for (int j = 0; j < mSelectorDb.count(); j++) {
+                    final KeySelector mParentSelector =
+                        mSelectorDb.getPersistent(j);
+                    if (mParentSelector.getName().equals(mName)) {
+                        mSelector.addParent(mParentSelector.getKeyId());
+                        mSelectorDb.putPersistent(mSelector);
+                    }
+                }
+            }
+        }
+
+        /*
+         * build key trails of users and store it to the key manager db
+         */
+
+        // iterate through all users
+        for (int j = 0; j < mUsers.size(); j++) {
+            final String mUser = mUsers.get(j);
+
+            // map of all key trails a user has
+            final Map<Long, List<Long>> mKeyTrails =
+                new HashMap<Long, List<Long>>();
+
+            // find user node in selector db
+            for (int i = 0; i < mSelectorDb.count(); i++) {
+                final KeySelector mSelector = mSelectorDb.getPersistent(i);
+                if (mSelector.getName().equals(mUser)) {
+
+                    // all parent ids of user
+                    List<Long> mParentIds = mSelector.getParents();
+
+                    for (int k = 0; k < mParentIds.size(); k++) {
+                        final long mParent = mParentIds.get(k);
+                        final LinkedList<Long> mKeyTrail =
+                            new LinkedList<Long>();
+                        mKeyTrail.add(mParent);
+                        mKeyTrails.put(mParent, mKeyTrail);
+                    }
+
+                    // iterate through all initiated key trails and find 
+                    //and complete the trail steps to the root
+                    iter = mKeyTrails.keySet().iterator();
+                    while (iter.hasNext()) {
+                        final long mParentKey = (Long) iter.next();
+                        final List<Long> mKeyTrail = mKeyTrails.get(mParentKey);
+
+                        // get parent id from parent
+                        List<Long> mParentId =
+                            mSelectorDb.getPersistent(mParentKey).getParents();
+
+                        while (mParentId.size() != 0) {
+
+                            if (mParentId.size() > 1) {
+                                try {
+                                    throw new TTEncryptionException(
+                                        "Initial right tree is not valid. A group node can "
+                                        + "only have one parent.");
+                                } catch (final TTEncryptionException ttee) {
+                                    ttee.printStackTrace();
+                                }
+                            } else {
+                                // add parent's parent id to key trail
+                                final long newParent = mParentId.get(0);
+                                mKeyTrail.add(newParent);
+                                mParentId =
+                                    mSelectorDb.getPersistent(newParent)
+                                        .getParents();
+                            }
+                        }
+                    }
+                }
+            }
+
+            // add key trails to key manager database
+            mManagerDb.putPersistent(mUser, mKeyTrails);
+
+        }
+    }
 }
