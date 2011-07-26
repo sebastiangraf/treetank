@@ -178,7 +178,7 @@ public final class GUI extends JFrame {
     /**
      * Get the {@link ReadDB} instance.
      * 
-     * @return the ReadDB instance
+     * @return the {@link ReadDB} instance
      */
     public ReadDB getReadDB() {
         return mReadDB;

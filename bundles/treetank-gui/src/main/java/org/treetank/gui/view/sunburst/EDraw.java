@@ -309,6 +309,9 @@ public enum EDraw {
                 paramGraphic.stroke(120, 100, paramGUI.getDotBrightness(), 30);
                 break;
             }
+            if (paramItem.getGreyState() == EGreyState.YES) {
+                paramGraphic.stroke(0);
+            }
             final SunburstItem item =
                 (SunburstItem)paramGUI.mControl.getModel().getItem(paramItem.getIndexToParent());
             for (int i = item.getDepth() + 1; i < paramGUI.mOldDepthMax + 1; i++) {
