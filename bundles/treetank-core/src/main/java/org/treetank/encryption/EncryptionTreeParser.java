@@ -79,7 +79,7 @@ public class EncryptionTreeParser extends DefaultHandler {
     private final List<String> mUsers = new ArrayList<String>();
 
     /**
-     * Just a helper map for user that has parent that hasn't been parsed 
+     * Just a helper map for user that has parent that hasn't been parsed
      * and written to the database yet.
      */
     private final Map<Long, List<String>> mUserParents =
@@ -213,7 +213,7 @@ public class EncryptionTreeParser extends DefaultHandler {
                 if (mSelector.getName().equals(mUser)) {
 
                     // all parent ids of user
-                    List<Long> mParentIds = mSelector.getParents();
+                    final List<Long> mParentIds = mSelector.getParents();
 
                     for (int k = 0; k < mParentIds.size(); k++) {
                         final long mParent = mParentIds.get(k);
@@ -223,32 +223,31 @@ public class EncryptionTreeParser extends DefaultHandler {
                         mKeyTrails.put(mParent, mKeyTrail);
                     }
 
-                    // iterate through all initiated key trails and find 
-                    //and complete the trail steps to the root
+                    // iterate through all initiated key trails and find
+                    // and complete the trail steps to the root
                     iter = mKeyTrails.keySet().iterator();
                     while (iter.hasNext()) {
                         final long mParentKey = (Long) iter.next();
                         final List<Long> mKeyTrail = mKeyTrails.get(mParentKey);
 
                         // get parent id from parent
-                        List<Long> mParentId =
+                        List<Long> mParentList =
                             mSelectorDb.getPersistent(mParentKey).getParents();
 
-                        while (mParentId.size() != 0) {
-
-                            if (mParentId.size() > 1) {
+                        while (mParentList.size() != 0) {
+                            if (mParentList.size() > 1) {
                                 try {
                                     throw new TTEncryptionException(
                                         "Initial right tree is not valid. A group node can "
-                                        + "only have one parent.");
+                                            + "only have one parent.");
                                 } catch (final TTEncryptionException ttee) {
                                     ttee.printStackTrace();
                                 }
                             } else {
                                 // add parent's parent id to key trail
-                                final long newParent = mParentId.get(0);
+                                final long newParent = mParentList.get(0);
                                 mKeyTrail.add(newParent);
-                                mParentId =
+                                mParentList =
                                     mSelectorDb.getPersistent(newParent)
                                         .getParents();
                             }
@@ -258,7 +257,8 @@ public class EncryptionTreeParser extends DefaultHandler {
             }
 
             // add key trails to key manager database
-            mManagerDb.putPersistent(mUser, mKeyTrails);
+            final KeyManager entity = new KeyManager(mUser, mKeyTrails);
+            mManagerDb.putPersistent(entity);
 
         }
     }

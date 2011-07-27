@@ -22,25 +22,29 @@ public class KeyCache {
     /**
      * The collection to hold the maps.
      */
-    private final Map<String, LinkedList<Long>> mMap;
+    private final Map<String, LinkedList<LinkedList<Long>>> mMap;
 
     /**
      * Constructor creates a new key cache.
      */
     public KeyCache() {
-        mMap = new LinkedHashMap<String, LinkedList<Long>>(CACHE_CAPACITY) {
-            private static final long serialVersionUID = 1;
+        mMap =
+            new LinkedHashMap<String, LinkedList<LinkedList<Long>>>(
+                CACHE_CAPACITY) {
+                private static final long serialVersionUID = 1;
 
-            @Override
-            protected boolean removeEldestEntry(
-                final Map.Entry<String, LinkedList<Long>> mEldest) {
-                boolean returnVal = false;
-                if (size() > CACHE_CAPACITY) {
-                    returnVal = true;
+                @Override
+                protected
+                    boolean
+                    removeEldestEntry(
+                        final Map.Entry<String, LinkedList<LinkedList<Long>>> mEldest) {
+                    boolean returnVal = false;
+                    if (size() > CACHE_CAPACITY) {
+                        returnVal = true;
+                    }
+                    return returnVal;
                 }
-                return returnVal;
-            }
-        };
+            };
 
     }
 
@@ -51,9 +55,9 @@ public class KeyCache {
      *            User key.
      * @return linked list of user.
      */
-    public final LinkedList<Long> get(final String paramUser) {
-        final LinkedList<Long> list = mMap.get(paramUser);
-        return list; // returns null if no value for this user exits in cache.
+    public final LinkedList<LinkedList<Long>> get(final String paramUser) {
+        final LinkedList<LinkedList<Long>> list = mMap.get(paramUser);
+        return list; // returns null if no value for this user exists in cache.
     }
 
     /**
@@ -67,7 +71,12 @@ public class KeyCache {
      */
     public final void put(final String paramUser,
         final LinkedList<Long> paramList) {
-        mMap.put(paramUser, paramList);
+
+        final LinkedList<LinkedList<Long>> mList =
+            new LinkedList<LinkedList<Long>>();
+        mList.add(paramList);
+
+        mMap.put(paramUser, mList);
     }
 
     /**
@@ -92,8 +101,9 @@ public class KeyCache {
      * 
      * @return a <code>Collection</code> with a copy of the cache content.
      */
-    public final Collection<Map.Entry<String, LinkedList<Long>>> getAll() {
-        return new ArrayList<Map.Entry<String, LinkedList<Long>>>(mMap
-            .entrySet());
+    public final Collection<Map.Entry<String, LinkedList<LinkedList<Long>>>>
+        getAll() {
+        return new ArrayList<Map.Entry<String, LinkedList<LinkedList<Long>>>>(
+            mMap.entrySet());
     }
 }

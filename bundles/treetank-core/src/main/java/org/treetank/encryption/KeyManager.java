@@ -61,7 +61,7 @@ public class KeyManager {
             final int mKeyTrailSize = mKeyTrail.size() - 1;
             final long mTek = mKeyTrail.get(mKeyTrailSize);
             mTekKeys.add(mTek);
-            // break after first iteration since 
+            // break after first iteration since
             // tek is identical to all key trails
             break;
         }
@@ -85,6 +85,16 @@ public class KeyManager {
      */
     public final Map<Long, List<Long>> getInitialKeys() {
         return mInitialKeys;
+    }
+
+    /**
+     * Add a new key trail to the map.
+     * 
+     * @param paramTrail
+     *            new key trail.
+     */
+    public final void addInitialKeyTrail(final List<Long> paramTrail) {
+        mInitialKeys.put(paramTrail.get(0), paramTrail);
     }
 
     /**
