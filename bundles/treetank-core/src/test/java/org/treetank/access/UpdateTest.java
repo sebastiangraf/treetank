@@ -39,6 +39,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.AbsStructNode;
+import org.treetank.settings.EFixed;
 import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.TypedValue;
 
@@ -205,9 +206,9 @@ public class UpdateTest {
         rtx.close();
         session.close();
     }
-    
+
     @Test
-    public void testMoveToFirstChild() throws AbsTTException {
+    public void testFirstMoveToFirstChild() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -229,9 +230,36 @@ public class UpdateTest {
         assertEquals("foo", rtx.getValueOfCurrentNode());
         rtx.close();
     }
-    
+
     @Test
-    public void testMoveToRightSibling() throws AbsTTException {
+    public void testSecondMoveToFirstChild() throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.moveTo(5);
+        wtx.moveSubtreeToFirstChild(4);
+        wtx.commit();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.moveTo(5));
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertEquals(4L, rtx.getStructuralNode().getFirstChildKey());
+        assertFalse(rtx.moveTo(6));
+        assertTrue(rtx.moveTo(4));
+        assertEquals("oops1foo", rtx.getValueOfCurrentNode());
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertEquals(5L, rtx.getStructuralNode().getParentKey());
+        assertEquals(7L, rtx.getStructuralNode().getRightSiblingKey());
+        assertTrue(rtx.moveTo(7));
+        assertEquals(4L, rtx.getStructuralNode().getLeftSiblingKey());
+        rtx.close();
+    }
+
+    @Test
+    public void testFirstMoveSubtreeToRightSibling() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -249,6 +277,78 @@ public class UpdateTest {
         assertEquals("foo", rtx.getValueOfCurrentNode());
         assertTrue(rtx.getStructuralNode().hasLeftSibling());
         assertEquals(7L, rtx.getStructuralNode().getLeftSiblingKey());
+        rtx.close();
+    }
+
+    @Test
+    public void testSecondMoveSubtreeToRightSibling() throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.moveTo(9);
+        wtx.moveSubtreeToRightSibling(5);
+        wtx.commit();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.moveTo(4));
+        // Assert that oops1 and oops2 text nodes merged.
+        assertEquals("oops1oops2", rtx.getValueOfCurrentNode());
+        assertFalse(rtx.moveTo(8));
+        assertTrue(rtx.moveTo(9));
+        assertEquals(5L, rtx.getStructuralNode().getRightSiblingKey());
+        assertTrue(rtx.moveTo(5));
+        assertEquals(9L, rtx.getStructuralNode().getLeftSiblingKey());
+        assertEquals(13L, rtx.getStructuralNode().getRightSiblingKey());
+        rtx.close();
+    }
+
+    @Test
+    public void testThirdMoveSubtreeToRightSibling() throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.moveTo(9);
+        wtx.moveSubtreeToRightSibling(4);
+        wtx.commit();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.moveTo(4));
+        // Assert that oops1 and oops3 text nodes merged.
+        assertEquals("oops1oops3", rtx.getValueOfCurrentNode());
+        assertFalse(rtx.moveTo(13));
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
+            .getStructuralNode().getRightSiblingKey());
+        assertEquals(9L, rtx.getStructuralNode().getLeftSiblingKey());
+        assertTrue(rtx.moveTo(9));
+        assertEquals(4L, rtx.getStructuralNode().getRightSiblingKey());
+        rtx.close();
+    }
+
+    @Test
+    public void testFourthMoveSubtreeToRightSibling() throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.moveTo(8);
+        wtx.moveSubtreeToRightSibling(4);
+        wtx.commit();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.moveTo(4));
+        // Assert that oops2 and oops1 text nodes merged.
+        assertEquals("oops2oops1", rtx.getValueOfCurrentNode());
+        assertFalse(rtx.moveTo(8));
+        assertEquals(9L, rtx.getStructuralNode().getRightSiblingKey());
+        assertEquals(5L, rtx.getStructuralNode().getLeftSiblingKey());
+        assertTrue(rtx.moveTo(5L));
+        assertEquals(4L, rtx.getStructuralNode().getRightSiblingKey());
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertTrue(rtx.moveTo(9));
+        assertEquals(4L, rtx.getStructuralNode().getLeftSiblingKey());
         rtx.close();
     }
 

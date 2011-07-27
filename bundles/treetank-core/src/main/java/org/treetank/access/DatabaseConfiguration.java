@@ -38,19 +38,19 @@ import org.treetank.settings.ERevisioning;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public class DatabaseConfiguration {
+public final class DatabaseConfiguration {
 
     // STATIC STANDARD FIELDS
-    /** Identification for string */
-    public final static String BINARY = "5.4.0";
-    /** Standard storage */
-    public final static StorageType STORAGE = StorageType.File;
-    /** Standard Versioning Approach */
-    public final static ERevisioning VERSIONING = ERevisioning.INCREMENTAL;
-    /** Type of hashing */
-    public final static HashKind HASHKIND = HashKind.Rolling;
+    /** Identification for string. */
+    public static final String BINARY = "5.4.0";
+    /** Standard storage. */
+    public static final StorageType STORAGE = StorageType.File;
+    /** Standard Versioning Approach. */
+    public static final ERevisioning VERSIONING = ERevisioning.INCREMENTAL;
+    /** Type of hashing. */
+    public static final HashKind HASHKIND = HashKind.Rolling;
     /** Versions to restore. */
-    public final static int VERSIONSTORESTORE = 4;
+    public static final int VERSIONSTORESTORE = 4;
     // END STATIC STANDARD FIELDS
 
     /** Type of Storage (File, Berkeley). */
@@ -150,7 +150,7 @@ public class DatabaseConfiguration {
         }
 
         /**
-         * Builder method to generate new configuration
+         * Builder method to generate new configuration.
          * 
          * @return a new {@link DatabaseConfiguration} instance
          */

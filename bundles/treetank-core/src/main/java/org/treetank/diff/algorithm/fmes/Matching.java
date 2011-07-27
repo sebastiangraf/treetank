@@ -4,14 +4,14 @@
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
- * * Neither the name of the University of Konstanz nor the
- * names of its contributors may be used to endorse or promote products
- * derived from this software without specific prior written permission.
+ *      * Redistributions of source code must retain the above copyright
+ *        notice, this list of conditions and the following disclaimer.
+ *      * Redistributions in binary form must reproduce the above copyright
+ *        notice, this list of conditions and the following disclaimer in the
+ *        documentation and/or other materials provided with the distribution.
+ *      * Neither the name of the University of Konstanz nor the
+ *        names of its contributors may be used to endorse or promote products
+ *        derived from this software without specific prior written permission.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -31,10 +31,8 @@ import java.util.Map;
 
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
-import org.treetank.exception.AbsTTException;
 
 /**
  * Keeps track of nodes in a matching.
@@ -159,9 +157,9 @@ public final class Matching {
         assert paramNodeY != null;
         long retVal = 0;
 
-        mRtxNew.moveTo(paramNodeX.getNodeKey());
-        for (final AbsAxis axis = new DescendantAxis(mRtxNew); axis.hasNext(); axis.next()) {
-            retVal += mIsInSubtree.get(paramNodeY, partner(mRtxNew.getNode())) ? 1 : 0;
+        mRtxOld.moveTo(paramNodeX.getNodeKey());
+        for (final AbsAxis axis = new DescendantAxis(mRtxOld, true); axis.hasNext(); axis.next()) {
+            retVal += mIsInSubtree.get(paramNodeY, partner(mRtxOld.getNode())) ? 1 : 0;
         }
 
         return retVal;

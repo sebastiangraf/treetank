@@ -53,17 +53,17 @@ public final class TextNode extends AbsStructNode {
     /**
      * Constructor for TextNode.
      * 
-     * @param mLongBuilder
-     *            vals of longs to set
-     * @param mIntBuilder
-     *            vals of ints to set
-     * @param mValue
+     * @param paramByteBuilder
+     *            vals of bytes to set
+     * @param paramPointerBuilder
+     *            vals of bytes to set
+     * @param paramValue
      *            val to set
      */
-    TextNode(final byte[] mByteBuilder, final byte[] mPointerBuilder, final byte[] mValue) {
-        super(mByteBuilder, mPointerBuilder);
-        this.mValue = mValue;
-        writeIntBytes(VALUE_LENGTH, mValue.length);
+    TextNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder, final byte[] paramValue) {
+        super(paramByteBuilder, paramPointerBuilder);
+        mValue = paramValue;
+        writeIntBytes(VALUE_LENGTH, paramValue.length);
     }
 
     /**
@@ -86,28 +86,28 @@ public final class TextNode extends AbsStructNode {
      * {@inheritDoc}
      */
     @Override
-    public void setValue(final int mValueType, final byte[] mValue) {
-        writeIntBytes(AbsNode.TYPE_KEY, mValueType);
-        writeIntBytes(VALUE_LENGTH, mValue.length);
-        this.mValue = mValue;
+    public void setValue(final int paramValueType, final byte[] paramValue) {
+        writeIntBytes(AbsNode.TYPE_KEY, paramValueType);
+        writeIntBytes(VALUE_LENGTH, paramValue.length);
+        mValue = paramValue;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setType(final int mValueType) {
-        writeIntBytes(AbsNode.TYPE_KEY, mValueType);
+    public void setType(final int paramValueType) {
+        writeIntBytes(AbsNode.TYPE_KEY, paramValueType);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink mNodeOut) {
-        super.serialize(mNodeOut);
+    public void serialize(final ITTSink paramNodeOut) {
+        super.serialize(paramNodeOut);
         for (final byte byteVal : mValue) {
-            mNodeOut.writeByte(byteVal);
+            paramNodeOut.writeByte(byteVal);
         }
     }
 

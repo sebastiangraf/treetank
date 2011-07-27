@@ -105,8 +105,8 @@ public class ReadTransaction implements IReadTransaction {
      */
     public ReadTransaction(final ReadTransaction paramRtx) {
         mTransactionID = paramRtx.getTransactionID();
-        Class c = paramRtx.getClass();
-        Field[] fields = c.getDeclaredFields();
+        final Class c = paramRtx.getClass();
+        final Field[] fields = c.getDeclaredFields();
         try {
             for (int i = 0; i < fields.length; i++) {
                 if (fields[i].getName().equals("mSessionState")) {
@@ -162,15 +162,15 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public final boolean moveTo(final long mNodeKey) {
+    public final boolean moveTo(final long paramNodeKey) {
         assertNotClosed();
-        if (mNodeKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (paramNodeKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
             return false;
         } else {
             // Remember old node and fetch new one.
             final IItem oldNode = mCurrentNode;
             try {
-                mCurrentNode = mTransactionState.getNode(mNodeKey);
+                mCurrentNode = mTransactionState.getNode(paramNodeKey);
             } catch (final Exception e) {
                 mCurrentNode = null;
 //                mCurrentNode = oldNode;

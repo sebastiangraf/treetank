@@ -232,18 +232,19 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Removing a node from the storage.
      * 
-     * @param mNode
-     *            to be removed
+     * @param paramNode
+     *            {@link AbsNode} to be removed
      * @throws TTIOException
      *             if the removal fails
      */
-    protected void removeNode(final AbsNode mNode) throws TTIOException {
-        final long nodePageKey = nodePageKey(mNode.getNodeKey());
+    protected void removeNode(final AbsNode paramNode) throws TTIOException {
+        assert paramNode != null;
+        final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         prepareNodePage(nodePageKey);
-        final AbsNode delNode = DeletedNode.createData(mNode.getNodeKey(), mNode.getParentKey());
-        mNodePageCon.getModified().setNode(nodePageOffset(mNode.getNodeKey()), delNode);
-        mNodePageCon.getComplete().setNode(nodePageOffset(mNode.getNodeKey()), delNode);
-        finishNodeModification(mNode);
+        final AbsNode delNode = DeletedNode.createData(paramNode.getNodeKey(), paramNode.getParentKey());
+        mNodePageCon.getModified().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
+        mNodePageCon.getComplete().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
+        finishNodeModification(paramNode);
     }
 
     /**
