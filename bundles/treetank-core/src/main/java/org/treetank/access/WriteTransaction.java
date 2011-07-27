@@ -170,8 +170,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             checkAccessAndCommit();
 
             final ElementNode nodeAnchor = (ElementNode)getCurrentNode();
-            setCurrentNode(nodeToMove);
-            adaptHashesWithRemove();
+
+            // Adapt hashes.
+            adaptHashesForMove((AbsStructNode)nodeToMove);
+
+            // Adapt pointers and merge sibling text nodes.
             adaptForMove((AbsStructNode)nodeToMove, nodeAnchor, EInsert.ASFIRSTCHILD);
             setCurrentNode(nodeAnchor);
             adaptHashesWithAdd();
@@ -198,8 +201,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             checkAccessAndCommit();
 
             final AbsStructNode nodeAnchor = (AbsStructNode)getCurrentNode();
-            setCurrentNode(nodeToMove);
-            adaptHashesWithRemove();
+
+            // Adapt hashes.
+            adaptHashesForMove((AbsStructNode)nodeToMove);
+
+            // Adapt pointers and merge sibling text nodes.
             adaptForMove((AbsStructNode)nodeToMove, nodeAnchor, EInsert.ASRIGHTSIBLING);
             setCurrentNode(nodeAnchor);
             adaptHashesWithAdd();
@@ -212,117 +218,277 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     }
 
     /**
+     * Adapt hashes for move operation ("remove" phase).
+     * 
+     * @param paramNodeToMove
+     *            node which implements {@link IStructuralItem} and is moved
+     */
+    private void adaptHashesForMove(final IStructuralItem paramNodeToMove) {
+        setCurrentNode(paramNodeToMove);
+//        while (((AbsStructNode)getCurrentNode()).hasFirstChild()) {
+//            moveToFirstChild();
+//        }
+        try {
+            adaptHashesWithRemove();
+        } catch (final TTIOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Adapting everything for move operations.
      * 
-     * @param paramFromElement
+     * @param paramFromNode
      *            root {@link AbsStructNode} of the subtree to be moved
-     * @param paramToElement
+     * @param paramToNode
      *            the {@link AbsStructNode} which is the anchor of the new subtree
      * @param paramInsert
      *            determines if it has to be inserted as a first child or a right sibling
      * @throws TTIOException
      *             if anything went wrong
      */
-    private void adaptForMove(final IStructuralItem paramFromElement, final IStructuralItem paramToElement,
+    private void adaptForMove(final IStructuralItem paramFromNode, final IStructuralItem paramToNode,
         final EInsert paramInsert) throws TTIOException {
-        assert paramFromElement != null;
-        assert paramToElement != null;
+        assert paramFromNode != null;
+        assert paramToNode != null;
         assert paramInsert != null;
 
         // Modify nodes where the subtree has been moved from.
         // ==============================================================================
         final AbsStructNode parent =
-            (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getParentKey());
+            (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromNode.getParentKey());
         parent.decrementChildCount();
         // Adapt first child key of former parent.
-        if (parent.getFirstChildKey() == paramFromElement.getNodeKey()) {
-            parent.setFirstChildKey(paramFromElement.getRightSiblingKey());
+        if (parent.getFirstChildKey() == paramFromNode.getNodeKey()) {
+            parent.setFirstChildKey(paramFromNode.getRightSiblingKey());
         }
         getTransactionState().finishNodeModification(parent);
 
         // Adapt right sibling key of former left sibling.
-        if (paramFromElement.hasLeftSibling()) {
+        if (paramFromNode.hasLeftSibling()) {
             final AbsStructNode leftSibling =
                 (AbsStructNode)getTransactionState().prepareNodeForModification(
-                    paramFromElement.getLeftSiblingKey());
-            leftSibling.setRightSiblingKey(paramFromElement.getRightSiblingKey());
+                    paramFromNode.getLeftSiblingKey());
+            leftSibling.setRightSiblingKey(paramFromNode.getRightSiblingKey());
             getTransactionState().finishNodeModification(leftSibling);
         }
 
         // Adapt left sibling key of former right sibling.
-        if (paramFromElement.hasRightSibling()) {
+        if (paramFromNode.hasRightSibling()) {
             final AbsStructNode rightSibling =
                 (AbsStructNode)getTransactionState().prepareNodeForModification(
-                    paramFromElement.getRightSiblingKey());
-            rightSibling.setLeftSiblingKey(paramFromElement.getLeftSiblingKey());
+                    paramFromNode.getRightSiblingKey());
+            rightSibling.setLeftSiblingKey(paramFromNode.getLeftSiblingKey());
             getTransactionState().finishNodeModification(rightSibling);
+        }
+
+        // Merge text nodes.
+        if (paramFromNode.hasLeftSibling() && paramFromNode.hasRightSibling()) {
+            moveTo(paramFromNode.getLeftSiblingKey());
+            if (getCurrentNode() != null && getCurrentNode().getKind() == ENodes.TEXT_KIND) {
+                final StringBuilder builder = new StringBuilder(getValueOfCurrentNode());
+                moveTo(paramFromNode.getRightSiblingKey());
+                if (getCurrentNode() != null && getCurrentNode().getKind() == ENodes.TEXT_KIND) {
+                    builder.append(getValueOfCurrentNode());
+                    try {
+                        remove();
+                    } catch (final AbsTTException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    moveTo(paramFromNode.getLeftSiblingKey());
+                    setValue(builder.toString());
+                }
+            }
         }
 
         // Modify nodes where the subtree has been moved to.
         // ==============================================================================
         switch (paramInsert) {
         case ASFIRSTCHILD:
-            if (paramToElement.hasFirstChild()) {
-                // Adapt left sibling key of former first child.
-                final AbsStructNode oldFirstChild =
-                    (AbsStructNode)getTransactionState().prepareNodeForModification(
-                        paramToElement.getNodeKey());
-                oldFirstChild.setLeftSiblingKey(paramFromElement.getNodeKey());
-                getTransactionState().finishNodeModification(oldFirstChild);
-                
-                // Adapt right sibling key of moved node.
-                final AbsStructNode moved =
-                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
-                moved.setRightSiblingKey(oldFirstChild.getNodeKey());
-                getTransactionState().finishNodeModification(moved);
+            if (paramToNode.hasFirstChild()) {
+                moveTo(paramToNode.getFirstChildKey());
+
+                if (getCurrentNode().getKind() == ENodes.TEXT_KIND
+                    && paramFromNode.getKind() == ENodes.TEXT_KIND) {
+                    final StringBuilder builder = new StringBuilder(getValueOfCurrentNode());
+
+                    // Adapt right sibling key of moved node.
+                    moveTo(((TextNode)getCurrentNode()).getRightSiblingKey());
+                    final TextNode moved =
+                        (TextNode)getTransactionState()
+                            .prepareNodeForModification(paramFromNode.getNodeKey());
+                    moved.setRightSiblingKey(getCurrentNode().getNodeKey());
+                    getTransactionState().finishNodeModification(moved);
+
+                    // Merge text nodes.
+                    moveTo(moved.getNodeKey());
+                    builder.insert(0, getValueOfCurrentNode());
+                    setValue(builder.toString());
+                    
+                    // Remove first child.
+                    moveTo(paramToNode.getFirstChildKey());
+                    try {
+                        remove();
+                    } catch (final AbsTTException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
+                    // Adapt left sibling key of former right sibling of first child.
+                    moveTo(moved.getRightSiblingKey());
+                    final AbsStructNode rightSibling =
+                        (AbsStructNode)getTransactionState().prepareNodeForModification(
+                            getCurrentNode().getNodeKey());
+                    rightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
+                    getTransactionState().finishNodeModification(rightSibling);
+                } else {
+                    // Adapt left sibling key of former first child.
+                    final AbsStructNode oldFirstChild =
+                        (AbsStructNode)getTransactionState().prepareNodeForModification(
+                            paramToNode.getFirstChildKey());
+                    oldFirstChild.setLeftSiblingKey(paramFromNode.getNodeKey());
+                    getTransactionState().finishNodeModification(oldFirstChild);
+
+                    // Adapt right sibling key of moved node.
+                    final AbsStructNode moved =
+                        (AbsStructNode)getTransactionState().prepareNodeForModification(
+                            paramFromNode.getNodeKey());
+                    moved.setRightSiblingKey(oldFirstChild.getNodeKey());
+                    getTransactionState().finishNodeModification(moved);
+                }
             } else {
                 // Adapt right sibling key of moved node.
                 final AbsStructNode moved =
-                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
-                moved.setRightSiblingKey((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(
+                        paramFromNode.getNodeKey());
+                moved.setRightSiblingKey((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
                 getTransactionState().finishNodeModification(moved);
             }
-            
+
             // Adapt first child key and childCount of parent where the subtree has to be inserted.
             final AbsStructNode newParent =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(paramToElement.getNodeKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(paramToNode.getNodeKey());
             newParent.incrementChildCount();
-            newParent.setFirstChildKey(paramFromElement.getNodeKey());
+            newParent.setFirstChildKey(paramFromNode.getNodeKey());
             getTransactionState().finishNodeModification(newParent);
-            
-            // Adapt left sibling key of moved node.
+
+            // Adapt left sibling key and parent key of moved node.
             final AbsStructNode moved =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
-            moved.setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromNode.getNodeKey());
+            moved.setLeftSiblingKey((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+            moved.setParentKey(paramToNode.getNodeKey());
             getTransactionState().finishNodeModification(moved);
             break;
         case ASRIGHTSIBLING:
-            final AbsStructNode insertAnchor =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(paramToElement.getNodeKey());
-            // Adapt right sibling key of node where the subtree has to be inserted.
-            insertAnchor.setRightSiblingKey(paramFromElement.getNodeKey());
-            getTransactionState().finishNodeModification(insertAnchor);
-            
-            if (insertAnchor.hasRightSibling()) {
-                // Adapt left sibling key of former right sibling.
-                final AbsStructNode oldRightSibling =
-                    (AbsStructNode)getTransactionState().prepareNodeForModification(
-                        insertAnchor.getRightSiblingKey());
-                oldRightSibling.setLeftSiblingKey(paramFromElement.getNodeKey());
-                getTransactionState().finishNodeModification(oldRightSibling);
+            final boolean hasMoved = moveTo(paramToNode.getRightSiblingKey());
 
-                // Adapt right sibling key of moved node.
+            if (paramFromNode.getKind() == ENodes.TEXT_KIND && paramToNode.getKind() == ENodes.TEXT_KIND) {
+                moveTo(paramToNode.getNodeKey());
+                final StringBuilder builder = new StringBuilder(getValueOfCurrentNode());
+
+                // Adapt left sibling key of former right sibling of first child.
+                final AbsStructNode rightSibling =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(
+                        ((TextNode)getCurrentNode()).getRightSiblingKey());
+                rightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
+                getTransactionState().finishNodeModification(rightSibling);
+
+                // Adapt sibling keys of moved node.
+                final TextNode movedNode =
+                    (TextNode)getTransactionState().prepareNodeForModification(paramFromNode.getNodeKey());
+                movedNode.setRightSiblingKey(rightSibling.getNodeKey());
+                // Adapt left sibling key of moved node.
+                movedNode.setLeftSiblingKey(((TextNode)getCurrentNode()).getLeftSiblingKey());
+                getTransactionState().finishNodeModification(movedNode);
+                
+                // Merge text nodes.
+                moveTo(movedNode.getNodeKey());
+                builder.append(getValueOfCurrentNode());
+                setValue(builder.toString());
+
+                final AbsStructNode insertAnchor =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramToNode.getNodeKey());
+                // Adapt right sibling key of node where the subtree has to be inserted.
+                insertAnchor.setRightSiblingKey(paramFromNode.getNodeKey());
+                getTransactionState().finishNodeModification(insertAnchor);
+                
+                // Remove first child.
+                moveTo(paramToNode.getNodeKey());
+                try {
+                    remove();
+                } catch (final AbsTTException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } else if (hasMoved && paramFromNode.getKind() == ENodes.TEXT_KIND
+                && getCurrentNode().getKind() == ENodes.TEXT_KIND) {
+                final StringBuilder builder = new StringBuilder(getValueOfCurrentNode());
+
+                // Adapt left sibling key of former right sibling of first child.
+                final AbsStructNode rightSibling =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(
+                        getCurrentNode().getNodeKey());
+                rightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
+                getTransactionState().finishNodeModification(rightSibling);
+
+                // Adapt sibling keys of moved node.
+                final TextNode movedNode =
+                    (TextNode)getTransactionState().prepareNodeForModification(paramFromNode.getNodeKey());
+                movedNode.setRightSiblingKey(rightSibling.getNodeKey());
+                movedNode.setLeftSiblingKey(paramToNode.getNodeKey());
+                getTransactionState().finishNodeModification(movedNode);
+                
+                // Merge text nodes.
+                moveTo(movedNode.getNodeKey());
+                builder.insert(0, getValueOfCurrentNode());
+                setValue(builder.toString());
+
+                // Remove right sibling.
+                moveTo(paramToNode.getRightSiblingKey());
+                try {
+                    remove();
+                } catch (final AbsTTException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
+                final AbsStructNode insertAnchor =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramToNode.getNodeKey());
+                // Adapt right sibling key of node where the subtree has to be inserted.
+                insertAnchor.setRightSiblingKey(paramFromNode.getNodeKey());
+                getTransactionState().finishNodeModification(insertAnchor);
+            } else {
+                final AbsStructNode insertAnchor =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramToNode.getNodeKey());
+                final long rightSiblKey = insertAnchor.getRightSiblingKey();
+                // Adapt right sibling key of node where the subtree has to be inserted.
+                insertAnchor.setRightSiblingKey(paramFromNode.getNodeKey());
+                getTransactionState().finishNodeModification(insertAnchor);
+
+                if (rightSiblKey > -1) {
+                    // Adapt left sibling key of former right sibling.
+                    final AbsStructNode oldRightSibling =
+                        (AbsStructNode)getTransactionState().prepareNodeForModification(rightSiblKey);
+                    oldRightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
+                    getTransactionState().finishNodeModification(oldRightSibling);
+
+                    // Adapt right sibling key of moved node.
+                    final AbsStructNode movedNode =
+                        (AbsStructNode)getTransactionState().prepareNodeForModification(
+                            paramFromNode.getNodeKey());
+                    movedNode.setRightSiblingKey(rightSiblKey);
+                    getTransactionState().finishNodeModification(movedNode);
+                }
+
+                // Adapt left sibling key of moved node.
                 final AbsStructNode movedNode =
-                    (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
-                movedNode.setRightSiblingKey(oldRightSibling.getNodeKey());
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(
+                        paramFromNode.getNodeKey());
+                movedNode.setLeftSiblingKey(insertAnchor.getNodeKey());
                 getTransactionState().finishNodeModification(movedNode);
             }
-            
-            // Adapt left sibling key of moved node.
-            final AbsStructNode movedNode =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(paramFromElement.getNodeKey());
-            movedNode.setLeftSiblingKey(insertAnchor.getNodeKey());
-            getTransactionState().finishNodeModification(movedNode);
             break;
         }
     }
@@ -385,7 +551,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     @Override
     public synchronized long insertTextAsRightSibling(final String paramValueAsString) throws AbsTTException {
         if (getCurrentNode() instanceof AbsStructNode) {
-
             checkAccessAndCommit();
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
@@ -925,7 +1090,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * Adapting the structure with a rolling hash for all ancestors only with insert.
      * 
      * @throws TTIOException
-     *             of anything weird happened.
+     *             if anything weird happened
      */
     private void postorderAdd() throws TTIOException {
         // start with hash to add
@@ -986,7 +1151,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @param paramOldHash
      *            paramOldHash to be removed
      * @throws TTIOException
-     *             of anything weird happened.
+     *             if anything weird happened
      */
     private void rollingUpdate(final long paramOldHash) throws TTIOException {
         final IItem newNode = getCurrentNode();
@@ -1016,7 +1181,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * Adapting the structure with a rolling hash for all ancestors only with remove.
      * 
      * @throws TTIOException
-     *             of anything weird happened.
+     *             if anything weird happened
      */
     private void rollingRemove() throws TTIOException {
         final IItem startNode = getCurrentNode();
@@ -1053,7 +1218,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * Adapting the structure with a rolling hash for all ancestors only with insert.
      * 
      * @throws TTIOException
-     *             of anything weird happened.
+     *             if anything weird happened
      */
     private void rollingAdd() throws TTIOException {
         // start with hash to add

@@ -27,22 +27,14 @@
 
 package org.treetank.access;
 
-import org.treetank.api.ISession;
 import org.treetank.api.IVisitor;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.node.AttributeNode;
-import org.treetank.node.DocumentRootNode;
-import org.treetank.node.DummyNode;
-import org.treetank.node.ElementNode;
-import org.treetank.node.NamespaceNode;
-import org.treetank.node.TextNode;
+import org.treetank.node.*;
 
 /**
  * <h1>AbsVisitorSupport</h1>
  * 
  * <p>
- * Based on the dom4j approach <code>VisitorSupport</code> is an abstract base class which is useful for
+ * Inspired by the dom4j approach <code>VisitorSupport</code> is an abstract base class which is useful for
  * implementation inheritence or when using anonymous inner classes to create simple <code>Visitor</code>
  * implementations.
  * </p>
@@ -57,7 +49,7 @@ import org.treetank.node.TextNode;
  * </pre></code>
  * 
  * <code><pre>
- * IVisitor visitor = new AbsVisitorSupport() {
+ * IVisitor visitor = new AbsVisitorSupport(rtx) {
  *      public void visit(final ElementNode paramNode) {
  *              mRtx.moveTo(paramNode.getNodeKey());
  *              System.out.println(

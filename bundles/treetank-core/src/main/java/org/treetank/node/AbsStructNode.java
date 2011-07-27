@@ -67,10 +67,10 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      * 
      * The concrete arrays are set by the concrete classes.
      * 
-     * @param paramLongBuilder
-     *            long array to be set
-     * @param paramIntBuilder
-     *            int array to be set
+     * @param paramByteBuilder
+     *            byte array to be set
+     * @param paramPointerBuilder
+     *            byte array to be set
      */
     protected AbsStructNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder) {
         super(paramByteBuilder, paramPointerBuilder);

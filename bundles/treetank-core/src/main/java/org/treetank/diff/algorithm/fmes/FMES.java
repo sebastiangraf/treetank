@@ -60,9 +60,18 @@ import org.treetank.node.ElementNode;
  */
 public final class FMES implements IImportDiff {
 
+    /** Determines if a reverse lookup has to be made. */
+    enum EReverseMap {
+        /** Yes, reverse lookup. */
+        TRUE,
+
+        /** No, normal lookup. */
+        FALSE
+    }
+
     /** Algorithm name. */
     private static final String NAME = "Fast Matching / Edit Script";
-    
+
     /**
      * Matching Criterion 1.
      * For the "good matching problem", the following
@@ -101,12 +110,12 @@ public final class FMES implements IImportDiff {
     /**
      * This is the matching M between nodes as described in the paper.
      */
-    private Matching mFastMatching;
+    private transient Matching mFastMatching;
 
     /**
      * This is the total matching M' between nodes as described in the paper.
      */
-    private Matching mTotalMatching;
+    private transient Matching mTotalMatching;
 
     /**
      * Stores the in-order property for each node
@@ -534,7 +543,12 @@ public final class FMES implements IImportDiff {
     private IItem emitInsert(final IItem paramParent, final IItem paramChild, final int paramPos,
         final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         paramWtx.moveTo(paramParent.getNodeKey());
-        paramWtx.moveTo(paramChild.getNodeKey());
+        paramRtx.moveTo(paramChild.getNodeKey());
+
+        // Determines if node has been already inserted (for subtrees).
+        if (mAlreadyInserted.containsKey(paramChild)) {
+            return paramChild; // actually child'
+        }
 
         try {
             switch (paramChild.getKind()) {
@@ -545,40 +559,111 @@ public final class FMES implements IImportDiff {
                 paramWtx.insertNamespace(paramRtx.getQNameOfCurrentNode());
                 break;
             default:
-                // In case of other node types do nothing.
-            }
-            if (paramPos == 0) {
-                switch (paramChild.getKind()) {
-                case ELEMENT_KIND:
-                    paramWtx.insertElementAsFirstChild(paramRtx.getQNameOfCurrentNode());
-                    break;
-                case TEXT_KIND:
-                    paramWtx.insertTextAsFirstChild(paramRtx.getValueOfCurrentNode());
-                    break;
-                default:
-                    // Already inserted.
-                }
-            } else {
-                assert paramWtx.getStructuralNode().hasFirstChild();
-                for (int i = 0; i < paramPos - 1; i++) {
-                    assert paramWtx.getStructuralNode().hasRightSibling();
-                    paramWtx.moveToRightSibling();
-                }
-                switch (paramChild.getKind()) {
-                case ELEMENT_KIND:
-                    paramWtx.insertElementAsRightSibling(paramRtx.getQNameOfCurrentNode());
-                    break;
-                case TEXT_KIND:
-                    paramWtx.insertTextAsRightSibling(paramRtx.getValueOfCurrentNode());
-                    break;
-                default:
-                    // Already inserted.
+                // In case of other node types.
+                if (paramPos == 0) {
+                    switch (paramChild.getKind()) {
+                    case ELEMENT_KIND:
+                        paramWtx.insertElementAsFirstChild(paramRtx.getQNameOfCurrentNode());
+                        insertNonStructural(paramRtx, paramWtx);
+                        // TODO: Insert whole subtree.
+                        break;
+                    case TEXT_KIND:
+                        paramWtx.insertTextAsFirstChild(paramRtx.getValueOfCurrentNode());
+                        break;
+                    default:
+                        // Already inserted.
+                    }
+                } else {
+                    assert paramWtx.getStructuralNode().hasFirstChild();
+                    paramWtx.moveToFirstChild();
+                    for (int i = 1; i < paramPos - 1; i++) {
+                        assert paramWtx.getStructuralNode().hasRightSibling();
+                        assert mInOrder.get(paramWtx.getNode()) != null;
+                        assert mInOrder.get(paramWtx.getNode());
+                        paramWtx.moveToRightSibling();
+                    }
+                    switch (paramChild.getKind()) {
+                    case ELEMENT_KIND:
+                        paramWtx.insertElementAsRightSibling(paramRtx.getQNameOfCurrentNode());
+                        insertNonStructural(paramRtx, paramWtx);
+                        // TODO: Insert whole subtree.
+                        break;
+                    case TEXT_KIND:
+                        paramWtx.insertTextAsRightSibling(paramRtx.getValueOfCurrentNode());
+                        break;
+                    default:
+                        // Already inserted.
+                    }
                 }
             }
         } catch (final AbsTTException e) {
             e.printStackTrace();
         }
+
+        // Mark all nodes in subtree as inserted.
+        for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+            final IStructuralItem node = axis.getTransaction().getStructuralNode();
+            mAlreadyInserted.put(node, true);
+            mInOrder.put(node, true);
+            final long nodeKey = node.getNodeKey();
+            if (node.getKind() == ENodes.ELEMENT_KIND) {
+                final ElementNode element = (ElementNode)node;
+                if (element.getAttributeCount() > 0) {
+                    for (int i = 0; i < element.getAttributeCount(); i++) {
+                        axis.getTransaction().moveToAttribute(i);
+                        mAlreadyInserted.put(axis.getTransaction().getNode(), true);
+                        mInOrder.put(axis.getTransaction().getNode(), true);
+                        axis.getTransaction().moveTo(nodeKey);
+                    }
+                }
+                if (element.getNamespaceCount() > 0) {
+                    for (int i = 0; i < element.getNamespaceCount(); i++) {
+                        axis.getTransaction().moveToNamespace(i);
+                        mAlreadyInserted.put(axis.getTransaction().getNode(), true);
+                        mInOrder.put(axis.getTransaction().getNode(), true);
+                        axis.getTransaction().moveTo(nodeKey);
+                    }
+                }
+            }
+
+            axis.getTransaction().moveTo(nodeKey);
+        }
+
         return paramWtx.getNode();
+    }
+
+    /**
+     * Insert attributes or namespaces.
+     * 
+     * @param paramWtx
+     *            {@link IWriteTransaction} implementation reference on old revision
+     * @param paramRtx
+     *            {@link IReadTransaction} implementation reference on new revision
+     * @throws AbsTTException
+     *             if insertion fails
+     */
+    private void insertNonStructural(final IReadTransaction paramRtx, final IWriteTransaction paramWtx)
+        throws AbsTTException {
+        assert paramRtx != null;
+        assert paramWtx != null;
+        assert paramRtx.getStructuralNode().getKind() == ENodes.ELEMENT_KIND;
+        assert paramWtx.getStructuralNode().getKind() == ENodes.ELEMENT_KIND;
+        final ElementNode element = (ElementNode)paramRtx.getStructuralNode();
+        if (element.getAttributeCount() > 0) {
+            for (int i = 0; i < element.getAttributeCount(); i++) {
+                paramRtx.moveToAttribute(i);
+                paramWtx.insertAttribute(paramRtx.getQNameOfCurrentNode(), paramRtx.getValueOfCurrentNode());
+                paramRtx.moveToParent();
+            }
+        }
+        if (element.getNamespaceCount() > 0) {
+            for (int i = 0; i < element.getNamespaceCount(); i++) {
+                paramRtx.moveToNamespace(i);
+                paramWtx.insertNamespace(paramRtx.getQNameOfCurrentNode());
+                paramRtx.moveToParent();
+            }
+        }
+
     }
 
     /**

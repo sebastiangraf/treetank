@@ -50,10 +50,10 @@ public final class FMESVisitor extends AbsVisitorSupport {
     private final IReadTransaction mRtx;
 
     /** Determines if nodes are in order. */
-    private Map<IItem, Boolean> mInOrder;
+    private final Map<IItem, Boolean> mInOrder;
 
     /** Descendant count per node. */
-    private Map<IItem, Long> mDescendants;
+    private final Map<IItem, Long> mDescendants;
 
     /**
      * Constructor.

@@ -81,24 +81,24 @@ public final class Util {
 
         for (int i = 0; i <= max; i++) {
             for (int j = -i; j <= i; j += 2) {
-                int idx_x;
+                int idxX;
                 if (j == -i || j != i && v[max + j - 1] < v[max + j + 1]) {
                     // System.err.printf("Array index: %d\n", max + j + 1);
-                    idx_x = v[max + j + 1];
+                    idxX = v[max + j + 1];
                     common.set(max + j, new ArrayList<Pair<T, T>>(common.get(max + j + 1)));
                 } else {
-                    idx_x = v[max + j - 1] + 1;
+                    idxX = v[max + j - 1] + 1;
                     common.set(max + j, new ArrayList<Pair<T, T>>(common.get(max + j - 1)));
                 }
-                int idx_y = idx_x - j;
-                while (idx_x < n && idx_y < m && paramCmp.isEqual(x.get(idx_x), y.get(idx_y))) {
-                    common.set(max + j, common.get(max + j)).add(new Pair<T, T>(x.get(idx_x), y.get(idx_y)));
-                    idx_x++;
-                    idx_y++;
+                int idxY = idxX - j;
+                while (idxX < n && idxY < m && paramCmp.isEqual(x.get(idxX), y.get(idxY))) {
+                    common.set(max + j, common.get(max + j)).add(new Pair<T, T>(x.get(idxX), y.get(idxY)));
+                    idxX++;
+                    idxY++;
                 }
 
-                v[max + j] = idx_x;
-                if (idx_x >= n && idx_y >= m) {
+                v[max + j] = idxX;
+                if (idxX >= n && idxY >= m) {
                     return common.get(max + j);
                 }
             }

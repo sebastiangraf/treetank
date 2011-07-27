@@ -24,32 +24,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.diff.algorithm;
-
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.IWriteTransaction;
 
 /**
- * Diff interface for Import algorithms.
+ * Implementation of diff algorithms.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- * 
  */
-public interface IImportDiff {
-    /**
-     * Do the diff.
-     * 
-     * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
-     * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
-     */
-    void diff(final IWriteTransaction paramWtx, final IReadTransaction paramRtx);
+package org.treetank.diff.algorithm;
 
-    /**
-     * Name of algorithm.
-     * 
-     * @return name
-     */
-    String getName();
-}
