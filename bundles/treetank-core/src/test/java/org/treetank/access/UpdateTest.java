@@ -148,7 +148,8 @@ public class UpdateTest {
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));
         for (int i = 0; i < 256 * 256 + 1; i++) {
-            wtx.insertTextAsRightSibling("");
+//            wtx.insertTextAsRightSibling("");
+            wtx.insertElementAsRightSibling(new QName(""));
         }
 
         assertTrue(wtx.moveTo(2L));
@@ -229,6 +230,7 @@ public class UpdateTest {
         assertFalse(rtx.getStructuralNode().hasRightSibling());
         assertEquals("foo", rtx.getValueOfCurrentNode());
         rtx.close();
+        session.close();
     }
 
     @Test
@@ -256,6 +258,45 @@ public class UpdateTest {
         assertTrue(rtx.moveTo(7));
         assertEquals(4L, rtx.getStructuralNode().getLeftSiblingKey());
         rtx.close();
+        session.close();
+    }
+    
+    @Test
+    public void testThirdMoveToFirstChild() throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.moveTo(5);
+        wtx.moveSubtreeToFirstChild(11);
+        wtx.commit();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.moveTo(5));
+        assertEquals(11L, rtx.getStructuralNode().getFirstChildKey());
+        assertTrue(rtx.moveTo(11));
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertEquals(5L, rtx.getStructuralNode().getParentKey());
+        assertEquals(6L, rtx.getStructuralNode().getRightSiblingKey());
+        assertTrue(rtx.moveTo(6L));
+        assertEquals(11L, rtx.getStructuralNode().getLeftSiblingKey());
+        assertEquals(7L, rtx.getStructuralNode().getRightSiblingKey());
+        rtx.close();
+        session.close();
+    }
+    
+    @Test(expected = TTUsageException.class)
+    public void testFourthMoveToFirstChild() throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.moveTo(4);
+        wtx.moveSubtreeToFirstChild(11);
+        wtx.commit();
+        wtx.close();
+        session.close();
     }
 
     @Test
@@ -278,6 +319,7 @@ public class UpdateTest {
         assertTrue(rtx.getStructuralNode().hasLeftSibling());
         assertEquals(7L, rtx.getStructuralNode().getLeftSiblingKey());
         rtx.close();
+        session.close();
     }
 
     @Test
@@ -301,6 +343,7 @@ public class UpdateTest {
         assertEquals(9L, rtx.getStructuralNode().getLeftSiblingKey());
         assertEquals(13L, rtx.getStructuralNode().getRightSiblingKey());
         rtx.close();
+        session.close();
     }
 
     @Test
@@ -324,6 +367,7 @@ public class UpdateTest {
         assertTrue(rtx.moveTo(9));
         assertEquals(4L, rtx.getStructuralNode().getRightSiblingKey());
         rtx.close();
+        session.close();
     }
 
     @Test
@@ -350,6 +394,7 @@ public class UpdateTest {
         assertTrue(rtx.moveTo(9));
         assertEquals(4L, rtx.getStructuralNode().getLeftSiblingKey());
         rtx.close();
+        session.close();
     }
 
 }

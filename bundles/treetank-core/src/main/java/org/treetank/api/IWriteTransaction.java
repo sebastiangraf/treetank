@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -56,8 +56,7 @@ import org.treetank.exception.TTIOException;
  * <p>
  * <ol>
  * <li>Only a single thread accesses the single IWriteTransaction instance.</li>
- * <li><strong>Precondition</strong> before moving cursor: <code>IWriteTransaction.getNodeKey() == n</code>.
- * </li>
+ * <li><strong>Precondition</strong> before moving cursor: <code>IWriteTransaction.getNodeKey() == n</code>.</li>
  * <li><strong>Postcondition</strong> after modifying the cursor: <code>(IWriteTransaction.insertX() == m &&
  *       IWriteTransaction.getNodeKey() == m)</code>.</li>
  * </ol>
@@ -116,7 +115,7 @@ public interface IWriteTransaction extends IReadTransaction {
 
     // --- Node Modifiers
     // --------------------------------------------------------
-    
+
     /**
      * Move a subtree rooted at paramToKey to the first child rooted at paramToKey.
      * 
@@ -127,7 +126,7 @@ public interface IWriteTransaction extends IReadTransaction {
      *             if move adaption fails
      */
     long moveSubtreeToFirstChild(final long paramFromKey) throws AbsTTException;
-    
+
     /**
      * Move a subtree rooted at paramToKey to the right sibling of the node at paramToKey.
      * 
@@ -293,12 +292,12 @@ public interface IWriteTransaction extends IReadTransaction {
      * Reverting all changes to the revision defined. This command has to be
      * finalized with a commit. A revert is always bound to a {@link IReadTransaction#moveToDocumentRoot()}.
      * 
-     * @param revision
-     *            revert for the revision
+     * @param paramRevision
+     *            revert to the revision
      * @throws AbsTTException
      *             if couldn't revert to revision
      */
-    void revertTo(final long revision) throws AbsTTException;
+    void revertTo(final long paramRevision) throws AbsTTException;
 
     /**
      * Closing current WriteTransaction.
@@ -309,4 +308,35 @@ public interface IWriteTransaction extends IReadTransaction {
     @Override
     void close() throws AbsTTException;
 
+    /**
+     * Copy subtree from another database/resource/revision and insert as right sibling of the current node.
+     * 
+     * @param paramNodeKey
+     *            node key of the root node of the subtree to copy
+     * @param paramRevision
+     *            revision from which to copy a subtree
+     * @param paramDatabase
+     *            database reference which implements the {@link IDatabase} interface
+     * @return key of copied subtree root node
+     * @throws AbsTTException
+     *             if anything went wrong
+     */
+    long copySubtreeAsFirstChild(final long paramNodeKey, final IDatabase paramDatabase,
+        final long paramRevision) throws AbsTTException;
+
+    /**
+     * Copy subtree from another database/resource/revision and insert as right sibling of the current node.
+     * 
+     * @param paramNodeKey
+     *            node key of the root node of the subtree to copy
+     * @param paramRevision
+     *            revision from which to copy a subtree
+     * @param paramDatabase
+     *            database reference which implements the {@link IDatabase} interface
+     * @return key of copied subtree root node
+     * @throws AbsTTException
+     *             if anything went wrong
+     */
+    long copySubtreeAsRightSibling(final long paramNodeKey, final IDatabase paramDatabase,
+        final long paramRevision) throws AbsTTException;
 }

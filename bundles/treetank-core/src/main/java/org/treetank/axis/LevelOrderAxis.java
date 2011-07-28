@@ -38,7 +38,7 @@ import org.treetank.settings.EFixed;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class BreathFirstAxis extends AbsAxis {
+public final class LevelOrderAxis extends AbsAxis {
 
     /** {@link List} for remembering next nodeKey in document order. */
     private List<Long> mFirstChildKeyList;
@@ -52,7 +52,7 @@ public final class BreathFirstAxis extends AbsAxis {
      * @param paramRtx
      *            exclusive (immutable) trx to iterate with
      */
-    public BreathFirstAxis(final IReadTransaction paramRtx) {
+    public LevelOrderAxis(final IReadTransaction paramRtx) {
         super(paramRtx);
     }
 
@@ -64,7 +64,7 @@ public final class BreathFirstAxis extends AbsAxis {
      * @param paramIncludeSelf
      *            determines if self included
      */
-    public BreathFirstAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf) {
+    public LevelOrderAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf) {
         super(paramRtx, paramIncludeSelf);
     }
 

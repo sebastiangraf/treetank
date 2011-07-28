@@ -35,7 +35,7 @@ import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransactionState;
 import org.treetank.api.*;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.BreathFirstAxis;
+import org.treetank.axis.LevelOrderAxis;
 import org.treetank.axis.ChildAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.PostOrderAxis;
@@ -203,7 +203,7 @@ public final class FMES implements IImportDiff {
      */
     private void firstFMESStep(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         // 2. Iterate over new shreddered file
-        for (final AbsAxis axis = new BreathFirstAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+        for (final AbsAxis axis = new LevelOrderAxis(paramRtx, true); axis.hasNext(); axis.next()) {
             final IStructuralItem node = axis.getTransaction().getStructuralNode();
             final long nodeKey = node.getNodeKey();
             if (node.getKind() == ENodes.ELEMENT_KIND) {

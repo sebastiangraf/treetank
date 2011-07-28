@@ -32,9 +32,11 @@ import org.treetank.io.AbsIOFactory.StorageType;
 import org.treetank.settings.ERevisioning;
 
 /**
- * <h1>Database Configuration</h1> class represents a configuration of a
- * database. includes all
- * settings which have to be made when it comes to the creation of the database.
+ * <h1>Database Configuration</h1>
+ * 
+ * <p>
+ * Represents a configuration of a database. Includes all settings which have to be made when 
+ * it comes to the creation of the database.
  * 
  * @author Sebastian Graf, University of Konstanz
  */
@@ -54,19 +56,19 @@ public final class DatabaseConfiguration {
     // END STATIC STANDARD FIELDS
 
     /** Type of Storage (File, Berkeley). */
-    public final StorageType mType;
+    private final StorageType mType;
 
     /** Kind of revisioning (Incremental, Differential). */
-    public final ERevisioning mRevision;
+    private final ERevisioning mRevision;
 
     /** Kind of integrity hash (rolling, postorder). */
-    public final HashKind mHashKind;
+    private final HashKind mHashKind;
 
     /** Number of revisions to restore a complete set of data. */
-    public final int mRevisionsToRestore;
+    private final int mRevisionsToRestore;
 
     /** Binary version of storage. */
-    public final String mBinaryVersion;
+    private final String mBinaryVersion;
 
     /**
      * Constructor with all possible properties.
@@ -75,14 +77,62 @@ public final class DatabaseConfiguration {
      *            properties to be set for setting
      */
     private DatabaseConfiguration(final DatabaseConfiguration.Builder paramBuilder) {
-        this.mType = paramBuilder.mType;
-        this.mRevision = paramBuilder.mRevision;
-        this.mHashKind = paramBuilder.mHashKind;
-        this.mRevisionsToRestore = paramBuilder.mRevisionsToRestore;
-        this.mBinaryVersion = paramBuilder.mBinaryVersion;
+        mType = paramBuilder.mType;
+        mRevision = paramBuilder.mRevision;
+        mHashKind = paramBuilder.mHashKind;
+        mRevisionsToRestore = paramBuilder.mRevisionsToRestore;
+        mBinaryVersion = paramBuilder.mBinaryVersion;
+    }
+    
+    /**
+     * Get binaryVersion.
+     *
+     * @return the binaryVersion
+     */
+    public String getBinaryVersion() {
+        return mBinaryVersion;
+    }
+    
+    /**
+     * Get hashKind.
+     *
+     * @return the hashKind
+     */
+    public HashKind getHashKind() {
+        return mHashKind;
+    }
+    
+    /**
+     * Get revision.
+     *
+     * @return the revision
+     */
+    public ERevisioning getRevision() {
+        return mRevision;
+    }
+    
+    /**
+     * Get type.
+     *
+     * @return the type
+     */
+    public StorageType getType() {
+        return mType;
+    }
+    
+    /**
+     * Get revisionsToRestore.
+     *
+     * @return the revisionsToRestore
+     */
+    public int getRevisionsToRestore() {
+        return mRevisionsToRestore;
     }
 
-    public static class Builder {
+    /**
+     * Builder class for generating new {@link DatabaseConfiguration} instance.
+     */
+    public static final class Builder {
 
         /** Type of Storage (File, Berkeley). */
         private StorageType mType = STORAGE;
@@ -100,53 +150,78 @@ public final class DatabaseConfiguration {
         private String mBinaryVersion = BINARY;
 
         /**
-         * Setter for mStorageType
+         * Setter for mStorageType.
          * 
          * @param paramType
          *            to be set
+         * @return reference to the builder object
          */
-        public void setType(StorageType paramType) {
-            this.mType = paramType;
+        public Builder setType(final StorageType paramType) {
+            if (paramType == null) {
+                throw new NullPointerException("paramType may not be null!");
+            }
+            mType = paramType;
+            return this;
         }
 
         /**
-         * Setter for mRevision
+         * Setter for mRevision.
          * 
          * @param paramRevision
          *            to be set
+         * @return reference to the builder object
          */
-        public void setRevision(ERevisioning paramRevision) {
-            this.mRevision = paramRevision;
+        public Builder setRevision(final ERevisioning paramRevision) {
+            if (paramRevision == null) {
+                throw new NullPointerException("paramType may not be null!");
+            }
+            mRevision = paramRevision;
+            return this;
         }
 
         /**
-         * Setter for mHashKind
+         * Setter for mHashKind.
          * 
          * @param paramHashKind
          *            to be set
+         * @return reference to the builder object
          */
-        public void setHashKind(HashKind paramHashKind) {
-            this.mHashKind = paramHashKind;
+        public Builder setHashKind(final HashKind paramHashKind) {
+            if (paramHashKind == null) {
+                throw new NullPointerException("paramType may not be null!");
+            }
+            mHashKind = paramHashKind;
+            return this;
         }
 
         /**
-         * Setter for mRevisionsToRestore
+         * Setter for mRevisionsToRestore.
          * 
          * @param paramRevisionsToRestore
          *            to be set
+         * @return reference to the builder object
          */
-        public void setRevisionsToRestore(int paramRevisionsToRestore) {
-            this.mRevisionsToRestore = paramRevisionsToRestore;
+        public Builder setRevisionsToRestore(final int paramRevisionsToRestore) {
+            if (paramRevisionsToRestore <= 0) {
+                throw new IllegalArgumentException("paramRevisionsToRestore must be > 0!");
+            }
+            mRevisionsToRestore = paramRevisionsToRestore;
+            return this;
         }
 
         /**
-         * Setter for paramBinaryVersion
+         * Setter for mBinaryVersion.
          * 
          * @param paramBinaryVersion
          *            to be set
+         * @return reference to the builder object
          */
-        public void setBinaryVersion(String paramBinaryVersion) {
-            this.mBinaryVersion = paramBinaryVersion;
+        public Builder setBinaryVersion(final String paramBinaryVersion) {
+            if (paramBinaryVersion == null) {
+                throw new NullPointerException("paramBinaryVersion may not be null!");
+            }
+            mBinaryVersion = paramBinaryVersion;
+            return this;
         }
 
         /**

@@ -133,7 +133,7 @@ public abstract class AbsIOFactory {
         throws TTIOException {
         AbsIOFactory fac = null;
         if (!FACTORIES.containsKey(paramSessionConf)) {
-            final AbsIOFactory.StorageType storageType = paramDatabaseConf.mType;
+            final AbsIOFactory.StorageType storageType = paramDatabaseConf.getType();
             switch (storageType) {
             case File:
                 fac = new FileFactory(paramFile, paramDatabaseConf, paramSessionConf);

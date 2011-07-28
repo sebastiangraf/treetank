@@ -27,64 +27,62 @@
 
 package org.treetank.access;
 
-import org.treetank.exception.TTUsageException;
-
 /**
  * <h1>SessionConfiguration</h1>
  * 
  * <p>
  * Holds the session-wide settings that can not change. This included stuff like commit-threshold and number
- * of usable write/read transactions
- * 
+ * of usable write/read transactions.
+ * </p>
  */
 public final class SessionConfiguration {
 
     // STATIC STANDARD FIELDS
     /** Number of concurrent exclusive write transactions. */
-    public final static int MAX_WRITE_TRANSACTIONS = 1;
+    public static final int MAX_WRITE_TRANSACTIONS = 1;
     /** Number of concurrent shared read transactions. */
-    public final static int MAX_READ_TRANSACTIONS = 128;
+    public static final int MAX_READ_TRANSACTIONS = 128;
     /** Commit threshold. */
-    public final static int COMMIT_THRESHOLD = 262144;
+    public static final int COMMIT_THRESHOLD = 262144;
     /** Default User. */
-    public final static String DEFAULT_USER = "ALL";
+    public static final String DEFAULT_USER = "ALL";
     /** Folder for tmp-database. */
-    public final static String INTRINSICTEMP = "tmp";
+    public static final String INTRINSICTEMP = "tmp";
     // END STATIC STANDARD FIELDS
 
     /** Numbers of allowed IWriteTransaction Instances. */
-    public final int mWtxAllowed;
+    final int mWtxAllowed;
 
     /** Numbers of allowed IWriteTransaction Instances. */
-    public final int mRtxAllowed;
+    final int mRtxAllowed;
 
     /** Number of node modifications until an automatic commit occurs. */
-    public final int mCommitThreshold;
+    final int mCommitThreshold;
 
     /** User for this session. */
-    public final String mUser;
+    final String mUser;
 
     /** Name for the resource to be associated. */
-    public final String mName;
+    final String mName;
 
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @throws TTUsageException
-     *             if session is not valid
+     * @param paramBuilder
+     *            {@link Builder} reference
      */
     private SessionConfiguration(final SessionConfiguration.Builder paramBuilder, final String paramName) {
-        this.mWtxAllowed = paramBuilder.mWtxAllowed;
-        this.mRtxAllowed = paramBuilder.mRtxAllowed;
-        this.mCommitThreshold = paramBuilder.mCommitThreshold;
-        this.mUser = paramBuilder.mUser;
-        this.mName = paramName;
+        mWtxAllowed = paramBuilder.mWtxAllowed;
+        mRtxAllowed = paramBuilder.mRtxAllowed;
+        mCommitThreshold = paramBuilder.mCommitThreshold;
+        mUser = paramBuilder.mUser;
+        mName = paramName;
     }
 
     /**
-     * Builder class for generating new SessionConfiguration.
+     * Builder class for generating new {@link SessionConfiguration} instance.
      */
-    public static class Builder {
+    public static final class Builder {
 
         /** Numbers of allowed IWriteTransaction Instances. */
         private int mWtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
@@ -99,47 +97,67 @@ public final class SessionConfiguration {
         private String mUser = SessionConfiguration.DEFAULT_USER;
 
         /**
-         * Setter for field mWtxAllowed
+         * Setter for field mWtxAllowed.
          * 
-         * @param mWtxAllowed
+         * @param paramWtxAllowed
          *            new value for field
+         * @return reference to the builder object
          */
-        public void setWtxAllowed(int mWtxAllowed) {
-            this.mWtxAllowed = mWtxAllowed;
+        public Builder setWtxAllowed(final int paramWtxAllowed) {
+            if (paramWtxAllowed < 1) {
+                throw new IllegalArgumentException("Value must be > 0!");
+            }
+            mWtxAllowed = paramWtxAllowed;
+            return this;
         }
 
         /**
-         * Setter for field mRtxAllowed
+         * Setter for field mRtxAllowed.
          * 
-         * @param mRtxAllowed
+         * @param paramRtxAllowed
          *            new value for field
+         * @return reference to the builder object
          */
-        public void setRtxAllowed(int mRtxAllowed) {
-            this.mRtxAllowed = mRtxAllowed;
+        public Builder setRtxAllowed(final int paramRtxAllowed) {
+            if (paramRtxAllowed < 1) {
+                throw new IllegalArgumentException("Value must be > 0!");
+            }
+            mRtxAllowed = paramRtxAllowed;
+            return this;
         }
 
         /**
-         * Setter for field mCommitThreshold
+         * Setter for field mCommitThreshold.
          * 
-         * @param mCommitThreshold
+         * @param paramCommitThreshold
          *            new value for field
+         * @return reference to the builder object
          */
-        public void setCommitThreshold(int mCommitThreshold) {
-            this.mCommitThreshold = mCommitThreshold;
+        public Builder setCommitThreshold(final int paramCommitThreshold) {
+            if (paramCommitThreshold < 100) {
+                throw new IllegalArgumentException("Value must be > 100!");
+            }
+            mCommitThreshold = paramCommitThreshold;
+            return this;
         }
 
         /**
-         * Setter for field mUser
+         * Setter for field mUser.
          * 
-         * @param mUser
+         * @param paramUser
          *            new value for field
+         * @return reference to the builder object
          */
-        public void setUser(String mUser) {
-            this.mUser = mUser;
+        public Builder setUser(final String paramUser) {
+            if (paramUser == null) {
+                throw new NullPointerException("paramUser may not be null!");
+            }
+            mUser = paramUser;
+            return this;
         }
 
         /**
-         * Builder method to generate new configuration
+         * Builder method to generate new configuration.
          * 
          * @return a new {@link SessionConfiguration} instance
          */
@@ -148,7 +166,7 @@ public final class SessionConfiguration {
         }
 
         /**
-         * Builder method to generate new configuration
+         * Builder method to generate new configuration.
          * 
          * @param resourceName
          *            name of the resource where the data should be persisted to
