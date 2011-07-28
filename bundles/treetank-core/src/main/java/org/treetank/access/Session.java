@@ -43,24 +43,26 @@ import org.treetank.utils.ItemList;
 public final class Session implements ISession {
 
     /** Session state. */
-    private SessionState mSessionState;
+    private transient SessionState mSessionState;
 
-    /** Was session closed? */
-    private boolean mClosed;
+    /** Determines if session was closed. */
+    private transient boolean mClosed;
 
     /**
      * Hidden constructor.
      * 
-     * @param mDatabaseConf
+     * @param paramDatabaseConf
      *            DatabaseConfiguration for general setting about the storage
-     * @param mSessionConf
+     * @param paramSessionConf
      *            SessionConfiguration for handling this specific session
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    protected Session(final DatabaseConfiguration mDatabaseConf, final SessionConfiguration mSessionConf)
+    protected Session(final DatabaseConfiguration paramDatabaseConf, final SessionConfiguration paramSessionConf)
         throws AbsTTException {
-        mSessionState = new SessionState(mDatabaseConf, mSessionConf);
+        assert paramDatabaseConf != null;
+        assert paramSessionConf != null;
+        mSessionState = new SessionState(paramDatabaseConf, paramSessionConf);
         mClosed = false;
     }
 
@@ -70,6 +72,7 @@ public final class Session implements ISession {
     @Override
     public synchronized IReadTransaction beginReadTransaction() throws AbsTTException {
         assertNotClosed();
+        assert mSessionState != null;
         return mSessionState.beginReadTransaction(new ItemList());
     }
 
@@ -77,10 +80,11 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public synchronized IReadTransaction beginReadTransaction(final long revisionKey) throws AbsTTException {
+    public synchronized IReadTransaction beginReadTransaction(final long paramRevisionKey) throws AbsTTException {
         assertNotClosed();
-        mSessionState.assertValidRevision(revisionKey);
-        return mSessionState.beginReadTransaction(revisionKey, new ItemList());
+        assert mSessionState != null;
+        mSessionState.assertValidRevision(paramRevisionKey);
+        return mSessionState.beginReadTransaction(paramRevisionKey, new ItemList());
     }
 
     /**
@@ -89,6 +93,7 @@ public final class Session implements ISession {
     @Override
     public synchronized IWriteTransaction beginWriteTransaction() throws AbsTTException {
         assertNotClosed();
+        assert mSessionState != null;
         return mSessionState.beginWriteTransaction(0, 0);
     }
 
@@ -96,10 +101,11 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public synchronized IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime)
+    public synchronized IWriteTransaction beginWriteTransaction(final int paramMaxNodeCount, final int paramMaxTime)
         throws AbsTTException {
         assertNotClosed();
-        return mSessionState.beginWriteTransaction(maxNodeCount, maxTime);
+        assert mSessionState != null;
+        return mSessionState.beginWriteTransaction(paramMaxNodeCount, paramMaxTime);
     }
 
     /**
@@ -108,6 +114,7 @@ public final class Session implements ISession {
     @Override
     public synchronized void close() throws AbsTTException {
         if (!mClosed) {
+            assert mSessionState != null;
             mSessionState.close();
             mSessionState = null;
             mClosed = true;
@@ -123,6 +130,7 @@ public final class Session implements ISession {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean isClosed() {
         return mClosed;

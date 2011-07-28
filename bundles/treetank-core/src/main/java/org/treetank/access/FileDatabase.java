@@ -55,22 +55,24 @@ public final class FileDatabase implements IDatabase {
     /** DatabaseConfiguration with fixed settings. */
     final DatabaseConfiguration mDatabaseConfiguration;
 
-    /** File for storing the DB */
+    /** File for storing the DB. */
     public final File mFile;
 
     /**
      * Private constructor.
      * 
+     * @param paramFile
+     *            Treetank {@link File} 
      * @param paramDBConf
-     *            conf for Database
-     * @param paramSessionConf
-     *            conf for session
+     *            {@link DatabaseConfiguration} reference to configure the {@link IDatabase}
      * @throws AbsTTException
      *             Exception if something weird happens
      */
     private FileDatabase(final File paramFile, final DatabaseConfiguration paramDBConf) throws AbsTTException {
-        this.mFile = paramFile;
-        this.mDatabaseConfiguration = paramDBConf;
+        assert paramFile != null;
+        assert paramDBConf != null;
+        mFile = paramFile;
+        mDatabaseConfiguration = paramDBConf;
     }
 
     /**
@@ -160,7 +162,6 @@ public final class FileDatabase implements IDatabase {
         } else {
             return returnVal;
         }
-
     }
 
     /**
@@ -186,7 +187,7 @@ public final class FileDatabase implements IDatabase {
      */
     @Override
     public String getVersion() {
-        return mDatabaseConfiguration.mBinaryVersion;
+        return mDatabaseConfiguration.getBinaryVersion();
     }
 
     /**
@@ -220,7 +221,7 @@ public final class FileDatabase implements IDatabase {
     }
 
     private final void generateResource() {
-
+        
     }
 
     /**

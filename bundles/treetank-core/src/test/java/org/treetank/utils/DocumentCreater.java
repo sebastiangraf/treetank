@@ -40,6 +40,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -55,11 +56,11 @@ import static org.junit.Assert.assertTrue;
  * described as follows:
  * 
  * <ul>
- * <li><code>IConstants.DOCUMENT : doc()</code></li>
- * <li><code>IConstants.FULLTEXT : ft()</code></li>
- * <li><code>IConstants.ELEMENT  : &lt;prefix:localPart&gt;</code></li>
- * <li><code>IConstants.ATTRIBUTE: &#64;prefix:localPart='value'</code></li>
- * <li><code>IConstants.TEXT     : #value</code></li>
+ * <li><code>ENodes.ROOT_KIND     : doc()</code></li>
+ * <li><code>ENodes.ELEMENT_KIND  : &lt;prefix:localPart&gt;</code></li>
+ * <li><code>ENodes.NAMESPACE_KIND: §prefix:namespaceURI</code></li>
+ * <li><code>ENodes.ATTRIBUTE_KIND: &#64;prefix:localPart='value'</code></li>
+ * <li><code>ENodes.TEXT_KIND     : #value</code></li>
  * </ul>
  * 
  * <pre>
@@ -102,9 +103,8 @@ public final class DocumentCreater {
             + "<c rest:ttid=\"11\"/>bar</b>oops3</p:a>" + "</rest:item></rest:sequence>";
 
     /** String representation of test document. */
-    public static final String XML =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">" + "<c/>bar</b>oops3</p:a>";
+    public static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+        + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">" + "<c/>bar</b>oops3</p:a>";
 
     /** String representation of test document. */
     public static final String VERSIONEDXML =
@@ -119,149 +119,158 @@ public final class DocumentCreater {
             + "<p:a>oops1<b>foo<c></c></b>oops2<b>" + "<c></c>bar</b>oops3</p:a>";
 
     /** XML for the index structure. */
-    public static final String XML_INDEX =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<t:o><t:oo><t:oop><t:oops><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-            + "<d:TEXT_KIND nodeID=\"4\"/></d:p:a></d:DOCUMENT_ROOT_KIND></t:oops></t:oop></t:oo>"
-            + "</t:o><t:f><t:fo><t:foo><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-            + "<d:b nodeID=\"5\"><d:TEXT_KIND nodeID=\"6\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:foo>"
-            + "</t:fo></t:f><t:b><t:ba><t:bar><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-            + "<d:b nodeID=\"9\"><d:TEXT_KIND nodeID=\"12\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:bar>"
-            + "</t:ba></t:b>";
+    public static final String XML_INDEX = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+        + "<t:o><t:oo><t:oop><t:oops><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+        + "<d:TEXT_KIND nodeID=\"4\"/></d:p:a></d:DOCUMENT_ROOT_KIND></t:oops></t:oop></t:oo>"
+        + "</t:o><t:f><t:fo><t:foo><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+        + "<d:b nodeID=\"5\"><d:TEXT_KIND nodeID=\"6\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:foo>"
+        + "</t:fo></t:f><t:b><t:ba><t:bar><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+        + "<d:b nodeID=\"9\"><d:TEXT_KIND nodeID=\"12\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:bar>"
+        + "</t:ba></t:b>";
 
     /**
      * Private Constructor, not used.
      */
     private DocumentCreater() {
+        throw new AssertionError("Not permitted to call constructor!");
     }
 
     /**
      * Create simple test document containing all supported node kinds.
      * 
-     * @param secondWtx
-     *            IWriteTransaction to write to.
+     * @param paramWtx
+     *            {@link IWriteTransaction} to write to
      * @throws AbsTTException
-     *             if any weird happens
+     *             if anything weird happens
      */
-    public static void create(final IWriteTransaction secondWtx) throws AbsTTException {
-        assertTrue(secondWtx.moveToDocumentRoot());
+    public static void create(final IWriteTransaction paramWtx) throws AbsTTException {
+        assertNotNull(paramWtx);
+        assertTrue(paramWtx.moveToDocumentRoot());
 
-        secondWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
-        secondWtx.insertAttribute(new QName("i"), "j");
-        assertTrue(secondWtx.moveToParent());
-        secondWtx.insertNamespace(new QName("ns", "xmlns", "p"));
-        assertTrue(secondWtx.moveToParent());
+        paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
+        paramWtx.insertAttribute(new QName("i"), "j");
+        assertTrue(paramWtx.moveToParent());
+        paramWtx.insertNamespace(new QName("ns", "xmlns", "p"));
+        assertTrue(paramWtx.moveToParent());
 
-        secondWtx.insertTextAsFirstChild("oops1");
+        paramWtx.insertTextAsFirstChild("oops1");
 
-        secondWtx.insertElementAsRightSibling(new QName("b"));
+        paramWtx.insertElementAsRightSibling(new QName("b"));
 
-        secondWtx.insertTextAsFirstChild("foo");
-        secondWtx.insertElementAsRightSibling(new QName("c"));
-        assertTrue(secondWtx.moveToParent());
+        paramWtx.insertTextAsFirstChild("foo");
+        paramWtx.insertElementAsRightSibling(new QName("c"));
+        assertTrue(paramWtx.moveToParent());
 
-        secondWtx.insertTextAsRightSibling("oops2");
+        paramWtx.insertTextAsRightSibling("oops2");
 
-        secondWtx.insertElementAsRightSibling(new QName("b"));
-        secondWtx.insertAttribute(new QName("ns", "x", "p"), "y");
-        assertTrue(secondWtx.moveToParent());
+        paramWtx.insertElementAsRightSibling(new QName("b"));
+        paramWtx.insertAttribute(new QName("ns", "x", "p"), "y");
+        assertTrue(paramWtx.moveToParent());
 
-        secondWtx.insertElementAsFirstChild(new QName("c"));
-        secondWtx.insertTextAsRightSibling("bar");
-        assertTrue(secondWtx.moveToParent());
+        paramWtx.insertElementAsFirstChild(new QName("c"));
+        paramWtx.insertTextAsRightSibling("bar");
+        assertTrue(paramWtx.moveToParent());
 
-        secondWtx.insertTextAsRightSibling("oops3");
+        paramWtx.insertTextAsRightSibling("oops3");
 
-        secondWtx.moveToDocumentRoot();
+        paramWtx.moveToDocumentRoot();
     }
 
     /**
-     * Create simple revision test in current database
+     * Create simple revision test in current database.
      * 
-     * @param wtx
-     *            IWriteTransaction to write to.
+     * @param paramWtx
+     *            {@link IWriteTransaction} to write to
+     * @throws AbsTTException
+     *             if anything went wrong
      */
-    public static void createVersioned(final IWriteTransaction wtx) throws AbsTTException {
-        create(wtx);
-        wtx.commit();
+    public static void createVersioned(final IWriteTransaction paramWtx) throws AbsTTException {
+        assertNotNull(paramWtx);
+        create(paramWtx);
+        paramWtx.commit();
         for (int i = 0; i <= 1; i++) {
-            wtx.moveToDocumentRoot();
-            wtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
-            wtx.insertTextAsFirstChild("OOPS4!");
-            wtx.commit();
+            paramWtx.moveToDocumentRoot();
+            paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
+            paramWtx.insertTextAsFirstChild("OOPS4!");
+            paramWtx.commit();
         }
 
     }
 
-    // /**
-    // * Create simple test document containing all supported node kinds except
-    // * the attributes.
-    // *
-    // * @param wtx
-    // * IWriteTransaction to write to.
-    // */
-    // public static void createWithoutAttributes(final IWriteTransaction wtx)
-    // throws TreetankException {
-    // wtx.moveToDocumentRoot();
-    //
-    // wtx.insertElementAsFirstChild("p:a", "ns");
-    //
-    // wtx.insertTextAsFirstChild("oops1");
-    //
-    // wtx.insertElementAsRightSibling("b", "");
-    //
-    // wtx.insertTextAsFirstChild("foo");
-    // wtx.insertElementAsRightSibling("c", "");
-    // wtx.moveToParent();
-    //
-    // wtx.insertTextAsRightSibling("oops2");
-    //
-    // wtx.insertElementAsRightSibling("b", "");
-    //
-    // wtx.insertElementAsFirstChild("c", "");
-    // wtx.insertTextAsRightSibling("bar");
-    // wtx.moveToParent();
-    //
-    // wtx.insertTextAsRightSibling("oops3");
-    //
-    // wtx.moveToDocumentRoot();
-    // }
+    /**
+     * Create simple test document containing all supported node kinds except
+     * the attributes.
+     * 
+     * @param paramWtx
+     *            {@link IWriteTransaction} to write to
+     * @throws AbsTTException
+     *             if anything went wrong
+     */
+    public static void createWithoutAttributes(final IWriteTransaction paramWtx) throws AbsTTException {
+        assertNotNull(paramWtx);
+        paramWtx.moveToDocumentRoot();
+
+        paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
+
+        paramWtx.insertTextAsFirstChild("oops1");
+
+        paramWtx.insertElementAsRightSibling(new QName("b"));
+
+        paramWtx.insertTextAsFirstChild("foo");
+        paramWtx.insertElementAsRightSibling(new QName("c"));
+        paramWtx.moveToParent();
+
+        paramWtx.insertTextAsRightSibling("oops2");
+
+        paramWtx.insertElementAsRightSibling(new QName("b"));
+
+        paramWtx.insertElementAsFirstChild(new QName("c"));
+        paramWtx.insertTextAsRightSibling("bar");
+        paramWtx.moveToParent();
+
+        paramWtx.insertTextAsRightSibling("oops3");
+
+        paramWtx.moveToDocumentRoot();
+    }
 
     /**
      * Create simple test document containing all supported node kinds, but
      * ignoring their namespace prefixes.
      * 
-     * @param wtx
-     *            IWriteTransaction to write to.
+     * @param paramWtx
+     *            {@link IWriteTransaction} to write to
+     * @throws AbsTTException
+     *             if anything went wrong
      */
-    public static void createWithoutNamespace(final IWriteTransaction wtx) throws AbsTTException {
-        wtx.moveToDocumentRoot();
+    public static void createWithoutNamespace(final IWriteTransaction paramWtx) throws AbsTTException {
+        assertNotNull(paramWtx);
+        paramWtx.moveToDocumentRoot();
 
-        wtx.insertElementAsFirstChild(new QName("a"));
-        wtx.insertAttribute(new QName("i"), "j");
-        wtx.moveToParent();
+        paramWtx.insertElementAsFirstChild(new QName("a"));
+        paramWtx.insertAttribute(new QName("i"), "j");
+        paramWtx.moveToParent();
 
-        wtx.insertTextAsFirstChild("oops1");
+        paramWtx.insertTextAsFirstChild("oops1");
 
-        wtx.insertElementAsRightSibling(new QName("b"));
+        paramWtx.insertElementAsRightSibling(new QName("b"));
 
-        wtx.insertTextAsFirstChild("foo");
-        wtx.insertElementAsRightSibling(new QName("c"));
-        wtx.moveToParent();
+        paramWtx.insertTextAsFirstChild("foo");
+        paramWtx.insertElementAsRightSibling(new QName("c"));
+        paramWtx.moveToParent();
 
-        wtx.insertTextAsRightSibling("oops2");
+        paramWtx.insertTextAsRightSibling("oops2");
 
-        wtx.insertElementAsRightSibling(new QName("b"));
-        wtx.insertAttribute(new QName("x"), "y");
-        wtx.moveToParent();
+        paramWtx.insertElementAsRightSibling(new QName("b"));
+        paramWtx.insertAttribute(new QName("x"), "y");
+        paramWtx.moveToParent();
 
-        wtx.insertElementAsFirstChild(new QName("c"));
-        wtx.insertTextAsRightSibling("bar");
-        wtx.moveToParent();
+        paramWtx.insertElementAsFirstChild(new QName("c"));
+        paramWtx.insertTextAsRightSibling("bar");
+        paramWtx.moveToParent();
 
-        wtx.insertTextAsRightSibling("oops3");
+        paramWtx.insertTextAsRightSibling("oops3");
 
-        wtx.moveToDocumentRoot();
+        paramWtx.moveToDocumentRoot();
     }
 
     /**

@@ -288,12 +288,12 @@ public interface IReadTransaction {
      */
     IItemList getItemList();
 
-     /**
+    /**
      * Getting the current node.
-     *
+     * 
      * @return the node
      */
-     IItem getNode();
+    IItem getNode();
 
     /**
      * Close shared read transaction and immediately release all resources.

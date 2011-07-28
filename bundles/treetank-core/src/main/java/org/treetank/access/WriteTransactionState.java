@@ -88,30 +88,32 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Standard constructor.
      * 
+     * @param paramToStore
+     *            storage {@link File}
      * @param paramDatabaseConfig
-     *            Database Configuration
+     *            {@link DatabaseConfiguration} reference
      * @param paramSessionState
-     *            Session State
+     *            {@link SessionState} reference
      * @param paramUberPage
-     *            Root of revision.
+     *            root of revision
      * @param paramWriter
-     *            Writer where this transaction should write to
+     *            writer where this transaction should write to
      * @param paramParamId
      *            parameter ID
      * @param paramRepresentRev
-     *            Revision Represent
+     *            revision represent
      * @param paramStoreRev
-     *            Revision Store
+     *            revision store
      * @throws TTIOException
      *             if IO Error
      */
-    protected WriteTransactionState(final File toStore, final DatabaseConfiguration paramDatabaseConfig,
+    protected WriteTransactionState(final File paramToStore, final DatabaseConfiguration paramDatabaseConfig,
         final SessionState paramSessionState, final UberPage paramUberPage, final IWriter paramWriter,
         final long paramParamId, final long paramRepresentRev, final long paramStoreRev) throws TTIOException {
         super(paramDatabaseConfig, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mSessionState = paramSessionState;
-        mLog = new TransactionLogCache(toStore, paramStoreRev);
+        mLog = new TransactionLogCache(paramToStore, paramStoreRev);
         mPageWriter = paramWriter;
         mTransactionID = paramParamId;
 
@@ -129,6 +131,9 @@ public final class WriteTransactionState extends ReadTransactionState {
      *             if IO Error
      */
     protected AbsNode prepareNodeForModification(final long paramNodeKey) throws TTIOException {
+        if (paramNodeKey < 0) {
+            throw new IllegalArgumentException("paramNodeKey must be >= 0!");
+        }
         if (mNodePageCon != null) {
             throw new IllegalStateException(
                 "Another node page container is currently in the cache for updates!");
@@ -173,13 +178,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      * Create fresh node and prepare node nodePageReference for modifications
      * (COW).
      * 
-     * @param mNode
-     *            node to add.
+     * @param paramNode
+     *            node to add
      * @return Unmodified node from parameter for convenience.
      * @throws TTIOException
      *             if IO Error
      */
-    protected AbsNode createNode(final AbsNode mNode) throws TTIOException {
+    protected AbsNode createNode(final AbsNode paramNode) throws TTIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         // Prepare node nodePageReference (COW).
@@ -188,10 +193,10 @@ public final class WriteTransactionState extends ReadTransactionState {
         final int nodePageOffset = nodePageOffset(nodeKey);
         prepareNodePage(nodePageKey);
         final NodePage page = mNodePageCon.getModified();
-        page.setNode(nodePageOffset, mNode);
-        finishNodeModification(mNode);
+        page.setNode(nodePageOffset, paramNode);
+        finishNodeModification(paramNode);
 
-        return mNode;
+        return paramNode;
     }
 
     protected ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
@@ -367,71 +372,71 @@ public final class WriteTransactionState extends ReadTransactionState {
         // // // /////////////
         // // // New code starts here
         // // // /////////////
-//        final Stack<PageReference> refs = new Stack<PageReference>();
-//        refs.push(uberPageReference);
-//
-//        final Stack<Integer> refIndex = new Stack<Integer>();
-//        refIndex.push(0);
-//        refIndex.push(0);
-//
-//        do {
-//
-//            assert refs.size() + 1 == refIndex.size();
-//
-//            // Getting the next ref
-//            final PageReference currentRef = refs.peek();
-//            final int currentIndex = refIndex.pop();
-//
-//            // Check if referenced page is valid, if not, continue
-//            AbsPage page = mLog.get(currentRef.getNodePageKey()).getModified();
-//            boolean continueFlag = true;
-//            if (page == null) {
-//                if (currentRef.isInstantiated()) {
-//                    page = currentRef.getPage();
-//                } else {
-//                    continueFlag = false;
-//                }
-//            } else {
-//                currentRef.setPage(page);
-//            }
-//
-//            if (continueFlag) {
-//
-//                if (currentIndex + 1 <= page.getReferences().length) {
-//                    // go down
-//
-//                    refIndex.push(currentIndex + 1);
-//
-//                    refs.push(page.getReference(currentIndex));
-//                    refIndex.push(0);
-//
-//                } else {
-//
-//                    mPageWriter.write(currentRef);
-//                    refs.pop();
-//                }
-//
-//            } // ref is not designated to be serialized
-//            else {
-//                refs.pop();
-//            }
-//
-//        } while (!refs.empty());
+        // final Stack<PageReference> refs = new Stack<PageReference>();
+        // refs.push(uberPageReference);
+        //
+        // final Stack<Integer> refIndex = new Stack<Integer>();
+        // refIndex.push(0);
+        // refIndex.push(0);
+        //
+        // do {
+        //
+        // assert refs.size() + 1 == refIndex.size();
+        //
+        // // Getting the next ref
+        // final PageReference currentRef = refs.peek();
+        // final int currentIndex = refIndex.pop();
+        //
+        // // Check if referenced page is valid, if not, continue
+        // AbsPage page = mLog.get(currentRef.getNodePageKey()).getModified();
+        // boolean continueFlag = true;
+        // if (page == null) {
+        // if (currentRef.isInstantiated()) {
+        // page = currentRef.getPage();
+        // } else {
+        // continueFlag = false;
+        // }
+        // } else {
+        // currentRef.setPage(page);
+        // }
+        //
+        // if (continueFlag) {
+        //
+        // if (currentIndex + 1 <= page.getReferences().length) {
+        // // go down
+        //
+        // refIndex.push(currentIndex + 1);
+        //
+        // refs.push(page.getReference(currentIndex));
+        // refIndex.push(0);
+        //
+        // } else {
+        //
+        // mPageWriter.write(currentRef);
+        // refs.pop();
+        // }
+        //
+        // } // ref is not designated to be serialized
+        // else {
+        // refs.pop();
+        // }
+        //
+        // } while (!refs.empty());
         //
         // // // ///////////////
         // // // New code ends here
         // // // ///////////////
 
-//         Recursively write indirectely referenced pages.
-         uberPage.commit(this);
-        
-         uberPageReference.setPage(uberPage);
-         mPageWriter.writeFirstReference(uberPageReference);
-         uberPageReference.setPage(null);
-        
-         mSessionState.waitForFinishedSync(mTransactionID);
-         // mPageWriter.close();
-         mSessionState.mCommitLock.unlock();
+        // Recursively write indirectely referenced pages.
+        uberPage.commit(this);
+
+        uberPageReference.setPage(uberPage);
+        mPageWriter.writeFirstReference(uberPageReference);
+        uberPageReference.setPage(null);
+
+        mSessionState.waitForFinishedSync(mTransactionID);
+        // mPageWriter.close();
+        mSessionState.mCommitLock.unlock();
         return uberPage;
     }
 
@@ -448,42 +453,42 @@ public final class WriteTransactionState extends ReadTransactionState {
         mPageWriter.close();
     }
 
-    protected IndirectPage prepareIndirectPage(final PageReference reference) throws TTIOException {
+    protected IndirectPage prepareIndirectPage(final PageReference paramReference) throws TTIOException {
 
-        IndirectPage page = (IndirectPage)reference.getPage();
-        if (!reference.isInstantiated()) {
-            if (reference.isCommitted()) {
+        IndirectPage page = (IndirectPage)paramReference.getPage();
+        if (!paramReference.isInstantiated()) {
+            if (paramReference.isCommitted()) {
                 page =
-                    new IndirectPage((IndirectPage)dereferenceIndirectPage(reference),
+                    new IndirectPage((IndirectPage)dereferenceIndirectPage(paramReference),
                         mNewRoot.getRevision() + 1);
             } else {
                 page = new IndirectPage(getUberPage().getRevision());
 
             }
-            reference.setPage(page);
+            paramReference.setPage(page);
         } else {
-            page = (IndirectPage)reference.getPage();
+            page = (IndirectPage)paramReference.getPage();
         }
         return page;
     }
 
-    protected NodePageContainer prepareNodePage(final long mNodePageKey) throws TTIOException {
+    protected NodePageContainer prepareNodePage(final long paramNodePageKey) throws TTIOException {
 
         // Last level points to node nodePageReference.
-        NodePageContainer cont = mLog.get(mNodePageKey);
+        NodePageContainer cont = mLog.get(paramNodePageKey);
         if (cont == null) {
 
             // Indirect reference.
             final PageReference reference =
-                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), mNodePageKey);
+                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), paramNodePageKey);
 
             if (!reference.isInstantiated()) {
 
                 if (reference.isCommitted()) {
-                    cont = dereferenceNodePageForModification(mNodePageKey);
+                    cont = dereferenceNodePageForModification(paramNodePageKey);
                 } else {
                     cont =
-                        new NodePageContainer(new NodePage(mNodePageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
+                        new NodePageContainer(new NodePage(paramNodePageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
                 }
 
             } else {
@@ -495,8 +500,8 @@ public final class WriteTransactionState extends ReadTransactionState {
                 reference.setPage(null);
             }
 
-            reference.setNodePageKey(mNodePageKey);
-            mLog.put(mNodePageKey, cont);
+            reference.setNodePageKey(paramNodePageKey);
+            mLog.put(paramNodePageKey, cont);
         }
         mNodePageCon = cont;
         return cont;
@@ -555,17 +560,17 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Dereference node page reference.
      * 
-     * @param mNodePageKey
-     *            Key of node page.
-     * @return Dereferenced page.
+     * @param paramNodePageKey
+     *            key of node page
+     * @return dereferenced page
      * @throws TTIOException
-     *             If something happend in the node.
+     *             if something happened in the node
      */
-    private NodePageContainer dereferenceNodePageForModification(final long mNodePageKey)
+    private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
         throws TTIOException {
-        final NodePage[] revs = getSnapshotPages(mNodePageKey);
-        final ERevisioning revision = getDatabaseConfiguration().mRevision;
-        final int mileStoneRevision = getDatabaseConfiguration().mRevisionsToRestore;
+        final NodePage[] revs = getSnapshotPages(paramNodePageKey);
+        final ERevisioning revision = getDatabaseConfiguration().getRevision();
+        final int mileStoneRevision = getDatabaseConfiguration().getRevisionsToRestore();
 
         return revision.combinePagesForModification(revs, mileStoneRevision);
     }
@@ -577,7 +582,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     @Override
     protected RevisionRootPage getActualRevisionRootPage() {
-        return this.mNewRoot;
+        return mNewRoot;
     }
 
     /**
@@ -597,16 +602,20 @@ public final class WriteTransactionState extends ReadTransactionState {
      * Building name consisting out of prefix and name. NamespaceUri is not used
      * over here.
      * 
-     * @param mQname
-     *            the QName of an element
+     * @param paramQname
+     *            the {@link QName} of an element
      * @return a string with [prefix:]localname
      */
-    public static String buildName(final QName mQname) {
+    public static String buildName(final QName paramQname) {
+        if (paramQname == null) {
+            throw new NullPointerException("mQName must not be null!");
+        }
         String name;
-        if (mQname.getPrefix().isEmpty()) {
-            name = mQname.getLocalPart();
+        if (paramQname.getPrefix().isEmpty()) {
+            name = paramQname.getLocalPart();
         } else {
-            name = new StringBuilder(mQname.getPrefix()).append(":").append(mQname.getLocalPart()).toString();
+            name =
+                new StringBuilder(paramQname.getPrefix()).append(":").append(paramQname.getLocalPart()).toString();
         }
         return name;
     }

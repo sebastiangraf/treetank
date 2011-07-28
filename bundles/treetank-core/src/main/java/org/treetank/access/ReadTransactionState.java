@@ -136,10 +136,10 @@ public class ReadTransactionState {
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
 
-            final int mileStoneRevision = mDatabaseConfiguration.mRevisionsToRestore;
+            final int mileStoneRevision = mDatabaseConfiguration.getRevisionsToRestore();
 
             // Build up the complete page.
-            final ERevisioning revision = mDatabaseConfiguration.mRevision;
+            final ERevisioning revision = mDatabaseConfiguration.getRevision();
             final NodePage completePage = revision.combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
@@ -285,7 +285,7 @@ public class ReadTransactionState {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == mDatabaseConfiguration.mRevisionsToRestore) {
+                if (refs.size() == mDatabaseConfiguration.getRevisionsToRestore()) {
                     break;
                 }
 
