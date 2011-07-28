@@ -51,7 +51,7 @@ import org.treetank.exception.AbsTTException;
  * final IDatabase database = Database.openDatabase(&quot;examplek&quot;);
  * final ISession session = database.getSession()
  * 
- * // Database with berkeley db and incremental revisioning
+ * // Database with berkeley db and incremental revisioning.
  * final Properties dbProps = new Properties();
  * dbProps.setProperty(STORAGE_TYPE.name(),StorageType.Berkeley.name());
  * dbProps.setProperty(REVISION_TYPE.name(), ERevisioning.INCREMENTAL.name());
@@ -72,13 +72,15 @@ public interface IDatabase {
     /**
      * Get the version of the TreeTank.
      * 
-     * @return TreeTank version.
+     * @return TreeTank version
      */
     String getVersion();
 
     /**
      * Getting the session associated within this database.
      * 
+     * @param paramSessionConfiguration
+     *            {@link SessionConfiguration} reference
      * @throws AbsTTException
      *             if can't get session
      * @return the database
@@ -88,7 +90,7 @@ public interface IDatabase {
     /**
      * Get the database configuration.
      * 
-     * @return the {@link DatabaseConfiguration}
+     * @return the {@link DatabaseConfiguration} reference
      */
     DatabaseConfiguration getDatabaseConf();
 
