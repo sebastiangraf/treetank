@@ -31,6 +31,7 @@ import java.lang.reflect.Field;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.annotations.NotNull;
 import org.treetank.api.IItem;
 import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
@@ -468,18 +469,19 @@ public class ReadTransaction implements IReadTransaction {
      * Building QName out of uri and name. The name can have the prefix denoted
      * with ":";
      * 
-     * @param mUri
+     * @param paramUri
      *            the namespaceuri
-     * @param mName
+     * @param paramName
      *            the name including a possible prefix
      * @return the QName obj
      */
-    protected static final QName buildQName(final String mUri, final String mName) {
+    @NotNull
+    protected static final QName buildQName(final String paramUri, final String paramName) {
         QName qname;
-        if (mName.contains(":")) {
-            qname = new QName(mUri, mName.split(":")[1], mName.split(":")[0]);
+        if (paramName.contains(":")) {
+            qname = new QName(paramUri, paramName.split(":")[1], paramName.split(":")[0]);
         } else {
-            qname = new QName(mUri, mName);
+            qname = new QName(paramUri, paramName);
         }
         return qname;
     }

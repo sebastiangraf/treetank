@@ -99,6 +99,7 @@ public final class LevelOrderAxis extends AbsAxis {
             return false;
         }
 
+        // First move to next key.
         getTransaction().moveTo(mNextKey);
 
         // Follow right sibling if there is one.
@@ -116,7 +117,7 @@ public final class LevelOrderAxis extends AbsAxis {
             return true;
         }
         
-        // The follow first child if there is one.
+        // Then follow first child if there is one.
         if (getTransaction().getStructuralNode().hasFirstChild()) {
             mNextKey = getTransaction().getStructuralNode().getFirstChildKey();
             return true;

@@ -307,12 +307,20 @@ public final class SessionState {
 
     }
 
-    protected void assertValidRevision(final long rev) throws TTUsageException {
-        if (rev < 0) {
-            throw new TTUsageException("Revision must be at least 0");
-        } else if (rev > mLastCommittedUberPage.getRevision()) {
-            throw new TTUsageException("Revision must not be bigger than", Long
-                .toString(mLastCommittedUberPage.getRevision()));
+    /**
+     * Checks for valid revision.
+     * 
+     * @param paramRevision
+     *            revision parameter to check
+     * @throws IllegalArgumentException
+     *             if revision isn't valid
+     */
+    protected void assertValidRevision(final long paramRevision) {
+        if (paramRevision < 0) {
+            throw new IllegalArgumentException("Revision must be at least 0");
+        } else if (paramRevision > mLastCommittedUberPage.getRevision()) {
+            throw new IllegalArgumentException(new StringBuilder("Revision must not be bigger than").append(
+                Long.toString(mLastCommittedUberPage.getRevision())).toString());
         }
     }
 

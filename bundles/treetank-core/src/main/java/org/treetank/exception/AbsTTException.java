@@ -76,7 +76,7 @@ public abstract class AbsTTException extends Exception {
      *            to be concatenated
      * @return the StringBuilder for the combined string
      */
-    private static StringBuilder concat(final String... message) {
+    public static StringBuilder concat(final String... message) {
         final StringBuilder builder = new StringBuilder();
         for (final String mess : message) {
             builder.append(mess);
