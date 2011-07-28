@@ -35,7 +35,7 @@
 		<groupId>treetank</groupId>
 		<version>1.0.4-SNAPSHOT</version>
 	</parent>
-	<groupId>treetank</groupId>
+
 	<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
 	<name>treetank-complete</name>

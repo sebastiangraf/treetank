@@ -35,7 +35,6 @@
 		<version>1.0.4-SNAPSHOT</version>
 	</parent>
 
-	<groupId>treetank</groupId>
 	<artifactId>jax-rx</artifactId>
 	<packaging>jar</packaging>
 	<name>treetank-jax-rx</name>
