@@ -50,7 +50,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 import org.treetank.TestHelper;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -88,8 +88,8 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IDatabase databaseBooks = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IDatabase databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session = databaseBooks.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKS);
@@ -97,7 +97,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         shredder.call();
         wtx.close();
         session.close();
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
         mHolder = AbsAxisTest.generateHolder();
 
         saxonTransform(BOOKS, STYLESHEET);
@@ -110,8 +110,8 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     public void tearDown() throws AbsTTException {
         mHolder.rtx.close();
         mHolder.session.close();
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test

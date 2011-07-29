@@ -38,7 +38,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 
 import org.treetank.TestHelper;
 import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -81,8 +81,8 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
     public void tearDown() throws AbsTTException {
         mHolder.rtx.close();
         mHolder.session.close();
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test

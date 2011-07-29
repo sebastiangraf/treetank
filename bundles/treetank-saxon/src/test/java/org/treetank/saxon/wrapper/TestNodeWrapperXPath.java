@@ -45,7 +45,7 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
 import org.treetank.TestHelper;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxisTest;
@@ -79,7 +79,7 @@ public final class TestNodeWrapperXPath {
 
     @Before
     public void setUp() throws AbsTTException, XPathFactoryConfigurationException {
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         TestHelper.createTestDocument();
         mHolder = AbsAxisTest.generateHolder();
 
@@ -96,8 +96,8 @@ public final class TestNodeWrapperXPath {
     public void tearDown() throws Exception {
         mHolder.rtx.close();
         mHolder.session.close();
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
 
     }
 
