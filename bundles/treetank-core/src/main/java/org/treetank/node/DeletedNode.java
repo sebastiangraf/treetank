@@ -69,7 +69,7 @@ public final class DeletedNode extends AbsNode {
     public static AbsNode createData(final long mNodeKey, final long mParentKey) {
 
         final byte[] byteData = new byte[ENodes.DELETE_KIND.getByteSize()];
-        
+
         final byte[] pointerData = new byte[ENodes.DELETE_KIND.getPointerSize()];
 
         int mCount = AbsNode.NODE_KEY;

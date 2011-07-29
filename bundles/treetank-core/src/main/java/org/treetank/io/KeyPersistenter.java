@@ -132,8 +132,8 @@ public final class KeyPersistenter {
             } else if (paramKey instanceof BerkeleyKey) {
                 paramSink.writeInt(BERKELEYKIND);
             } else {
-                throw new IllegalStateException(new StringBuilder("Key ").append(paramKey.getClass())
-                    .append(" cannot be serialized").toString());
+                throw new IllegalStateException(new StringBuilder("Key ").append(paramKey.getClass()).append(
+                    " cannot be serialized").toString());
             }
 
             for (final long val : paramKey.getKeys()) {

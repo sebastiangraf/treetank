@@ -72,8 +72,8 @@ public final class ElementNode extends AbsStructNode {
      * @param paramNamespaceKeys
      *            namespace keys
      */
-    ElementNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder, final List<Long> paramAttributeKeys,
-        final List<Long> paramNamespaceKeys) {
+    ElementNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder,
+        final List<Long> paramAttributeKeys, final List<Long> paramNamespaceKeys) {
         super(paramByteBuilder, paramPointerBuilder);
         mAttributeKeys = paramAttributeKeys;
         mNamespaceKeys = paramNamespaceKeys;
@@ -348,7 +348,7 @@ public final class ElementNode extends AbsStructNode {
         // result = prime * result + mNamespaceKeys.hashCode();
         return result;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {

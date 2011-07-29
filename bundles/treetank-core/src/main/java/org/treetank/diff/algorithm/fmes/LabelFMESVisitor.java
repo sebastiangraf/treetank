@@ -96,7 +96,7 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
             mLabels.get(paramNode.getKind()).add(paramNode);
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void visit(final TextNode paramNode) {

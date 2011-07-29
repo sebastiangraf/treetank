@@ -117,8 +117,7 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
         PrimaryIndex<Long, KeyingMaterial> primaryIndex;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
-                    Long.class, KeyingMaterial.class);
+                (PrimaryIndex<Long, KeyingMaterial>)mStore.getPrimaryIndex(Long.class, KeyingMaterial.class);
 
             primaryIndex.put(entity);
         } catch (final DatabaseException e) {
@@ -141,9 +140,8 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
         KeyingMaterial entity = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
-                    Long.class, KeyingMaterial.class);
-            entity = (KeyingMaterial) primaryIndex.get(paramKey);
+                (PrimaryIndex<Long, KeyingMaterial>)mStore.getPrimaryIndex(Long.class, KeyingMaterial.class);
+            entity = (KeyingMaterial)primaryIndex.get(paramKey);
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
@@ -162,14 +160,13 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
         long counter = 0;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
-                    Long.class, KeyingMaterial.class);
+                (PrimaryIndex<Long, KeyingMaterial>)mStore.getPrimaryIndex(Long.class, KeyingMaterial.class);
             counter = primaryIndex.count();
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
         }
-        return (int) counter;
+        return (int)counter;
     }
 
 }

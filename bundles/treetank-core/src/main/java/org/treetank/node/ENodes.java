@@ -53,36 +53,36 @@ public enum ENodes {
     ELEMENT_KIND(1, 7, 5) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
-            
+
             final byte[] pointerData = readPointerData(paramSource);
-            
+
             final byte[] byteData = readByteData(paramSource);
 
             final List<Long> attrKeys = new ArrayList<Long>();
             final List<Long> namespKeys = new ArrayList<Long>();
 
             int attrCount = readIntBytes(ElementNode.ATTRIBUTE_COUNT, byteData);
-            
+
             if (attrCount > 0) {
                 for (int i = 0; i < attrCount; i++) {
-                    byte [] mBuffer = new byte[8];
-                    for(int j=0; j<mBuffer.length;j++){
-                        mBuffer[j]=paramSource.readByte();
-                    }         
+                    byte[] mBuffer = new byte[8];
+                    for (int j = 0; j < mBuffer.length; j++) {
+                        mBuffer[j] = paramSource.readByte();
+                    }
                     long l = byteArrayToLong(mBuffer);
                     attrKeys.add(l);
                 }
             }
-            
+
             int nsCount = readIntBytes(ElementNode.NAMESPACE_COUNT, byteData);
-            
+
             if (nsCount > 0) {
                 for (int i = 0; i < nsCount; i++) {
-                    
-                    byte [] mBuffer = new byte[8];
-                    for(int j=0; j<mBuffer.length;j++){
-                        mBuffer[j]=paramSource.readByte();
-                    }         
+
+                    byte[] mBuffer = new byte[8];
+                    for (int j = 0; j < mBuffer.length; j++) {
+                        mBuffer[j] = paramSource.readByte();
+                    }
                     long l = byteArrayToLong(mBuffer);
                     namespKeys.add(l);
                 }
@@ -96,11 +96,11 @@ public enum ENodes {
     ATTRIBUTE_KIND(2, 3, 4) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
-            
+
             final byte[] pointerData = readPointerData(paramSource);
-            
+
             final byte[] byteData = readByteData(paramSource);
-            
+
             final byte[] value = new byte[readIntBytes(AttributeNode.VALUE_LENGTH, byteData)];
             for (int i = 0; i < value.length; i++) {
                 value[i] = paramSource.readByte();
@@ -113,9 +113,9 @@ public enum ENodes {
     TEXT_KIND(3, 7, 2) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
-            
+
             final byte[] pointerData = readPointerData(paramSource);
-            
+
             final byte[] byteData = readByteData(paramSource);
             final byte[] value = new byte[readIntBytes(TextNode.VALUE_LENGTH, byteData)];
             for (int i = 0; i < value.length; i++) {
@@ -186,7 +186,7 @@ public enum ENodes {
 
     /** Size in the long data array. */
     public static final int MDATASIZE = 24;
-    
+
     public static final int MPOINTERSIZE = 60;
 
     /** Mapping of keys -> Nodes */
@@ -228,7 +228,7 @@ public enum ENodes {
     int getByteSize() {
         return MDATASIZE;
     }
-    
+
     /**
      * @return the pointer size
      */
@@ -243,7 +243,7 @@ public enum ENodes {
         }
         return mData;
     }
-    
+
     byte[] readPointerData(final ITTSource mSource) {
         final byte[] mData = new byte[getPointerSize()];
         for (int i = 0; i < mData.length; i++) {
@@ -298,8 +298,7 @@ public enum ENodes {
         System.arraycopy(paramInput, 0, value, 0, value.length);
         return value;
     }
-    
-    
+
     /**
      * Converting a byte array to integer.
      * 
@@ -331,19 +330,19 @@ public enum ENodes {
 
         return mConvLong;
     }
-    
-    public long readLongBytes(final int mOffset, final byte[] mByteData){
-        byte [] mBuffer = new byte [8];
-        for(int i=0; i<8; i++){
-            mBuffer[i] = mByteData[mOffset+i];
+
+    public long readLongBytes(final int mOffset, final byte[] mByteData) {
+        byte[] mBuffer = new byte[8];
+        for (int i = 0; i < 8; i++) {
+            mBuffer[i] = mByteData[mOffset + i];
         }
         return byteArrayToLong(mBuffer);
     }
-    
-    public int readIntBytes(final int mOffset, final byte[] mByteData){
-        byte [] mBuffer = new byte [4];
-        for(int i=0; i<4; i++){
-            mBuffer[i] = mByteData[mOffset+i];
+
+    public int readIntBytes(final int mOffset, final byte[] mByteData) {
+        byte[] mBuffer = new byte[4];
+        for (int i = 0; i < 4; i++) {
+            mBuffer[i] = mByteData[mOffset + i];
         }
         return byteArrayToInt(mBuffer);
     }

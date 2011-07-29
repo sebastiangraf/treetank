@@ -45,7 +45,7 @@ public final class LevelOrderAxis extends AbsAxis {
 
     /** The nodeKey of the next node to visit. */
     private long mNextKey;
-    
+
     /**
      * Constructor initializing internal state.
      * 
@@ -116,7 +116,7 @@ public final class LevelOrderAxis extends AbsAxis {
             mNextKey = mFirstChildKeyList.remove(0);
             return true;
         }
-        
+
         // Then follow first child if there is one.
         if (getTransaction().getStructuralNode().hasFirstChild()) {
             mNextKey = getTransaction().getStructuralNode().getFirstChildKey();

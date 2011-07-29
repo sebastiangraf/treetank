@@ -109,7 +109,7 @@ public final class NamespaceNode extends AbsNode {
         final byte[] byteData = new byte[ENodes.NAMESPACE_KIND.getByteSize()];
 
         final byte[] pointerData = new byte[ENodes.NAMESPACE_KIND.getPointerSize()];
-        
+
         int mCount = AbsNode.NODE_KEY;
         for (byte aByte : longToByteArray(mNodeKey)) {
             pointerData[mCount++] = aByte;

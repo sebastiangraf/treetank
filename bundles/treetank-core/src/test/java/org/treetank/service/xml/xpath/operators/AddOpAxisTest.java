@@ -90,21 +90,22 @@ public class AddOpAxisTest {
         AbsAxis op2 = new SequenceAxis(holder.rtx);
         AbsObAxis axis = new AddOpAxis(holder.rtx, op1, op2);
 
-        assertEquals(Type.DOUBLE, axis
-            .getReturnType(holder.rtx.keyForName("xs:double"), holder.rtx.keyForName("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(holder.rtx.keyForName("xs:double"), holder.rtx
+            .keyForName("xs:double")));
         assertEquals(Type.DOUBLE, axis.getReturnType(holder.rtx.keyForName("xs:decimal"), holder.rtx
             .keyForName("xs:double")));
-        assertEquals(Type.FLOAT, axis.getReturnType(holder.rtx.keyForName("xs:float"), holder.rtx.keyForName("xs:decimal")));
+        assertEquals(Type.FLOAT, axis.getReturnType(holder.rtx.keyForName("xs:float"), holder.rtx
+            .keyForName("xs:decimal")));
         assertEquals(Type.DECIMAL, axis.getReturnType(holder.rtx.keyForName("xs:decimal"), holder.rtx
             .keyForName("xs:integer")));
         // assertEquals(Type.INTEGER,
         // axis.getReturnType(holder.rtx.keyForName("xs:integer"),
         // holder.rtx.keyForName("xs:integer")));
 
-        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:yearMonthDuration"), holder.rtx
-            .keyForName("xs:yearMonthDuration")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:dayTimeDuration"), holder.rtx
-            .keyForName("xs:dayTimeDuration")));
+        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.rtx
+            .keyForName("xs:yearMonthDuration"), holder.rtx.keyForName("xs:yearMonthDuration")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:dayTimeDuration"),
+            holder.rtx.keyForName("xs:dayTimeDuration")));
 
         assertEquals(Type.DATE, axis.getReturnType(holder.rtx.keyForName("xs:date"), holder.rtx
             .keyForName("xs:yearMonthDuration")));
@@ -134,7 +135,8 @@ public class AddOpAxisTest {
         }
 
         try {
-            axis.getReturnType(holder.rtx.keyForName("xs:string"), holder.rtx.keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(holder.rtx.keyForName("xs:string"), holder.rtx
+                .keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (final TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "

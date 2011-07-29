@@ -27,7 +27,6 @@
 
 package org.treetank.axis;
 
-
 /**
  * <h1>ChainedAxis</h1>
  * 

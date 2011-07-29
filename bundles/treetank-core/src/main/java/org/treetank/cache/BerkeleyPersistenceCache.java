@@ -87,8 +87,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceCache(final File paramFile, final long paramRevision)
-        throws TTIOException {
+    public BerkeleyPersistenceCache(final File paramFile, final long paramRevision) throws TTIOException {
         super(paramFile);
         try {
             /* Create a new, transactional database environment */

@@ -54,7 +54,9 @@ public class NodeCompTest {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = AbsAxisTest.generateHolder();
-        comparator = new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1), CompKind.IS);
+        comparator =
+            new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1),
+                CompKind.IS);
     }
 
     @After
@@ -81,7 +83,9 @@ public class NodeCompTest {
         assertEquals(true, comparator.compare(op3, op2));
 
         try {
-            comparator = new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1), CompKind.PRE);
+            comparator =
+                new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1),
+                    CompKind.PRE);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
@@ -89,7 +93,9 @@ public class NodeCompTest {
         }
 
         try {
-            comparator = new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1), CompKind.FO);
+            comparator =
+                new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1),
+                    CompKind.FO);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {

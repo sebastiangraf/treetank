@@ -99,8 +99,8 @@ public final class PagePersistenter {
         } else if (paramPage instanceof UberPage) {
             paramSink.writeInt(PagePersistenter.UBERPAGE);
         } else {
-            throw new IllegalStateException(new StringBuilder("Page ").append(paramPage.getClass())
-                .append(" cannot be serialized").toString());
+            throw new IllegalStateException(new StringBuilder("Page ").append(paramPage.getClass()).append(
+                " cannot be serialized").toString());
         }
         paramPage.serialize(paramSink);
     }

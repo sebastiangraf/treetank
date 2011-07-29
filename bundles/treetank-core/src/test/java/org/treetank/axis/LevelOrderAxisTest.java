@@ -38,7 +38,7 @@ import org.junit.Test;
  * Test {@link LevelOrderAxis}.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public class LevelOrderAxisTest {
     @Before
@@ -46,12 +46,12 @@ public class LevelOrderAxisTest {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
     }
-    
+
     @Test
     public void testAxisConventions() throws AbsTTException {
         final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
         final IReadTransaction rtx = holder.rtx;
-        
+
         rtx.moveTo(11L);
         AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
             12L
@@ -64,28 +64,28 @@ public class LevelOrderAxisTest {
         AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
             0L, 1L, 4L, 5L, 8L, 9L, 13L, 6L, 7L, 11L, 12L
         });
-        
+
         rtx.moveTo(4L);
         AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
             4L, 5L, 8L, 9L, 13L, 6L, 7L, 11L, 12L
         });
-        
+
         rtx.moveTo(4L);
         AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
             5L, 8L, 9L, 13L, 6L, 7L, 11L, 12L
         });
-        
+
         rtx.moveTo(6L);
         AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
             7L
         });
-        
+
         rtx.moveTo(6L);
         AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
             6L, 7L
         });
     }
-    
+
     @After
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();

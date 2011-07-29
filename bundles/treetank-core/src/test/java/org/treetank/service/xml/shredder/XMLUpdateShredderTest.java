@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -53,7 +53,6 @@ import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 
 /**
  * Test XMLUpdateShredder.
@@ -96,7 +95,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     private static final String XMLALLEIGHTH = RESOURCES + File.separator + "revXMLsAll7";
 
     private static final String XMLALLNINETH = RESOURCES + File.separator + "revXMLsAll8";
-    
+
     private static final String XMLLINGUISTICS = RESOURCES + File.separator + "linguistics";
 
     static {
@@ -200,11 +199,11 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     public void testAllNineth() throws Exception {
         test(XMLALLNINETH);
     }
-    
-//    @Test
-//    public void testLinguistics() throws Exception {
-//        test(XMLLINGUISTICS);
-//    }
+
+    // @Test
+    // public void testLinguistics() throws Exception {
+    // test(XMLLINGUISTICS);
+    // }
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -224,11 +223,11 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
             @Override
             public int compare(final Object paramFirst, final Object paramSecond) {
                 final String firstName =
-                    ((File)paramFirst).getName().toString()
-                        .substring(0, ((File)paramFirst).getName().toString().indexOf('.'));
+                    ((File)paramFirst).getName().toString().substring(0,
+                        ((File)paramFirst).getName().toString().indexOf('.'));
                 final String secondName =
-                    ((File)paramSecond).getName().toString()
-                        .substring(0, ((File)paramSecond).getName().toString().indexOf('.'));
+                    ((File)paramSecond).getName().toString().substring(0,
+                        ((File)paramSecond).getName().toString().indexOf('.'));
                 if (Integer.parseInt(firstName) < Integer.parseInt(secondName)) {
                     return -1;
                 } else if (Integer.parseInt(firstName) > Integer.parseInt(secondName)) {

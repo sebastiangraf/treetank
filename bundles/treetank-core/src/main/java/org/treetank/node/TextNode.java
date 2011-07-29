@@ -154,48 +154,49 @@ public final class TextNode extends AbsStructNode {
     @Override
     public AbsNode clone() {
         final AbsNode toClone =
-            new TextNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData), ENodes.cloneData(mValue));
+            new TextNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData), ENodes
+                .cloneData(mValue));
         return toClone;
     }
 
     public static AbsNode createData(final long mNodeKey, final long mParentKey, final long mLeftSibKey,
         final long mRightSibKey, final int mType, final byte[] mValue) {
-        
+
         final byte[] byteData = new byte[ENodes.TEXT_KIND.getByteSize()];
-        
+
         final byte[] pointerData = new byte[ENodes.TEXT_KIND.getPointerSize()];
-        
+
         int mCount = AbsNode.NODE_KEY;
-        for(byte aByte : longToByteArray(mNodeKey)){
-            pointerData[mCount++] = aByte;
-        }
-        
-        mCount = AbsNode.PARENT_KEY;
-        for(byte aByte : longToByteArray(mParentKey)){
-            pointerData[mCount++] = aByte;
-        }
-        
-        mCount =AbsStructNode.LEFT_SIBLING_KEY;
-        for(byte aByte : longToByteArray(mLeftSibKey)){
-            pointerData[mCount++] = aByte;
-        }
-     
-        mCount =AbsStructNode.RIGHT_SIBLING_KEY;
-        for(byte aByte : longToByteArray(mRightSibKey)){
+        for (byte aByte : longToByteArray(mNodeKey)) {
             pointerData[mCount++] = aByte;
         }
 
-        mCount =AbsStructNode.FIRST_CHILD_KEY;
-        for(byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())){
+        mCount = AbsNode.PARENT_KEY;
+        for (byte aByte : longToByteArray(mParentKey)) {
             pointerData[mCount++] = aByte;
         }
-        
-        mCount =TextNode.TYPE_KEY;
-        for(byte aByte : intToByteArray(mType)){
+
+        mCount = AbsStructNode.LEFT_SIBLING_KEY;
+        for (byte aByte : longToByteArray(mLeftSibKey)) {
+            pointerData[mCount++] = aByte;
+        }
+
+        mCount = AbsStructNode.RIGHT_SIBLING_KEY;
+        for (byte aByte : longToByteArray(mRightSibKey)) {
+            pointerData[mCount++] = aByte;
+        }
+
+        mCount = AbsStructNode.FIRST_CHILD_KEY;
+        for (byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())) {
+            pointerData[mCount++] = aByte;
+        }
+
+        mCount = TextNode.TYPE_KEY;
+        for (byte aByte : intToByteArray(mType)) {
             byteData[mCount++] = aByte;
         }
-        
-        return new TextNode(byteData,pointerData, mValue);
+
+        return new TextNode(byteData, pointerData, mValue);
     }
 
     /** {@inheritDoc} */
@@ -203,8 +204,8 @@ public final class TextNode extends AbsStructNode {
     public String toString() {
         final int valLength = readIntBytes(VALUE_LENGTH);
         final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tvalueLength: ").append(
-            valLength).append("\n\tvalue:").append(new String(mValue)).toString();
+        returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tvalueLength: ").append(valLength)
+            .append("\n\tvalue:").append(new String(mValue)).toString();
         return returnVal.toString();
     }
 

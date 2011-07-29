@@ -459,8 +459,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (!paramReference.isInstantiated()) {
             if (paramReference.isCommitted()) {
                 page =
-                    new IndirectPage((IndirectPage)dereferenceIndirectPage(paramReference),
-                        mNewRoot.getRevision() + 1);
+                    new IndirectPage((IndirectPage)dereferenceIndirectPage(paramReference), mNewRoot
+                        .getRevision() + 1);
             } else {
                 page = new IndirectPage(getUberPage().getRevision());
 
@@ -488,7 +488,8 @@ public final class WriteTransactionState extends ReadTransactionState {
                     cont = dereferenceNodePageForModification(paramNodePageKey);
                 } else {
                     cont =
-                        new NodePageContainer(new NodePage(paramNodePageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
+                        new NodePageContainer(new NodePage(paramNodePageKey,
+                            IConstants.UBP_ROOT_REVISION_NUMBER));
                 }
 
             } else {
@@ -615,7 +616,8 @@ public final class WriteTransactionState extends ReadTransactionState {
             name = paramQname.getLocalPart();
         } else {
             name =
-                new StringBuilder(paramQname.getPrefix()).append(":").append(paramQname.getLocalPart()).toString();
+                new StringBuilder(paramQname.getPrefix()).append(":").append(paramQname.getLocalPart())
+                    .toString();
         }
         return name;
     }

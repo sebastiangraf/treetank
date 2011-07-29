@@ -74,7 +74,7 @@ public final class BerkeleyFactory extends AbsIOFactory {
      * Name for the database.
      */
     private static final String NAME = "berkeleyDatabase";
-    
+
     /**
      * Berkeley Environment for the database.
      */

@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -47,99 +47,89 @@ import static org.junit.Assert.assertFalse;
 
 public class ReadTransactionTest {
 
-	private IDatabase database;
+    private IDatabase database;
 
-	@Before
-	public void setUp() throws AbsTTException {
-		TestHelper.deleteEverything();
-		database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database
-				.getSession(new SessionConfiguration.Builder().build());
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		wtx.close();
-		session.close();
-	}
+    @Before
+    public void setUp() throws AbsTTException {
+        TestHelper.deleteEverything();
+        database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
+        session.close();
+    }
 
-	@After
-	public void tearDown() throws AbsTTException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws AbsTTException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void testEmptyRtx() throws AbsTTException {
-		assertFalse(PATHS.PATH2.getFile().exists());
-		Database.createDatabase(PATHS.PATH2.getFile(),
-				new DatabaseConfiguration.Builder().build());
-		final IDatabase db = Database.openDatabase(PATHS.PATH2.getFile());
-		final ISession session = db
-				.getSession(new SessionConfiguration.Builder().build());
-		final IReadTransaction rtx = session.beginReadTransaction();
-		rtx.getRevisionNumber();
-		rtx.close();
-		session.close();
-		Database.closeDatabase(PATHS.PATH1.getFile());
-	}
+    @Test
+    public void testEmptyRtx() throws AbsTTException {
+        assertFalse(PATHS.PATH2.getFile().exists());
+        Database.createDatabase(PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder().build());
+        final IDatabase db = Database.openDatabase(PATHS.PATH2.getFile());
+        final ISession session = db.getSession(new SessionConfiguration.Builder().build());
+        final IReadTransaction rtx = session.beginReadTransaction();
+        rtx.getRevisionNumber();
+        rtx.close();
+        session.close();
+        Database.closeDatabase(PATHS.PATH1.getFile());
+    }
 
-	@Test
-	public void testDocumentRoot() throws AbsTTException {
-		final ISession session = database
-				.getSession(new SessionConfiguration.Builder().build());
-		final IReadTransaction rtx = session.beginReadTransaction();
+    @Test
+    public void testDocumentRoot() throws AbsTTException {
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IReadTransaction rtx = session.beginReadTransaction();
 
-		assertEquals(true, rtx.moveToDocumentRoot());
-		assertEquals(ENodes.ROOT_KIND, rtx.getNode().getKind());
-		assertEquals(false, rtx.getNode().hasParent());
-		assertEquals(false, ((AbsStructNode) rtx.getNode()).hasLeftSibling());
-		assertEquals(false, ((AbsStructNode) rtx.getNode()).hasRightSibling());
-		assertEquals(true, ((AbsStructNode) rtx.getNode()).hasFirstChild());
+        assertEquals(true, rtx.moveToDocumentRoot());
+        assertEquals(ENodes.ROOT_KIND, rtx.getNode().getKind());
+        assertEquals(false, rtx.getNode().hasParent());
+        assertEquals(false, ((AbsStructNode)rtx.getNode()).hasLeftSibling());
+        assertEquals(false, ((AbsStructNode)rtx.getNode()).hasRightSibling());
+        assertEquals(true, ((AbsStructNode)rtx.getNode()).hasFirstChild());
 
-		rtx.close();
-	}
+        rtx.close();
+    }
 
-	@Test
-	public void testConventions() throws AbsTTException {
-		final ISession session = database
-				.getSession(new SessionConfiguration.Builder().build());
-		final IReadTransaction rtx = session.beginReadTransaction();
+    @Test
+    public void testConventions() throws AbsTTException {
+        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final IReadTransaction rtx = session.beginReadTransaction();
 
-		// IReadTransaction Convention 1.
-		assertEquals(true, rtx.moveToDocumentRoot());
-		long key = rtx.getNode().getNodeKey();
+        // IReadTransaction Convention 1.
+        assertEquals(true, rtx.moveToDocumentRoot());
+        long key = rtx.getNode().getNodeKey();
 
-		// IReadTransaction Convention 2.
-		assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
-		assertEquals(key, rtx.getNode().getNodeKey());
+        // IReadTransaction Convention 2.
+        assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
+        assertEquals(key, rtx.getNode().getNodeKey());
 
-		assertEquals(((AbsStructNode) rtx.getNode()).hasFirstChild(),
-				rtx.moveToFirstChild());
-		assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasFirstChild(), rtx.moveToFirstChild());
+        assertEquals(1L, rtx.getNode().getNodeKey());
 
-		assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
-		assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
-		assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
+        assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
+        assertEquals(1L, rtx.getNode().getNodeKey());
 
-		assertEquals(((AbsStructNode) rtx.getNode()).hasRightSibling(),
-				rtx.moveToRightSibling());
-		assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasRightSibling(), rtx.moveToRightSibling());
+        assertEquals(1L, rtx.getNode().getNodeKey());
 
-		assertEquals(((AbsStructNode) rtx.getNode()).hasFirstChild(),
-				rtx.moveToFirstChild());
-		assertEquals(4L, rtx.getNode().getNodeKey());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasFirstChild(), rtx.moveToFirstChild());
+        assertEquals(4L, rtx.getNode().getNodeKey());
 
-		assertEquals(((AbsStructNode) rtx.getNode()).hasRightSibling(),
-				rtx.moveToRightSibling());
-		assertEquals(5L, rtx.getNode().getNodeKey());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasRightSibling(), rtx.moveToRightSibling());
+        assertEquals(5L, rtx.getNode().getNodeKey());
 
-		assertEquals(((AbsStructNode) rtx.getNode()).hasLeftSibling(),
-				rtx.moveToLeftSibling());
-		assertEquals(4L, rtx.getNode().getNodeKey());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasLeftSibling(), rtx.moveToLeftSibling());
+        assertEquals(4L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
-		assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
+        assertEquals(1L, rtx.getNode().getNodeKey());
 
-		rtx.close();
-	}
+        rtx.close();
+    }
 
 }
