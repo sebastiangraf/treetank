@@ -118,7 +118,7 @@ public class TestNodeWrapper {
         // Not the same document.
         NodeInfo node = new DocumentWrapper(session, config);
         NodeInfo other = new NodeWrapper(new DocumentWrapper(mHolder.session, config), 3);
-        assertEquals(-2, node.compareOrder(other));
+        assertEquals(-1, node.compareOrder(other));
 
         // Before.
         node = new DocumentWrapper(mHolder.session, config);
