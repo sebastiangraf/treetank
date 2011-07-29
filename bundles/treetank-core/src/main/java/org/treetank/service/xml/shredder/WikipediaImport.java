@@ -47,7 +47,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -115,7 +115,7 @@ public final class WikipediaImport implements IImport<StartElement> {
         }
 
         try {
-            final IDatabase db = FileDatabase.openDatabase(paramTTDir);
+            final IDatabase db = Database.openDatabase(paramTTDir);
             mSession = db.getSession(new SessionConfiguration.Builder().build());
             mWTX = mSession.beginWriteTransaction();
         } catch (final AbsTTException exc) {
@@ -539,7 +539,7 @@ public final class WikipediaImport implements IImport<StartElement> {
         System.out.print("Importing wikipedia...");
         final File xml = new File(args[0]);
         final File tnk = new File(args[1]);
-        FileDatabase.truncateDatabase(tnk);
+        Database.truncateDatabase(tnk);
 
         // Create necessary element nodes.
         final XMLEventFactory eventFactory = XMLEventFactory.newInstance();

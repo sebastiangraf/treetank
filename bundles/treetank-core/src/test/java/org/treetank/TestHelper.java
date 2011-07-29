@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.Session;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction.HashKind;
@@ -111,12 +111,12 @@ public final class TestHelper {
         final DatabaseConfiguration tempConfig = new DatabaseConfiguration.Builder().build();
         try {
             if (!file.exists() && config == null) {
-                FileDatabase.createDatabase(file, tempConfig);
+                Database.createDatabase(file, tempConfig);
                 if (config == null) {
                     configs.put(file, tempConfig);
                 }
             }
-            return FileDatabase.openDatabase(file);
+            return Database.openDatabase(file);
         } catch (final AbsTTException exc) {
             fail(exc.toString());
             return null;
@@ -149,12 +149,12 @@ public final class TestHelper {
     @Ignore
     public static final void deleteEverything() throws AbsTTException {
         if (PATHS.PATH1.getFile().exists()) {
-            FileDatabase.closeDatabase(PATHS.PATH1.getFile());
-            assertTrue(FileDatabase.truncateDatabase(PATHS.PATH1.getFile()));
+            Database.closeDatabase(PATHS.PATH1.getFile());
+            assertTrue(Database.truncateDatabase(PATHS.PATH1.getFile()));
         }
         if (PATHS.PATH2.getFile().exists()) {
-            FileDatabase.closeDatabase(PATHS.PATH2.getFile());
-            assertTrue(FileDatabase.truncateDatabase(PATHS.PATH2.getFile()));
+            Database.closeDatabase(PATHS.PATH2.getFile());
+            assertTrue(Database.truncateDatabase(PATHS.PATH2.getFile()));
         }
 
         configs.clear();
@@ -164,8 +164,8 @@ public final class TestHelper {
     @Ignore
     public static final void closeEverything() {
         try {
-            FileDatabase.closeDatabase(PATHS.PATH1.getFile());
-            FileDatabase.closeDatabase(PATHS.PATH2.getFile());
+            Database.closeDatabase(PATHS.PATH1.getFile());
+            Database.closeDatabase(PATHS.PATH2.getFile());
         } catch (final AbsTTException exc) {
             fail(exc.toString());
         }

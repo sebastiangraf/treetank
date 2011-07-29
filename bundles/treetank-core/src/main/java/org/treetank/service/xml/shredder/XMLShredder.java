@@ -51,7 +51,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.slf4j.LoggerFactory;
 import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction;
 import org.treetank.api.IDatabase;
@@ -322,9 +322,9 @@ public class XMLShredder implements Callable<Long> {
         System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1] + "' ... ");
         final long time = System.currentTimeMillis();
         final File target = new File(paramArgs[1]);
-        FileDatabase.truncateDatabase(target);
-        FileDatabase.createDatabase(target, new DatabaseConfiguration.Builder().build());
-        final IDatabase db = FileDatabase.openDatabase(target);
+        Database.truncateDatabase(target);
+        Database.createDatabase(target, new DatabaseConfiguration.Builder().build());
+        final IDatabase db = Database.openDatabase(target);
         final ISession session = db.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = createReader(new File(paramArgs[0]));

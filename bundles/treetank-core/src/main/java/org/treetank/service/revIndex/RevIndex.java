@@ -35,7 +35,7 @@ import java.util.Stack;
 import javax.xml.namespace.QName;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
@@ -111,7 +111,7 @@ public final class RevIndex {
      *             if any access to Treetank fails
      */
     public RevIndex(final File mIndex, final long mRev) throws AbsTTException {
-        final IDatabase db = FileDatabase.openDatabase(mIndex);
+        final IDatabase db = Database.openDatabase(mIndex);
         mIndexSession = db.getSession(new SessionConfiguration.Builder().build());
         if (mRev < 0) {
             mRtx = mIndexSession.beginWriteTransaction();

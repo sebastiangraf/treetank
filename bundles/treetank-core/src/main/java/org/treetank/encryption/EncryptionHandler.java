@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.cache.KeyCache;
 import org.treetank.exception.TTEncryptionException;
 
@@ -369,15 +369,15 @@ public final class EncryptionHandler {
      */
     public void clear() {
         if (SEL_STORE.exists()) {
-            FileDatabase.truncateDatabase(SEL_STORE);
+            Database.truncateDatabase(SEL_STORE);
             System.out.println("Selector DB has been removed.");
         }
         if (MAT_STORE.exists()) {
-            FileDatabase.truncateDatabase(MAT_STORE);
+            Database.truncateDatabase(MAT_STORE);
             System.out.println("Secret Material DB has been removed.");
         }
         if (MAN_STORE.exists()) {
-            FileDatabase.truncateDatabase(MAN_STORE);
+            Database.truncateDatabase(MAN_STORE);
             System.out.println("Key Manager DB has been  removed.");
         }
     }

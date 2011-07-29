@@ -46,11 +46,11 @@ import org.treetank.settings.EStoragePaths;
  * @see IDatabase
  * @author Sebastian Graf, University of Konstanz
  */
-public final class FileDatabase implements IDatabase {
+public final class Database implements IDatabase {
 
     /** Central repository of all running sessions. */
-    private static final ConcurrentMap<File, FileDatabase> DATABASEMAP =
-        new ConcurrentHashMap<File, FileDatabase>();
+    private static final ConcurrentMap<File, Database> DATABASEMAP =
+        new ConcurrentHashMap<File, Database>();
 
     /** DatabaseConfiguration with fixed settings. */
     final DatabaseConfiguration mDatabaseConfiguration;
@@ -68,7 +68,7 @@ public final class FileDatabase implements IDatabase {
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    private FileDatabase(final File paramFile, final DatabaseConfiguration paramDBConf) throws AbsTTException {
+    private Database(final File paramFile, final DatabaseConfiguration paramDBConf) throws AbsTTException {
         assert paramFile != null;
         assert paramDBConf != null;
         mFile = paramFile;
@@ -154,9 +154,9 @@ public final class FileDatabase implements IDatabase {
         if (!paramFile.exists() && !createDatabase(paramFile, new DatabaseConfiguration.Builder().build())) {
             throw new TTUsageException("DB could not be created at location", paramFile.toString());
         }
-        final FileDatabase database =
-            new FileDatabase(paramFile, new DatabaseConfiguration.Builder().build());
-        final FileDatabase returnVal = DATABASEMAP.putIfAbsent(paramFile, database);
+        final Database database =
+            new Database(paramFile, new DatabaseConfiguration.Builder().build());
+        final Database returnVal = DATABASEMAP.putIfAbsent(paramFile, database);
         if (returnVal == null) {
             return database;
         } else {
