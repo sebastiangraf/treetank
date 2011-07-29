@@ -46,7 +46,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -1351,8 +1351,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         final File target = new File(args[1]);
 
         try {
-            FileDatabase.createDatabase(target, new DatabaseConfiguration.Builder().build());
-            final IDatabase db = FileDatabase.openDatabase(target);
+            Database.createDatabase(target, new DatabaseConfiguration.Builder().build());
+            final IDatabase db = Database.openDatabase(target);
             final ISession session = db.getSession(new SessionConfiguration.Builder().build());
             final IWriteTransaction wtx = session.beginWriteTransaction();
             final XMLEventReader reader = createReader(new File(args[0]));

@@ -36,7 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
@@ -336,7 +336,7 @@ public final class XMLSerializer extends AbsSerializer {
         target.delete();
         final FileOutputStream outputStream = new FileOutputStream(target);
 
-        final IDatabase db = FileDatabase.openDatabase(new File(args[0]));
+        final IDatabase db = Database.openDatabase(new File(args[0]));
         final ISession session = db.getSession(new SessionConfiguration.Builder().build());
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();

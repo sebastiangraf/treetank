@@ -36,7 +36,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransactionState;
 import org.treetank.api.IDatabase;
@@ -205,7 +205,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      */
     public static void main(final String... args) throws Exception {
 
-        final IDatabase database = FileDatabase.openDatabase(new File(args[0]));
+        final IDatabase database = Database.openDatabase(new File(args[0]));
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         final DefaultHandler defHandler = new DefaultHandler();

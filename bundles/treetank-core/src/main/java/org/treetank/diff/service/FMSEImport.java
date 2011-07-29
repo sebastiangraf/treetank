@@ -33,7 +33,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 
 import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -69,9 +69,9 @@ public final class FMSEImport {
         IOException, XMLStreamException {
         assert paramResNewRev != null;
         assert paramNewRev != null;
-        FileDatabase.truncateDatabase(paramNewRev);
-        FileDatabase.createDatabase(paramNewRev, new DatabaseConfiguration.Builder().build());
-        final IDatabase db = FileDatabase.openDatabase(paramNewRev);
+        Database.truncateDatabase(paramNewRev);
+        Database.createDatabase(paramNewRev, new DatabaseConfiguration.Builder().build());
+        final IDatabase db = Database.openDatabase(paramNewRev);
         final ISession session = db.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(paramResNewRev);

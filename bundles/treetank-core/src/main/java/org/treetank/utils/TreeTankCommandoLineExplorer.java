@@ -32,7 +32,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 
 import org.slf4j.LoggerFactory;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
@@ -93,7 +93,7 @@ public final class TreeTankCommandoLineExplorer {
             }
 
             final File file = new File(args[0]);
-            database = FileDatabase.openDatabase(file);
+            database = Database.openDatabase(file);
             session = database.getSession(new SessionConfiguration.Builder().build());
             if (revision != 0) {
                 rtx = session.beginWriteTransaction();
@@ -126,7 +126,7 @@ public final class TreeTankCommandoLineExplorer {
                     }
                     final File file = findFile(line);
                     if (file != null) {
-                        database = FileDatabase.openDatabase(file);
+                        database = Database.openDatabase(file);
                         session = database.getSession(new SessionConfiguration.Builder().build());
                         rtx = session.beginReadTransaction();
                         System.out.println(command.executeCommand(rtx));

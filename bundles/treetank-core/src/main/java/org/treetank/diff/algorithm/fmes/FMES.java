@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.*;
 
 import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransactionState;
 import org.treetank.api.*;
@@ -156,13 +156,13 @@ public final class FMES implements IImportDiff {
         mInOrder = new IdentityHashMap<IItem, Boolean>();
         mAlreadyInserted = new IdentityHashMap<IItem, Boolean>();
 
-        FileDatabase.createDatabase(paramOldFile, new DatabaseConfiguration.Builder().build());
-        final IDatabase databaseOld = FileDatabase.openDatabase(paramOldFile);
+        Database.createDatabase(paramOldFile, new DatabaseConfiguration.Builder().build());
+        final IDatabase databaseOld = Database.openDatabase(paramOldFile);
         final ISession sessionOld = databaseOld.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = sessionOld.beginWriteTransaction();
 
-        FileDatabase.createDatabase(paramNewFile, new DatabaseConfiguration.Builder().build());
-        final IDatabase databaseNew = FileDatabase.openDatabase(paramOldFile);
+        Database.createDatabase(paramNewFile, new DatabaseConfiguration.Builder().build());
+        final IDatabase databaseNew = Database.openDatabase(paramOldFile);
         final ISession sessionNew = databaseNew.getSession(new SessionConfiguration.Builder().build());
         final IReadTransaction rtx = sessionNew.beginWriteTransaction();
 
