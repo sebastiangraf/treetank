@@ -130,6 +130,21 @@ public final class DatabaseConfiguration {
     }
 
     /**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Type: ");
+		builder.append(this.mType);
+		builder.append("\nRevision: ");
+		builder.append(this.mRevision);
+		builder.append("\nHashKind: ");
+		builder.append(this.mHashKind);
+		return builder.toString();
+	}
+    
+    /**
      * Builder class for generating new {@link DatabaseConfiguration} instance.
      */
     public static final class Builder {

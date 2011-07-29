@@ -37,103 +37,118 @@ import org.treetank.utils.ItemList;
  * <h1>Session</h1>
  * 
  * <p>
- * Makes sure that there only is a single session instance bound to a TreeTank file.
+ * Makes sure that there only is a single session instance bound to a TreeTank
+ * file.
  * </p>
  */
 public final class Session implements ISession {
 
-    /** Session state. */
-    private transient SessionState mSessionState;
+	/** Session state. */
+	private transient SessionState mSessionState;
 
-    /** Determines if session was closed. */
-    private transient boolean mClosed;
+	/** Determines if session was closed. */
+	private transient boolean mClosed;
 
-    /**
-     * Hidden constructor.
-     * 
-     * @param paramDatabaseConf
-     *            DatabaseConfiguration for general setting about the storage
-     * @param paramSessionConf
-     *            SessionConfiguration for handling this specific session
-     * @throws AbsTTException
-     *             Exception if something weird happens
-     */
-    protected Session(final DatabaseConfiguration paramDatabaseConf, final SessionConfiguration paramSessionConf)
-        throws AbsTTException {
-        assert paramDatabaseConf != null;
-        assert paramSessionConf != null;
-        mSessionState = new SessionState(paramDatabaseConf, paramSessionConf);
-        mClosed = false;
-    }
+	/**
+	 * Hidden constructor.
+	 * 
+	 * @param paramDatabaseConf
+	 *            DatabaseConfiguration for general setting about the storage
+	 * @param paramSessionConf
+	 *            SessionConfiguration for handling this specific session
+	 * @throws AbsTTException
+	 *             Exception if something weird happens
+	 */
+	protected Session(final DatabaseConfiguration paramDatabaseConf,
+			final SessionConfiguration paramSessionConf) throws AbsTTException {
+		assert paramDatabaseConf != null;
+		assert paramSessionConf != null;
+		mSessionState = new SessionState(paramDatabaseConf, paramSessionConf);
+		mClosed = false;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized IReadTransaction beginReadTransaction() throws AbsTTException {
-        assertNotClosed();
-        assert mSessionState != null;
-        return mSessionState.beginReadTransaction(new ItemList());
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public synchronized IReadTransaction beginReadTransaction()
+			throws AbsTTException {
+		assertNotClosed();
+		assert mSessionState != null;
+		return mSessionState.beginReadTransaction(new ItemList());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized IReadTransaction beginReadTransaction(final long paramRevisionKey) throws AbsTTException {
-        assertNotClosed();
-        assert mSessionState != null;
-        mSessionState.assertValidRevision(paramRevisionKey);
-        return mSessionState.beginReadTransaction(paramRevisionKey, new ItemList());
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public synchronized IReadTransaction beginReadTransaction(
+			final long paramRevisionKey) throws AbsTTException {
+		assertNotClosed();
+		assert mSessionState != null;
+		mSessionState.assertValidRevision(paramRevisionKey);
+		return mSessionState.beginReadTransaction(paramRevisionKey,
+				new ItemList());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized IWriteTransaction beginWriteTransaction() throws AbsTTException {
-        assertNotClosed();
-        assert mSessionState != null;
-        return mSessionState.beginWriteTransaction(0, 0);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public synchronized IWriteTransaction beginWriteTransaction()
+			throws AbsTTException {
+		assertNotClosed();
+		assert mSessionState != null;
+		return mSessionState.beginWriteTransaction(0, 0);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized IWriteTransaction beginWriteTransaction(final int paramMaxNodeCount, final int paramMaxTime)
-        throws AbsTTException {
-        assertNotClosed();
-        assert mSessionState != null;
-        return mSessionState.beginWriteTransaction(paramMaxNodeCount, paramMaxTime);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public synchronized IWriteTransaction beginWriteTransaction(
+			final int paramMaxNodeCount, final int paramMaxTime)
+			throws AbsTTException {
+		assertNotClosed();
+		assert mSessionState != null;
+		return mSessionState.beginWriteTransaction(paramMaxNodeCount,
+				paramMaxTime);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void close() throws AbsTTException {
-        if (!mClosed) {
-            assert mSessionState != null;
-            mSessionState.close();
-            mSessionState = null;
-            mClosed = true;
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public synchronized void close() throws AbsTTException {
+		if (!mClosed) {
+			assert mSessionState != null;
+			mSessionState.close();
+			mSessionState = null;
+			mClosed = true;
+		}
+	}
 
-    /**
-     * Make sure that the session is not yet closed when calling this method.
-     */
-    private void assertNotClosed() {
-        if (mClosed) {
-            throw new IllegalStateException("Session is already closed.");
-        }
-    }
+	/**
+	 * Make sure that the session is not yet closed when calling this method.
+	 */
+	private void assertNotClosed() {
+		if (mClosed) {
+			throw new IllegalStateException("Session is already closed.");
+		}
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public synchronized boolean isClosed() {
-        return mClosed;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public synchronized boolean isClosed() {
+		return mClosed;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return mSessionState.toString();
+	}
 
 }
