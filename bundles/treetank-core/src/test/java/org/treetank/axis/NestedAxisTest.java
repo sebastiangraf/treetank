@@ -52,7 +52,6 @@ public class NestedAxisTest {
         TestHelper.createTestDocument();
     }
 
-
     @Test
     public void testNestedAxisTest() throws AbsTTException {
         final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();

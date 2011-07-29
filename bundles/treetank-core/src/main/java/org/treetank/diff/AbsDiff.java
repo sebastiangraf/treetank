@@ -123,7 +123,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         mDiff = EDiff.SAME;
         mDiffKind = paramBuilder.mKind;
         mDepth = new DepthCounter(paramBuilder.mNewDepth, paramBuilder.mOldDepth);
-//        System.out.println("NEW REV: " + paramBuilder.mNewRev + " new rev: " + mNewRtx.getRevisionNumber());
+        // System.out.println("NEW REV: " + paramBuilder.mNewRev + " new rev: " +
+        // mNewRtx.getRevisionNumber());
     }
 
     /**

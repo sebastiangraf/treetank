@@ -107,8 +107,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         PrimaryIndex<Long, KeySelector> primaryIndex;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
-                    Long.class, KeySelector.class);
+                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
 
             primaryIndex.put(entity);
         } catch (DatabaseException e) {
@@ -130,9 +129,8 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         KeySelector entity = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
-                    Long.class, KeySelector.class);
-            entity = (KeySelector) primaryIndex.get(paramKey);
+                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+            entity = (KeySelector)primaryIndex.get(paramKey);
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
@@ -151,14 +149,13 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         long counter = 0;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
-                    Long.class, KeySelector.class);
+                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
             counter = primaryIndex.count();
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
         }
-        return (int) counter;
+        return (int)counter;
     }
 
     /**
@@ -172,8 +169,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         SortedMap<Long, KeySelector> sMap = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
-                    Long.class, KeySelector.class);
+                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
             sMap = primaryIndex.sortedMap();
 
         } catch (final DatabaseException mDbExp) {

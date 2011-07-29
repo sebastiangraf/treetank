@@ -148,7 +148,7 @@ public class UpdateTest {
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));
         for (int i = 0; i < 256 * 256 + 1; i++) {
-//            wtx.insertTextAsRightSibling("");
+            // wtx.insertTextAsRightSibling("");
             wtx.insertElementAsRightSibling(new QName(""));
         }
 
@@ -260,7 +260,7 @@ public class UpdateTest {
         rtx.close();
         session.close();
     }
-    
+
     @Test
     public void testThirdMoveToFirstChild() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -285,7 +285,7 @@ public class UpdateTest {
         rtx.close();
         session.close();
     }
-    
+
     @Test(expected = TTUsageException.class)
     public void testFourthMoveToFirstChild() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());

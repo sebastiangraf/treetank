@@ -29,9 +29,8 @@ public class EncryptionTreeParser extends DefaultHandler {
     /**
      * Path of initial right tree XML file.
      */
-    private static final String FILENAME = "src" + File.separator + "test"
-        + File.separator + "resources" + File.separator
-        + "righttreestructure.xml";
+    private static final String FILENAME = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "righttreestructure.xml";
 
     /**
      * Instance for {@link KeySelectorDatabase}.
@@ -82,8 +81,7 @@ public class EncryptionTreeParser extends DefaultHandler {
      * Just a helper map for user that has parent that hasn't been parsed
      * and written to the database yet.
      */
-    private final Map<Long, List<String>> mUserParents =
-        new HashMap<Long, List<String>>();
+    private final Map<Long, List<String>> mUserParents = new HashMap<Long, List<String>>();
 
     /**
      * Start tree parsing process.
@@ -95,8 +93,8 @@ public class EncryptionTreeParser extends DefaultHandler {
      * @param manDb
      *            key manager database instance.
      */
-    public final void init(final KeySelectorDatabase selDb,
-        final KeyMaterialDatabase matDb, final KeyManagerDatabase manDb) {
+    public final void init(final KeySelectorDatabase selDb, final KeyMaterialDatabase matDb,
+        final KeyManagerDatabase manDb) {
 
         mSelectorDb = selDb;
         mMaterialDb = matDb;
@@ -118,9 +116,8 @@ public class EncryptionTreeParser extends DefaultHandler {
      * {@inheritDoc}
      */
     @Override
-    public final void startElement(final String namespaceURI,
-        final String localName, final String qName, final Attributes atts)
-        throws SAXException {
+    public final void startElement(final String namespaceURI, final String localName, final String qName,
+        final Attributes atts) throws SAXException {
 
         final String mNodeName = atts.getValue(0);
         if (qName.equals(mNodeDec)) {
@@ -164,8 +161,8 @@ public class EncryptionTreeParser extends DefaultHandler {
      * {@inheritDoc}
      */
     @Override
-    public final void endElement(final String namespaceURI,
-        final String localName, final String qName) throws SAXException {
+    public final void endElement(final String namespaceURI, final String localName, final String qName)
+        throws SAXException {
     }
 
     /**
@@ -178,15 +175,14 @@ public class EncryptionTreeParser extends DefaultHandler {
          */
         Iterator iter = mUserParents.keySet().iterator();
         while (iter.hasNext()) {
-            final long mMapKey = (Long) iter.next();
+            final long mMapKey = (Long)iter.next();
             final KeySelector mSelector = mSelectorDb.getPersistent(mMapKey);
             final List<String> mNameList = mUserParents.get(mMapKey);
 
             for (int i = 0; i < mNameList.size(); i++) {
                 final String mName = mNameList.get(i);
                 for (int j = 0; j < mSelectorDb.count(); j++) {
-                    final KeySelector mParentSelector =
-                        mSelectorDb.getPersistent(j);
+                    final KeySelector mParentSelector = mSelectorDb.getPersistent(j);
                     if (mParentSelector.getName().equals(mName)) {
                         mSelector.addParent(mParentSelector.getKeyId());
                         mSelectorDb.putPersistent(mSelector);
@@ -204,8 +200,7 @@ public class EncryptionTreeParser extends DefaultHandler {
             final String mUser = mUsers.get(j);
 
             // map of all key trails a user has
-            final Map<Long, List<Long>> mKeyTrails =
-                new HashMap<Long, List<Long>>();
+            final Map<Long, List<Long>> mKeyTrails = new HashMap<Long, List<Long>>();
 
             // find user node in selector db
             for (int i = 0; i < mSelectorDb.count(); i++) {
@@ -217,8 +212,7 @@ public class EncryptionTreeParser extends DefaultHandler {
 
                     for (int k = 0; k < mParentIds.size(); k++) {
                         final long mParent = mParentIds.get(k);
-                        final LinkedList<Long> mKeyTrail =
-                            new LinkedList<Long>();
+                        final LinkedList<Long> mKeyTrail = new LinkedList<Long>();
                         mKeyTrail.add(mParent);
                         mKeyTrails.put(mParent, mKeyTrail);
                     }
@@ -227,12 +221,11 @@ public class EncryptionTreeParser extends DefaultHandler {
                     // and complete the trail steps to the root
                     iter = mKeyTrails.keySet().iterator();
                     while (iter.hasNext()) {
-                        final long mParentKey = (Long) iter.next();
+                        final long mParentKey = (Long)iter.next();
                         final List<Long> mKeyTrail = mKeyTrails.get(mParentKey);
 
                         // get parent id from parent
-                        List<Long> mParentList =
-                            mSelectorDb.getPersistent(mParentKey).getParents();
+                        List<Long> mParentList = mSelectorDb.getPersistent(mParentKey).getParents();
 
                         while (mParentList.size() != 0) {
                             if (mParentList.size() > 1) {
@@ -247,9 +240,7 @@ public class EncryptionTreeParser extends DefaultHandler {
                                 // add parent's parent id to key trail
                                 final long newParent = mParentList.get(0);
                                 mKeyTrail.add(newParent);
-                                mParentList =
-                                    mSelectorDb.getPersistent(newParent)
-                                        .getParents();
+                                mParentList = mSelectorDb.getPersistent(newParent).getParents();
                             }
                         }
                     }

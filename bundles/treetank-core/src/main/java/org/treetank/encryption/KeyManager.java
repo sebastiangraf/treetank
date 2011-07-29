@@ -48,15 +48,14 @@ public class KeyManager {
      * @param paramInitial
      *            map of all key trails.
      */
-    public KeyManager(final String paramUser,
-        final Map<Long, List<Long>> paramInitial) {
+    public KeyManager(final String paramUser, final Map<Long, List<Long>> paramInitial) {
         this.mUser = paramUser;
         this.mInitialKeys = paramInitial;
         this.mTekKeys = new LinkedList<Long>();
 
         final Iterator iter = paramInitial.keySet().iterator();
         while (iter.hasNext()) {
-            final long mMapKey = (Long) iter.next();
+            final long mMapKey = (Long)iter.next();
             final List<Long> mKeyTrail = paramInitial.get(mMapKey);
             final int mKeyTrailSize = mKeyTrail.size() - 1;
             final long mTek = mKeyTrail.get(mKeyTrailSize);

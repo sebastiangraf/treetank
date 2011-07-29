@@ -82,7 +82,7 @@ public final class DocumentRootNode extends AbsStructNode {
     public static DocumentRootNode createData() {
 
         final byte[] byteData = new byte[ENodes.ROOT_KIND.getByteSize()];
-        
+
         final byte[] pointerData = new byte[ENodes.ROOT_KIND.getPointerSize()];
 
         int mCount = AbsNode.NODE_KEY;

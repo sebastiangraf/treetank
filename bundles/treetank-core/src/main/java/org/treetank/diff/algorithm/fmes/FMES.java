@@ -677,7 +677,8 @@ public final class FMES implements IImportDiff {
      *            {@link IReadTransaction} implementation reference on new revision
      * @return it's position, with respect to already inserted/deleted nodes
      */
-    private int findPos(final IItem paramX, final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
+    private int
+        findPos(final IItem paramX, final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         final long nodeKey = paramRtx.getStructuralNode().getNodeKey();
         if (paramX.getKind() == ENodes.ATTRIBUTE_KIND) {
             return -1;

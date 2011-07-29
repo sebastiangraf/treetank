@@ -33,7 +33,8 @@ package org.treetank.diff.algorithm.fmes;
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
- * @param <T> type of instances to compare
+ * @param <T>
+ *            type of instances to compare
  * 
  */
 public interface IComparator<T> {

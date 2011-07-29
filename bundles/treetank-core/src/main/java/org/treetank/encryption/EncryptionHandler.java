@@ -65,23 +65,20 @@ public final class EncryptionHandler {
     /**
      * Store path of berkley key selector db.
      */
-    private static final File SEL_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("selectordb").toString());
+    private static final File SEL_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("selectordb").toString());
 
     /**
      * Store path of berkley keying material db.
      */
-    private static final File MAT_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("secretmaterialdb").toString());
+    private static final File MAT_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("secretmaterialdb").toString());
 
     /**
      * Store path of berkley key manager db.
      */
-    private static final File MAN_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("keymanagerdb").toString());
+    private static final File MAN_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("keymanagerdb").toString());
 
     /**
      * Constructor of singleton class that initiates all needed instances.
@@ -131,13 +128,12 @@ public final class EncryptionHandler {
      * @throws TTEncryptionException
      *             Exception occurred during joining process.
      */
-    public void joinGroup(final String paramUser, final String paramGroup)
-        throws TTEncryptionException {
+    public void joinGroup(final String paramUser, final String paramGroup) throws TTEncryptionException {
         try {
             // check if group exits.
             if (nodeExists(paramGroup)) {
                 final long mGroupId = getNodeIdByName(paramGroup);
-                // check if user exists; if so, check if 
+                // check if user exists; if so, check if
                 // it is already member of group.
                 if (nodeExists(paramUser)) {
                     boolean userGroupCheck = true;
@@ -149,36 +145,31 @@ public final class EncryptionHandler {
                         }
                     }
                     if (userGroupCheck) {
-                        // user is not member of this group yet. 
+                        // user is not member of this group yet.
                         // add group id to its parent list.
                         final long mUserId = getNodeIdByName(paramUser);
-                        final KeySelector mSelector =
-                            mSelectorDb.getPersistent(mUserId);
+                        final KeySelector mSelector = mSelectorDb.getPersistent(mUserId);
                         mSelector.addParent(mGroupId);
                         mSelectorDb.putPersistent(mSelector);
 
-                        // increase revision in key trail and create new 
+                        // increase revision in key trail and create new
                         // keks and tek in material db
                         final List<Long> mKeyTrail = getKeyTrail(mGroupId);
                         final List<Long> mMaterialKeys = new LinkedList<Long>();
 
                         for (int i = 0; i < mKeyTrail.size(); i++) {
-                            final KeySelector mSel =
-                                mSelectorDb.getPersistent(mKeyTrail.get(i));
+                            final KeySelector mSel = mSelectorDb.getPersistent(mKeyTrail.get(i));
                             mSelectorDb.putPersistent(mSel);
-                            final long mMatKey =
-                                mMaterialDb.putPersistent(mSel);
+                            final long mMatKey = mMaterialDb.putPersistent(mSel);
                             mMaterialKeys.add(mMatKey);
                         }
 
-                        // add new key trail and tek to initial key 
-                        //list of user.
-                        final KeyManager mManager =
-                            mManagerDb.getPersistent(paramUser);
+                        // add new key trail and tek to initial key
+                        // list of user.
+                        final KeyManager mManager = mManagerDb.getPersistent(paramUser);
                         mManager.addInitialKeyTrail(mMaterialKeys);
 
-                        final long mTek =
-                            mMaterialKeys.get(mMaterialKeys.size() - 1);
+                        final long mTek = mMaterialKeys.get(mMaterialKeys.size() - 1);
                         mManager.addTEK(mTek);
                         mManagerDb.putPersistent(mManager);
 
@@ -186,37 +177,33 @@ public final class EncryptionHandler {
                         transmitKEK(paramUser, mTek);
 
                     } else {
-                        throw new TTEncryptionException(
-                            "User is already member of this group!");
+                        throw new TTEncryptionException("User is already member of this group!");
                     }
                 } else {
-                    // user does not exist yet. create user and its keying 
-                    // material and add group id to its  parent list.
+                    // user does not exist yet. create user and its keying
+                    // material and add group id to its parent list.
                     final KeySelector mSelector = new KeySelector(paramUser);
                     mSelector.addParent(mGroupId);
                     mSelectorDb.putPersistent(mSelector);
                     mMaterialDb.putPersistent(mSelector);
 
-                    // increase revision in key trail and create new 
+                    // increase revision in key trail and create new
                     // KEKs and TEK in material db.
                     final List<Long> mKeyTrail = getKeyTrail(mGroupId);
                     final List<Long> mMaterialKeys = new LinkedList<Long>();
 
                     for (int i = 0; i < mKeyTrail.size(); i++) {
-                        final KeySelector mSel =
-                            mSelectorDb.getPersistent(mKeyTrail.get(i));
+                        final KeySelector mSel = mSelectorDb.getPersistent(mKeyTrail.get(i));
                         mSel.increaseRevision();
                         mSelectorDb.putPersistent(mSel);
                         final long mMatKey = mMaterialDb.putPersistent(mSel);
                         mMaterialKeys.add(mMatKey);
                     }
 
-                    final Map<Long, List<Long>> mKeyTrails =
-                        new HashMap<Long, List<Long>>();
+                    final Map<Long, List<Long>> mKeyTrails = new HashMap<Long, List<Long>>();
                     mKeyTrails.put(mMaterialKeys.get(0), mMaterialKeys);
 
-                    final KeyManager mManager =
-                        new KeyManager(paramUser, mKeyTrails);
+                    final KeyManager mManager = new KeyManager(paramUser, mKeyTrails);
                     mManagerDb.putPersistent(mManager);
 
                     // transmit new kek to all other users.
@@ -293,8 +280,7 @@ public final class EncryptionHandler {
     private List<Long> getKeyTrail(final long paramGroupKey) {
         final List<Long> mKeyTrail = new LinkedList<Long>();
         mKeyTrail.add(paramGroupKey);
-        List<Long> mParentList =
-            mSelectorDb.getPersistent(paramGroupKey).getParents();
+        List<Long> mParentList = mSelectorDb.getPersistent(paramGroupKey).getParents();
 
         while (mParentList.size() != 0) {
             final long newParent = mParentList.get(0);
@@ -392,16 +378,13 @@ public final class EncryptionHandler {
          */
         for (int i = 0; i < mSelectorDb.count(); i++) {
             final StringBuilder mParentsString = new StringBuilder();
-            final List<Long> mParentsList =
-                mSelectorDb.getPersistent(i).getParents();
+            final List<Long> mParentsList = mSelectorDb.getPersistent(i).getParents();
             for (int k = 0; k < mParentsList.size(); k++) {
                 mParentsString.append("#" + mParentsList.get(k));
             }
 
-            System.out.println("Node: "
-                + mSelectorDb.getPersistent(i).getKeyId() + " "
-                + mSelectorDb.getPersistent(i).getName() + " "
-                + mParentsString.toString() + " "
+            System.out.println("Node: " + mSelectorDb.getPersistent(i).getKeyId() + " "
+                + mSelectorDb.getPersistent(i).getName() + " " + mParentsString.toString() + " "
                 + mSelectorDb.getPersistent(i).getRevision() + " "
                 + mSelectorDb.getPersistent(i).getVersion());
 
@@ -412,12 +395,10 @@ public final class EncryptionHandler {
          */
         for (int i = 0; i < mMaterialDb.count(); i++) {
 
-            System.out.println("Material "
-                + mMaterialDb.getPersistent(i).getMaterialKey() + ": "
+            System.out.println("Material " + mMaterialDb.getPersistent(i).getMaterialKey() + ": "
                 + mMaterialDb.getPersistent(i).getSelectorKey() + " "
-                + mMaterialDb.getPersistent(i).getRevsion() + " "
-                + mMaterialDb.getPersistent(i).getVersion() + " "
-                + mMaterialDb.getPersistent(i).getSecretKey());
+                + mMaterialDb.getPersistent(i).getRevsion() + " " + mMaterialDb.getPersistent(i).getVersion()
+                + " " + mMaterialDb.getPersistent(i).getSecretKey());
         }
 
         /**
@@ -431,8 +412,7 @@ public final class EncryptionHandler {
             String user = (String)iter.next();
             System.out.println("Initial key trails of " + user);
 
-            Map<Long, List<Long>> mKeyTrails =
-                mManagerDb.getPersistent(user).getInitialKeys();
+            Map<Long, List<Long>> mKeyTrails = mManagerDb.getPersistent(user).getInitialKeys();
 
             // iterate through all key trails of user
             Iterator innerIter = mKeyTrails.keySet().iterator();

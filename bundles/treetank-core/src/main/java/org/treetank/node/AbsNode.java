@@ -153,11 +153,10 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     public byte[] getRawValue() {
         return null;
     }
-    
-    public int getPointerSize(){
+
+    public int getPointerSize() {
         return mPointerData.length;
     }
-    
 
     /**
      * Serializing the data.

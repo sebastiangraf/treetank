@@ -100,7 +100,7 @@ public final class DiffFactory {
          * @param paramBuilder
          *            {@link Builder} reference
          * @throws AbsTTException
-         *            if anything while diffing goes wrong related to Treetank
+         *             if anything while diffing goes wrong related to Treetank
          */
         abstract void invoke(final Builder paramBuilder) throws AbsTTException;
     }
@@ -256,11 +256,11 @@ public final class DiffFactory {
         public Void call() throws AbsTTException {
             final DiffKind kind = mBuilder.mDiffKind;
             kind.invoke(mBuilder);
-//            final StructuralDiff diff = new StructuralDiff(mBuilder);
-//            diff.diffMovement();
+            // final StructuralDiff diff = new StructuralDiff(mBuilder);
+            // diff.diffMovement();
             return null;
         }
-        
+
         /**
          * Check parameters for validity and assign global static variables.
          * 

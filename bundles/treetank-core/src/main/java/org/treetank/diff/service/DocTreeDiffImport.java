@@ -30,7 +30,7 @@ package org.treetank.diff.service;
  * Import using DocTreeDiff.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public final class DocTreeDiffImport {
 

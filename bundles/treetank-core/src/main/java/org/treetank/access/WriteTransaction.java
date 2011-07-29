@@ -730,7 +730,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     private void adaptForInsert(final AbsNode paramNewNode, final EInsert paramInsert) throws TTIOException {
         assert paramNewNode != null;
         assert paramInsert != null;
-        
+
         if (paramNewNode instanceof AbsStructNode) {
             final AbsStructNode strucNode = (AbsStructNode)paramNewNode;
             final AbsStructNode parent =
@@ -777,7 +777,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      */
     private void adaptForRemove(final AbsStructNode paramOldNode) throws TTIOException {
         assert paramOldNode != null;
-        
+
         // Adapt left sibling node if there is one.
         if (paramOldNode.hasLeftSibling()) {
             final AbsStructNode leftSibling =
@@ -1092,7 +1092,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         rtx.getNode().acceptVisitor(new InsertSubtreeVisitor(rtx, this, EInsert.ASFIRSTCHILD));
         return paramNodeKey;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public long copySubtreeAsRightSibling(final long paramNodeKey, final IDatabase paramDatabase,
@@ -1142,7 +1142,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws NullPointerException
      *             if the database reference is null
      */
-    private void checkParams(final long paramNodeKey, final IDatabase paramDatabase, final long paramRevision) {
+    private void
+        checkParams(final long paramNodeKey, final IDatabase paramDatabase, final long paramRevision) {
         if (paramNodeKey < 1) {
             throw new IllegalArgumentException("Node key parameter of copied subtree root must be > 1!");
         }

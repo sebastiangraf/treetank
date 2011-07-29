@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -1820,8 +1820,8 @@ public enum FuncDef {
          * <p>
          * Returns the current dateTime (with timezone) from the dynamic context. (See Section C.2 Dynamic
          * Context ComponentsXP.) This is an xs:dateTime that is current at some time during the evaluation of
-         * a query or transformation in which fn:current-dateTime() is executed. This function is
-         * �stable�. The precise instant during the query or transformation represented by the value of
+         * a query or transformation in which fn:current-dateTime() is executed. This function is �stable�.
+         * The precise instant during the query or transformation represented by the value of
          * fn:current-dateTime() is �implementation dependent�.
          * </p>
          */
@@ -1834,8 +1834,8 @@ public enum FuncDef {
          * <p>
          * Returns xs:date(fn:current-dateTime()). This is an xs:date (with timezone) that is current at some
          * time during the evaluation of a query or transformation in which fn:current-date() is executed.
-         * This function is �stable�. The precise instant during the query or transformation represented
-         * by the value of fn:current-date() is �implementation dependent�.
+         * This function is �stable�. The precise instant during the query or transformation represented by
+         * the value of fn:current-date() is �implementation dependent�.
          * </p>
          */
         CURRENT_DATE(AbsFunction.class, 0, 0, "xs:date", "fn:current-date"),
@@ -1847,8 +1847,8 @@ public enum FuncDef {
          * <p>
          * Returns xs:time(fn:current-dateTime()). This is an xs:time (with timezone) that is current at some
          * time during the evaluation of a query or transformation in which fn:current-time() is executed.
-         * This function is �stable�. The precise instant during the query or transformation represented
-         * by the value of fn:current-time() is �implementation dependent�.
+         * This function is �stable�. The precise instant during the query or transformation represented by
+         * the value of fn:current-time() is �implementation dependent�.
          * </p>
          */
         CURRENT_TIME(AbsFunction.class, 0, 0, "xs:time", "fn:current-time"),

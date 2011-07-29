@@ -31,165 +31,163 @@ package org.treetank.access;
  * <h1>SessionConfiguration</h1>
  * 
  * <p>
- * Holds the session-wide settings that can not change. This included stuff like
- * commit-threshold and number of usable write/read transactions.
+ * Holds the session-wide settings that can not change. This included stuff like commit-threshold and number
+ * of usable write/read transactions.
  * </p>
  */
 public final class SessionConfiguration {
 
-	// STATIC STANDARD FIELDS
-	/** Number of concurrent exclusive write transactions. */
-	public static final int MAX_WRITE_TRANSACTIONS = 1;
-	/** Number of concurrent shared read transactions. */
-	public static final int MAX_READ_TRANSACTIONS = 128;
-	/** Commit threshold. */
-	public static final int COMMIT_THRESHOLD = 262144;
-	/** Default User. */
-	public static final String DEFAULT_USER = "ALL";
-	/** Folder for tmp-database. */
-	public static final String INTRINSICTEMP = "tmp";
-	// END STATIC STANDARD FIELDS
+    // STATIC STANDARD FIELDS
+    /** Number of concurrent exclusive write transactions. */
+    public static final int MAX_WRITE_TRANSACTIONS = 1;
+    /** Number of concurrent shared read transactions. */
+    public static final int MAX_READ_TRANSACTIONS = 128;
+    /** Commit threshold. */
+    public static final int COMMIT_THRESHOLD = 262144;
+    /** Default User. */
+    public static final String DEFAULT_USER = "ALL";
+    /** Folder for tmp-database. */
+    public static final String INTRINSICTEMP = "tmp";
+    // END STATIC STANDARD FIELDS
 
-	/** Numbers of allowed IWriteTransaction Instances. */
-	final int mWtxAllowed;
+    /** Numbers of allowed IWriteTransaction Instances. */
+    final int mWtxAllowed;
 
-	/** Numbers of allowed IWriteTransaction Instances. */
-	final int mRtxAllowed;
+    /** Numbers of allowed IWriteTransaction Instances. */
+    final int mRtxAllowed;
 
-	/** Number of node modifications until an automatic commit occurs. */
-	final int mCommitThreshold;
+    /** Number of node modifications until an automatic commit occurs. */
+    final int mCommitThreshold;
 
-	/** User for this session. */
-	final String mUser;
+    /** User for this session. */
+    final String mUser;
 
-	/** Name for the resource to be associated. */
-	final String mName;
+    /** Name for the resource to be associated. */
+    final String mName;
 
-	/**
-	 * Convenience constructor using the standard settings.
-	 * 
-	 * @param paramBuilder
-	 *            {@link Builder} reference
-	 */
-	private SessionConfiguration(
-			final SessionConfiguration.Builder paramBuilder,
-			final String paramName) {
-		mWtxAllowed = paramBuilder.mWtxAllowed;
-		mRtxAllowed = paramBuilder.mRtxAllowed;
-		mCommitThreshold = paramBuilder.mCommitThreshold;
-		mUser = paramBuilder.mUser;
-		mName = paramName;
-	}
+    /**
+     * Convenience constructor using the standard settings.
+     * 
+     * @param paramBuilder
+     *            {@link Builder} reference
+     */
+    private SessionConfiguration(final SessionConfiguration.Builder paramBuilder, final String paramName) {
+        mWtxAllowed = paramBuilder.mWtxAllowed;
+        mRtxAllowed = paramBuilder.mRtxAllowed;
+        mCommitThreshold = paramBuilder.mCommitThreshold;
+        mUser = paramBuilder.mUser;
+        mName = paramName;
+    }
 
-	   /**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public String toString() {
-			final StringBuilder builder = new StringBuilder();
-			builder.append("User: ");
-			builder.append(this.mUser);
-			builder.append("\nResource: ");
-			builder.append(this.mName);
-			return builder.toString();
-		}
-	
-	/**
-	 * Builder class for generating new {@link SessionConfiguration} instance.
-	 */
-	public static final class Builder {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("User: ");
+        builder.append(this.mUser);
+        builder.append("\nResource: ");
+        builder.append(this.mName);
+        return builder.toString();
+    }
 
-		/** Numbers of allowed IWriteTransaction Instances. */
-		private int mWtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
+    /**
+     * Builder class for generating new {@link SessionConfiguration} instance.
+     */
+    public static final class Builder {
 
-		/** Numbers of allowed IWriteTransaction Instances. */
-		private int mRtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
+        /** Numbers of allowed IWriteTransaction Instances. */
+        private int mWtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
 
-		/** Number of node modifications until an automatic commit occurs. */
-		private int mCommitThreshold = SessionConfiguration.COMMIT_THRESHOLD;
+        /** Numbers of allowed IWriteTransaction Instances. */
+        private int mRtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
 
-		/** User for this session. */
-		private String mUser = SessionConfiguration.DEFAULT_USER;
+        /** Number of node modifications until an automatic commit occurs. */
+        private int mCommitThreshold = SessionConfiguration.COMMIT_THRESHOLD;
 
-		/**
-		 * Setter for field mWtxAllowed.
-		 * 
-		 * @param paramWtxAllowed
-		 *            new value for field
-		 * @return reference to the builder object
-		 */
-		public Builder setWtxAllowed(final int paramWtxAllowed) {
-			if (paramWtxAllowed < 1) {
-				throw new IllegalArgumentException("Value must be > 0!");
-			}
-			mWtxAllowed = paramWtxAllowed;
-			return this;
-		}
+        /** User for this session. */
+        private String mUser = SessionConfiguration.DEFAULT_USER;
 
-		/**
-		 * Setter for field mRtxAllowed.
-		 * 
-		 * @param paramRtxAllowed
-		 *            new value for field
-		 * @return reference to the builder object
-		 */
-		public Builder setRtxAllowed(final int paramRtxAllowed) {
-			if (paramRtxAllowed < 1) {
-				throw new IllegalArgumentException("Value must be > 0!");
-			}
-			mRtxAllowed = paramRtxAllowed;
-			return this;
-		}
+        /**
+         * Setter for field mWtxAllowed.
+         * 
+         * @param paramWtxAllowed
+         *            new value for field
+         * @return reference to the builder object
+         */
+        public Builder setWtxAllowed(final int paramWtxAllowed) {
+            if (paramWtxAllowed < 1) {
+                throw new IllegalArgumentException("Value must be > 0!");
+            }
+            mWtxAllowed = paramWtxAllowed;
+            return this;
+        }
 
-		/**
-		 * Setter for field mCommitThreshold.
-		 * 
-		 * @param paramCommitThreshold
-		 *            new value for field
-		 * @return reference to the builder object
-		 */
-		public Builder setCommitThreshold(final int paramCommitThreshold) {
-			if (paramCommitThreshold < 100) {
-				throw new IllegalArgumentException("Value must be > 100!");
-			}
-			mCommitThreshold = paramCommitThreshold;
-			return this;
-		}
+        /**
+         * Setter for field mRtxAllowed.
+         * 
+         * @param paramRtxAllowed
+         *            new value for field
+         * @return reference to the builder object
+         */
+        public Builder setRtxAllowed(final int paramRtxAllowed) {
+            if (paramRtxAllowed < 1) {
+                throw new IllegalArgumentException("Value must be > 0!");
+            }
+            mRtxAllowed = paramRtxAllowed;
+            return this;
+        }
 
-		/**
-		 * Setter for field mUser.
-		 * 
-		 * @param paramUser
-		 *            new value for field
-		 * @return reference to the builder object
-		 */
-		public Builder setUser(final String paramUser) {
-			if (paramUser == null) {
-				throw new NullPointerException("paramUser may not be null!");
-			}
-			mUser = paramUser;
-			return this;
-		}
+        /**
+         * Setter for field mCommitThreshold.
+         * 
+         * @param paramCommitThreshold
+         *            new value for field
+         * @return reference to the builder object
+         */
+        public Builder setCommitThreshold(final int paramCommitThreshold) {
+            if (paramCommitThreshold < 100) {
+                throw new IllegalArgumentException("Value must be > 100!");
+            }
+            mCommitThreshold = paramCommitThreshold;
+            return this;
+        }
 
-		/**
-		 * Builder method to generate new configuration.
-		 * 
-		 * @return a new {@link SessionConfiguration} instance
-		 */
-		public SessionConfiguration build() {
-			return build(INTRINSICTEMP);
-		}
+        /**
+         * Setter for field mUser.
+         * 
+         * @param paramUser
+         *            new value for field
+         * @return reference to the builder object
+         */
+        public Builder setUser(final String paramUser) {
+            if (paramUser == null) {
+                throw new NullPointerException("paramUser may not be null!");
+            }
+            mUser = paramUser;
+            return this;
+        }
 
-		/**
-		 * Builder method to generate new configuration.
-		 * 
-		 * @param resourceName
-		 *            name of the resource where the data should be persisted to
-		 * @return a new {@link SessionConfiguration} instance
-		 */
-		public SessionConfiguration build(final String resourceName) {
-			return new SessionConfiguration(this, resourceName);
-		}
-	}
+        /**
+         * Builder method to generate new configuration.
+         * 
+         * @return a new {@link SessionConfiguration} instance
+         */
+        public SessionConfiguration build() {
+            return build(INTRINSICTEMP);
+        }
+
+        /**
+         * Builder method to generate new configuration.
+         * 
+         * @param resourceName
+         *            name of the resource where the data should be persisted to
+         * @return a new {@link SessionConfiguration} instance
+         */
+        public SessionConfiguration build(final String resourceName) {
+            return new SessionConfiguration(this, resourceName);
+        }
+    }
 
 }

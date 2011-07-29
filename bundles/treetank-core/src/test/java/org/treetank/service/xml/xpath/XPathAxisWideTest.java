@@ -53,7 +53,7 @@ public class XPathAxisWideTest {
         TestHelper.deleteEverything();
         // Setup parsed session.
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        
+
     }
 
     @After

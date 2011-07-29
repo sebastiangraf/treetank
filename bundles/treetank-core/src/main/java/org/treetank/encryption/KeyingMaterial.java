@@ -59,8 +59,7 @@ public class KeyingMaterial {
      * @param paramSKey
      *            secret key of keying material.
      */
-    public KeyingMaterial(final long paramKey, final int paramRev,
-        final int paramVer, final byte[] paramSKey) {
+    public KeyingMaterial(final long paramKey, final int paramRev, final int paramVer, final byte[] paramSKey) {
         this.mMaterialKey = RightKey.getInstance().newMaterialKey();
         this.mSelectorKey = paramKey;
         this.mRevsion = paramRev;

@@ -28,23 +28,19 @@ public class KeyCache {
      * Constructor creates a new key cache.
      */
     public KeyCache() {
-        mMap =
-            new LinkedHashMap<String, LinkedList<LinkedList<Long>>>(
-                CACHE_CAPACITY) {
-                private static final long serialVersionUID = 1;
+        mMap = new LinkedHashMap<String, LinkedList<LinkedList<Long>>>(CACHE_CAPACITY) {
+            private static final long serialVersionUID = 1;
 
-                @Override
-                protected
-                    boolean
-                    removeEldestEntry(
-                        final Map.Entry<String, LinkedList<LinkedList<Long>>> mEldest) {
-                    boolean returnVal = false;
-                    if (size() > CACHE_CAPACITY) {
-                        returnVal = true;
-                    }
-                    return returnVal;
+            @Override
+            protected boolean
+                removeEldestEntry(final Map.Entry<String, LinkedList<LinkedList<Long>>> mEldest) {
+                boolean returnVal = false;
+                if (size() > CACHE_CAPACITY) {
+                    returnVal = true;
                 }
-            };
+                return returnVal;
+            }
+        };
 
     }
 
@@ -69,11 +65,9 @@ public class KeyCache {
      * @param paramList
      *            linked list as values.
      */
-    public final void put(final String paramUser,
-        final LinkedList<Long> paramList) {
+    public final void put(final String paramUser, final LinkedList<Long> paramList) {
 
-        final LinkedList<LinkedList<Long>> mList =
-            new LinkedList<LinkedList<Long>>();
+        final LinkedList<LinkedList<Long>> mList = new LinkedList<LinkedList<Long>>();
         mList.add(paramList);
 
         mMap.put(paramUser, mList);
@@ -101,9 +95,7 @@ public class KeyCache {
      * 
      * @return a <code>Collection</code> with a copy of the cache content.
      */
-    public final Collection<Map.Entry<String, LinkedList<LinkedList<Long>>>>
-        getAll() {
-        return new ArrayList<Map.Entry<String, LinkedList<LinkedList<Long>>>>(
-            mMap.entrySet());
+    public final Collection<Map.Entry<String, LinkedList<LinkedList<Long>>>> getAll() {
+        return new ArrayList<Map.Entry<String, LinkedList<LinkedList<Long>>>>(mMap.entrySet());
     }
 }

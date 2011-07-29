@@ -62,7 +62,7 @@ public abstract class AbsIOFactory {
      * Config for the database holding information about the location of the storage.
      */
     protected final DatabaseConfiguration mDatabaseConfig;
-    
+
     /** Type for different storages. */
     public enum StorageType {
         /** File Storage. */

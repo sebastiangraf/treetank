@@ -145,7 +145,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
                 mContHandler.startPrefixMapping(qName.getPrefix(), qName.getNamespaceURI());
                 final String mURI = paramRtx.nameForKey(paramRtx.getNode().getURIKey());
                 if (paramRtx.nameForKey(paramRtx.getNode().getNameKey()).length() == 0) {
-//                if (qName.getPrefix() == null || qName.getPrefix() == "") {
+                    // if (qName.getPrefix() == null || qName.getPrefix() == "") {
                     atts.addAttribute(mURI, "xmlns", "xmlns", "CDATA", mURI);
                 } else {
                     atts.addAttribute(mURI, "xmlns", "xmlns:"
@@ -166,13 +166,13 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
             // Create SAX events.
             final QName qName = paramRtx.getQNameOfCurrentNode();
-            mContHandler.startElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()),
-                qName.getLocalPart(), WriteTransactionState.buildName(qName), atts);
+            mContHandler.startElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()), qName
+                .getLocalPart(), WriteTransactionState.buildName(qName), atts);
 
             // Empty elements.
             if (!((ElementNode)paramRtx.getNode()).hasFirstChild()) {
-                mContHandler.endElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()),
-                    qName.getLocalPart(), WriteTransactionState.buildName(qName));
+                mContHandler.endElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()), qName
+                    .getLocalPart(), WriteTransactionState.buildName(qName));
             }
         } catch (final SAXException exc) {
             exc.printStackTrace();
@@ -315,15 +315,15 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /* Implements XMLReader method. */
     @Override
-    public void setFeature(final String paramName, final boolean paramValue) throws SAXNotRecognizedException,
-        SAXNotSupportedException {
+    public void setFeature(final String paramName, final boolean paramValue)
+        throws SAXNotRecognizedException, SAXNotSupportedException {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setProperty(final String paramName, final Object paramValue) throws SAXNotRecognizedException,
-        SAXNotSupportedException {
+    public void setProperty(final String paramName, final Object paramValue)
+        throws SAXNotRecognizedException, SAXNotSupportedException {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 }

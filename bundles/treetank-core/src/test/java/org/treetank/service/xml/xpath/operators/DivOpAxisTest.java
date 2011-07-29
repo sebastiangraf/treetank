@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,7 +26,6 @@
  */
 
 package org.treetank.service.xml.xpath.operators;
-
 
 import org.treetank.TestHelper;
 import org.treetank.api.IItem;
@@ -51,7 +50,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class DivOpAxisTest {
-
 
     private AbsAxisTest.Holder holder;
 
@@ -88,33 +86,34 @@ public class DivOpAxisTest {
     @Test
     public final void testGetReturnType() throws AbsTTException {
 
-
         AbsAxis op1 = new SequenceAxis(holder.rtx);
         AbsAxis op2 = new SequenceAxis(holder.rtx);
         AbsObAxis axis = new DivOpAxis(holder.rtx, op1, op2);
 
-        assertEquals(Type.DOUBLE, axis
-            .getReturnType(holder.rtx.keyForName("xs:double"), holder.rtx.keyForName("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(holder.rtx.keyForName("xs:double"), holder.rtx
+            .keyForName("xs:double")));
         assertEquals(Type.DOUBLE, axis.getReturnType(holder.rtx.keyForName("xs:decimal"), holder.rtx
             .keyForName("xs:double")));
-        assertEquals(Type.FLOAT, axis.getReturnType(holder.rtx.keyForName("xs:float"), holder.rtx.keyForName("xs:decimal")));
+        assertEquals(Type.FLOAT, axis.getReturnType(holder.rtx.keyForName("xs:float"), holder.rtx
+            .keyForName("xs:decimal")));
         assertEquals(Type.DECIMAL, axis.getReturnType(holder.rtx.keyForName("xs:decimal"), holder.rtx
             .keyForName("xs:integer")));
         // assertEquals(Type.INTEGER,
         // axis.getReturnType(holder.rtx.keyForName("xs:integer"),
         // holder.rtx.keyForName("xs:integer")));
-        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:yearMonthDuration"), holder.rtx
-            .keyForName("xs:double")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:dayTimeDuration"), holder.rtx
-            .keyForName("xs:double")));
-        assertEquals(Type.DECIMAL, axis.getReturnType(holder.rtx.keyForName("xs:yearMonthDuration"), holder.rtx
-            .keyForName("xs:yearMonthDuration")));
+        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.rtx
+            .keyForName("xs:yearMonthDuration"), holder.rtx.keyForName("xs:double")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:dayTimeDuration"),
+            holder.rtx.keyForName("xs:double")));
+        assertEquals(Type.DECIMAL, axis.getReturnType(holder.rtx.keyForName("xs:yearMonthDuration"),
+            holder.rtx.keyForName("xs:yearMonthDuration")));
         assertEquals(Type.DECIMAL, axis.getReturnType(holder.rtx.keyForName("xs:dayTimeDuration"), holder.rtx
             .keyForName("xs:dayTimeDuration")));
 
         try {
 
-            axis.getReturnType(holder.rtx.keyForName("xs:dateTime"), holder.rtx.keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(holder.rtx.keyForName("xs:dateTime"), holder.rtx
+                .keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -130,7 +129,8 @@ public class DivOpAxisTest {
         }
 
         try {
-            axis.getReturnType(holder.rtx.keyForName("xs:string"), holder.rtx.keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(holder.rtx.keyForName("xs:string"), holder.rtx
+                .keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "

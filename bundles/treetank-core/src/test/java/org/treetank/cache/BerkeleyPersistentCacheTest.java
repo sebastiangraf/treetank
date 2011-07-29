@@ -40,7 +40,8 @@ import static org.junit.Assert.assertEquals;
 
 public class BerkeleyPersistentCacheTest {
 
-    private final NodePage[][] pages = new NodePage[LRUCache.CACHE_CAPACITY + 1][DatabaseConfiguration.VERSIONSTORESTORE + 1];
+    private final NodePage[][] pages =
+        new NodePage[LRUCache.CACHE_CAPACITY + 1][DatabaseConfiguration.VERSIONSTORESTORE + 1];
 
     private ICache cache;
 
@@ -50,8 +51,7 @@ public class BerkeleyPersistentCacheTest {
         cache = new BerkeleyPersistenceCache(TestHelper.PATHS.PATH1.getFile(), 1);
         for (int i = 0; i < pages.length; i++) {
             final NodePage page = new NodePage(i, 0);
-            final NodePage[] revs =
-                new NodePage[DatabaseConfiguration.VERSIONSTORESTORE];
+            final NodePage[] revs = new NodePage[DatabaseConfiguration.VERSIONSTORESTORE];
 
             for (int j = 0; j < DatabaseConfiguration.VERSIONSTORESTORE; j++) {
                 pages[i][j + 1] = new NodePage(i, 0);

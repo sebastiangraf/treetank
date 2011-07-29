@@ -43,16 +43,16 @@ import org.treetank.diff.DiffFactory.EDiff;
  * 
  */
 public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
-    
+
     /** Preserves the order of changes and is used to iterate over all changes. */
     private final List<Diff> mChanges;
 
     /** To do a lookup; we use node/object identities. */
     private final IdentityHashMap<IItem, Diff> mChangeByNode;
-    
+
     /** Index in the {@link List} of {@link Diff}s. */
     private transient int mIndex;
-    
+
     /**
      * Constructor.
      */
@@ -121,7 +121,8 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      */
     public Diff add(final Diff paramChange) {
         assert paramChange != null;
-        final IItem item = paramChange.getDiff() == EDiff.DELETED ? paramChange.getOldNode() : paramChange.getNewNode();
+        final IItem item =
+            paramChange.getDiff() == EDiff.DELETED ? paramChange.getOldNode() : paramChange.getNewNode();
         if (mChangeByNode.containsKey(item)) {
             return paramChange;
         }

@@ -62,8 +62,8 @@ abstract class AbsDiffObservable implements IDiffObservable {
 
     /** {@inheritDoc} */
     @Override
-    public final void fireDiff(final EDiff paramDiff, final IStructuralItem paramNewNode, final IStructuralItem paramOldNode,
-        final DiffDepth paramDepth) {
+    public final void fireDiff(final EDiff paramDiff, final IStructuralItem paramNewNode,
+        final IStructuralItem paramOldNode, final DiffDepth paramDepth) {
         for (final IDiffObserver observer : mDiffObservers) {
             observer.diffListener(paramDiff, paramNewNode, paramOldNode, paramDepth);
         }

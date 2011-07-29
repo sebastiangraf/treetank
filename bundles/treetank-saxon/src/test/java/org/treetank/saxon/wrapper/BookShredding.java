@@ -28,8 +28,8 @@ public final class BookShredding {
 
     public static void createBookDB() throws Exception {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database.createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder()
-            .build());
+        Database
+            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder().build());
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();

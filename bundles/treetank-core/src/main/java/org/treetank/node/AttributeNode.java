@@ -129,7 +129,9 @@ public final class AttributeNode extends AbsNode {
     /** {@inheritDoc} */
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new AttributeNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData), ENodes.cloneData(mValue));
+        final AbsNode toClone =
+            new AttributeNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData), ENodes
+                .cloneData(mValue));
         return toClone;
     }
 
@@ -137,7 +139,7 @@ public final class AttributeNode extends AbsNode {
         final int mUriKey, final int mType, final byte[] mValue) {
 
         final byte[] byteData = new byte[ENodes.ATTRIBUTE_KIND.getByteSize()];
-        
+
         final byte[] pointerData = new byte[ENodes.ATTRIBUTE_KIND.getPointerSize()];
 
         int mCount = AbsNode.NODE_KEY;

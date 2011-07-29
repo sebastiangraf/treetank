@@ -35,31 +35,31 @@ public class NodeEncryptionTest {
 
         final byte[] bytesString = aString.getBytes();
 
-//        final byte[] bytesEncrypt = NodeEncryption.getInstance().encrypt(bytesString);
-//
-//        final byte[] bytesDecrypt = NodeEncryption.getInstance().decrypt(bytesEncrypt);
-        
-//        StringBuilder sb = new StringBuilder();
-//        for(byte aByte: bytesString){
-//            sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
-//        }
-//        System.out.println("Orginal: "+ sb);
-//        
-//         sb = new StringBuilder();
-//        for(byte aByte: bytesEncrypt){
-//            sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
-//        }
-//        System.out.println("Encrypted: "+ sb);
-//        
-//        
-//        
-//         sb = new StringBuilder();
-//        for(byte aByte: bytesDecrypt){
-//            sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
-//        }
-//        System.out.println("Decrypted: "+ sb);
+        // final byte[] bytesEncrypt = NodeEncryption.getInstance().encrypt(bytesString);
+        //
+        // final byte[] bytesDecrypt = NodeEncryption.getInstance().decrypt(bytesEncrypt);
 
-//        assertArrayEquals(bytesString, bytesDecrypt);
+        // StringBuilder sb = new StringBuilder();
+        // for(byte aByte: bytesString){
+        // sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
+        // }
+        // System.out.println("Orginal: "+ sb);
+        //
+        // sb = new StringBuilder();
+        // for(byte aByte: bytesEncrypt){
+        // sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
+        // }
+        // System.out.println("Encrypted: "+ sb);
+        //
+        //
+        //
+        // sb = new StringBuilder();
+        // for(byte aByte: bytesDecrypt){
+        // sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
+        // }
+        // System.out.println("Decrypted: "+ sb);
+
+        // assertArrayEquals(bytesString, bytesDecrypt);
 
     }
 

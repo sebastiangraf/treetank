@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -67,7 +67,7 @@ public final class DummyNode extends AbsStructNode {
     public AbsNode clone() {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public long getFirstChildKey() {
         return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
@@ -77,7 +77,7 @@ public final class DummyNode extends AbsStructNode {
     public void setFirstChildKey(final long mFirstChildKey) {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public void decrementChildCount() {
         throw new UnsupportedOperationException();
@@ -105,7 +105,7 @@ public final class DummyNode extends AbsStructNode {
     public static DummyNode createData(final long paramNodeKey, final long paramParentKey) {
         final byte[] byteData = new byte[ENodes.DUMMY_KIND.getByteSize()];
         final byte[] pointerData = new byte[ENodes.DUMMY_KIND.getPointerSize()];
-        
+
         int mCount = AbsNode.NODE_KEY;
         for (byte aByte : longToByteArray(paramNodeKey)) {
             pointerData[mCount++] = aByte;
@@ -115,24 +115,24 @@ public final class DummyNode extends AbsStructNode {
         for (byte aByte : longToByteArray(paramParentKey)) {
             pointerData[mCount++] = aByte;
         }
-        
+
         mCount = AbsStructNode.LEFT_SIBLING_KEY;
         for (byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())) {
             pointerData[mCount++] = aByte;
         }
-        
+
         mCount = AbsStructNode.RIGHT_SIBLING_KEY;
         for (byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())) {
             pointerData[mCount++] = aByte;
         }
-        
+
         mCount = AbsStructNode.FIRST_CHILD_KEY;
         for (byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())) {
             pointerData[mCount++] = aByte;
         }
         return new DummyNode(byteData, pointerData);
     }
-        
+
     /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {

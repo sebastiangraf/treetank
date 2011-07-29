@@ -35,8 +35,8 @@ import org.treetank.settings.ERevisioning;
  * <h1>Database Configuration</h1>
  * 
  * <p>
- * Represents a configuration of a database. Includes all settings which have to be made when 
- * it comes to the creation of the database.
+ * Represents a configuration of a database. Includes all settings which have to be made when it comes to the
+ * creation of the database.
  * 
  * @author Sebastian Graf, University of Konstanz
  */
@@ -83,46 +83,46 @@ public final class DatabaseConfiguration {
         mRevisionsToRestore = paramBuilder.mRevisionsToRestore;
         mBinaryVersion = paramBuilder.mBinaryVersion;
     }
-    
+
     /**
      * Get binaryVersion.
-     *
+     * 
      * @return the binaryVersion
      */
     public String getBinaryVersion() {
         return mBinaryVersion;
     }
-    
+
     /**
      * Get hashKind.
-     *
+     * 
      * @return the hashKind
      */
     public HashKind getHashKind() {
         return mHashKind;
     }
-    
+
     /**
      * Get revision.
-     *
+     * 
      * @return the revision
      */
     public ERevisioning getRevision() {
         return mRevision;
     }
-    
+
     /**
      * Get type.
-     *
+     * 
      * @return the type
      */
     public StorageType getType() {
         return mType;
     }
-    
+
     /**
      * Get revisionsToRestore.
-     *
+     * 
      * @return the revisionsToRestore
      */
     public int getRevisionsToRestore() {
@@ -130,20 +130,20 @@ public final class DatabaseConfiguration {
     }
 
     /**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("Type: ");
-		builder.append(this.mType);
-		builder.append("\nRevision: ");
-		builder.append(this.mRevision);
-		builder.append("\nHashKind: ");
-		builder.append(this.mHashKind);
-		return builder.toString();
-	}
-    
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Type: ");
+        builder.append(this.mType);
+        builder.append("\nRevision: ");
+        builder.append(this.mRevision);
+        builder.append("\nHashKind: ");
+        builder.append(this.mHashKind);
+        return builder.toString();
+    }
+
     /**
      * Builder class for generating new {@link DatabaseConfiguration} instance.
      */

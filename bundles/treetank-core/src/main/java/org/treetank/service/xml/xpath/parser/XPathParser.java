@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -912,7 +912,7 @@ public final class XPathParser {
             || "attribute".equals(content)
             || "self".equals(content)
             || "following".equals(content) || "following-sibling".equals(content) || "namespace"
-            .equals(content))));
+                .equals(content))));
     }
 
     /**
@@ -1516,7 +1516,7 @@ public final class XPathParser {
         return (("node".equals(content) || "attribute".equals(content) || "schema-attribute".equals(content)
             || "schema-element".equals(content) || "element".equals(content) || "text".equals(content)
             || "comment".equals(content) || "document-node".equals(content) || "processing-instruction"
-            .equals(content)) && mScanner.lookUpTokens(1).getType() == TokenType.OPEN_BR);
+                .equals(content)) && mScanner.lookUpTokens(1).getType() == TokenType.OPEN_BR);
     }
 
     /**
@@ -1649,8 +1649,8 @@ public final class XPathParser {
             if (!name.equals("*")) {
                 filter = new NestedFilter(getTransaction(), filter, new NameFilter(getTransaction(), name));
             } // if it is '*', all attributes are accepted, so the normal
-            // attribute
-            // filter is sufficient
+              // attribute
+              // filter is sufficient
 
             if (is(TokenType.COMMA, true)) {
                 // add type filter
@@ -1746,7 +1746,7 @@ public final class XPathParser {
             if (!mName.equals("*")) {
                 filter = new NestedFilter(getTransaction(), filter, new NameFilter(getTransaction(), mName));
             } // if it is '*', all elements are accepted, so the normal element
-            // filter is sufficient
+              // filter is sufficient
 
             if (is(TokenType.COMMA, true)) {
 
