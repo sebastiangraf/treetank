@@ -73,187 +73,191 @@ import static org.junit.Assert.fail;
  */
 public final class TestHelper {
 
-    public enum PATHS {
+	public enum PATHS {
 
-        // PATH1
-            PATH1(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
-                "tnk").append(File.separator).append("path1").toString())),
+		// PATH1
+		PATH1(new File(new StringBuilder(File.separator).append("tmp")
+				.append(File.separator).append("tnk").append(File.separator)
+				.append("path1").toString())),
 
-            // PATH2
-            PATH2(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
-                "tnk").append(File.separator).append("path2").toString()));
+		// PATH2
+		PATH2(new File(new StringBuilder(File.separator).append("tmp")
+				.append(File.separator).append("tnk").append(File.separator)
+				.append("path2").toString()));
 
-        final File file;
+		final File file;
 
-        PATHS(final File paramFile) {
-            file = paramFile;
-        }
+		PATHS(final File paramFile) {
+			file = paramFile;
+		}
 
-        public File getFile() {
-            return file;
-        }
+		public File getFile() {
+			return file;
+		}
 
-    }
+	}
 
-    private final static Map<File, DatabaseConfiguration> configs =
-        new HashMap<File, DatabaseConfiguration>();
+	private final static Map<File, DatabaseConfiguration> configs = new HashMap<File, DatabaseConfiguration>();
 
-    public final static Random random = new Random();
+	public final static Random random = new Random();
 
-    @Test
-    public void testDummy() {
-        // Just empty to ensure maven running
-    }
+	@Test
+	public void testDummy() {
+		// Just empty to ensure maven running
+	}
 
-    @Ignore
-    public static final IDatabase getDatabase(final File file) {
-        final DatabaseConfiguration config = configs.get(file);
-        final DatabaseConfiguration tempConfig = new DatabaseConfiguration.Builder().build();
-        try {
-            if (!file.exists() && config == null) {
-                Database.createDatabase(file, tempConfig);
-                if (config == null) {
-                    configs.put(file, tempConfig);
-                }
-            }
-            return Database.openDatabase(file);
-        } catch (final AbsTTException exc) {
-            fail(exc.toString());
-            return null;
-        }
-    }
+	@Ignore
+	public static final IDatabase getDatabase(final File file) {
+		final DatabaseConfiguration config = configs.get(file);
+		final DatabaseConfiguration tempConfig = new DatabaseConfiguration.Builder()
+				.build();
+		try {
+			if (!file.exists() && config == null) {
+				Database.createDatabase(file, tempConfig);
+				if (config == null) {
+					configs.put(file, tempConfig);
+				}
+			}
+			return Database.openDatabase(file);
+		} catch (final AbsTTException exc) {
+			fail(exc.toString());
+			return null;
+		}
+	}
 
-    @Ignore
-    public static final void setDB(final File file, final String hashKind) throws TTUsageException {
+	@Ignore
+	public static final void setDB(final File file, final String hashKind)
+			throws TTUsageException {
 
-        final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
-        builder.setHashKind(HashKind.valueOf(hashKind));
-        final DatabaseConfiguration config = builder.build();
-        configs.put(file, config);
-    }
+		final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
+		builder.setHashKind(HashKind.valueOf(hashKind));
+		final DatabaseConfiguration config = builder.build();
+		configs.put(file, config);
+	}
 
-    @Ignore
-    public static final void setDB(final StorageType storageKind, final ERevisioning revisionKind,
-        final int revisions, final File file, final HashKind hashKind) throws TTUsageException {
+	@Ignore
+	public static final void deleteEverything() throws AbsTTException {
+		if (PATHS.PATH1.getFile().exists()) {
+			Database.closeDatabase(PATHS.PATH1.getFile());
+			assertTrue(Database.truncateDatabase(PATHS.PATH1.getFile()));
+		}
+		if (PATHS.PATH2.getFile().exists()) {
+			Database.closeDatabase(PATHS.PATH2.getFile());
+			assertTrue(Database.truncateDatabase(PATHS.PATH2.getFile()));
+		}
 
-        final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
-        builder.setType(storageKind);
-        builder.setHashKind(hashKind);
-        builder.setRevision(revisionKind);
-        builder.setRevisionsToRestore(revisions);
+		configs.clear();
 
-        final DatabaseConfiguration config = builder.build();
-        configs.put(file, config);
-    }
+	}
 
-    @Ignore
-    public static final void deleteEverything() throws AbsTTException {
-        if (PATHS.PATH1.getFile().exists()) {
-            Database.closeDatabase(PATHS.PATH1.getFile());
-            assertTrue(Database.truncateDatabase(PATHS.PATH1.getFile()));
-        }
-        if (PATHS.PATH2.getFile().exists()) {
-            Database.closeDatabase(PATHS.PATH2.getFile());
-            assertTrue(Database.truncateDatabase(PATHS.PATH2.getFile()));
-        }
+	@Ignore
+	public static final void closeEverything() {
+		try {
+			Database.closeDatabase(PATHS.PATH1.getFile());
+			Database.closeDatabase(PATHS.PATH2.getFile());
+		} catch (final AbsTTException exc) {
+			fail(exc.toString());
+		}
+	}
 
-        configs.clear();
+	@Ignore
+	public static NodePage getNodePage(final long revision, final int offset,
+			final int length, final long nodePageKey) {
+		final NodePage page = new NodePage(nodePageKey, revision);
+		for (int i = offset; i < length; i++) {
+			switch (random.nextInt(6)) {
+			case 0:
+				page.setNode(
+						i,
+						AttributeNode.createData(random.nextLong(),
+								random.nextLong(), random.nextInt(),
+								random.nextInt(), random.nextInt(), new byte[] {
+										0, 1, 2, 3, 4 }));
+				break;
+			case 1:
+				page.setNode(
+						i,
+						DeletedNode.createData(random.nextLong(),
+								random.nextLong()));
+				break;
+			case 2:
+				page.setNode(
+						i,
+						ElementNode.createData(random.nextLong(),
+								random.nextLong(), random.nextLong(),
+								random.nextLong(), random.nextLong(),
+								random.nextLong(), random.nextInt(),
+								random.nextInt(), random.nextInt(),
+								random.nextLong()));
+				break;
+			case 3:
+				page.setNode(
+						i,
+						NamespaceNode.createData(random.nextLong(),
+								random.nextLong(), random.nextInt(),
+								random.nextInt()));
+				break;
+			case 4:
+				page.setNode(i,
 
-    }
+				DocumentRootNode.createData());
+				break;
+			case 5:
+				page.setNode(i, TextNode.createData(random.nextLong(),
+						random.nextLong(), random.nextLong(),
+						random.nextLong(), random.nextInt(),
+						new byte[] { 0, 1 }));
+				break;
+			}
 
-    @Ignore
-    public static final void closeEverything() {
-        try {
-            Database.closeDatabase(PATHS.PATH1.getFile());
-            Database.closeDatabase(PATHS.PATH2.getFile());
-        } catch (final AbsTTException exc) {
-            fail(exc.toString());
-        }
-    }
+		}
+		return page;
+	}
 
-    @Ignore
-    public static NodePage getNodePage(final long revision, final int offset, final int length,
-        final long nodePageKey) {
-        final NodePage page = new NodePage(nodePageKey, revision);
-        for (int i = offset; i < length; i++) {
-            switch (random.nextInt(6)) {
-            case 0:
-                page.setNode(i, AttributeNode.createData(random.nextLong(), random.nextLong(), random
-                    .nextInt(), random.nextInt(), random.nextInt(), new byte[] {
-                    0, 1, 2, 3, 4
-                }));
-                break;
-            case 1:
-                page.setNode(i, DeletedNode.createData(random.nextLong(), random.nextLong()));
-                break;
-            case 2:
-                page.setNode(i, ElementNode.createData(random.nextLong(), random.nextLong(), random
-                    .nextLong(), random.nextLong(), random.nextLong(), random.nextLong(), random.nextInt(),
-                    random.nextInt(), random.nextInt(), random.nextLong()));
-                break;
-            case 3:
-                page.setNode(i, NamespaceNode.createData(random.nextLong(), random.nextLong(), random
-                    .nextInt(), random.nextInt()));
-                break;
-            case 4:
-                page.setNode(i,
+	/**
+	 * Read a file into a StringBuilder.
+	 * 
+	 * @param paramFile
+	 *            The file to read.
+	 * @param paramWhitespaces
+	 *            Retrieve file and don't remove any whitespaces.
+	 * @return StringBuilder instance, which has the string representation of
+	 *         the document.
+	 * @throws IOException
+	 *             throws an IOException if any I/O operation fails.
+	 */
+	@Ignore("Not a test, utility method only")
+	public static StringBuilder readFile(final File paramFile,
+			final boolean paramWhitespaces) throws IOException {
+		final BufferedReader in = new BufferedReader(new FileReader(paramFile));
+		final StringBuilder sBuilder = new StringBuilder();
+		for (String line = in.readLine(); line != null; line = in.readLine()) {
+			if (paramWhitespaces) {
+				sBuilder.append(line + ECharsForSerializing.NEWLINE);
+			} else {
+				sBuilder.append(line.trim());
+			}
+		}
 
-                DocumentRootNode.createData());
-                break;
-            case 5:
-                page.setNode(i, TextNode.createData(random.nextLong(), random.nextLong(), random.nextLong(),
-                    random.nextLong(), random.nextInt(), new byte[] {
-                        0, 1
-                    }));
-                break;
-            }
+		// Remove last newline.
+		if (paramWhitespaces) {
+			sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), "");
+		}
+		in.close();
 
-        }
-        return page;
-    }
+		return sBuilder;
+	}
 
-    /**
-     * Read a file into a StringBuilder.
-     * 
-     * @param paramFile
-     *            The file to read.
-     * @param paramWhitespaces
-     *            Retrieve file and don't remove any whitespaces.
-     * @return StringBuilder instance, which has the string representation of
-     *         the document.
-     * @throws IOException
-     *             throws an IOException if any I/O operation fails.
-     */
-    @Ignore("Not a test, utility method only")
-    public static StringBuilder readFile(final File paramFile, final boolean paramWhitespaces)
-        throws IOException {
-        final BufferedReader in = new BufferedReader(new FileReader(paramFile));
-        final StringBuilder sBuilder = new StringBuilder();
-        for (String line = in.readLine(); line != null; line = in.readLine()) {
-            if (paramWhitespaces) {
-                sBuilder.append(line + ECharsForSerializing.NEWLINE);
-            } else {
-                sBuilder.append(line.trim());
-            }
-        }
-
-        // Remove last newline.
-        if (paramWhitespaces) {
-            sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), "");
-        }
-        in.close();
-
-        return sBuilder;
-    }
-
-    public static void createTestDocument() throws AbsTTException {
-        // Build simple test tree.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
-        session.close();
-    }
+	public static void createTestDocument() throws AbsTTException {
+		// Build simple test tree.
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database
+				.getSession(new SessionConfiguration.Builder().build());
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
+		wtx.commit();
+		wtx.close();
+		session.close();
+	}
 }
