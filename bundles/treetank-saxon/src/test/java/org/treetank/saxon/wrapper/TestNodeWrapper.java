@@ -44,7 +44,7 @@ import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
 import org.treetank.TestHelper;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -81,8 +81,8 @@ public class TestNodeWrapper {
 
     @Before
     public void beforeMethod() throws AbsTTException {
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
         TestHelper.createTestDocument();
         mHolder = AbsAxisTest.generateHolder();
 
@@ -96,8 +96,8 @@ public class TestNodeWrapper {
     public void afterMethod() throws AbsTTException {
         mHolder.session.close();
         mHolder.rtx.close();
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class TestNodeWrapper {
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 
-        final IDatabase database = FileDatabase.openDatabase(TestHelper.PATHS.PATH2.getFile());
+        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
         // Not the same document.
@@ -136,7 +136,7 @@ public class TestNodeWrapper {
         assertEquals(0, node.compareOrder(other));
 
         session.close();
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH2.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH2.getFile());
     }
 
     @Test
@@ -164,9 +164,9 @@ public class TestNodeWrapper {
             new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "data"
                 + File.separator + "testBaseURI.xml");
 
-        FileDatabase.truncateDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
+        Database.truncateDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
         final IDatabase database =
-            FileDatabase.openDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
+            Database.openDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(source);
@@ -186,7 +186,7 @@ public class TestNodeWrapper {
 
         assertEquals("http://example.org", baz.getBaseURI());
         session.close();
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH2.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH2.getFile());
 
     }
 

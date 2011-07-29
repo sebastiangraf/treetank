@@ -6,7 +6,7 @@ import javax.xml.stream.XMLEventReader;
 
 import org.treetank.TestHelper;
 import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -27,10 +27,10 @@ public final class BookShredding {
         File.separator).append("my-books.xml").toString());
 
     public static void createBookDB() throws Exception {
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder()
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder()
             .build());
-        final IDatabase database = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);

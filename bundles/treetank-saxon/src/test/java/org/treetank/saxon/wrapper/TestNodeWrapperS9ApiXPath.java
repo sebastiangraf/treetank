@@ -33,7 +33,7 @@ import net.sf.saxon.s9api.XdmItem;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.treetank.TestHelper;
-import org.treetank.access.FileDatabase;
+import org.treetank.access.Database;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -64,8 +64,8 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     @Override
     @Before
     public void setUp() throws AbsTTException {
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        final IDatabase databaseTest = FileDatabase.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IDatabase databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session = databaseTest.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -80,8 +80,8 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     public void tearDown() throws AbsTTException {
         mHolder.rtx.close();
         mHolder.session.close();
-        FileDatabase.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        FileDatabase.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test
