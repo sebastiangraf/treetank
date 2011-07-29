@@ -152,10 +152,9 @@ public final class Database implements IDatabase {
 	 */
 	public static synchronized IDatabase openDatabase(final File paramFile)
 			throws AbsTTException {
-		if (!paramFile.exists()
-				&& !createDatabase(paramFile,
-						new DatabaseConfiguration.Builder().build())) {
-			throw new TTUsageException("DB could not be created at location",
+		if (!paramFile.exists()&& !createDatabase(paramFile,
+				new DatabaseConfiguration.Builder().build())) {
+			throw new TTUsageException("DB could not be opened (since it was not created?) at location",
 					paramFile.toString());
 		}
 		final Database database = new Database(paramFile,
@@ -228,9 +227,6 @@ public final class Database implements IDatabase {
 				paramSessionConfiguration);
 	}
 
-	private final void generateResource() {
-
-	}
 
 	/**
 	 * Checking if storage is valid.

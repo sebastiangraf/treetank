@@ -45,7 +45,7 @@ public enum EStoragePaths {
     /** Folder for transaction log. */
     TRANSACTIONLOG(new File("transactionLog"), true),
     /** File to store the db settings. */
-    DBSETTINGS(new File("dbsettings.properties"), false),
+    DBSETTINGS(new File("dbsettings.xml"), false),
     /** File to store encryption db settings. */
     KEYSELECTOR(new File("keyselector"), true);
 

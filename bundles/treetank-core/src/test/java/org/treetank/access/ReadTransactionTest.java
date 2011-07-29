@@ -70,8 +70,11 @@ public class ReadTransactionTest {
 	@Test
 	public void testEmptyRtx() throws AbsTTException {
 		assertFalse(PATHS.PATH2.getFile().exists());
+		Database.createDatabase(PATHS.PATH2.getFile(),
+				new DatabaseConfiguration.Builder().build());
 		final IDatabase db = Database.openDatabase(PATHS.PATH2.getFile());
-		final ISession session = db.getSession(new SessionConfiguration.Builder().build());
+		final ISession session = db
+				.getSession(new SessionConfiguration.Builder().build());
 		final IReadTransaction rtx = session.beginReadTransaction();
 		rtx.getRevisionNumber();
 		rtx.close();
