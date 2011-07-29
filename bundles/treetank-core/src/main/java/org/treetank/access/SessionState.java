@@ -323,5 +323,19 @@ public final class SessionState {
                 Long.toString(mLastCommittedUberPage.getRevision())).toString());
         }
     }
+    
+    /**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public String toString() {
+ 		final StringBuilder builder = new StringBuilder();
+ 		builder.append("SessionConf: ");
+ 		builder.append(this.mSessionConfiguration);
+ 		builder.append("\nDatabaseConf: ");
+ 		builder.append(this.mDatabaseConfiguration);
+ 		return builder.toString();
+ 	}
+
 
 }
