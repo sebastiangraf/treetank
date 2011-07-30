@@ -38,6 +38,7 @@ import org.treetank.api.IStructuralItem;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.io.AbsIOFactory;
 import org.treetank.node.AbsStructNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.DocumentCreater;

@@ -136,11 +136,11 @@ public final class TestHelper {
     public static final void deleteEverything() throws AbsTTException {
         if (PATHS.PATH1.getFile().exists()) {
             Database.closeDatabase(PATHS.PATH1.getFile());
-            assertTrue(Database.truncateDatabase(PATHS.PATH1.getFile()));
+            Database.truncateDatabase(PATHS.PATH1.getFile());
         }
         if (PATHS.PATH2.getFile().exists()) {
             Database.closeDatabase(PATHS.PATH2.getFile());
-            assertTrue(Database.truncateDatabase(PATHS.PATH2.getFile()));
+            Database.truncateDatabase(PATHS.PATH2.getFile());
         }
 
         configs.clear();

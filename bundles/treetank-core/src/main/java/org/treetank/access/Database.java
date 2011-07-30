@@ -28,7 +28,6 @@
 package org.treetank.access;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -88,35 +87,35 @@ public final class Database implements IDatabase {
      */
     public static synchronized boolean createDatabase(final File paramFile,
         final DatabaseConfiguration paramConf) throws TTIOException {
-        try {
-            boolean returnVal = true;
-            if (paramFile.exists()) {
-                returnVal = false;
-            } else {
-                returnVal = paramFile.mkdirs();
-                if (returnVal) {
-                    for (EStoragePaths paths : EStoragePaths.values()) {
-                        final File toCreate = new File(paramFile, paths.getFile().getName());
-                        if (paths.isFolder()) {
-                            returnVal = toCreate.mkdir();
-                        } else {
-                            returnVal = toCreate.createNewFile();
-                        }
-                        if (!returnVal) {
-                            break;
-                        }
-                    }
-                }
-            }
-            // if something was not correct, delete the partly created
-            // substructure
-            if (!returnVal) {
-                recursiveDelete(paramFile);
-            }
-            return returnVal;
-        } catch (final IOException exc) {
-            throw new TTIOException(exc);
+        // try {
+        boolean returnVal = true;
+        if (paramFile.exists()) {
+            returnVal = false;
+        } else {
+            returnVal = paramFile.mkdirs();
+            // if (returnVal) {
+            // for (EStoragePaths paths : EStoragePaths.values()) {
+            // final File toCreate = new File(paramFile, paths.getFile().getName());
+            // if (paths.isFolder()) {
+            // returnVal = toCreate.mkdir();
+            // } else {
+            // returnVal = toCreate.createNewFile();
+            // }
+            // if (!returnVal) {
+            // break;
+            // }
+            // }
+            // }
         }
+        // if something was not correct, delete the partly created
+        // substructure
+        if (!returnVal) {
+            paramFile.delete();
+        }
+        return returnVal;
+        // } catch (final IOException exc) {
+        // throw new TTIOException(exc);
+        // }
     }
 
     /**
@@ -126,12 +125,12 @@ public final class Database implements IDatabase {
      * @param paramFile
      *            the database at this path should be deleted.
      * @return true if removal is successful, false otherwise
+     * @throws TTIOException
      */
-    public static synchronized boolean truncateDatabase(final File paramFile) {
-        if (DATABASEMAP.containsKey(paramFile)) {
-            return false;
-        } else {
-            return recursiveDelete(paramFile);
+    public static synchronized void truncateDatabase(final File paramFile) throws TTIOException {
+        // check that database must be closed beforehand
+        if (!DATABASEMAP.containsKey(paramFile)) {
+            AbsIOFactory.truncateStorage(paramFile);
         }
     }
 
@@ -187,24 +186,6 @@ public final class Database implements IDatabase {
     }
 
     /**
-     * Deleting a storage recursive. Used for deleting a databases
-     * 
-     * @param paramFile
-     *            which should be deleted included descendants
-     * @return true if delete is valid
-     */
-    private static boolean recursiveDelete(final File paramFile) {
-        if (paramFile.isDirectory()) {
-            for (final File child : paramFile.listFiles()) {
-                if (!recursiveDelete(child)) {
-                    return false;
-                }
-            }
-        }
-        return paramFile.delete();
-    }
-
-    /**
      * {@inheritDoc}
      * 
      * @throws AbsTTException
@@ -212,7 +193,8 @@ public final class Database implements IDatabase {
     @Override
     public synchronized ISession getSession(final SessionConfiguration paramSessionConfiguration)
         throws AbsTTException {
-        AbsIOFactory.registerInstance(mFile, mDatabaseConfiguration, paramSessionConfiguration);
+        final File storageFile = new File(mFile, paramSessionConfiguration.mName);
+        AbsIOFactory.registerInstance(storageFile, mDatabaseConfiguration, paramSessionConfiguration);
         return new Session(this.mDatabaseConfiguration, paramSessionConfiguration);
     }
 

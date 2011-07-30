@@ -54,6 +54,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
@@ -532,8 +533,9 @@ public final class WikipediaImport implements IImport<StartElement> {
      * 
      * @param args
      *            Arguments.
+     * @throws TTIOException
      */
-    public static void main(final String... args) {
+    public static void main(final String... args) throws TTIOException {
         if (args.length != 2) {
             System.err.println("usage: WikipediaImport path/to/xmlFile path/to/TTStorage");
         }
