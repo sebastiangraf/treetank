@@ -105,4 +105,12 @@ public final class FileFactory extends AbsIOFactory {
         return returnVal;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void truncate() throws TTIOException {
+        recursiveDelete(super.mFile);
+    }
+
 }

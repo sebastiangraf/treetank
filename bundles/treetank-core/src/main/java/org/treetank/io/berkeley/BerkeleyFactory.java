@@ -101,18 +101,14 @@ public final class BerkeleyFactory extends AbsIOFactory {
         final SessionConfiguration paramSession) throws TTIOException {
         super(paramFile, paramDatabase, paramSession);
 
-        final DatabaseConfig conf = new DatabaseConfig();
-        conf.setTransactional(true);
-        conf.setKeyPrefixing(true);
-
-        final EnvironmentConfig config = new EnvironmentConfig();
-        config.setTransactional(true);
-        config.setCacheSize(1024 * 1024);
-
         final File repoFile = new File(paramFile, EStoragePaths.TT.getFile().getName());
         if (!repoFile.exists()) {
             repoFile.mkdirs();
         }
+
+        final DatabaseConfig conf = generateDBConf();
+        final EnvironmentConfig config = generateEnvConf();
+
         if (repoFile.listFiles().length == 0
             || (repoFile.listFiles().length == 1 && "tt.tnk".equals(repoFile.listFiles()[0].getName()))) {
             conf.setAllowCreate(true);
@@ -184,6 +180,37 @@ public final class BerkeleyFactory extends AbsIOFactory {
         }
         return returnVal;
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void truncate() throws TTIOException {
+        try {
+            final Environment env =
+                new Environment(new File(mFile, EStoragePaths.TT.getFile().getName()), generateEnvConf());
+            if (env.getDatabaseNames().contains("NAME")) {
+                env.removeDatabase(null, NAME);
+            }
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
+        }
+
+    }
+
+    private static EnvironmentConfig generateEnvConf() {
+        final EnvironmentConfig config = new EnvironmentConfig();
+        config.setTransactional(true);
+        config.setCacheSize(1024 * 1024);
+        return config;
+    }
+
+    private static DatabaseConfig generateDBConf() {
+        final DatabaseConfig conf = new DatabaseConfig();
+        conf.setTransactional(true);
+        conf.setKeyPrefixing(true);
+        return conf;
     }
 
 }

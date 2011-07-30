@@ -11,6 +11,7 @@ import java.util.SortedMap;
 import org.treetank.access.Database;
 import org.treetank.cache.KeyCache;
 import org.treetank.exception.TTEncryptionException;
+import org.treetank.exception.TTIOException;
 
 /**
  * Singleton class holding and handling all necessary operations and
@@ -352,8 +353,10 @@ public final class EncryptionHandler {
 
     /**
      * Clears all established berkeley dbs.
+     * 
+     * @throws TTIOException
      */
-    public void clear() {
+    public void clear() throws TTIOException {
         if (SEL_STORE.exists()) {
             Database.truncateDatabase(SEL_STORE);
             System.out.println("Selector DB has been removed.");

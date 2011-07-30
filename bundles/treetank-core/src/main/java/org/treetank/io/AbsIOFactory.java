@@ -28,7 +28,9 @@
 package org.treetank.io;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.treetank.access.DatabaseConfiguration;
@@ -51,6 +53,12 @@ public abstract class AbsIOFactory {
      */
     private static final Map<SessionConfiguration, AbsIOFactory> FACTORIES =
         new ConcurrentHashMap<SessionConfiguration, AbsIOFactory>();
+
+    /**
+     * Concurrent storage for all avaliable databases in runtime.
+     */
+    private static final Map<File, Set<SessionConfiguration>> STORAGES =
+        new ConcurrentHashMap<File, Set<SessionConfiguration>>();
 
     /**
      * Config for the session holding information about the settings of the
@@ -117,7 +125,26 @@ public abstract class AbsIOFactory {
      */
     public final void closeStorage() throws TTIOException {
         closeConcreteStorage();
-        FACTORIES.remove(this.mSessionConfig);
+//        FACTORIES.remove(this.mSessionConfig);
+    }
+
+    /**
+     * Truncate storage and remove all resources within a database
+     * 
+     * @param paramFile
+     *            which should be removed
+     * @throws TTIOException
+     *             if anything occures
+     */
+    public static final void truncateStorage(final File paramFile) throws TTIOException {
+        final Set<SessionConfiguration> configs = STORAGES.get(paramFile);
+        if (configs != null) {
+            for (final SessionConfiguration config : configs) {
+                final AbsIOFactory fac = FACTORIES.get(config);
+                fac.truncate();
+            }
+        }
+        recursiveDelete(paramFile);
     }
 
     /**
@@ -145,6 +172,12 @@ public abstract class AbsIOFactory {
                 throw new TTIOException("Type", storageType.toString(), "not valid!");
             }
             FACTORIES.put(paramSessionConf, fac);
+            Set<SessionConfiguration> configs = STORAGES.get(paramFile);
+            if (configs == null) {
+                configs = new HashSet<SessionConfiguration>();
+            }
+            configs.add(paramSessionConf);
+            STORAGES.put(paramFile, configs);
         }
     }
 
@@ -168,9 +201,17 @@ public abstract class AbsIOFactory {
      * 
      * @return true if storage holds data, false otherwise
      * @throws TTIOException
-     *             if storage is not accessable
+     *             if storage is not accessible
      */
     public abstract boolean exists() throws TTIOException;
+
+    /**
+     * Truncate database completely
+     * 
+     * @throws TTIOException
+     *             if storage is not accessible
+     */
+    public abstract void truncate() throws TTIOException;
 
     /** {@inheritDoc} */
     @Override
@@ -181,5 +222,23 @@ public abstract class AbsIOFactory {
         builder.append("SessionConfig: ").append(mSessionConfig.toString()).append("\n");
         // builder.append("exists: ").append(exists()).append("\n");
         return builder.toString();
+    }
+
+    /**
+     * Deleting a storage recursive. Used for deleting a databases
+     * 
+     * @param paramFile
+     *            which should be deleted included descendants
+     * @return true if delete is valid
+     */
+    protected static boolean recursiveDelete(final File paramFile) {
+        if (paramFile.isDirectory()) {
+            for (final File child : paramFile.listFiles()) {
+                if (!recursiveDelete(child)) {
+                    return false;
+                }
+            }
+        }
+        return paramFile.delete();
     }
 }

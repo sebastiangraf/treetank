@@ -75,6 +75,7 @@ public final class FileReader implements IReader {
 
         try {
             if (!mConcreteStorage.exists()) {
+                mConcreteStorage.getParentFile().mkdirs();
                 mConcreteStorage.createNewFile();
             }
 
