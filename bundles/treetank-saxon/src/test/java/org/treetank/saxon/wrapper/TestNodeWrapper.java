@@ -45,6 +45,7 @@ import net.sf.saxon.value.Value;
 
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
+import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -112,6 +113,8 @@ public class TestNodeWrapper {
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 
+        Database
+            .createDatabase(TestHelper.PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder().build());
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
@@ -164,9 +167,10 @@ public class TestNodeWrapper {
             new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "data"
                 + File.separator + "testBaseURI.xml");
 
-        Database.truncateDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
-        final IDatabase database =
-            Database.openDatabase(new File(TestHelper.PATHS.PATH2.getFile(), "baseURI"));
+        Database.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
+        Database
+            .createDatabase(TestHelper.PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder().build());
+        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
         final ISession session = database.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(source);

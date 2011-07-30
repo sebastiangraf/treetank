@@ -34,6 +34,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
+import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
@@ -65,6 +66,8 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     @Before
     public void setUp() throws AbsTTException {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database
+            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder().build());
         final IDatabase databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session = databaseTest.getSession(new SessionConfiguration.Builder().build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
