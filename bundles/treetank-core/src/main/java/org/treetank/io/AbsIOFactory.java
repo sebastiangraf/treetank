@@ -125,7 +125,9 @@ public abstract class AbsIOFactory {
      */
     public final void closeStorage() throws TTIOException {
         closeConcreteStorage();
-        // FACTORIES.remove(this.mSessionConfig);
+        FACTORIES.remove(this.mSessionConfig);
+        final Set<SessionConfiguration> conf = STORAGES.get(mFile.getParentFile());
+        conf.remove(this.mSessionConfig);
     }
 
     /**
