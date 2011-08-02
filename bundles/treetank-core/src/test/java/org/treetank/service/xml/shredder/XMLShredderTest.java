@@ -135,9 +135,8 @@ public class XMLShredderTest extends XMLTestCase {
 
     @Test
     public void testShredIntoExisting() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
@@ -160,7 +159,7 @@ public class XMLShredderTest extends XMLTestCase {
         expectedTrx.moveToDocumentRoot();
 
         // Verify.
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
 
         final Iterator<Long> descendants = new DescendantAxis(rtx);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
@@ -184,8 +183,6 @@ public class XMLShredderTest extends XMLTestCase {
         expectedTrx.close();
         expectedSession.close();
         rtx.close();
-        session.close();
-
     }
 
     @Test
