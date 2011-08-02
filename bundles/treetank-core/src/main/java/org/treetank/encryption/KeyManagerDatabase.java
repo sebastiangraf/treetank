@@ -108,9 +108,13 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         PrimaryIndex<String, KeyManager> primaryIndex;
         try {
             primaryIndex =
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+
+                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
+
 
             primaryIndex.put(entity);
+
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
@@ -130,13 +134,40 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         KeyManager entity = null;
         try {
             primaryIndex =
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+
+                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
+
             entity = (KeyManager)primaryIndex.get(paramUser);
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
         }
         return entity;
+    }
+
+    /**
+     * Deletes an entry from storage.
+     * 
+     * @param paramKey
+     *            primary key of entry to delete.
+     * @return
+     *         status whether deletion was successful or not.
+     */
+    public final boolean deleteEntry(final String paramKey) {
+        PrimaryIndex<String, KeyManager> primaryIndex;
+        boolean status = false;
+        try {
+            primaryIndex =
+                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
+            status = primaryIndex.delete(paramKey);
+
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+
+        return status;
     }
 
     /**
@@ -150,7 +181,10 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         long counter = 0;
         try {
             primaryIndex =
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+
+                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
+
             counter = primaryIndex.count();
 
         } catch (final DatabaseException mDbExp) {
@@ -170,7 +204,10 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         SortedMap<String, KeyManager> sMap = null;
         try {
             primaryIndex =
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+
+                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
+
             sMap = primaryIndex.sortedMap();
 
         } catch (final DatabaseException mDbExp) {

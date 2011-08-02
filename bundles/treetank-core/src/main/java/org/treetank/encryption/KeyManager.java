@@ -95,6 +95,10 @@ public class KeyManager {
     public final void addInitialKeyTrail(final List<Long> paramTrail) {
         mInitialKeys.put(paramTrail.get(0), paramTrail);
     }
+    
+    public final void removeInitialKeyTrail(final long paramKey){
+        mInitialKeys.remove(paramKey);
+    }
 
     /**
      * Returns a list of TEKs the user owns.
@@ -115,5 +119,8 @@ public class KeyManager {
     public final void addTEK(final long paramTek) {
         mTekKeys.add(paramTek);
     }
+    
+    
+
 
 }

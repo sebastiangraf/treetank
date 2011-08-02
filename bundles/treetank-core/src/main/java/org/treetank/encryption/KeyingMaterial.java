@@ -39,6 +39,11 @@ public class KeyingMaterial {
      * Secret key using for data en-/decryption.
      */
     private byte[] mSecretKey;
+    
+    /**
+     * Parent node id. 
+     */
+    private long mParent;
 
     /**
      * Standard constructor.
@@ -125,6 +130,16 @@ public class KeyingMaterial {
      */
     public final void setSecretKey(final byte[] paramSKey) {
         this.mSecretKey = paramSKey;
+    }
+    
+    /**
+     * Returns parent node id.
+     * 
+     * @return
+     *          node id of parent.
+     */
+    public final long getParent(){
+        return mParent;
     }
 
 }
