@@ -1,6 +1,7 @@
 package org.treetank.encryption;
 
 import java.io.File;
+import java.util.SortedMap;
 
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseException;
@@ -105,25 +106,18 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
      * @return
      *         generated unique material key of new keying material.
      */
-    public final long putPersistent(final KeySelector paramSelect) {
-
-        final long key = paramSelect.getKeyId();
-        final int rev = paramSelect.getRevision();
-        final int ver = paramSelect.getVersion();
-        final byte[] sKey = new NodeEncryption().generateSecretKey();
-
-        final KeyingMaterial entity = new KeyingMaterial(key, rev, ver, sKey);
+    public final long putPersistent(final KeyingMaterial paramMat) {
 
         PrimaryIndex<Long, KeyingMaterial> primaryIndex;
         try {
             primaryIndex =
                 (PrimaryIndex<Long, KeyingMaterial>)mStore.getPrimaryIndex(Long.class, KeyingMaterial.class);
 
-            primaryIndex.put(entity);
+            primaryIndex.put(paramMat);
         } catch (final DatabaseException e) {
             e.printStackTrace();
         }
-        return entity.getMaterialKey();
+        return paramMat.getMaterialKey();
 
     }
 
@@ -140,13 +134,40 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
         KeyingMaterial entity = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeyingMaterial>)mStore.getPrimaryIndex(Long.class, KeyingMaterial.class);
+
+                (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
+                    Long.class, KeyingMaterial.class);
             entity = (KeyingMaterial)primaryIndex.get(paramKey);
+
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
         }
         return entity;
+    }
+
+    /**
+     * Deletes an entry from storage.
+     * 
+     * @param paramKey
+     *            primary key of entry to delete.
+     * @return
+     *         status whether deletion was successful or not.
+     */
+    public final boolean deleteEntry(final long paramKey) {
+        PrimaryIndex<Long, KeyingMaterial> primaryIndex;
+        boolean status = false;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
+                    Long.class, KeyingMaterial.class);
+            status = primaryIndex.delete(paramKey);
+
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+
+        return status;
     }
 
     /**
@@ -167,6 +188,27 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
             mDbExp.printStackTrace();
         }
         return (int)counter;
+    }
+    
+    /**
+     * Returns all database entries as {@link SortedMap}.
+     * 
+     * @return
+     *         all database entries.
+     */
+    public final SortedMap<Long, KeyingMaterial> getEntries() {
+        PrimaryIndex<Long, KeyingMaterial> primaryIndex;
+        SortedMap<Long, KeyingMaterial> sMap = null;
+        try {
+            primaryIndex =
+                    (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
+                        Long.class, KeyingMaterial.class);
+            sMap = primaryIndex.sortedMap();
+
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return sMap;
     }
 
 }

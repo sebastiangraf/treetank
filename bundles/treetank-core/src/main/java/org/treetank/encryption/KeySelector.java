@@ -39,6 +39,11 @@ public class KeySelector {
      * Current version of node.
      */
     private int mVersion;
+    
+    /**
+     * Type of node (group or user).
+     */
+    private EntityType mType;
 
     /**
      * Standard constructor.
@@ -53,12 +58,13 @@ public class KeySelector {
      * @param paramName
      *            node name.
      */
-    public KeySelector(final String paramName) {
+    public KeySelector(final String paramName, final EntityType paramType) {
         this.mKeyId = RightKey.getInstance().newSelectorKey();
         this.mName = paramName;
         this.mParents = new LinkedList<Long>();
         this.mRevision = 0;
         this.mVersion = 0;
+        this.mType = paramType;
     }
 
     /**
@@ -134,5 +140,11 @@ public class KeySelector {
     public final void increaseVersion() {
         this.mVersion += 1;
     }
-
+    
+    /**
+     * Returns type of entity.
+     */
+    public EntityType getType(){
+        return mType;
+    }
 }

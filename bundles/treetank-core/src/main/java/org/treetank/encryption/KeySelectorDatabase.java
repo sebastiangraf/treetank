@@ -137,6 +137,30 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         }
         return entity;
     }
+    
+    /**
+     * Deletes an entry from storage.
+     * 
+     * @param paramKey
+     *            primary key of entry to delete.
+     * @return
+     *         status whether deletion was successful or not.
+     */
+    public final boolean deleteEntry(final long paramKey) {
+        PrimaryIndex<Long, KeySelector> primaryIndex;
+        boolean status = false;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                    Long.class, KeySelector.class);
+            status = primaryIndex.delete(paramKey);
+
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+
+        return status;
+    }
 
     /**
      * Returns number of database entries.

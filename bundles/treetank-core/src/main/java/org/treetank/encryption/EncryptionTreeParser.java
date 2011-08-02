@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
@@ -120,18 +121,31 @@ public class EncryptionTreeParser extends DefaultHandler {
         final Attributes atts) throws SAXException {
 
         final String mNodeName = atts.getValue(0);
+        final String mNodeType = atts.getValue(1);
+
         if (qName.equals(mNodeDec)) {
 
             if (mNodeStack.size() > 0) {
                 mNodeStack.pop();
             }
-            final KeySelector mSelector = new KeySelector(mNodeName);
+
+            final KeySelector mSelector;
+            if (mNodeType.equals("group")) {
+                mSelector = new KeySelector(mNodeName, EntityType.GROUP);
+            } else {
+                mSelector = new KeySelector(mNodeName, EntityType.USER);
+            }
 
             mNodeStack.add(mSelector.getKeyId());
             mNodeIds.put(mNodeName, mSelector.getKeyId());
 
             mSelectorDb.putPersistent(mSelector);
-            mMaterialDb.putPersistent(mSelector);
+
+            final KeyingMaterial mMaterial =
+                new KeyingMaterial(mSelector.getKeyId(), mSelector
+                    .getRevision(), mSelector.getVersion(),
+                    new NodeEncryption().generateSecretKey());
+            mMaterialDb.putPersistent(mMaterial);
 
             if (atts.getValue(1).equals(mTypeUser)) {
                 mUsers.add(mNodeName);
@@ -181,8 +195,16 @@ public class EncryptionTreeParser extends DefaultHandler {
 
             for (int i = 0; i < mNameList.size(); i++) {
                 final String mName = mNameList.get(i);
-                for (int j = 0; j < mSelectorDb.count(); j++) {
-                    final KeySelector mParentSelector = mSelectorDb.getPersistent(j);
+
+                final SortedMap<Long, KeySelector> mSelMap =
+                    mSelectorDb.getEntries();
+                final Iterator innerIter = mSelMap.keySet().iterator();
+
+                while (innerIter.hasNext()) {
+
+                    final KeySelector mParentSelector =
+                        mSelMap.get(innerIter.next());
+
                     if (mParentSelector.getName().equals(mName)) {
                         mSelector.addParent(mParentSelector.getKeyId());
                         mSelectorDb.putPersistent(mSelector);
@@ -203,8 +225,12 @@ public class EncryptionTreeParser extends DefaultHandler {
             final Map<Long, List<Long>> mKeyTrails = new HashMap<Long, List<Long>>();
 
             // find user node in selector db
-            for (int i = 0; i < mSelectorDb.count(); i++) {
-                final KeySelector mSelector = mSelectorDb.getPersistent(i);
+            final SortedMap<Long, KeySelector> mSelMap =
+                mSelectorDb.getEntries();
+            final Iterator innerIter = mSelMap.keySet().iterator();
+
+            while (innerIter.hasNext()) {
+                final KeySelector mSelector = mSelMap.get(innerIter.next());
                 if (mSelector.getName().equals(mUser)) {
 
                     // all parent ids of user
