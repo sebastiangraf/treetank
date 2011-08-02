@@ -33,10 +33,10 @@ import org.perfidix.annotation.AfterEachRun;
 import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
 import org.perfidix.annotation.SkipBench;
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.ChildAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
@@ -55,7 +55,9 @@ import org.treetank.service.xml.xpath.filter.PredicateFilterAxis;
 import org.treetank.utils.TypedValue;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -69,30 +71,20 @@ public class ConcurrentAxisTest {
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + XMLFILE;
 
-    private AbsAxisTest.Holder holder;
-
-    /**
-     * Constructor, just to meet checkstyle requirements.
-     */
-    public ConcurrentAxisTest() {
-
-    }
+    private static Holder holder;
 
     /**
      * Method is called once before each test. It deletes all states, shreds XML file to database and
      * initializes the required variables.
+     * 
+     * @throws Exception
      */
-    @Ignore
     @BeforeEachRun
-    @Before
-    public final void setUp() {
-        try {
-            TestHelper.deleteEverything();
-            XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-            holder = AbsAxisTest.generateHolder();
-        } catch (final Exception mExe) {
-            mExe.printStackTrace();
-        }
+    @BeforeClass
+    public static final void setUp() throws Exception {
+        TestHelper.deleteEverything();
+        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
+        holder = Holder.generate();
     }
 
     @Test
@@ -1016,10 +1008,10 @@ public class ConcurrentAxisTest {
      * @throws AbsTTException
      */
     @AfterEachRun
-    @After
-    public final void tearDown() throws AbsTTException {
-        holder.rtx.close();
-        holder.session.close();
+    @AfterClass
+    public static final void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
     }
 
 }

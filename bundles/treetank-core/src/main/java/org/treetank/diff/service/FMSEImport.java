@@ -70,9 +70,9 @@ public final class FMSEImport {
         assert paramResNewRev != null;
         assert paramNewRev != null;
         Database.truncateDatabase(paramNewRev);
-        Database.createDatabase(paramNewRev, new DatabaseConfiguration.Builder().build());
+        Database.createDatabase(paramNewRev, new DatabaseConfiguration.Builder());
         final IDatabase db = Database.openDatabase(paramNewRev);
-        final ISession session = db.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = db.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(paramResNewRev);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

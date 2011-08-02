@@ -125,7 +125,7 @@ public abstract class AbsIOFactory {
      */
     public final void closeStorage() throws TTIOException {
         closeConcreteStorage();
-//        FACTORIES.remove(this.mSessionConfig);
+        // FACTORIES.remove(this.mSessionConfig);
     }
 
     /**
@@ -136,11 +136,11 @@ public abstract class AbsIOFactory {
      * @throws TTIOException
      *             if anything occures
      */
-    public static final void truncateStorage(final File paramFile) throws TTIOException {
-        final Set<SessionConfiguration> configs = STORAGES.get(paramFile);
+    public synchronized static final void truncateStorage(final File paramFile) throws TTIOException {
+        final Set<SessionConfiguration> configs = STORAGES.remove(paramFile);
         if (configs != null) {
             for (final SessionConfiguration config : configs) {
-                final AbsIOFactory fac = FACTORIES.get(config);
+                final AbsIOFactory fac = FACTORIES.remove(config);
                 fac.truncate();
             }
         }
@@ -155,12 +155,12 @@ public abstract class AbsIOFactory {
      */
     protected abstract void closeConcreteStorage() throws TTIOException;
 
-    public static final void registerInstance(final File paramFile,
+    public synchronized static final void registerInstance(final File paramFile,
         final DatabaseConfiguration paramDatabaseConf, final SessionConfiguration paramSessionConf)
         throws TTIOException {
         AbsIOFactory fac = null;
         if (!FACTORIES.containsKey(paramSessionConf)) {
-            final AbsIOFactory.StorageType storageType = paramDatabaseConf.getType();
+            final AbsIOFactory.StorageType storageType = paramDatabaseConf.mType;
             switch (storageType) {
             case File:
                 fac = new FileFactory(paramFile, paramDatabaseConf, paramSessionConf);
@@ -172,12 +172,12 @@ public abstract class AbsIOFactory {
                 throw new TTIOException("Type", storageType.toString(), "not valid!");
             }
             FACTORIES.put(paramSessionConf, fac);
-            Set<SessionConfiguration> configs = STORAGES.get(paramFile);
+            Set<SessionConfiguration> configs = STORAGES.get(paramFile.getParentFile());
             if (configs == null) {
                 configs = new HashSet<SessionConfiguration>();
             }
             configs.add(paramSessionConf);
-            STORAGES.put(paramFile, configs);
+            STORAGES.put(paramFile.getParentFile(), configs);
         }
     }
 

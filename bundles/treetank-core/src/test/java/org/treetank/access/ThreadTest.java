@@ -32,6 +32,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import junit.extensions.TestDecorator;
+
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -54,31 +57,28 @@ public class ThreadTest {
 
     public static final int WORKER_COUNT = 50;
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void testThreads() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        IWriteTransaction wtx = session.beginWriteTransaction();
-
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
-
-        ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
+        final ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
         long newKey = 10L;
         for (int i = 0; i < WORKER_COUNT; i++) {
-            taskExecutor.submit(new Task(session.beginReadTransaction(i)));
-            wtx = session.beginWriteTransaction();
+            taskExecutor.submit(new Task(holder.session.beginReadTransaction(i)));
+            final IWriteTransaction wtx = holder.session.beginWriteTransaction();
             wtx.moveTo(newKey);
             wtx.setValue("value" + i);
             newKey = wtx.getNode().getNodeKey();
@@ -88,7 +88,6 @@ public class ThreadTest {
         taskExecutor.shutdown();
         taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
 
-        session.close();
     }
 
     private class Task implements Callable<Void> {

@@ -37,7 +37,6 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.AbsIOFactory;
-import org.treetank.settings.EStoragePaths;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -51,26 +50,18 @@ public final class Database implements IDatabase {
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
     /** DatabaseConfiguration with fixed settings. */
-    final DatabaseConfiguration mDatabaseConfiguration;
-
-    /** File for storing the DB. */
-    public final File mFile;
+    final DatabaseConfiguration mDBConfig;
 
     /**
      * Private constructor.
      * 
-     * @param paramFile
-     *            Treetank {@link File}
      * @param paramDBConf
      *            {@link DatabaseConfiguration} reference to configure the {@link IDatabase}
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    private Database(final File paramFile, final DatabaseConfiguration paramDBConf) throws AbsTTException {
-        assert paramFile != null;
-        assert paramDBConf != null;
-        mFile = paramFile;
-        mDatabaseConfiguration = paramDBConf;
+    private Database(final DatabaseConfiguration paramDBConf) throws AbsTTException {
+        mDBConfig = paramDBConf;
     }
 
     /**
@@ -86,7 +77,7 @@ public final class Database implements IDatabase {
      *             if something odd happens within the creation process.
      */
     public static synchronized boolean createDatabase(final File paramFile,
-        final DatabaseConfiguration paramConf) throws TTIOException {
+        final DatabaseConfiguration.Builder paramConf) throws TTIOException {
         // try {
         boolean returnVal = true;
         if (paramFile.exists()) {
@@ -150,7 +141,8 @@ public final class Database implements IDatabase {
             throw new TTUsageException("DB could not be opened (since it was not created?) at location",
                 paramFile.toString());
         }
-        final Database database = new Database(paramFile, new DatabaseConfiguration.Builder().build());
+        final Database database =
+            new Database(new DatabaseConfiguration.Builder().setFile(paramFile).build());
         final Database returnVal = DATABASEMAP.putIfAbsent(paramFile, database);
         if (returnVal == null) {
             return database;
@@ -174,7 +166,7 @@ public final class Database implements IDatabase {
     /** {@inheritDoc} */
     @Override
     public DatabaseConfiguration getDatabaseConf() {
-        return mDatabaseConfiguration;
+        return mDBConfig;
     }
 
     /**
@@ -182,7 +174,7 @@ public final class Database implements IDatabase {
      */
     @Override
     public String getVersion() {
-        return mDatabaseConfiguration.getBinaryVersion();
+        return mDBConfig.mBinaryVersion;
     }
 
     /**
@@ -191,33 +183,14 @@ public final class Database implements IDatabase {
      * @throws AbsTTException
      */
     @Override
-    public synchronized ISession getSession(final SessionConfiguration paramSessionConfiguration)
+    public synchronized ISession getSession(final SessionConfiguration.Builder paramSessionConfig)
         throws AbsTTException {
-        final File storageFile = new File(mFile, paramSessionConfiguration.mName);
-        AbsIOFactory.registerInstance(storageFile, mDatabaseConfiguration, paramSessionConfiguration);
-        return new Session(this.mDatabaseConfiguration, paramSessionConfiguration);
-    }
-
-    /**
-     * Checking if storage is valid.
-     * 
-     * @throws TTUsageException
-     *             if storage is not valid
-     */
-    private void checkResource() throws TTUsageException {
-        final int compareStructure = EStoragePaths.compareStructure(mFile);
-        if (compareStructure != 0) {
-            throw new TTUsageException("Storage has no valid storage structure."
-                + " Compared to the specification, storage has", Integer.toString(compareStructure),
-                "elements!");
-        }
-        final String version = DatabaseConfiguration.BINARY;
-
-        final String storedVersions = getVersion();
-        if (!version.equals(storedVersions)) {
-            throw new TTUsageException("Versions Differ, Expected Version:", version, "but was",
-                storedVersions);
-        }
+        paramSessionConfig.setDBConfig(mDBConfig);
+        final SessionConfiguration config = paramSessionConfig.build();
+        final File storageFile = config.mPath;
+        AbsIOFactory.registerInstance(storageFile, mDBConfig, config);
+        final boolean bla = AbsIOFactory.getInstance(config).exists();
+        return new Session(config);
     }
 
     /**
@@ -226,10 +199,7 @@ public final class Database implements IDatabase {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Path: ");
-        builder.append(this.mFile.getAbsolutePath());
-        builder.append("\n");
-        builder.append(this.mDatabaseConfiguration);
+        builder.append(this.mDBConfig);
         return builder.toString();
     }
 

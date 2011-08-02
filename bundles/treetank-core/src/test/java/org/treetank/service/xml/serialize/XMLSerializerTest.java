@@ -60,7 +60,7 @@ public class XMLSerializerTest {
     @Test
     public void testXMLSerializer() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -77,7 +77,7 @@ public class XMLSerializerTest {
     @Test
     public void testRestSerializer() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -99,7 +99,7 @@ public class XMLSerializerTest {
     @Test
     public void testIDSerializer() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -119,7 +119,7 @@ public class XMLSerializerTest {
     @Test
     public void testSampleCompleteSerializer() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -148,7 +148,7 @@ public class XMLSerializerTest {
     public void testKeyStart() throws Exception {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 

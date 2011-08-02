@@ -156,14 +156,14 @@ public final class FMES implements IImportDiff {
         mInOrder = new IdentityHashMap<IItem, Boolean>();
         mAlreadyInserted = new IdentityHashMap<IItem, Boolean>();
 
-        Database.createDatabase(paramOldFile, new DatabaseConfiguration.Builder().build());
+        Database.createDatabase(paramOldFile, new DatabaseConfiguration.Builder());
         final IDatabase databaseOld = Database.openDatabase(paramOldFile);
-        final ISession sessionOld = databaseOld.getSession(new SessionConfiguration.Builder().build());
+        final ISession sessionOld = databaseOld.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = sessionOld.beginWriteTransaction();
 
-        Database.createDatabase(paramNewFile, new DatabaseConfiguration.Builder().build());
+        Database.createDatabase(paramNewFile, new DatabaseConfiguration.Builder());
         final IDatabase databaseNew = Database.openDatabase(paramOldFile);
-        final ISession sessionNew = databaseNew.getSession(new SessionConfiguration.Builder().build());
+        final ISession sessionNew = databaseNew.getSession(new SessionConfiguration.Builder());
         final IReadTransaction rtx = sessionNew.beginWriteTransaction();
 
         mOldRevVisitor = new FMESVisitor(sessionOld, mInOrder, mDescendants);

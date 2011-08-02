@@ -27,6 +27,8 @@
 
 package org.treetank.access;
 
+import java.io.File;
+
 import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.io.AbsIOFactory.StorageType;
 import org.treetank.settings.ERevisioning;
@@ -56,19 +58,22 @@ public final class DatabaseConfiguration {
     // END STATIC STANDARD FIELDS
 
     /** Type of Storage (File, Berkeley). */
-    private final StorageType mType;
+    public final StorageType mType;
 
     /** Kind of revisioning (Incremental, Differential). */
-    private final ERevisioning mRevision;
+    public final ERevisioning mRevision;
 
     /** Kind of integrity hash (rolling, postorder). */
-    private final HashKind mHashKind;
+    public final HashKind mHashKind;
 
     /** Number of revisions to restore a complete set of data. */
-    private final int mRevisionsToRestore;
+    public final int mRevisionsToRestore;
 
     /** Binary version of storage. */
-    private final String mBinaryVersion;
+    public final String mBinaryVersion;
+
+    /** Path to file. */
+    public final File mFile;
 
     /**
      * Constructor with all possible properties.
@@ -82,51 +87,7 @@ public final class DatabaseConfiguration {
         mHashKind = paramBuilder.mHashKind;
         mRevisionsToRestore = paramBuilder.mRevisionsToRestore;
         mBinaryVersion = paramBuilder.mBinaryVersion;
-    }
-
-    /**
-     * Get binaryVersion.
-     * 
-     * @return the binaryVersion
-     */
-    public String getBinaryVersion() {
-        return mBinaryVersion;
-    }
-
-    /**
-     * Get hashKind.
-     * 
-     * @return the hashKind
-     */
-    public HashKind getHashKind() {
-        return mHashKind;
-    }
-
-    /**
-     * Get revision.
-     * 
-     * @return the revision
-     */
-    public ERevisioning getRevision() {
-        return mRevision;
-    }
-
-    /**
-     * Get type.
-     * 
-     * @return the type
-     */
-    public StorageType getType() {
-        return mType;
-    }
-
-    /**
-     * Get revisionsToRestore.
-     * 
-     * @return the revisionsToRestore
-     */
-    public int getRevisionsToRestore() {
-        return mRevisionsToRestore;
+        mFile = paramBuilder.mFile;
     }
 
     /**
@@ -142,6 +103,28 @@ public final class DatabaseConfiguration {
         builder.append("\nHashKind: ");
         builder.append(this.mHashKind);
         return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean equals(final Object mObj) {
+        return this.hashCode() == mObj.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 72277;
+        int result = 13;
+        result = prime * result + mType.hashCode();
+        result = prime * result + mRevision.hashCode();
+        result = prime * result + mHashKind.hashCode();
+        result = prime * result + mBinaryVersion.hashCode();
+        return result;
     }
 
     /**
@@ -163,6 +146,24 @@ public final class DatabaseConfiguration {
 
         /** Binary version of storage. */
         private String mBinaryVersion = BINARY;
+
+        /** File for location. */
+        private File mFile;
+
+        /**
+         * Setter for mFile.
+         * 
+         * @param paramFile
+         *            to be set
+         * @return reference to the builder object
+         */
+        public Builder setFile(final File paramFile) {
+            if (paramFile == null) {
+                throw new NullPointerException("paramType may not be null!");
+            }
+            mFile = paramFile;
+            return this;
+        }
 
         /**
          * Setter for mStorageType.
@@ -247,6 +248,22 @@ public final class DatabaseConfiguration {
         public DatabaseConfiguration build() {
             return new DatabaseConfiguration(this);
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("Type: ");
+            builder.append(this.mType);
+            builder.append("\nRevision: ");
+            builder.append(this.mRevision);
+            builder.append("\nHashKind: ");
+            builder.append(this.mHashKind);
+            return builder.toString();
+        }
+
     }
 
 }

@@ -65,9 +65,6 @@ import org.treetank.utils.IConstants;
  */
 public class ReadTransactionState {
 
-    /** Database configuration. */
-    private final DatabaseConfiguration mDatabaseConfiguration;
-
     /** Page reader exclusively assigned to this transaction. */
     private final IReader mPageReader;
 
@@ -83,11 +80,14 @@ public class ReadTransactionState {
     /** Internal reference to cache. */
     private final ICache mCache;
 
+    /** Configuration of the session */
+    protected final SessionState mSessionState;
+
     /**
      * Standard constructor.
      * 
-     * @param paramDatabaseConfiguration
-     *            Configuration of database.
+     * @param paramSessionState
+     *            State of state.
      * @param paramUberPage
      *            Uber page to start reading with.
      * @param paramRevision
@@ -99,11 +99,11 @@ public class ReadTransactionState {
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected ReadTransactionState(final DatabaseConfiguration paramDatabaseConfiguration,
-        final UberPage paramUberPage, final long paramRevision, final IItemList paramItemList,
-        final IReader paramReader) throws TTIOException {
+    protected ReadTransactionState(final SessionState paramSessionState, final UberPage paramUberPage,
+        final long paramRevision, final IItemList paramItemList, final IReader paramReader)
+        throws TTIOException {
         mCache = new RAMCache();
-        mDatabaseConfiguration = paramDatabaseConfiguration;
+        mSessionState = paramSessionState;
         mPageReader = paramReader;
         mUberPage = paramUberPage;
         mRootPage = loadRevRoot(paramRevision);
@@ -136,10 +136,10 @@ public class ReadTransactionState {
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
 
-            final int mileStoneRevision = mDatabaseConfiguration.getRevisionsToRestore();
+            final int mileStoneRevision = mSessionState.mSessionConfig.mDBConfig.mRevisionsToRestore;
 
             // Build up the complete page.
-            final ERevisioning revision = mDatabaseConfiguration.getRevision();
+            final ERevisioning revision = mSessionState.mSessionConfig.mDBConfig.mRevision;
             final NodePage completePage = revision.combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
@@ -285,7 +285,7 @@ public class ReadTransactionState {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == mDatabaseConfiguration.getRevisionsToRestore()) {
+                if (refs.size() == mSessionState.mSessionConfig.mDBConfig.mRevisionsToRestore) {
                     break;
                 }
 
@@ -392,15 +392,6 @@ public class ReadTransactionState {
     }
 
     /**
-     * Getting the {@link DatabaseConfiguration} addicted to this state.
-     * 
-     * @return the {@link DatabaseConfiguration} bound to this state
-     */
-    protected DatabaseConfiguration getDatabaseConfiguration() {
-        return mDatabaseConfiguration;
-    }
-
-    /**
      * Calculate node page offset for a given node key.
      * 
      * @param mNodeKey
@@ -418,9 +409,9 @@ public class ReadTransactionState {
      */
     @Override
     public String toString() {
-        return new StringBuilder("DatabaseConfiguration: ").append(mDatabaseConfiguration.toString()).append(
-            "\nPageReader: ").append(mPageReader.toString()).append("\nUberPage: ").append(
-            mUberPage.toString()).append("\nRevRootPage: ").append(mRootPage.toString()).toString();
+        return new StringBuilder("SessionConfiguration: ").append(mSessionState.mSessionConfig).append(
+            "\nPageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage).append(
+            "\nRevRootPage: ").append(mRootPage).toString();
     }
 
 }

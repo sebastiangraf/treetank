@@ -39,6 +39,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -56,12 +57,13 @@ public class SynchWriteTest {
     Exchanger<Boolean> threadsFinished = new Exchanger<Boolean>();
     Exchanger<Boolean> verify = new Exchanger<Boolean>();
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        holder = Holder.generate();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         wtx.moveToDocumentRoot();
         wtx.insertElementAsFirstChild(new QName(""));
         wtx.insertElementAsRightSibling(new QName(""));
@@ -72,11 +74,11 @@ public class SynchWriteTest {
         wtx.insertElementAsFirstChild(new QName(""));
         wtx.commit();
         wtx.close();
-        session.close();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.session.close();
         TestHelper.closeEverything();
     }
 
@@ -87,11 +89,9 @@ public class SynchWriteTest {
      * that have to persist.
      */
     public void testConcurrentWrite() throws AbsTTException, InterruptedException, ExecutionException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final Semaphore semaphore = new Semaphore(1);
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        final IWriteTransaction wtx2 = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx2 = holder.session.beginWriteTransaction();
         final ExecutorService exec = Executors.newFixedThreadPool(2);
         final Callable<Void> c1 = new Wtx1(wtx, semaphore);
         final Callable<Void> c2 = new Wtx2(wtx2, semaphore);
@@ -102,7 +102,7 @@ public class SynchWriteTest {
         r1.get();
         r2.get();
 
-        final IReadTransaction rtx = session.beginWriteTransaction();
+        final IReadTransaction rtx = holder.session.beginWriteTransaction();
         TestCase.assertTrue(rtx.moveToFirstChild());
         TestCase.assertTrue(rtx.moveToFirstChild());
         TestCase.assertFalse(rtx.moveToRightSibling());

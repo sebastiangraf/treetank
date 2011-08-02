@@ -27,12 +27,15 @@
 
 package org.treetank.access;
 
+import java.io.File;
+
 /**
  * <h1>SessionConfiguration</h1>
  * 
  * <p>
  * Holds the session-wide settings that can not change. This included stuff like commit-threshold and number
- * of usable write/read transactions.
+ * of usable write/read transactions. Each SessionConfiguration is furthermore bound to one fixed database
+ * denoted by the DatabaseConfiguration.
  * </p>
  */
 public final class SessionConfiguration {
@@ -62,8 +65,11 @@ public final class SessionConfiguration {
     /** User for this session. */
     final String mUser;
 
-    /** Name for the resource to be associated. */
-    final String mName;
+    /** Path for the resource to be associated. */
+    final File mPath;
+
+    /** DatabaseConfiguration for this SessionConfig. */
+    final DatabaseConfiguration mDBConfig;
 
     /**
      * Convenience constructor using the standard settings.
@@ -71,12 +77,34 @@ public final class SessionConfiguration {
      * @param paramBuilder
      *            {@link Builder} reference
      */
-    private SessionConfiguration(final SessionConfiguration.Builder paramBuilder, final String paramName) {
+    private SessionConfiguration(final SessionConfiguration.Builder paramBuilder) {
         mWtxAllowed = paramBuilder.mWtxAllowed;
         mRtxAllowed = paramBuilder.mRtxAllowed;
         mCommitThreshold = paramBuilder.mCommitThreshold;
         mUser = paramBuilder.mUser;
-        mName = paramName;
+        mDBConfig = paramBuilder.mDBConfig;
+        mPath = new File(mDBConfig.mFile, paramBuilder.mResource);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 90599;
+        int result = 13;
+        result = prime * result + mUser.hashCode();
+        result = prime * result + mPath.hashCode();
+        result = prime * result + mDBConfig.hashCode();
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean equals(final Object mObj) {
+        return this.hashCode() == mObj.hashCode();
     }
 
     /**
@@ -88,7 +116,7 @@ public final class SessionConfiguration {
         builder.append("User: ");
         builder.append(this.mUser);
         builder.append("\nResource: ");
-        builder.append(this.mName);
+        builder.append(this.mPath);
         return builder.toString();
     }
 
@@ -108,6 +136,27 @@ public final class SessionConfiguration {
 
         /** User for this session. */
         private String mUser = SessionConfiguration.DEFAULT_USER;
+
+        /** Resource for the this session. */
+        private String mResource = INTRINSICTEMP;
+
+        /** Resource for the this session. */
+        private DatabaseConfiguration mDBConfig;
+
+        /**
+         * Setter for field mResource.
+         * 
+         * @param paramResource
+         *            new value for field
+         * @return reference to the builder object
+         */
+        public Builder setResource(final String paramResource) {
+            if (paramResource == null) {
+                throw new IllegalArgumentException("Value must not be null!");
+            }
+            mResource = paramResource;
+            return this;
+        }
 
         /**
          * Setter for field mWtxAllowed.
@@ -170,24 +219,43 @@ public final class SessionConfiguration {
         }
 
         /**
-         * Builder method to generate new configuration.
+         * Setter for field mDBConfig.
          * 
-         * @return a new {@link SessionConfiguration} instance
+         * @param paramDBConfig
+         *            new value for field
+         * @return reference to the builder object
          */
-        public SessionConfiguration build() {
-            return build(INTRINSICTEMP);
+        public Builder setDBConfig(final DatabaseConfiguration paramDBConfig) {
+            if (paramDBConfig == null) {
+                throw new NullPointerException("paramDBConfig may not be null!");
+            }
+            mDBConfig = paramDBConfig;
+            return this;
         }
 
         /**
          * Builder method to generate new configuration.
          * 
-         * @param resourceName
-         *            name of the resource where the data should be persisted to
          * @return a new {@link SessionConfiguration} instance
          */
-        public SessionConfiguration build(final String resourceName) {
-            return new SessionConfiguration(this, resourceName);
+        public SessionConfiguration build() {
+            assert mDBConfig != null;
+            return new SessionConfiguration(this);
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("User: ");
+            builder.append(this.mUser);
+            builder.append("\nResource: ");
+            builder.append(this.mResource);
+            return builder.toString();
+        }
+
     }
 
 }

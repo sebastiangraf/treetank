@@ -33,6 +33,7 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -58,80 +59,67 @@ public class HashTest {
     private final static String NAME1 = "a";
     private final static String NAME2 = "b";
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        holder = Holder.generate();
     }
 
     @Test
     public void testPostorderNamespace() throws Exception {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        testNamespace(session);
+        testNamespace(holder.session);
 
     }
 
     @Test
     public void testPostorderInsertRemove() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
     public void testPostorderDeep() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         testDeepTree(wtx);
     }
 
     @Test
     public void testPostorderSetter() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         testSetter(wtx);
     }
 
     @Test
     public void testRollingNamespace() throws Exception {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        testNamespace(session);
+        testNamespace(holder.session);
 
     }
 
     @Test
     public void testRollingInsertRemove() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
     public void testRollingDeep() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         testDeepTree(wtx);
     }
 
     @Test
     public void testRollingSetter() throws AbsTTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         testSetter(wtx);
     }
 

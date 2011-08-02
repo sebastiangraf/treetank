@@ -32,6 +32,7 @@ import net.sf.saxon.s9api.XdmItem;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.DatabaseConfiguration;
@@ -39,8 +40,6 @@ import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
 import org.treetank.utils.DocumentCreater;
@@ -67,16 +66,16 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     public void setUp() throws AbsTTException {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         Database
-            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder().build());
+            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder());
         final IDatabase databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final ISession session = databaseTest.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = databaseTest.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
         session.close();
         XMLUnit.setIgnoreWhitespace(true);
-        mHolder = AbsAxisTest.generateHolder();
+        mHolder = Holder.generate();
     }
 
     @After

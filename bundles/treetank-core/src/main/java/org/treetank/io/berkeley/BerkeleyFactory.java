@@ -190,7 +190,7 @@ public final class BerkeleyFactory extends AbsIOFactory {
         try {
             final Environment env =
                 new Environment(new File(mFile, EStoragePaths.TT.getFile().getName()), generateEnvConf());
-            if (env.getDatabaseNames().contains("NAME")) {
+            if (env.getDatabaseNames().contains(NAME)) {
                 env.removeDatabase(null, NAME);
             }
         } catch (final DatabaseException exc) {

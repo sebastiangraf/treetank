@@ -27,9 +27,9 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
@@ -47,13 +47,13 @@ import static org.junit.Assert.fail;
 public class NodeCompTest {
 
     private AbsComparator comparator;
-    private AbsAxisTest.Holder holder;
+    private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = AbsAxisTest.generateHolder();
+        holder = Holder.generate();
         comparator =
             new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1),
                 CompKind.IS);

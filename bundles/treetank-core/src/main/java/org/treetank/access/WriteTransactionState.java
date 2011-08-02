@@ -79,21 +79,15 @@ public final class WriteTransactionState extends ReadTransactionState {
     /** Last reference to the actual revRoot. */
     private final RevisionRootPage mNewRoot;
 
-    /** State of session for synchronizing against other writetrans. */
-    private final SessionState mSessionState;
-
     /** ID for current transaction. */
     private final long mTransactionID;
 
     /**
      * Standard constructor.
      * 
-     * @param paramToStore
-     *            storage {@link File}
-     * @param paramDatabaseConfig
-     *            {@link DatabaseConfiguration} reference
-     * @param paramSessionState
-     *            {@link SessionState} reference
+     * 
+     * @param paramSessionConfiguration
+     *            {@link SessionConfiguration} reference
      * @param paramUberPage
      *            root of revision
      * @param paramWriter
@@ -107,13 +101,12 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected WriteTransactionState(final File paramToStore, final DatabaseConfiguration paramDatabaseConfig,
-        final SessionState paramSessionState, final UberPage paramUberPage, final IWriter paramWriter,
-        final long paramParamId, final long paramRepresentRev, final long paramStoreRev) throws TTIOException {
-        super(paramDatabaseConfig, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
+    protected WriteTransactionState(final SessionState paramSessionState, final UberPage paramUberPage,
+        final IWriter paramWriter, final long paramParamId, final long paramRepresentRev,
+        final long paramStoreRev) throws TTIOException {
+        super(paramSessionState, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
-        mSessionState = paramSessionState;
-        mLog = new TransactionLogCache(paramToStore, paramStoreRev);
+        mLog = new TransactionLogCache(paramSessionState.mSessionConfig.mPath, paramStoreRev);
         mPageWriter = paramWriter;
         mTransactionID = paramParamId;
 
@@ -570,8 +563,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
         throws TTIOException {
         final NodePage[] revs = getSnapshotPages(paramNodePageKey);
-        final ERevisioning revision = getDatabaseConfiguration().getRevision();
-        final int mileStoneRevision = getDatabaseConfiguration().getRevisionsToRestore();
+        final ERevisioning revision = mSessionState.mSessionConfig.mDBConfig.mRevision;
+        final int mileStoneRevision = mSessionState.mSessionConfig.mDBConfig.mRevisionsToRestore;
 
         return revision.combinePagesForModification(revs, mileStoneRevision);
     }

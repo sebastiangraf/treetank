@@ -94,7 +94,7 @@ public final class TreeTankCommandoLineExplorer {
 
             final File file = new File(args[0]);
             database = Database.openDatabase(file);
-            session = database.getSession(new SessionConfiguration.Builder().build());
+            session = database.getSession(new SessionConfiguration.Builder());
             if (revision != 0) {
                 rtx = session.beginWriteTransaction();
             } else {
@@ -127,7 +127,7 @@ public final class TreeTankCommandoLineExplorer {
                     final File file = findFile(line);
                     if (file != null) {
                         database = Database.openDatabase(file);
-                        session = database.getSession(new SessionConfiguration.Builder().build());
+                        session = database.getSession(new SessionConfiguration.Builder());
                         rtx = session.beginReadTransaction();
                         System.out.println(command.executeCommand(rtx));
                     } else {

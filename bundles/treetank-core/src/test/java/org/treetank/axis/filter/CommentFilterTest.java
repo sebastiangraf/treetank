@@ -27,6 +27,7 @@
 
 package org.treetank.axis.filter;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -44,15 +45,23 @@ import org.junit.Test;
 
 public class CommentFilterTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
+        holder = Holder.generate();
+    }
+
+    @After
+    public void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
     }
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
         final IReadTransaction wtx = holder.rtx;
 
         wtx.moveTo(9L);
@@ -69,12 +78,5 @@ public class CommentFilterTest {
         wtx.moveToAttribute(0);
         IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
-        wtx.close();
-        holder.session.close();
-    }
-
-    @After
-    public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
     }
 }

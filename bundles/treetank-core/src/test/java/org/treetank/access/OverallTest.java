@@ -33,6 +33,7 @@ import java.util.Random;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -60,18 +61,19 @@ public final class OverallTest {
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "auction.xml";
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        holder = Holder.generate();
     }
 
     @Test
     public void testXML() throws Exception {
 
         for (int i = 0; i < DatabaseConfiguration.VERSIONSTORESTORE * 2; i++) {
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-            final IWriteTransaction wtx = session.beginWriteTransaction();
+            final IWriteTransaction wtx = holder.session.beginWriteTransaction();
             if (wtx.moveToFirstChild()) {
                 wtx.remove();
                 wtx.commit();
@@ -84,16 +86,13 @@ public final class OverallTest {
             shredder.call();
 
             wtx.close();
-            session.close();
 
         }
     }
 
     @Test
     public void testJustEverything() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         wtx.insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
@@ -156,11 +155,11 @@ public final class OverallTest {
         wtx.moveTo(key);
         wtx.commit();
         wtx.close();
-        session.close();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 

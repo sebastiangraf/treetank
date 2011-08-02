@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.xpath;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
@@ -44,14 +45,7 @@ import org.junit.Test;
  */
 public class FunctionsTest {
 
-    private AbsAxisTest.Holder holder;
-
-    /**
-     * Constructor, just to meet checkstyle requirements.
-     */
-    public FunctionsTest() {
-
-    }
+    private Holder holder;
 
     /**
      * Method is called once before each test. It deletes all states, shreds XML file to database and
@@ -64,7 +58,7 @@ public class FunctionsTest {
     public final void setUp() throws Exception {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = AbsAxisTest.generateHolder();
+        holder = Holder.generate();
     }
 
     /**

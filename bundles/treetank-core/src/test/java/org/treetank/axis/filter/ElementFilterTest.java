@@ -27,6 +27,7 @@
 
 package org.treetank.axis.filter;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -44,54 +45,54 @@ import org.junit.Test;
 
 public class ElementFilterTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
+        holder = Holder.generate();
+    }
+
+    @After
+    public void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
     }
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
         // Build simple test tree.
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
+        final IReadTransaction rtx = holder.rtx;
 
-        wtx.moveTo(0L);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+        rtx.moveTo(0L);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), false);
 
-        wtx.moveTo(1L);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
+        rtx.moveTo(1L);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), true);
 
-        wtx.moveTo(1L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+        rtx.moveTo(1L);
+        rtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), false);
 
-        wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+        rtx.moveTo(4L);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), false);
 
-        wtx.moveTo(5L);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
+        rtx.moveTo(5L);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), true);
 
-        wtx.moveTo(6L);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+        rtx.moveTo(6L);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), false);
 
-        wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
+        rtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), true);
 
-        wtx.moveTo(9L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+        rtx.moveTo(9L);
+        rtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), false);
 
-        wtx.moveTo(12L);
-        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
-
-        wtx.close();
-        holder.session.close();
-    }
-
-    @After
-    public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        rtx.moveTo(12L);
+        IFilterTest.testIFilterConventions(new ElementFilter(rtx), false);
     }
 
 }

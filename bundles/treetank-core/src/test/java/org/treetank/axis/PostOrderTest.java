@@ -27,6 +27,7 @@
 
 package org.treetank.axis;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -43,28 +44,29 @@ import org.junit.Test;
 
 public class PostOrderTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-    }
-
-    @Test
-    public void testIterate() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
-
-        wtx.moveToDocumentRoot();
-        AbsAxisTest.testIAxisConventions(new PostOrderAxis(wtx), new long[] {
-            4L, 6L, 7L, 5L, 8L, 11L, 12L, 9L, 13L, 1L, 0L
-        });
-
-        wtx.close();
-        holder.session.close();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
+    }
+
+    @Test
+    public void testIterate() throws AbsTTException {
+        final IReadTransaction rtx = holder.rtx;
+
+        rtx.moveToDocumentRoot();
+        AbsAxisTest.testIAxisConventions(new PostOrderAxis(rtx), new long[] {
+            4L, 6L, 7L, 5L, 8L, 11L, 12L, 9L, 13L, 1L, 0L
+        });
+
     }
 }

@@ -337,7 +337,7 @@ public final class XMLSerializer extends AbsSerializer {
         final FileOutputStream outputStream = new FileOutputStream(target);
 
         final IDatabase db = Database.openDatabase(new File(args[0]));
-        final ISession session = db.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = db.getSession(new SessionConfiguration.Builder());
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();
         serializer.call();

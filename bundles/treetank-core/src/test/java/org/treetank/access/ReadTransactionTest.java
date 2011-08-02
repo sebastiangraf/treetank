@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -47,31 +48,27 @@ import static org.junit.Assert.assertFalse;
 
 public class ReadTransactionTest {
 
-    private IDatabase database;
+    private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
-        session.close();
+        TestHelper.createTestDocument();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void testEmptyRtx() throws AbsTTException {
         assertFalse(PATHS.PATH2.getFile().exists());
-        Database.createDatabase(PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder().build());
+        Database.createDatabase(PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder());
         final IDatabase db = Database.openDatabase(PATHS.PATH2.getFile());
-        final ISession session = db.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = db.getSession(new SessionConfiguration.Builder());
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.getRevisionNumber();
         rtx.close();
@@ -81,23 +78,19 @@ public class ReadTransactionTest {
 
     @Test
     public void testDocumentRoot() throws AbsTTException {
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IReadTransaction rtx = session.beginReadTransaction();
-
+        final IReadTransaction rtx = holder.rtx;
         assertEquals(true, rtx.moveToDocumentRoot());
         assertEquals(ENodes.ROOT_KIND, rtx.getNode().getKind());
         assertEquals(false, rtx.getNode().hasParent());
         assertEquals(false, ((AbsStructNode)rtx.getNode()).hasLeftSibling());
         assertEquals(false, ((AbsStructNode)rtx.getNode()).hasRightSibling());
         assertEquals(true, ((AbsStructNode)rtx.getNode()).hasFirstChild());
-
         rtx.close();
     }
 
     @Test
     public void testConventions() throws AbsTTException {
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.rtx;
 
         // IReadTransaction Convention 1.
         assertEquals(true, rtx.moveToDocumentRoot());

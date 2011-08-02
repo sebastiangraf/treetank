@@ -96,7 +96,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private static final String XMLALLNINETH = RESOURCES + File.separator + "revXMLsAll8";
 
-    private static final String XMLLINGUISTICS = RESOURCES + File.separator + "linguistics";
+//    private static final String XMLLINGUISTICS = RESOURCES + File.separator + "linguistics";
 
     static {
         XMLUnit.setIgnoreComments(true);
@@ -207,7 +207,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final File folder = new File(FOLDER);
         int i = 1;
         final File[] filesList = folder.listFiles();
@@ -264,16 +264,16 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
 
-                System.out.println(out.toString());
+//                System.out.println(out.toString());
                 final Diff diff = new Diff(sBuilder.toString(), out.toString());
-                final DetailedDiff detDiff = new DetailedDiff(diff);
-                @SuppressWarnings("unchecked")
-                final List<Difference> differences = detDiff.getAllDifferences();
-                for (final Difference difference : differences) {
-                    System.out.println("***********************");
-                    System.out.println(difference);
-                    System.out.println("***********************");
-                }
+//                final DetailedDiff detDiff = new DetailedDiff(diff);
+//                @SuppressWarnings("unchecked")
+//                final List<Difference> differences = detDiff.getAllDifferences();
+//                for (final Difference difference : differences) {
+////                    System.out.println("***********************");
+////                    System.out.println(difference);
+////                    System.out.println("***********************");
+//                }
 
                 assertTrue("pieces of XML are similar " + diff, diff.similar());
                 assertTrue("but are they identical? " + diff, diff.identical());

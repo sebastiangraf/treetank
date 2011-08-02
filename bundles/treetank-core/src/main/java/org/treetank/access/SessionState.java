@@ -68,10 +68,7 @@ public final class SessionState {
     protected final Lock mCommitLock;
 
     /** Session configuration. */
-    protected final SessionConfiguration mSessionConfiguration;
-
-    /** Database configuration. */
-    protected final DatabaseConfiguration mDatabaseConfiguration;
+    protected final SessionConfiguration mSessionConfig;
 
     /** Write semaphore to assure only one exclusive write transaction exists. */
     private final Semaphore mWriteSemaphore;
@@ -102,15 +99,11 @@ public final class SessionState {
      * 
      * @param paramSessionConfig
      *            Session configuration for the TreeTank.
-     * @param paramDBConfig
-     *            Database configuration for the TreeTank.
      * @throws AbsTTException
      *             if Session state error
      */
-    protected SessionState(final DatabaseConfiguration paramDBConfig,
-        final SessionConfiguration paramSessionConfig) throws AbsTTException {
-        mDatabaseConfiguration = paramDBConfig;
-        mSessionConfiguration = paramSessionConfig;
+    protected SessionState(final SessionConfiguration paramSessionConfig) throws AbsTTException {
+        mSessionConfig = paramSessionConfig;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
         mWriteTransactionStateMap = new ConcurrentHashMap<Long, WriteTransactionState>();
         mSyncTransactionsReturns = new ConcurrentHashMap<Long, Map<Long, Collection<Future<Void>>>>();
@@ -123,7 +116,7 @@ public final class SessionState {
         mReadSemaphore = new Semaphore(paramSessionConfig.mRtxAllowed);
         final PageReference uberPageReference = new PageReference();
 
-        mFac = AbsIOFactory.getInstance(mSessionConfiguration);
+        mFac = AbsIOFactory.getInstance(mSessionConfig);
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
@@ -162,8 +155,8 @@ public final class SessionState {
         IReadTransaction rtx = null;
         // Create new read transaction.
         rtx =
-            new ReadTransaction(mTransactionIDCounter.incrementAndGet(), this, new ReadTransactionState(
-                mDatabaseConfiguration, mLastCommittedUberPage, mRevisionNumber, mItemList, mFac.getReader()));
+            new ReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new ReadTransactionState(this,
+                mLastCommittedUberPage, mRevisionNumber, mItemList, mFac.getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -207,8 +200,8 @@ public final class SessionState {
         final long mRepresentRevision, final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
-        return new WriteTransactionState(mFac.mFile, mDatabaseConfiguration, this, new UberPage(
-            mLastCommittedUberPage, mStoreRevision + 1), writer, mId, mRepresentRevision, mStoreRevision);
+        return new WriteTransactionState(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
+            writer, mId, mRepresentRevision, mStoreRevision);
     }
 
     protected synchronized void syncLogs(final NodePageContainer mContToSync, final long mTransactionId)
@@ -330,10 +323,7 @@ public final class SessionState {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("SessionConf: ");
-        builder.append(this.mSessionConfiguration);
-        builder.append("\nDatabaseConf: ");
-        builder.append(this.mDatabaseConfiguration);
+        builder.append(this.mSessionConfig);
         return builder.toString();
     }
 

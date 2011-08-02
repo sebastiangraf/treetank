@@ -27,6 +27,7 @@
 
 package org.treetank.axis;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -48,13 +49,19 @@ import static org.junit.Assert.fail;
 
 public class AbsAxisTest {
 
-    private AbsAxisTest.Holder holder;
+    private Holder holder;
 
-    public static Holder generateHolder() throws TTUsageException, AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IReadTransaction rtx = session.beginReadTransaction();
-        return new Holder(rtx, session);
+    @Before
+    public void setUp() throws AbsTTException {
+        TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = Holder.generate();
+    }
+
+    @After
+    public void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
     }
 
     public static void testIAxisConventions(final AbsAxis axis, final long[] expectedKeys) {
@@ -93,33 +100,6 @@ public class AbsAxisTest {
 
     }
 
-    /**
-     * Method is called once before each test. It deletes all states, shreds XML file to database and
-     * initializes the required variables.
-     * 
-     * @throws Exception
-     *             of any kind
-     */
-    @Before
-    public final void setUp() throws Exception {
-        TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = AbsAxisTest.generateHolder();
-    }
-
-    /**
-     * Close all connections.
-     * 
-     * @throws AbsTTException
-     */
-    @After
-    public final void tearDown() throws AbsTTException {
-        holder.rtx.close();
-        holder.session.close();
-        TestHelper.closeEverything();
-
-    }
-
     @Test
     public void testIAxisUserExample() throws AbsTTException {
 
@@ -129,17 +109,6 @@ public class AbsAxisTest {
             count += 1;
         }
         Assert.assertEquals(10L, count);
-    }
-
-    public static class Holder {
-
-        public final IReadTransaction rtx;
-        public final ISession session;
-
-        public Holder(final IReadTransaction rtx, final ISession session) {
-            this.rtx = rtx;
-            this.session = session;
-        }
     }
 
 }

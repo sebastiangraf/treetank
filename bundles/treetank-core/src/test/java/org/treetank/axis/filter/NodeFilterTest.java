@@ -27,6 +27,7 @@
 
 package org.treetank.axis.filter;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -44,33 +45,33 @@ import org.junit.Test;
 
 public class NodeFilterTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-    }
-
-    @Test
-    public void testIFilterConvetions() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
-        wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new NodeFilter(wtx), true);
-
-        wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new NodeFilter(wtx), true);
-
-        wtx.moveTo(1L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new NodeFilter(wtx), false);
-
-        wtx.close();
-        holder.session.close();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
+    }
+
+    @Test
+    public void testIFilterConvetions() throws AbsTTException {
+        final IReadTransaction rtx = holder.rtx;
+        rtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new NodeFilter(rtx), true);
+
+        rtx.moveTo(4L);
+        IFilterTest.testIFilterConventions(new NodeFilter(rtx), true);
+
+        rtx.moveTo(1L);
+        rtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new NodeFilter(rtx), false);
     }
 
 }

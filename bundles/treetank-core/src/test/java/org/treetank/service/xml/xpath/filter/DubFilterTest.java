@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
@@ -44,19 +45,18 @@ import org.junit.Test;
  */
 public class DubFilterTest {
 
-    private AbsAxisTest.Holder holder;
+    private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = AbsAxisTest.generateHolder();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        holder.rtx.close();
-        holder.session.close();
+        holder.close();
         TestHelper.deleteEverything();
     }
 
