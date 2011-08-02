@@ -29,9 +29,9 @@ public final class BookShredding {
     public static void createBookDB() throws Exception {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         Database
-            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder().build());
+            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder());
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

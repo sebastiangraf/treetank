@@ -27,28 +27,16 @@
 
 package org.treetank.saxon.wrapper;
 
-import java.io.File;
-
-import javax.xml.stream.XMLEventReader;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.Database;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorSAXHandler;
-import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.After;
 import org.junit.Before;
@@ -74,13 +62,12 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
     @Before
     public void setUp() throws Exception {
         BookShredding.createBookDB();
-        mHolder = AbsAxisTest.generateHolder();
+        mHolder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        mHolder.rtx.close();
-        mHolder.session.close();
+        mHolder.close();
         Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }

@@ -323,9 +323,9 @@ public class XMLShredder implements Callable<Long> {
         final long time = System.currentTimeMillis();
         final File target = new File(paramArgs[1]);
         Database.truncateDatabase(target);
-        Database.createDatabase(target, new DatabaseConfiguration.Builder().build());
+        Database.createDatabase(target, new DatabaseConfiguration.Builder());
         final IDatabase db = Database.openDatabase(target);
-        final ISession session = db.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = db.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = createReader(new File(paramArgs[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

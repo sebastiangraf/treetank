@@ -35,8 +35,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.Database;
+import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.Session;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction.HashKind;
@@ -45,7 +45,6 @@ import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.AbsIOFactory.StorageType;
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DeletedNode;
 import org.treetank.node.DocumentRootNode;
@@ -54,13 +53,11 @@ import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 import org.treetank.page.NodePage;
 import org.treetank.settings.ECharsForSerializing;
-import org.treetank.settings.ERevisioning;
 import org.treetank.utils.DocumentCreater;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -95,8 +92,8 @@ public final class TestHelper {
 
     }
 
-    private final static Map<File, DatabaseConfiguration> configs =
-        new HashMap<File, DatabaseConfiguration>();
+    private final static Map<File, DatabaseConfiguration.Builder> configs =
+        new HashMap<File, DatabaseConfiguration.Builder>();
 
     public final static Random random = new Random();
 
@@ -107,8 +104,8 @@ public final class TestHelper {
 
     @Ignore
     public static final IDatabase getDatabase(final File file) {
-        final DatabaseConfiguration config = configs.get(file);
-        final DatabaseConfiguration tempConfig = new DatabaseConfiguration.Builder().build();
+        final DatabaseConfiguration.Builder config = configs.get(file);
+        final DatabaseConfiguration.Builder tempConfig = new DatabaseConfiguration.Builder();
         if (config == null) {
             configs.put(file, tempConfig);
         }
@@ -128,8 +125,7 @@ public final class TestHelper {
 
         final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
         builder.setHashKind(HashKind.valueOf(hashKind));
-        final DatabaseConfiguration config = builder.build();
-        configs.put(file, config);
+        configs.put(file, builder);
     }
 
     @Ignore
@@ -235,7 +231,7 @@ public final class TestHelper {
     public static void createTestDocument() throws AbsTTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();

@@ -27,6 +27,7 @@
 
 package org.treetank.axis.filter;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -44,35 +45,35 @@ import org.junit.Test;
 
 public class TextFilterTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-    }
-
-    @Test
-    public void testIFilterConvetions() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
-        wtx.moveTo(8L);
-        IFilterTest.testIFilterConventions(new TextFilter(wtx), true);
-
-        wtx.moveTo(3L);
-        IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
-
-        wtx.moveTo(5L);
-        IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
-
-        wtx.moveTo(1L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
-
-        wtx.close();
-        holder.session.close();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
+    }
+
+    @Test
+    public void testIFilterConvetions() throws AbsTTException {
+        final IReadTransaction rtx = holder.rtx;
+        rtx.moveTo(8L);
+        IFilterTest.testIFilterConventions(new TextFilter(rtx), true);
+
+        rtx.moveTo(3L);
+        IFilterTest.testIFilterConventions(new TextFilter(rtx), false);
+
+        rtx.moveTo(5L);
+        IFilterTest.testIFilterConventions(new TextFilter(rtx), false);
+
+        rtx.moveTo(1L);
+        rtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new TextFilter(rtx), false);
     }
 }

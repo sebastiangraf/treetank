@@ -26,6 +26,7 @@
  */
 package org.treetank.axis;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
@@ -41,15 +42,24 @@ import org.junit.Test;
  * 
  */
 public class LevelOrderAxisTest {
+
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
+        holder = Holder.generate();
+    }
+
+    @After
+    public void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
     }
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
         final IReadTransaction rtx = holder.rtx;
 
         rtx.moveTo(11L);
@@ -86,8 +96,4 @@ public class LevelOrderAxisTest {
         });
     }
 
-    @After
-    public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
-    }
 }

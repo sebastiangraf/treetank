@@ -49,6 +49,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.DatabaseConfiguration;
@@ -56,8 +57,6 @@ import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XSLTEvaluator;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -91,9 +90,9 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     public void setUp() throws Exception {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         Database
-            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder().build());
+            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder());
         final IDatabase databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final ISession session = databaseBooks.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = databaseBooks.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(BOOKS);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
@@ -101,7 +100,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         wtx.close();
         session.close();
         Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        mHolder = AbsAxisTest.generateHolder();
+        mHolder = Holder.generate();
 
         saxonTransform(BOOKS, STYLESHEET);
 

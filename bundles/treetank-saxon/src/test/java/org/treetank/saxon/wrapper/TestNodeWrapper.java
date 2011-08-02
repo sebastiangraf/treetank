@@ -43,6 +43,7 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.DatabaseConfiguration;
@@ -50,12 +51,9 @@ import org.treetank.access.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;
@@ -85,7 +83,7 @@ public class TestNodeWrapper {
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
         Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
         TestHelper.createTestDocument();
-        mHolder = AbsAxisTest.generateHolder();
+        mHolder = Holder.generate();
 
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
@@ -114,14 +112,14 @@ public class TestNodeWrapper {
         final Configuration config = proc.getUnderlyingConfiguration();
 
         Database
-            .createDatabase(TestHelper.PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder().build());
+            .createDatabase(TestHelper.PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder());
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
 
         // Not the same document.
         NodeInfo node = new DocumentWrapper(session, config);
         NodeInfo other = new NodeWrapper(new DocumentWrapper(mHolder.session, config), 3);
-        assertEquals(-1, node.compareOrder(other));
+        assertEquals(-2, node.compareOrder(other));
 
         // Before.
         node = new DocumentWrapper(mHolder.session, config);
@@ -169,9 +167,9 @@ public class TestNodeWrapper {
 
         Database.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
         Database
-            .createDatabase(TestHelper.PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder().build());
+            .createDatabase(TestHelper.PATHS.PATH2.getFile(), new DatabaseConfiguration.Builder());
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(source);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

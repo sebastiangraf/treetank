@@ -104,12 +104,12 @@ abstract class AbsDiff extends AbsDiffObservable {
         mDiffKind = paramBuilder.mKind;
         synchronized (paramBuilder.mDb) {
             mNewRtx =
-                paramBuilder.mDb.getSession(new SessionConfiguration.Builder().build()).beginReadTransaction(
+                paramBuilder.mDb.getSession(new SessionConfiguration.Builder()).beginReadTransaction(
                     paramBuilder.mNewRev);
             mOldRtx =
-                paramBuilder.mDb.getSession(new SessionConfiguration.Builder().build()).beginReadTransaction(
+                paramBuilder.mDb.getSession(new SessionConfiguration.Builder()).beginReadTransaction(
                     paramBuilder.mOldRev);
-            mHashKind = paramBuilder.mDb.getDatabaseConf().getHashKind();
+            mHashKind = paramBuilder.mDb.getDatabaseConf().mHashKind;
         }
         mNewRtx.moveTo(paramBuilder.mKey);
         mOldRtx.moveTo(paramBuilder.mKey);

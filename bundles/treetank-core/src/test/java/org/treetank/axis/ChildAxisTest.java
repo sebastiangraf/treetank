@@ -27,6 +27,7 @@
 
 package org.treetank.axis;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
@@ -37,36 +38,36 @@ import org.junit.Test;
 
 public class ChildAxisTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-    }
-
-    @Test
-    public void testIterate() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
-
-        wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {
-            4L, 5L, 8L, 9L, 13L
-        });
-
-        wtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {
-            6L, 7L
-        });
-
-        wtx.moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
-
-        wtx.close();
-        holder.session.close();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
+    }
+
+    @Test
+    public void testIterate() throws AbsTTException {
+        final IReadTransaction rtx = holder.rtx;
+
+        rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {
+            4L, 5L, 8L, 9L, 13L
+        });
+
+        rtx.moveTo(5L);
+        AbsAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {
+            6L, 7L
+        });
+
+        rtx.moveTo(13L);
+        AbsAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {});
     }
 }

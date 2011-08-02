@@ -66,7 +66,7 @@ public class ReadTransaction implements IReadTransaction {
     private final long mTransactionID;
 
     /** Session state this write transaction is bound to. */
-    private SessionState mSessionState;
+    protected SessionState mSessionState;
 
     /** State of transaction including all cached stuff. */
     private ReadTransactionState mTransactionState;
@@ -80,19 +80,20 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * Constructor.
      * 
+     * @param paramSessionState
+     *            state of the session
      * @param paramTransactionID
      *            ID of transaction.
-     * @param paramSessionState
-     *            Session state to work with.
+     * 
      * @param paramTransactionState
      *            Transaction state to work with.
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected ReadTransaction(final long paramTransactionID, final SessionState paramSessionState,
+    protected ReadTransaction(final SessionState paramSessionState, final long paramTransactionID,
         final ReadTransactionState paramTransactionState) throws TTIOException {
-        mTransactionID = paramTransactionID;
         mSessionState = paramSessionState;
+        mTransactionID = paramTransactionID;
         mTransactionState = paramTransactionState;
         mCurrentNode = getTransactionState().getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
         mClosed = false;
@@ -409,15 +410,6 @@ public class ReadTransaction implements IReadTransaction {
      */
     protected final void setTransactionState(final ReadTransactionState paramTransactionState) {
         mTransactionState = paramTransactionState;
-    }
-
-    /**
-     * Getter for superclasses.
-     * 
-     * @return The session state.
-     */
-    public final SessionState getSessionState() {
-        return mSessionState;
     }
 
     /**

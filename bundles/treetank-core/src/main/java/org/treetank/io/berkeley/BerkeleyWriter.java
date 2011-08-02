@@ -32,10 +32,10 @@ import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.LockMode;
+import com.sleepycat.je.OperationFailureException;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.AbsPage;
@@ -115,15 +115,12 @@ public final class BerkeleyWriter implements IWriter {
         BerkeleyFactory.PAGE_VAL_B.objectToEntry(page, valueEntry);
         BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
 
-        try {
-            final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
-            if (status != OperationStatus.SUCCESS) {
-                throw new DatabaseException(new StringBuilder("Write of ").append(pageReference.toString())
-                    .append(" failed!").toString());
-            }
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
+        final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
+        if (status != OperationStatus.SUCCESS) {
+            throw new TTIOException(new StringBuilder("Write of ").append(pageReference.toString()).append(
+                " failed!").toString());
         }
+
         pageReference.setKey(key);
 
     }

@@ -30,15 +30,16 @@ package org.treetank.service.xml.xpath.xmark;
 import org.perfidix.annotation.AfterEachRun;
 import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
+import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 
 public class XMarkBenchTestPerfidix {
 
-    XMarkBenchTest xmbt = new XMarkBenchTest();;
+    private final static XMarkBenchTest xmbt = new XMarkBenchTest();;
 
     @BeforeEachRun
-    public void setUp() {
-        xmbt.setUp();
+    public static void setUp() throws Exception {
+        XMarkBenchTest.setUp();
     }
 
     @Bench
@@ -97,8 +98,8 @@ public class XMarkBenchTestPerfidix {
     // }
 
     @AfterEachRun
-    public void tearDownTest() {
-        xmbt.tearDown();
+    public static void tearDownTest() throws AbsTTException {
+        XMarkBenchTest.tearDown();
 
     }
 

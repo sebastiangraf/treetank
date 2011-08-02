@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -53,21 +54,23 @@ import static org.junit.Assert.assertEquals;
 
 public class MultipleCommitTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void test() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         Assert.assertEquals(0L, wtx.getRevisionNumber());
 
         wtx.commit();
@@ -81,29 +84,22 @@ public class MultipleCommitTest {
         assertEquals(1L, wtx.getRevisionNumber());
 
         wtx.close();
-
-        session.close();
     }
 
     @Test
     public void testAutoCommit() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction(100, 1);
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         rtx.close();
-        session.close();
     }
 
     @Test
     public void testRemove() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         assertEquals(1L, wtx.getRevisionNumber());
@@ -115,15 +111,11 @@ public class MultipleCommitTest {
         assertEquals(2L, wtx.getRevisionNumber());
 
         wtx.close();
-        session.close();
-
     }
 
     @Test
     public void testAttributeRemove() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.moveToDocumentRoot();
@@ -157,7 +149,6 @@ public class MultipleCommitTest {
             }
         }
         wtx.close();
-        session.close();
         assertEquals(0, attrTouch);
 
     }

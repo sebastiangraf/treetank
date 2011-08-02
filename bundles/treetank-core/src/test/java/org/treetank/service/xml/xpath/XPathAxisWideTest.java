@@ -29,6 +29,7 @@ package org.treetank.service.xml.xpath;
 
 import java.io.File;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IReadTransaction;
@@ -64,7 +65,7 @@ public class XPathAxisWideTest {
     @Test
     public void testIterateFactbook() throws Exception {
         // Verify.
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
+        final Holder holder = Holder.generate();
         final IReadTransaction rtx = holder.rtx;
         rtx.moveToDocumentRoot();
 

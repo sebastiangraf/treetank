@@ -79,13 +79,13 @@ public interface IDatabase {
     /**
      * Getting the session associated within this database.
      * 
-     * @param paramSessionConfiguration
-     *            {@link SessionConfiguration} reference
+     * @param paramBuilder
+     *            {@link SessionConfiguration.Builder} reference
      * @throws AbsTTException
      *             if can't get session
      * @return the database
      */
-    ISession getSession(final SessionConfiguration paramSessionConfiguration) throws AbsTTException;
+    ISession getSession(final SessionConfiguration.Builder paramBuilder) throws AbsTTException;
 
     /**
      * Get the database configuration.

@@ -27,6 +27,7 @@
 
 package org.treetank.axis;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -42,46 +43,46 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PrecedingAxisTest {
+
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-    }
-
-    @Test
-    public void testAxisConventions() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
-
-        wtx.moveTo(12L);
-        AbsAxisTest.testIAxisConventions(new PrecedingAxis(wtx), new long[] {
-            11L, 8L, 7L, 6L, 5L, 4L
-        });
-
-        wtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new PrecedingAxis(wtx), new long[] {
-            4L
-        });
-
-        wtx.moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new PrecedingAxis(wtx), new long[] {
-            12L, 11L, 9L, 8L, 7L, 6L, 5L, 4L
-        });
-
-        wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new PrecedingAxis(wtx), new long[] {});
-
-        wtx.moveTo(9L);
-        wtx.moveToAttribute(0);
-        AbsAxisTest.testIAxisConventions(new PrecedingAxis(wtx), new long[] {});
-
-        wtx.close();
-        holder.session.close();
-
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
+    }
+
+    @Test
+    public void testAxisConventions() throws AbsTTException {
+        final IReadTransaction rtx = holder.rtx;
+
+        rtx.moveTo(12L);
+        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
+            11L, 8L, 7L, 6L, 5L, 4L
+        });
+
+        rtx.moveTo(5L);
+        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
+            4L
+        });
+
+        rtx.moveTo(13L);
+        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
+            12L, 11L, 9L, 8L, 7L, 6L, 5L, 4L
+        });
+
+        rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {});
+
+        rtx.moveTo(9L);
+        rtx.moveToAttribute(0);
+        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {});
     }
 }

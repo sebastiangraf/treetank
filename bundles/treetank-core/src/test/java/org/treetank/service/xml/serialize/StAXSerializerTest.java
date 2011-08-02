@@ -40,6 +40,7 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -66,33 +67,32 @@ import static org.junit.Assert.fail;
  * @author Johannes Lichtenberger, University of Konstanz.
  */
 public class StAXSerializerTest {
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void testStAXSerializer() {
         try {
-            // Setup test file.
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final XMLSerializerBuilder builder = new XMLSerializerBuilder(session, out);
+            final XMLSerializerBuilder builder = new XMLSerializerBuilder(holder.session, out);
             builder.setDeclaration(false);
             final XMLSerializer xmlSerializer = builder.build();
             xmlSerializer.call();
 
-            final IReadTransaction rtx = session.beginReadTransaction();
+            final IReadTransaction rtx = holder.session.beginReadTransaction();
             StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx));
             final StringBuilder strBuilder = new StringBuilder();
             boolean isEmptyElement = false;
@@ -132,7 +132,7 @@ public class StAXSerializerTest {
 
             // Check getElementText().
             // ========================================================
-            wtx.moveToDocumentRoot();
+            holder.rtx.moveToDocumentRoot();
             serializer = new StAXSerializer(new DescendantAxis(rtx));
             String elemText = null;
 
@@ -200,10 +200,7 @@ public class StAXSerializerTest {
 
             // </p:a>
             checkForException(serializer);
-
-            wtx.close();
             rtx.close();
-            session.close();
         } catch (final XMLStreamException e) {
             fail("XML error while parsing: " + e.getMessage());
         } catch (final AbsTTException e) {

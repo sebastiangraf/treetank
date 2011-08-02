@@ -122,7 +122,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         DocumentCreater.createVersioned(wtx);
         wtx.close();
 
@@ -156,7 +156,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         DocumentCreater.createVersioned(wtx);
         wtx.close();
 
@@ -200,7 +200,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll4"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -254,7 +254,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete1" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -301,7 +301,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll3"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -340,7 +340,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll2"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -385,7 +385,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator
                 + "revXMLsDelete2" + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -442,7 +442,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll5"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -499,7 +499,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         final XMLShredder init =
             new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES + File.separator + "revXMLsAll6"
                 + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
@@ -614,7 +614,7 @@ public class FullDiffTest {
 
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction wtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         DocumentCreater.createVersioned(wtx);
         wtx.close();
 

@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.xpath.expr;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IItem;
 import org.treetank.axis.AbsAxis;
@@ -49,20 +50,19 @@ import static org.junit.Assert.assertEquals;
  */
 public class LiteralExprTest {
 
-    private AbsAxisTest.Holder holder;
+    private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = AbsAxisTest.generateHolder();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        holder.rtx.close();
-        holder.session.close();
-        TestHelper.deleteEverything();
+        holder.close();
+        TestHelper.closeEverything();
     }
 
     @Test

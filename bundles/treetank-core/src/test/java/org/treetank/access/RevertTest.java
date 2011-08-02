@@ -29,6 +29,7 @@ package org.treetank.access;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -45,21 +46,24 @@ import static org.junit.Assert.assertEquals;
 
 public final class RevertTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void test() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        IWriteTransaction wtx = session.beginWriteTransaction();
+
+        IWriteTransaction wtx = holder.session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
         assertEquals(0L, wtx.getRevisionNumber());
@@ -67,7 +71,7 @@ public final class RevertTest {
         assertEquals(1L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = session.beginWriteTransaction();
+        wtx = holder.session.beginWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
         wtx.moveToFirstChild();
         wtx.insertElementAsFirstChild(new QName("bla"));
@@ -75,17 +79,16 @@ public final class RevertTest {
         assertEquals(2L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = session.beginWriteTransaction();
+        wtx = holder.session.beginWriteTransaction();
         assertEquals(2L, wtx.getRevisionNumber());
         wtx.revertTo(0);
         wtx.commit();
         assertEquals(3L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = session.beginWriteTransaction();
+        wtx = holder.session.beginWriteTransaction();
         assertEquals(3L, wtx.getRevisionNumber());
         wtx.close();
 
-        session.close();
     }
 }

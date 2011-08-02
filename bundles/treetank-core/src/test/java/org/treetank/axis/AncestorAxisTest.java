@@ -27,6 +27,7 @@
 
 package org.treetank.axis;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -43,70 +44,66 @@ import org.junit.Test;
 
 public class AncestorAxisTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-    }
-
-    @Test
-    public void testAxisConventions() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
-
-        wtx.moveTo(12L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {
-            9L, 1L
-        });
-
-        wtx.moveTo(4L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {
-            1L
-        });
-
-        wtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {
-            1L
-        });
-
-        wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {});
-
-        wtx.close();
-        holder.session.close();
-    }
-
-    @Test
-    public void testAxisConventionsIncludingSelf() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
-
-        wtx.moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-            11L, 9L, 1L
-        });
-
-        wtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-            5L, 1L
-        });
-
-        wtx.moveTo(4L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-            4L, 1L
-        });
-
-        wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-            1L
-        });
-
-        wtx.close();
-        holder.session.close();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
+    }
+
+    @Test
+    public void testAxisConventions() throws AbsTTException {
+        final IReadTransaction rtx = holder.rtx;
+
+        rtx.moveTo(12L);
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {
+            9L, 1L
+        });
+
+        rtx.moveTo(4L);
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {
+            1L
+        });
+
+        rtx.moveTo(5L);
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {
+            1L
+        });
+
+        rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {});
+    }
+
+    @Test
+    public void testAxisConventionsIncludingSelf() throws AbsTTException {
+        final IReadTransaction rtx = holder.rtx;
+
+        rtx.moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true), new long[] {
+            11L, 9L, 1L
+        });
+
+        rtx.moveTo(5L);
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true), new long[] {
+            5L, 1L
+        });
+
+        rtx.moveTo(4L);
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true), new long[] {
+            4L, 1L
+        });
+
+        rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true), new long[] {
+            1L
+        });
     }
 }

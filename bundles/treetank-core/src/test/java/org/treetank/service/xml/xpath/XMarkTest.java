@@ -30,6 +30,7 @@ package org.treetank.service.xml.xpath;
 import java.io.File;
 
 import org.perfidix.annotation.BenchClass;
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.axis.AbsAxisTest;
@@ -52,14 +53,14 @@ public class XMarkTest {
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "auction.xml";
 
-    private AbsAxisTest.Holder holder;
+    private Holder holder;
 
     @Before
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Build simple test tree.
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        holder = AbsAxisTest.generateHolder();
+        holder = Holder.generate();
 
     }
 

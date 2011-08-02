@@ -29,6 +29,7 @@ package org.treetank.service.xml.xpath;
 
 import java.io.File;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.axis.AbsAxisTest;
@@ -51,13 +52,13 @@ public class XPathFunctionTest {
     public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "alphabet.xml";
 
-    private AbsAxisTest.Holder holder;
+    private Holder holder;
 
     @Before
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        holder = AbsAxisTest.generateHolder();
+        holder = Holder.generate();
     }
 
     @After

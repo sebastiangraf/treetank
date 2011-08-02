@@ -29,22 +29,13 @@
 package org.treetank.saxon.wrapper;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.OutputStream;
 
-import javax.xml.stream.XMLEventReader;
-
+import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.Database;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
-import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.After;
 import org.junit.Before;
@@ -66,13 +57,12 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
     @Before
     public void setUp() throws Exception {
         BookShredding.createBookDB();
-        mHolder = AbsAxisTest.generateHolder();
+        mHolder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        mHolder.rtx.close();
-        mHolder.session.close();
+        mHolder.close();
         Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
         Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
     }

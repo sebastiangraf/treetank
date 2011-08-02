@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -45,60 +46,58 @@ import static org.junit.Assert.assertTrue;
 
 public class MinimumCommitTest {
 
+    private IWriteTransaction wtx;
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+
+        holder = Holder.generate();
+        wtx = holder.session.beginWriteTransaction();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void test() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
         wtx.commit();
 
         wtx.close();
-        session.close();
+        holder.session.close();
 
-        session = database.getSession(new SessionConfiguration.Builder().build());
-        wtx = session.beginWriteTransaction();
+        holder = Holder.generate();
+        wtx = holder.session.beginWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
-        wtx = session.beginWriteTransaction();
+        wtx = holder.session.beginWriteTransaction();
         assertEquals(2L, wtx.getRevisionNumber());
         wtx.commit();
         wtx.close();
 
-        IReadTransaction rtx = session.beginReadTransaction();
+        IReadTransaction rtx = holder.session.beginReadTransaction();
         assertEquals(2L, rtx.getRevisionNumber());
         rtx.close();
-        session.close();
 
     }
 
     @Test
     public void testTimestamp() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionTimestamp());
         wtx.commit();
         wtx.close();
 
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
         rtx.close();
-
-        session.close();
     }
 
 }

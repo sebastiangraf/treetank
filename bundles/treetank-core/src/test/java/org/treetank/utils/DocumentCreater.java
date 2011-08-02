@@ -286,13 +286,13 @@ public final class DocumentCreater {
     public static void createRevisioned() throws AbsTTException, IOException, XMLStreamException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final IWriteTransaction firstWtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(firstWtx, XMLShredder.createStringReader(REVXML), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         firstWtx.close();
         final IWriteTransaction secondWtx =
-            database.getSession(new SessionConfiguration.Builder().build()).beginWriteTransaction();
+            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
         secondWtx.moveToFirstChild();
         secondWtx.moveToFirstChild();
         secondWtx.moveToFirstChild();

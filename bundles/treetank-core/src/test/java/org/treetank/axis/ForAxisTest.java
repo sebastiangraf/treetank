@@ -27,6 +27,7 @@
 
 package org.treetank.axis;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -53,20 +54,23 @@ import static org.junit.Assert.assertEquals;
  */
 public class ForAxisTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void testFor() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
         final IReadTransaction rtx = holder.rtx;
 
         rtx.moveTo(1L);
@@ -116,9 +120,6 @@ public class ForAxisTest {
         assertEquals(true, axis.hasNext());
         assertEquals("22.0", TypedValue.parseString(rtx.getNode().getRawValue()));
         assertEquals(false, axis.hasNext());
-
-        rtx.close();
-        holder.session.close();
     }
 
 }

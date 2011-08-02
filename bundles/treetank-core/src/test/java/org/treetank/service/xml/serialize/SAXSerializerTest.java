@@ -27,12 +27,15 @@
 
 package org.treetank.service.xml.serialize;
 
+import java.io.IOException;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -54,79 +57,65 @@ import org.junit.Test;
  * 
  */
 public class SAXSerializerTest extends XMLTestCase {
-    @Override
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = Holder.generate();
     }
 
-    @Override
     @After
     public void tearDown() throws AbsTTException {
+        holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testSAXSerializer() {
-        try {
-            // Setup test file.
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-            final IWriteTransaction testTrx = session.beginWriteTransaction();
-            DocumentCreater.create(testTrx);
-            testTrx.commit();
-            testTrx.close();
+    public void testSAXSerializer() throws AbsTTException, SAXException, IOException {
 
-            final StringBuilder strBuilder = new StringBuilder();
-            final ContentHandler contHandler = new XMLFilterImpl() {
+        final StringBuilder strBuilder = new StringBuilder();
+        final ContentHandler contHandler = new XMLFilterImpl() {
 
-                @Override
-                public void startDocument() {
-                    strBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+            @Override
+            public void startDocument() {
+                strBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+            }
+
+            @Override
+            public void startElement(final String uri, final String localName, final String qName,
+                final Attributes atts) throws SAXException {
+                strBuilder.append("<" + qName);
+
+                for (int i = 0; i < atts.getLength(); i++) {
+                    strBuilder.append(" " + atts.getQName(i));
+                    strBuilder.append("=\"" + atts.getValue(i) + "\"");
                 }
 
-                @Override
-                public void startElement(final String uri, final String localName, final String qName,
-                    final Attributes atts) throws SAXException {
-                    strBuilder.append("<" + qName);
+                strBuilder.append(">");
+            }
 
-                    for (int i = 0; i < atts.getLength(); i++) {
-                        strBuilder.append(" " + atts.getQName(i));
-                        strBuilder.append("=\"" + atts.getValue(i) + "\"");
-                    }
+            // @Override
+            // public void startPrefixMapping(final String prefix, final String uri) throws SAXException {
+            // strBuilder.append(" " + prefix + "=\"" + uri + "\"");
+            // };
 
-                    strBuilder.append(">");
+            @Override
+            public void endElement(String uri, String localName, String qName) throws SAXException {
+                strBuilder.append("</" + qName + ">");
+            }
+
+            @Override
+            public void characters(final char[] ch, final int start, final int length) throws SAXException {
+                for (int i = start; i < start + length; i++) {
+                    strBuilder.append(ch[i]);
                 }
+            }
+        };
 
-                // @Override
-                // public void startPrefixMapping(final String prefix, final String uri) throws SAXException {
-                // strBuilder.append(" " + prefix + "=\"" + uri + "\"");
-                // };
-
-                @Override
-                public void endElement(String uri, String localName, String qName) throws SAXException {
-                    strBuilder.append("</" + qName + ">");
-                }
-
-                @Override
-                public void characters(final char[] ch, final int start, final int length)
-                    throws SAXException {
-                    for (int i = start; i < start + length; i++) {
-                        strBuilder.append(ch[i]);
-                    }
-                }
-            };
-
-            final SAXSerializer serializer = new SAXSerializer(session, contHandler);
-            serializer.call();
-
-            System.out.println(strBuilder.toString());
-            assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
-        } catch (final AbsTTException e) {
-            fail("Treetank exception occured!");
-        } catch (final Exception e) {
-            e.printStackTrace();
-            fail("Any exception occured!");
-        }
+        final SAXSerializer serializer = new SAXSerializer(holder.session, contHandler);
+        serializer.call();
+        assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
     }
 }

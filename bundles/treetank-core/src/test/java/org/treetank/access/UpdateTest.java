@@ -29,6 +29,7 @@ package org.treetank.access;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.api.IDatabase;
@@ -55,9 +56,12 @@ import static org.junit.Assert.assertTrue;
 
 public class UpdateTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        holder = Holder.generate();
     }
 
     @After
@@ -67,26 +71,24 @@ public class UpdateTest {
 
     @Test
     public void testInsertChild() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
-        IWriteTransaction wtx = session.beginWriteTransaction();
+        IWriteTransaction wtx = holder.session.beginWriteTransaction();
         wtx.commit();
         wtx.close();
 
-        IReadTransaction rtx = session.beginReadTransaction();
+        IReadTransaction rtx = holder.session.beginReadTransaction();
         assertEquals(0L, rtx.getRevisionNumber());
         rtx.close();
 
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
-            wtx = session.beginWriteTransaction();
+            wtx = holder.session.beginWriteTransaction();
             wtx.moveToDocumentRoot();
             wtx.insertTextAsFirstChild(Integer.toString(i));
             wtx.commit();
             wtx.close();
 
-            rtx = session.beginReadTransaction();
+            rtx = holder.session.beginReadTransaction();
             rtx.moveToDocumentRoot();
             rtx.moveToFirstChild();
             assertEquals(Integer.toString(i), TypedValue.parseString(rtx.getNode().getRawValue()));
@@ -94,28 +96,24 @@ public class UpdateTest {
             rtx.close();
         }
 
-        rtx = session.beginReadTransaction();
+        rtx = holder.session.beginReadTransaction();
         rtx.moveToDocumentRoot();
         rtx.moveToFirstChild();
         assertEquals("10", TypedValue.parseString(rtx.getNode().getRawValue()));
         assertEquals(10L, rtx.getRevisionNumber());
         rtx.close();
 
-        session.close();
-
     }
 
     @Test
     public void testInsertPath() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
 
-        IWriteTransaction wtx = session.beginWriteTransaction();
+        IWriteTransaction wtx = holder.session.beginWriteTransaction();
 
         wtx.commit();
         wtx.close();
 
-        wtx = session.beginWriteTransaction();
+        wtx = holder.session.beginWriteTransaction();
         assertNotNull(wtx.moveToDocumentRoot());
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
 
@@ -128,7 +126,7 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        final IWriteTransaction wtx2 = session.beginWriteTransaction();
+        final IWriteTransaction wtx2 = holder.session.beginWriteTransaction();
 
         assertNotNull(wtx2.moveToDocumentRoot());
         assertEquals(5L, wtx2.insertElementAsFirstChild(new QName("")));
@@ -136,15 +134,11 @@ public class UpdateTest {
         wtx2.commit();
         wtx2.close();
 
-        session.close();
-
     }
 
     @Test
     public void testPageBoundary() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
 
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));
@@ -158,15 +152,11 @@ public class UpdateTest {
 
         wtx.abort();
         wtx.close();
-        session.close();
     }
 
     @Test(expected = TTUsageException.class)
     public void testRemoveDocument() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
@@ -176,23 +166,20 @@ public class UpdateTest {
         } finally {
             wtx.abort();
             wtx.close();
-            session.close();
         }
 
     }
 
     @Test
     public void testRemoveDescendant() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.moveTo(5L);
         wtx.remove();
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertEquals(0, rtx.getNode().getNodeKey());
         assertTrue(rtx.moveToFirstChild());
         assertEquals(1, rtx.getNode().getNodeKey());
@@ -206,20 +193,17 @@ public class UpdateTest {
         assertTrue(rtx.moveToRightSibling());
         assertEquals(13, rtx.getNode().getNodeKey());
         rtx.close();
-        session.close();
     }
 
     @Test
     public void testFirstMoveToFirstChild() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(7);
         wtx.moveSubtreeToFirstChild(6);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertTrue(rtx.moveTo(4));
         assertEquals(rtx.getValueOfCurrentNode(), "oops1");
         assertTrue(rtx.moveTo(7));
@@ -231,20 +215,17 @@ public class UpdateTest {
         assertFalse(rtx.getStructuralNode().hasRightSibling());
         assertEquals("foo", rtx.getValueOfCurrentNode());
         rtx.close();
-        session.close();
     }
 
     @Test
     public void testSecondMoveToFirstChild() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(5);
         wtx.moveSubtreeToFirstChild(4);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertTrue(rtx.moveTo(5));
         assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
             .getStructuralNode().getLeftSiblingKey());
@@ -259,20 +240,17 @@ public class UpdateTest {
         assertTrue(rtx.moveTo(7));
         assertEquals(4L, rtx.getStructuralNode().getLeftSiblingKey());
         rtx.close();
-        session.close();
     }
 
     @Test
     public void testThirdMoveToFirstChild() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(5);
         wtx.moveSubtreeToFirstChild(11);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertTrue(rtx.moveTo(5));
         assertEquals(11L, rtx.getStructuralNode().getFirstChildKey());
         assertTrue(rtx.moveTo(11));
@@ -284,33 +262,27 @@ public class UpdateTest {
         assertEquals(11L, rtx.getStructuralNode().getLeftSiblingKey());
         assertEquals(7L, rtx.getStructuralNode().getRightSiblingKey());
         rtx.close();
-        session.close();
     }
 
     @Test(expected = TTUsageException.class)
     public void testFourthMoveToFirstChild() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(4);
         wtx.moveSubtreeToFirstChild(11);
         wtx.commit();
         wtx.close();
-        session.close();
     }
 
     @Test
     public void testFirstMoveSubtreeToRightSibling() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(7);
         wtx.moveSubtreeToRightSibling(6);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertTrue(rtx.moveTo(7));
         assertFalse(rtx.getStructuralNode().hasLeftSibling());
         assertTrue(rtx.getStructuralNode().hasRightSibling());
@@ -320,20 +292,17 @@ public class UpdateTest {
         assertTrue(rtx.getStructuralNode().hasLeftSibling());
         assertEquals(7L, rtx.getStructuralNode().getLeftSiblingKey());
         rtx.close();
-        session.close();
     }
 
     @Test
     public void testSecondMoveSubtreeToRightSibling() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(9);
         wtx.moveSubtreeToRightSibling(5);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertTrue(rtx.moveTo(4));
         // Assert that oops1 and oops2 text nodes merged.
         assertEquals("oops1oops2", rtx.getValueOfCurrentNode());
@@ -344,20 +313,17 @@ public class UpdateTest {
         assertEquals(9L, rtx.getStructuralNode().getLeftSiblingKey());
         assertEquals(13L, rtx.getStructuralNode().getRightSiblingKey());
         rtx.close();
-        session.close();
     }
 
     @Test
     public void testThirdMoveSubtreeToRightSibling() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(9);
         wtx.moveSubtreeToRightSibling(4);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertTrue(rtx.moveTo(4));
         // Assert that oops1 and oops3 text nodes merged.
         assertEquals("oops1oops3", rtx.getValueOfCurrentNode());
@@ -368,20 +334,17 @@ public class UpdateTest {
         assertTrue(rtx.moveTo(9));
         assertEquals(4L, rtx.getStructuralNode().getRightSiblingKey());
         rtx.close();
-        session.close();
     }
 
     @Test
     public void testFourthMoveSubtreeToRightSibling() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(8);
         wtx.moveSubtreeToRightSibling(4);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = holder.session.beginReadTransaction();
         assertTrue(rtx.moveTo(4));
         // Assert that oops2 and oops1 text nodes merged.
         assertEquals("oops2oops1", rtx.getValueOfCurrentNode());
@@ -395,7 +358,6 @@ public class UpdateTest {
         assertTrue(rtx.moveTo(9));
         assertEquals(4L, rtx.getStructuralNode().getLeftSiblingKey());
         rtx.close();
-        session.close();
     }
 
 }

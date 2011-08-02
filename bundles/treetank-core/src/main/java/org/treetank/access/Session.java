@@ -58,11 +58,8 @@ public final class Session implements ISession {
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    protected Session(final DatabaseConfiguration paramDatabaseConf,
-        final SessionConfiguration paramSessionConf) throws AbsTTException {
-        assert paramDatabaseConf != null;
-        assert paramSessionConf != null;
-        mSessionState = new SessionState(paramDatabaseConf, paramSessionConf);
+    protected Session(final SessionConfiguration paramSessionConf) throws AbsTTException {
+        mSessionState = new SessionState(paramSessionConf);
         mClosed = false;
     }
 

@@ -29,6 +29,7 @@ package org.treetank.axis;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -47,15 +48,23 @@ import org.junit.Test;
 
 public class AttributeAxisTest {
 
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
+        holder = Holder.generate();
+    }
+
+    @After
+    public void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
     }
 
     @Test
     public void testIterate() throws AbsTTException {
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
         final IReadTransaction wtx = holder.rtx;
 
         wtx.moveToDocumentRoot();
@@ -76,16 +85,11 @@ public class AttributeAxisTest {
 
         wtx.moveTo(2L);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
-
-        wtx.close();
-        holder.session.close();
     }
 
     @Test
     public void testMultipleAttributes() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");
         wtx.moveTo(nodeKey);
@@ -132,11 +136,5 @@ public class AttributeAxisTest {
 
         wtx.abort();
         wtx.close();
-        session.close();
-    }
-
-    @After
-    public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
     }
 }

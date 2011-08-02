@@ -27,6 +27,8 @@
 
 package org.treetank.io;
 
+import java.io.File;
+
 import org.treetank.TestHelper;
 import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
@@ -62,8 +64,8 @@ public final class IOTestHelper {
         final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
         builder.setType(type);
         final DatabaseConfiguration config = builder.build();
-        final SessionConfiguration sessionConfig = new SessionConfiguration.Builder().build();
-        AbsIOFactory.registerInstance(TestHelper.PATHS.PATH1.getFile(), config, sessionConfig);
+        final SessionConfiguration sessionConfig = new SessionConfiguration.Builder().setDBConfig(config).build();
+        AbsIOFactory.registerInstance(new File(TestHelper.PATHS.PATH1.getFile(),"BLA"), config, sessionConfig);
         return sessionConfig;
     }
 

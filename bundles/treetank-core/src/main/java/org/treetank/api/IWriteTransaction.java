@@ -321,8 +321,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws AbsTTException
      *             if anything went wrong
      */
-    long copySubtreeAsFirstChild(final long paramNodeKey, final IDatabase paramDatabase,
-        final long paramRevision) throws AbsTTException;
+    long copySubtreeAsFirstChild(final long paramNodeKey, final long paramRevision) throws AbsTTException;
 
     /**
      * Copy subtree from another database/resource/revision and insert as right sibling of the current node.
@@ -337,6 +336,5 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws AbsTTException
      *             if anything went wrong
      */
-    long copySubtreeAsRightSibling(final long paramNodeKey, final IDatabase paramDatabase,
-        final long paramRevision) throws AbsTTException;
+    long copySubtreeAsRightSibling(final long paramNodeKey, final long paramRevision) throws AbsTTException;
 }

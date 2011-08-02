@@ -27,10 +27,10 @@
 
 package org.treetank.service.xml.xpath.operators;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IItem;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.XPathError;
@@ -51,18 +51,17 @@ import static org.junit.Assert.fail;
 
 public class SubOpAxisTest {
 
-    private AbsAxisTest.Holder holder;
+    private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = AbsAxisTest.generateHolder();
+        holder = Holder.generate();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        holder.rtx.close();
-        holder.session.close();
+        holder.close();
         TestHelper.deleteEverything();
     }
 

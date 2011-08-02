@@ -27,6 +27,7 @@
 
 package org.treetank.axis.filter;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.SessionConfiguration;
@@ -46,66 +47,61 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FilterAxisTest {
+
+    private Holder holder;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
+        holder = Holder.generate();
+    }
+
+    @After
+    public void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
     }
 
     @Test
     public void testNameAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
+        final IReadTransaction rtx = holder.rtx;
 
-        wtx.moveToDocumentRoot();
-        AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(wtx), new NameFilter(wtx, "b")),
+        rtx.moveToDocumentRoot();
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), new NameFilter(rtx, "b")),
             new long[] {
                 5L, 9L
             });
-
-        wtx.close();
-        holder.session.close();
     }
 
     @Test
     public void testValueAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
+        final IReadTransaction rtx = holder.rtx;
 
-        wtx.moveToDocumentRoot();
+        rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(
-            new FilterAxis(new DescendantAxis(wtx), new ValueFilter(wtx, "foo")), new long[] {
+            new FilterAxis(new DescendantAxis(rtx), new ValueFilter(rtx, "foo")), new long[] {
                 6L
             });
-
-        wtx.close();
-        holder.session.close();
     }
 
     @Test
     public void testValueAndNameAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final AbsAxisTest.Holder holder = AbsAxisTest.generateHolder();
-        final IReadTransaction wtx = holder.rtx;
+        final IReadTransaction rtx = holder.rtx;
 
-        wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "i"),
-            new ValueFilter(wtx, "j")), new long[] {
+        rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx), new NameFilter(rtx, "i"),
+            new ValueFilter(rtx, "j")), new long[] {
             2L
         });
 
-        wtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "y"),
-            new ValueFilter(wtx, "y")), new long[] {});
+        rtx.moveTo(9L);
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx), new NameFilter(rtx, "y"),
+            new ValueFilter(rtx, "y")), new long[] {});
 
-        wtx.close();
-        holder.session.close();
     }
 
-    @After
-    public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
-    }
 }

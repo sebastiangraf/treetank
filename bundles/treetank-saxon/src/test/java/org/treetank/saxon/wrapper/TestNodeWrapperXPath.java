@@ -44,12 +44,11 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.axis.AbsAxisTest.Holder;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
 
@@ -79,9 +78,9 @@ public final class TestNodeWrapperXPath {
 
     @Before
     public void setUp() throws AbsTTException, XPathFactoryConfigurationException {
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        mHolder = AbsAxisTest.generateHolder();
+        mHolder = Holder.generate();
 
         // Saxon setup.
         System.setProperty("javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON,

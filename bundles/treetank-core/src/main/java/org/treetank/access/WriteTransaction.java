@@ -46,6 +46,7 @@ import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 import org.treetank.page.UberPage;
 import org.treetank.settings.EFixed;
+import org.treetank.utils.ItemList;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -108,7 +109,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     protected WriteTransaction(final long paramTransactionID, final SessionState paramSessionState,
         final WriteTransactionState paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
-        super(paramTransactionID, paramSessionState, paramTransactionState);
+        super(paramSessionState, paramTransactionID, paramTransactionState);
 
         // Do not accept negative values.
         if ((paramMaxNodeCount < 0) || (paramMaxTime < 0)) {
@@ -119,7 +120,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         mMaxNodeCount = paramMaxNodeCount;
         mModificationCount = 0L;
 
-        mHashKind = getSessionState().mDatabaseConfiguration.getHashKind();
+        mHashKind = paramSessionState.mSessionConfig.mDBConfig.mHashKind;
     }
 
     /**
@@ -622,10 +623,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             throw new IllegalArgumentException("paramRevision parameter must be >= 0");
         }
         assertNotClosed();
-        getSessionState().assertValidRevision(paramRevision);
+        mSessionState.assertValidRevision(paramRevision);
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
-        setTransactionState(getSessionState().createWriteTransactionState(getTransactionID(), paramRevision,
+        setTransactionState(mSessionState.createWriteTransactionState(getTransactionID(), paramRevision,
             getRevisionNumber() - 1));
         // Reset modification counter.
         mModificationCount = 0L;
@@ -645,14 +646,14 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         final UberPage uberPage = getTransactionState().commit();
 
         // Remember succesfully committed uber page in session state.
-        getSessionState().setLastCommittedUberPage(uberPage);
+        mSessionState.setLastCommittedUberPage(uberPage);
 
         // Reset modification counter.
         mModificationCount = 0L;
 
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
-        setTransactionState(getSessionState().createWriteTransactionState(getTransactionID(),
+        setTransactionState(mSessionState.createWriteTransactionState(getTransactionID(),
             getRevisionNumber(), getRevisionNumber()));
 
     }
@@ -676,7 +677,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         }
 
         // Reset internal transaction state to last committed uber page.
-        setTransactionState(getSessionState().createWriteTransactionState(getTransactionID(), revisionToSet,
+        setTransactionState(mSessionState.createWriteTransactionState(getTransactionID(), revisionToSet,
             revisionToSet));
     }
 
@@ -692,7 +693,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             }
             // Release all state immediately.
             getTransactionState().close();
-            getSessionState().closeWriteTransaction(getTransactionID());
+            mSessionState.closeWriteTransaction(getTransactionID());
             setSessionState(null);
             setTransactionState(null);
             setCurrentNode(null);
@@ -913,7 +914,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws TTIOException
      *             if anything weird happens
      */
-    public void postorderRemove() throws TTIOException {
+    private void postorderRemove() throws TTIOException {
         moveTo(getCurrentNode().getParentKey());
         postorderAdd();
     }
@@ -1086,18 +1087,18 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
     /** {@inheritDoc} */
     @Override
-    public long copySubtreeAsFirstChild(final long paramNodeKey, final IDatabase paramDatabase,
-        final long paramRevision) throws AbsTTException {
-        final IReadTransaction rtx = getTransaction(paramDatabase, paramRevision, paramNodeKey);
+    public long copySubtreeAsFirstChild(final long paramNodeKey, final long paramRevision)
+        throws AbsTTException {
+        final IReadTransaction rtx = getTransaction(paramRevision, paramNodeKey);
         rtx.getNode().acceptVisitor(new InsertSubtreeVisitor(rtx, this, EInsert.ASFIRSTCHILD));
         return paramNodeKey;
     }
 
     /** {@inheritDoc} */
     @Override
-    public long copySubtreeAsRightSibling(final long paramNodeKey, final IDatabase paramDatabase,
-        final long paramRevision) throws AbsTTException {
-        final IReadTransaction rtx = getTransaction(paramDatabase, paramRevision, paramNodeKey);
+    public long copySubtreeAsRightSibling(final long paramNodeKey, final long paramRevision)
+        throws AbsTTException {
+        final IReadTransaction rtx = getTransaction(paramRevision, paramNodeKey);
         rtx.getNode().acceptVisitor(new InsertSubtreeVisitor(rtx, this, EInsert.ASRIGHTSIBLING));
         return paramNodeKey;
     }
@@ -1115,12 +1116,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws AbsTTException
      *             if setup of Treetank fails
      */
-    private IReadTransaction getTransaction(final IDatabase paramDatabase, final long paramRevision,
-        final long paramNodeKey) throws AbsTTException {
-        checkParams(paramNodeKey, paramDatabase, paramRevision);
-        final IDatabase database = paramDatabase;
-        final ISession session = database.getSession(new SessionConfiguration.Builder().build());
-        final IReadTransaction rtx = session.beginReadTransaction(paramRevision);
+    private IReadTransaction getTransaction(final long paramRevision, final long paramNodeKey)
+        throws AbsTTException {
+        checkParams(paramNodeKey, paramRevision);
+        final IReadTransaction rtx = mSessionState.beginReadTransaction(paramRevision, new ItemList());
         rtx.moveTo(paramNodeKey);
         if (rtx.getNode().getKind() != ENodes.TEXT_KIND || rtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
             throw new IllegalStateException("Node to insert must be a structural node (Text or Element)!");
@@ -1142,14 +1141,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws NullPointerException
      *             if the database reference is null
      */
-    private void
-        checkParams(final long paramNodeKey, final IDatabase paramDatabase, final long paramRevision) {
+    private void checkParams(final long paramNodeKey, final long paramRevision) {
         if (paramNodeKey < 1) {
             throw new IllegalArgumentException("Node key parameter of copied subtree root must be > 1!");
         }
-        if (paramDatabase == null) {
-            throw new NullPointerException("Database parameter may not be null!");
-        }
-        getSessionState().assertValidRevision(paramRevision);
+
+        mSessionState.assertValidRevision(paramRevision);
     }
 }
