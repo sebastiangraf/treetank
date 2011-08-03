@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyFactory;
@@ -48,199 +47,196 @@ import org.treetank.io.file.FileFactory;
  */
 public abstract class AbsIOFactory {
 
-    /**
-     * Concurrent storage for all avaliable databases in runtime.
-     */
-    private static final Map<SessionConfiguration, AbsIOFactory> FACTORIES =
-        new ConcurrentHashMap<SessionConfiguration, AbsIOFactory>();
+	/**
+	 * Concurrent storage for all avaliable databases in runtime.
+	 */
+	private static final Map<SessionConfiguration, AbsIOFactory> FACTORIES = new ConcurrentHashMap<SessionConfiguration, AbsIOFactory>();
 
-    /**
-     * Concurrent storage for all avaliable databases in runtime.
-     */
-    private static final Map<File, Set<SessionConfiguration>> STORAGES =
-        new ConcurrentHashMap<File, Set<SessionConfiguration>>();
+	/**
+	 * Concurrent storage for all avaliable databases in runtime.
+	 */
+	private static final Map<File, Set<SessionConfiguration>> STORAGES = new ConcurrentHashMap<File, Set<SessionConfiguration>>();
 
-    /**
-     * Config for the session holding information about the settings of the
-     * session.
-     */
-    protected final SessionConfiguration mSessionConfig;
+	/**
+	 * Config for the session holding information about the settings of the
+	 * session.
+	 */
+	protected final SessionConfiguration mSessionConfig;
 
-    /**
-     * Config for the database holding information about the location of the storage.
-     */
-    protected final DatabaseConfiguration mDatabaseConfig;
+	/** Type for different storages. */
+	public enum StorageType {
+		/** File Storage. */
+		File,
+		/** Berkeley Storage. */
+		Berkeley
+	}
 
-    /** Type for different storages. */
-    public enum StorageType {
-        /** File Storage. */
-        File,
-        /** Berkeley Storage. */
-        Berkeley
-    }
+	/** Folder to store the data. */
+	public final File mFile;
 
-    /** Folder to store the data. */
-    public final File mFile;
+	/**
+	 * Protected constructor, just setting the sessionconfiguration.
+	 * 
+	 * @param paramFile
+	 *            to be set
+	 * @param paramSession
+	 *            to be set
+	 * @param paramDatabase
+	 *            to be set
+	 */
+	protected AbsIOFactory(final File paramFile,
+			final SessionConfiguration paramSession) {
+		mSessionConfig = paramSession;
+		mFile = paramFile;
+	}
 
-    /**
-     * Protected constructor, just setting the sessionconfiguration.
-     * 
-     * @param paramFile
-     *            to be set
-     * @param paramSession
-     *            to be set
-     * @param paramDatabase
-     *            to be set
-     */
-    protected AbsIOFactory(final File paramFile, final DatabaseConfiguration paramDatabase,
-        final SessionConfiguration paramSession) {
-        mSessionConfig = paramSession;
-        mDatabaseConfig = paramDatabase;
-        mFile = paramFile;
-    }
+	/**
+	 * Getting a writer.
+	 * 
+	 * @return an {@link IWriter} instance
+	 * @throws TTIOException
+	 *             if the initalisation fails
+	 */
+	public abstract IWriter getWriter() throws TTIOException;
 
-    /**
-     * Getting a writer.
-     * 
-     * @return an {@link IWriter} instance
-     * @throws TTIOException
-     *             if the initalisation fails
-     */
-    public abstract IWriter getWriter() throws TTIOException;
+	/**
+	 * Getting a reader.
+	 * 
+	 * @return an {@link IReader} instance
+	 * @throws TTIOException
+	 *             if the initalisation fails
+	 */
+	public abstract IReader getReader() throws TTIOException;
 
-    /**
-     * Getting a reader.
-     * 
-     * @return an {@link IReader} instance
-     * @throws TTIOException
-     *             if the initalisation fails
-     */
-    public abstract IReader getReader() throws TTIOException;
+	/**
+	 * Getting a Closing this storage. Is equivalent to Session.close
+	 * 
+	 * @throws TTIOException
+	 *             exception to be throwns
+	 */
+	public final void closeStorage() throws TTIOException {
+		closeConcreteStorage();
+		FACTORIES.remove(this.mSessionConfig);
+		final Set<SessionConfiguration> conf = STORAGES.get(mFile
+				.getParentFile());
+		conf.remove(this.mSessionConfig);
+	}
 
-    /**
-     * Getting a Closing this storage. Is equivalent to Session.close
-     * 
-     * @throws TTIOException
-     *             exception to be throwns
-     */
-    public final void closeStorage() throws TTIOException {
-        closeConcreteStorage();
-        FACTORIES.remove(this.mSessionConfig);
-        final Set<SessionConfiguration> conf = STORAGES.get(mFile.getParentFile());
-        conf.remove(this.mSessionConfig);
-    }
+	/**
+	 * Truncate storage and remove all resources within a database
+	 * 
+	 * @param paramFile
+	 *            which should be removed
+	 * @throws TTIOException
+	 *             if anything occures
+	 */
+	public synchronized static final void truncateStorage(final File paramFile)
+			throws TTIOException {
+		final Set<SessionConfiguration> configs = STORAGES.remove(paramFile);
+		if (configs != null) {
+			for (final SessionConfiguration config : configs) {
+				final AbsIOFactory fac = FACTORIES.remove(config);
+				fac.truncate();
+			}
+		}
+		recursiveDelete(paramFile);
+	}
 
-    /**
-     * Truncate storage and remove all resources within a database
-     * 
-     * @param paramFile
-     *            which should be removed
-     * @throws TTIOException
-     *             if anything occures
-     */
-    public synchronized static final void truncateStorage(final File paramFile) throws TTIOException {
-        final Set<SessionConfiguration> configs = STORAGES.remove(paramFile);
-        if (configs != null) {
-            for (final SessionConfiguration config : configs) {
-                final AbsIOFactory fac = FACTORIES.remove(config);
-                fac.truncate();
-            }
-        }
-        recursiveDelete(paramFile);
-    }
+	/**
+	 * Closing concrete storage.
+	 * 
+	 * @throws TTIOException
+	 *             if anything weird happens
+	 */
+	protected abstract void closeConcreteStorage() throws TTIOException;
 
-    /**
-     * Closing concrete storage.
-     * 
-     * @throws TTIOException
-     *             if anything weird happens
-     */
-    protected abstract void closeConcreteStorage() throws TTIOException;
+	public synchronized static final void registerInstance(
+			final File paramFile, final SessionConfiguration paramSessionConf)
+			throws TTIOException {
+		AbsIOFactory fac = null;
+		if (!FACTORIES.containsKey(paramSessionConf)) {
+			final AbsIOFactory.StorageType storageType = paramSessionConf.mDBConfig.mType;
+			switch (storageType) {
+			case File:
+				fac = new FileFactory(paramFile, paramSessionConf);
+				break;
+			case Berkeley:
+				fac = new BerkeleyFactory(paramFile, paramSessionConf);
+				break;
+			default:
+				throw new TTIOException("Type", storageType.toString(),
+						"not valid!");
+			}
+			FACTORIES.put(paramSessionConf, fac);
+			Set<SessionConfiguration> configs = STORAGES.get(paramFile
+					.getParentFile());
+			if (configs == null) {
+				configs = new HashSet<SessionConfiguration>();
+			}
+			configs.add(paramSessionConf);
+			STORAGES.put(paramFile.getParentFile(), configs);
+		}
+	}
 
-    public synchronized static final void registerInstance(final File paramFile,
-        final DatabaseConfiguration paramDatabaseConf, final SessionConfiguration paramSessionConf)
-        throws TTIOException {
-        AbsIOFactory fac = null;
-        if (!FACTORIES.containsKey(paramSessionConf)) {
-            final AbsIOFactory.StorageType storageType = paramDatabaseConf.mType;
-            switch (storageType) {
-            case File:
-                fac = new FileFactory(paramFile, paramDatabaseConf, paramSessionConf);
-                break;
-            case Berkeley:
-                fac = new BerkeleyFactory(paramFile, paramDatabaseConf, paramSessionConf);
-                break;
-            default:
-                throw new TTIOException("Type", storageType.toString(), "not valid!");
-            }
-            FACTORIES.put(paramSessionConf, fac);
-            Set<SessionConfiguration> configs = STORAGES.get(paramFile.getParentFile());
-            if (configs == null) {
-                configs = new HashSet<SessionConfiguration>();
-            }
-            configs.add(paramSessionConf);
-            STORAGES.put(paramFile.getParentFile(), configs);
-        }
-    }
+	/**
+	 * Getting an AbstractIOFactory instance. !!!MUST CALL REGISTERINSTANCE
+	 * BEFOREHAND!!!!
+	 * 
+	 * @param paramSessionConf
+	 *            settings for the session
+	 * @throws TTIOException
+	 *             if an I/O error occurs
+	 * @return an instance of this factory based on the kind in the conf
+	 */
+	public static final AbsIOFactory getInstance(
+			final SessionConfiguration paramSessionConf) throws TTIOException {
+		return FACTORIES.get(paramSessionConf);
+	}
 
-    /**
-     * Getting an AbstractIOFactory instance.
-     * !!!MUST CALL REGISTERINSTANCE BEFOREHAND!!!!
-     * 
-     * @param paramSessionConf
-     *            settings for the session
-     * @throws TTIOException
-     *             if an I/O error occurs
-     * @return an instance of this factory based on the kind in the conf
-     */
-    public static final AbsIOFactory getInstance(final SessionConfiguration paramSessionConf)
-        throws TTIOException {
-        return FACTORIES.get(paramSessionConf);
-    }
+	/**
+	 * Check if storage exists.
+	 * 
+	 * @return true if storage holds data, false otherwise
+	 * @throws TTIOException
+	 *             if storage is not accessible
+	 */
+	public abstract boolean exists() throws TTIOException;
 
-    /**
-     * Check if storage exists.
-     * 
-     * @return true if storage holds data, false otherwise
-     * @throws TTIOException
-     *             if storage is not accessible
-     */
-    public abstract boolean exists() throws TTIOException;
+	/**
+	 * Truncate database completely
+	 * 
+	 * @throws TTIOException
+	 *             if storage is not accessible
+	 */
+	public abstract void truncate() throws TTIOException;
 
-    /**
-     * Truncate database completely
-     * 
-     * @throws TTIOException
-     *             if storage is not accessible
-     */
-    public abstract void truncate() throws TTIOException;
+	/** {@inheritDoc} */
+	@Override
+	public final String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("factory keys: ").append(FACTORIES.keySet())
+				.append("\n");
+		builder.append("SessionConfig: ").append(mSessionConfig.toString())
+				.append("\n");
+		// builder.append("exists: ").append(exists()).append("\n");
+		return builder.toString();
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public final String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("factory keys: ").append(FACTORIES.keySet()).append("\n");
-        builder.append("DatabaseConfig: ").append(mDatabaseConfig.toString()).append("\n");
-        builder.append("SessionConfig: ").append(mSessionConfig.toString()).append("\n");
-        // builder.append("exists: ").append(exists()).append("\n");
-        return builder.toString();
-    }
-
-    /**
-     * Deleting a storage recursive. Used for deleting a databases
-     * 
-     * @param paramFile
-     *            which should be deleted included descendants
-     * @return true if delete is valid
-     */
-    protected static boolean recursiveDelete(final File paramFile) {
-        if (paramFile.isDirectory()) {
-            for (final File child : paramFile.listFiles()) {
-                if (!recursiveDelete(child)) {
-                    return false;
-                }
-            }
-        }
-        return paramFile.delete();
-    }
+	/**
+	 * Deleting a storage recursive. Used for deleting a databases
+	 * 
+	 * @param paramFile
+	 *            which should be deleted included descendants
+	 * @return true if delete is valid
+	 */
+	protected static boolean recursiveDelete(final File paramFile) {
+		if (paramFile.isDirectory()) {
+			for (final File child : paramFile.listFiles()) {
+				if (!recursiveDelete(child)) {
+					return false;
+				}
+			}
+		}
+		return paramFile.delete();
+	}
 }

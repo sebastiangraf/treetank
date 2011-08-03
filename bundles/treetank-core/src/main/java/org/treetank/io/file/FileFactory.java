@@ -29,7 +29,6 @@ package org.treetank.io.file;
 
 import java.io.File;
 
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.AbsIOFactory;
@@ -45,72 +44,73 @@ import org.treetank.settings.EStoragePaths;
  */
 public final class FileFactory extends AbsIOFactory {
 
-    /** private constant for fileName. */
-    private static final String FILENAME = "tt.tnk";
+	/** private constant for fileName. */
+	private static final String FILENAME = "tt.tnk";
 
-    /**
-     * Constructor.
-     * 
-     * @param mParamDatabase
-     *            the location of the database
-     * @param mParamSession
-     *            the location of the storage
-     */
-    public FileFactory(final File paramFile, final DatabaseConfiguration mParamDatabase,
-        final SessionConfiguration mParamSession) {
-        super(paramFile, mParamDatabase, mParamSession);
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param paramFile
+	 *            the location of the database
+	 * @param mParamSession
+	 *            the location of the storage
+	 */
+	public FileFactory(final File paramFile,
+			final SessionConfiguration mParamSession) {
+		super(paramFile, mParamSession);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IReader getReader() throws TTIOException {
-        return new FileReader(super.mSessionConfig, getConcreteStorage());
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IReader getReader() throws TTIOException {
+		return new FileReader(super.mSessionConfig, getConcreteStorage());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IWriter getWriter() throws TTIOException {
-        return new FileWriter(super.mSessionConfig, getConcreteStorage());
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IWriter getWriter() throws TTIOException {
+		return new FileWriter(super.mSessionConfig, getConcreteStorage());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void closeConcreteStorage() {
-        // not used over here
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void closeConcreteStorage() {
+		// not used over here
+	}
 
-    /**
-     * Getting concrete storage for this file.
-     * 
-     * @return the concrete storage for this database
-     */
-    private File getConcreteStorage() {
-        return new File(super.mFile, new StringBuilder(EStoragePaths.TT.getFile().getName()).append(
-            File.separator).append(FILENAME).toString());
-    }
+	/**
+	 * Getting concrete storage for this file.
+	 * 
+	 * @return the concrete storage for this database
+	 */
+	private File getConcreteStorage() {
+		return new File(super.mFile, new StringBuilder(EStoragePaths.TT
+				.getFile().getName()).append(File.separator).append(FILENAME)
+				.toString());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean exists() throws TTIOException {
-        final File file = getConcreteStorage();
-        final boolean returnVal = file.length() > 0;
-        return returnVal;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean exists() throws TTIOException {
+		final File file = getConcreteStorage();
+		final boolean returnVal = file.length() > 0;
+		return returnVal;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void truncate() throws TTIOException {
-        recursiveDelete(super.mFile);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void truncate() throws TTIOException {
+		recursiveDelete(super.mFile);
+	}
 
 }
