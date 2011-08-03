@@ -39,168 +39,177 @@ import org.treetank.exception.TTUsageException;
 import org.treetank.io.AbsIOFactory;
 
 /**
- * This class represents one concrete database for enabling several {@link ISession} objects.
+ * This class represents one concrete database for enabling several
+ * {@link ISession} objects.
  * 
  * @see IDatabase
  * @author Sebastian Graf, University of Konstanz
  */
 public final class Database implements IDatabase {
 
-    /** Central repository of all running sessions. */
-    private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
+	/** Central repository of all running sessions. */
+	private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
-    /** DatabaseConfiguration with fixed settings. */
-    final DatabaseConfiguration mDBConfig;
+	/** DatabaseConfiguration with fixed settings. */
+	final DatabaseConfiguration mDBConfig;
 
-    /**
-     * Private constructor.
-     * 
-     * @param paramDBConf
-     *            {@link DatabaseConfiguration} reference to configure the {@link IDatabase}
-     * @throws AbsTTException
-     *             Exception if something weird happens
-     */
-    private Database(final DatabaseConfiguration paramDBConf) throws AbsTTException {
-        mDBConfig = paramDBConf;
-    }
+	/**
+	 * Private constructor.
+	 * 
+	 * @param paramDBConf
+	 *            {@link DatabaseConfiguration} reference to configure the
+	 *            {@link IDatabase}
+	 * @throws AbsTTException
+	 *             Exception if something weird happens
+	 */
+	private Database(final DatabaseConfiguration paramDBConf)
+			throws AbsTTException {
+		mDBConfig = paramDBConf;
+	}
 
-    /**
-     * Creating a database. This includes loading the database configurations,
-     * building up the structure and preparing everything for login.
-     * 
-     * @param paramFile
-     *            the file where the storage is
-     * @param paramConf
-     *            which are used for the database
-     * @return true if creation is valid, false otherwise
-     * @throws TTIOException
-     *             if something odd happens within the creation process.
-     */
-    public static synchronized boolean createDatabase(final File paramFile,
-        final DatabaseConfiguration.Builder paramConf) throws TTIOException {
-        // try {
-        boolean returnVal = true;
-        if (paramFile.exists()) {
-            returnVal = false;
-        } else {
-            returnVal = paramFile.mkdirs();
-            // if (returnVal) {
-            // for (EStoragePaths paths : EStoragePaths.values()) {
-            // final File toCreate = new File(paramFile, paths.getFile().getName());
-            // if (paths.isFolder()) {
-            // returnVal = toCreate.mkdir();
-            // } else {
-            // returnVal = toCreate.createNewFile();
-            // }
-            // if (!returnVal) {
-            // break;
-            // }
-            // }
-            // }
-        }
-        // if something was not correct, delete the partly created
-        // substructure
-        if (!returnVal) {
-            paramFile.delete();
-        }
-        return returnVal;
-        // } catch (final IOException exc) {
-        // throw new TTIOException(exc);
-        // }
-    }
+	/**
+	 * Creating a database. This includes loading the database configurations,
+	 * building up the structure and preparing everything for login.
+	 * 
+	 * @param paramFile
+	 *            the file where the storage is
+	 * @param paramConf
+	 *            which are used for the database
+	 * @return true if creation is valid, false otherwise
+	 * @throws TTIOException
+	 *             if something odd happens within the creation process.
+	 */
+	public static synchronized boolean createDatabase(final File paramFile,
+			final DatabaseConfiguration.Builder paramConf) throws TTIOException {
+		// try {
+		boolean returnVal = true;
+		if (paramFile.exists()) {
+			returnVal = false;
+		} else {
+			returnVal = paramFile.mkdirs();
+			// if (returnVal) {
+			// for (EStoragePaths paths : EStoragePaths.values()) {
+			// final File toCreate = new File(paramFile,
+			// paths.getFile().getName());
+			// if (paths.isFolder()) {
+			// returnVal = toCreate.mkdir();
+			// } else {
+			// returnVal = toCreate.createNewFile();
+			// }
+			// if (!returnVal) {
+			// break;
+			// }
+			// }
+			// }
+		}
+		// if something was not correct, delete the partly created
+		// substructure
+		if (!returnVal) {
+			paramFile.delete();
+		}
+		return returnVal;
+		// } catch (final IOException exc) {
+		// throw new TTIOException(exc);
+		// }
+	}
 
-    /**
-     * Truncate a database. This deletes all relevant data. If there are
-     * existing sessions against this database, the method returns null.
-     * 
-     * @param paramFile
-     *            the database at this path should be deleted.
-     * @return true if removal is successful, false otherwise
-     * @throws TTIOException
-     */
-    public static synchronized void truncateDatabase(final File paramFile) throws TTIOException {
-        // check that database must be closed beforehand
-        if (!DATABASEMAP.containsKey(paramFile)) {
-            AbsIOFactory.truncateStorage(paramFile);
-        }
-    }
+	/**
+	 * Truncate a database. This deletes all relevant data. If there are
+	 * existing sessions against this database, the method returns null.
+	 * 
+	 * @param paramFile
+	 *            the database at this path should be deleted.
+	 * @return true if removal is successful, false otherwise
+	 * @throws TTIOException
+	 */
+	public static synchronized void truncateDatabase(final File paramFile)
+			throws TTIOException {
+		// check that database must be closed beforehand
+		if (!DATABASEMAP.containsKey(paramFile)) {
+			AbsIOFactory.truncateStorage(paramFile);
+		}
+	}
 
-    /**
-     * Open database. A database can be opened only once. Afterwards the
-     * singleton instance bound to the File is given back.
-     * 
-     * @param paramFile
-     *            where the database is located sessionConf a {@link SessionConfiguration} object to set up
-     *            the session
-     * @return {@link IDatabase} instance.
-     * @throws AbsTTException
-     *             if something odd happens
-     */
-    public static synchronized IDatabase openDatabase(final File paramFile) throws AbsTTException {
-        if (!paramFile.exists()) {
-            throw new TTUsageException("DB could not be opened (since it was not created?) at location",
-                paramFile.toString());
-        }
-        final Database database =
-            new Database(new DatabaseConfiguration.Builder().setFile(paramFile).build());
-        final Database returnVal = DATABASEMAP.putIfAbsent(paramFile, database);
-        if (returnVal == null) {
-            return database;
-        } else {
-            return returnVal;
-        }
-    }
+	/**
+	 * Open database. A database can be opened only once. Afterwards the
+	 * singleton instance bound to the File is given back.
+	 * 
+	 * @param paramFile
+	 *            where the database is located sessionConf a
+	 *            {@link SessionConfiguration} object to set up the session
+	 * @return {@link IDatabase} instance.
+	 * @throws AbsTTException
+	 *             if something odd happens
+	 */
+	public static synchronized IDatabase openDatabase(final File paramFile)
+			throws AbsTTException {
+		if (!paramFile.exists()) {
+			throw new TTUsageException(
+					"DB could not be opened (since it was not created?) at location",
+					paramFile.toString());
+		}
+		final Database database = new Database(
+				new DatabaseConfiguration.Builder().setFile(paramFile).build());
+		final Database returnVal = DATABASEMAP.putIfAbsent(paramFile, database);
+		if (returnVal == null) {
+			return database;
+		} else {
+			return returnVal;
+		}
+	}
 
-    /**
-     * This method forces the Database to close an existing instance.
-     * 
-     * @param paramFile
-     *            where the database should be closed
-     * @throws AbsTTException
-     *             if something weird happens while closing
-     */
-    public static synchronized void closeDatabase(final File paramFile) throws AbsTTException {
-        DATABASEMAP.remove(paramFile);
-    }
+	/**
+	 * This method forces the Database to close an existing instance.
+	 * 
+	 * @param paramFile
+	 *            where the database should be closed
+	 * @throws AbsTTException
+	 *             if something weird happens while closing
+	 */
+	public static synchronized void closeDatabase(final File paramFile)
+			throws AbsTTException {
+		DATABASEMAP.remove(paramFile);
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public DatabaseConfiguration getDatabaseConf() {
-        return mDBConfig;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public DatabaseConfiguration getDatabaseConf() {
+		return mDBConfig;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getVersion() {
-        return mDBConfig.mBinaryVersion;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getVersion() {
+		return mDBConfig.mBinaryVersion;
+	}
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws AbsTTException
-     */
-    @Override
-    public synchronized ISession getSession(final SessionConfiguration.Builder paramSessionConfig)
-        throws AbsTTException {
-        paramSessionConfig.setDBConfig(mDBConfig);
-        final SessionConfiguration config = paramSessionConfig.build();
-        final File storageFile = config.mPath;
-        AbsIOFactory.registerInstance(storageFile, mDBConfig, config);
-        final boolean bla = AbsIOFactory.getInstance(config).exists();
-        return new Session(config);
-    }
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws AbsTTException
+	 */
+	@Override
+	public synchronized ISession getSession(
+			final SessionConfiguration.Builder paramSessionConfig)
+			throws AbsTTException {
+		paramSessionConfig.setDBConfig(mDBConfig);
+		final SessionConfiguration config = paramSessionConfig.build();
+		final File storageFile = config.mPath;
+		AbsIOFactory.registerInstance(storageFile, config);
+		final boolean bla = AbsIOFactory.getInstance(config).exists();
+		return new Session(config);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(this.mDBConfig);
-        return builder.toString();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.mDBConfig);
+		return builder.toString();
+	}
 
 }
