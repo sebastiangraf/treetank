@@ -19,8 +19,7 @@
 	OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
 	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>pom</artifactId>
@@ -29,7 +28,7 @@
 	</parent>
 
 	<artifactId>core</artifactId>
-	<version>5.3.6-SNAPSHOT</version>
+	<version>5.3.6</version>
 	<packaging>jar</packaging>
 	<name>treetank-core</name>
 	<description>Treetank is a fully java-implemented native XML-Database.
@@ -40,9 +39,9 @@
 		These versions can be easily retrieved within the database itself.
 	</description>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.6</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.6</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.6</url>
 	</scm>
 	<repositories>
 		<repository>
