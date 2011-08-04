@@ -25,12 +25,12 @@
 	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
 	<name>treetank-pom</name>
-	<version>1.0.4</version>
+	<version>1.0.5-SNAPSHOT</version>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.4</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.4</developerConnection>
-		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-1.0.4</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/parent</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/parent</developerConnection>
+		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/parent</url>
 	</scm>
 	<issueManagement>
 		<system>Redmine</system>
