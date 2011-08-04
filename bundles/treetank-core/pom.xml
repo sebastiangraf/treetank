@@ -27,12 +27,12 @@
 		<version>1.0.4</version>
 	</parent>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.6</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.6</developerConnection>
-		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/core-5.3.6</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-core</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-core</developerConnection>
+		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-core</url>
 	</scm>
 	<artifactId>core</artifactId>
-	<version>5.3.6</version>
+	<version>5.3.7-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>treetank-core</name>
 	<description>Treetank is a fully java-implemented native XML-Database.
