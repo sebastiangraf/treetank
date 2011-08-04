@@ -53,16 +53,6 @@
 	</licenses>
 	<developers>
 		<developer>
-			<name>Marc Kramis</name>
-			<email>marc.kramis@seabix.com</email>
-			<roles>
-				<role>Architect</role>
-			</roles>
-			<url>http://www.seabix.com</url>
-			<organization>Seabix GmbH</organization>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
 			<name>Sebastian Graf</name>
 			<email>Sebastian.Graf@uni-konstanz.de</email>
 			<roles>
@@ -71,20 +61,6 @@
 				<role>Architect</role>
 			</roles>
 			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme/mitglieder/Sebastian-Graf
-			</url>
-			<organization>University of Konstanz, Distributed Systems Lab
-			</organization>
-			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/
-			</organizationUrl>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<name>Lukas Lewandowski</name>
-			<email>lukas.lewandowski@uni-konstanz.de</email>
-			<roles>
-				<role>Developer</role>
-			</roles>
-			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme
 			</url>
 			<organization>University of Konstanz, Distributed Systems Lab
 			</organization>
