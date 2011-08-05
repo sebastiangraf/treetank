@@ -70,7 +70,7 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
     }
 
     /**
-     * Clearing the database. That is removing all elements
+     * Clearing the database. That is removing all elements.
      */
     public final void clearPersistent() {
         try {
@@ -101,43 +101,43 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
      * Putting a {@link KeyMaterial} into the database with a corresponding
      * key.
      * 
-     * @param paramSelect
-     *            selector instance to get information of node.
+     * @param paramEntity
+     *            key material instance to put on storage.
      * @return
      *         generated unique material key of new keying material.
      */
-    public final long putPersistent(final KeyingMaterial paramMat) {
+    public final long putEntry(final KeyMaterial paramEntity) {
 
-        PrimaryIndex<Long, KeyingMaterial> primaryIndex;
+        PrimaryIndex<Long, KeyMaterial> primaryIndex;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeyingMaterial>)mStore.getPrimaryIndex(Long.class, KeyingMaterial.class);
+                (PrimaryIndex<Long, KeyMaterial>)mStore.getPrimaryIndex(Long.class, KeyMaterial.class);
 
-            primaryIndex.put(paramMat);
+            primaryIndex.put(paramEntity);
         } catch (final DatabaseException e) {
             e.printStackTrace();
         }
-        return paramMat.getMaterialKey();
+        return paramEntity.getPrimaryKey();
 
     }
 
     /**
-     * Getting a {@link KeyingMaterial} related to a given material key.
+     * Getting a {@link KeyMaterial} related to a given material key.
      * 
      * @param paramKey
      *            material key for related keying material.
      * @return
      *         keying material instance.
      */
-    public final KeyingMaterial getPersistent(final long paramKey) {
-        PrimaryIndex<Long, KeyingMaterial> primaryIndex;
-        KeyingMaterial entity = null;
+    public final KeyMaterial getEntry(final long paramKey) {
+        PrimaryIndex<Long, KeyMaterial> primaryIndex;
+        KeyMaterial entity = null;
         try {
             primaryIndex =
 
-                (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
-                    Long.class, KeyingMaterial.class);
-            entity = (KeyingMaterial)primaryIndex.get(paramKey);
+                (PrimaryIndex<Long, KeyMaterial>) mStore.getPrimaryIndex(
+                    Long.class, KeyMaterial.class);
+            entity = (KeyMaterial)primaryIndex.get(paramKey);
 
 
         } catch (final DatabaseException mDbExp) {
@@ -155,12 +155,12 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
      *         status whether deletion was successful or not.
      */
     public final boolean deleteEntry(final long paramKey) {
-        PrimaryIndex<Long, KeyingMaterial> primaryIndex;
+        PrimaryIndex<Long, KeyMaterial> primaryIndex;
         boolean status = false;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
-                    Long.class, KeyingMaterial.class);
+                (PrimaryIndex<Long, KeyMaterial>) mStore.getPrimaryIndex(
+                    Long.class, KeyMaterial.class);
             status = primaryIndex.delete(paramKey);
 
         } catch (final DatabaseException mDbExp) {
@@ -177,11 +177,11 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
      *         number of entries in database.
      */
     public final int count() {
-        PrimaryIndex<Long, KeyingMaterial> primaryIndex;
+        PrimaryIndex<Long, KeyMaterial> primaryIndex;
         long counter = 0;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeyingMaterial>)mStore.getPrimaryIndex(Long.class, KeyingMaterial.class);
+                (PrimaryIndex<Long, KeyMaterial>)mStore.getPrimaryIndex(Long.class, KeyMaterial.class);
             counter = primaryIndex.count();
 
         } catch (final DatabaseException mDbExp) {
@@ -196,13 +196,13 @@ public class KeyMaterialDatabase extends AbsKeyDatabase {
      * @return
      *         all database entries.
      */
-    public final SortedMap<Long, KeyingMaterial> getEntries() {
-        PrimaryIndex<Long, KeyingMaterial> primaryIndex;
-        SortedMap<Long, KeyingMaterial> sMap = null;
+    public final SortedMap<Long, KeyMaterial> getEntries() {
+        PrimaryIndex<Long, KeyMaterial> primaryIndex;
+        SortedMap<Long, KeyMaterial> sMap = null;
         try {
             primaryIndex =
-                    (PrimaryIndex<Long, KeyingMaterial>) mStore.getPrimaryIndex(
-                        Long.class, KeyingMaterial.class);
+                    (PrimaryIndex<Long, KeyMaterial>) mStore.getPrimaryIndex(
+                        Long.class, KeyMaterial.class);
             sMap = primaryIndex.sortedMap();
 
         } catch (final DatabaseException mDbExp) {

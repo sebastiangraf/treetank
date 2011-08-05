@@ -18,7 +18,7 @@ public class KeySelector {
      * Selector key and primary key of database.
      */
     @PrimaryKey
-    private long mKeyId;
+    private long mSelectorKey;
 
     /**
      * Name of the node (group or user name).
@@ -29,6 +29,11 @@ public class KeySelector {
      * List of parent nodes.
      */
     private List<Long> mParents;
+    
+    /**
+     * List of child nodes.
+     */
+    private List<Long> mChilds;
 
     /**
      * Current revision of node.
@@ -59,9 +64,10 @@ public class KeySelector {
      *            node name.
      */
     public KeySelector(final String paramName, final EntityType paramType) {
-        this.mKeyId = RightKey.getInstance().newSelectorKey();
+        this.mSelectorKey = PrimaryKeyGenerator.getInstance().newSelectorKey();
         this.mName = paramName;
         this.mParents = new LinkedList<Long>();
+        this.mChilds = new LinkedList<Long>();
         this.mRevision = 0;
         this.mVersion = 0;
         this.mType = paramType;
@@ -73,8 +79,8 @@ public class KeySelector {
      * @return
      *         selector id.
      */
-    public final long getKeyId() {
-        return mKeyId;
+    public final long getPrimaryKey() {
+        return mSelectorKey;
     }
 
     /**
@@ -88,7 +94,7 @@ public class KeySelector {
     }
 
     /**
-     * Returns a set of parent nodes for node.
+     * Returns a list of parent nodes for node.
      * 
      * @return
      *         set of parent nodes.
@@ -96,15 +102,55 @@ public class KeySelector {
     public final List<Long> getParents() {
         return mParents;
     }
+    
+    /**
+     * Returns a list of child nodes for node.
+     * 
+     * @return
+     *         set of child nodes.
+     */
+    public final List<Long> getChilds() {
+        return mChilds;
+    }
 
     /**
-     * Add a new parent node to the set.
+     * Adds a new parent node to the list.
      * 
      * @param paramParent
-     *            parent to add to set.
+     *            parent to add to list.
      */
     public final void addParent(final long paramParent) {
         mParents.add(paramParent);
+    }
+    
+    /**
+     * Adds a new child node to the list.
+     * 
+     * @param paramParent
+     *            parent to add to list.
+     */
+    public final void addChild(final long paramChild) {
+        mChilds.add(paramChild);
+    }
+    
+    /**
+     * Removes a parent node from list.
+     * 
+     * @param paramParent
+     *          parent node to remove.
+     */
+    public void removeParent(final long paramParent){
+        mParents.remove(paramParent);
+    }
+    
+    /**
+     * Removes a child node from list.
+     * 
+     * @param paramChild
+     *          child node to remove.
+     */
+    public void removeChild(final long paramChild){
+        mChilds.remove(paramChild);
     }
 
     /**

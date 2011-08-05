@@ -100,16 +100,16 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
      * Putting a {@link KeySelector} into the database with a corresponding
      * selector key.
      * 
-     * @param entity
+     * @param paramEntity
      *            key selector instance to put into database.
      */
-    public final void putPersistent(final KeySelector entity) {
+    public final void putEntry(final KeySelector paramEntity) {
         PrimaryIndex<Long, KeySelector> primaryIndex;
         try {
             primaryIndex =
                 (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
 
-            primaryIndex.put(entity);
+            primaryIndex.put(paramEntity);
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
@@ -124,7 +124,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
      * @return
      *         key selector instance.
      */
-    public final KeySelector getPersistent(final long paramKey) {
+    public final KeySelector getEntry(final long paramKey) {
         PrimaryIndex<Long, KeySelector> primaryIndex;
         KeySelector entity = null;
         try {

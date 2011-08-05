@@ -1,9 +1,8 @@
 package org.treetank.encryption;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
@@ -24,14 +23,9 @@ public class KeyManager {
     private String mUser;
 
     /**
-     * Initial trace of keys the user gets for entry a group.
+     * Set of keys the user owns.
      */
-    private Map<Long, List<Long>> mInitialKeys;
-
-    /**
-     * List of all TEKs the user owns.
-     */
-    private List<Long> mTekKeys;
+    private Set<Long> mKeySet;
 
     /**
      * Standard constructor.
@@ -45,25 +39,13 @@ public class KeyManager {
      * 
      * @param paramUser
      *            user.
-     * @param paramInitial
-     *            map of all key trails.
+     * @param paramKeys
+     *            set of initial keys.
      */
-    public KeyManager(final String paramUser, final Map<Long, List<Long>> paramInitial) {
+    public KeyManager(final String paramUser, final Set<Long> paramKeys) {
         this.mUser = paramUser;
-        this.mInitialKeys = paramInitial;
-        this.mTekKeys = new LinkedList<Long>();
+        this.mKeySet = paramKeys;
 
-        final Iterator iter = paramInitial.keySet().iterator();
-        while (iter.hasNext()) {
-            final long mMapKey = (Long)iter.next();
-            final List<Long> mKeyTrail = paramInitial.get(mMapKey);
-            final int mKeyTrailSize = mKeyTrail.size() - 1;
-            final long mTek = mKeyTrail.get(mKeyTrailSize);
-            mTekKeys.add(mTek);
-            // break after first iteration since
-            // tek is identical to all key trails
-            break;
-        }
     }
 
     /**
@@ -77,50 +59,33 @@ public class KeyManager {
     }
 
     /**
-     * Returns a list of initial keys.
+     * Returns a set of all keys a user owns.
      * 
      * @return
-     *         list of initial keys.
+     *         set of users keys.
      */
-    public final Map<Long, List<Long>> getInitialKeys() {
-        return mInitialKeys;
+    public final Set<Long> getKeySet() {
+        return mKeySet;
     }
 
     /**
-     * Add a new key trail to the map.
+     * Adds a new key to the set.
      * 
      * @param paramTrail
-     *            new key trail.
+     *            new key the user owns.
      */
-    public final void addInitialKeyTrail(final List<Long> paramTrail) {
-        mInitialKeys.put(paramTrail.get(0), paramTrail);
-    }
-    
-    public final void removeInitialKeyTrail(final long paramKey){
-        mInitialKeys.remove(paramKey);
+    public final void addKey(final long paramKey) {
+        mKeySet.add(paramKey);
     }
 
     /**
-     * Returns a list of TEKs the user owns.
+     * Removes a key from the set.
      * 
-     * @return
-     *         TEK list.
+     * @param paramKey
+     *            the key to be withdraw.
      */
-    public final List<Long> getTEKs() {
-        return mTekKeys;
+    public final void removeKey(final long paramKey) {
+        mKeySet.remove(paramKey);
     }
-
-    /**
-     * Adds a new TEK to users TEK list.
-     * 
-     * @param paramTek
-     *            new TEK to add.
-     */
-    public final void addTEK(final long paramTek) {
-        mTekKeys.add(paramTek);
-    }
-    
-    
-
 
 }

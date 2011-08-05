@@ -141,5 +141,14 @@ public final class Session implements ISession {
     public String toString() {
         return mSessionState.toString();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getUser(){
+        return mSessionState.mSessionConfig.mUser;
+    }
+    
 
 }
