@@ -1,5 +1,7 @@
 package org.treetank.encryption;
 
+import java.util.List;
+
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 
@@ -12,18 +14,13 @@ import com.sleepycat.persist.model.PrimaryKey;
  * @author Patrick Lang, University of Konstanz
  */
 @Entity
-public class KeyingMaterial {
+public class KeyMaterial {
 
     /**
      * Unique material key and primary key for database.
      */
     @PrimaryKey
     private long mMaterialKey;
-
-    /**
-     * Selector key for having a relation to key selector database.
-     */
-    private long mSelectorKey;
 
     /**
      * Revision of keying material.
@@ -36,19 +33,29 @@ public class KeyingMaterial {
     private int mVersion;
 
     /**
+     * List of parent nodes.
+     */
+    private List<Long> mParents;
+
+    /**
+     * List of child nodes.
+     */
+    private List<Long> mChilds;
+
+    /**
+     * Type of node (group or user).
+     */
+    private EntityType mType;
+
+    /**
      * Secret key using for data en-/decryption.
      */
     private byte[] mSecretKey;
-    
-    /**
-     * Parent node id. 
-     */
-    private long mParent;
 
     /**
      * Standard constructor.
      */
-    public KeyingMaterial() {
+    public KeyMaterial() {
         super();
     }
 
@@ -64,29 +71,33 @@ public class KeyingMaterial {
      * @param paramSKey
      *            secret key of keying material.
      */
-    public KeyingMaterial(final long paramKey, final int paramRev, final int paramVer, final byte[] paramSKey) {
-        this.mMaterialKey = RightKey.getInstance().newMaterialKey();
-        this.mSelectorKey = paramKey;
+    public KeyMaterial(final int paramRev, final int paramVer,
+        final List<Long> paramPar, final List<Long> paramChilds,
+        final EntityType paramType) {
+        this.mMaterialKey = PrimaryKeyGenerator.getInstance().newMaterialKey();
         this.mRevsion = paramRev;
         this.mVersion = paramVer;
-        this.mSecretKey = paramSKey;
+        this.mParents = paramPar;
+        this.mChilds = paramChilds;
+        this.mType = paramType;
+        this.mSecretKey = new NodeEncryption().generateSecretKey();
     }
 
     /**
-     * Returns selector key.
+     * Returns unique material key.
      * 
      * @return
-     *         selector key.
+     *         material key.
      */
-    public final long getSelectorKey() {
-        return mSelectorKey;
+    public final long getPrimaryKey() {
+        return mMaterialKey;
     }
 
     /**
      * Returns revision.
      * 
      * @return
-     *         revsion.
+     *         revision.
      */
     public final int getRevsion() {
         return mRevsion;
@@ -103,13 +114,30 @@ public class KeyingMaterial {
     }
 
     /**
-     * Returns unqiue material key.
+     * Returns a list of parent nodes for node.
      * 
      * @return
-     *         material key.
+     *         set of parent nodes.
      */
-    public final long getMaterialKey() {
-        return mMaterialKey;
+    public final List<Long> getParents() {
+        return mParents;
+    }
+
+    /**
+     * Returns a list of child nodes for node.
+     * 
+     * @return
+     *         set of child nodes.
+     */
+    public final List<Long> getChilds() {
+        return mChilds;
+    }
+
+    /**
+     * Returns type of entity.
+     */
+    public EntityType getType() {
+        return mType;
     }
 
     /**
@@ -120,26 +148,6 @@ public class KeyingMaterial {
      */
     public final byte[] getSecretKey() {
         return mSecretKey;
-    }
-
-    /**
-     * Sets a new secret key.
-     * 
-     * @param paramSKey
-     *            new secret key.
-     */
-    public final void setSecretKey(final byte[] paramSKey) {
-        this.mSecretKey = paramSKey;
-    }
-    
-    /**
-     * Returns parent node id.
-     * 
-     * @return
-     *          node id of parent.
-     */
-    public final long getParent(){
-        return mParent;
     }
 
 }

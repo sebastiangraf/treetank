@@ -101,10 +101,10 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
      * Putting a {@link KeyManager} into the database with a corresponding
      * user.
      * 
-     * @param entity
+     * @param paramEntity
      *            key manager instance to get information for storage.
      */
-    public final void putPersistent(final KeyManager entity) {
+    public final void putEntry(final KeyManager paramEntity) {
         PrimaryIndex<String, KeyManager> primaryIndex;
         try {
             primaryIndex =
@@ -113,10 +113,10 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
                     String.class, KeyManager.class);
 
 
-            primaryIndex.put(entity);
+            primaryIndex.put(paramEntity);
 
-        } catch (DatabaseException e) {
-            e.printStackTrace();
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
         }
 
     }
@@ -129,7 +129,7 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
      * @return
      *         key manager instance.
      */
-    public final KeyManager getPersistent(final String paramUser) {
+    public final KeyManager getEntry(final String paramKey) {
         PrimaryIndex<String, KeyManager> primaryIndex;
         KeyManager entity = null;
         try {
@@ -138,7 +138,7 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
                 (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
                     String.class, KeyManager.class);
 
-            entity = (KeyManager)primaryIndex.get(paramUser);
+            entity = (KeyManager)primaryIndex.get(paramKey);
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();

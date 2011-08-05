@@ -1,12 +1,13 @@
 package org.treetank.encryption;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.Stack;
 
@@ -17,7 +18,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.treetank.exception.TTEncryptionException;
+import org.treetank.cache.KeyCache;
 
 /**
  * Class for parsing the initial given right tree and storing
@@ -30,23 +31,26 @@ public class EncryptionTreeParser extends DefaultHandler {
     /**
      * Path of initial right tree XML file.
      */
-    private static final String FILENAME = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "righttreestructure.xml";
+    private static final String FILENAME = "src" + File.separator + "test"
+        + File.separator + "resources" + File.separator
+        + "righttreestructure.xml";
 
     /**
      * Instance for {@link KeySelectorDatabase}.
      */
-    private static KeySelectorDatabase mSelectorDb;
+    private static KeySelectorDatabase mKeySelectorDb;
 
     /**
      * Instance for {@link KeyMaterialDatabase}.
      */
-    private static KeyMaterialDatabase mMaterialDb;
+    private static KeyMaterialDatabase mKeyMaterialDb;
 
     /**
      * Instance for {@link KeyManagerDatabase}.
      */
-    private static KeyManagerDatabase mManagerDb;
+    private static KeyManagerDatabase mKeyManagerDb;
+
+    private static KeyCache mKeyCache;
 
     /**
      * Node declaration in initial right tree XML file.
@@ -59,9 +63,11 @@ public class EncryptionTreeParser extends DefaultHandler {
     private final String mEdgeDec = "EDGE";
 
     /**
-     * User type declaration in initial right tree XML file.
+     * Group type declaration in initial right tree XML file.
      */
-    private final String mTypeUser = "user";
+    private final String mTypeGroup = "group";
+    
+    private static String mUser;
 
     /**
      * Stack holding all parsed nodes.
@@ -69,20 +75,21 @@ public class EncryptionTreeParser extends DefaultHandler {
     private final Stack<Long> mNodeStack = new Stack<Long>();
 
     /**
-     * Map holding all node names and its corresponding node ids.
+     * Map holding all node names and its corresponding node id.
      */
-    private final Map<String, Long> mNodeIds = new HashMap<String, Long>();
+    private final Map<String, Long> mNodeMap = new HashMap<String, Long>();
 
     /**
-     * List of all parsed users.
+     * List of all parsed user ids.
      */
-    private final List<String> mUsers = new ArrayList<String>();
+    private final List<Long> mUserIdList = new LinkedList<Long>();
 
     /**
      * Just a helper map for user that has parent that hasn't been parsed
      * and written to the database yet.
      */
-    private final Map<Long, List<String>> mUserParents = new HashMap<Long, List<String>>();
+    private final Map<Long, List<String>> mUserParents =
+        new HashMap<Long, List<String>>();
 
     /**
      * Start tree parsing process.
@@ -94,12 +101,13 @@ public class EncryptionTreeParser extends DefaultHandler {
      * @param manDb
      *            key manager database instance.
      */
-    public final void init(final KeySelectorDatabase selDb, final KeyMaterialDatabase matDb,
-        final KeyManagerDatabase manDb) {
-
-        mSelectorDb = selDb;
-        mMaterialDb = matDb;
-        mManagerDb = manDb;
+    public final void init(final EncryptionHandler paramHandler) {
+        
+        mKeySelectorDb = paramHandler.getKeySelectorDBInstance();
+        mKeyMaterialDb = paramHandler.getKeyMaterialDBInstance();
+        mKeyManagerDb = paramHandler.getKeyManagerDBInstance();
+        mKeyCache = paramHandler.getKeyCacheInstance();
+        mUser = paramHandler.getUser();
 
         try {
 
@@ -117,8 +125,9 @@ public class EncryptionTreeParser extends DefaultHandler {
      * {@inheritDoc}
      */
     @Override
-    public final void startElement(final String namespaceURI, final String localName, final String qName,
-        final Attributes atts) throws SAXException {
+    public final void startElement(final String namespaceURI,
+        final String localName, final String qName, final Attributes atts)
+        throws SAXException {
 
         final String mNodeName = atts.getValue(0);
         final String mNodeType = atts.getValue(1);
@@ -130,35 +139,27 @@ public class EncryptionTreeParser extends DefaultHandler {
             }
 
             final KeySelector mSelector;
-            if (mNodeType.equals("group")) {
+            if (mNodeType.equals(mTypeGroup)) {
                 mSelector = new KeySelector(mNodeName, EntityType.GROUP);
             } else {
                 mSelector = new KeySelector(mNodeName, EntityType.USER);
+                mUserIdList.add(mSelector.getPrimaryKey());
             }
 
-            mNodeStack.add(mSelector.getKeyId());
-            mNodeIds.put(mNodeName, mSelector.getKeyId());
+            mNodeStack.add(mSelector.getPrimaryKey());
+            mNodeMap.put(mNodeName, mSelector.getPrimaryKey());
 
-            mSelectorDb.putPersistent(mSelector);
-
-            final KeyingMaterial mMaterial =
-                new KeyingMaterial(mSelector.getKeyId(), mSelector
-                    .getRevision(), mSelector.getVersion(),
-                    new NodeEncryption().generateSecretKey());
-            mMaterialDb.putPersistent(mMaterial);
-
-            if (atts.getValue(1).equals(mTypeUser)) {
-                mUsers.add(mNodeName);
-            }
+            mKeySelectorDb.putEntry(mSelector);
 
         } else if (qName.equals(mEdgeDec)) {
             long mNodeId = mNodeStack.peek();
-            KeySelector mSelector = mSelectorDb.getPersistent(mNodeId);
+            KeySelector mSelector = mKeySelectorDb.getEntry(mNodeId);
 
-            if (mNodeIds.containsKey(mNodeName)) {
-                mSelector.addParent(mNodeIds.get(mNodeName));
-                mSelectorDb.putPersistent(mSelector);
+            if (mNodeMap.containsKey(mNodeName)) {
+                mSelector.addParent(mNodeMap.get(mNodeName));
+                mKeySelectorDb.putEntry(mSelector);
             } else {
+                // put parent node that weren't parsed yet into a map.
                 if (mUserParents.containsKey(mNodeId)) {
                     List<String> mNameList = mUserParents.get(mNodeId);
                     mNameList.add(mNodeName);
@@ -175,108 +176,118 @@ public class EncryptionTreeParser extends DefaultHandler {
      * {@inheritDoc}
      */
     @Override
-    public final void endElement(final String namespaceURI, final String localName, final String qName)
-        throws SAXException {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public final void endDocument() throws SAXException {
         /*
-         * add not yet stored edges as parents to the nodes respectively
+         * add not yet stored edges as parents to the nodes.
          */
         Iterator iter = mUserParents.keySet().iterator();
         while (iter.hasNext()) {
             final long mMapKey = (Long)iter.next();
-            final KeySelector mSelector = mSelectorDb.getPersistent(mMapKey);
+            final KeySelector mSelector = mKeySelectorDb.getEntry(mMapKey);
             final List<String> mNameList = mUserParents.get(mMapKey);
 
             for (int i = 0; i < mNameList.size(); i++) {
                 final String mName = mNameList.get(i);
 
-                final SortedMap<Long, KeySelector> mSelMap =
-                    mSelectorDb.getEntries();
-                final Iterator innerIter = mSelMap.keySet().iterator();
+                final SortedMap<Long, KeySelector> mSelectorMap =
+                    mKeySelectorDb.getEntries();
+                final Iterator innerIter = mSelectorMap.keySet().iterator();
 
                 while (innerIter.hasNext()) {
-
                     final KeySelector mParentSelector =
-                        mSelMap.get(innerIter.next());
+                        mSelectorMap.get(innerIter.next());
 
                     if (mParentSelector.getName().equals(mName)) {
-                        mSelector.addParent(mParentSelector.getKeyId());
-                        mSelectorDb.putPersistent(mSelector);
+                        mSelector.addParent(mParentSelector.getPrimaryKey());
+                        mKeySelectorDb.putEntry(mSelector);
                     }
                 }
             }
         }
 
         /*
-         * build key trails of users and store it to the key manager db
+         * find and store children of each node.
          */
 
-        // iterate through all users
-        for (int j = 0; j < mUsers.size(); j++) {
-            final String mUser = mUsers.get(j);
+        // outer loop
+        final SortedMap<Long, KeySelector> mOuterSelectorMap =
+            mKeySelectorDb.getEntries();
+        final Iterator outerIter = mOuterSelectorMap.keySet().iterator();
+        while (outerIter.hasNext()) {
+            final KeySelector mOuterSelector =
+                mOuterSelectorMap.get(outerIter.next());
+            final long mOuterId = mOuterSelector.getPrimaryKey();
 
-            // map of all key trails a user has
-            final Map<Long, List<Long>> mKeyTrails = new HashMap<Long, List<Long>>();
-
-            // find user node in selector db
-            final SortedMap<Long, KeySelector> mSelMap =
-                mSelectorDb.getEntries();
-            final Iterator innerIter = mSelMap.keySet().iterator();
-
+            // inner loop
+            final SortedMap<Long, KeySelector> mInnerSelectorMap =
+                mKeySelectorDb.getEntries();
+            final Iterator innerIter = mInnerSelectorMap.keySet().iterator();
             while (innerIter.hasNext()) {
-                final KeySelector mSelector = mSelMap.get(innerIter.next());
-                if (mSelector.getName().equals(mUser)) {
+                final KeySelector mInnerSelector =
+                    mInnerSelectorMap.get(innerIter.next());
+                final long mInnerId = mInnerSelector.getPrimaryKey();
+                final List<Long> mParents = mInnerSelector.getParents();
 
-                    // all parent ids of user
-                    final List<Long> mParentIds = mSelector.getParents();
+                if (mParents.size() > 0 && mParents.contains(mOuterId)) {
+                    mOuterSelector.addChild(mInnerId);
+                }
+            }
+            mKeySelectorDb.putEntry(mOuterSelector);
+        }
 
-                    for (int k = 0; k < mParentIds.size(); k++) {
-                        final long mParent = mParentIds.get(k);
-                        final LinkedList<Long> mKeyTrail = new LinkedList<Long>();
-                        mKeyTrail.add(mParent);
-                        mKeyTrails.put(mParent, mKeyTrail);
-                    }
+        /*
+         * build up key material database from selector database with secret keys.
+         */
+        final SortedMap<Long, KeySelector> mSelectorMap =
+            mKeySelectorDb.getEntries();
+        final Iterator selIter = mSelectorMap.keySet().iterator();
+        while (selIter.hasNext()) {
+            final KeySelector mSelector = mSelectorMap.get(selIter.next());
+            final KeyMaterial mMaterial =
+                new KeyMaterial(mSelector.getRevision(),
+                    mSelector.getVersion(), mSelector.getParents(), mSelector
+                        .getChilds(), mSelector.getType());
+            mKeyMaterialDb.putEntry(mMaterial);
+        }
 
-                    // iterate through all initiated key trails and find
-                    // and complete the trail steps to the root
-                    iter = mKeyTrails.keySet().iterator();
-                    while (iter.hasNext()) {
-                        final long mParentKey = (Long)iter.next();
-                        final List<Long> mKeyTrail = mKeyTrails.get(mParentKey);
+        /*
+         * build key manager database.
+         */
 
-                        // get parent id from parent
-                        List<Long> mParentList = mSelectorDb.getPersistent(mParentKey).getParents();
+        for (long userId : mUserIdList) {
+            final Set<Long> mKeySet = new HashSet<Long>();
+            final List<Long> mHelper = new LinkedList<Long>();
+            final KeySelector mUserSelector = mKeySelectorDb.getEntry(userId);
 
-                        while (mParentList.size() != 0) {
-                            if (mParentList.size() > 1) {
-                                try {
-                                    throw new TTEncryptionException(
-                                        "Initial right tree is not valid. A group node can "
-                                            + "only have one parent.");
-                                } catch (final TTEncryptionException ttee) {
-                                    ttee.printStackTrace();
-                                }
-                            } else {
-                                // add parent's parent id to key trail
-                                final long newParent = mParentList.get(0);
-                                mKeyTrail.add(newParent);
-                                mParentList = mSelectorDb.getPersistent(newParent).getParents();
-                            }
+            mKeySet.add(mUserSelector.getPrimaryKey());
+            mHelper.add(mUserSelector.getPrimaryKey());
+
+            for (int i = 0; i < mHelper.size(); i++) {
+                final KeySelector mNodeSelector =
+                    mKeySelectorDb.getEntry(mHelper.get(i));
+                final List<Long> mParents = mNodeSelector.getParents();
+                if (mParents.size() > 0) {
+                    for (long parentId : mParents) {
+                        if (!mKeySet.contains(parentId)) {
+                            mKeySet.add(parentId);
+                        }
+                        if (!mHelper.contains(parentId)) {
+                            mHelper.add(parentId);
                         }
                     }
                 }
             }
+            mKeyManagerDb.putEntry(new KeyManager(mUserSelector.getName(),
+                mKeySet));
 
-            // add key trails to key manager database
-            final KeyManager entity = new KeyManager(mUser, mKeyTrails);
-            mManagerDb.putPersistent(entity);
-
+            /*
+             * put initial key set of current logged user into key cache.
+             */
+            if (mUserSelector.getName().equals(mUser)) {
+                mKeyCache.put(mUser, new LinkedList<Long>(mKeySet));
+            }
         }
+
     }
+
 }

@@ -82,7 +82,8 @@ public interface ISession {
      *             If can't begin Read Transaction.
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction(final long revisionKey) throws AbsTTException;
+    IReadTransaction beginReadTransaction(final long revisionKey)
+        throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
@@ -104,7 +105,8 @@ public interface ISession {
      *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime) throws AbsTTException;
+    IWriteTransaction beginWriteTransaction(final int maxNodeCount,
+        final int maxTime) throws AbsTTException;
 
     /**
      * Safely close session and immediately release all resources. If there are
@@ -126,4 +128,10 @@ public interface ISession {
      */
     boolean isClosed();
 
+    /**
+     * Returns user that is bound to the session.
+     * 
+     * @return current session bound user.
+     */
+    String getUser();
 }

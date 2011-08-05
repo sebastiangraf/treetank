@@ -3,17 +3,12 @@ package org.treetank.encryption;
 /**
  * A singleton class to create several unique keys for encryption processes.
  */
-public class RightKey {
+public class PrimaryKeyGenerator {
 
     /**
      * Singleton instance.
      */
-    private static RightKey mINSTANCE = new RightKey();
-
-    /**
-     * Right key counter.
-     */
-    private int mRightKey = -1;
+    private static PrimaryKeyGenerator mINSTANCE = new PrimaryKeyGenerator();
 
     /**
      * Selector key counter.
@@ -31,19 +26,10 @@ public class RightKey {
      * @return
      *         singleton instance.
      */
-    public static RightKey getInstance() {
+    public static PrimaryKeyGenerator getInstance() {
         return mINSTANCE;
     }
 
-    /**
-     * Create new right key by increasing current state by 1.
-     * 
-     * @return
-     *         new unique right key.
-     */
-    public final int newRightKey() {
-        return ++mRightKey;
-    }
 
     /**
      * Create new selector key by increasing current state by 1.
