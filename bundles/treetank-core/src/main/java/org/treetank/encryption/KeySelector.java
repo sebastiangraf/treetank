@@ -29,7 +29,7 @@ public class KeySelector {
      * List of parent nodes.
      */
     private List<Long> mParents;
-    
+
     /**
      * List of child nodes.
      */
@@ -44,11 +44,13 @@ public class KeySelector {
      * Current version of node.
      */
     private int mVersion;
-    
-    /**
-     * Type of node (group or user).
-     */
+
     private EntityType mType;
+
+    /**
+     * Secret key using for data en-/decryption.
+     */
+    private byte[] mSecretKey;
 
     /**
      * Standard constructor.
@@ -63,14 +65,17 @@ public class KeySelector {
      * @param paramName
      *            node name.
      */
-    public KeySelector(final String paramName, final EntityType paramType) {
+    public KeySelector(final String paramName, final List<Long> paramPar,
+        final List<Long> paramChild, final int paramRev,
+        final int paramVer, final EntityType paramType) {
         this.mSelectorKey = PrimaryKeyGenerator.getInstance().newSelectorKey();
         this.mName = paramName;
-        this.mParents = new LinkedList<Long>();
-        this.mChilds = new LinkedList<Long>();
-        this.mRevision = 0;
-        this.mVersion = 0;
+        this.mParents = paramPar;
+        this.mChilds = paramChild;
+        this.mRevision = paramRev;
+        this.mVersion = paramVer;
         this.mType = paramType;
+        this.mSecretKey = new NodeEncryption().generateSecretKey();
     }
 
     /**
@@ -102,7 +107,7 @@ public class KeySelector {
     public final List<Long> getParents() {
         return mParents;
     }
-    
+
     /**
      * Returns a list of child nodes for node.
      * 
@@ -122,7 +127,7 @@ public class KeySelector {
     public final void addParent(final long paramParent) {
         mParents.add(paramParent);
     }
-    
+
     /**
      * Adds a new child node to the list.
      * 
@@ -132,24 +137,24 @@ public class KeySelector {
     public final void addChild(final long paramChild) {
         mChilds.add(paramChild);
     }
-    
+
     /**
      * Removes a parent node from list.
      * 
      * @param paramParent
-     *          parent node to remove.
+     *            parent node to remove.
      */
-    public void removeParent(final long paramParent){
+    public void removeParent(final long paramParent) {
         mParents.remove(paramParent);
     }
-    
+
     /**
      * Removes a child node from list.
      * 
      * @param paramChild
-     *          child node to remove.
+     *            child node to remove.
      */
-    public void removeChild(final long paramChild){
+    public void removeChild(final long paramChild) {
         mChilds.remove(paramChild);
     }
 
@@ -186,11 +191,21 @@ public class KeySelector {
     public final void increaseVersion() {
         this.mVersion += 1;
     }
-    
+
     /**
      * Returns type of entity.
      */
-    public EntityType getType(){
+    public EntityType getType() {
         return mType;
+    }
+
+    /**
+     * Returns secret key.
+     * 
+     * @return
+     *         secret key.
+     */
+    public final byte[] getSecretKey() {
+        return mSecretKey;
     }
 }
