@@ -1,6 +1,7 @@
 package org.treetank.encryption;
 
-enum EntityType {
-    GROUP,
-    USER;
+public enum EntityType {
+    
+    USER, GROUP;
+
 }

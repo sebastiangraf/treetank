@@ -41,11 +41,6 @@ public class EncryptionTreeParser extends DefaultHandler {
     private static KeySelectorDatabase mKeySelectorDb;
 
     /**
-     * Instance for {@link KeyMaterialDatabase}.
-     */
-    private static KeyMaterialDatabase mKeyMaterialDb;
-
-    /**
      * Instance for {@link KeyManagerDatabase}.
      */
     private static KeyManagerDatabase mKeyManagerDb;
@@ -66,7 +61,7 @@ public class EncryptionTreeParser extends DefaultHandler {
      * Group type declaration in initial right tree XML file.
      */
     private final String mTypeGroup = "group";
-    
+
     private static String mUser;
 
     /**
@@ -101,13 +96,13 @@ public class EncryptionTreeParser extends DefaultHandler {
      * @param manDb
      *            key manager database instance.
      */
-    public final void init(final EncryptionHandler paramHandler) {
-        
-        mKeySelectorDb = paramHandler.getKeySelectorDBInstance();
-        mKeyMaterialDb = paramHandler.getKeyMaterialDBInstance();
-        mKeyManagerDb = paramHandler.getKeyManagerDBInstance();
-        mKeyCache = paramHandler.getKeyCacheInstance();
-        mUser = paramHandler.getUser();
+    public final void init() {
+
+        mKeySelectorDb =
+            EncryptionHandler.getInstance().getKeySelectorInstance();
+        mKeyManagerDb = EncryptionHandler.getInstance().getKeyManagerInstance();
+        mKeyCache = EncryptionHandler.getInstance().getKeyCacheInstance();
+        mUser = EncryptionHandler.getInstance().getUser();
 
         try {
 
@@ -140,9 +135,13 @@ public class EncryptionTreeParser extends DefaultHandler {
 
             final KeySelector mSelector;
             if (mNodeType.equals(mTypeGroup)) {
-                mSelector = new KeySelector(mNodeName, EntityType.GROUP);
+                mSelector =
+                    new KeySelector(mNodeName, new LinkedList<Long>(),
+                        new LinkedList<Long>(), 0, 0, EntityType.GROUP);
             } else {
-                mSelector = new KeySelector(mNodeName, EntityType.USER);
+                mSelector =
+                    new KeySelector(mNodeName, new LinkedList<Long>(),
+                        new LinkedList<Long>(), 0, 0, EntityType.USER);
                 mUserIdList.add(mSelector.getPrimaryKey());
             }
 
@@ -233,21 +232,6 @@ public class EncryptionTreeParser extends DefaultHandler {
                 }
             }
             mKeySelectorDb.putEntry(mOuterSelector);
-        }
-
-        /*
-         * build up key material database from selector database with secret keys.
-         */
-        final SortedMap<Long, KeySelector> mSelectorMap =
-            mKeySelectorDb.getEntries();
-        final Iterator selIter = mSelectorMap.keySet().iterator();
-        while (selIter.hasNext()) {
-            final KeySelector mSelector = mSelectorMap.get(selIter.next());
-            final KeyMaterial mMaterial =
-                new KeyMaterial(mSelector.getRevision(),
-                    mSelector.getVersion(), mSelector.getParents(), mSelector
-                        .getChilds(), mSelector.getType());
-            mKeyMaterialDb.putEntry(mMaterial);
         }
 
         /*

@@ -41,11 +41,6 @@ public final class EncryptionHandler {
     private static KeySelectorDatabase mKeySelectorDb;
 
     /**
-     * Instance of KeyMaterialDatabase holding keying material stuff.
-     */
-    private static KeyMaterialDatabase mKeyMaterialDb;
-
-    /**
      * Instance of KeyManagerDatabase holding key manager stuff.
      */
     private static KeyManagerDatabase mKeyManagerDb;
@@ -56,6 +51,8 @@ public final class EncryptionHandler {
     private static KeyCache mKeyCache;
 
     private static ISession mSession;
+    
+    private static String mLoggedUser = "U0";
 
     /**
      * The key data should be encrypted.
@@ -68,13 +65,6 @@ public final class EncryptionHandler {
     private static final File SEL_STORE = new File(new StringBuilder(
         File.separator).append("tmp").append(File.separator).append("tnk")
         .append(File.separator).append("selectordb").toString());
-
-    /**
-     * Store path of berkeley keying material db.
-     */
-    private static final File MAT_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("secretmaterialdb").toString());
 
     /**
      * Store path of berkeley key manager db.
@@ -114,54 +104,23 @@ public final class EncryptionHandler {
         throws TTEncryptionException {
         if (mNodeEncryption) {
             mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
-            mKeyMaterialDb = new KeyMaterialDatabase(MAT_STORE);
             mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
             mSession = paramSession;
             mDataEncryptionKey = paramDEK;
             mKeyCache = new KeyCache();
-            new EncryptionTreeParser().init(this);
+            new EncryptionTreeParser().init();
         } else {
             throw new TTEncryptionException("Encryption is disabled!");
         }
     }
 
     /**
-     * Invoked when a new user joining a group.
-     * 
-     * @param paramUser
-     *            new user name joining a group.
-     * @param paramGroup
-     *            name of goup the user joins.
-     * @throws TTEncryptionException
-     *             Exception occurred during joining process.
-     */
-    public void joinGroup(final String paramUser, final String paramGroup)
-        throws TTEncryptionException {
-
-    }
-
-    /**
-     * Invoked when a new user leaving a group.
-     * 
-     * @param paramUser
-     *            user name leaving a group.
-     * @param paramGroup
-     *            name of goup the user leaves.
-     */
-    public void leaveGroup(final String paramUser, final String paramGroup) {
-
-    }
-
-    /*
      * Clears all established berkeley dbs.
      */
     public void clear() {
         try {
             if (SEL_STORE.exists()) {
                 Database.truncateDatabase(SEL_STORE);
-            }
-            if (MAT_STORE.exists()) {
-                Database.truncateDatabase(MAT_STORE);
             }
             if (MAN_STORE.exists()) {
                 Database.truncateDatabase(MAN_STORE);
@@ -207,40 +166,7 @@ public final class EncryptionHandler {
                     + " " + mSelector.getName() + " " + mSelector.getType()
                     + " " + mParentsString.toString() + " "
                     + mChildsString.toString() + " " + mSelector.getRevision()
-                    + " " + mSelector.getVersion());
-            }
-            System.out.println();
-
-            /*
-             * print key material db.
-             */
-            final SortedMap<Long, KeyMaterial> mMatMap =
-                mKeyMaterialDb.getEntries();
-            iter = mMatMap.keySet().iterator();
-
-            System.out.println("Material DB Size: " + mKeyMaterialDb.count());
-
-            while (iter.hasNext()) {
-                final KeyMaterial mMaterial = mMatMap.get(iter.next());
-
-                final List<Long> mParentsList = mMaterial.getParents();
-                final List<Long> mChildsList = mMaterial.getChilds();
-
-                final StringBuilder mParentsString = new StringBuilder();
-                for (int k = 0; k < mParentsList.size(); k++) {
-                    mParentsString.append("#" + mParentsList.get(k));
-                }
-
-                final StringBuilder mChildsString = new StringBuilder();
-                for (int k = 0; k < mChildsList.size(); k++) {
-                    mChildsString.append("#" + mChildsList.get(k));
-                }
-
-                System.out.println("Material: " + mMaterial.getPrimaryKey()
-                    + " " + mMaterial.getRevsion() + " "
-                    + mMaterial.getVersion() + " " + mParentsString.toString()
-                    + " " + mChildsString.toString() + " "
-                    + mMaterial.getSecretKey());
+                    + " " + mSelector.getVersion() + " " + mSelector.getSecretKey());
             }
             System.out.println();
 
@@ -293,7 +219,7 @@ public final class EncryptionHandler {
 
     public String getUser() {
         //return mSession.getUser();
-        return "U2";
+        return mLoggedUser;
     }
 
     public List<Long> getKeyCache() {
@@ -304,19 +230,16 @@ public final class EncryptionHandler {
         return mDataEncryptionKey;
     }
 
-    public KeyMaterialDatabase getKeyMaterialDBInstance() {
-        return mKeyMaterialDb;
-    }
-
-    public KeySelectorDatabase getKeySelectorDBInstance() {
+    public KeySelectorDatabase getKeySelectorInstance() {
         return mKeySelectorDb;
     }
 
-    public KeyManagerDatabase getKeyManagerDBInstance() {
+    public KeyManagerDatabase getKeyManagerInstance() {
         return mKeyManagerDb;
     }
 
     public KeyCache getKeyCacheInstance() {
         return mKeyCache;
     }
+
 }

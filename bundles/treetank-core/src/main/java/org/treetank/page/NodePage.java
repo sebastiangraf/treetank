@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.treetank.encryption.EncryptionHandler;
-import org.treetank.encryption.KeyMaterial;
+import org.treetank.encryption.KeySelector;
 import org.treetank.encryption.NodeEncryption;
 import org.treetank.exception.TTEncryptionException;
 import org.treetank.io.ITTSink;
@@ -85,7 +85,7 @@ public class NodePage extends AbsPage {
                 if (mUserKeys.contains(mRightKey)) {
                     // get secret key
                     mSecretKey =
-                        enHandler.getKeyMaterialDBInstance()
+                        enHandler.getKeySelectorInstance()
                             .getEntry(mRightKey).getSecretKey();
 
                     final int mElementKind = mIn.readInt();
@@ -250,22 +250,22 @@ public class NodePage extends AbsPage {
                 mNodeOut = new NodeOutputSink();
 
                 final long mDek = enHandler.getDataEncryptionKey();
-                final KeyMaterial mKeyMat =
-                    enHandler.getKeyMaterialDBInstance().getEntry(mDek);
-                final byte[] mSecretKey = mKeyMat.getSecretKey();
+                final KeySelector mKeySel =
+                    enHandler.getKeySelectorInstance().getEntry(mDek);
+                final byte[] mSecretKey = mKeySel.getSecretKey();
 
                 if (node != null) {
-                    mOut.writeLong(mKeyMat.getPrimaryKey());
-                    mOut.writeInt(mKeyMat.getRevsion());
-                    mOut.writeInt(mKeyMat.getVersion());
+                    mOut.writeLong(mKeySel.getPrimaryKey());
+                    mOut.writeInt(mKeySel.getRevision());
+                    mOut.writeInt(mKeySel.getVersion());
                     final int kind = node.getKind().getNodeIdentifier();
                     mOut.writeInt(kind);
                     node.serialize(mNodeOut);
 
                 } else {
-                    mOut.writeLong(mKeyMat.getPrimaryKey());
-                    mOut.writeInt(mKeyMat.getRevsion());
-                    mOut.writeInt(mKeyMat.getVersion());
+                    mOut.writeLong(mKeySel.getPrimaryKey());
+                    mOut.writeInt(mKeySel.getRevision());
+                    mOut.writeInt(mKeySel.getVersion());
                     mOut.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
                 }
 
