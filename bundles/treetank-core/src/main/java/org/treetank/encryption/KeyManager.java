@@ -45,7 +45,6 @@ public class KeyManager {
     public KeyManager(final String paramUser, final Set<Long> paramKeys) {
         this.mUser = paramUser;
         this.mKeySet = paramKeys;
-
     }
 
     /**
