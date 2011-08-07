@@ -52,7 +52,7 @@ public final class EncryptionHandler {
 
     private static ISession mSession;
     
-    private static String mLoggedUser = "U0";
+    private static String mLoggedUser = "U2";
 
     /**
      * The key data should be encrypted.
@@ -149,7 +149,7 @@ public final class EncryptionHandler {
             while (iter.hasNext()) {
 
                 final KeySelector mSelector = mSelMap.get(iter.next());
-                final List<Long> mParentsList = mSelector.getParents();
+                final LinkedList<Long> mParentsList = mSelector.getParents();
                 final List<Long> mChildsList = mSelector.getChilds();
 
                 final StringBuilder mParentsString = new StringBuilder();

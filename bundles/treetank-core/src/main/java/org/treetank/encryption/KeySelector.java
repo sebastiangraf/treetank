@@ -28,12 +28,12 @@ public class KeySelector {
     /**
      * List of parent nodes.
      */
-    private List<Long> mParents;
+    private LinkedList<Long> mParents;
 
     /**
      * List of child nodes.
      */
-    private List<Long> mChilds;
+    private LinkedList<Long> mChilds;
 
     /**
      * Current revision of node.
@@ -65,8 +65,8 @@ public class KeySelector {
      * @param paramName
      *            node name.
      */
-    public KeySelector(final String paramName, final List<Long> paramPar,
-        final List<Long> paramChild, final int paramRev,
+    public KeySelector(final String paramName, final LinkedList<Long> paramPar,
+        final LinkedList<Long> paramChild, final int paramRev,
         final int paramVer, final EntityType paramType) {
         this.mSelectorKey = PrimaryKeyGenerator.getInstance().newSelectorKey();
         this.mName = paramName;
@@ -104,7 +104,7 @@ public class KeySelector {
      * @return
      *         set of parent nodes.
      */
-    public final List<Long> getParents() {
+    public final LinkedList<Long> getParents() {
         return mParents;
     }
 
@@ -114,7 +114,7 @@ public class KeySelector {
      * @return
      *         set of child nodes.
      */
-    public final List<Long> getChilds() {
+    public final LinkedList<Long> getChilds() {
         return mChilds;
     }
 
