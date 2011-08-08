@@ -1,66 +1,104 @@
 /**
- * Copyright (c) 2011, Distributed Systems Group, University of Konstanz
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * All rights reserved.
  * 
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
  * 
- * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.treetank.encryption;
 
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 
 /**
- * Test class for node en- and decryption.
+ * JUnit-test class to test the functionality of the NodeEncryption methods.
  * 
  * @author Patrick Lang, University of Konstanz
- * 
  */
 public class NodeEncryptionTest {
+    
+    private Holder holder;
 
+    @Before
+    public void setUp() throws AbsTTException {
+        TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = Holder.generate();
+    }
+
+    @After
+    public void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
+    }
+    
     @Test
-    public final void testEncrypt() {
+    public void testEnDecryption(){
+        final String mOriginalString = "This is a String to encrypt";
+        final byte [] mStringAsByteArray = mOriginalString.getBytes();
+        
+        final byte [] mSecretKey = NodeEncryption.generateSecretKey();
+        
+        final byte [] mEncryptedBytes = NodeEncryption.encrypt(mStringAsByteArray, mSecretKey);
+        
+        final byte[] mDecryptedBytes = NodeEncryption.decrypt(mEncryptedBytes, mSecretKey);
+        
+        final String mDecryptedString = new String(mDecryptedBytes);
+        
+        assertEquals(mOriginalString, mDecryptedString);
 
-        final String aString = "This is a example string for en- and decryption testing";
-
-        final byte[] bytesString = aString.getBytes();
-
-        // final byte[] bytesEncrypt = NodeEncryption.getInstance().encrypt(bytesString);
-        //
-        // final byte[] bytesDecrypt = NodeEncryption.getInstance().decrypt(bytesEncrypt);
-
-        // StringBuilder sb = new StringBuilder();
-        // for(byte aByte: bytesString){
-        // sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
-        // }
-        // System.out.println("Orginal: "+ sb);
-        //
-        // sb = new StringBuilder();
-        // for(byte aByte: bytesEncrypt){
-        // sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
-        // }
-        // System.out.println("Encrypted: "+ sb);
-        //
-        //
-        //
-        // sb = new StringBuilder();
-        // for(byte aByte: bytesDecrypt){
-        // sb.append(aByte+ " "+ (aByte&0xff)+" "+Integer.toBinaryString(aByte & 0xff) );
-        // }
-        // System.out.println("Decrypted: "+ sb);
-
-        // assertArrayEquals(bytesString, bytesDecrypt);
-
+    }
+    
+    @Test
+    public void testLongByteConversion(){
+        final long mOrginialLong = 1000000;
+        
+        final byte[] mLongAsByteArray = NodeEncryption.longToByteArray(mOrginialLong);
+        
+        final long mByteArrayAsLong = NodeEncryption.byteArrayToLong(mLongAsByteArray);
+        
+        assertEquals(mOrginialLong, mByteArrayAsLong);
+        
+        
+    }
+    
+    @Test
+    public void testIntByteConversion(){
+        final int mOrginialInt = 1000;
+        
+        final byte[] mIntAsByteArray = NodeEncryption.intToByteArray(mOrginialInt);
+        
+        final int mByteArrayAsInt = NodeEncryption.byteArrayToInt(mIntAsByteArray);
+        
+        assertEquals(mOrginialInt, mByteArrayAsInt);
+        
+        
     }
 
 }

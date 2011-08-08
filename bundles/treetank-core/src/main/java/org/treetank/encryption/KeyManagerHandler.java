@@ -1,3 +1,30 @@
+/**
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.treetank.encryption;
 
 import java.util.HashMap;
@@ -11,14 +38,35 @@ import java.util.SortedMap;
 
 import org.treetank.exception.TTEncryptionException;
 
+/**
+ * This class handles all operations on KeyManager.
+ * 
+ * @author Patrick Lang, University of Konstanz
+ */
 public class KeyManagerHandler {
-
+    /**
+     * KeySelector database instance.
+     */
     KeySelectorDatabase mKeySelectorDb;
+    /**
+     * KeyManager database instance.
+     */
     KeyManagerDatabase mKeyManagerDb;
+    /**
+     * Current logged user.
+     */
     String mLoggedUser;
+    /**
+     * User name who join or leave a group.
+     */
+    String mGroupUser;
+    /**
+     * Group name in which a user is joining or leaving.
+     */
+    String mGroupName;
 
     /**
-     * Invoked when a new user joining a group.
+     * Invoked when a new user is joining a group.
      * 
      * @param paramUser
      *            new user name joining a group.
@@ -30,40 +78,34 @@ public class KeyManagerHandler {
     public void joinGroup(final String paramUser, final String paramGroup)
         throws TTEncryptionException {
         init();
+        mGroupUser = paramUser;
+        mGroupName = paramGroup;
         try {
             // check if group exits.
             if (nodeExists(paramGroup)) {
                 final long mGroupId = getRecentNodeKey(paramGroup);
-                // check if user exists and if is already member of group
-                long mUserId = -1;
-                boolean mUserExists = false;
-                if (nodeExists(paramUser)) {
-                    mUserExists = true;
-                    mUserId = getRecentNodeKey(paramUser);
-                }
-                if (!userGroupCheck(paramUser, paramGroup)) {
-                    /*
-                     * create new node for each join affected tree tail node and update version, parent
-                     * and child list.
-                     */
-                    // nodes that are affected by leave.
-                    final List<Long> mTreePath = getTreePathNodes(mGroupId);
+                final boolean mUserExists = nodeExists(paramUser);
 
-                    // old node id (key), new node id (value)
+                // check if user exists and if is already member of group
+                if (!userGroupCheck(paramUser, paramGroup)) {
+                    // all nodes that are affected by leave.
+                    final List<Long> mTreePath =
+                        getTreePathNodes(getRecentNodeKey(paramGroup));
+
+                    // map of old node id (key), new node id (value).
                     final Map<Long, Long> mNewSelIds =
                         new HashMap<Long, Long>();
 
-                    // new node ids
+                    // ids of all new created nodes.
                     final List<Long> mNewIdsList = new LinkedList<Long>();
 
+                    // new id of joining group
                     long mNewGroupId = -1;
 
-                    // create new group nodes.
+                    // create new node for each node affected by join and it's version.
                     for (int i = 0; i < mTreePath.size(); i++) {
-
                         final KeySelector mOldSel =
                             mKeySelectorDb.getEntry(mTreePath.get(i));
-
                         int mNewVersion = mOldSel.getVersion() + 1;
 
                         final KeySelector mNewSel =
@@ -82,49 +124,15 @@ public class KeyManagerHandler {
                     }
 
                     // update parent and child list of each new node.
-                    for (int i = 0; i < mNewIdsList.size(); i++) {
-                        final KeySelector mSel =
-                            mKeySelectorDb.getEntry(mNewIdsList.get(i));
+                    updateParentsChilds(mNewIdsList);
 
-                        final Long[] parArray =
-                            new Long[mSel.getParents().size()];
-                        mSel.getParents().toArray(parArray);
-
-                        final Long[] childArray =
-                            new Long[mSel.getChilds().size()];
-                        mSel.getChilds().toArray(childArray);
-
-                        for (int j = 0; j < parArray.length; j++) {
-                            long lastKey =
-                                getRecentNodeKey(mKeySelectorDb.getEntry(
-                                    parArray[j]).getName());
-                            mSel.removeParent(parArray[j]);
-                            mSel.addParent(lastKey);
-                        }
-
-                        for (int j = 0; j < childArray.length; j++) {
-                            long lastKey =
-                                getRecentNodeKey(mKeySelectorDb.getEntry(
-                                    childArray[j]).getName());
-                            mSel.removeChild(childArray[j]);
-                            mSel.addChild(lastKey);
-                        }
-
-                        if (mNewIdsList.get(i) == getRecentNodeKey(paramGroup)) {
-                            if (mSel.getChilds().contains(
-                                getRecentNodeKey(paramUser))) {
-                                mSel.removeChild(getRecentNodeKey(paramUser));
-                            }
-                        }
-                        mKeySelectorDb.putEntry(mSel);
-                    }
-
-                    // create new user node with new version, parent list and add its new id as child to the
+                    // create new user node with new version, parent list and add it's new id as child to the
                     // new node of its joining group.
                     final KeySelector mNewUserSel;
                     if (mUserExists) {
                         final KeySelector mOldUserSel =
-                            mKeySelectorDb.getEntry(mUserId);
+                            mKeySelectorDb
+                                .getEntry(getRecentNodeKey(paramUser));
 
                         final LinkedList<Long> mUserParentList =
                             mOldUserSel.getParents();
@@ -154,7 +162,6 @@ public class KeyManagerHandler {
                         // create key manager entry for new user.
                         mKeyManagerDb.putEntry(new KeyManager(paramUser,
                             new HashSet<Long>()));
-
                     }
 
                     final KeySelector mGroupSel =
@@ -162,74 +169,22 @@ public class KeyManagerHandler {
                     mGroupSel.addChild(mNewUserSel.getPrimaryKey());
                     mKeySelectorDb.putEntry(mGroupSel);
 
-                    /*
-                     * update each user key set in key manager.
-                     */
-                    final SortedMap<String, KeyManager> mManMap =
-                        mKeyManagerDb.getEntries();
-                    final Iterator mOuterIter = mManMap.keySet().iterator();
+                    // update each user key set in key manager.
+                    updateKeyManagerJoin(mNewSelIds);
 
-                    while (mOuterIter.hasNext()) { // iterate through all users.
-                        final String mKeyUser = (String)mOuterIter.next();
-                        final KeyManager mManager = mManMap.get(mKeyUser);
-
-                        final Iterator mInnerIter =
-                            mNewSelIds.keySet().iterator();
-                        while (mInnerIter.hasNext()) { // iterate through all keys that have changed.
-                            long mId = (Long)mInnerIter.next();
-
-                            if (mKeyUser.equals(paramUser)) {
-                                mManager.addKey(mNewSelIds.get(mId));
-                            } else if (mManager.getKeySet().contains(mId)) {
-                                mManager.addKey(mNewSelIds.get(mId));
-                            }
-                        }
-                        mKeyManagerDb.putEntry(mManager);
-                    }
-
-                    /*
-                     * create and encrypt key trails for logged user.
-                     */
+                    // create and encrypt key trails for logged user.
                     final Map<Long, byte[]> mKeyTrails =
-                        new HashMap<Long, byte[]>();
-
-                    final KeyManager mKeyManager =
-                        mKeyManagerDb.getEntry(mLoggedUser);
-                    final Set<Long> mUserKeySet = mKeyManager.getKeySet();
-
-                    final Iterator mSetIter = mUserKeySet.iterator();
-                    while (mSetIter.hasNext()) {
-                        final long mMapId = (Long)mSetIter.next();
-                        if (mNewIdsList.contains(mMapId)) {
-                            final KeySelector mSel =
-                                mKeySelectorDb.getEntry(mMapId);
-                            final List<Long> mChilds = mSel.getChilds();
-                            for (int i = 0; i < mChilds.size(); i++) {
-                                if (mUserKeySet.contains(mChilds.get(i))) {
-                                    final KeySelector mChildSel =
-                                        mKeySelectorDb.getEntry(mChilds.get(i));
-                                    final byte[] mChildSecretKey =
-                                        mChildSel.getSecretKey();
-                                    final byte[] mIdAsByteArray =
-                                        NodeEncryption.longToByteArray(mMapId);
-                                    final byte[] mEncryptedId =
-                                        NodeEncryption.encrypt(mIdAsByteArray,
-                                            mChildSecretKey);
-                                    mKeyTrails
-                                        .put(mChilds.get(i), mEncryptedId);
-                                }
-                            }
-                        }
-                    }
-
+                        encryptKeyTrails(mNewIdsList);
                     transmitKeyTrails(mKeyTrails);
 
                 } else {
                     throw new TTEncryptionException("User " + paramUser
-                        + " is already member of given group " + paramGroup + "!");
+                        + " is already member of given group " + paramGroup
+                        + "!");
                 }
             } else {
-                throw new TTEncryptionException("Group "+ paramGroup +" does not exist!");
+                throw new TTEncryptionException("Group " + paramGroup
+                    + " does not exist!");
             }
         } catch (final TTEncryptionException mTTExp) {
             mTTExp.printStackTrace();
@@ -248,32 +203,29 @@ public class KeyManagerHandler {
      */
     public void leaveGroup(final String paramUser, final String paramGroup) {
         init();
+        mGroupUser = paramUser;
+        mGroupName = paramGroup;
         try {
             // check if group and user exits.
             if (nodeExists(paramGroup) && nodeExists(paramUser)) {
-                final long mGroupId = getRecentNodeKey(paramGroup);
                 if (userGroupCheck(paramUser, paramGroup)) {
-                    /*
-                     * create new node for each join affected tree tail node and update revision, parent
-                     * and child list.
-                     */
-                    // nodes that are affected by leave.
-                    final List<Long> mTreePath = getTreePathNodes(mGroupId);
+                    // all nodes that are affected by leave.
+                    final List<Long> mTreePath =
+                        getTreePathNodes(getRecentNodeKey(paramGroup));
 
-                    // old node id (key), new node id (value)
+                    // map of old node id (key), new node id (value).
                     final Map<Long, Long> mNewSelIds =
                         new HashMap<Long, Long>();
 
-                    // new node ids
+                    // ids of all new created nodes.
                     final List<Long> mNewIdsList = new LinkedList<Long>();
 
-                    // create new group nodes.
+                    // create new node for each node affected by leave and it's revision.
                     for (int i = 0; i < mTreePath.size(); i++) {
                         final KeySelector mOldSel =
                             mKeySelectorDb.getEntry(mTreePath.get(i));
 
                         int mNewRevision = mOldSel.getRevision() + 1;
-
                         final KeySelector mNewSel =
                             new KeySelector(mOldSel.getName(), mOldSel
                                 .getParents(), mOldSel.getChilds(),
@@ -284,17 +236,27 @@ public class KeyManagerHandler {
                         mNewSelIds.put(mOldSel.getPrimaryKey(), mNewSel
                             .getPrimaryKey());
                         mNewIdsList.add(mNewSel.getPrimaryKey());
-
                     }
-                    
-                 // create new user node with new revision and new parent list (without leaving group id).
+
+                    // create new user node with new revision and new parent list (without leaving group id).
                     final KeySelector mOldUserSel =
                         mKeySelectorDb.getEntry(getRecentNodeKey(paramUser));
-
                     if (mOldUserSel.getParents().size() > 1) {
                         final LinkedList<Long> mUserParentList =
                             mOldUserSel.getParents();
-                        mUserParentList.remove(getFirstNodeKey(paramGroup));
+
+                        long mId = -1;
+                        final Iterator iter =
+                            mKeySelectorDb.getEntries().keySet().iterator();
+                        while (iter.hasNext()) {
+                            final KeySelector mSelector =
+                                mKeySelectorDb.getEntries().get(iter.next());
+                            if (mSelector.getName().equals(paramGroup)) {
+                                mId = mSelector.getPrimaryKey();
+                                break;
+                            }
+                        }
+                        mUserParentList.remove(mId);
 
                         final KeySelector mNewUserSel =
                             new KeySelector(mOldUserSel.getName(),
@@ -312,154 +274,14 @@ public class KeyManagerHandler {
                     }
 
                     // update parent and child list of each new node.
-                    for (int i = 0; i < mNewIdsList.size(); i++) {
-                        final KeySelector mSel =
-                            mKeySelectorDb.getEntry(mNewIdsList.get(i));
+                    updateParentsChilds(mNewIdsList);
 
-                        final Long[] parArray =
-                            new Long[mSel.getParents().size()];
-                        mSel.getParents().toArray(parArray);
+                    // update each user key set into key manager.
+                    updateKeyManagerLeave(mNewSelIds);
 
-                        final Long[] childArray =
-                            new Long[mSel.getChilds().size()];
-                        mSel.getChilds().toArray(childArray);
-
-                        for (int j = 0; j < parArray.length; j++) {
-                            long lastKey =
-                                getRecentNodeKey(mKeySelectorDb.getEntry(
-                                    parArray[j]).getName());
-                            mSel.removeParent(parArray[j]);
-                            mSel.addParent(lastKey);
-                        }
-
-                        for (int j = 0; j < childArray.length; j++) {
-                            long lastKey =
-                                getRecentNodeKey(mKeySelectorDb.getEntry(
-                                    childArray[j]).getName());
-                            mSel.removeChild(childArray[j]);
-                            mSel.addChild(lastKey);
-                        }
-
-                        if (mNewIdsList.get(i) == getRecentNodeKey(paramGroup)) {
-                            if (mSel.getChilds().contains(
-                                getRecentNodeKey(paramUser))) {
-                                mSel.removeChild(getRecentNodeKey(paramUser));
-                            }
-                        }
-                        mKeySelectorDb.putEntry(mSel);
-                    }
-
-                    
-
-                    /*
-                     * update each user key set into key manager.
-                     */
-                    final SortedMap<String, KeyManager> mManMap =
-                        mKeyManagerDb.getEntries();
-                    final Iterator mOuterIter = mManMap.keySet().iterator();
-
-                    while (mOuterIter.hasNext()) { // iterate through all users.
-                        final String mKeyUser = (String)mOuterIter.next();
-                        final KeyManager mManager = mManMap.get(mKeyUser);
-
-                        final Iterator mInnerIter =
-                            mNewSelIds.keySet().iterator();
-                        while (mInnerIter.hasNext()) { // iterate through all keys that have changed.
-                            long mId = (Long)mInnerIter.next();
-                            if (mKeyUser.equals(paramUser)) {
-                                // add all new keys user gets since its remaining DAG.
-
-                                final List<Long> mUserTreePath =
-                                    getTreePathNodes(getRecentNodeKey(paramUser));
-                                if (mUserTreePath.contains(mId)
-                                    || mUserTreePath.contains(mNewSelIds
-                                        .get(mId))) {
-                                    mManager.addKey(mNewSelIds.get(mId));
-                                }
-
-                            } else if (mManager.getKeySet().contains(mId)) {
-                                mManager.addKey(mNewSelIds.get(mId));
-                            }
-                        }
-
-                        // remove all old keys from user's key manager it is losing through group leaving.
-                        if (mKeyUser.equals(paramUser)) {
-                            final Set<Long> mUserSet = mManager.getKeySet();
-
-                            final Iterator mapIter =
-                                mNewSelIds.keySet().iterator();
-                            while (mapIter.hasNext()) {
-                                final long mMapKey = (Long)mapIter.next();
-                                if (mUserSet.contains(mMapKey)) {
-                                    if (!mUserSet.contains(mNewSelIds
-                                        .get(mMapKey))) {
-                                        mManager.removeKey(mMapKey);
-
-                                        final String nodeName =
-                                            mKeySelectorDb.getEntry(mMapKey)
-                                                .getName();
-                                        final SortedMap<Long, KeySelector> mSelectorMap =
-                                            mKeySelectorDb.getEntries();
-                                        final Iterator mIter =
-                                            mSelectorMap.keySet().iterator();
-                                        while (mIter.hasNext()) {
-                                            long mMapId = (Long)mIter.next();
-                                            KeySelector mInnerSel =
-                                                mSelectorMap.get(mMapId);
-                                            if (mInnerSel.getName().equals(
-                                                nodeName)) {
-                                                mManager.removeKey(mMapId);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        mKeyManagerDb.putEntry(mManager);
-                    }
-
-                    /*
-                     * create and encrypt key trails for logged user.
-                     */
+                    // create and encrypt key trails for logged user.
                     final Map<Long, byte[]> mKeyTrails =
-                        new HashMap<Long, byte[]>();
-
-                    final KeyManager mKeyManager =
-                        mKeyManagerDb.getEntry(mLoggedUser);
-
-                    // mKeyManager is NULL, when logged user is not a member of any group
-                    if (mKeyManager != null) {
-                        final Set<Long> mUserKeySet = mKeyManager.getKeySet();
-
-                        final Iterator mSetIter = mUserKeySet.iterator();
-                        while (mSetIter.hasNext()) {
-                            final long mMapId = (Long)mSetIter.next();
-                            if (mNewIdsList.contains(mMapId)) {
-                                final KeySelector mSel =
-                                    mKeySelectorDb.getEntry(mMapId);
-                                final List<Long> mChilds = mSel.getChilds();
-                                for (int i = 0; i < mChilds.size(); i++) {
-                                    if (mUserKeySet.contains(mChilds.get(i))) {
-                                        final KeySelector mChildSel =
-                                            mKeySelectorDb.getEntry(mChilds
-                                                .get(i));
-                                        final byte[] mChildSecretKey =
-                                            mChildSel.getSecretKey();
-                                        final byte[] mIdAsByteArray =
-                                            NodeEncryption
-                                                .longToByteArray(mMapId);
-                                        final byte[] mEncryptedId =
-                                            NodeEncryption
-                                                .encrypt(mIdAsByteArray,
-                                                    mChildSecretKey);
-                                        mKeyTrails.put(mChilds.get(i),
-                                            mEncryptedId);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
+                        encryptKeyTrails(mNewIdsList);
                     transmitKeyTrails(mKeyTrails);
 
                 } else {
@@ -477,12 +299,181 @@ public class KeyManagerHandler {
     }
 
     /**
+     * Creates and encrypts key trails.
+     * 
+     * @param paramList
+     *            id list of all node which are affected by update.
+     * @return
+     *         key trails map.
+     */
+    private Map<Long, byte[]> encryptKeyTrails(final List<Long> paramList) {
+        final Map<Long, byte[]> mKeyTrails = new HashMap<Long, byte[]>();
+        final KeyManager mKeyManager = mKeyManagerDb.getEntry(mLoggedUser);
+
+        // mKeyManager is NULL, when logged user is not a member of any group
+        if (mKeyManager != null) {
+            final Set<Long> mUserKeySet = mKeyManager.getKeySet();
+
+            final Iterator mSetIter = mUserKeySet.iterator();
+            while (mSetIter.hasNext()) {
+                final long mMapId = (Long)mSetIter.next();
+                if (paramList.contains(mMapId)) {
+                    final List<Long> mChilds =
+                        mKeySelectorDb.getEntry(mMapId).getChilds();
+                    for (int i = 0; i < mChilds.size(); i++) {
+                        if (mUserKeySet.contains(mChilds.get(i))) {
+                            final byte[] mChildSecretKey =
+                                mKeySelectorDb.getEntry(mChilds.get(i))
+                                    .getSecretKey();
+                            final byte[] mIdAsByteArray =
+                                NodeEncryption.longToByteArray(mMapId);
+                            final byte[] mEncryptedId =
+                                NodeEncryption.encrypt(mIdAsByteArray,
+                                    mChildSecretKey);
+                            mKeyTrails.put(mChilds.get(i), mEncryptedId);
+                        }
+                    }
+                }
+            }
+        }
+
+        return mKeyTrails;
+    }
+
+    /**
+     * Updates parent and children of all nodes.
+     * 
+     * @param paramList
+     *            id list of all node which are affected by update
+     */
+    private void updateParentsChilds(final List<Long> paramList) {
+        for (int i = 0; i < paramList.size(); i++) {
+            final KeySelector mSel = mKeySelectorDb.getEntry(paramList.get(i));
+
+            final Long[] parArray = new Long[mSel.getParents().size()];
+            mSel.getParents().toArray(parArray);
+
+            for (int j = 0; j < parArray.length; j++) {
+                long lastKey =
+                    getRecentNodeKey(mKeySelectorDb.getEntry(parArray[j])
+                        .getName());
+                mSel.removeParent(parArray[j]);
+                mSel.addParent(lastKey);
+            }
+
+            final Long[] childArray = new Long[mSel.getChilds().size()];
+            mSel.getChilds().toArray(childArray);
+
+            for (int j = 0; j < childArray.length; j++) {
+                long lastKey =
+                    getRecentNodeKey(mKeySelectorDb.getEntry(childArray[j])
+                        .getName());
+                mSel.removeChild(childArray[j]);
+                mSel.addChild(lastKey);
+            }
+
+            if (paramList.get(i) == getRecentNodeKey(mGroupName)) {
+                if (mSel.getChilds().contains(getRecentNodeKey(mGroupUser))) {
+                    mSel.removeChild(getRecentNodeKey(mGroupUser));
+                }
+            }
+            mKeySelectorDb.putEntry(mSel);
+        }
+    }
+
+    /**
+     * Updates the key manager on a join operation.
+     * 
+     * @param paramMap
+     *            map containing all through join effected nodes with old and new id.
+     */
+    public void updateKeyManagerJoin(final Map<Long, Long> paramMap) {
+        final Iterator mOuterIter =
+            mKeyManagerDb.getEntries().keySet().iterator();
+        while (mOuterIter.hasNext()) { // iterate through all users.
+            final String mKeyUser = (String)mOuterIter.next();
+            final KeyManager mManager =
+                mKeyManagerDb.getEntries().get(mKeyUser);
+
+            final Iterator mInnerIter = paramMap.keySet().iterator();
+            while (mInnerIter.hasNext()) { // iterate through all keys that have changed.
+                final long mId = (Long)mInnerIter.next();
+                if (mKeyUser.equals(mGroupUser)) {
+                    mManager.addKey(paramMap.get(mId));
+                } else if (mManager.getKeySet().contains(mId)) {
+                    mManager.addKey(paramMap.get(mId));
+                }
+            }
+            mKeyManagerDb.putEntry(mManager);
+        }
+    }
+
+    /**
+     * Updates the key manager on a leave operation.
+     * 
+     * @param paramMap
+     *            map containing all through leave effected nodes with old and new id.
+     */
+    public void updateKeyManagerLeave(final Map<Long, Long> paramMap) {
+        final Iterator mOuterIter =
+            mKeyManagerDb.getEntries().keySet().iterator();
+        while (mOuterIter.hasNext()) { // iterate through all users.
+            final String mKeyUser = (String)mOuterIter.next();
+            final KeyManager mManager =
+                mKeyManagerDb.getEntries().get(mKeyUser);
+
+            final Iterator mInnerIter = paramMap.keySet().iterator();
+            while (mInnerIter.hasNext()) { // iterate through all keys that have changed.
+                long mId = (Long)mInnerIter.next();
+                if (mKeyUser.equals(mGroupUser)) {
+                    // add all new keys user gets since its remaining DAG.
+                    final List<Long> mUserTreePath =
+                        getTreePathNodes(getRecentNodeKey(mGroupUser));
+                    if (mUserTreePath.contains(mId)
+                        || mUserTreePath.contains(paramMap.get(mId))) {
+                        mManager.addKey(paramMap.get(mId));
+                    }
+                } else if (mManager.getKeySet().contains(mId)) {
+                    mManager.addKey(paramMap.get(mId));
+                }
+            }
+
+            // remove all old keys from user's key manager it is losing through group leaving.
+            if (mKeyUser.equals(mGroupUser)) {
+                final Iterator mapIter = paramMap.keySet().iterator();
+                while (mapIter.hasNext()) {
+                    final long mMapKey = (Long)mapIter.next();
+                    if (mManager.getKeySet().contains(mMapKey)) {
+                        if (!mManager.getKeySet().contains(
+                            paramMap.get(mMapKey))) {
+                            mManager.removeKey(mMapKey);
+
+                            final Iterator mIter =
+                                mKeySelectorDb.getEntries().keySet().iterator();
+                            while (mIter.hasNext()) {
+                                long mMapId = (Long)mIter.next();
+                                final KeySelector mInnerSel =
+                                    mKeySelectorDb.getEntries().get(mMapId);
+                                if (mInnerSel.getName().equals(
+                                    mKeySelectorDb.getEntry(mMapKey).getName())) {
+                                    mManager.removeKey(mMapId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            mKeyManagerDb.putEntry(mManager);
+        }
+    }
+
+    /**
      * Transmits the key to the client.
      * 
      * @param paramKeyTails
      *            map of key trails.
      */
-    public void transmitKeyTrails(final Map<Long, byte[]> paramKeyTails) {
+    private void transmitKeyTrails(final Map<Long, byte[]> paramKeyTails) {
         // if map has no values, the logged user key cache has to be removed
         // final Iterator iter = paramKeyTails.keySet().iterator();
         // System.out.println("KeyTrails of user " + mLoggedUser + ": ");
@@ -509,11 +500,10 @@ public class KeyManagerHandler {
      *         node existence.
      */
     private boolean nodeExists(final String paramNodeName) {
-        final SortedMap<Long, KeySelector> mSelMap =
-            mKeySelectorDb.getEntries();
-        final Iterator iter = mSelMap.keySet().iterator();
+        final Iterator iter = mKeySelectorDb.getEntries().keySet().iterator();
         while (iter.hasNext()) {
-            final KeySelector mSelector = mSelMap.get(iter.next());
+            final KeySelector mSelector =
+                mKeySelectorDb.getEntries().get(iter.next());
             if (mSelector.getName().equals(paramNodeName)) {
                 return true;
             }
@@ -533,46 +523,24 @@ public class KeyManagerHandler {
      */
     private boolean userGroupCheck(final String paramUser,
         final String paramGroup) {
-        
-        final List<Long> mTreePath = getTreePathNodes(getRecentNodeKey(paramGroup));
-        
-        for(int i=0; i< mTreePath.size(); i++){
+        final List<Long> mTreePath =
+            getTreePathNodes(getRecentNodeKey(paramGroup));
+
+        for (int i = 0; i < mTreePath.size(); i++) {
             final KeySelector mGroupSelector =
-              mKeySelectorDb.getEntry(mTreePath.get(i));
-            
-            if(mGroupSelector.getName().equals(paramGroup)){
+                mKeySelectorDb.getEntry(mTreePath.get(i));
+            if (mGroupSelector.getName().equals(paramGroup)) {
                 final List<Long> mChildList = mGroupSelector.getChilds();
-                for(int j=0; j<mChildList.size(); j++){
-                    final String mChildName = mKeySelectorDb.getEntry(mChildList.get(j)).getName();
-                    if(mChildName.equals(paramUser)){
+                for (int j = 0; j < mChildList.size(); j++) {
+                    final String mChildName =
+                        mKeySelectorDb.getEntry(mChildList.get(j)).getName();
+                    if (mChildName.equals(paramUser)) {
                         return true;
                     }
-                } 
+                }
             }
         }
         return false;
-    }
-
-    /**
-     * Returns first selector node id by given node name.
-     * 
-     * @param paramNodeName
-     *            node name for what the id should found.
-     * @return
-     *         first found selector node id.
-     */
-    private long getFirstNodeKey(final String paramNodeName) {
-        final SortedMap<Long, KeySelector> mSelMap =
-            mKeySelectorDb.getEntries();
-        final Iterator iter = mSelMap.keySet().iterator();
-
-        while (iter.hasNext()) {
-            final KeySelector mSelector = mSelMap.get(iter.next());
-            if (mSelector.getName().equals(paramNodeName)) {
-                return mSelector.getPrimaryKey();
-            }
-        }
-        return -1;
     }
 
     /**
@@ -611,11 +579,11 @@ public class KeyManagerHandler {
         long mGroupId = mNodeId;
         final String mGroupName = mKeySelectorDb.getEntry(mGroupId).getName();
 
-        final SortedMap<Long, KeySelector> mGroupSelMap =
-            mKeySelectorDb.getEntries();
-        final Iterator mGroupIter = mGroupSelMap.keySet().iterator();
+        final Iterator mGroupIter =
+            mKeySelectorDb.getEntries().keySet().iterator();
         while (mGroupIter.hasNext()) {
-            final KeySelector mSelector = mGroupSelMap.get(mGroupIter.next());
+            final KeySelector mSelector =
+                mKeySelectorDb.getEntries().get(mGroupIter.next());
             if (mSelector.getName().equals(mGroupName)) {
                 mGroupId = mSelector.getPrimaryKey();
             }
@@ -631,12 +599,11 @@ public class KeyManagerHandler {
                     long mParentId = parentId;
                     final String mNodeName =
                         mKeySelectorDb.getEntry(mParentId).getName();
-
-                    final SortedMap<Long, KeySelector> mSelMap =
-                        mKeySelectorDb.getEntries();
-                    final Iterator iter = mSelMap.keySet().iterator();
+                    final Iterator iter =
+                        mKeySelectorDb.getEntries().keySet().iterator();
                     while (iter.hasNext()) {
-                        final KeySelector mSelector = mSelMap.get(iter.next());
+                        final KeySelector mSelector =
+                            mKeySelectorDb.getEntries().get(iter.next());
                         if (mSelector.getName().equals(mNodeName)) {
                             mParentId = mSelector.getPrimaryKey();
                         }

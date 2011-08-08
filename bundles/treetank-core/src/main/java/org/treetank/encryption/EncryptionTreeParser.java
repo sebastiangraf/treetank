@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2011, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package org.treetank.encryption;
 
 import java.io.File;
@@ -21,7 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.treetank.cache.KeyCache;
 
 /**
- * Class for parsing the initial given right tree and storing
+ * Class for parsing the initial given encryption tree and storing
  * all data into the databases.
  * 
  * @author Patrick Lang, University of Konstanz
@@ -128,7 +144,6 @@ public class EncryptionTreeParser extends DefaultHandler {
         final String mNodeType = atts.getValue(1);
 
         if (qName.equals(mNodeDec)) {
-
             if (mNodeStack.size() > 0) {
                 mNodeStack.pop();
             }
@@ -188,14 +203,10 @@ public class EncryptionTreeParser extends DefaultHandler {
             for (int i = 0; i < mNameList.size(); i++) {
                 final String mName = mNameList.get(i);
 
-                final SortedMap<Long, KeySelector> mSelectorMap =
-                    mKeySelectorDb.getEntries();
-                final Iterator innerIter = mSelectorMap.keySet().iterator();
-
+                final Iterator innerIter = mKeySelectorDb.getEntries().keySet().iterator();
                 while (innerIter.hasNext()) {
                     final KeySelector mParentSelector =
-                        mSelectorMap.get(innerIter.next());
-
+                        mKeySelectorDb.getEntries().get(innerIter.next());
                     if (mParentSelector.getName().equals(mName)) {
                         mSelector.addParent(mParentSelector.getPrimaryKey());
                         mKeySelectorDb.putEntry(mSelector);

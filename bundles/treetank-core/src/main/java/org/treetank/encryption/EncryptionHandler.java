@@ -1,3 +1,29 @@
+/**
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package org.treetank.encryption;
 
 import java.io.File;
@@ -15,8 +41,7 @@ import org.treetank.exception.TTEncryptionException;
 import org.treetank.exception.TTIOException;
 
 /**
- * Singleton class holding and handling all necessary operations and
- * data for encryption process.
+ * Singleton class holding and handling data for encryption.
  * 
  * @author Patrick Lang, University of Konstanz
  */
@@ -51,8 +76,14 @@ public final class EncryptionHandler {
      */
     private static KeyCache mKeyCache;
 
+    /**
+     * Instance of Session.
+     */
     private static ISession mSession;
 
+    /**
+     * Current session user.
+     */
     private static String mLoggedUser = "U2";
 
     /**
@@ -63,17 +94,19 @@ public final class EncryptionHandler {
     /**
      * Store path of berkeley key selector db.
      */
-    private static final File SEL_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
-        File.separator).append("tnk").append(File.separator).append("selectordb").toString());
+    private static final File SEL_STORE = new File(new StringBuilder(
+        File.separator).append("tmp").append(File.separator).append("tnk")
+        .append(File.separator).append("selectordb").toString());
 
     /**
      * Store path of berkeley key manager db.
      */
-    private static final File MAN_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
-        File.separator).append("tnk").append(File.separator).append("keymanagerdb").toString());
+    private static final File MAN_STORE = new File(new StringBuilder(
+        File.separator).append("tmp").append(File.separator).append("tnk")
+        .append(File.separator).append("keymanagerdb").toString());
 
     /**
-     * Constructor of singleton class that initiates all needed instances.
+     * Standard constructor.
      */
     private EncryptionHandler() {
 
@@ -99,7 +132,8 @@ public final class EncryptionHandler {
      * 
      * @throws TTEncryptionException
      */
-    public void init(final ISession paramSession, final long paramDEK) throws TTEncryptionException {
+    public void init(final ISession paramSession, final long paramDEK)
+        throws TTEncryptionException {
         if (mNodeEncryption) {
             mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
             mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
@@ -140,7 +174,8 @@ public final class EncryptionHandler {
             /*
              * print key selector db.
              */
-            final SortedMap<Long, KeySelector> mSelMap = mKeySelectorDb.getEntries();
+            final SortedMap<Long, KeySelector> mSelMap =
+                mKeySelectorDb.getEntries();
             Iterator iter = mSelMap.keySet().iterator();
 
             System.out.println("\nSelector DB Size: " + mKeySelectorDb.count());
@@ -161,9 +196,11 @@ public final class EncryptionHandler {
                     mChildsString.append("#" + mChildsList.get(k));
                 }
 
-                System.out.println("Selector: " + mSelector.getPrimaryKey() + " " + mSelector.getName() + " "
-                    + mSelector.getType() + " " + mParentsString.toString() + " " + mChildsString.toString()
-                    + " " + mSelector.getRevision() + " " + mSelector.getVersion() + " "
+                System.out.println("Selector: " + mSelector.getPrimaryKey()
+                    + " " + mSelector.getName() + " " + mSelector.getType()
+                    + " " + mParentsString.toString() + " "
+                    + mChildsString.toString() + " " + mSelector.getRevision()
+                    + " " + mSelector.getVersion() + " "
                     + mSelector.getSecretKey());
             }
             System.out.println();
@@ -171,7 +208,8 @@ public final class EncryptionHandler {
             /*
              * print key manager db
              */
-            final SortedMap<String, KeyManager> sMap = mKeyManagerDb.getEntries();
+            final SortedMap<String, KeyManager> sMap =
+                mKeyManagerDb.getEntries();
 
             // iterate through all users
             final Iterator outerIter = sMap.keySet().iterator();
@@ -183,7 +221,8 @@ public final class EncryptionHandler {
                 final String user = (String)outerIter.next();
                 sb = new StringBuilder(user + ": ");
 
-                final Set<Long> mKeySet = mKeyManagerDb.getEntry(user).getKeySet();
+                final Set<Long> mKeySet =
+                    mKeyManagerDb.getEntry(user).getKeySet();
 
                 // iterate through user's key set.
                 final Iterator innerIter = mKeySet.iterator();
@@ -199,7 +238,8 @@ public final class EncryptionHandler {
              * print key cache.
              */
             final LinkedList<Long> mKeyList = mKeyCache.get(getUser());
-            final StringBuilder cacheString = new StringBuilder(getUser() + ": ");
+            final StringBuilder cacheString =
+                new StringBuilder(getUser() + ": ");
             for (long aKey : mKeyList) {
                 cacheString.append(aKey + " ");
             }
@@ -208,31 +248,73 @@ public final class EncryptionHandler {
 
     }
 
+    /**
+     * Returns whether encryption is enabled or not.
+     * 
+     * @return
+     *         encryption enabled.
+     */
     public boolean checkEncryption() {
         return mNodeEncryption;
     }
 
+    /**
+     * Returns session user.
+     * 
+     * @return
+     *         current logged user.
+     */
     public String getUser() {
         // return mSession.getUser();
         return mLoggedUser;
     }
 
+    /**
+     * Returns cache list of current logged user.
+     * 
+     * @return
+     *         cache list of user.
+     */
     public List<Long> getKeyCache() {
         return mKeyCache.get(getUser());
     }
 
+    /**
+     * Returns data encryption key.
+     * 
+     * @return
+     *         data encryption key.
+     */
     public long getDataEncryptionKey() {
         return mDataEncryptionKey;
     }
 
+    /**
+     * Returns key selector database instance.
+     * 
+     * @return
+     *         KeySelector instance.
+     */
     public KeySelectorDatabase getKeySelectorInstance() {
         return mKeySelectorDb;
     }
 
+    /**
+     * Returns key manager database instance.
+     * 
+     * @return
+     *         KeyManager instance.
+     */
     public KeyManagerDatabase getKeyManagerInstance() {
         return mKeyManagerDb;
     }
 
+    /**
+     * Returns key cache instance.
+     * 
+     * @return
+     *         KeyCache instance.
+     */
     public KeyCache getKeyCacheInstance() {
         return mKeyCache;
     }
