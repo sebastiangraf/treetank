@@ -26,7 +26,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * Helper class to provide operations for node encryption and decrpytion.
+ * Helper class to provide operations for node encryption and decryption.
  * 
  * @author Patrick Lang, University of Konstanz
  * 
@@ -116,7 +116,7 @@ public class NodeEncryption {
      * @return
      *         Generated secret key.
      */
-    public final synchronized byte[] generateSecretKey() {
+    public static final synchronized byte[] generateSecretKey() {
         final KeyGenerator kGen;
         SecretKey sKey = null;
         try {
