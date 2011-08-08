@@ -10,6 +10,7 @@ import java.util.SortedMap;
 import org.treetank.access.Database;
 import org.treetank.api.ISession;
 import org.treetank.cache.KeyCache;
+import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTEncryptionException;
 import org.treetank.exception.TTIOException;
 
@@ -51,7 +52,7 @@ public final class EncryptionHandler {
     private static KeyCache mKeyCache;
 
     private static ISession mSession;
-    
+
     private static String mLoggedUser = "U2";
 
     /**
@@ -62,16 +63,14 @@ public final class EncryptionHandler {
     /**
      * Store path of berkeley key selector db.
      */
-    private static final File SEL_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("selectordb").toString());
+    private static final File SEL_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("selectordb").toString());
 
     /**
      * Store path of berkeley key manager db.
      */
-    private static final File MAN_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("keymanagerdb").toString());
+    private static final File MAN_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("keymanagerdb").toString());
 
     /**
      * Constructor of singleton class that initiates all needed instances.
@@ -100,8 +99,7 @@ public final class EncryptionHandler {
      * 
      * @throws TTEncryptionException
      */
-    public void init(final ISession paramSession, final long paramDEK)
-        throws TTEncryptionException {
+    public void init(final ISession paramSession, final long paramDEK) throws TTEncryptionException {
         if (mNodeEncryption) {
             mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
             mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
@@ -116,8 +114,10 @@ public final class EncryptionHandler {
 
     /**
      * Clears all established berkeley dbs.
+     * 
+     * @throws AbsTTException
      */
-    public void clear() {
+    public void clear() throws AbsTTException {
         try {
             if (SEL_STORE.exists()) {
                 Database.truncateDatabase(SEL_STORE);
@@ -140,8 +140,7 @@ public final class EncryptionHandler {
             /*
              * print key selector db.
              */
-            final SortedMap<Long, KeySelector> mSelMap =
-                mKeySelectorDb.getEntries();
+            final SortedMap<Long, KeySelector> mSelMap = mKeySelectorDb.getEntries();
             Iterator iter = mSelMap.keySet().iterator();
 
             System.out.println("\nSelector DB Size: " + mKeySelectorDb.count());
@@ -162,19 +161,17 @@ public final class EncryptionHandler {
                     mChildsString.append("#" + mChildsList.get(k));
                 }
 
-                System.out.println("Selector: " + mSelector.getPrimaryKey()
-                    + " " + mSelector.getName() + " " + mSelector.getType()
-                    + " " + mParentsString.toString() + " "
-                    + mChildsString.toString() + " " + mSelector.getRevision()
-                    + " " + mSelector.getVersion() + " " + mSelector.getSecretKey());
+                System.out.println("Selector: " + mSelector.getPrimaryKey() + " " + mSelector.getName() + " "
+                    + mSelector.getType() + " " + mParentsString.toString() + " " + mChildsString.toString()
+                    + " " + mSelector.getRevision() + " " + mSelector.getVersion() + " "
+                    + mSelector.getSecretKey());
             }
             System.out.println();
 
             /*
              * print key manager db
              */
-            final SortedMap<String, KeyManager> sMap =
-                mKeyManagerDb.getEntries();
+            final SortedMap<String, KeyManager> sMap = mKeyManagerDb.getEntries();
 
             // iterate through all users
             final Iterator outerIter = sMap.keySet().iterator();
@@ -186,8 +183,7 @@ public final class EncryptionHandler {
                 final String user = (String)outerIter.next();
                 sb = new StringBuilder(user + ": ");
 
-                final Set<Long> mKeySet =
-                    mKeyManagerDb.getEntry(user).getKeySet();
+                final Set<Long> mKeySet = mKeyManagerDb.getEntry(user).getKeySet();
 
                 // iterate through user's key set.
                 final Iterator innerIter = mKeySet.iterator();
@@ -203,8 +199,7 @@ public final class EncryptionHandler {
              * print key cache.
              */
             final LinkedList<Long> mKeyList = mKeyCache.get(getUser());
-            final StringBuilder cacheString =
-                new StringBuilder(getUser() + ": ");
+            final StringBuilder cacheString = new StringBuilder(getUser() + ": ");
             for (long aKey : mKeyList) {
                 cacheString.append(aKey + " ");
             }
@@ -218,7 +213,7 @@ public final class EncryptionHandler {
     }
 
     public String getUser() {
-        //return mSession.getUser();
+        // return mSession.getUser();
         return mLoggedUser;
     }
 
