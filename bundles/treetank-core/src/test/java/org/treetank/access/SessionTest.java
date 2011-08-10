@@ -30,6 +30,7 @@ package org.treetank.access;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
@@ -52,6 +53,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -62,7 +64,7 @@ public class SessionTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -72,8 +74,23 @@ public class SessionTest {
     }
 
     @Test
+    public void testSingleton() throws AbsTTException {
+        final IDatabase database = Holder.generateSession().getDatabase();
+        assertEquals(database, holder.getDatabase());
+        final ISession session =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+        assertEquals(session, holder.getSession());
+        session.close();
+        final ISession session2 =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+        assertNotSame(session2, holder.getSession());
+        database.close();
+
+    }
+
+    @Test
     public void testClosed() throws AbsTTException {
-        IReadTransaction rtx = holder.rtx;
+        IReadTransaction rtx = holder.getRtx();
         rtx.close();
 
         try {
@@ -83,7 +100,7 @@ public class SessionTest {
         } catch (Exception e) {
             // Must fail.
         } finally {
-            holder.session.close();
+            holder.getSession().close();
         }
     }
 
@@ -96,7 +113,7 @@ public class SessionTest {
 
     @Test
     public void testInsertChild() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         assertNotNull(wtx.moveToDocumentRoot());
         assertEquals(ENodes.ROOT_KIND, wtx.getNode().getKind());
@@ -111,22 +128,22 @@ public class SessionTest {
 
     @Test
     public void testRevision() throws AbsTTException {
-        IReadTransaction rtx = holder.rtx;
+        IReadTransaction rtx = holder.getRtx();
         assertEquals(0L, rtx.getRevisionNumber());
 
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
 
         // Commit and check.
         wtx.commit();
         wtx.close();
 
-        rtx = holder.session.beginReadTransaction();
+        rtx = holder.getSession().beginReadTransaction();
 
         assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx.getRevisionNumber());
         rtx.close();
 
-        final IReadTransaction rtx2 = holder.session.beginReadTransaction();
+        final IReadTransaction rtx2 = holder.getSession().beginReadTransaction();
         assertEquals(0L, rtx2.getRevisionNumber());
         rtx2.close();
     }
@@ -134,18 +151,18 @@ public class SessionTest {
     @Test
     public void testShreddedRevision() throws AbsTTException {
 
-        final IWriteTransaction wtx1 = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx1 = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx1);
         assertEquals(0L, wtx1.getRevisionNumber());
         wtx1.commit();
         wtx1.close();
 
-        final IReadTransaction rtx1 = holder.session.beginReadTransaction();
+        final IReadTransaction rtx1 = holder.getSession().beginReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
         assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
 
-        final IWriteTransaction wtx2 = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx2 = holder.getSession().beginWriteTransaction();
         assertEquals(1L, wtx2.getRevisionNumber());
         wtx2.moveTo(12L);
         wtx2.setValue("bar2");
@@ -156,7 +173,7 @@ public class SessionTest {
         wtx2.abort();
         wtx2.close();
 
-        final IReadTransaction rtx2 = holder.session.beginReadTransaction();
+        final IReadTransaction rtx2 = holder.getSession().beginReadTransaction();
         assertEquals(0L, rtx2.getRevisionNumber());
         rtx2.moveTo(12L);
         assertEquals("bar", TypedValue.parseString(rtx2.getNode().getRawValue()));
@@ -166,7 +183,8 @@ public class SessionTest {
     @Test
     public void testExisting() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session1 = database.getSession(new SessionConfiguration.Builder());
+        final ISession session1 =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
 
         final IWriteTransaction wtx1 = session1.beginWriteTransaction();
         DocumentCreater.create(wtx1);
@@ -175,7 +193,8 @@ public class SessionTest {
         wtx1.close();
         session1.close();
 
-        final ISession session2 = database.getSession(new SessionConfiguration.Builder());
+        final ISession session2 =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final IReadTransaction rtx1 = session2.beginReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
@@ -195,7 +214,8 @@ public class SessionTest {
         session2.close();
 
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session3 = database2.getSession(new SessionConfiguration.Builder());
+        final ISession session3 =
+            database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final IReadTransaction rtx2 = session3.beginReadTransaction();
         assertEquals(1L, rtx2.getRevisionNumber());
         rtx2.moveTo(12L);
@@ -208,24 +228,24 @@ public class SessionTest {
 
     @Test
     public void testIdempotentClose() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
         wtx.close();
 
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertEquals(false, rtx.moveTo(14L));
         rtx.close();
         rtx.close();
-        holder.session.close();
+        holder.getSession().close();
 
     }
 
     @Test
     public void testGetStructuralNode() throws AbsTTException {
 
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
 
         DocumentCreater.create(wtx);
         wtx.moveToDocumentRoot();
@@ -257,7 +277,7 @@ public class SessionTest {
 
     @Test
     public void testAutoCommit() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
 
         DocumentCreater.create(wtx);
     }
@@ -265,9 +285,9 @@ public class SessionTest {
     @Test
     public void testAutoClose() throws AbsTTException {
 
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
-        holder.session.beginReadTransaction();
+        holder.getSession().beginReadTransaction();
     }
 }

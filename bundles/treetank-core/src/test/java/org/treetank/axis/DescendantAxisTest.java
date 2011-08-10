@@ -27,21 +27,14 @@
 
 package org.treetank.axis;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.settings.EFixed;
-import org.treetank.utils.DocumentCreater;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.settings.EFixed;
 
 public class DescendantAxisTest {
 
@@ -51,7 +44,7 @@ public class DescendantAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -62,7 +55,7 @@ public class DescendantAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
@@ -85,7 +78,7 @@ public class DescendantAxisTest {
 
     @Test
     public void testIterateIncludingSelf() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
             (Long)EFixed.ROOT_NODE_KEY.getStandardProperty(), 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L

@@ -27,12 +27,11 @@
 
 package org.treetank.page;
 
-import org.treetank.io.file.ByteBufferSinkAndSource;
-import org.treetank.node.ElementNode;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.treetank.io.file.ByteBufferSinkAndSource;
+import org.treetank.node.ElementNode;
 
 public class NodePageTest {
 

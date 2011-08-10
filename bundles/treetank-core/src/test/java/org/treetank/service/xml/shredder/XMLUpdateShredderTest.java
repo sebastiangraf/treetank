@@ -35,24 +35,22 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Test XMLUpdateShredder.
@@ -96,7 +94,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private static final String XMLALLNINETH = RESOURCES + File.separator + "revXMLsAll8";
 
-//    private static final String XMLLINGUISTICS = RESOURCES + File.separator + "linguistics";
+    // private static final String XMLLINGUISTICS = RESOURCES + File.separator + "linguistics";
 
     static {
         XMLUnit.setIgnoreComments(true);
@@ -207,7 +205,9 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final File folder = new File(FOLDER);
         int i = 1;
         final File[] filesList = folder.listFiles();
@@ -264,16 +264,16 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
 
-//                System.out.println(out.toString());
+                // System.out.println(out.toString());
                 final Diff diff = new Diff(sBuilder.toString(), out.toString());
-//                final DetailedDiff detDiff = new DetailedDiff(diff);
-//                @SuppressWarnings("unchecked")
-//                final List<Difference> differences = detDiff.getAllDifferences();
-//                for (final Difference difference : differences) {
-////                    System.out.println("***********************");
-////                    System.out.println(difference);
-////                    System.out.println("***********************");
-//                }
+                // final DetailedDiff detDiff = new DetailedDiff(diff);
+                // @SuppressWarnings("unchecked")
+                // final List<Difference> differences = detDiff.getAllDifferences();
+                // for (final Difference difference : differences) {
+                // // System.out.println("***********************");
+                // // System.out.println(difference);
+                // // System.out.println("***********************");
+                // }
 
                 assertTrue("pieces of XML are similar " + diff, diff.similar());
                 assertTrue("but are they identical? " + diff, diff.identical());

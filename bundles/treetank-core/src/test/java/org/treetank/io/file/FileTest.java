@@ -27,32 +27,31 @@
 
 package org.treetank.io.file;
 
-import org.treetank.access.SessionConfiguration;
-import org.treetank.exception.AbsTTException;
-import org.treetank.io.AbsIOFactory.StorageType;
-import org.treetank.io.IOTestHelper;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.exception.AbsTTException;
+import org.treetank.io.AbsIOFactory.StorageType;
+import org.treetank.io.IOTestHelper;
+
 public class FileTest {
-    private SessionConfiguration sessionConf;
+    private ResourceConfiguration resourceConf;
 
     @Before
     public void setUp() throws AbsTTException {
-        IOTestHelper.clean();
-        sessionConf = IOTestHelper.registerIO(StorageType.File);
-    }
-
-    @Test
-    public void testFactory() throws AbsTTException {
-        IOTestHelper.testFactory(sessionConf);
+        TestHelper.deleteEverything();
+        Holder.generateSession().close();
+        resourceConf = IOTestHelper.registerIO(StorageType.File);
     }
 
     @Test
     public void testFirstRef() throws AbsTTException {
-        IOTestHelper.testReadWriteFirstRef(sessionConf);
+        IOTestHelper.testReadWriteFirstRef(resourceConf);
     }
 
     @After

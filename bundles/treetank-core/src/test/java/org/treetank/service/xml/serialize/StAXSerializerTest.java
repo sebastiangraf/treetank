@@ -27,6 +27,9 @@
 
 package org.treetank.service.xml.serialize;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
@@ -40,26 +43,16 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.DescendantAxis;
-import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-import org.treetank.utils.DocumentCreater;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.axis.DescendantAxis;
+import org.treetank.exception.AbsTTException;
+import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
 /**
  * Test StAXSerializer.
@@ -73,7 +66,7 @@ public class StAXSerializerTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -87,12 +80,12 @@ public class StAXSerializerTest {
         try {
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final XMLSerializerBuilder builder = new XMLSerializerBuilder(holder.session, out);
+            final XMLSerializerBuilder builder = new XMLSerializerBuilder(holder.getSession(), out);
             builder.setDeclaration(false);
             final XMLSerializer xmlSerializer = builder.build();
             xmlSerializer.call();
 
-            final IReadTransaction rtx = holder.session.beginReadTransaction();
+            final IReadTransaction rtx = holder.getSession().beginReadTransaction();
             StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx));
             final StringBuilder strBuilder = new StringBuilder();
             boolean isEmptyElement = false;
@@ -132,7 +125,7 @@ public class StAXSerializerTest {
 
             // Check getElementText().
             // ========================================================
-            holder.rtx.moveToDocumentRoot();
+            holder.getRtx().moveToDocumentRoot();
             serializer = new StAXSerializer(new DescendantAxis(rtx));
             String elemText = null;
 

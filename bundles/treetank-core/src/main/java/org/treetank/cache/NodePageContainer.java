@@ -27,11 +27,11 @@
 
 package org.treetank.cache;
 
-import com.sleepycat.bind.tuple.TupleOutput;
-
 import org.treetank.io.berkeley.TupleOutputSink;
 import org.treetank.page.NodePage;
 import org.treetank.page.PagePersistenter;
+
+import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
  * <h1>NodePageContainer</h1> This class acts as a container for revisioned {@link NodePage}s. Each

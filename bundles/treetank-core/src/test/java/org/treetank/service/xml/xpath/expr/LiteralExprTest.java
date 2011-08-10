@@ -27,21 +27,19 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.api.IItem;
-import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.TypedValue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IItem;
+import org.treetank.axis.AbsAxis;
+import org.treetank.exception.AbsTTException;
+import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.service.xml.xpath.types.Type;
+import org.treetank.utils.TypedValue;
 
 /**
  * JUnit-test class to test the functionality of the LiteralExpr.
@@ -56,7 +54,7 @@ public class LiteralExprTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -72,21 +70,21 @@ public class LiteralExprTest {
         final IItem item1 = new AtomicValue(false);
         final IItem item2 = new AtomicValue(14, Type.INTEGER);
 
-        final int key1 = holder.rtx.getItemList().addItem(item1);
-        final int key2 = holder.rtx.getItemList().addItem(item2);
+        final int key1 = holder.getRtx().getItemList().addItem(item1);
+        final int key2 = holder.getRtx().getItemList().addItem(item2);
 
-        final AbsAxis axis1 = new LiteralExpr(holder.rtx, key1);
+        final AbsAxis axis1 = new LiteralExpr(holder.getRtx(), key1);
         assertEquals(true, axis1.hasNext());
-        assertEquals(key1, holder.rtx.getNode().getNodeKey());
-        assertEquals(holder.rtx.keyForName("xs:boolean"), holder.rtx.getNode().getTypeKey());
-        assertEquals(false, TypedValue.parseBoolean((holder.rtx.getNode().getRawValue())));
+        assertEquals(key1, holder.getRtx().getNode().getNodeKey());
+        assertEquals(holder.getRtx().keyForName("xs:boolean"), holder.getRtx().getNode().getTypeKey());
+        assertEquals(false, TypedValue.parseBoolean((holder.getRtx().getNode().getRawValue())));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new LiteralExpr(holder.rtx, key2);
+        final AbsAxis axis2 = new LiteralExpr(holder.getRtx(), key2);
         assertEquals(true, axis2.hasNext());
-        assertEquals(key2, holder.rtx.getNode().getNodeKey());
-        assertEquals(holder.rtx.keyForName("xs:integer"), holder.rtx.getNode().getTypeKey());
-        assertEquals(14, (int)TypedValue.parseDouble(holder.rtx.getNode().getRawValue()));
+        assertEquals(key2, holder.getRtx().getNode().getNodeKey());
+        assertEquals(holder.getRtx().keyForName("xs:integer"), holder.getRtx().getNode().getTypeKey());
+        assertEquals(14, (int)TypedValue.parseDouble(holder.getRtx().getNode().getRawValue()));
         assertEquals(false, axis2.hasNext());
 
     }

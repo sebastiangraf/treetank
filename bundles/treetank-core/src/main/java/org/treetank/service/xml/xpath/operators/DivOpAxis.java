@@ -27,7 +27,6 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;

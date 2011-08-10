@@ -54,7 +54,7 @@ public class AbsOpAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -69,19 +69,19 @@ public class AbsOpAxisTest {
         IItem item1 = new AtomicValue(1.0, Type.DOUBLE);
         IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-        AbsAxis op1 = new LiteralExpr(holder.rtx, holder.rtx.getItemList().addItem(item1));
-        AbsAxis op2 = new LiteralExpr(holder.rtx, holder.rtx.getItemList().addItem(item2));
-        AbsObAxis axis = new DivOpAxis(holder.rtx, op1, op2);
+        AbsAxis op1 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item1));
+        AbsAxis op2 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item2));
+        AbsObAxis axis = new DivOpAxis(holder.getRtx(), op1, op2);
 
         assertEquals(true, axis.hasNext());
-        assertEquals(holder.rtx.keyForName("xs:double"), holder.rtx.getNode().getTypeKey());
+        assertEquals(holder.getRtx().keyForName("xs:double"), holder.getRtx().getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
         // here both operands are the empty sequence
-        axis = new DivOpAxis(holder.rtx, op1, op2);
+        axis = new DivOpAxis(holder.getRtx(), op1, op2);
         assertEquals(true, axis.hasNext());
-        assertThat(Double.NaN, is(TypedValue.parseDouble(holder.rtx.getNode().getRawValue())));
-        assertEquals(holder.rtx.keyForName("xs:double"), holder.rtx.getNode().getTypeKey());
+        assertThat(Double.NaN, is(TypedValue.parseDouble(holder.getRtx().getNode().getRawValue())));
+        assertEquals(holder.getRtx().keyForName("xs:double"), holder.getRtx().getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
     }

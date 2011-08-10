@@ -35,7 +35,7 @@ import java.io.File;
  * different resources, etc.
  * 
  * @deprecated
- *      use DatabaseConfiguration$Paths instead
+ *             use DatabaseConfiguration$Paths instead
  * @author Sebastian Graf, University of Konstanz
  * 
  * 

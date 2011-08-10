@@ -27,24 +27,17 @@
 
 package org.treetank.axis;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.DocumentCreater;
-import org.treetank.utils.TypedValue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.service.xml.xpath.XPathAxis;
+import org.treetank.utils.TypedValue;
 
 /**
  * JUnit-test class to test the functionality of the DubFilter.
@@ -60,7 +53,7 @@ public class ForAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -71,7 +64,7 @@ public class ForAxisTest {
 
     @Test
     public void testFor() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(1L);
 

@@ -27,18 +27,31 @@
 package org.treetank.diff.algorithm.fmes;
 
 import java.io.File;
-import java.util.*;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.Database;
-import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransactionState;
-import org.treetank.api.*;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.api.IStructuralItem;
+import org.treetank.api.IVisitor;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.LevelOrderAxis;
 import org.treetank.axis.ChildAxis;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.axis.LevelOrderAxis;
 import org.treetank.axis.PostOrderAxis;
+import org.treetank.diff.DiffFactory;
 import org.treetank.diff.algorithm.IImportDiff;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
@@ -156,14 +169,22 @@ public final class FMES implements IImportDiff {
         mInOrder = new IdentityHashMap<IItem, Boolean>();
         mAlreadyInserted = new IdentityHashMap<IItem, Boolean>();
 
-        Database.createDatabase(paramOldFile, new DatabaseConfiguration.Builder());
+        final DatabaseConfiguration oldConfig = new DatabaseConfiguration(paramOldFile);
+        Database.createDatabase(oldConfig);
         final IDatabase databaseOld = Database.openDatabase(paramOldFile);
-        final ISession sessionOld = databaseOld.getSession(new SessionConfiguration.Builder());
+        databaseOld.createResource(new ResourceConfiguration.Builder(DiffFactory.RESOURCENAME, oldConfig)
+            .build());
+        final ISession sessionOld =
+            databaseOld.getSession(new SessionConfiguration.Builder(DiffFactory.RESOURCENAME).build());
         final IWriteTransaction wtx = sessionOld.beginWriteTransaction();
 
-        Database.createDatabase(paramNewFile, new DatabaseConfiguration.Builder());
-        final IDatabase databaseNew = Database.openDatabase(paramOldFile);
-        final ISession sessionNew = databaseNew.getSession(new SessionConfiguration.Builder());
+        final DatabaseConfiguration newConfig = new DatabaseConfiguration(paramNewFile);
+        Database.createDatabase(new DatabaseConfiguration(paramNewFile));
+        final IDatabase databaseNew = Database.openDatabase(paramNewFile);
+        databaseNew.createResource(new ResourceConfiguration.Builder(DiffFactory.RESOURCENAME, newConfig)
+            .build());
+        final ISession sessionNew =
+            databaseNew.getSession(new SessionConfiguration.Builder(DiffFactory.RESOURCENAME).build());
         final IReadTransaction rtx = sessionNew.beginWriteTransaction();
 
         mOldRevVisitor = new FMESVisitor(sessionOld, mInOrder, mDescendants);

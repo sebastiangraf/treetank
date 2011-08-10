@@ -27,23 +27,20 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.service.xml.xpath.XPathError;
-import org.treetank.utils.TypedValue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.axis.AbsAxis;
+import org.treetank.exception.AbsTTException;
+import org.treetank.service.xml.xpath.XPathAxis;
+import org.treetank.service.xml.xpath.XPathError;
+import org.treetank.utils.TypedValue;
 
 /**
  * JUnit-test class to test the functionality of the CastableExpr.
@@ -58,7 +55,7 @@ public class CastableExprTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -70,13 +67,13 @@ public class CastableExprTest {
     @Test
     public void testCastableExpr() throws AbsTTException {
 
-        final AbsAxis axis1 = new XPathAxis(holder.rtx, "1 castable as xs:decimal");
+        final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "1 castable as xs:decimal");
         assertEquals(true, axis1.hasNext());
-        assertEquals(holder.rtx.keyForName("xs:boolean"), holder.rtx.getNode().getTypeKey());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+        assertEquals(holder.getRtx().keyForName("xs:boolean"), holder.getRtx().getNode().getTypeKey());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new XPathAxis(holder.rtx, "10.0 castable as xs:anyAtomicType");
+        final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "10.0 castable as xs:anyAtomicType");
         try {
             assertEquals(true, axis2.hasNext());
         } catch (XPathError e) {
@@ -86,24 +83,24 @@ public class CastableExprTest {
         }
 
         // Token is not implemented yet.
-        // final IAxis axis3 = new XPathAxis(holder.rtx,
+        // final IAxis axis3 = new XPathAxis(holder.getRtx(),
         // "\"hello\" castable as xs:token");
         // assertEquals(true, axis3.hasNext());
-        // assertEquals(Type.BOOLEAN, holder.rtx.getValueTypeAsType());
-        // assertEquals(true, holder.rtx.getValueAsBoolean());
+        // assertEquals(Type.BOOLEAN, holder.getRtx().getValueTypeAsType());
+        // assertEquals(true, holder.getRtx().getValueAsBoolean());
         // assertEquals(false, axis3.hasNext());
 
-        final AbsAxis axis4 = new XPathAxis(holder.rtx, "\"hello\" castable as xs:string");
+        final AbsAxis axis4 = new XPathAxis(holder.getRtx(), "\"hello\" castable as xs:string");
         assertEquals(true, axis4.hasNext());
-        assertEquals(holder.rtx.keyForName("xs:boolean"), holder.rtx.getNode().getTypeKey());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+        assertEquals(holder.getRtx().keyForName("xs:boolean"), holder.getRtx().getNode().getTypeKey());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis4.hasNext());
 
-        // final IAxis axis5 = new XPathAxis(holder.rtx,
+        // final IAxis axis5 = new XPathAxis(holder.getRtx(),
         // "\"hello\" castable as xs:decimal");
         // assertEquals(true, axis5.hasNext());
-        // assertEquals(holder.rtx.keyForName("xs:boolean"), holder.rtx.getTypeKey());
-        // assertEquals(true, Boolean.parseBoolean(holder.rtx.getValue()));
+        // assertEquals(holder.getRtx().keyForName("xs:boolean"), holder.getRtx().getTypeKey());
+        // assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValue()));
         // assertEquals(false, axis5.hasNext());
 
     }

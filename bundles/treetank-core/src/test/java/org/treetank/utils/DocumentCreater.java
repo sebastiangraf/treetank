@@ -27,21 +27,21 @@
 
 package org.treetank.utils;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.treetank.TestHelper;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * <h1>TestDocument</h1>
@@ -283,16 +283,19 @@ public final class DocumentCreater {
      * @throws IOException
      *             if reading XML string fails
      */
-    public static void createRevisioned() throws AbsTTException, IOException, XMLStreamException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+    public static void createRevisioned(final IDatabase paramDB) throws AbsTTException, IOException,
+        XMLStreamException {
+
         final IWriteTransaction firstWtx =
-            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
+            paramDB.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+                .beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(firstWtx, XMLShredder.createStringReader(REVXML), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         firstWtx.close();
         final IWriteTransaction secondWtx =
-            database.getSession(new SessionConfiguration.Builder()).beginWriteTransaction();
+            paramDB.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+                .beginWriteTransaction();
         secondWtx.moveToFirstChild();
         secondWtx.moveToFirstChild();
         secondWtx.moveToFirstChild();

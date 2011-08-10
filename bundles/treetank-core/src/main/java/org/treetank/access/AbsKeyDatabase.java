@@ -18,12 +18,13 @@ package org.treetank.access;
 
 import java.io.File;
 
-import org.treetank.settings.EStoragePaths;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
 
 /**
  * Abstract class for holding common data for all key databases involved
  * in encryption process. Each instance of this class stores the data in a
- * place related to the {@link DatabaseConfiguration} at a different subfolder.
+ * place related to the {@link ResourceConfiguration} at a different subfolder.
  * 
  * @author Patrick Lang, University of Konstanz
  */
@@ -48,8 +49,9 @@ public abstract class AbsKeyDatabase {
      */
     protected AbsKeyDatabase(final File paramFile) {
         place =
-            new File(paramFile, new StringBuilder(EStoragePaths.KEYSELECTOR.getFile().getName()).append(
-                File.separator).append(counter).toString());
+            new File(paramFile,
+                new StringBuilder(DatabaseConfiguration.Paths.KEYSELECTOR.getFile().getName()).append(
+                    File.separator).append(counter).toString());
         place.mkdirs();
         counter++;
     }

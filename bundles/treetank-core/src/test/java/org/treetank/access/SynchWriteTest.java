@@ -39,19 +39,15 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
 
 public class SynchWriteTest {
     Exchanger<Boolean> threadsFinished = new Exchanger<Boolean>();
@@ -62,23 +58,22 @@ public class SynchWriteTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = Holder.generate();
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
-        wtx.moveToDocumentRoot();
-        wtx.insertElementAsFirstChild(new QName(""));
-        wtx.insertElementAsRightSibling(new QName(""));
-        wtx.moveToLeftSibling();
-        wtx.insertElementAsFirstChild(new QName(""));
-        wtx.moveToParent();
-        wtx.moveToRightSibling();
-        wtx.insertElementAsFirstChild(new QName(""));
-        wtx.commit();
-        wtx.close();
+        holder = Holder.generateWtx();
+        holder.getWtx().moveToDocumentRoot();
+        holder.getWtx().insertElementAsFirstChild(new QName(""));
+        holder.getWtx().insertElementAsRightSibling(new QName(""));
+        holder.getWtx().moveToLeftSibling();
+        holder.getWtx().insertElementAsFirstChild(new QName(""));
+        holder.getWtx().moveToParent();
+        holder.getWtx().moveToRightSibling();
+        holder.getWtx().insertElementAsFirstChild(new QName(""));
+        holder.getWtx().commit();
+        holder.getWtx().close();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        holder.session.close();
+        holder.getSession().close();
         TestHelper.closeEverything();
     }
 
@@ -90,8 +85,8 @@ public class SynchWriteTest {
      */
     public void testConcurrentWrite() throws AbsTTException, InterruptedException, ExecutionException {
         final Semaphore semaphore = new Semaphore(1);
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
-        final IWriteTransaction wtx2 = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final IWriteTransaction wtx2 = holder.getSession().beginWriteTransaction();
         final ExecutorService exec = Executors.newFixedThreadPool(2);
         final Callable<Void> c1 = new Wtx1(wtx, semaphore);
         final Callable<Void> c2 = new Wtx2(wtx2, semaphore);
@@ -102,7 +97,7 @@ public class SynchWriteTest {
         r1.get();
         r2.get();
 
-        final IReadTransaction rtx = holder.session.beginWriteTransaction();
+        final IReadTransaction rtx = holder.getSession().beginWriteTransaction();
         TestCase.assertTrue(rtx.moveToFirstChild());
         TestCase.assertTrue(rtx.moveToFirstChild());
         TestCase.assertFalse(rtx.moveToRightSibling());

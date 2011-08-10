@@ -49,8 +49,7 @@ public class KeyCache {
             private static final long serialVersionUID = 1;
 
             @Override
-            protected boolean removeEldestEntry(
-                final Map.Entry<String, LinkedList<Long>> mEldest) {
+            protected boolean removeEldestEntry(final Map.Entry<String, LinkedList<Long>> mEldest) {
                 boolean returnVal = false;
                 if (size() > CACHE_CAPACITY) {
                     returnVal = true;
@@ -83,8 +82,7 @@ public class KeyCache {
      * @param paramList
      *            linked list as values.
      */
-    public final void put(final String paramUser,
-        final LinkedList<Long> paramList) {
+    public final void put(final String paramUser, final LinkedList<Long> paramList) {
 
         mMap.put(paramUser, paramList);
     }
@@ -113,8 +111,7 @@ public class KeyCache {
      */
 
     public final Collection<Map.Entry<String, LinkedList<Long>>> getAll() {
-        return new ArrayList<Map.Entry<String, LinkedList<Long>>>(mMap
-            .entrySet());
+        return new ArrayList<Map.Entry<String, LinkedList<Long>>>(mMap.entrySet());
 
     }
 }

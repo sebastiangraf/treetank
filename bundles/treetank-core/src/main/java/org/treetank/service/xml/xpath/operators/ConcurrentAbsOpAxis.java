@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.xpath.operators;
 
+import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -40,8 +42,6 @@ import org.treetank.service.xml.xpath.concurrent.ConcurrentAxis;
 import org.treetank.service.xml.xpath.functions.Function;
 import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.settings.EFixed;
-
-import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
 /**
  * <h1>AbstractOpAxis</h1>

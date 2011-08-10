@@ -27,14 +27,12 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
 
 /**
  * JUnit-test class to test the functionality of the RangeAxis.
@@ -50,7 +48,7 @@ public class RangeAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After

@@ -26,14 +26,13 @@
  */
 package org.treetank.axis;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Test {@link LevelOrderAxis}.
@@ -49,7 +48,7 @@ public class LevelOrderAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -60,7 +59,7 @@ public class LevelOrderAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(11L);
         AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {

@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.treetank.api.IItem;
-import org.treetank.api.IReadTransaction;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 import org.treetank.settings.EFixed;

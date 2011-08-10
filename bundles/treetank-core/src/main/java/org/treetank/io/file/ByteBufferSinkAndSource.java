@@ -27,7 +27,6 @@
 
 package org.treetank.io.file;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import org.treetank.io.ITTSink;

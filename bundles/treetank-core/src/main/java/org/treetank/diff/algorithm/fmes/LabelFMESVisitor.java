@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Node;
-
 import org.treetank.access.AbsVisitorSupport;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;

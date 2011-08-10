@@ -29,7 +29,7 @@ package org.treetank.cache;
 
 import java.io.File;
 
-import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTIOException;
 
 /**
@@ -47,7 +47,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     private final LRUCache mFirstCache;
 
     /**
-     * Constructor including the {@link DatabaseConfiguration} for persistent
+     * Constructor including the {@link ResourceConfiguration} for persistent
      * storage.
      * 
      * @param paramFile

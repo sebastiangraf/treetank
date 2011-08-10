@@ -27,14 +27,14 @@
 
 package org.treetank.io.berkeley.binding;
 
-import com.sleepycat.bind.tuple.TupleBinding;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
-
 import org.treetank.io.AbsKey;
 import org.treetank.io.KeyPersistenter;
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;
+
+import com.sleepycat.bind.tuple.TupleBinding;
+import com.sleepycat.bind.tuple.TupleInput;
+import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
  * Class to store {@link AbsKey} objects in the BerkeleyDB.

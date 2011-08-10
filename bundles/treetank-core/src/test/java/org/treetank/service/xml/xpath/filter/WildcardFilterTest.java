@@ -27,20 +27,18 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.filter.IFilterTest;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.AbsTTException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 public class WildcardFilterTest {
 
@@ -50,7 +48,7 @@ public class WildcardFilterTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -61,27 +59,27 @@ public class WildcardFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        holder.rtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "b", true), true);
-        holder.rtx.moveToAttribute(0);
+        holder.getRtx().moveTo(9L);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b", true), true);
+        holder.getRtx().moveToAttribute(0);
         try {
-            IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "p", false), true);
+            IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);
             fail("Expected an Exception, because attributes are not supported.");
         } catch (IllegalStateException e) {
             assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
 
         }
-        // IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "b",
+        // IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b",
         // true), true);
 
-        // holder.rtx.moveTo(3L);
-        // IFilterTest.testIFilterConventions(new ItemFilter(holder.rtx), true);
+        // holder.getRtx().moveTo(3L);
+        // IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
 
-        holder.rtx.moveTo(1L);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "p", false), true);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "a", true), true);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "c", true), false);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.rtx, "b", false), false);
+        holder.getRtx().moveTo(1L);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "a", true), true);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "c", true), false);
+        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b", false), false);
 
     }
 }

@@ -27,11 +27,8 @@
 
 package org.treetank.node;
 
-import java.io.IOException;
 import java.util.Arrays;
 
-import org.treetank.api.IItem;
-import org.treetank.api.IReadTransaction;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 import org.treetank.settings.EFixed;

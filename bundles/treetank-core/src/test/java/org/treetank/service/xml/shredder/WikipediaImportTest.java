@@ -29,15 +29,17 @@ package org.treetank.service.xml.shredder;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.Database;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.serialize.XMLSerializer;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test WikipediaImport.
@@ -45,7 +47,7 @@ import org.junit.Before;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class WikipediaImportTest extends TestCase {
+public class WikipediaImportTest {
 
     public static final String WIKIPEDIA = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "testWikipedia.xml";
@@ -53,18 +55,18 @@ public class WikipediaImportTest extends TestCase {
     public static final String EXPECTED = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "testWikipediaExpected.xml";
 
-    @Override
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
-    @Override
     @After
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
+        PATHS.PATH1.getFile().delete();
     }
 
+    @Test
     public void testWikipediaImport() throws Exception {
         WikipediaImport.main(WIKIPEDIA, PATHS.PATH2.getFile().getAbsolutePath());
         XMLSerializer.main(PATHS.PATH2.getFile().getAbsolutePath(), PATHS.PATH1.getFile().getAbsolutePath());

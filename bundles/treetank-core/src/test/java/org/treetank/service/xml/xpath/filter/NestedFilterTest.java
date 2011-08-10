@@ -27,6 +27,9 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.filter.AttributeFilter;
@@ -39,10 +42,6 @@ import org.treetank.axis.filter.NodeFilter;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.AbsTTException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 public class NestedFilterTest {
 
     private Holder holder;
@@ -51,7 +50,7 @@ public class NestedFilterTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -63,22 +62,22 @@ public class NestedFilterTest {
     @Test
     public void testIFilterConvetions() throws AbsTTException {
 
-        holder.rtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new ItemFilter(holder.rtx),
-            new ElementFilter(holder.rtx), new NameFilter(holder.rtx, "b")), true);
-        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new ItemFilter(holder.rtx),
-            new AttributeFilter(holder.rtx), new NameFilter(holder.rtx, "b")), false);
+        holder.getRtx().moveTo(9L);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(), new ItemFilter(holder.getRtx()),
+            new ElementFilter(holder.getRtx()), new NameFilter(holder.getRtx(), "b")), true);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(), new ItemFilter(holder.getRtx()),
+            new AttributeFilter(holder.getRtx()), new NameFilter(holder.getRtx(), "b")), false);
 
-        holder.rtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new NodeFilter(holder.rtx),
-            new ElementFilter(holder.rtx)), false);
-        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new NodeFilter(holder.rtx),
-            new TextFilter(holder.rtx)), true);
+        holder.getRtx().moveTo(4L);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(), new NodeFilter(holder.getRtx()),
+            new ElementFilter(holder.getRtx())), false);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(), new NodeFilter(holder.getRtx()),
+            new TextFilter(holder.getRtx())), true);
 
-        holder.rtx.moveTo(1L);
-        holder.rtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new NestedFilter(holder.rtx, new AttributeFilter(holder.rtx),
-            new NameFilter(holder.rtx, "i")), true);
+        holder.getRtx().moveTo(1L);
+        holder.getRtx().moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(), new AttributeFilter(holder.getRtx()),
+            new NameFilter(holder.getRtx(), "i")), true);
 
     }
 }

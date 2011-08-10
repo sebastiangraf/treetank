@@ -27,31 +27,24 @@
 
 package org.treetank.access;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import junit.extensions.TestDecorator;
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.TypedValue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class ThreadTest {
 
@@ -63,7 +56,7 @@ public class ThreadTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateSession();
     }
 
     @After
@@ -77,8 +70,8 @@ public class ThreadTest {
         final ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
         long newKey = 10L;
         for (int i = 0; i < WORKER_COUNT; i++) {
-            taskExecutor.submit(new Task(holder.session.beginReadTransaction(i)));
-            final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+            taskExecutor.submit(new Task(holder.getSession().beginReadTransaction(i)));
+            final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
             wtx.moveTo(newKey);
             wtx.setValue("value" + i);
             newKey = wtx.getNode().getNodeKey();

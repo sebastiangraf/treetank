@@ -27,8 +27,11 @@
 
 package org.treetank.cache;
 
+import java.io.File;
+
+import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.page.NodePage;
 
@@ -40,37 +43,26 @@ import static org.junit.Assert.assertEquals;
 
 public class BerkeleyPersistentCacheTest {
 
-    private final NodePage[][] pages =
-        new NodePage[LRUCache.CACHE_CAPACITY + 1][DatabaseConfiguration.VERSIONSTORESTORE + 1];
-
     private ICache cache;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        cache = new BerkeleyPersistenceCache(TestHelper.PATHS.PATH1.getFile(), 1);
-        for (int i = 0; i < pages.length; i++) {
-            final NodePage page = new NodePage(i, 0);
-            final NodePage[] revs = new NodePage[DatabaseConfiguration.VERSIONSTORESTORE];
-
-            for (int j = 0; j < DatabaseConfiguration.VERSIONSTORESTORE; j++) {
-                pages[i][j + 1] = new NodePage(i, 0);
-                revs[j] = pages[i][j + 1];
-            }
-            pages[i][0] = page;
-            cache.put(i, new NodePageContainer(page));
-        }
+        Holder.generateSession();
+        cache =
+            new BerkeleyPersistenceCache(new File(new File(TestHelper.PATHS.PATH1.getFile(),
+                DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCE), 1);
+        CacheTestHelper.setUp(cache);
     }
 
     @Test
     public void test() {
-        for (int i = 0; i < pages.length; i++) {
+        for (int i = 0; i < CacheTestHelper.PAGES.length; i++) {
             final NodePageContainer cont = cache.get(i);
             final NodePage current = cont.getComplete();
-            assertEquals(pages[i][0], current);
+            assertEquals(CacheTestHelper.PAGES[i][0], current);
 
         }
-
         cache.clear();
     }
 

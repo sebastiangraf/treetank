@@ -28,15 +28,13 @@ package org.treetank.diff.algorithm.fmes;
 
 import java.util.Map;
 
-import org.w3c.dom.NodeList;
-
 import org.treetank.access.AbsVisitorSupport;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IVisitor;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.*;
+import org.treetank.node.ElementNode;
+import org.treetank.node.TextNode;
 
 /**
  * Initialize data structures.

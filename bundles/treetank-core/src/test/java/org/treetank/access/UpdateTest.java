@@ -27,32 +27,26 @@
 
 package org.treetank.access;
 
-import javax.xml.namespace.QName;
-
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IStructuralItem;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTUsageException;
-import org.treetank.io.AbsIOFactory;
-import org.treetank.node.AbsStructNode;
-import org.treetank.settings.EFixed;
-import org.treetank.utils.DocumentCreater;
-import org.treetank.utils.TypedValue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import javax.xml.namespace.QName;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTUsageException;
+import org.treetank.node.AbsStructNode;
+import org.treetank.settings.EFixed;
+import org.treetank.utils.DocumentCreater;
+import org.treetank.utils.TypedValue;
 
 public class UpdateTest {
 
@@ -61,7 +55,7 @@ public class UpdateTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = Holder.generate();
+        holder = Holder.generateSession();
     }
 
     @After
@@ -72,23 +66,23 @@ public class UpdateTest {
     @Test
     public void testInsertChild() throws AbsTTException {
 
-        IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         wtx.commit();
         wtx.close();
 
-        IReadTransaction rtx = holder.session.beginReadTransaction();
+        IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertEquals(0L, rtx.getRevisionNumber());
         rtx.close();
 
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
-            wtx = holder.session.beginWriteTransaction();
+            wtx = holder.getSession().beginWriteTransaction();
             wtx.moveToDocumentRoot();
             wtx.insertTextAsFirstChild(Integer.toString(i));
             wtx.commit();
             wtx.close();
 
-            rtx = holder.session.beginReadTransaction();
+            rtx = holder.getSession().beginReadTransaction();
             rtx.moveToDocumentRoot();
             rtx.moveToFirstChild();
             assertEquals(Integer.toString(i), TypedValue.parseString(rtx.getNode().getRawValue()));
@@ -96,7 +90,7 @@ public class UpdateTest {
             rtx.close();
         }
 
-        rtx = holder.session.beginReadTransaction();
+        rtx = holder.getSession().beginReadTransaction();
         rtx.moveToDocumentRoot();
         rtx.moveToFirstChild();
         assertEquals("10", TypedValue.parseString(rtx.getNode().getRawValue()));
@@ -108,12 +102,12 @@ public class UpdateTest {
     @Test
     public void testInsertPath() throws AbsTTException {
 
-        IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
 
         wtx.commit();
         wtx.close();
 
-        wtx = holder.session.beginWriteTransaction();
+        wtx = holder.getSession().beginWriteTransaction();
         assertNotNull(wtx.moveToDocumentRoot());
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
 
@@ -126,7 +120,7 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        final IWriteTransaction wtx2 = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx2 = holder.getSession().beginWriteTransaction();
 
         assertNotNull(wtx2.moveToDocumentRoot());
         assertEquals(5L, wtx2.insertElementAsFirstChild(new QName("")));
@@ -138,7 +132,7 @@ public class UpdateTest {
 
     @Test
     public void testPageBoundary() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
 
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));
@@ -156,7 +150,7 @@ public class UpdateTest {
 
     @Test(expected = TTUsageException.class)
     public void testRemoveDocument() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
@@ -172,14 +166,14 @@ public class UpdateTest {
 
     @Test
     public void testRemoveDescendant() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.moveTo(5L);
         wtx.remove();
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertEquals(0, rtx.getNode().getNodeKey());
         assertTrue(rtx.moveToFirstChild());
         assertEquals(1, rtx.getNode().getNodeKey());
@@ -197,13 +191,13 @@ public class UpdateTest {
 
     @Test
     public void testFirstMoveToFirstChild() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(7);
         wtx.moveSubtreeToFirstChild(6);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.moveTo(4));
         assertEquals(rtx.getValueOfCurrentNode(), "oops1");
         assertTrue(rtx.moveTo(7));
@@ -219,13 +213,13 @@ public class UpdateTest {
 
     @Test
     public void testSecondMoveToFirstChild() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(5);
         wtx.moveSubtreeToFirstChild(4);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.moveTo(5));
         assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
             .getStructuralNode().getLeftSiblingKey());
@@ -244,13 +238,13 @@ public class UpdateTest {
 
     @Test
     public void testThirdMoveToFirstChild() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(5);
         wtx.moveSubtreeToFirstChild(11);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.moveTo(5));
         assertEquals(11L, rtx.getStructuralNode().getFirstChildKey());
         assertTrue(rtx.moveTo(11));
@@ -266,7 +260,7 @@ public class UpdateTest {
 
     @Test(expected = TTUsageException.class)
     public void testFourthMoveToFirstChild() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(4);
         wtx.moveSubtreeToFirstChild(11);
@@ -276,13 +270,13 @@ public class UpdateTest {
 
     @Test
     public void testFirstMoveSubtreeToRightSibling() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(7);
         wtx.moveSubtreeToRightSibling(6);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.moveTo(7));
         assertFalse(rtx.getStructuralNode().hasLeftSibling());
         assertTrue(rtx.getStructuralNode().hasRightSibling());
@@ -296,13 +290,13 @@ public class UpdateTest {
 
     @Test
     public void testSecondMoveSubtreeToRightSibling() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(9);
         wtx.moveSubtreeToRightSibling(5);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.moveTo(4));
         // Assert that oops1 and oops2 text nodes merged.
         assertEquals("oops1oops2", rtx.getValueOfCurrentNode());
@@ -317,13 +311,13 @@ public class UpdateTest {
 
     @Test
     public void testThirdMoveSubtreeToRightSibling() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(9);
         wtx.moveSubtreeToRightSibling(4);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.moveTo(4));
         // Assert that oops1 and oops3 text nodes merged.
         assertEquals("oops1oops3", rtx.getValueOfCurrentNode());
@@ -338,13 +332,13 @@ public class UpdateTest {
 
     @Test
     public void testFourthMoveSubtreeToRightSibling() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(8);
         wtx.moveSubtreeToRightSibling(4);
         wtx.commit();
         wtx.close();
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.moveTo(4));
         // Assert that oops2 and oops1 text nodes merged.
         assertEquals("oops2oops1", rtx.getValueOfCurrentNode());

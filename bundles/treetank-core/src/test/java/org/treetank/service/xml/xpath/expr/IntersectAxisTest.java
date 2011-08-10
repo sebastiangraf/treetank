@@ -27,15 +27,14 @@
 
 package org.treetank.service.xml.xpath.expr;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * JUnit-test class to test the functionality of the UnionAxis.
@@ -51,7 +50,7 @@ public class IntersectAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -63,34 +62,34 @@ public class IntersectAxisTest {
     @Test
     public void testIntersect() throws AbsTTException {
 
-        holder.rtx.moveTo(1L);
+        holder.getRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "child::node() intersect b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::node() intersect b"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node() intersect b intersect child::node()[@p:x]"), new long[] {
             9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node() intersect child::node()[attribute::p:x]"), new long[] {
             9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node()/parent::node() intersect self::node()"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "//node() intersect //text()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//node() intersect //text()"),
             new long[] {
                 4L, 8L, 13L, 6L, 12L
             });
 
-        holder.rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "b/preceding::node() intersect text()"),
+        holder.getRtx().moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/preceding::node() intersect text()"),
             new long[] {
                 4L, 8L
             });

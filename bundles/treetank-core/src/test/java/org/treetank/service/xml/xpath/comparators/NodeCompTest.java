@@ -27,6 +27,12 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
@@ -37,13 +43,6 @@ import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 public class NodeCompTest {
 
     private AbsComparator comparator;
@@ -53,16 +52,15 @@ public class NodeCompTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
         comparator =
-            new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1),
+            new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder.getRtx(), -1),
                 CompKind.IS);
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        holder.rtx.close();
-        holder.session.close();
+        holder.close();
         TestHelper.closeEverything();
     }
 
@@ -84,7 +82,7 @@ public class NodeCompTest {
 
         try {
             comparator =
-                new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1),
+                new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder.getRtx(), -1),
                     CompKind.PRE);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
@@ -94,7 +92,7 @@ public class NodeCompTest {
 
         try {
             comparator =
-                new NodeComp(holder.rtx, new LiteralExpr(holder.rtx, -2), new LiteralExpr(holder.rtx, -1),
+                new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder.getRtx(), -1),
                     CompKind.FO);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
@@ -107,16 +105,16 @@ public class NodeCompTest {
     @Test
     public void testAtomize() throws TTXPathException {
 
-        AbsAxis axis = new LiteralExpr(holder.rtx, -2);
+        AbsAxis axis = new LiteralExpr(holder.getRtx(), -2);
         axis.hasNext(); // this is needed, because hasNext() has already been
         // called
         AtomicValue[] value = comparator.atomize(axis);
         assertEquals(value.length, 1);
-        assertEquals(holder.rtx.getNode().getNodeKey(), value[0].getNodeKey());
+        assertEquals(holder.getRtx().getNode().getNodeKey(), value[0].getNodeKey());
         assertEquals("xs:integer", value[0].getType());
 
         try {
-            axis = new DescendantAxis(holder.rtx, false);
+            axis = new DescendantAxis(holder.getRtx(), false);
             axis.hasNext();
             comparator.atomize(axis);
         } catch (TTXPathException e) {

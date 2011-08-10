@@ -32,17 +32,26 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.helpers.DefaultHandler;
-
 import org.treetank.access.Database;
-import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransactionState;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.node.ElementNode;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.DTDHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * <h1>SaxSerializer</h1>
@@ -205,8 +214,11 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      */
     public static void main(final String... args) throws Exception {
 
+        final DatabaseConfiguration config = new DatabaseConfiguration(new File(args[0]));
+        Database.createDatabase(config);
         final IDatabase database = Database.openDatabase(new File(args[0]));
-        final ISession session = database.getSession(new SessionConfiguration.Builder());
+        database.createResource(new ResourceConfiguration.Builder("shredded", config).build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder("shredded").build());
 
         final DefaultHandler defHandler = new DefaultHandler();
 

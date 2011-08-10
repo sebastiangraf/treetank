@@ -41,6 +41,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
@@ -66,6 +68,9 @@ public final class SessionState {
 
     /** Lock for blocking the commit. */
     protected final Lock mCommitLock;
+
+    /** Session configuration. */
+    protected final ResourceConfiguration mResourceConfig;
 
     /** Session configuration. */
     protected final SessionConfiguration mSessionConfig;
@@ -102,7 +107,9 @@ public final class SessionState {
      * @throws AbsTTException
      *             if Session state error
      */
-    protected SessionState(final SessionConfiguration paramSessionConfig) throws AbsTTException {
+    protected SessionState(final ResourceConfiguration paramResourceConf,
+        final SessionConfiguration paramSessionConfig) throws AbsTTException {
+        mResourceConfig = paramResourceConf;
         mSessionConfig = paramSessionConfig;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
         mWriteTransactionStateMap = new ConcurrentHashMap<Long, WriteTransactionState>();
@@ -116,7 +123,7 @@ public final class SessionState {
         mReadSemaphore = new Semaphore(paramSessionConfig.mRtxAllowed);
         final PageReference uberPageReference = new PageReference();
 
-        mFac = AbsIOFactory.getInstance(mSessionConfig);
+        mFac = AbsIOFactory.getInstance(mResourceConfig);
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
@@ -279,7 +286,7 @@ public final class SessionState {
         mTransactionMap.clear();
         mWriteTransactionStateMap.clear();
 
-        mFac.closeStorage();
+        mFac.close();
     }
 
     class LogSyncer implements Callable<Void> {

@@ -27,34 +27,25 @@
 
 package org.treetank.access;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.node.ElementNode;
-import org.treetank.utils.DocumentCreater;
+import static junit.framework.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
+import org.treetank.node.ElementNode;
 
 public class AttributeAndNamespaceTest {
 
-    private IReadTransaction rtx;
     private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
-        rtx = holder.rtx;
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -65,25 +56,25 @@ public class AttributeAndNamespaceTest {
 
     @Test
     public void testAttribute() throws AbsTTException {
-        rtx.moveTo(1L);
-        assertEquals(1, ((ElementNode)rtx.getNode()).getAttributeCount());
-        rtx.moveToAttribute(0);
-        assertEquals("i", rtx.nameForKey(rtx.getNode().getNameKey()));
+        holder.getRtx().moveTo(1L);
+        assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getAttributeCount());
+        holder.getRtx().moveToAttribute(0);
+        assertEquals("i", holder.getRtx().nameForKey(holder.getRtx().getNode().getNameKey()));
 
-        rtx.moveTo(9L);
-        assertEquals(1, ((ElementNode)rtx.getNode()).getAttributeCount());
-        rtx.moveToAttribute(0);
-        assertEquals("p:x", rtx.nameForKey(rtx.getNode().getNameKey()));
-        assertEquals("ns", rtx.nameForKey(rtx.getNode().getURIKey()));
+        holder.getRtx().moveTo(9L);
+        assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getAttributeCount());
+        holder.getRtx().moveToAttribute(0);
+        assertEquals("p:x", holder.getRtx().nameForKey(holder.getRtx().getNode().getNameKey()));
+        assertEquals("ns", holder.getRtx().nameForKey(holder.getRtx().getNode().getURIKey()));
     }
 
     @Test
     public void testNamespace() throws AbsTTException {
-        rtx.moveTo(1L);
-        assertEquals(1, ((ElementNode)rtx.getNode()).getNamespaceCount());
-        rtx.moveToNamespace(0);
-        assertEquals("p", rtx.nameForKey(rtx.getNode().getNameKey()));
-        assertEquals("ns", rtx.nameForKey(rtx.getNode().getURIKey()));
+        holder.getRtx().moveTo(1L);
+        assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getNamespaceCount());
+        holder.getRtx().moveToNamespace(0);
+        assertEquals("p", holder.getRtx().nameForKey(holder.getRtx().getNode().getNameKey()));
+        assertEquals("ns", holder.getRtx().nameForKey(holder.getRtx().getNode().getURIKey()));
     }
 
 }

@@ -27,34 +27,26 @@
 
 package org.treetank.access;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.utils.DocumentCreater;
 
 public class MinimumCommitTest {
 
-    private IWriteTransaction wtx;
     private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-
-        holder = Holder.generate();
-        wtx = holder.session.beginWriteTransaction();
+        holder = Holder.generateWtx();
     }
 
     @After
@@ -65,39 +57,33 @@ public class MinimumCommitTest {
 
     @Test
     public void test() throws AbsTTException {
-        assertEquals(0L, wtx.getRevisionNumber());
-        wtx.commit();
+        assertEquals(0L, holder.getWtx().getRevisionNumber());
+        holder.getWtx().commit();
+        holder.close();
 
-        wtx.close();
-        holder.session.close();
+        holder = Holder.generateWtx();
+        assertEquals(1L, holder.getWtx().getRevisionNumber());
+        DocumentCreater.create(holder.getWtx());
+        holder.getWtx().commit();
+        holder.close();
 
-        holder = Holder.generate();
-        wtx = holder.session.beginWriteTransaction();
-        assertEquals(1L, wtx.getRevisionNumber());
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
+        holder = Holder.generateWtx();
+        assertEquals(2L, holder.getWtx().getRevisionNumber());
+        holder.getWtx().commit();
+        holder.close();
 
-        wtx = holder.session.beginWriteTransaction();
-        assertEquals(2L, wtx.getRevisionNumber());
-        wtx.commit();
-        wtx.close();
-
-        IReadTransaction rtx = holder.session.beginReadTransaction();
-        assertEquals(2L, rtx.getRevisionNumber());
-        rtx.close();
+        holder = Holder.generateRtx();
+        assertEquals(2L, holder.getRtx().getRevisionNumber());
 
     }
 
     @Test
     public void testTimestamp() throws AbsTTException {
-        assertEquals(0L, wtx.getRevisionTimestamp());
-        wtx.commit();
-        wtx.close();
+        assertEquals(0L, holder.getWtx().getRevisionTimestamp());
+        holder.getWtx().commit();
 
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
         rtx.close();
     }
-
 }

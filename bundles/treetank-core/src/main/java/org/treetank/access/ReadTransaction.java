@@ -39,15 +39,9 @@ import org.treetank.api.IStructuralItem;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.AbsStructNode;
-import org.treetank.node.AttributeNode;
-import org.treetank.node.DeletedNode;
-import org.treetank.node.DocumentRootNode;
 import org.treetank.node.DummyNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
-import org.treetank.node.NamespaceNode;
-import org.treetank.node.TextNode;
-import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
@@ -107,7 +101,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     public ReadTransaction(final ReadTransaction paramRtx) {
         mTransactionID = paramRtx.getTransactionID();
-        final Class c = paramRtx.getClass();
+        final Class<?> c = paramRtx.getClass();
         final Field[] fields = c.getDeclaredFields();
         try {
             for (int i = 0; i < fields.length; i++) {

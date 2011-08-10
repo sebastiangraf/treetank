@@ -27,11 +27,11 @@
 
 package org.treetank.io;
 
-import java.io.File;
-
+import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.TestHelper.PATHS;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.AbsIOFactory.StorageType;
@@ -49,78 +49,56 @@ import static org.junit.Assert.assertSame;
  */
 public final class IOTestHelper {
 
-	private IOTestHelper() {
-	}
+    private IOTestHelper() {
+    }
 
-	/**
-	 * Static method to get {@link DatabaseConfiguration}
-	 * 
-	 * @param type
-	 *            for the the {@link DatabaseConfiguration} should be generated
-	 * @return a suitable {@link DatabaseConfiguration}
-	 * @throws TTUsageException
-	 */
-	public static SessionConfiguration registerIO(final StorageType type)
-			throws AbsTTException {
-		final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
-		builder.setType(type);
-		final DatabaseConfiguration config = builder.build();
-		final SessionConfiguration sessionConfig = new SessionConfiguration.Builder()
-				.setDBConfig(config).build();
-		AbsIOFactory.registerInstance(new File(
-				TestHelper.PATHS.PATH1.getFile(), "BLA"), sessionConfig);
-		return sessionConfig;
-	}
+    /**
+     * Static method to get {@link ResourceConfiguration}
+     * 
+     * @param type
+     *            for the the {@link ResourceConfiguration} should be generated
+     * @return a suitable {@link ResourceConfiguration}
+     * @throws TTUsageException
+     */
+    public static ResourceConfiguration registerIO(final StorageType type) throws AbsTTException {
+        final ResourceConfiguration.Builder resourceConfig =
+            new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1.getConfig());
+        resourceConfig.setType(type);
+        return resourceConfig.build();
+    }
 
-	/**
-	 * Tear down for all tests related to the io layer.
-	 */
-	public static void clean() throws AbsTTException {
-		TestHelper.deleteEverything();
+    /**
+     * Tear down for all tests related to the io layer.
+     */
+    public static void clean() throws AbsTTException {
+        TestHelper.deleteEverything();
 
-	}
+    }
 
-	/**
-	 * Testing the get and remove in the Factory methods.
-	 * 
-	 * @param dbConf
-	 *            to be tested
-	 * @param sessionConf
-	 *            to be tested
-	 */
-	public static void testFactory(final SessionConfiguration sessionConf)
-			throws AbsTTException {
-		final AbsIOFactory fac1 = AbsIOFactory.getInstance(sessionConf);
-		final AbsIOFactory fac2 = AbsIOFactory.getInstance(sessionConf);
-		assertSame(fac1, fac2);
-		fac1.closeStorage();
-	}
+    public static void testReadWriteFirstRef(final ResourceConfiguration resourceConf) throws AbsTTException {
+        final AbsIOFactory fac = AbsIOFactory.getInstance(resourceConf);
+        final PageReference pageRef1 = new PageReference();
+        final UberPage page1 = new UberPage();
+        pageRef1.setPage(page1);
 
-	public static void testReadWriteFirstRef(
-			final SessionConfiguration sessionConf) throws AbsTTException {
-		final AbsIOFactory fac = AbsIOFactory.getInstance(sessionConf);
-		final PageReference pageRef1 = new PageReference();
-		final UberPage page1 = new UberPage();
-		pageRef1.setPage(page1);
+        // same instance check
+        final IWriter writer = fac.getWriter();
+        writer.writeFirstReference(pageRef1);
+        final PageReference pageRef2 = writer.readFirstReference();
+        assertEquals(pageRef1.getNodePageKey(), pageRef2.getNodePageKey());
+        assertEquals(((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef2.getPage())
+            .getRevisionCount());
+        writer.close();
 
-		// same instance check
-		final IWriter writer = fac.getWriter();
-		writer.writeFirstReference(pageRef1);
-		final PageReference pageRef2 = writer.readFirstReference();
-		assertEquals(pageRef1.getNodePageKey(), pageRef2.getNodePageKey());
-		assertEquals(((UberPage) pageRef1.getPage()).getRevisionCount(),
-				((UberPage) pageRef2.getPage()).getRevisionCount());
-		writer.close();
+        // new instance check
+        final IReader reader = fac.getReader();
+        final PageReference pageRef3 = reader.readFirstReference();
+        assertEquals(pageRef1.getNodePageKey(), pageRef3.getNodePageKey());
+        assertEquals(((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef3.getPage())
+            .getRevisionCount());
+        reader.close();
+        fac.close();
 
-		// new instance check
-		final IReader reader = fac.getReader();
-		final PageReference pageRef3 = reader.readFirstReference();
-		assertEquals(pageRef1.getNodePageKey(), pageRef3.getNodePageKey());
-		assertEquals(((UberPage) pageRef1.getPage()).getRevisionCount(),
-				((UberPage) pageRef3.getPage()).getRevisionCount());
-		reader.close();
-		fac.closeStorage();
-
-	}
+    }
 
 }

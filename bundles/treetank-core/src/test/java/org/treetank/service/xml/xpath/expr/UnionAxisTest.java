@@ -27,15 +27,14 @@
 
 package org.treetank.service.xml.xpath.expr;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * JUnit-test class to test the functionality of the UnionAxis.
@@ -51,7 +50,7 @@ public class UnionAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -63,35 +62,35 @@ public class UnionAxisTest {
     @Test
     public void testUnion() throws AbsTTException {
 
-        holder.rtx.moveTo(1L);
+        holder.getRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node()/parent::node() union child::node()"), new long[] {
             1L, 4L, 5L, 8L, 9L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node()/parent::node() | child::node()"), new long[] {
             1L, 4L, 5L, 8L, 9L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node()/parent::node() | child::node() | self::node()"), new long[] {
             1L, 4L, 5L, 8L, 9L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node()/parent::node() | child::node() | self::node()" + "union parent::node()"),
             new long[] {
                 1L, 4L, 5L, 8L, 9L, 13L, 0L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "b/preceding::node() union text() | descendant::node()"), new long[] {
             4L, 8L, 7L, 6L, 5L, 13L, 9L, 11L, 12L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "//c/ancestor::node() | //node()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//c/ancestor::node() | //node()"),
             new long[] {
                 5L, 1L, 9L, 4L, 8L, 13L, 6L, 7L, 11L, 12L
             });

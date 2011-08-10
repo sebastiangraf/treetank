@@ -27,26 +27,18 @@
 
 package org.treetank.axis;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.filter.NameFilter;
 import org.treetank.axis.filter.NodeFilter;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 public class NestedAxisTest {
-
 
     private Holder holder;
 
@@ -54,7 +46,7 @@ public class NestedAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -63,10 +55,9 @@ public class NestedAxisTest {
         TestHelper.closeEverything();
     }
 
-
     @Test
     public void testNestedAxisTest() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
@@ -88,7 +79,7 @@ public class NestedAxisTest {
 
     @Test
     public void testNestedAxisTest2() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
@@ -111,7 +102,7 @@ public class NestedAxisTest {
 
     @Test
     public void testNestedAxisTest3() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         // Find desceFndants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();

@@ -33,21 +33,17 @@ import java.util.Random;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 public final class OverallTest {
 
@@ -58,103 +54,78 @@ public final class OverallTest {
     private static final Random ran = new Random(0l);
     public static String chars = "abcdefghijklm";
 
-    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "auction.xml";
-
     private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = Holder.generate();
-    }
-
-    @Test
-    public void testXML() throws Exception {
-
-        for (int i = 0; i < DatabaseConfiguration.VERSIONSTORESTORE * 2; i++) {
-            final IWriteTransaction wtx = holder.session.beginWriteTransaction();
-            if (wtx.moveToFirstChild()) {
-                wtx.remove();
-                wtx.commit();
-            } else {
-                wtx.abort();
-            }
-
-            final XMLEventReader reader = XMLShredder.createReader(new File(XML));
-            final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
-            shredder.call();
-
-            wtx.close();
-
-        }
+        holder = Holder.generateWtx();
     }
 
     @Test
     public void testJustEverything() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
-        wtx.insertElementAsFirstChild(new QName(getString()));
+        holder.getWtx().insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
-                switch (wtx.getNode().getKind()) {
+                switch (holder.getWtx().getNode().getKind()) {
                 case ELEMENT_KIND:
-                    wtx.setQName(new QName(getString()));
-                    wtx.setURI(getString());
+                    holder.getWtx().setQName(new QName(getString()));
+                    holder.getWtx().setURI(getString());
                     break;
                 case ATTRIBUTE_KIND:
-                    wtx.setQName(new QName(getString()));
-                    wtx.setURI(getString());
-                    wtx.setValue(getString());
+                    holder.getWtx().setQName(new QName(getString()));
+                    holder.getWtx().setURI(getString());
+                    holder.getWtx().setValue(getString());
                     break;
                 case NAMESPACE_KIND:
-                    wtx.setQName(new QName(getString()));
-                    wtx.setURI(getString());
+                    holder.getWtx().setQName(new QName(getString()));
+                    holder.getWtx().setURI(getString());
                     break;
                 case TEXT_KIND:
-                    wtx.setValue(getString());
+                    holder.getWtx().setValue(getString());
                     break;
                 default:
                 }
             } else {
-                if (wtx.getNode() instanceof ElementNode) {
+                if (holder.getWtx().getNode() instanceof ElementNode) {
                     if (ran.nextBoolean()) {
-                        wtx.insertElementAsFirstChild(new QName(getString()));
+                        holder.getWtx().insertElementAsFirstChild(new QName(getString()));
                     } else {
-                        wtx.insertElementAsRightSibling(new QName(getString()));
+                        holder.getWtx().insertElementAsRightSibling(new QName(getString()));
                     }
                     while (ran.nextBoolean()) {
-                        wtx.insertAttribute(new QName(getString()), getString());
-                        wtx.moveToParent();
+                        holder.getWtx().insertAttribute(new QName(getString()), getString());
+                        holder.getWtx().moveToParent();
                     }
                     while (ran.nextBoolean()) {
-                        wtx.insertNamespace(new QName(getString(), getString()));
-                        wtx.moveToParent();
+                        holder.getWtx().insertNamespace(new QName(getString(), getString()));
+                        holder.getWtx().moveToParent();
                     }
                 }
 
                 if (ran.nextInt(100) < REMOVEPERCENTAGE) {
-                    wtx.remove();
+                    holder.getWtx().remove();
                 }
 
                 if (ran.nextInt(100) < COMMITPERCENTAGE) {
-                    wtx.commit();
+                    holder.getWtx().commit();
                 }
                 do {
                     final int newKey = ran.nextInt(i + 1) + 1;
-                    wtx.moveTo(newKey);
-                } while (wtx.getNode() == null);
+                    holder.getWtx().moveTo(newKey);
+                } while (holder.getWtx().getNode() == null);
                 // TODO Check if reference check can occur on "=="
-                if (wtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
-                    wtx.moveToParent();
+                if (holder.getWtx().getNode().getKind() != ENodes.ELEMENT_KIND) {
+                    holder.getWtx().moveToParent();
                 }
             }
         }
-        final long key = wtx.getNode().getNodeKey();
-        wtx.remove();
-        wtx.insertElementAsFirstChild(new QName(getString()));
-        wtx.moveTo(key);
-        wtx.commit();
-        wtx.close();
+        final long key = holder.getWtx().getNode().getNodeKey();
+        holder.getWtx().remove();
+        holder.getWtx().insertElementAsFirstChild(new QName(getString()));
+        holder.getWtx().moveTo(key);
+        holder.getWtx().commit();
+        holder.getWtx().close();
     }
 
     @After

@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.xpath.operators;
 
+import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
+
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
@@ -34,8 +36,6 @@ import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.functions.Function;
 import org.treetank.service.xml.xpath.types.Type;
-
-import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
 /**
  * <h1>AbstractOpAxis</h1>

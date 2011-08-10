@@ -27,19 +27,18 @@
 
 package org.treetank.io.berkeley;
 
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IWriter;
+import org.treetank.page.AbsPage;
+import org.treetank.page.PageReference;
+
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.LockMode;
-import com.sleepycat.je.OperationFailureException;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
-
-import org.treetank.exception.TTIOException;
-import org.treetank.io.IWriter;
-import org.treetank.page.AbsPage;
-import org.treetank.page.PageReference;
 
 /**
  * This class represents an reading instance of the Treetank-Application
