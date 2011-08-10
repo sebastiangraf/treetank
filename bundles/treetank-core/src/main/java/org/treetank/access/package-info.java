@@ -31,8 +31,8 @@
  * The access semantics is as follows:
  * <ul>
  * <li>There can only be a single {@link org.treetank.api.IDatabase} instance per Database-Folder</li>
- * <li>There can only be a single {@link org.treetank.api.ISession} instance per
- * {@link org.treetank.api.IDatabase}</li>
+ * <li>There can only be multiple {@link org.treetank.api.ISession} instance per
+ * {@link org.treetank.api.IDatabase} linked uniquely to resources representing concrete data-storages.</li>
  * <li>There can only be a single {@link org.treetank.api.IWriteTransaction} instance per
  * {@link org.treetank.api.ISession}</li>
  * <li>There can be multiple {@link org.treetank.api.IReadTransaction} instances per
@@ -43,43 +43,38 @@
  * Code examples:
  * 
  * <pre>
- * final ISession someSession = Session.beginSession(&quot;example.tnk&quot;);
- * final ISession otherSession = Session.beginSession(&quot;other.tnk&quot;);
- * 
- * // ! final ISession concurrentSession = Session.beginSessoin(&quot;other.tnk&quot;);
- * // ! Error: There already is a session bound to &quot;other.tnk&quot; (otherSession).
- * 
+ * // DatabaseConfiguration denoted the configuration for a connected set of data resources. 
+ * final DatabaseConfiguration dbConfig = new DatabaseConfiguration(new File("/path/to/db/location"));
+ * // Creation of a database. Returns true if successful, false if not (including existence of the database)
+ * Database.createDatabase(dbConfig);
+ * // Getting of database instance, will be a singleton for the denoted path
+ * final IDatabase database = Database.openDatabase(new File("/path/to/db/location");
+ * // Creation of a resource within the db. The creation includes the setting of versioning, etc. It must take place only one.
+ * final ResourceConfiguration resourceConfig = new ResourceConfiguration.Builder(&quot;coolResource&quot;).setRevision(ERevisioning.Differential).build();
+ * database.createResource(resourceConfig);
+ * // Getting access via a ISession
+ * final SessionConfiguration sessionConfig = new SessionConfiguration(&quot;coolResource&quot;);
+ * final ISession someSession = Session.beginSession(sessionConfig);
+ *  
  * final IWriteTransaction someWTX = someSession.beginWriteTransaction();
- * final IWriteTransaction otherWTX = otherSession.beginWriteTransaction();
- * 
- * // ! final IWriteTransaction concurrentWTX = otherSession.beginWriteTransaction();
- * // ! Error: There already is a write transaction running (wtx).
- * 
  * final IReadTransaction someRTX = someSession.beginReadTransaction();
  * final IReadTransaction someConcurrentRTX = someSession.beginReadTransaction();
- * 
- * // ! otherSession.close();
- * // ! Error: All transactions must be closed first.
- * 
- * otherWTX.commit();
- * otherWTX.abort();
- * otherWTX.commit();
- * otherWTX.close();
- * otherSession.close();
  * 
  * someWTX.abort();
  * someWTX.close();
  * someRTX.close();
  * someConcurrentRTX.close();
  * someSession.close();
+ * database.close();
  * </pre>
  * 
  * </p>
  * <p>
- * Best practice to safely manipulate a TreeTank:
+ * Best practice to safely manipulate a TreeTank resource within a database if everything exists:
  * 
  * <pre>
- *         final ISession session = Session.beginSession("example.tnk");
+ *         final IDatabase database = Database.openDatabase(new File(&quot;/path/to/db/location&quot;);
+ *         final ISession session = Session.beginSession(new SessionConfiguration(&quot;existingResource&quot;);
  *         final IWriteTransaction wtx = session.beginWriteTransaction();
  *         try {
  *           wtx.insertElementAsFirstChild("foo", "", "");
@@ -92,6 +87,7 @@
  *           wtx.close();
  *         }
  *         session.close(); // Might also stand in the finally...
+ *         database.close();
  * </pre>
  * 
  * </p>
