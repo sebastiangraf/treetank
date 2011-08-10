@@ -31,7 +31,7 @@
  * The access semantics is as follows:
  * <ul>
  * <li>There can only be a single {@link org.treetank.api.IDatabase} instance per Database-Folder</li>
- * <li>There can only be multiple {@link org.treetank.api.ISession} instance per
+ * <li>There can only be multiple {@link org.treetank.api.ISession} instances per
  * {@link org.treetank.api.IDatabase} linked uniquely to resources representing concrete data-storages.</li>
  * <li>There can only be a single {@link org.treetank.api.IWriteTransaction} instance per
  * {@link org.treetank.api.ISession}</li>
@@ -80,9 +80,9 @@
  *           wtx.insertElementAsFirstChild("foo", "", "");
  *           ...
  *           wtx.commit();
- *         } catch (TreetankException e) {
+ *         } catch (final AbsTTException exc) {
  *           wtx.abort();
- *           throw new RuntimeException(e);
+ *           throw new RuntimeException(exc);
  *         } finally {
  *           wtx.close();
  *         }

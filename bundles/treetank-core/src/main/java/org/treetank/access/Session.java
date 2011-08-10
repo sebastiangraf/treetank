@@ -27,9 +27,6 @@
 
 package org.treetank.access;
 
-import java.util.Hashtable;
-import java.util.Map;
-
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IReadTransaction;
