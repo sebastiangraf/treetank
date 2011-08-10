@@ -42,6 +42,7 @@ import org.treetank.exception.AbsTTException;
  * 
  */
 public final class DiffFactory {
+    public static final String RESOURCENAME = "bla";
 
     /**
      * Possible kinds of differences between two nodes.

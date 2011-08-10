@@ -27,15 +27,24 @@
 
 package org.treetank.access;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.treetank.Holder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.WriteTransaction.HashKind;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -43,13 +52,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class HashTest {
 
@@ -59,67 +61,93 @@ public class HashTest {
     private final static String NAME1 = "a";
     private final static String NAME2 = "b";
 
-    private Holder holder;
-
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = Holder.generate();
+
     }
 
     @Test
     public void testPostorderNamespace() throws Exception {
-        TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
-        testNamespace(holder.session);
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Postorder).build());
+        testNamespace(database);
 
     }
 
     @Test
     public void testPostorderInsertRemove() throws AbsTTException {
-        TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Postorder).build());
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+                .beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
     public void testPostorderDeep() throws AbsTTException {
-        TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Postorder).build());
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+                .beginWriteTransaction();
         testDeepTree(wtx);
     }
 
     @Test
     public void testPostorderSetter() throws AbsTTException {
-        TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Postorder).build());
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+                .beginWriteTransaction();
         testSetter(wtx);
     }
 
     @Test
     public void testRollingNamespace() throws Exception {
-        TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
-        testNamespace(holder.session);
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Rolling).build());
+        testNamespace(database);
 
     }
 
     @Test
     public void testRollingInsertRemove() throws AbsTTException {
-        TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Rolling).build());
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+                .beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
     public void testRollingDeep() throws AbsTTException {
-        TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Rolling).build());
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+                .beginWriteTransaction();
         testDeepTree(wtx);
     }
 
     @Test
     public void testRollingSetter() throws AbsTTException {
-        TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Rolling).build());
+        final IWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+                .beginWriteTransaction();
         testSetter(wtx);
     }
 
@@ -191,7 +219,10 @@ public class HashTest {
         assertEquals(firstRootHash, wtx.getNode().getHash());
     }
 
-    private void testNamespace(final ISession session) throws AbsTTException, IOException, XMLStreamException {
+    private void testNamespace(final IDatabase database) throws AbsTTException, IOException,
+        XMLStreamException {
+        final ISession session =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
@@ -272,7 +303,7 @@ public class HashTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 

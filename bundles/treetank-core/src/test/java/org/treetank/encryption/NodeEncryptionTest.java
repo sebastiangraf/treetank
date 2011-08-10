@@ -42,14 +42,14 @@ import static org.junit.Assert.*;
  * @author Patrick Lang, University of Konstanz
  */
 public class NodeEncryptionTest {
-    
+
     private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateSession();
     }
 
     @After
@@ -57,48 +57,46 @@ public class NodeEncryptionTest {
         holder.close();
         TestHelper.closeEverything();
     }
-    
+
     @Test
-    public void testEnDecryption(){
+    public void testEnDecryption() {
         final String mOriginalString = "This is a String to encrypt";
-        final byte [] mStringAsByteArray = mOriginalString.getBytes();
-        
-        final byte [] mSecretKey = NodeEncryption.generateSecretKey();
-        
-        final byte [] mEncryptedBytes = NodeEncryption.encrypt(mStringAsByteArray, mSecretKey);
-        
+        final byte[] mStringAsByteArray = mOriginalString.getBytes();
+
+        final byte[] mSecretKey = NodeEncryption.generateSecretKey();
+
+        final byte[] mEncryptedBytes = NodeEncryption.encrypt(mStringAsByteArray, mSecretKey);
+
         final byte[] mDecryptedBytes = NodeEncryption.decrypt(mEncryptedBytes, mSecretKey);
-        
+
         final String mDecryptedString = new String(mDecryptedBytes);
-        
+
         assertEquals(mOriginalString, mDecryptedString);
 
     }
-    
+
     @Test
-    public void testLongByteConversion(){
+    public void testLongByteConversion() {
         final long mOrginialLong = 1000000;
-        
+
         final byte[] mLongAsByteArray = NodeEncryption.longToByteArray(mOrginialLong);
-        
+
         final long mByteArrayAsLong = NodeEncryption.byteArrayToLong(mLongAsByteArray);
-        
+
         assertEquals(mOrginialLong, mByteArrayAsLong);
-        
-        
+
     }
-    
+
     @Test
-    public void testIntByteConversion(){
+    public void testIntByteConversion() {
         final int mOrginialInt = 1000;
-        
+
         final byte[] mIntAsByteArray = NodeEncryption.intToByteArray(mOrginialInt);
-        
+
         final int mByteArrayAsInt = NodeEncryption.byteArrayToInt(mIntAsByteArray);
-        
+
         assertEquals(mOrginialInt, mByteArrayAsInt);
-        
-        
+
     }
 
 }

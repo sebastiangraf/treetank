@@ -27,21 +27,13 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
 
 public class AttributeFilterTest {
 
@@ -51,7 +43,7 @@ public class AttributeFilterTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -62,7 +54,7 @@ public class AttributeFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        final IReadTransaction wtx = holder.rtx;
+        final IReadTransaction wtx = holder.getRtx();
         wtx.moveTo(9L);
         IFilterTest.testIFilterConventions(new AttributeFilter(wtx), false);
 

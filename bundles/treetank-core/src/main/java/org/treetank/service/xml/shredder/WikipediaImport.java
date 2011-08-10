@@ -46,10 +46,10 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.access.Database;
-import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -117,9 +117,11 @@ public final class WikipediaImport implements IImport<StartElement> {
         }
 
         try {
-            Database.createDatabase(paramTTDir, new DatabaseConfiguration.Builder());
+            final DatabaseConfiguration config = new DatabaseConfiguration(paramTTDir);
+            Database.createDatabase(config);
             final IDatabase db = Database.openDatabase(paramTTDir);
-            mSession = db.getSession(new SessionConfiguration.Builder());
+            db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
+            mSession = db.getSession(new SessionConfiguration.Builder("shredded").build());
             mWTX = mSession.beginWriteTransaction();
         } catch (final AbsTTException exc) {
             exc.printStackTrace();
@@ -535,7 +537,7 @@ public final class WikipediaImport implements IImport<StartElement> {
      *            Arguments.
      * @throws TTIOException
      */
-    public static void main(final String... args) throws TTIOException {
+    public static void main(final String... args) throws AbsTTException {
         if (args.length != 2) {
             System.err.println("usage: WikipediaImport path/to/xmlFile path/to/TTStorage");
         }
@@ -544,7 +546,7 @@ public final class WikipediaImport implements IImport<StartElement> {
         System.out.print("Importing wikipedia...");
         final File xml = new File(args[0]);
         final File tnk = new File(args[1]);
-        Database.truncateDatabase(tnk);
+        Database.truncateDatabase(new DatabaseConfiguration(tnk));
 
         // Create necessary element nodes.
         final XMLEventFactory eventFactory = XMLEventFactory.newInstance();

@@ -27,15 +27,14 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.filter.IFilterTest;
 import org.treetank.axis.filter.ItemFilter;
 import org.treetank.exception.AbsTTException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 public class ItemFilterTest {
 
@@ -45,7 +44,7 @@ public class ItemFilterTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -57,15 +56,15 @@ public class ItemFilterTest {
     @Test
     public void testIFilterConvetions() throws AbsTTException {
 
-        holder.rtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new ItemFilter(holder.rtx), true);
+        holder.getRtx().moveTo(9L);
+        IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
 
-        holder.rtx.moveTo(3L);
-        IFilterTest.testIFilterConventions(new ItemFilter(holder.rtx), true);
+        holder.getRtx().moveTo(3L);
+        IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
 
-        holder.rtx.moveTo(2L);
-        holder.rtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new ItemFilter(holder.rtx), true);
+        holder.getRtx().moveTo(2L);
+        holder.getRtx().moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
 
     }
 }

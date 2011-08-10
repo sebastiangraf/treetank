@@ -45,7 +45,6 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.utils.FastStack;

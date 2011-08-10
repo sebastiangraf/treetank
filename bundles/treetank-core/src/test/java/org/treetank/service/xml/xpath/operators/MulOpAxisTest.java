@@ -56,7 +56,7 @@ public class MulOpAxisTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -71,13 +71,13 @@ public class MulOpAxisTest {
         IItem item1 = new AtomicValue(3.0, Type.DOUBLE);
         IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-        AbsAxis op1 = new LiteralExpr(holder.rtx, holder.rtx.getItemList().addItem(item1));
-        AbsAxis op2 = new LiteralExpr(holder.rtx, holder.rtx.getItemList().addItem(item2));
-        AbsObAxis axis = new MulOpAxis(holder.rtx, op1, op2);
+        AbsAxis op1 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item1));
+        AbsAxis op2 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item2));
+        AbsObAxis axis = new MulOpAxis(holder.getRtx(), op1, op2);
 
         assertEquals(true, axis.hasNext());
-        assertThat(6.0, is(Double.parseDouble(TypedValue.parseString(holder.rtx.getNode().getRawValue()))));
-        assertEquals(holder.rtx.keyForName("xs:double"), holder.rtx.getNode().getTypeKey());
+        assertThat(6.0, is(Double.parseDouble(TypedValue.parseString(holder.getRtx().getNode().getRawValue()))));
+        assertEquals(holder.getRtx().keyForName("xs:double"), holder.getRtx().getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
     }
@@ -85,33 +85,33 @@ public class MulOpAxisTest {
     @Test
     public final void testGetReturnType() throws AbsTTException {
 
-        AbsAxis op1 = new SequenceAxis(holder.rtx);
-        AbsAxis op2 = new SequenceAxis(holder.rtx);
-        AbsObAxis axis = new MulOpAxis(holder.rtx, op1, op2);
+        AbsAxis op1 = new SequenceAxis(holder.getRtx());
+        AbsAxis op2 = new SequenceAxis(holder.getRtx());
+        AbsObAxis axis = new MulOpAxis(holder.getRtx(), op1, op2);
 
-        assertEquals(Type.DOUBLE, axis.getReturnType(holder.rtx.keyForName("xs:double"), holder.rtx
+        assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:double"), holder.getRtx()
             .keyForName("xs:double")));
-        assertEquals(Type.DOUBLE, axis.getReturnType(holder.rtx.keyForName("xs:decimal"), holder.rtx
+        assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder.getRtx()
             .keyForName("xs:double")));
-        assertEquals(Type.FLOAT, axis.getReturnType(holder.rtx.keyForName("xs:float"), holder.rtx
+        assertEquals(Type.FLOAT, axis.getReturnType(holder.getRtx().keyForName("xs:float"), holder.getRtx()
             .keyForName("xs:decimal")));
-        assertEquals(Type.DECIMAL, axis.getReturnType(holder.rtx.keyForName("xs:decimal"), holder.rtx
+        assertEquals(Type.DECIMAL, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder.getRtx()
             .keyForName("xs:integer")));
         // assertEquals(Type.INTEGER,
-        // axis.getReturnType(holder.rtx.keyForName("xs:integer"),
-        // holder.rtx.keyForName("xs:integer")));
-        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.rtx
-            .keyForName("xs:yearMonthDuration"), holder.rtx.keyForName("xs:double")));
-        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:integer"),
-            holder.rtx.keyForName("xs:yearMonthDuration")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:dayTimeDuration"),
-            holder.rtx.keyForName("xs:double")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.rtx.keyForName("xs:integer"),
-            holder.rtx.keyForName("xs:dayTimeDuration")));
+        // axis.getReturnType(holder.getRtx().keyForName("xs:integer"),
+        // holder.getRtx().keyForName("xs:integer")));
+        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.getRtx()
+            .keyForName("xs:yearMonthDuration"), holder.getRtx().keyForName("xs:double")));
+        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.getRtx().keyForName("xs:integer"),
+            holder.getRtx().keyForName("xs:yearMonthDuration")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.getRtx().keyForName("xs:dayTimeDuration"),
+            holder.getRtx().keyForName("xs:double")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.getRtx().keyForName("xs:integer"),
+            holder.getRtx().keyForName("xs:dayTimeDuration")));
 
         try {
 
-            axis.getReturnType(holder.rtx.keyForName("xs:dateTime"), holder.rtx
+            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx()
                 .keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
@@ -121,7 +121,7 @@ public class MulOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.rtx.keyForName("xs:dateTime"), holder.rtx.keyForName("xs:double"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName("xs:double"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -130,7 +130,7 @@ public class MulOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.rtx.keyForName("xs:string"), holder.rtx
+            axis.getReturnType(holder.getRtx().keyForName("xs:string"), holder.getRtx()
                 .keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
@@ -140,7 +140,7 @@ public class MulOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.rtx.keyForName("xs:yearMonthDuration"), holder.rtx
+            axis.getReturnType(holder.getRtx().keyForName("xs:yearMonthDuration"), holder.getRtx()
                 .keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {

@@ -27,17 +27,18 @@
 
 package org.treetank.access;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.PostOrderAxis;
@@ -46,12 +47,6 @@ import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.utils.DocumentCreater;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-
 public class MultipleCommitTest {
 
     private Holder holder;
@@ -59,7 +54,7 @@ public class MultipleCommitTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = Holder.generate();
+        holder = Holder.generateWtx();
     }
 
     @After
@@ -70,77 +65,68 @@ public class MultipleCommitTest {
 
     @Test
     public void test() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
-        Assert.assertEquals(0L, wtx.getRevisionNumber());
+        Assert.assertEquals(0L, holder.getWtx().getRevisionNumber());
 
-        wtx.commit();
+        holder.getWtx().commit();
 
-        wtx.insertElementAsFirstChild(new QName("foo"));
-        assertEquals(1L, wtx.getRevisionNumber());
-        wtx.moveTo(1);
-        assertEquals(new QName("foo"), wtx.getQNameOfCurrentNode());
-        wtx.abort();
+        holder.getWtx().insertElementAsFirstChild(new QName("foo"));
+        assertEquals(1L, holder.getWtx().getRevisionNumber());
+        holder.getWtx().moveTo(1);
+        assertEquals(new QName("foo"), holder.getWtx().getQNameOfCurrentNode());
+        holder.getWtx().abort();
 
-        assertEquals(1L, wtx.getRevisionNumber());
-
-        wtx.close();
+        assertEquals(1L, holder.getWtx().getRevisionNumber());
     }
 
     @Test
     public void testAutoCommit() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction(100, 1);
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
+        DocumentCreater.create(holder.getWtx());
+        holder.getWtx().commit();
 
-        final IReadTransaction rtx = holder.session.beginReadTransaction();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
         rtx.close();
     }
 
     @Test
     public void testRemove() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        assertEquals(1L, wtx.getRevisionNumber());
+        DocumentCreater.create(holder.getWtx());
+        holder.getWtx().commit();
+        assertEquals(1L, holder.getWtx().getRevisionNumber());
 
-        wtx.moveToDocumentRoot();
-        wtx.moveToFirstChild();
-        wtx.remove();
-        wtx.commit();
-        assertEquals(2L, wtx.getRevisionNumber());
-
-        wtx.close();
+        holder.getWtx().moveToDocumentRoot();
+        holder.getWtx().moveToFirstChild();
+        holder.getWtx().remove();
+        holder.getWtx().commit();
+        assertEquals(2L, holder.getWtx().getRevisionNumber());
     }
 
     @Test
     public void testAttributeRemove() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.moveToDocumentRoot();
+        DocumentCreater.create(holder.getWtx());
+        holder.getWtx().commit();
+        holder.getWtx().moveToDocumentRoot();
 
-        final AbsAxis postorderAxis = new PostOrderAxis(wtx);
+        final AbsAxis postorderAxis = new PostOrderAxis(holder.getWtx());
         while (postorderAxis.hasNext()) {
             postorderAxis.next();
-            if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                && ((ElementNode)wtx.getNode()).getAttributeCount() > 0) {
-                for (int i = 0, attrCount = ((ElementNode)wtx.getNode()).getAttributeCount(); i < attrCount; i++) {
-                    wtx.moveToAttribute(i);
-                    wtx.remove();
+            if (holder.getWtx().getNode().getKind() == ENodes.ELEMENT_KIND
+                && ((ElementNode)holder.getWtx().getNode()).getAttributeCount() > 0) {
+                for (int i = 0, attrCount = ((ElementNode)holder.getWtx().getNode()).getAttributeCount(); i < attrCount; i++) {
+                    holder.getWtx().moveToAttribute(i);
+                    holder.getWtx().remove();
                 }
             }
         }
-        wtx.commit();
-        wtx.moveToDocumentRoot();
+        holder.getWtx().commit();
+        holder.getWtx().moveToDocumentRoot();
 
         int attrTouch = 0;
-        final AbsAxis descAxis = new DescendantAxis(wtx);
+        final AbsAxis descAxis = new DescendantAxis(holder.getWtx());
         while (descAxis.hasNext()) {
             descAxis.next();
-            if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                for (int i = 0, attrCount = ((ElementNode)wtx.getNode()).getAttributeCount(); i < attrCount; i++) {
-                    if (wtx.moveToAttribute(i)) {
+            if (holder.getWtx().getNode().getKind() == ENodes.ELEMENT_KIND) {
+                for (int i = 0, attrCount = ((ElementNode)holder.getWtx().getNode()).getAttributeCount(); i < attrCount; i++) {
+                    if (holder.getWtx().moveToAttribute(i)) {
                         attrTouch++;
                     } else {
                         throw new IllegalStateException("Should never occur!");
@@ -148,9 +134,7 @@ public class MultipleCommitTest {
                 }
             }
         }
-        wtx.close();
         assertEquals(0, attrTouch);
 
     }
-
 }

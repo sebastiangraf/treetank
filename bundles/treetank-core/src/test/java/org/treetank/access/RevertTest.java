@@ -27,22 +27,18 @@
 
 package org.treetank.access;
 
-import javax.xml.namespace.QName;
+import static org.junit.Assert.assertEquals;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
+import javax.xml.namespace.QName;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.utils.DocumentCreater;
 
 public final class RevertTest {
 
@@ -51,7 +47,7 @@ public final class RevertTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-        holder = Holder.generate();
+        holder = Holder.generateSession();
     }
 
     @After
@@ -62,8 +58,7 @@ public final class RevertTest {
 
     @Test
     public void test() throws AbsTTException {
-
-        IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
         assertEquals(0L, wtx.getRevisionNumber());
@@ -71,7 +66,7 @@ public final class RevertTest {
         assertEquals(1L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = holder.session.beginWriteTransaction();
+        wtx = holder.getSession().beginWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
         wtx.moveToFirstChild();
         wtx.insertElementAsFirstChild(new QName("bla"));
@@ -79,14 +74,14 @@ public final class RevertTest {
         assertEquals(2L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = holder.session.beginWriteTransaction();
+        wtx = holder.getSession().beginWriteTransaction();
         assertEquals(2L, wtx.getRevisionNumber());
         wtx.revertTo(0);
         wtx.commit();
         assertEquals(3L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = holder.session.beginWriteTransaction();
+        wtx = holder.getSession().beginWriteTransaction();
         assertEquals(3L, wtx.getRevisionNumber());
         wtx.close();
 

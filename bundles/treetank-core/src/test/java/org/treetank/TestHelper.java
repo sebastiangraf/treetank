@@ -32,19 +32,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
 import org.treetank.access.Database;
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.Session;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.access.WriteTransaction.HashKind;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DeletedNode;
 import org.treetank.node.DocumentRootNode;
@@ -65,11 +65,17 @@ import static org.junit.Assert.fail;
  * Helper class for offering convenient usage of {@link Session}s for test
  * cases.
  * 
+ * This includes instantiation of databases plus resources.
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 public final class TestHelper {
 
+    /** Common resource name. */
+    public static final String RESOURCE = "shredded";
+
+    /** Paths where the data is stored to. */
     public enum PATHS {
 
         // PATH1
@@ -82,74 +88,88 @@ public final class TestHelper {
 
         final File file;
 
+        final DatabaseConfiguration config;
+
         PATHS(final File paramFile) {
             file = paramFile;
+            config = new DatabaseConfiguration(paramFile);
         }
 
         public File getFile() {
             return file;
         }
 
+        public DatabaseConfiguration getConfig() {
+            return config;
+        }
+
     }
 
-    private final static Map<File, DatabaseConfiguration.Builder> configs =
-        new HashMap<File, DatabaseConfiguration.Builder>();
-
+    /** Common random instance for generating common tag names. */
     public final static Random random = new Random();
+
+    private final static Map<File, IDatabase> INSTANCES = new Hashtable<File, IDatabase>();
 
     @Test
     public void testDummy() {
         // Just empty to ensure maven running
     }
 
+    /**
+     * Getting a database and create one of not existing. This includes the creation of a resource with the
+     * settings in the builder as standard.
+     * 
+     * @param file
+     *            to be created
+     * @return a database-obj
+     */
     @Ignore
     public static final IDatabase getDatabase(final File file) {
-        final DatabaseConfiguration.Builder config = configs.get(file);
-        final DatabaseConfiguration.Builder tempConfig = new DatabaseConfiguration.Builder();
-        if (config == null) {
-            configs.put(file, tempConfig);
-        }
-        try {
-            if (!file.exists()) {
-                Database.createDatabase(file, tempConfig);
+        if (INSTANCES.containsKey(file)) {
+            return INSTANCES.get(file);
+        } else {
+            try {
+                final DatabaseConfiguration config = new DatabaseConfiguration(file);
+                if (!file.exists()) {
+                    Database.createDatabase(config);
+                }
+                final IDatabase database = Database.openDatabase(file);
+                database.createResource(new ResourceConfiguration.Builder(RESOURCE, config).build());
+                INSTANCES.put(file, database);
+                return database;
+            } catch (final AbsTTException exc) {
+                fail(exc.toString());
+                return null;
             }
-            return Database.openDatabase(file);
-        } catch (final AbsTTException exc) {
-            fail(exc.toString());
-            return null;
         }
     }
 
-    @Ignore
-    public static final void setDB(final File file, final String hashKind) throws TTUsageException {
-
-        final DatabaseConfiguration.Builder builder = new DatabaseConfiguration.Builder();
-        builder.setHashKind(HashKind.valueOf(hashKind));
-        configs.put(file, builder);
-    }
-
+    /**
+     * Deleting all resources as defined in the enum {@link PATHS}.
+     * 
+     * @throws AbsTTException
+     */
     @Ignore
     public static final void deleteEverything() throws AbsTTException {
-        if (PATHS.PATH1.getFile().exists()) {
-            Database.closeDatabase(PATHS.PATH1.getFile());
-            Database.truncateDatabase(PATHS.PATH1.getFile());
-        }
-        if (PATHS.PATH2.getFile().exists()) {
-            Database.closeDatabase(PATHS.PATH2.getFile());
-            Database.truncateDatabase(PATHS.PATH2.getFile());
-        }
-
-        configs.clear();
-
+        closeEverything();
+        Database.truncateDatabase(PATHS.PATH1.config);
+        Database.truncateDatabase(PATHS.PATH2.config);
     }
 
+    /**
+     * Closing all resources as defined in the enum {@link PATHS}.
+     * 
+     * @throws AbsTTException
+     */
     @Ignore
-    public static final void closeEverything() {
-        try {
-            Database.closeDatabase(PATHS.PATH1.getFile());
-            Database.closeDatabase(PATHS.PATH2.getFile());
-        } catch (final AbsTTException exc) {
-            fail(exc.toString());
+    public static final void closeEverything() throws AbsTTException {
+        if (INSTANCES.containsKey(PATHS.PATH1.getFile())) {
+            final IDatabase database = INSTANCES.remove(PATHS.PATH1.getFile());
+            database.close();
+        }
+        if (INSTANCES.containsKey(PATHS.PATH2.getFile())) {
+            final IDatabase database = INSTANCES.remove(PATHS.PATH2.getFile());
+            database.close();
         }
     }
 
@@ -228,10 +248,15 @@ public final class TestHelper {
         return sBuilder;
     }
 
+    /**
+     * Creating a test document at {@link PATHS#PATH1}.
+     * 
+     * @throws AbsTTException
+     */
     public static void createTestDocument() throws AbsTTException {
-        // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder());
+        database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.config).build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder(RESOURCE).build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();

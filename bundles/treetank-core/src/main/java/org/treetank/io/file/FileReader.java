@@ -31,8 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.slf4j.LoggerFactory;
-import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.page.AbsPage;
@@ -66,12 +64,10 @@ public final class FileReader implements IReader {
     /**
      * Constructor.
      * 
-     * @param paramConf
-     *            Configuration of session we are bound to.
      * @throws TTIOException
      *             if something bad happens
      */
-    public FileReader(final SessionConfiguration paramConf, final File mConcreteStorage) throws TTIOException {
+    public FileReader(final File mConcreteStorage) throws TTIOException {
 
         try {
             if (!mConcreteStorage.exists()) {

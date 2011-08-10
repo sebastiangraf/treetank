@@ -27,12 +27,12 @@
 
 package org.treetank.service.xml.xpath.parser;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit test class to test the functionality of the XPathScanner.

@@ -29,22 +29,17 @@ package org.treetank.axis;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
-import org.treetank.utils.TypedValue;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.utils.TypedValue;
 
 public class AttributeAxisTest {
 
@@ -54,7 +49,8 @@ public class AttributeAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
+
     }
 
     @After
@@ -65,7 +61,7 @@ public class AttributeAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final IReadTransaction wtx = holder.rtx;
+        final IReadTransaction wtx = holder.getRtx();
 
         wtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
@@ -88,8 +84,9 @@ public class AttributeAxisTest {
     }
 
     @Test
+    @Ignore
     public void testMultipleAttributes() throws AbsTTException {
-        final IWriteTransaction wtx = holder.session.beginWriteTransaction();
+        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");
         wtx.moveTo(nodeKey);

@@ -27,15 +27,14 @@
 
 package org.treetank.service.xml.xpath.expr;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * JUnit-test class to test the functionality of the UnionAxis.
@@ -51,7 +50,7 @@ public class ExceptAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -63,26 +62,26 @@ public class ExceptAxisTest {
     @Test
     public void testExcept() throws AbsTTException {
 
-        holder.rtx.moveTo(1L);
+        holder.getRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "child::node() except b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::node() except b"), new long[] {
             4L, 8L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node() except child::node()[attribute::p:x]"), new long[] {
             4L, 5L, 8L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node()/parent::node() except self::node()"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "//node() except //text()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//node() except //text()"), new long[] {
             1L, 5L, 9L, 7L, 11L
         });
 
-        holder.rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "b/preceding::node() except text()"),
+        holder.getRtx().moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/preceding::node() except text()"),
             new long[] {
                 7L, 6L, 5L
             });

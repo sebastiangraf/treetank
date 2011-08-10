@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
+import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +39,6 @@ import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.functions.Function;
 import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.utils.TypedValue;
-
-import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
 /**
  * <h1>GeneralComp</h1>

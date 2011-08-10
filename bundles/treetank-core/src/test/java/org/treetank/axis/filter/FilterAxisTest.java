@@ -27,24 +27,17 @@
 
 package org.treetank.axis.filter;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.AttributeAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 public class FilterAxisTest {
 
@@ -54,7 +47,7 @@ public class FilterAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -66,7 +59,7 @@ public class FilterAxisTest {
     @Test
     public void testNameAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), new NameFilter(rtx, "b")),
@@ -78,7 +71,7 @@ public class FilterAxisTest {
     @Test
     public void testValueAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(
@@ -90,7 +83,7 @@ public class FilterAxisTest {
     @Test
     public void testValueAndNameAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx), new NameFilter(rtx, "i"),

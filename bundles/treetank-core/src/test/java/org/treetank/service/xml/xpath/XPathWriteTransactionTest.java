@@ -27,23 +27,23 @@
 
 package org.treetank.service.xml.xpath;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
 
 /**
  * Testcase for working with XPath and WriteTransactions
@@ -53,8 +53,10 @@ import static org.junit.Assert.fail;
  */
 public final class XPathWriteTransactionTest {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "enwiki-revisions-test.xml";
+
+    private static final String RESOURCE = "bla";
 
     private ISession session;
 
@@ -70,7 +72,8 @@ public final class XPathWriteTransactionTest {
 
         // Verify.
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        session = database.getSession(new SessionConfiguration.Builder());
+        database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.getConfig()).build());
+        session = database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         wtx = session.beginWriteTransaction();
     }
 

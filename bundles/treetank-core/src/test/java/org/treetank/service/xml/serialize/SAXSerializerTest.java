@@ -29,26 +29,18 @@ package org.treetank.service.xml.serialize;
 
 import java.io.IOException;
 
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
+import org.treetank.utils.DocumentCreater;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
-
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.access.WriteTransactionState;
-import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Test SAXSerializer.
@@ -63,7 +55,7 @@ public class SAXSerializerTest extends XMLTestCase {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -114,7 +106,7 @@ public class SAXSerializerTest extends XMLTestCase {
             }
         };
 
-        final SAXSerializer serializer = new SAXSerializer(holder.session, contHandler);
+        final SAXSerializer serializer = new SAXSerializer(holder.getSession(), contHandler);
         serializer.call();
         assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
     }

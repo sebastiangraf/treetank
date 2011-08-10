@@ -29,13 +29,12 @@ package org.treetank.cache;
 
 import java.io.File;
 
-import org.treetank.access.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTIOException;
-import org.treetank.settings.EStoragePaths;
 
 /**
  * Abstract class for holding all persistence caches. Each instance of this
- * class stores the data in a place related to the {@link DatabaseConfiguration} at a different subfolder.
+ * class stores the data in a place related to the {@link ResourceConfiguration} at a different subfolder.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -50,7 +49,7 @@ public abstract class AbstractPersistenceCache implements ICache {
     /**
      * Counter to give every instance a different place.
      */
-    private static int counter;
+    private static int counter = 0;
 
     /**
      * Constructor with the place to store the data.
@@ -61,9 +60,9 @@ public abstract class AbstractPersistenceCache implements ICache {
      */
     protected AbstractPersistenceCache(final File paramFile) {
         place =
-            new File(paramFile, new StringBuilder(EStoragePaths.TRANSACTIONLOG.getFile().getName()).append(
-                File.separator).append(counter).toString());
-        place.mkdirs();
+            new File(new File(paramFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()),
+                Integer.toString(counter));
+        final boolean bla = place.mkdirs();
         counter++;
     }
 

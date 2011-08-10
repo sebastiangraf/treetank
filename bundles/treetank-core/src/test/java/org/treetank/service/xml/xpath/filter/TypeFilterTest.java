@@ -29,9 +29,14 @@ package org.treetank.service.xml.xpath.filter;
 
 import java.io.File;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -42,39 +47,27 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 public class TypeFilterTest {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "test.xml";
+    private Holder holder;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = Holder.generateRtx();
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        TestHelper.closeEverything();
+        holder.close();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testIFilterConvetions() throws Exception {
 
-        // Build simple test tree.
-        // final ISession session = Session.beginSession(PATH);
-        // final IWriteTransaction wtx = session.beginWriteTransaction();
-        // TestDocument.create(wtx);
-        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-
-        // Verify.
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session = database.getSession(new SessionConfiguration.Builder());
-        final IReadTransaction rtx = session.beginReadTransaction();
-        final AbsAxis axis = new XPathAxis(rtx, "a");
+        final AbsAxis axis = new XPathAxis(holder.getRtx(), "a");
         final IReadTransaction xtx = axis.getTransaction();
 
         xtx.moveTo(9L);
@@ -90,10 +83,6 @@ public class TypeFilterTest {
         IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untypedAtomic"), true);
 
         IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"), false);
-
-        xtx.close();
-        rtx.close();
-        session.close();
 
     }
 }

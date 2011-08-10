@@ -27,18 +27,16 @@
 
 package org.treetank.settings;
 
-import org.treetank.TestHelper;
-import org.treetank.access.DatabaseConfiguration;
-import org.treetank.exception.AbsTTException;
-import org.treetank.page.NodePage;
+import static org.junit.Assert.assertEquals;
+import static org.treetank.TestHelper.getNodePage;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-
-import static org.treetank.TestHelper.getNodePage;
+import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.exception.AbsTTException;
+import org.treetank.page.NodePage;
 
 public class ERevisioningTest {
 
@@ -48,7 +46,7 @@ public class ERevisioningTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
 
@@ -59,7 +57,7 @@ public class ERevisioningTest {
         pages[1] = getNodePage(0, 0, 128, 0);
 
         final NodePage page =
-            ERevisioning.FULLDUMP.combinePages(pages, DatabaseConfiguration.VERSIONSTORESTORE);
+            ERevisioning.FULLDUMP.combinePages(pages, ResourceConfiguration.VERSIONSTORESTORE);
 
         for (int j = 0; j < page.getNodes().length; j++) {
             assertEquals(pages[0].getNode(j), page.getNode(j));
@@ -71,7 +69,7 @@ public class ERevisioningTest {
     public void testDifferentialCombinePages() {
         final NodePage[] pages = prepareNormal(4);
         final NodePage page =
-            ERevisioning.DIFFERENTIAL.combinePages(pages, DatabaseConfiguration.VERSIONSTORESTORE);
+            ERevisioning.DIFFERENTIAL.combinePages(pages, ResourceConfiguration.VERSIONSTORESTORE);
 
         for (int j = 0; j < 32; j++) {
             assertEquals(pages[0].getNode(j), page.getNode(j));
@@ -86,7 +84,7 @@ public class ERevisioningTest {
     public void testIncrementalCombinePages() {
         final NodePage[] pages = prepareNormal(4);
         final NodePage page =
-            ERevisioning.INCREMENTAL.combinePages(pages, DatabaseConfiguration.VERSIONSTORESTORE);
+            ERevisioning.INCREMENTAL.combinePages(pages, ResourceConfiguration.VERSIONSTORESTORE);
         checkCombined(pages, page);
     }
 

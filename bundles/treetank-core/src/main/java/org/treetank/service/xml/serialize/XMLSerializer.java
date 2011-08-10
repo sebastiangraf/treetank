@@ -27,6 +27,12 @@
 
 package org.treetank.service.xml.serialize;
 
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,9 +41,10 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ConcurrentMap;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.access.Database;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -45,12 +52,6 @@ import org.treetank.node.AbsStructNode;
 import org.treetank.node.ElementNode;
 import org.treetank.settings.ECharsForSerializing;
 import org.treetank.utils.IConstants;
-
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
 
 /**
  * <h1>XMLSerializer</h1>
@@ -336,14 +337,18 @@ public final class XMLSerializer extends AbsSerializer {
         target.delete();
         final FileOutputStream outputStream = new FileOutputStream(target);
 
+        final DatabaseConfiguration config = new DatabaseConfiguration(new File(args[0]));
+        Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(new File(args[0]));
-        final ISession session = db.getSession(new SessionConfiguration.Builder());
+        db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
+        final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();
         serializer.call();
 
         session.close();
         outputStream.close();
+        db.close();
 
         System.out.println(" done [" + (System.currentTimeMillis() - time) + "ms].");
     }

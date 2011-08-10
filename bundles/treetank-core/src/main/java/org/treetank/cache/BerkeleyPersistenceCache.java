@@ -29,6 +29,8 @@ package org.treetank.cache;
 
 import java.io.File;
 
+import org.treetank.exception.TTIOException;
+
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -38,8 +40,6 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-
-import org.treetank.exception.TTIOException;
 
 /**
  * Berkeley implementation of a persistent cache. That means that all data is

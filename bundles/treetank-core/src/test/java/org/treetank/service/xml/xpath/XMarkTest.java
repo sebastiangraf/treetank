@@ -29,17 +29,15 @@ package org.treetank.service.xml.xpath;
 
 import java.io.File;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.perfidix.annotation.BenchClass;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.XMLShredder;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Performes the XMark benchmark.
@@ -60,14 +58,13 @@ public class XMarkTest {
         TestHelper.deleteEverything();
         // Build simple test tree.
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
 
     }
 
     @After
     public void tearDown() throws AbsTTException {
-        holder.rtx.close();
-        holder.session.close();
+        holder.close();
         TestHelper.closeEverything();
     }
 
@@ -75,7 +72,7 @@ public class XMarkTest {
     public void testQ1_10() throws AbsTTException {
         // Verify.
 
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "/site/people/person[@id=\"person0\"]/name/text()"), new String[] {
             "Sinisa Farrel"
         });
@@ -85,7 +82,7 @@ public class XMarkTest {
     public void testQ1() throws AbsTTException {
 
         // Q1 The name of the person with ID 'person0' {projecting}
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "for $b in /site/people/person[@id=\"person0\"] " + "return $b/name/text()"), new String[] {
             "Sinisa Farrel"
         });
@@ -95,7 +92,7 @@ public class XMarkTest {
     public void testQ5() throws AbsTTException {
 
         // Q5 How many sold items cost more than 40?
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] "
                 + "return $i/price)"), new String[] {
             "75"
@@ -106,7 +103,7 @@ public class XMarkTest {
     public void testQ6() throws AbsTTException {
 
         // Q6 How many items are listed on all continents?
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "for $b in //site/regions return fn:count($b//item)"), new String[] {
             "217"
         });
@@ -115,7 +112,7 @@ public class XMarkTest {
     @Test
     public void testQ7() throws AbsTTException {
         // Q7 How many pieces of prose are in our database?
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx,
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "for $p in /site return fn:count($p//description) + "
                 + "fn:count($p//annotation) + fn:count($p//emailaddress)"), new String[] {
             "916.0"

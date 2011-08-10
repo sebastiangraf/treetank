@@ -27,8 +27,14 @@
 
 package org.treetank.service.xml.xpath.concurrent;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.perfidix.annotation.AfterEachRun;
 import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
@@ -54,15 +60,6 @@ import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.filter.PredicateFilterAxis;
 import org.treetank.utils.TypedValue;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-
 public class ConcurrentAxisTest {
 
     /** XML file name to test. */
@@ -84,7 +81,7 @@ public class ConcurrentAxisTest {
     public static final void setUp() throws Exception {
         TestHelper.deleteEverything();
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @Test
@@ -107,7 +104,7 @@ public class ConcurrentAxisTest {
         final int resultNumber = 550;
         AbsAxis axis = null;
         try {
-            axis = new XPathAxis(holder.rtx, query);
+            axis = new XPathAxis(holder.getRtx(), query);
         } catch (final TTXPathException ttExp) {
             ttExp.printStackTrace();
         }
@@ -130,10 +127,10 @@ public class ConcurrentAxisTest {
         /* query: //regions/africa//location */
         final int resultNumber = 550;
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.rtx, true),
-                new NameFilter(holder.rtx, "regions")), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "africa"))), new FilterAxis(new DescendantAxis(holder.rtx, true),
-                new NameFilter(holder.rtx, "location")));
+            new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                new NameFilter(holder.getRtx(), "regions")), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "africa"))), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                new NameFilter(holder.getRtx(), "location")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -154,11 +151,11 @@ public class ConcurrentAxisTest {
         /* query: //regions/africa//location */
         final int resultNumber = 550;
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions"))), new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "africa")))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true),
-                    new NameFilter(holder.rtx, "name"))));
+            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))), new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "africa")))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                    new NameFilter(holder.getRtx(), "name"))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -180,10 +177,10 @@ public class ConcurrentAxisTest {
         /* query: //regions/africa//location */
         final int resultNumber = 550;
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions"))), new FilterAxis(new ChildAxis(
-                holder.rtx), new NameFilter(holder.rtx, "africa"))), new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "name")));
+            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))), new FilterAxis(new ChildAxis(
+                holder.getRtx()), new NameFilter(holder.getRtx(), "africa"))), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "name")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -205,10 +202,10 @@ public class ConcurrentAxisTest {
         /* query: //regions/africa//location */
         final int resultNumber = 550;
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.rtx, true),
-                new NameFilter(holder.rtx, "regions")), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "africa"))), new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "name"))));
+            new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                new NameFilter(holder.getRtx(), "regions")), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "africa"))), new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "name"))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -233,19 +230,19 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
             new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions")), new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "item"))), new FilterAxis(new ChildAxis(
-                holder.rtx), new NameFilter(holder.rtx, "mailbox"))), new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail"))), new PredicateFilterAxis(
-                holder.rtx, new NestedAxis(new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                    holder.rtx, "date")), new GeneralComp(holder.rtx, new FilterAxis(
-                    new ChildAxis(holder.rtx), new TextFilter(holder.rtx)), literal, CompKind.EQ))));
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions")), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "item"))), new FilterAxis(new ChildAxis(
+                holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail"))), new PredicateFilterAxis(
+                holder.getRtx(), new NestedAxis(new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                    holder.getRtx(), "date")), new GeneralComp(holder.getRtx(), new FilterAxis(
+                    new ChildAxis(holder.getRtx()), new TextFilter(holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -268,20 +265,20 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true),
-                    new NameFilter(holder.rtx, "item")))), new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox")))), new ConcurrentAxis(
-                holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail")))),
-                new PredicateFilterAxis(holder.rtx, new NestedAxis(new FilterAxis(new ChildAxis(holder.rtx),
-                    new NameFilter(holder.rtx, "date")), new GeneralComp(holder.rtx, new FilterAxis(
-                    new ChildAxis(holder.rtx), new TextFilter(holder.rtx)), literal, CompKind.EQ))));
+            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                    new NameFilter(holder.getRtx(), "item")))), new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox")))), new ConcurrentAxis(
+                holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail")))),
+                new PredicateFilterAxis(holder.getRtx(), new NestedAxis(new FilterAxis(new ChildAxis(holder.getRtx()),
+                    new NameFilter(holder.getRtx(), "date")), new GeneralComp(holder.getRtx(), new FilterAxis(
+                    new ChildAxis(holder.getRtx()), new TextFilter(holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -304,20 +301,20 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true),
-                    new NameFilter(holder.rtx, "item")))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "mailbox"))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "mail"))), new PredicateFilterAxis(holder.rtx, new NestedAxis(
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "date")),
-                new GeneralComp(holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new TextFilter(
-                    holder.rtx)), literal, CompKind.EQ))));
+            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                    new NameFilter(holder.getRtx(), "item")))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "mailbox"))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "mail"))), new PredicateFilterAxis(holder.getRtx(), new NestedAxis(
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "date")),
+                new GeneralComp(holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new TextFilter(
+                    holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -343,11 +340,11 @@ public class ConcurrentAxisTest {
         // final int resultNumber = 208497; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.rtx, true),
-                new NameFilter(holder.rtx, "regions")), new FilterAxis(new DescendantAxis(holder.rtx, true),
-                new NameFilter(holder.rtx, "item"))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "mailbox"))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "mail")));
+            new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                new NameFilter(holder.getRtx(), "regions")), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                new NameFilter(holder.getRtx(), "item"))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "mailbox"))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -371,12 +368,12 @@ public class ConcurrentAxisTest {
         // final int resultNumber = 208497; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true),
-                    new NameFilter(holder.rtx, "item")))), new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox")))), new ConcurrentAxis(
-                holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail"))));
+            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                    new NameFilter(holder.getRtx(), "item")))), new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox")))), new ConcurrentAxis(
+                holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail"))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -400,11 +397,11 @@ public class ConcurrentAxisTest {
         // final int resultNumber = 208497; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail")));
+            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -428,11 +425,11 @@ public class ConcurrentAxisTest {
         // final int resultNumber = 208497; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.rtx, true),
-                new NameFilter(holder.rtx, "regions")), new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item")))), new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox"))), new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail")));
+            new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                new NameFilter(holder.getRtx(), "regions")), new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item")))), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -456,12 +453,12 @@ public class ConcurrentAxisTest {
         // final int resultNumber = 208497; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true),
-                    new NameFilter(holder.rtx, "item")))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "mailbox"))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "mail")));
+            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                    new NameFilter(holder.getRtx(), "item")))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "mailbox"))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -485,12 +482,12 @@ public class ConcurrentAxisTest {
         // final int resultNumber = 208497; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item"))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                    holder.rtx, "mailbox")))), new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                holder.rtx, "mail")));
+            new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item"))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                    holder.getRtx(), "mailbox")))), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -514,11 +511,11 @@ public class ConcurrentAxisTest {
         // final int resultNumber = 208497; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.rtx, true),
-                new NameFilter(holder.rtx, "regions")), new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item")))), new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox"))), new ConcurrentAxis(
-                holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail"))));
+            new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                new NameFilter(holder.getRtx(), "regions")), new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item")))), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))), new ConcurrentAxis(
+                holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail"))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -543,19 +540,19 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
             new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions")), new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "item"))), new FilterAxis(new ChildAxis(
-                holder.rtx), new NameFilter(holder.rtx, "mailbox"))), new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail"))), new PredicateFilterAxis(
-                holder.rtx, new NestedAxis(new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                    holder.rtx, "date")), new GeneralComp(holder.rtx, new FilterAxis(
-                    new ChildAxis(holder.rtx), new TextFilter(holder.rtx)), literal, CompKind.EQ))));
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions")), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "item"))), new FilterAxis(new ChildAxis(
+                holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail"))), new PredicateFilterAxis(
+                holder.getRtx(), new NestedAxis(new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                    holder.getRtx(), "date")), new GeneralComp(holder.getRtx(), new FilterAxis(
+                    new ChildAxis(holder.getRtx()), new TextFilter(holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -578,20 +575,20 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true),
-                    new NameFilter(holder.rtx, "item")))), new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox")))), new ConcurrentAxis(
-                holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail")))),
-                new PredicateFilterAxis(holder.rtx, new NestedAxis(new FilterAxis(new ChildAxis(holder.rtx),
-                    new NameFilter(holder.rtx, "date")), new GeneralComp(holder.rtx, new FilterAxis(
-                    new ChildAxis(holder.rtx), new TextFilter(holder.rtx)), literal, CompKind.EQ))));
+            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                    new NameFilter(holder.getRtx(), "item")))), new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox")))), new ConcurrentAxis(
+                holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail")))),
+                new PredicateFilterAxis(holder.getRtx(), new NestedAxis(new FilterAxis(new ChildAxis(holder.getRtx()),
+                    new NameFilter(holder.getRtx(), "date")), new GeneralComp(holder.getRtx(), new FilterAxis(
+                    new ChildAxis(holder.getRtx()), new TextFilter(holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -614,20 +611,20 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
             new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions")), new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "item"))), new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox")))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                    holder.rtx, "mail")))), new PredicateFilterAxis(holder.rtx, new NestedAxis(
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "date")),
-                new GeneralComp(holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new TextFilter(
-                    holder.rtx)), literal, CompKind.EQ))));
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions")), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "item"))), new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox")))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                    holder.getRtx(), "mail")))), new PredicateFilterAxis(holder.getRtx(), new NestedAxis(
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "date")),
+                new GeneralComp(holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new TextFilter(
+                    holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -650,19 +647,19 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail"))),
-                new PredicateFilterAxis(holder.rtx, new NestedAxis(new FilterAxis(new ChildAxis(holder.rtx),
-                    new NameFilter(holder.rtx, "date")), new GeneralComp(holder.rtx, new FilterAxis(
-                    new ChildAxis(holder.rtx), new TextFilter(holder.rtx)), literal, CompKind.EQ))));
+            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail"))),
+                new PredicateFilterAxis(holder.getRtx(), new NestedAxis(new FilterAxis(new ChildAxis(holder.getRtx()),
+                    new NameFilter(holder.getRtx(), "date")), new GeneralComp(holder.getRtx(), new FilterAxis(
+                    new ChildAxis(holder.getRtx()), new TextFilter(holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -685,19 +682,19 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
             new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions")), new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item")))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail"))),
-                new PredicateFilterAxis(holder.rtx, new NestedAxis(new FilterAxis(new ChildAxis(holder.rtx),
-                    new NameFilter(holder.rtx, "date")), new GeneralComp(holder.rtx, new FilterAxis(
-                    new ChildAxis(holder.rtx), new TextFilter(holder.rtx)), literal, CompKind.EQ))));
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions")), new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item")))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail"))),
+                new PredicateFilterAxis(holder.getRtx(), new NestedAxis(new FilterAxis(new ChildAxis(holder.getRtx()),
+                    new NameFilter(holder.getRtx(), "date")), new GeneralComp(holder.getRtx(), new FilterAxis(
+                    new ChildAxis(holder.getRtx()), new TextFilter(holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -720,20 +717,20 @@ public class ConcurrentAxisTest {
         final int resultNumber = 22;
 
         long date =
-            holder.rtx.getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.rtx.keyForName("xs:string")));
-        AbsAxis literal = new LiteralExpr(holder.rtx, date);
+            holder.getRtx().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes("02/24/2000"), holder.getRtx().keyForName("xs:string")));
+        AbsAxis literal = new LiteralExpr(holder.getRtx(), date);
 
         final AbsAxis axis =
             new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions")), new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item")))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                    holder.rtx, "mailbox")))), new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                holder.rtx, "mail"))),
-                new PredicateFilterAxis(holder.rtx, new NestedAxis(new FilterAxis(new ChildAxis(holder.rtx),
-                    new NameFilter(holder.rtx, "date")), new GeneralComp(holder.rtx, new FilterAxis(
-                    new ChildAxis(holder.rtx), new TextFilter(holder.rtx)), literal, CompKind.EQ))));
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions")), new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item")))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                    holder.getRtx(), "mailbox")))), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                holder.getRtx(), "mail"))),
+                new PredicateFilterAxis(holder.getRtx(), new NestedAxis(new FilterAxis(new ChildAxis(holder.getRtx()),
+                    new NameFilter(holder.getRtx(), "date")), new GeneralComp(holder.getRtx(), new FilterAxis(
+                    new ChildAxis(holder.getRtx()), new TextFilter(holder.getRtx())), literal, CompKind.EQ))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -758,10 +755,10 @@ public class ConcurrentAxisTest {
         final int resultNumber = 5363;
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.rtx, true),
-                new NameFilter(holder.rtx, "description")), new FilterAxis(new DescendantAxis(holder.rtx,
-                true), new NameFilter(holder.rtx, "listitem"))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "text")));
+            new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                new NameFilter(holder.getRtx(), "description")), new FilterAxis(new DescendantAxis(holder.getRtx(),
+                true), new NameFilter(holder.getRtx(), "listitem"))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "text")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -784,11 +781,11 @@ public class ConcurrentAxisTest {
         final int resultNumber = 5363;
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "description"))), new ConcurrentAxis(
-                holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx,
-                    "listitem")))), new ConcurrentAxis(holder.rtx, new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "text"))));
+            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "description"))), new ConcurrentAxis(
+                holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(),
+                    "listitem")))), new ConcurrentAxis(holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "text"))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -811,10 +808,10 @@ public class ConcurrentAxisTest {
         final int resultNumber = 5363;
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "description"))), new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "listitem"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "text")));
+            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "description"))), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "listitem"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "text")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -837,10 +834,10 @@ public class ConcurrentAxisTest {
         final int resultNumber = 5363;
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "description"))), new ConcurrentAxis(
-                holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx,
-                    "listitem")))), new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx,
+            new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "description"))), new ConcurrentAxis(
+                holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(),
+                    "listitem")))), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(),
                 "text")));
 
         for (int i = 0; i < resultNumber; i++) {
@@ -868,11 +865,11 @@ public class ConcurrentAxisTest {
 
         final AbsAxis axis =
             new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions")), new FilterAxis(new ChildAxis(
-                holder.rtx), new NameFilter(holder.rtx, "africa"))), new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "item"))), new FilterAxis(new ChildAxis(
-                holder.rtx), new NameFilter(holder.rtx, "mailbox"))), new FilterAxis(
-                new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail")));
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions")), new FilterAxis(new ChildAxis(
+                holder.getRtx()), new NameFilter(holder.getRtx(), "africa"))), new FilterAxis(new DescendantAxis(
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "item"))), new FilterAxis(new ChildAxis(
+                holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))), new FilterAxis(
+                new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -896,14 +893,14 @@ public class ConcurrentAxisTest {
         final int resultNumber = 544; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                    holder.rtx, "africa")))), new ConcurrentAxis(holder.rtx, new FilterAxis(
-                new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item")))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(
-                    holder.rtx, "mailbox")))), new ConcurrentAxis(holder.rtx, new FilterAxis(new ChildAxis(
-                holder.rtx), new NameFilter(holder.rtx, "mail"))));
+            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                    holder.getRtx(), "africa")))), new ConcurrentAxis(holder.getRtx(), new FilterAxis(
+                new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item")))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(
+                    holder.getRtx(), "mailbox")))), new ConcurrentAxis(holder.getRtx(), new FilterAxis(new ChildAxis(
+                holder.getRtx()), new NameFilter(holder.getRtx(), "mail"))));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -927,12 +924,12 @@ public class ConcurrentAxisTest {
         final int resultNumber = 544; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "africa"))),
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail")));
+            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "africa"))),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -957,11 +954,11 @@ public class ConcurrentAxisTest {
 
         final AbsAxis axis =
             new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new FilterAxis(new DescendantAxis(
-                holder.rtx, true), new NameFilter(holder.rtx, "regions")), new FilterAxis(new ChildAxis(
-                holder.rtx), new NameFilter(holder.rtx, "africa"))), new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "item")))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mailbox"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "mail")));
+                holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions")), new FilterAxis(new ChildAxis(
+                holder.getRtx()), new NameFilter(holder.getRtx(), "africa"))), new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "item")))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mailbox"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());
@@ -985,13 +982,13 @@ public class ConcurrentAxisTest {
         final int resultNumber = 544; // 1000mb xmark
 
         final AbsAxis axis =
-            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.rtx,
-                new FilterAxis(new DescendantAxis(holder.rtx, true), new NameFilter(holder.rtx, "regions"))),
-                new FilterAxis(new ChildAxis(holder.rtx), new NameFilter(holder.rtx, "africa"))),
-                new ConcurrentAxis(holder.rtx, new FilterAxis(new DescendantAxis(holder.rtx, true),
-                    new NameFilter(holder.rtx, "item")))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "mailbox"))), new FilterAxis(new ChildAxis(holder.rtx),
-                new NameFilter(holder.rtx, "mail")));
+            new NestedAxis(new NestedAxis(new NestedAxis(new NestedAxis(new ConcurrentAxis(holder.getRtx(),
+                new FilterAxis(new DescendantAxis(holder.getRtx(), true), new NameFilter(holder.getRtx(), "regions"))),
+                new FilterAxis(new ChildAxis(holder.getRtx()), new NameFilter(holder.getRtx(), "africa"))),
+                new ConcurrentAxis(holder.getRtx(), new FilterAxis(new DescendantAxis(holder.getRtx(), true),
+                    new NameFilter(holder.getRtx(), "item")))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "mailbox"))), new FilterAxis(new ChildAxis(holder.getRtx()),
+                new NameFilter(holder.getRtx(), "mail")));
 
         for (int i = 0; i < resultNumber; i++) {
             assertEquals(true, axis.hasNext());

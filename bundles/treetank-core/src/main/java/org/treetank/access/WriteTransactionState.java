@@ -27,11 +27,9 @@
 
 package org.treetank.access;
 
-import java.io.File;
-import java.util.Stack;
-
 import javax.xml.namespace.QName;
 
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IItem;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
@@ -106,7 +104,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         final long paramStoreRev) throws TTIOException {
         super(paramSessionState, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
-        mLog = new TransactionLogCache(paramSessionState.mSessionConfig.mPath, paramStoreRev);
+        mLog = new TransactionLogCache(paramSessionState.mResourceConfig.mPath, paramStoreRev);
         mPageWriter = paramWriter;
         mTransactionID = paramParamId;
 
@@ -563,8 +561,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
         throws TTIOException {
         final NodePage[] revs = getSnapshotPages(paramNodePageKey);
-        final ERevisioning revision = mSessionState.mSessionConfig.mDBConfig.mRevision;
-        final int mileStoneRevision = mSessionState.mSessionConfig.mDBConfig.mRevisionsToRestore;
+        final ERevisioning revision = mSessionState.mResourceConfig.mRevision;
+        final int mileStoneRevision = mSessionState.mResourceConfig.mRevisionsToRestore;
 
         return revision.combinePagesForModification(revs, mileStoneRevision);
     }

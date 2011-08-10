@@ -31,9 +31,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.access.Database;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -93,8 +94,11 @@ public final class TreeTankCommandoLineExplorer {
             }
 
             final File file = new File(args[0]);
+            final DatabaseConfiguration config = new DatabaseConfiguration(file);
+            Database.createDatabase(config);
             database = Database.openDatabase(file);
-            session = database.getSession(new SessionConfiguration.Builder());
+            database.createResource(new ResourceConfiguration.Builder("TMP", config).build());
+            session = database.getSession(new SessionConfiguration.Builder("TMP").build());
             if (revision != 0) {
                 rtx = session.beginWriteTransaction();
             } else {
@@ -127,7 +131,7 @@ public final class TreeTankCommandoLineExplorer {
                     final File file = findFile(line);
                     if (file != null) {
                         database = Database.openDatabase(file);
-                        session = database.getSession(new SessionConfiguration.Builder());
+                        session = database.getSession(new SessionConfiguration.Builder("TMP").build());
                         rtx = session.beginReadTransaction();
                         System.out.println(command.executeCommand(rtx));
                     } else {

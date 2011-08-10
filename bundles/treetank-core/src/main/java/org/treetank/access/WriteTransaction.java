@@ -29,10 +29,13 @@ package org.treetank.access;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.*;
+import org.treetank.api.IDatabase;
+import org.treetank.api.IItem;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.IStructuralItem;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
-import org.treetank.axis.LevelOrderAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
@@ -120,7 +123,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         mMaxNodeCount = paramMaxNodeCount;
         mModificationCount = 0L;
 
-        mHashKind = paramSessionState.mSessionConfig.mDBConfig.mHashKind;
+        mHashKind = paramSessionState.mResourceConfig.mHashKind;
     }
 
     /**

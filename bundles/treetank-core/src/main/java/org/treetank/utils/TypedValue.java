@@ -27,7 +27,6 @@
 
 package org.treetank.utils;
 
-import org.slf4j.LoggerFactory;
 
 /**
  * <h1>UTF</h1>

@@ -27,27 +27,25 @@
 
 package org.treetank.service.xml.serialize;
 
-import java.io.File;
-import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
-
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
+
+import java.io.File;
+import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
 
 public class XMLSerializerPropertiesTest {
 
@@ -63,10 +61,6 @@ public class XMLSerializerPropertiesTest {
 
     @Test
     public void testXMLSerializerProp() {
-        final String path = TestHelper.PATHS.PATH1.getFile().getAbsolutePath();
-        if (!new File(path).mkdirs()) {
-            fail("Directories couldn't be created!");
-        }
         final XMLSerializerProperties props = new XMLSerializerProperties();
 
         final ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>)props.getmProps();

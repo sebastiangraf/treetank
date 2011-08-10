@@ -27,6 +27,11 @@
 
 package org.treetank.access;
 
+import java.util.Hashtable;
+import java.util.Map;
+
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -58,8 +63,9 @@ public final class Session implements ISession {
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    protected Session(final SessionConfiguration paramSessionConf) throws AbsTTException {
-        mSessionState = new SessionState(paramSessionConf);
+    protected Session(final ResourceConfiguration paramResourceConf,
+        final SessionConfiguration paramSessionConf) throws AbsTTException {
+        mSessionState = new SessionState(paramResourceConf, paramSessionConf);
         mClosed = false;
     }
 
@@ -113,6 +119,7 @@ public final class Session implements ISession {
     public synchronized void close() throws AbsTTException {
         if (!mClosed) {
             assert mSessionState != null;
+            Database.closeResource(mSessionState.mResourceConfig.mPath);
             mSessionState.close();
             mSessionState = null;
             mClosed = true;
@@ -141,14 +148,13 @@ public final class Session implements ISession {
     public String toString() {
         return mSessionState.toString();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getUser(){
+    public String getUser() {
         return mSessionState.mSessionConfig.mUser;
     }
-    
 
 }

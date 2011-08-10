@@ -32,8 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.slf4j.LoggerFactory;
-import org.treetank.access.SessionConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.AbsPage;
@@ -67,14 +65,13 @@ public final class FileWriter implements IWriter {
     /**
      * Constructor.
      * 
-     * @param paramConf
-     *            the path to the storage
+     * 
      * @param paramStorage
      *            the Concrete Storage
      * @throws TTIOException
      *             if FileWriter IO error
      */
-    public FileWriter(final SessionConfiguration paramConf, final File paramStorage) throws TTIOException {
+    public FileWriter(final File paramStorage) throws TTIOException {
         try {
             if (!paramStorage.getParentFile().exists()) {
                 paramStorage.getParentFile().mkdirs();
@@ -87,7 +84,7 @@ public final class FileWriter implements IWriter {
         mCompressor = new CryptoJavaImpl();
         mBuffer = new ByteBufferSinkAndSource();
 
-        reader = new FileReader(paramConf, paramStorage);
+        reader = new FileReader(paramStorage);
 
     }
 

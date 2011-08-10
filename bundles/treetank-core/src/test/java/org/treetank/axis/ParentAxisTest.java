@@ -27,20 +27,13 @@
 
 package org.treetank.axis;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.api.IReadTransaction;
+import org.treetank.exception.AbsTTException;
 
 public class ParentAxisTest {
 
@@ -50,7 +43,7 @@ public class ParentAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -61,7 +54,7 @@ public class ParentAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(5L);
         AbsAxisTest.testIAxisConventions(new ParentAxis(rtx), new long[] {

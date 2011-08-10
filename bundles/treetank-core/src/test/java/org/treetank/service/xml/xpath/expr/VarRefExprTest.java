@@ -27,17 +27,16 @@
 
 package org.treetank.service.xml.xpath.expr;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit-test class to test the functionality of the VarRefExpr.
@@ -52,7 +51,7 @@ public class VarRefExprTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -60,36 +59,36 @@ public class VarRefExprTest {
         holder.close();
         TestHelper.closeEverything();
     }
-    
+
     @Test
     public void testEveryExpr() throws AbsTTException {
 
-        final AbsAxis axis = new XPathAxis(holder.rtx, "for $a in b return $a");
+        final AbsAxis axis = new XPathAxis(holder.getRtx(), "for $a in b return $a");
 
-        final VariableAxis variable = new VariableAxis(holder.rtx, axis);
+        final VariableAxis variable = new VariableAxis(holder.getRtx(), axis);
 
-        final VarRefExpr axis1 = new VarRefExpr(holder.rtx, variable);
+        final VarRefExpr axis1 = new VarRefExpr(holder.getRtx(), variable);
         // assertEquals(false, axis1.hasNext());
         axis1.update(5L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(5L, holder.rtx.getNode().getNodeKey());
+        assertEquals(5L, holder.getRtx().getNode().getNodeKey());
         axis1.update(13L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(13L, holder.rtx.getNode().getNodeKey());
+        assertEquals(13L, holder.getRtx().getNode().getNodeKey());
         axis1.update(1L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(1L, holder.rtx.getNode().getNodeKey());
+        assertEquals(1L, holder.getRtx().getNode().getNodeKey());
         assertEquals(false, axis1.hasNext());
 
-        final VarRefExpr axis2 = new VarRefExpr(holder.rtx, variable);
+        final VarRefExpr axis2 = new VarRefExpr(holder.getRtx(), variable);
         // assertEquals(false, axis2.hasNext());
         axis2.update(13L);
         assertEquals(true, axis2.hasNext());
-        assertEquals(13L, holder.rtx.getNode().getNodeKey());
+        assertEquals(13L, holder.getRtx().getNode().getNodeKey());
         assertEquals(false, axis2.hasNext());
         axis2.update(12L);
         assertEquals(true, axis2.hasNext());
-        assertEquals(12L, holder.rtx.getNode().getNodeKey());
+        assertEquals(12L, holder.getRtx().getNode().getNodeKey());
         assertEquals(false, axis2.hasNext());
 
     }

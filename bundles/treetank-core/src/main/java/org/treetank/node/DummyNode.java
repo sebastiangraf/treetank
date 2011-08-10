@@ -29,8 +29,6 @@ package org.treetank.node;
 
 import java.util.Arrays;
 
-import org.treetank.api.IItem;
-import org.treetank.api.IReadTransaction;
 import org.treetank.api.IVisitor;
 import org.treetank.settings.EFixed;
 

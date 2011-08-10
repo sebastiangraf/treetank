@@ -27,14 +27,13 @@
 
 package org.treetank.axis;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 public class ChildAxisTest {
 
@@ -44,7 +43,7 @@ public class ChildAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -55,7 +54,7 @@ public class ChildAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final IReadTransaction rtx = holder.rtx;
+        final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {

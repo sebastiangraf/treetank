@@ -32,12 +32,14 @@ import java.io.IOException;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 
-import org.treetank.access.DatabaseConfiguration;
 import org.treetank.access.Database;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.diff.DiffFactory;
 import org.treetank.diff.algorithm.fmes.FMES;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -69,10 +71,15 @@ public final class FMSEImport {
         IOException, XMLStreamException {
         assert paramResNewRev != null;
         assert paramNewRev != null;
-        Database.truncateDatabase(paramNewRev);
-        Database.createDatabase(paramNewRev, new DatabaseConfiguration.Builder());
+        final DatabaseConfiguration config = new DatabaseConfiguration(paramNewRev);
+        Database.truncateDatabase(config);
+        Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(paramNewRev);
-        final ISession session = db.getSession(new SessionConfiguration.Builder());
+        final ResourceConfiguration.Builder builder2 =
+            new ResourceConfiguration.Builder(DiffFactory.RESOURCENAME, config);
+        db.createResource(builder2.build());
+        final ISession session =
+            db.getSession(new SessionConfiguration.Builder(DiffFactory.RESOURCENAME).build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = XMLShredder.createReader(paramResNewRev);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

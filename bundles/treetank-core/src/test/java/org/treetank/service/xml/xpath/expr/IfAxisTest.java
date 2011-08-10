@@ -27,15 +27,14 @@
 
 package org.treetank.service.xml.xpath.expr;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * JUnit-test class to test the functionality of the DubFilter.
@@ -51,7 +50,7 @@ public class IfAxisTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -63,19 +62,19 @@ public class IfAxisTest {
     @Test
     public void testIf() throws AbsTTException {
 
-        holder.rtx.moveTo(1L);
+        holder.getRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "if (text()) then . else child::node()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "if (text()) then . else child::node()"),
             new long[] {
                 1L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "if (node()) then . else child::node()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "if (node()) then . else child::node()"),
             new long[] {
                 1L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx,
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "if (processing-instruction()) then . else child::node()"), new long[] {
             4L, 5L, 8L, 9L, 13L
         });

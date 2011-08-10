@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;

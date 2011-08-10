@@ -26,9 +26,9 @@
  */
 package org.treetank.io.berkeley;
 
-import com.sleepycat.bind.tuple.TupleInput;
-
 import org.treetank.io.ITTSource;
+
+import com.sleepycat.bind.tuple.TupleInput;
 
 /**
  * {@link ITTSource} implementation for the BerkeleyDB-Layer.

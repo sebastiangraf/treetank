@@ -27,22 +27,20 @@
 
 package org.treetank.service.xml.xpath.expr;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.utils.TypedValue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * JUnit-test class to test the functionality of the AndExpr.
@@ -58,7 +56,7 @@ public class AndExprTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -70,35 +68,35 @@ public class AndExprTest {
     @Test
     public void testAnd() throws AbsTTException {
 
-        long iTrue = holder.rtx.getItemList().addItem(new AtomicValue(true));
-        long iFalse = holder.rtx.getItemList().addItem(new AtomicValue(false));
+        long iTrue = holder.getRtx().getItemList().addItem(new AtomicValue(true));
+        long iFalse = holder.getRtx().getItemList().addItem(new AtomicValue(false));
 
-        AbsAxis trueLit1 = new LiteralExpr(holder.rtx, iTrue);
-        AbsAxis trueLit2 = new LiteralExpr(holder.rtx, iTrue);
-        AbsAxis falseLit1 = new LiteralExpr(holder.rtx, iFalse);
-        AbsAxis falseLit2 = new LiteralExpr(holder.rtx, iFalse);
+        AbsAxis trueLit1 = new LiteralExpr(holder.getRtx(), iTrue);
+        AbsAxis trueLit2 = new LiteralExpr(holder.getRtx(), iTrue);
+        AbsAxis falseLit1 = new LiteralExpr(holder.getRtx(), iFalse);
+        AbsAxis falseLit2 = new LiteralExpr(holder.getRtx(), iFalse);
 
-        AbsAxis axis1 = new AndExpr(holder.rtx, trueLit1, trueLit2);
+        AbsAxis axis1 = new AndExpr(holder.getRtx(), trueLit1, trueLit2);
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        AbsAxis axis2 = new AndExpr(holder.rtx, trueLit1, falseLit1);
+        AbsAxis axis2 = new AndExpr(holder.getRtx(), trueLit1, falseLit1);
         assertEquals(true, axis2.hasNext());
         assertEquals(false, Boolean
-            .parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+            .parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis2.hasNext());
 
-        AbsAxis axis3 = new AndExpr(holder.rtx, falseLit1, trueLit1);
+        AbsAxis axis3 = new AndExpr(holder.getRtx(), falseLit1, trueLit1);
         assertEquals(true, axis3.hasNext());
         assertEquals(false, Boolean
-            .parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+            .parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis3.hasNext());
 
-        AbsAxis axis4 = new AndExpr(holder.rtx, falseLit1, falseLit2);
+        AbsAxis axis4 = new AndExpr(holder.getRtx(), falseLit1, falseLit2);
         assertEquals(true, axis4.hasNext());
         assertEquals(false, Boolean
-            .parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+            .parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis4.hasNext());
 
     }
@@ -106,38 +104,38 @@ public class AndExprTest {
     @Test
     public void testAndQuery() throws AbsTTException {
 
-        holder.rtx.moveTo(1L);
+        holder.getRtx().moveTo(1L);
 
-        final AbsAxis axis1 = new XPathAxis(holder.rtx, "text() and node()");
+        final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "text() and node()");
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new XPathAxis(holder.rtx, "comment() and node()");
+        final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "comment() and node()");
         assertEquals(true, axis2.hasNext());
         assertEquals(false, Boolean
-            .parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+            .parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis2.hasNext());
 
-        final AbsAxis axis3 = new XPathAxis(holder.rtx, "1 eq 1 and 2 eq 2");
+        final AbsAxis axis3 = new XPathAxis(holder.getRtx(), "1 eq 1 and 2 eq 2");
         assertEquals(true, axis3.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis3.hasNext());
 
-        final AbsAxis axis4 = new XPathAxis(holder.rtx, "1 eq 1 and 2 eq 3");
+        final AbsAxis axis4 = new XPathAxis(holder.getRtx(), "1 eq 1 and 2 eq 3");
         assertEquals(true, axis4.hasNext());
         assertEquals(false, Boolean
-            .parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+            .parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis4.hasNext());
 
         // is never evaluated.
-        final AbsAxis axis5 = new XPathAxis(holder.rtx, "1 eq 2 and (3 idiv 0 = 1)");
+        final AbsAxis axis5 = new XPathAxis(holder.getRtx(), "1 eq 2 and (3 idiv 0 = 1)");
         assertEquals(true, axis5.hasNext());
         assertEquals(false, Boolean
-            .parseBoolean(TypedValue.parseString((holder.rtx.getNode().getRawValue()))));
+            .parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
         assertEquals(false, axis5.hasNext());
 
-        final AbsAxis axis6 = new XPathAxis(holder.rtx, "1 eq 1 and 3 idiv 0 = 1");
+        final AbsAxis axis6 = new XPathAxis(holder.getRtx(), "1 eq 1 and 3 idiv 0 = 1");
         try {
             assertEquals(true, axis6.hasNext());
             fail("Expected XPath exception, because of division by zero");

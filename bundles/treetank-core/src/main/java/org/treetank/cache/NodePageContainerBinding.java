@@ -27,14 +27,14 @@
 
 package org.treetank.cache;
 
-import com.sleepycat.bind.tuple.TupleBinding;
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
-
 import org.treetank.io.ITTSource;
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.page.NodePage;
 import org.treetank.page.PagePersistenter;
+
+import com.sleepycat.bind.tuple.TupleBinding;
+import com.sleepycat.bind.tuple.TupleInput;
+import com.sleepycat.bind.tuple.TupleOutput;
 
 public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 

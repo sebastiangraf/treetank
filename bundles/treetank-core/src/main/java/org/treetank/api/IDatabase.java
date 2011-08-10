@@ -27,9 +27,11 @@
 
 package org.treetank.api;
 
-import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTIOException;
 
 /**
  * This interface describes database instances handled by treetank. A database
@@ -69,12 +71,7 @@ import org.treetank.exception.AbsTTException;
  */
 public interface IDatabase {
 
-    /**
-     * Get the version of the TreeTank.
-     * 
-     * @return TreeTank version
-     */
-    String getVersion();
+    boolean createResource(final ResourceConfiguration paramConfig) throws TTIOException;
 
     /**
      * Getting the session associated within this database.
@@ -85,13 +82,10 @@ public interface IDatabase {
      *             if can't get session
      * @return the database
      */
-    ISession getSession(final SessionConfiguration.Builder paramBuilder) throws AbsTTException;
+    ISession getSession(final SessionConfiguration paramBuilder) throws AbsTTException;
 
-    /**
-     * Get the database configuration.
-     * 
-     * @return the {@link DatabaseConfiguration} reference
-     */
-    DatabaseConfiguration getDatabaseConf();
+    void truncateResource(final ResourceConfiguration paramBuilder);
+
+    void close() throws AbsTTException;
 
 }

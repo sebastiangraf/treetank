@@ -27,15 +27,14 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * JUnit-test class to test the functionality of the DubFilter.
@@ -51,7 +50,7 @@ public class DubFilterTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @After
@@ -63,23 +62,23 @@ public class DubFilterTest {
     @Test
     public void testDupElemination() throws AbsTTException {
 
-        holder.rtx.moveTo(1L);
+        holder.getRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "child::node()/parent::node()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::node()/parent::node()"),
             new long[] {
                 1L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "b/following-sibling::node()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/following-sibling::node()"),
             new long[] {
                 8L, 9L, 13L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "b/preceding::node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/preceding::node()"), new long[] {
             4L, 8L, 7L, 6L, 5L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.rtx, "//c/ancestor::node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//c/ancestor::node()"), new long[] {
             5L, 1L, 9L
         });
 

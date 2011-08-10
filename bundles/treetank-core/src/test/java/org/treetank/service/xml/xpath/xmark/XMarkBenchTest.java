@@ -29,21 +29,17 @@ package org.treetank.service.xml.xpath.xmark;
 
 import java.io.File;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathStringChecker;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Performes the XMark benchmark.
@@ -66,14 +62,14 @@ public class XMarkBenchTest {
     public static void setUp() throws Exception {
         TestHelper.deleteEverything();
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        holder = Holder.generate();
+        holder = Holder.generateRtx();
     }
 
     @Test
     public void xMarkTest_Q1() throws TTXPathException {
         String query = xmbq.getQuery(1, FACTOR);
         String result = xmbq.getResult(1, FACTOR);
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx, query), new String[] {
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), query), new String[] {
             result
         });
     }
@@ -82,7 +78,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q5() throws TTXPathException {
         String query = xmbq.getQuery(5, FACTOR);
         String result = xmbq.getResult(5, FACTOR);
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx, query), new String[] {
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), query), new String[] {
             result
         });
     }
@@ -91,7 +87,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q6() throws TTXPathException {
         String query = xmbq.getQuery(6, FACTOR);
         String result = xmbq.getResult(6, FACTOR);
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx, query), new String[] {
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), query), new String[] {
             result
         });
     }
@@ -100,7 +96,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q7() throws TTXPathException {
         String query = xmbq.getQuery(7, FACTOR);
         String result = xmbq.getResult(7, FACTOR);
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.rtx, query), new String[] {
+        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), query), new String[] {
             result
         });
     }
@@ -110,7 +106,7 @@ public class XMarkBenchTest {
      * public void xMarkTest_Q21() {
      * String query = xmbq.getQuery(21, FACTOR);
      * String result = xmbq.getResult(21, FACTOR);
-     * XPathStringChecker.testIAxisConventions(new XPathAxis(rtx, query),
+     * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
      * new String[] { result });
      * }
      * 
@@ -118,7 +114,7 @@ public class XMarkBenchTest {
      * public void xMarkTest_Q22() {
      * String query = xmbq.getQuery(22, FACTOR);
      * String result = xmbq.getResult(22, FACTOR);
-     * XPathStringChecker.testIAxisConventions(new XPathAxis(rtx, query),
+     * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
      * new String[] { result });
      * }
      * 
@@ -126,7 +122,7 @@ public class XMarkBenchTest {
      * public void xMarkTest_Q23() {
      * String query = xmbq.getQuery(23, FACTOR);
      * String result = xmbq.getResult(23, FACTOR);
-     * XPathStringChecker.testIAxisConventions(new XPathAxis(rtx, query),
+     * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
      * new String[] { result });
      * }
      */

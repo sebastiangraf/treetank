@@ -29,8 +29,8 @@ package org.treetank.diff;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.access.SessionConfiguration;
 import org.treetank.access.WriteTransaction.HashKind;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.Builder;
@@ -104,12 +104,14 @@ abstract class AbsDiff extends AbsDiffObservable {
         mDiffKind = paramBuilder.mKind;
         synchronized (paramBuilder.mDb) {
             mNewRtx =
-                paramBuilder.mDb.getSession(new SessionConfiguration.Builder()).beginReadTransaction(
+                paramBuilder.mDb.getSession(
+                    new SessionConfiguration.Builder(DiffFactory.RESOURCENAME).build()).beginReadTransaction(
                     paramBuilder.mNewRev);
             mOldRtx =
-                paramBuilder.mDb.getSession(new SessionConfiguration.Builder()).beginReadTransaction(
+                paramBuilder.mDb.getSession(
+                    new SessionConfiguration.Builder(DiffFactory.RESOURCENAME).build()).beginReadTransaction(
                     paramBuilder.mOldRev);
-            mHashKind = paramBuilder.mDb.getDatabaseConf().mHashKind;
+            mHashKind = HashKind.Postorder;
         }
         mNewRtx.moveTo(paramBuilder.mKey);
         mOldRtx.moveTo(paramBuilder.mKey);

@@ -96,7 +96,6 @@
  * 
  * </p>
  * 
- * @author Marc Kramis, University of Konstanz
  * @author Sebastian Graf, University of Konstanz
  */
 package org.treetank.access;

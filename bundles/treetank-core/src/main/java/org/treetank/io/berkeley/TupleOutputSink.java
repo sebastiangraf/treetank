@@ -27,9 +27,9 @@
 
 package org.treetank.io.berkeley;
 
-import com.sleepycat.bind.tuple.TupleOutput;
-
 import org.treetank.io.ITTSink;
+
+import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
  * Simple wrapper as an {@link ITTSink} implemetation.
