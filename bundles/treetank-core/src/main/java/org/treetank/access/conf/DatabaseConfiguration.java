@@ -29,131 +29,157 @@ package org.treetank.access.conf;
 
 import java.io.File;
 
+import org.treetank.access.Database;
+
 /**
  * <h1>Database Configuration</h1>
  * 
  * <p>
- * Represents a configuration of a database. Includes all settings which have to be made when it comes to the
- * creation of the database.
- * 
+ * Represents a configuration of a database. Includes all settings which have to
+ * be made when it comes to the creation of the database. Since the settings are
+ * persisted after creation, it must contain a link to the file defined by the
+ * interface {@link IConfigureSerializable}.
+ * </p>
  * @author Sebastian Graf, University of Konstanz
  */
 public final class DatabaseConfiguration implements IConfigureSerializable {
 
-    public enum Paths {
+	/** For serialization. */
+	private static final long serialVersionUID = -5005030622296323912L;
 
-        /** File to store encryption db settings. */
-        ConfigBinary(new File("dbsetting.obj"), false),
-        /** File to store encryption db settings. */
-        KEYSELECTOR(new File("keyselector"), true),
-        /** File to store the data. */
-        Data(new File("resources"), true);
+	/**
+	 * Paths for a {@link Database}. Each {@link Database} has the same
+	 * folder.layout.
+	 */
+	public enum Paths {
 
-        private final File mFile;
+		/** File to store db settings. */
+		ConfigBinary(new File("dbsetting.obj"), false),
+		/** File to store encryption db settings. */
+		KEYSELECTOR(new File("keyselector"), true),
+		/** File to store the data. */
+		Data(new File("resources"), true);
 
-        private final boolean mIsFolder;
+		/** Location of the file. */
+		private final File mFile;
 
-        private Paths(final File mFile, final boolean mIsFolder) {
-            this.mFile = mFile;
-            this.mIsFolder = mIsFolder;
-        }
+		/** Is the location a folder or no? */
+		private final boolean mIsFolder;
 
-        /**
-         * Getting the file for the kind.
-         * 
-         * @return the File to the kind
-         */
-        public File getFile() {
-            return mFile;
-        }
+		/**
+		 * Constructor.
+		 * 
+		 * @param mFile
+		 *            to be set
+		 * @param mIsFolder
+		 *            to be set.
+		 */
+		private Paths(final File mFile, final boolean mIsFolder) {
+			this.mFile = mFile;
+			this.mIsFolder = mIsFolder;
+		}
 
-        /**
-         * Check if file is denoted as folder or not.
-         * 
-         * @return boolean if file is folder
-         */
-        public boolean isFolder() {
-            return mIsFolder;
-        }
+		/**
+		 * Getting the file for the kind.
+		 * 
+		 * @return the file to the kind
+		 */
+		public File getFile() {
+			return mFile;
+		}
 
-        /**
-         * Checking a structure in a folder to be equal with the data in this
-         * enum.
-         * 
-         * @param mFile
-         *            to be checked
-         * @return -1 if less folders are there, 0 if the structure is equal to
-         *         the one expected, 1 if the structure has more folders
-         */
-        public static int compareStructure(final File mFile) {
-            int existing = 0;
-            for (final Paths paths : values()) {
-                final File currentFile = new File(mFile, paths.getFile().getName());
-                if (currentFile.exists()) {
-                    existing++;
-                }
-            }
-            return existing - values().length;
-        }
+		/**
+		 * Check if file is denoted as folder or not.
+		 * 
+		 * @return boolean if file is folder
+		 */
+		public boolean isFolder() {
+			return mIsFolder;
+		}
 
-    }
+		/**
+		 * Checking a structure in a folder to be equal with the data in this
+		 * enum.
+		 * 
+		 * @param paramFile
+		 *            to be checked
+		 * @return -1 if less folders are there, 0 if the structure is equal to
+		 *         the one expected, 1 if the structure has more folders
+		 */
+		public static int compareStructure(final File paramFile) {
+			int existing = 0;
+			for (final Paths paths : values()) {
+				final File currentFile = new File(paramFile, paths.getFile()
+						.getName());
+				if (currentFile.exists()) {
+					existing++;
+				}
+			}
+			return existing - values().length;
+		}
 
-    // STATIC STANDARD FIELDS
-    /** Identification for string. */
-    public static final String BINARY = "5.3.7";
-    // END STATIC STANDARD FIELDS
+	}
 
-    /** Binary version of storage. */
-    public final String mBinaryVersion;
+	// STATIC STANDARD FIELDS
+	/** Identification for string. */
+	public static final String BINARY = "5.4.0";
+	// END STATIC STANDARD FIELDS
 
-    /** Path to file. */
-    public final File mFile;
+	/** Binary version of storage. */
+	public final String mBinaryVersion;
 
-    /**
-     * Constructor with all possible properties.
-     * 
-     * @param paramBuilder
-     *            properties to be set for setting
-     */
-    public DatabaseConfiguration(final File paramFile) {
-        mBinaryVersion = BINARY;
-        mFile = paramFile;
-    }
+	/** Path to file. */
+	public final File mFile;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("DatabaseConfiguration, ");
-        builder.append("File: ");
-        builder.append(this.mFile);
-        return builder.toString();
-    }
+	/**
+	 * Constructor with the path to be set.
+	 * 
+	 * @param paramFile
+	 *            file to be set
+	 */
+	public DatabaseConfiguration(final File paramFile) {
+		mBinaryVersion = BINARY;
+		mFile = paramFile;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean equals(final Object mObj) {
-        return this.hashCode() == mObj.hashCode();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("DatabaseConfiguration, ");
+		builder.append("File: ");
+		builder.append(this.mFile);
+		return builder.toString();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 72277;
-        int result = 13;
-        result = prime * result + mFile.hashCode();
-        result = prime * result + mBinaryVersion.hashCode();
-        return result;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final boolean equals(final Object mObj) {
+		return this.hashCode() == mObj.hashCode();
+	}
 
-    public File getConfigFile() {
-        return new File(mFile, Paths.ConfigBinary.getFile().getName());
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 72277;
+		int result = 13;
+		result = prime * result + mFile.hashCode();
+		result = prime * result + mBinaryVersion.hashCode();
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public File getConfigFile() {
+		return new File(mFile, Paths.ConfigBinary.getFile().getName());
+	}
 
 }
