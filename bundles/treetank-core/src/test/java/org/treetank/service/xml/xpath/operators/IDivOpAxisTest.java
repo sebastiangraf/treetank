@@ -91,21 +91,21 @@ public class IDivOpAxisTest {
         AbsAxis op2 = new SequenceAxis(holder.getRtx());
         AbsObAxis axis = new IDivOpAxis(holder.getRtx(), op1, op2);
 
-        assertEquals(Type.INTEGER, axis.getReturnType(holder.getRtx().keyForName("xs:double"), holder.getRtx()
-            .keyForName("xs:double")));
-        assertEquals(Type.INTEGER, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder.getRtx()
-            .keyForName("xs:double")));
+        assertEquals(Type.INTEGER, axis.getReturnType(holder.getRtx().keyForName("xs:double"), holder
+            .getRtx().keyForName("xs:double")));
+        assertEquals(Type.INTEGER, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder
+            .getRtx().keyForName("xs:double")));
         assertEquals(Type.INTEGER, axis.getReturnType(holder.getRtx().keyForName("xs:float"), holder.getRtx()
             .keyForName("xs:decimal")));
-        assertEquals(Type.INTEGER, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder.getRtx()
-            .keyForName("xs:integer")));
+        assertEquals(Type.INTEGER, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder
+            .getRtx().keyForName("xs:integer")));
         // assertEquals(Type.INTEGER,
         // axis.getReturnType(holder.getRtx().keyForName("xs:integer"),
         // holder.getRtx().keyForName("xs:integer")));
 
         try {
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx()
-                .keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+                "xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -114,7 +114,8 @@ public class IDivOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName("xs:double"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+                "xs:double"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -123,8 +124,8 @@ public class IDivOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:string"), holder.getRtx()
-                .keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:string"), holder.getRtx().keyForName(
+                "xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -133,7 +134,8 @@ public class IDivOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName("xs:IDREF"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+                "xs:IDREF"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "

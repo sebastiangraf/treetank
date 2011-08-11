@@ -29,7 +29,6 @@ package org.treetank.access;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -56,7 +55,7 @@ import org.treetank.exception.TTUsageException;
  */
 public final class Database implements IDatabase {
 
-    /** Central repository of all running sessions. */
+    /** Central repository of all running databases. */
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
     /** Central repository of all running sessions. */
@@ -82,25 +81,26 @@ public final class Database implements IDatabase {
     // START Creation/Deletion of Databases /////////////////////
     // //////////////////////////////////////////////////////////
     /**
-     * Creating a database. This includes loading the database configurations,
+     * Creating a database. This includes loading the database configuration,
      * building up the structure and preparing everything for login.
      * 
      * 
-     * @param paramConf
+     * @param paramConfig
      *            which are used for the database, including storage location
      * @return true if creation is valid, false otherwise
      * @throws TTIOException
      *             if something odd happens within the creation process.
-     * @throws IOException
      */
     public static synchronized boolean createDatabase(final DatabaseConfiguration paramConfig)
         throws TTIOException {
         boolean returnVal = true;
+        // if file is existing, skipping
         if (paramConfig.mFile.exists()) {
             return false;
         } else {
             returnVal = paramConfig.mFile.mkdirs();
             if (returnVal) {
+                // creation of folder structure
                 for (DatabaseConfiguration.Paths paths : DatabaseConfiguration.Paths.values()) {
                     final File toCreate = new File(paramConfig.mFile, paths.getFile().getName());
                     if (paths.isFolder()) {
@@ -117,7 +117,7 @@ public final class Database implements IDatabase {
                     }
                 }
             }
-
+            // serialization of the config
             try {
                 serializeConfiguration(paramConfig);
             } catch (final IOException exc) {
@@ -133,13 +133,12 @@ public final class Database implements IDatabase {
     }
 
     /**
-     * Truncate a database. This deletes all relevant data. If there are
-     * existing sessions against this database, the method returns null.
+     * Truncate a database. This deletes all relevant data. All running sessions must be closed beforehand.
      * 
      * @param paramConfig
      *            the database at this path should be deleted.
-     * @return true if removal is successful, false otherwise
-     * @throws TTIOException
+     * @throws AbsTTException
+     *             any kind of false Treetank behaviour
      */
     public static synchronized void truncateDatabase(final DatabaseConfiguration paramConfig)
         throws AbsTTException {
@@ -162,17 +161,23 @@ public final class Database implements IDatabase {
     // START Creation/Deletion of Resources /////////////////////
     // //////////////////////////////////////////////////////////
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public synchronized boolean createResource(final ResourceConfiguration paramConfig) throws TTIOException {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already set data.
         final File path =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 paramConfig.mPath.getName());
+        // if file is existing, skipping
         if (path.exists()) {
             return false;
         } else {
             returnVal = path.mkdir();
             if (returnVal) {
+                // creation of the folder structure
                 for (ResourceConfiguration.Paths paths : ResourceConfiguration.Paths.values()) {
                     final File toCreate = new File(path, paths.getFile().getName());
                     if (paths.isFolder()) {
@@ -189,7 +194,7 @@ public final class Database implements IDatabase {
                     }
                 }
             }
-
+            // serialization of the config
             try {
                 serializeConfiguration(paramConfig);
             } catch (final IOException exc) {
@@ -204,6 +209,10 @@ public final class Database implements IDatabase {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public synchronized void truncateResource(final ResourceConfiguration paramConfig) {
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
@@ -253,7 +262,7 @@ public final class Database implements IDatabase {
             is.close();
         } catch (final IOException exc) {
             throw new TTIOException(exc);
-        } catch (ClassNotFoundException exc) {
+        } catch (final ClassNotFoundException exc) {
             throw new TTIOException(exc.toString());
         }
         final Database database = new Database(config);
@@ -273,6 +282,10 @@ public final class Database implements IDatabase {
     // START DB-Operations//////////////////////////////////
     // /////////////////////////////////////////////////////////
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public synchronized ISession getSession(final SessionConfiguration paramConfig) throws AbsTTException {
 
         final File resourceFile =
@@ -310,13 +323,9 @@ public final class Database implements IDatabase {
     }
 
     /**
-     * This method forces the Database to close an existing instance.
-     * 
-     * @param paramFile
-     *            where the database should be closed
-     * @throws AbsTTException
-     *             if something weird happens while closing
+     * {@inheritDoc}
      */
+    @Override
     public synchronized void close() throws AbsTTException {
         for (final ISession session : SESSIONMAP.values()) {
             session.close();
@@ -356,10 +365,26 @@ public final class Database implements IDatabase {
         return paramFile.delete();
     }
 
+    /**
+     * Closing a resource. This callback is necessary due to centralized handling of all sessions within a
+     * database.
+     * 
+     * @param paramFile
+     *            to be closed
+     * @return true if close successful, false otherwise
+     */
     protected static boolean closeResource(final File paramFile) {
         return SESSIONMAP.remove(paramFile) != null ? true : false;
     }
 
+    /**
+     * Serializing any {@link IConfigureSerializable} instance to a denoted file.
+     * 
+     * @param paramToSerialize
+     *            to be serializied, containing the file
+     * @throws IOException
+     *             if serialization fails
+     */
     private static void serializeConfiguration(final IConfigureSerializable paramToSerialize)
         throws IOException {
         FileOutputStream os = null;

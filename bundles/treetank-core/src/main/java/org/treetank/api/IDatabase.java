@@ -27,7 +27,6 @@
 
 package org.treetank.api;
 
-import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.AbsTTException;
@@ -38,9 +37,8 @@ import org.treetank.exception.TTIOException;
  * is a persistent place where all data is stored. The access to the data is
  * done with the help of {@link ISession}s.
  * 
- * Furthermore, databases can be created with the help of {@link DatabaseConfiguration}s. After creation, the
- * settings of a database
- * cannot be changed.
+ * Furthermore, databases can be created with the help of {@link org.access.conf.DatabaseConfiguration}s.
+ * After creation, the settings of a database cannot be changed.
  * 
  * 
  * <h2>Usage Example</h2>
@@ -70,7 +68,17 @@ import org.treetank.exception.TTIOException;
  * 
  */
 public interface IDatabase {
-
+    /**
+     * Creation of a resource. Since databases can consist out of several resources, those can be created
+     * within this method. This includes the creation of a suitable folder structure as well as the
+     * serialization of the configuration of this resource.
+     * 
+     * @param paramConfig
+     *            the config of the resource
+     * @return boolean with true if successful, false otherwise
+     * @throws TTIOException
+     *             if anything happens while creating the resource
+     */
     boolean createResource(final ResourceConfiguration paramConfig) throws TTIOException;
 
     /**
@@ -80,12 +88,26 @@ public interface IDatabase {
      *            {@link SessionConfiguration.Builder} reference
      * @throws AbsTTException
      *             if can't get session
-     * @return the database
+     * @return the session
      */
     ISession getSession(final SessionConfiguration paramBuilder) throws AbsTTException;
 
+    /**
+     * Truncating a resource.
+     * This includes the removal of all data stored within this resource.
+     * 
+     * @param paramBuilder
+     *            storing the name of the resource
+     * 
+     */
     void truncateResource(final ResourceConfiguration paramBuilder);
 
+    /**
+     * Closing the database for further access.
+     * 
+     * @throws AbsTTException
+     *             if anything happens within treetank.
+     */
     void close() throws AbsTTException;
 
 }

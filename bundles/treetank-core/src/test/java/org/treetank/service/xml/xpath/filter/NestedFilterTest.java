@@ -76,8 +76,8 @@ public class NestedFilterTest {
 
         holder.getRtx().moveTo(1L);
         holder.getRtx().moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(), new AttributeFilter(holder.getRtx()),
-            new NameFilter(holder.getRtx(), "i")), true);
+        IFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(), new AttributeFilter(holder
+            .getRtx()), new NameFilter(holder.getRtx(), "i")), true);
 
     }
 }

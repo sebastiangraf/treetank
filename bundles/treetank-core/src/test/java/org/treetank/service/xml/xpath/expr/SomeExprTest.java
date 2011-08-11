@@ -63,22 +63,27 @@ public class SomeExprTest {
     @Test
     public void testEveryExpr() throws AbsTTException {
 
-        final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/@i");
+        final AbsAxis axis1 =
+            new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/@i");
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
+            .getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/@abc");
+        final AbsAxis axis2 =
+            new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/@abc");
         assertEquals(true, axis2.hasNext());
-        assertEquals(false, Boolean
-            .parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
+            .getRawValue()))));
         assertEquals(false, axis2.hasNext());
 
         holder.getRtx().moveTo(1L);
         final AbsAxis axis3 =
-            new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/attribute::attribute()");
+            new XPathAxis(holder.getRtx(),
+                "some $child in child::node() satisfies $child/attribute::attribute()");
         assertEquals(true, axis3.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
+            .getRawValue()))));
         assertEquals(false, axis3.hasNext());
     }
 

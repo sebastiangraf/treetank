@@ -27,7 +27,6 @@
 
 package org.treetank.utils;
 
-
 /**
  * <h1>UTF</h1>
  * 

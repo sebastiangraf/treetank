@@ -17,7 +17,7 @@
 package org.treetank.encryption;
 
 /**
- * Enumeration class holding all types of nodes. 
+ * Enumeration class holding all types of nodes.
  */
 public enum EntityType {
     USER, GROUP;

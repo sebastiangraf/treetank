@@ -71,7 +71,8 @@ public class XPathParserTest {
 
         axis = new XPathAxis(holder.getRtx(), "\"He said, \"\"I don't like it\"\"\"");
         assertEquals(true, axis.hasNext());
-        assertEquals("He said, I don't like it", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("He said, I don't like it", TypedValue.parseString(holder.getRtx().getNode()
+            .getRawValue()));
         assertEquals(holder.getRtx().keyForName("xs:string"), holder.getRtx().getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 

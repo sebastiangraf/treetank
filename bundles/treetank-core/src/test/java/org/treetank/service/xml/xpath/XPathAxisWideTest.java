@@ -67,22 +67,25 @@ public class XPathAxisWideTest {
         final Holder holder = Holder.generateRtx();
         holder.getRtx().moveToDocumentRoot();
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/mondial/continent[@id]"), new long[] {
-            2L, 5L, 8L, 11L, 14L
-        });
-
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "mondial/continent[@name]"), new long[] {
-            2L, 5L, 8L, 11L, 14L
-        });
-
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "mondial/continent[@id=\"f0_119\"]"), new long[] {
-            2L
-        });
-
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/mondial/continent[@name = \"Africa\"]"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/mondial/continent[@id]"),
             new long[] {
-                14L
+                2L, 5L, 8L, 11L, 14L
             });
+
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "mondial/continent[@name]"),
+            new long[] {
+                2L, 5L, 8L, 11L, 14L
+            });
+
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "mondial/continent[@id=\"f0_119\"]"),
+            new long[] {
+                2L
+            });
+
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+            "/mondial/continent[@name = \"Africa\"]"), new long[] {
+            14L
+        });
 
         final AbsAxis axis5 = new XPathAxis(holder.getRtx(), "mondial/lake/node()");
         for (int i = 0; i < 61; i++) {

@@ -127,8 +127,8 @@ public class PredicateFilterAxisTest {
             5l, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::*[text() or c], /node(), //c"),
-            new long[] {
+        AbsAxisTest.testIAxisConventions(
+            new XPathAxis(holder.getRtx(), "child::*[text() or c], /node(), //c"), new long[] {
                 5l, 9L, 1L, 7L, 11L
             });
 
