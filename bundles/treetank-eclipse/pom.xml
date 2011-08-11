@@ -31,7 +31,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>eclipse</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>treetank-eclipse</name>
     <packaging>pom</packaging>
 	<parent>
@@ -40,9 +40,9 @@
 		<version>1.0.3</version>
 	</parent>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-eclipse</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-eclipse</developerConnection>
-		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-eclipse</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/eclipse-1.0.1</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/eclipse-1.0.1</developerConnection>
+		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/eclipse-1.0.1</url>
 	</scm>
 	<repositories>
 		<repository>
