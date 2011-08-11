@@ -38,7 +38,6 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 
-import org.treetank.access.AbsKeyDatabase;
 import org.treetank.exception.TTIOException;
 
 /**

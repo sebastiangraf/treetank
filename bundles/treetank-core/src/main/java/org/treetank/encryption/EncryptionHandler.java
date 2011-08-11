@@ -85,7 +85,7 @@ public final class EncryptionHandler {
     /**
      * Current session user.
      */
-    private static String mLoggedUser = "U2";
+    private static String mLoggedUser = "U3";
 
     /**
      * The key data should be encrypted.
@@ -93,16 +93,23 @@ public final class EncryptionHandler {
     private long mDataEncryptionKey;
 
     /**
+     * Selector key counter.
+     */
+    private int mSelectorKey = -1;
+
+    /**
      * Store path of berkeley key selector db.
      */
-    private static final File SEL_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
-        File.separator).append("tnk").append(File.separator).append("selectordb").toString());
+    private static final File SEL_STORE = new File(new StringBuilder(
+        File.separator).append("tmp").append(File.separator).append("tnk")
+        .append(File.separator).append("selectordb").toString());
 
     /**
      * Store path of berkeley key manager db.
      */
-    private static final File MAN_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
-        File.separator).append("tnk").append(File.separator).append("keymanagerdb").toString());
+    private static final File MAN_STORE = new File(new StringBuilder(
+        File.separator).append("tmp").append(File.separator).append("tnk")
+        .append(File.separator).append("keymanagerdb").toString());
 
     /**
      * Standard constructor.
@@ -131,14 +138,15 @@ public final class EncryptionHandler {
      * 
      * @throws TTEncryptionException
      */
-    public void init(final ISession paramSession, final long paramDEK) throws TTEncryptionException {
+    public void init(final ISession paramSession, final long paramDEK)
+        throws TTEncryptionException {
         if (mNodeEncryption) {
             mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
             mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
             mSession = paramSession;
             mDataEncryptionKey = paramDEK;
             mKeyCache = new KeyCache();
-            new EncryptionTreeParser().init();
+            new EncryptionDAGParser().init();
         } else {
             throw new TTEncryptionException("Encryption is disabled!");
         }
@@ -150,21 +158,34 @@ public final class EncryptionHandler {
      * @throws AbsTTException
      */
     public void clear() throws AbsTTException {
-        try {
-            if (SEL_STORE.exists()) {
-                Database.truncateDatabase(new DatabaseConfiguration(SEL_STORE));
-            }
-            if (MAN_STORE.exists()) {
-                Database.truncateDatabase(new DatabaseConfiguration(MAN_STORE));
-            }
-        } catch (final TTIOException ttee) {
-            ttee.printStackTrace();
+        if (SEL_STORE.exists()) {
+            recursiveDelete(SEL_STORE);
         }
+        if (MAN_STORE.exists()) {
+            recursiveDelete(SEL_STORE);
+        }
+
+    }
+
+    protected static boolean recursiveDelete(final File paramFile) {
+        if (paramFile.isDirectory()) {
+            for (final File child : paramFile.listFiles()) {
+                if (!recursiveDelete(child)) {
+                    return false;
+                }
+            }
+        }
+        return paramFile.delete();
+    }
+
+    public void close() {
+        mKeySelectorDb.clearPersistent();
+        mKeyManagerDb.clearPersistent();
     }
 
     /**
-     * Prints all stored information of KeySelector, KeyingMaterial
-     * and KeyManager database. This method is just for testing issues.
+     * Prints all stored information of KeySelector and KeyManager database. This method is just for testing
+     * issues.
      */
     public void print() {
         if (mNodeEncryption) {
@@ -172,7 +193,8 @@ public final class EncryptionHandler {
             /*
              * print key selector db.
              */
-            final SortedMap<Long, KeySelector> mSelMap = mKeySelectorDb.getEntries();
+            final SortedMap<Long, KeySelector> mSelMap =
+                mKeySelectorDb.getEntries();
             Iterator iter = mSelMap.keySet().iterator();
 
             System.out.println("\nSelector DB Size: " + mKeySelectorDb.count());
@@ -193,9 +215,11 @@ public final class EncryptionHandler {
                     mChildsString.append("#" + mChildsList.get(k));
                 }
 
-                System.out.println("Selector: " + mSelector.getPrimaryKey() + " " + mSelector.getName() + " "
-                    + mSelector.getType() + " " + mParentsString.toString() + " " + mChildsString.toString()
-                    + " " + mSelector.getRevision() + " " + mSelector.getVersion() + " "
+                System.out.println("Selector: " + mSelector.getPrimaryKey()
+                    + " " + mSelector.getName() + " "
+                    + mParentsString.toString() + " "
+                    + mChildsString.toString() + " " + mSelector.getRevision()
+                    + " " + mSelector.getVersion() + " "
                     + mSelector.getSecretKey());
             }
             System.out.println();
@@ -203,7 +227,8 @@ public final class EncryptionHandler {
             /*
              * print key manager db
              */
-            final SortedMap<String, KeyManager> sMap = mKeyManagerDb.getEntries();
+            final SortedMap<String, KeyManager> sMap =
+                mKeyManagerDb.getEntries();
 
             // iterate through all users
             final Iterator outerIter = sMap.keySet().iterator();
@@ -215,7 +240,8 @@ public final class EncryptionHandler {
                 final String user = (String)outerIter.next();
                 sb = new StringBuilder(user + ": ");
 
-                final Set<Long> mKeySet = mKeyManagerDb.getEntry(user).getKeySet();
+                final Set<Long> mKeySet =
+                    mKeyManagerDb.getEntry(user).getKeySet();
 
                 // iterate through user's key set.
                 final Iterator innerIter = mKeySet.iterator();
@@ -231,7 +257,8 @@ public final class EncryptionHandler {
              * print key cache.
              */
             final LinkedList<Long> mKeyList = mKeyCache.get(getUser());
-            final StringBuilder cacheString = new StringBuilder(getUser() + ": ");
+            final StringBuilder cacheString =
+                new StringBuilder(getUser() + ": ");
             for (long aKey : mKeyList) {
                 cacheString.append(aKey + " ");
             }
@@ -269,6 +296,16 @@ public final class EncryptionHandler {
      */
     public List<Long> getKeyCache() {
         return mKeyCache.get(getUser());
+    }
+
+    /**
+     * Create new selector key by increasing current state by 1.
+     * 
+     * @return
+     *         new unique selector key.
+     */
+    public final int newSelectorKey() {
+        return ++mSelectorKey;
     }
 
     /**

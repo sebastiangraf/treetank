@@ -72,11 +72,6 @@ public class KeySelector {
     private int mVersion;
 
     /**
-     * Type of node (user or group).
-     */
-    private EntityType mType;
-
-    /**
      * Secret key using for data en-/decryption.
      */
     private byte[] mSecretKey;
@@ -95,15 +90,16 @@ public class KeySelector {
      *            node name.
      */
     public KeySelector(final String paramName, final LinkedList<Long> paramPar,
-        final LinkedList<Long> paramChild, final int paramRev, final int paramVer, final EntityType paramType) {
-        this.mSelectorKey = SelectorKeyGenerator.getInstance().newSelectorKey();
+        final LinkedList<Long> paramChild, final int paramRev,
+        final int paramVer) {
+        this.mSelectorKey = EncryptionHandler.getInstance().newSelectorKey();
+
         this.mName = paramName;
         this.mParents = paramPar;
         this.mChilds = paramChild;
         this.mRevision = paramRev;
         this.mVersion = paramVer;
-        this.mType = paramType;
-        this.mSecretKey = new NodeEncryption().generateSecretKey();
+        this.mSecretKey = NodeEncryption.generateSecretKey();
     }
 
     /**
@@ -218,13 +214,6 @@ public class KeySelector {
      */
     public final void increaseVersion() {
         this.mVersion += 1;
-    }
-
-    /**
-     * Returns type of entity.
-     */
-    public EntityType getType() {
-        return mType;
     }
 
     /**
