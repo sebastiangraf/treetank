@@ -64,9 +64,10 @@ public class ExceptAxisTest {
 
         holder.getRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::node() except b"), new long[] {
-            4L, 8L, 13L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::node() except b"),
+            new long[] {
+                4L, 8L, 13L
+            });
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node() except child::node()[attribute::p:x]"), new long[] {
@@ -76,9 +77,10 @@ public class ExceptAxisTest {
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "child::node()/parent::node() except self::node()"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//node() except //text()"), new long[] {
-            1L, 5L, 9L, 7L, 11L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//node() except //text()"),
+            new long[] {
+                1L, 5L, 9L, 7L, 11L
+            });
 
         holder.getRtx().moveTo(1L);
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/preceding::node() except text()"),

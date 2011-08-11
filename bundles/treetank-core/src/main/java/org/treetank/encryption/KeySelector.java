@@ -95,8 +95,7 @@ public class KeySelector {
      *            node name.
      */
     public KeySelector(final String paramName, final LinkedList<Long> paramPar,
-        final LinkedList<Long> paramChild, final int paramRev,
-        final int paramVer, final EntityType paramType) {
+        final LinkedList<Long> paramChild, final int paramRev, final int paramVer, final EntityType paramType) {
         this.mSelectorKey = SelectorKeyGenerator.getInstance().newSelectorKey();
         this.mName = paramName;
         this.mParents = paramPar;

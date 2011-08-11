@@ -82,25 +82,29 @@ public class XPathFunctionTest {
             58L, 63, 67L, 72L, 77L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/descendant-or-self::*"), new long[] {
-            53L, 58L, 63, 67L, 72L, 77L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/descendant-or-self::*"),
+            new long[] {
+                53L, 58L, 63, 67L, 72L, 77L
+            });
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/ancestor::*"), new long[] {
             20L, 1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/ancestor-or-self::*"), new long[] {
-            53L, 20L, 1L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/ancestor-or-self::*"),
+            new long[] {
+                53L, 20L, 1L
+            });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/following-sibling::*"), new long[] {
-            83L, 97L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/following-sibling::*"),
+            new long[] {
+                83L, 97L
+            });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/preceding-sibling::*"), new long[] {
-            39L, 24L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/preceding-sibling::*"),
+            new long[] {
+                39L, 24L
+            });
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/following::*"), new long[] {
             83L, 87L, 92L, 97L, 101L, 106L, 111L, 115L, 120L
@@ -135,25 +139,29 @@ public class XPathFunctionTest {
             1L, 20L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[descendant-or-self::L]"), new long[] {
-            1L, 20L, 53L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[descendant-or-self::L]"),
+            new long[] {
+                1L, 20L, 53L
+            });
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[ancestor::L]"), new long[] {
             58L, 63L, 77L, 67L, 72L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[ancestor-or-self::L]"), new long[] {
-            53L, 58L, 63L, 77L, 67L, 72L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[ancestor-or-self::L]"),
+            new long[] {
+                53L, 58L, 63L, 77L, 67L, 72L
+            });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[following-sibling::L]"), new long[] {
-            24L, 39L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[following-sibling::L]"),
+            new long[] {
+                24L, 39L
+            });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[preceding-sibling::L]"), new long[] {
-            83L, 97L
-        });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[preceding-sibling::L]"),
+            new long[] {
+                83L, 97L
+            });
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[following::L]"), new long[] {
             6L, 10L, 15L, 24L, 39L, 28L, 33L, 43L, 48L
@@ -200,8 +208,8 @@ public class XPathFunctionTest {
             new long[] {});
 
         // porcessing instructions are not supported yet
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/processing-instruction(\"myPI\")"),
-            new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+            "//L/processing-instruction(\"myPI\")"), new long[] {});
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/node()"), new long[] {
             57L, 58L, 62L, 63L, 77L
@@ -228,18 +236,18 @@ public class XPathFunctionTest {
                 111L, 83L, 97L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[fn:not(child::*) and preceding::Q]"),
-            new long[] {
-                87L, 92L, 101L, 106L, 115L, 120L
-            });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+            "//*[fn:not(child::*) and preceding::Q]"), new long[] {
+            87L, 92L, 101L, 106L, 115L, 120L
+        });
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//*[preceding::L or following::L]"),
             new long[] {
                 6L, 111L, 10L, 15L, 24L, 39L, 83L, 97L, 28L, 33L, 43L, 48L, 87L, 92L, 101L, 106L, 115L, 120L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//L/ancestor::* | //L/descendant::*"),
-            new long[] {
+        AbsAxisTest.testIAxisConventions(
+            new XPathAxis(holder.getRtx(), "//L/ancestor::* | //L/descendant::*"), new long[] {
                 20L, 1L, 58L, 63L, 67L, 72L, 77L
             });
 

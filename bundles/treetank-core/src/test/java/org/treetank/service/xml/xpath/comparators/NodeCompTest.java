@@ -54,8 +54,8 @@ public class NodeCompTest {
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
         comparator =
-            new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder.getRtx(), -1),
-                CompKind.IS);
+            new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
+                .getRtx(), -1), CompKind.IS);
     }
 
     @After
@@ -82,8 +82,8 @@ public class NodeCompTest {
 
         try {
             comparator =
-                new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder.getRtx(), -1),
-                    CompKind.PRE);
+                new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
+                    .getRtx(), -1), CompKind.PRE);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
@@ -92,8 +92,8 @@ public class NodeCompTest {
 
         try {
             comparator =
-                new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder.getRtx(), -1),
-                    CompKind.FO);
+                new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
+                    .getRtx(), -1), CompKind.FO);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {

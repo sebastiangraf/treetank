@@ -51,7 +51,6 @@ public class SelectorKeyGenerator {
         return mINSTANCE;
     }
 
-
     /**
      * Create new selector key by increasing current state by 1.
      * 

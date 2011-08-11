@@ -28,21 +28,22 @@
 /**
  * <h1>Configuration ofTreetank</h1>
  * <p>
- *  All configuration of Treetank takes place of the classes in this package.
+ * All configuration of Treetank takes place of the classes in this package.
  * <ul>
- * <li>The {@link org.treetank.access.conf.DatabaseConfiguration} defines the settings within a 
- * {@link org.treetank.access.Database} (e.g. path to the database and the version where the data was created).
- * This configuration is only needed within the creation of a {@link org.treetank.access.Database} and serialized.</li>
- * <li>The {@link org.treetank.access.conf.ResourceConfiguration} defines the persisted settings within a 
- * {@link org.treetank.access.Session} (e.g. versioning-kind of the resource, hashing-kind, ...).
- * This configuration is only needed within the creation of a resource and serialized.</li>
- * <li>The {@link org.treetank.access.conf.SessionConfiguration} defines the runtime settings within a 
- * {@link org.treetank.access.Session} (e.g. numbers of transactions, ...).
- * This configuration is needed within each instantiation of a {@link org.treetank.access.Session}.</li>
+ * <li>The {@link org.treetank.access.conf.DatabaseConfiguration} defines the settings within a
+ * {@link org.treetank.access.Database} (e.g. path to the database and the version where the data was
+ * created). This configuration is only needed within the creation of a {@link org.treetank.access.Database}
+ * and serialized.</li>
+ * <li>The {@link org.treetank.access.conf.ResourceConfiguration} defines the persisted settings within a
+ * {@link org.treetank.access.Session} (e.g. versioning-kind of the resource, hashing-kind, ...). This
+ * configuration is only needed within the creation of a resource and serialized.</li>
+ * <li>The {@link org.treetank.access.conf.SessionConfiguration} defines the runtime settings within a
+ * {@link org.treetank.access.Session} (e.g. numbers of transactions, ...). This configuration is needed
+ * within each instantiation of a {@link org.treetank.access.Session}.</li>
  * </ul>
  * </p>
  * <p>
- * All configurations are set within the {@link org.treetank.access.Database} only. 
+ * All configurations are set within the {@link org.treetank.access.Database} only.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz

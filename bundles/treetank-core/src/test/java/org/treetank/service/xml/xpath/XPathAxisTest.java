@@ -174,7 +174,6 @@ public class XPathAxisTest {
             9L
         });
 
-
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[@i=\"k\"]"), new long[] {});
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a/b[@p:x=\"y\"]"), new long[] {

@@ -35,31 +35,10 @@ import org.treetank.exception.AbsTTException;
  * <h2>Description</h2>
  * 
  * <p>
- * Each <code>IDatabase</code> is bound to one instance implementing <code>ISession</code>. Transactions can
+ * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions can
  * then be started from this instance. There can only be one <code>IWriteTransaction</code> at the time.
  * However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
- * 
- * 
- * <h2>User Example</h2>
- * 
- * <p>
- * 
- * <pre>
- * // Simple session with standards as defined in <code>EDatabaseSetting</code> and 
- * <code>ESessionSetting</code>. 
- * final IDatabase database = Database.openDatabase(&quot;example.tnk&quot;);
- * final ISession session = database.getSession()
- * 
- * // Session with lower commit-threshold
- * final Properties sessionProps = new Properties();
- * sessionProps.setProperty(ESessionSetting.COMMIT_THRESHOLD.name(), "32");
- * final SessionConfiguration config = new SessionConfiguration(sessionProps);
- * final ISession session = Database.openDatabase(&quot;example&quot;, config);
- * </pre>
- * 
- * </p>
- * 
  * 
  */
 public interface ISession {
@@ -82,8 +61,7 @@ public interface ISession {
      *             If can't begin Read Transaction.
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction(final long revisionKey)
-        throws AbsTTException;
+    IReadTransaction beginReadTransaction(final long revisionKey) throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
@@ -105,8 +83,7 @@ public interface ISession {
      *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction(final int maxNodeCount,
-        final int maxTime) throws AbsTTException;
+    IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime) throws AbsTTException;
 
     /**
      * Safely close session and immediately release all resources. If there are

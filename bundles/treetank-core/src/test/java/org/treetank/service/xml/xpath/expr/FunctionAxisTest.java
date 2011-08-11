@@ -85,7 +85,8 @@ public class FunctionAxisTest {
 
         final AbsAxis axis4 = new XPathAxis(holder.getRtx(), "fn:string()");
         assertEquals(true, axis4.hasNext());
-        assertEquals("oops1 foo oops2 bar oops3", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("oops1 foo oops2 bar oops3", TypedValue.parseString(holder.getRtx().getNode()
+            .getRawValue()));
         assertEquals(false, axis4.hasNext());
 
         final AbsAxis axis5 = new XPathAxis(holder.getRtx(), "fn:string(./attribute::attribute())");

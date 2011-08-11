@@ -64,15 +64,15 @@ public class IfAxisTest {
 
         holder.getRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "if (text()) then . else child::node()"),
-            new long[] {
-                1L
-            });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+            "if (text()) then . else child::node()"), new long[] {
+            1L
+        });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "if (node()) then . else child::node()"),
-            new long[] {
-                1L
-            });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+            "if (node()) then . else child::node()"), new long[] {
+            1L
+        });
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             "if (processing-instruction()) then . else child::node()"), new long[] {

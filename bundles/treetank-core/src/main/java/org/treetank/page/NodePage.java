@@ -84,9 +84,7 @@ public class NodePage extends AbsPage {
 
                 if (mUserKeys.contains(mRightKey)) {
                     // get secret key
-                    mSecretKey =
-                        enHandler.getKeySelectorInstance()
-                            .getEntry(mRightKey).getSecretKey();
+                    mSecretKey = enHandler.getKeySelectorInstance().getEntry(mRightKey).getSecretKey();
 
                     final int mElementKind = mIn.readInt();
 
@@ -103,13 +101,11 @@ public class NodePage extends AbsPage {
                             mEncryptedNode[j] = mIn.readByte();
                         }
 
-                        mDecryptedNode =
-                            NodeEncryption.decrypt(mEncryptedNode, mSecretKey);
+                        mDecryptedNode = NodeEncryption.decrypt(mEncryptedNode, mSecretKey);
 
                     } else {
 
-                        final byte[] mEncryptedPointer =
-                            new byte[mPointerBytes];
+                        final byte[] mEncryptedPointer = new byte[mPointerBytes];
                         for (int j = 0; j < mPointerBytes; j++) {
                             mEncryptedPointer[j] = mIn.readByte();
                         }
@@ -121,15 +117,11 @@ public class NodePage extends AbsPage {
                         }
 
                         final byte[] mDecryptedPointer =
-                            NodeEncryption.decrypt(mEncryptedPointer,
-                                mSecretKey);
+                            NodeEncryption.decrypt(mEncryptedPointer, mSecretKey);
 
-                        final byte[] mDecryptedData =
-                            NodeEncryption.decrypt(mEncryptedData, mSecretKey);
+                        final byte[] mDecryptedData = NodeEncryption.decrypt(mEncryptedData, mSecretKey);
 
-                        mDecryptedNode =
-                            new byte[mDecryptedPointer.length
-                                + mDecryptedData.length];
+                        mDecryptedNode = new byte[mDecryptedPointer.length + mDecryptedData.length];
 
                         int mCounter = 0;
                         for (int j = 0; j < mDecryptedPointer.length; j++) {
@@ -143,20 +135,17 @@ public class NodePage extends AbsPage {
 
                     }
 
-                    final NodeInputSource mNodeInput =
-                        new NodeInputSource(mDecryptedNode);
+                    final NodeInputSource mNodeInput = new NodeInputSource(mDecryptedNode);
 
                     final ENodes mEnumKind = ENodes.getEnumKind(mElementKind);
 
                     if (mEnumKind != ENodes.UNKOWN_KIND) {
-                        getNodes()[i] =
-                            mEnumKind.createNodeFromPersistence(mNodeInput);
+                        getNodes()[i] = mEnumKind.createNodeFromPersistence(mNodeInput);
                     }
 
                 } else {
                     try {
-                        throw new TTEncryptionException(
-                            "User has no permission to access the node");
+                        throw new TTEncryptionException("User has no permission to access the node");
 
                     } catch (final TTEncryptionException mExp) {
                         mExp.printStackTrace();
@@ -173,8 +162,7 @@ public class NodePage extends AbsPage {
                 final int kind = kinds[offset];
                 final ENodes enumKind = ENodes.getEnumKind(kind);
                 if (enumKind != ENodes.UNKOWN_KIND) {
-                    getNodes()[offset] =
-                        enumKind.createNodeFromPersistence(mIn);
+                    getNodes()[offset] = enumKind.createNodeFromPersistence(mIn);
                 }
             }
 
@@ -187,8 +175,7 @@ public class NodePage extends AbsPage {
      * @param mCommittedNodePage
      *            Node page to clone.
      */
-    protected NodePage(final NodePage mCommittedNodePage,
-        final long mRevisionToUse) {
+    protected NodePage(final NodePage mCommittedNodePage, final long mRevisionToUse) {
         super(0, mCommittedNodePage, mRevisionToUse);
         mNodePageKey = mCommittedNodePage.mNodePageKey;
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
@@ -250,8 +237,7 @@ public class NodePage extends AbsPage {
                 mNodeOut = new NodeOutputSink();
 
                 final long mDek = enHandler.getDataEncryptionKey();
-                final KeySelector mKeySel =
-                    enHandler.getKeySelectorInstance().getEntry(mDek);
+                final KeySelector mKeySel = enHandler.getKeySelectorInstance().getEntry(mDek);
                 final byte[] mSecretKey = mKeySel.getSecretKey();
 
                 if (node != null) {
@@ -282,17 +268,14 @@ public class NodePage extends AbsPage {
                         mPointer[i] = mStream[i];
                     }
 
-                    final byte[] mData =
-                        new byte[mStream.length - mPointer.length];
+                    final byte[] mData = new byte[mStream.length - mPointer.length];
                     for (int i = 0; i < mData.length; i++) {
                         mData[i] = mStream[mPointer.length + i];
                     }
 
-                    final byte[] mEnPointer =
-                        NodeEncryption.encrypt(mPointer, mSecretKey);
+                    final byte[] mEnPointer = NodeEncryption.encrypt(mPointer, mSecretKey);
                     pointerEnSize = mEnPointer.length;
-                    final byte[] mEnData =
-                        NodeEncryption.encrypt(mData, mSecretKey);
+                    final byte[] mEnData = NodeEncryption.encrypt(mData, mSecretKey);
 
                     mEncrypted = new byte[mEnPointer.length + mEnData.length];
 
@@ -322,8 +305,7 @@ public class NodePage extends AbsPage {
         } else {
             for (int i = 0; i < getNodes().length; i++) {
                 if (getNodes()[i] != null) {
-                    final int kind =
-                        getNodes()[i].getKind().getNodeIdentifier();
+                    final int kind = getNodes()[i].getKind().getNodeIdentifier();
                     mOut.writeInt(kind);
                 } else {
                     mOut.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());

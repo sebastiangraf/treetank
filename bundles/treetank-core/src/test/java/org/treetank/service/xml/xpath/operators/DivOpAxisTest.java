@@ -91,28 +91,28 @@ public class DivOpAxisTest {
 
         assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:double"), holder.getRtx()
             .keyForName("xs:double")));
-        assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder.getRtx()
-            .keyForName("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder
+            .getRtx().keyForName("xs:double")));
         assertEquals(Type.FLOAT, axis.getReturnType(holder.getRtx().keyForName("xs:float"), holder.getRtx()
             .keyForName("xs:decimal")));
-        assertEquals(Type.DECIMAL, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder.getRtx()
-            .keyForName("xs:integer")));
+        assertEquals(Type.DECIMAL, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder
+            .getRtx().keyForName("xs:integer")));
         // assertEquals(Type.INTEGER,
         // axis.getReturnType(holder.getRtx().keyForName("xs:integer"),
         // holder.getRtx().keyForName("xs:integer")));
-        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.getRtx()
-            .keyForName("xs:yearMonthDuration"), holder.getRtx().keyForName("xs:double")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.getRtx().keyForName("xs:dayTimeDuration"),
-            holder.getRtx().keyForName("xs:double")));
+        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.getRtx().keyForName(
+            "xs:yearMonthDuration"), holder.getRtx().keyForName("xs:double")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.getRtx().keyForName(
+            "xs:dayTimeDuration"), holder.getRtx().keyForName("xs:double")));
         assertEquals(Type.DECIMAL, axis.getReturnType(holder.getRtx().keyForName("xs:yearMonthDuration"),
             holder.getRtx().keyForName("xs:yearMonthDuration")));
-        assertEquals(Type.DECIMAL, axis.getReturnType(holder.getRtx().keyForName("xs:dayTimeDuration"), holder.getRtx()
-            .keyForName("xs:dayTimeDuration")));
+        assertEquals(Type.DECIMAL, axis.getReturnType(holder.getRtx().keyForName("xs:dayTimeDuration"),
+            holder.getRtx().keyForName("xs:dayTimeDuration")));
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx()
-                .keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+                "xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -120,7 +120,8 @@ public class DivOpAxisTest {
         }
 
         try {
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName("xs:double"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+                "xs:double"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -128,8 +129,8 @@ public class DivOpAxisTest {
         }
 
         try {
-            axis.getReturnType(holder.getRtx().keyForName("xs:string"), holder.getRtx()
-                .keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:string"), holder.getRtx().keyForName(
+                "xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -137,7 +138,8 @@ public class DivOpAxisTest {
         }
 
         try {
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName("xs:IDREF"));
+            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+                "xs:IDREF"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
