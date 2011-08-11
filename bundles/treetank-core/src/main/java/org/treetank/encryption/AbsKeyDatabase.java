@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package org.treetank.access;
+package org.treetank.encryption;
 
 import java.io.File;
 
