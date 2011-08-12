@@ -67,14 +67,15 @@ import org.treetank.utils.ItemList;
  * </p>
  */
 public final class Session implements ISession {
-    /** Lock for blocking the commit. */
-    protected final Lock mCommitLock;
 
     /** Session configuration. */
     protected final ResourceConfiguration mResourceConfig;
 
     /** Session configuration. */
     protected final SessionConfiguration mSessionConfig;
+
+    /** Database for centralized closure of related Sessions. */
+    private final Database mDatabase;
 
     /** Write semaphore to assure only one exclusive write transaction exists. */
     private final Semaphore mWriteSemaphore;
@@ -87,6 +88,9 @@ public final class Session implements ISession {
 
     /** Remember all running transactions (both read and write). */
     private final Map<Long, IReadTransaction> mTransactionMap;
+
+    /** Lock for blocking the commit. */
+    protected final Lock mCommitLock;
 
     /** Remember the write seperatly because of the concurrent writes. */
     private final Map<Long, WriteTransactionState> mWriteTransactionStateMap;
@@ -106,6 +110,8 @@ public final class Session implements ISession {
     /**
      * Hidden constructor.
      * 
+     * @param paramDatabase
+     *            Database for centralized operations on related sessions.
      * @param paramDatabaseConf
      *            DatabaseConfiguration for general setting about the storage
      * @param paramSessionConf
@@ -113,8 +119,9 @@ public final class Session implements ISession {
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    protected Session(final ResourceConfiguration paramResourceConf,
+    protected Session(final Database paramDatabase, final ResourceConfiguration paramResourceConf,
         final SessionConfiguration paramSessionConf) throws AbsTTException {
+        mDatabase = paramDatabase;
         mResourceConfig = paramResourceConf;
         mSessionConfig = paramSessionConf;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
@@ -264,7 +271,7 @@ public final class Session implements ISession {
             mWriteTransactionStateMap.clear();
 
             mFac.close();
-            Database.closeResource(mResourceConfig.mPath);
+            mDatabase.removeSession(mResourceConfig.mPath);
             mClosed = true;
         }
     }

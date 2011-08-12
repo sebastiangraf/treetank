@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -59,10 +60,10 @@ public final class Database implements IDatabase {
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
     /** Central repository of all running sessions. */
-    private static final Map<File, Session> SESSIONMAP = new ConcurrentHashMap<File, Session>();
+    private final Map<File, Session> mSessions;
 
     /** DatabaseConfiguration with fixed settings. */
-    final DatabaseConfiguration mDBConfig;
+    private final DatabaseConfiguration mDBConfig;
 
     /**
      * Private constructor.
@@ -74,6 +75,7 @@ public final class Database implements IDatabase {
      */
     private Database(final DatabaseConfiguration paramDBConf) throws AbsTTException {
         mDBConfig = paramDBConf;
+        mSessions = new HashMap<File, Session>();
 
     }
 
@@ -218,7 +220,7 @@ public final class Database implements IDatabase {
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 paramConfig.mPath.getName());
         // check that database must be closed beforehand
-        if (!SESSIONMAP.containsKey(resourceFile)) {
+        if (!mSessions.containsKey(resourceFile)) {
             // if file is existing and folder is a tt-dataplace, delete it
             if (resourceFile.exists() && ResourceConfiguration.Paths.compareStructure(resourceFile) == 0) {
                 // instantiate the database for deletion
@@ -291,7 +293,7 @@ public final class Database implements IDatabase {
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 paramConfig.getFile());
-        Session returnVal = SESSIONMAP.get(resourceFile);
+        Session returnVal = mSessions.get(resourceFile);
         if (returnVal == null) {
             if (!resourceFile.exists()) {
                 throw new TTUsageException(
@@ -316,8 +318,8 @@ public final class Database implements IDatabase {
 
             // Resource of session must be associated to this database
             assert config.mPath.getParentFile().getParentFile().equals(mDBConfig.mFile);
-            returnVal = new Session(config, paramConfig);
-            SESSIONMAP.put(resourceFile, returnVal);
+            returnVal = new Session(this, config, paramConfig);
+            mSessions.put(resourceFile, returnVal);
         }
         return returnVal;
     }
@@ -327,7 +329,7 @@ public final class Database implements IDatabase {
      */
     @Override
     public synchronized void close() throws AbsTTException {
-        for (final ISession session : SESSIONMAP.values()) {
+        for (final ISession session : mSessions.values()) {
             session.close();
         }
         DATABASEMAP.remove(mDBConfig.mFile);
@@ -354,7 +356,7 @@ public final class Database implements IDatabase {
      *            which should be deleted included descendants
      * @return true if delete is valid
      */
-    protected static boolean recursiveDelete(final File paramFile) {
+    private static boolean recursiveDelete(final File paramFile) {
         if (paramFile.isDirectory()) {
             for (final File child : paramFile.listFiles()) {
                 if (!recursiveDelete(child)) {
@@ -373,8 +375,8 @@ public final class Database implements IDatabase {
      *            to be closed
      * @return true if close successful, false otherwise
      */
-    protected static boolean closeResource(final File paramFile) {
-        return SESSIONMAP.remove(paramFile) != null ? true : false;
+    protected boolean removeSession(final File paramFile) {
+        return mSessions.remove(paramFile) != null ? true : false;
     }
 
     /**
