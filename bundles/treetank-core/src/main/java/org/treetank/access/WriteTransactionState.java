@@ -347,14 +347,14 @@ public final class WriteTransactionState extends ReadTransactionState {
             // afterwards synchronize all logs since the changes must to be written to the transaction log as
             // well
             if (cont != null) {
-                mSessionState.syncLogs(cont, mTransactionID);
+                nSession.syncLogs(cont, mTransactionID);
             }
         }
     }
 
     protected UberPage commit() throws AbsTTException {
 
-        mSessionState.mCommitLock.lock();
+        nSession.mCommitLock.lock();
 
         final PageReference uberPageReference = new PageReference();
         final UberPage uberPage = getUberPage();
@@ -425,9 +425,9 @@ public final class WriteTransactionState extends ReadTransactionState {
         mPageWriter.writeFirstReference(uberPageReference);
         uberPageReference.setPage(null);
 
-        mSessionState.waitForFinishedSync(mTransactionID);
+        nSession.waitForFinishedSync(mTransactionID);
         // mPageWriter.close();
-        mSessionState.mCommitLock.unlock();
+        nSession.mCommitLock.unlock();
         return uberPage;
     }
 
@@ -561,8 +561,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
         throws TTIOException {
         final NodePage[] revs = getSnapshotPages(paramNodePageKey);
-        final ERevisioning revision = mSessionState.mResourceConfig.mRevision;
-        final int mileStoneRevision = mSessionState.mResourceConfig.mRevisionsToRestore;
+        final ERevisioning revision = nSession.mResourceConfig.mRevision;
+        final int mileStoneRevision = nSession.mResourceConfig.mRevisionsToRestore;
 
         return revision.combinePagesForModification(revs, mileStoneRevision);
     }

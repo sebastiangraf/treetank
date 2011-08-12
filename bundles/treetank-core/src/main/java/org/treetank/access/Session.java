@@ -179,9 +179,7 @@ public final class Session implements ISession {
         try {
             mReadSemaphore.acquire();
         } catch (final InterruptedException exc) {
-            throw new AbsTTException(exc) {
-                private static final long serialVersionUID = 1L;
-            };
+            throw new TTThreadedException(exc);
         }
 
         IReadTransaction rtx = null;
