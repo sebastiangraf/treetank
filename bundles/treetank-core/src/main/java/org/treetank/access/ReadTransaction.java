@@ -60,7 +60,7 @@ public class ReadTransaction implements IReadTransaction {
     private final long mTransactionID;
 
     /** Session state this write transaction is bound to. */
-    protected SessionState mSessionState;
+    protected final Session mSession;
 
     /** State of transaction including all cached stuff. */
     private ReadTransactionState mTransactionState;
@@ -74,7 +74,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * Constructor.
      * 
-     * @param paramSessionState
+     * @param paramSession
      *            state of the session
      * @param paramTransactionID
      *            ID of transaction.
@@ -84,48 +84,13 @@ public class ReadTransaction implements IReadTransaction {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected ReadTransaction(final SessionState paramSessionState, final long paramTransactionID,
+    protected ReadTransaction(final Session paramSession, final long paramTransactionID,
         final ReadTransactionState paramTransactionState) throws TTIOException {
-        mSessionState = paramSessionState;
+        mSession = paramSession;
         mTransactionID = paramTransactionID;
         mTransactionState = paramTransactionState;
         mCurrentNode = getTransactionState().getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
         mClosed = false;
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param paramRtx
-     *            Transaction state to work with.
-     */
-    public ReadTransaction(final ReadTransaction paramRtx) {
-        mTransactionID = paramRtx.getTransactionID();
-        final Class<?> c = paramRtx.getClass();
-        final Field[] fields = c.getDeclaredFields();
-        try {
-            for (int i = 0; i < fields.length; i++) {
-                if (fields[i].getName().equals("mSessionState")) {
-                    mSessionState = (SessionState)(fields[i].get(paramRtx));
-                } else if (fields[i].getName().equals("mTransactionState")) {
-                    mTransactionState = (ReadTransactionState)fields[i].get(paramRtx);
-                }
-            }
-
-            assert mSessionState != null;
-            assert mTransactionState != null;
-            assert paramRtx.getNode().getNodeKey() >= 0; // has to be node
-            mCurrentNode = getTransactionState().getNode(paramRtx.getNode().getNodeKey());
-            mClosed = false;
-
-        } catch (final TTIOException mExp) {
-            mExp.getStackTrace();
-        } catch (final IllegalArgumentException mExp) {
-            mExp.printStackTrace();
-        } catch (final IllegalAccessException mExp) {
-            mExp.printStackTrace();
-        }
-
     }
 
     /**
@@ -325,10 +290,9 @@ public class ReadTransaction implements IReadTransaction {
             mTransactionState.close();
 
             // Callback on session to make sure everything is cleaned up.
-            mSessionState.closeReadTransaction(mTransactionID);
+            mSession.closeReadTransaction(mTransactionID);
 
             // Immediately release all references.
-            mSessionState = null;
             mTransactionState = null;
             mCurrentNode = null;
 
@@ -404,16 +368,6 @@ public class ReadTransaction implements IReadTransaction {
      */
     protected final void setTransactionState(final ReadTransactionState paramTransactionState) {
         mTransactionState = paramTransactionState;
-    }
-
-    /**
-     * Set session state.
-     * 
-     * @param paramSessionState
-     *            Session state to set.
-     */
-    protected final void setSessionState(final SessionState paramSessionState) {
-        mSessionState = paramSessionState;
     }
 
     /**

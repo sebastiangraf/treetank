@@ -35,8 +35,8 @@ import org.treetank.exception.AbsTTException;
  * <h2>Description</h2>
  * 
  * <p>
- * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions can
- * then be started from this instance. There can only be one <code>IWriteTransaction</code> at the time.
+ * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
+ * can then be started from this instance. There can only be one <code>IWriteTransaction</code> at the time.
  * However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
  * 
@@ -62,6 +62,9 @@ public interface ISession {
      * @return IReadTransaction instance.
      */
     IReadTransaction beginReadTransaction(final long revisionKey) throws AbsTTException;
+
+    IReadTransaction beginReadTransaction(final long paramRevisionKey, final IItemList mItemList)
+        throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.

@@ -109,7 +109,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws TTUsageException
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
-    protected WriteTransaction(final long paramTransactionID, final SessionState paramSessionState,
+    protected WriteTransaction(final long paramTransactionID, final Session paramSessionState,
         final WriteTransactionState paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
         super(paramSessionState, paramTransactionID, paramTransactionState);
@@ -626,10 +626,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             throw new IllegalArgumentException("paramRevision parameter must be >= 0");
         }
         assertNotClosed();
-        mSessionState.assertValidRevision(paramRevision);
+        mSession.assertAccess(paramRevision);
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
-        setTransactionState(mSessionState.createWriteTransactionState(getTransactionID(), paramRevision,
+        setTransactionState(mSession.createWriteTransactionState(getTransactionID(), paramRevision,
             getRevisionNumber() - 1));
         // Reset modification counter.
         mModificationCount = 0L;
@@ -649,14 +649,14 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         final UberPage uberPage = getTransactionState().commit();
 
         // Remember succesfully committed uber page in session state.
-        mSessionState.setLastCommittedUberPage(uberPage);
+        mSession.setLastCommittedUberPage(uberPage);
 
         // Reset modification counter.
         mModificationCount = 0L;
 
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
-        setTransactionState(mSessionState.createWriteTransactionState(getTransactionID(),
+        setTransactionState(mSession.createWriteTransactionState(getTransactionID(),
             getRevisionNumber(), getRevisionNumber()));
 
     }
@@ -680,7 +680,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         }
 
         // Reset internal transaction state to last committed uber page.
-        setTransactionState(mSessionState.createWriteTransactionState(getTransactionID(), revisionToSet,
+        setTransactionState(mSession.createWriteTransactionState(getTransactionID(), revisionToSet,
             revisionToSet));
     }
 
@@ -696,8 +696,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             }
             // Release all state immediately.
             getTransactionState().close();
-            mSessionState.closeWriteTransaction(getTransactionID());
-            setSessionState(null);
+            mSession.closeWriteTransaction(getTransactionID());
             setTransactionState(null);
             setCurrentNode(null);
             // Remember that we are closed.
@@ -1122,7 +1121,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     private IReadTransaction getTransaction(final long paramRevision, final long paramNodeKey)
         throws AbsTTException {
         checkParams(paramNodeKey, paramRevision);
-        final IReadTransaction rtx = mSessionState.beginReadTransaction(paramRevision, new ItemList());
+        final IReadTransaction rtx = mSession.beginReadTransaction(paramRevision, new ItemList());
         rtx.moveTo(paramNodeKey);
         if (rtx.getNode().getKind() != ENodes.TEXT_KIND || rtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
             throw new IllegalStateException("Node to insert must be a structural node (Text or Element)!");
@@ -1149,6 +1148,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             throw new IllegalArgumentException("Node key parameter of copied subtree root must be > 1!");
         }
 
-        mSessionState.assertValidRevision(paramRevision);
+        mSession.assertAccess(paramRevision);
     }
 }

@@ -99,7 +99,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected WriteTransactionState(final SessionState paramSessionState, final UberPage paramUberPage,
+    protected WriteTransactionState(final Session paramSessionState, final UberPage paramUberPage,
         final IWriter paramWriter, final long paramParamId, final long paramRepresentRev,
         final long paramStoreRev) throws TTIOException {
         super(paramSessionState, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
