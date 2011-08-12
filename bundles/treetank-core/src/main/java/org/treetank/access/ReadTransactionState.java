@@ -81,7 +81,7 @@ public class ReadTransactionState {
     private final ICache mCache;
 
     /** Configuration of the session */
-    protected final Session mSessionState;
+    protected final Session nSession;
 
     /**
      * Standard constructor.
@@ -103,7 +103,7 @@ public class ReadTransactionState {
         final long paramRevision, final IItemList paramItemList, final IReader paramReader)
         throws TTIOException {
         mCache = new RAMCache();
-        mSessionState = paramSessionState;
+        nSession = paramSessionState;
         mPageReader = paramReader;
         mUberPage = paramUberPage;
         mRootPage = loadRevRoot(paramRevision);
@@ -136,10 +136,10 @@ public class ReadTransactionState {
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
 
-            final int mileStoneRevision = mSessionState.mResourceConfig.mRevisionsToRestore;
+            final int mileStoneRevision = nSession.mResourceConfig.mRevisionsToRestore;
 
             // Build up the complete page.
-            final ERevisioning revision = mSessionState.mResourceConfig.mRevision;
+            final ERevisioning revision = nSession.mResourceConfig.mRevision;
             final NodePage completePage = revision.combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
@@ -285,7 +285,7 @@ public class ReadTransactionState {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == mSessionState.mResourceConfig.mRevisionsToRestore) {
+                if (refs.size() == nSession.mResourceConfig.mRevisionsToRestore) {
                     break;
                 }
 
@@ -409,7 +409,7 @@ public class ReadTransactionState {
      */
     @Override
     public String toString() {
-        return new StringBuilder("SessionConfiguration: ").append(mSessionState.mSessionConfig).append(
+        return new StringBuilder("SessionConfiguration: ").append(nSession.mSessionConfig).append(
             "\nPageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage).append(
             "\nRevRootPage: ").append(mRootPage).toString();
     }
