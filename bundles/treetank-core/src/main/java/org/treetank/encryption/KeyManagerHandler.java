@@ -36,6 +36,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
+import org.treetank.encryption.database.KeyManagerDatabase;
+import org.treetank.encryption.database.KeySelectorDatabase;
+import org.treetank.encryption.database.model.KeyManager;
+import org.treetank.encryption.database.model.KeySelector;
+import org.treetank.encryption.utils.NodeEncryption;
 import org.treetank.exception.TTEncryptionException;
 
 /**
@@ -47,23 +52,23 @@ public class KeyManagerHandler {
     /**
      * KeySelector database instance.
      */
-    KeySelectorDatabase mKeySelectorDb;
+    private KeySelectorDatabase mKeySelectorDb;
     /**
      * KeyManager database instance.
      */
-    KeyManagerDatabase mKeyManagerDb;
+    private KeyManagerDatabase mKeyManagerDb;
     /**
      * Current logged user.
      */
-    String mLoggedUser;
+    private String mLoggedUser;
     /**
      * User name who join or leave a group.
      */
-    String mGroupUser;
+    private String mGroupUser;
     /**
      * Group name in which a user is joining or leaving.
      */
-    String mGroupName;
+    private String mGroupName;
 
     /**
      * Invoked when a new user is joining a group.
@@ -385,7 +390,7 @@ public class KeyManagerHandler {
      * @param paramMap
      *            map containing all through join effected nodes with old and new id.
      */
-    public void updateKeyManagerJoin(final Map<Long, Long> paramMap) {
+    private void updateKeyManagerJoin(final Map<Long, Long> paramMap) {
         final Iterator mOuterIter =
             mKeyManagerDb.getEntries().keySet().iterator();
         while (mOuterIter.hasNext()) { // iterate through all users.
@@ -412,7 +417,7 @@ public class KeyManagerHandler {
      * @param paramMap
      *            map containing all through leave effected nodes with old and new id.
      */
-    public void updateKeyManagerLeave(final Map<Long, Long> paramMap) {
+    private void updateKeyManagerLeave(final Map<Long, Long> paramMap) {
         final Iterator mOuterIter =
             mKeyManagerDb.getEntries().keySet().iterator();
         while (mOuterIter.hasNext()) { // iterate through all users.
@@ -472,21 +477,7 @@ public class KeyManagerHandler {
      *            map of key trails.
      */
     private void transmitKeyTrails(final Map<Long, byte[]> paramKeyTails) {
-        // if map has no values, the logged user key cache has to be removed
-        // final Iterator iter = paramKeyTails.keySet().iterator();
-        // System.out.println("KeyTrails of user " + mLoggedUser + ": ");
-        // while (iter.hasNext()) {
-        // long id = (Long)iter.next();
-        // System.out.println(id + " - " + paramKeyTails.get(id));
-        //
-        // byte [] mChildSecretKey = mKeySelectorDb.getEntry(id).getSecretKey();
-        // byte [] mDecryptedBytes = NodeEncryption.decrypt(paramKeyTails.get(id), mChildSecretKey);
-        //
-        // long key = NodeEncryption.byteArrayToLong(mDecryptedBytes);
-        //
-        // System.out.println("encrypted key: " + key);
-        // }
-
+         EncryptionController.getInstance().getCHInstance().decryptKeyTrails(paramKeyTails);
     }
 
     /**
@@ -621,9 +612,9 @@ public class KeyManagerHandler {
      */
     private void init() {
         mKeySelectorDb =
-            EncryptionHandler.getInstance().getKeySelectorInstance();
-        mKeyManagerDb = EncryptionHandler.getInstance().getKeyManagerInstance();
-        mLoggedUser = EncryptionHandler.getInstance().getUser();
+            EncryptionController.getInstance().getKeySelectorInstance();
+        mKeyManagerDb = EncryptionController.getInstance().getKeyManagerInstance();
+        mLoggedUser = EncryptionController.getInstance().getUser();
     }
 
 }

@@ -20,9 +20,9 @@ package org.treetank.page;
 import java.util.Arrays;
 import java.util.List;
 
-import org.treetank.encryption.EncryptionHandler;
-import org.treetank.encryption.KeySelector;
-import org.treetank.encryption.NodeEncryption;
+import org.treetank.encryption.EncryptionController;
+import org.treetank.encryption.database.model.KeySelector;
+import org.treetank.encryption.utils.NodeEncryption;
 import org.treetank.exception.TTEncryptionException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
@@ -71,7 +71,7 @@ public class NodePage extends AbsPage {
         mNodePageKey = mIn.readLong();
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
 
-        final EncryptionHandler enHandler = EncryptionHandler.getInstance();
+        final EncryptionController enHandler = EncryptionController.getInstance();
 
         if (enHandler.checkEncryption()) {
             for (int i = 0; i < mNodes.length; i++) {
@@ -229,7 +229,7 @@ public class NodePage extends AbsPage {
         super.serialize(mOut);
         mOut.writeLong(mNodePageKey);
 
-        final EncryptionHandler enHandler = EncryptionHandler.getInstance();
+        final EncryptionController enHandler = EncryptionController.getInstance();
 
         if (enHandler.checkEncryption()) {
             NodeOutputSink mNodeOut = null;

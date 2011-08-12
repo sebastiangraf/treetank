@@ -26,8 +26,8 @@
  */
 
 /**
- * This package contains the source for encryption and
- * decryption using versakey framework approach.
+ * This package contains the sources for data encryption and
+ * decryption using a DAG (directed acyclic graph) based hierarchical group management approach.
  * 
  * @author Patrick Lang, University of Konstanz
  */

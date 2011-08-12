@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -37,30 +38,47 @@ import org.treetank.access.Database;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.cache.KeyCache;
+import org.treetank.encryption.database.KeyManagerDatabase;
+import org.treetank.encryption.database.KeySelectorDatabase;
+import org.treetank.encryption.database.model.KeyManager;
+import org.treetank.encryption.database.model.KeySelector;
+import org.treetank.encryption.utils.EncryptionDAGParser;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTEncryptionException;
 import org.treetank.exception.TTIOException;
 
 /**
- * Singleton class holding and handling data for encryption.
+ * This central singleton class holding and handling data and instances for encryption operations.
+ * It initiates all important components like databases or cache. It is like a controlling class from which
+ * all other classes get their database instances or session information.
  * 
  * @author Patrick Lang, University of Konstanz
  */
-public final class EncryptionHandler {
+public final class EncryptionController {
 
-    // #################START SETTINGS#####################
+    // #################SETTINGS START#######################
 
     /**
      * Instance for enabling or disabling encryption process.
      */
     private final static boolean mNodeEncryption = false;
 
-    // #################END SETTINGS#######################
+    /**
+     * The key data should be encrypted.
+     */
+    private long mDataEncryptionKey = 0;
+    
+    /**
+     * Current session user.
+     */
+    private static String mLoggedUser = "U3";
 
+    // #################SETTINGS END#######################
+    
     /**
      * Singleton instance.
      */
-    private static EncryptionHandler mINSTANCE;
+    private static EncryptionController mINSTANCE = new EncryptionController();
 
     /**
      * Instance of KeySelectorDatabase holding key selection stuff.
@@ -81,16 +99,6 @@ public final class EncryptionHandler {
      * Instance of Session.
      */
     private static ISession mSession;
-
-    /**
-     * Current session user.
-     */
-    private static String mLoggedUser = "U3";
-
-    /**
-     * The key data should be encrypted.
-     */
-    private long mDataEncryptionKey;
 
     /**
      * Selector key counter.
@@ -114,8 +122,7 @@ public final class EncryptionHandler {
     /**
      * Standard constructor.
      */
-    private EncryptionHandler() {
-
+    private EncryptionController() {
     }
 
     /**
@@ -124,10 +131,7 @@ public final class EncryptionHandler {
      * @return
      *         Handler instance.
      */
-    public static synchronized EncryptionHandler getInstance() {
-        if (mINSTANCE == null) {
-            mINSTANCE = new EncryptionHandler();
-        }
+    public static EncryptionController getInstance() {
         return mINSTANCE;
     }
 
@@ -138,13 +142,10 @@ public final class EncryptionHandler {
      * 
      * @throws TTEncryptionException
      */
-    public void init(final ISession paramSession, final long paramDEK)
-        throws TTEncryptionException {
+    public void init() throws TTEncryptionException {
         if (mNodeEncryption) {
             mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
             mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
-            mSession = paramSession;
-            mDataEncryptionKey = paramDEK;
             mKeyCache = new KeyCache();
             new EncryptionDAGParser().init();
         } else {
@@ -167,6 +168,14 @@ public final class EncryptionHandler {
 
     }
 
+    /**
+     * Deletes berkeley db file recursively.
+     * 
+     * @param paramFile
+     *            File to delete.
+     * @return
+     *         if some more files available.
+     */
     protected static boolean recursiveDelete(final File paramFile) {
         if (paramFile.isDirectory()) {
             for (final File child : paramFile.listFiles()) {
@@ -178,93 +187,12 @@ public final class EncryptionHandler {
         return paramFile.delete();
     }
 
+    /**
+     * Closes all databases.
+     */
     public void close() {
         mKeySelectorDb.clearPersistent();
         mKeyManagerDb.clearPersistent();
-    }
-
-    /**
-     * Prints all stored information of KeySelector and KeyManager database. This method is just for testing
-     * issues.
-     */
-    public void print() {
-        if (mNodeEncryption) {
-
-            /*
-             * print key selector db.
-             */
-            final SortedMap<Long, KeySelector> mSelMap =
-                mKeySelectorDb.getEntries();
-            Iterator iter = mSelMap.keySet().iterator();
-
-            System.out.println("\nSelector DB Size: " + mKeySelectorDb.count());
-
-            while (iter.hasNext()) {
-
-                final KeySelector mSelector = mSelMap.get(iter.next());
-                final LinkedList<Long> mParentsList = mSelector.getParents();
-                final List<Long> mChildsList = mSelector.getChilds();
-
-                final StringBuilder mParentsString = new StringBuilder();
-                for (int k = 0; k < mParentsList.size(); k++) {
-                    mParentsString.append("#" + mParentsList.get(k));
-                }
-
-                final StringBuilder mChildsString = new StringBuilder();
-                for (int k = 0; k < mChildsList.size(); k++) {
-                    mChildsString.append("#" + mChildsList.get(k));
-                }
-
-                System.out.println("Selector: " + mSelector.getPrimaryKey()
-                    + " " + mSelector.getName() + " "
-                    + mParentsString.toString() + " "
-                    + mChildsString.toString() + " " + mSelector.getRevision()
-                    + " " + mSelector.getVersion() + " "
-                    + mSelector.getSecretKey());
-            }
-            System.out.println();
-
-            /*
-             * print key manager db
-             */
-            final SortedMap<String, KeyManager> sMap =
-                mKeyManagerDb.getEntries();
-
-            // iterate through all users
-            final Iterator outerIter = sMap.keySet().iterator();
-
-            System.out.println("Key manager DB Size: " + mKeyManagerDb.count());
-
-            StringBuilder sb;
-            while (outerIter.hasNext()) {
-                final String user = (String)outerIter.next();
-                sb = new StringBuilder(user + ": ");
-
-                final Set<Long> mKeySet =
-                    mKeyManagerDb.getEntry(user).getKeySet();
-
-                // iterate through user's key set.
-                final Iterator innerIter = mKeySet.iterator();
-                while (innerIter.hasNext()) {
-                    sb.append(innerIter.next() + " ");
-                }
-
-                System.out.println(sb.toString());
-            }
-            System.out.println();
-
-            /*
-             * print key cache.
-             */
-            final LinkedList<Long> mKeyList = mKeyCache.get(getUser());
-            final StringBuilder cacheString =
-                new StringBuilder(getUser() + ": ");
-            for (long aKey : mKeyList) {
-                cacheString.append(aKey + " ");
-            }
-            System.out.println(cacheString);
-        }
-
     }
 
     /**
@@ -294,7 +222,7 @@ public final class EncryptionHandler {
      * @return
      *         cache list of user.
      */
-    public List<Long> getKeyCache() {
+    public LinkedList<Long> getKeyCache() {
         return mKeyCache.get(getUser());
     }
 
@@ -347,5 +275,24 @@ public final class EncryptionHandler {
     public KeyCache getKeyCacheInstance() {
         return mKeyCache;
     }
+
+    /**
+     * Returns key manager handler instance.
+     * 
+     * @return
+     */
+    public KeyManagerHandler getKMHInstance() {
+        return new KeyManagerHandler();
+    }
+
+    /**
+     * Returns key cac
+     * 
+     * @return
+     */
+    public ClientHandler getCHInstance() {
+        return new ClientHandler();
+    }
+
 
 }

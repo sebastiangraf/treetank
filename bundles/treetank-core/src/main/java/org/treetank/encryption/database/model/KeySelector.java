@@ -24,12 +24,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.encryption;
+package org.treetank.encryption.database.model;
 
 import java.util.LinkedList;
 import java.util.List;
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
+
+import org.treetank.encryption.EncryptionController;
+import org.treetank.encryption.utils.NodeEncryption;
 
 /**
  * This class represents the key selector model holding all data
@@ -92,7 +95,7 @@ public class KeySelector {
     public KeySelector(final String paramName, final LinkedList<Long> paramPar,
         final LinkedList<Long> paramChild, final int paramRev,
         final int paramVer) {
-        this.mSelectorKey = EncryptionHandler.getInstance().newSelectorKey();
+        this.mSelectorKey = EncryptionController.getInstance().newSelectorKey();
 
         this.mName = paramName;
         this.mParents = paramPar;

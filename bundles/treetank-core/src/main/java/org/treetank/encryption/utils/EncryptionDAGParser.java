@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package org.treetank.encryption;
+package org.treetank.encryption.utils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -35,6 +35,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.treetank.cache.KeyCache;
+import org.treetank.encryption.EncryptionController;
+import org.treetank.encryption.database.KeyManagerDatabase;
+import org.treetank.encryption.database.KeySelectorDatabase;
+import org.treetank.encryption.database.model.KeyManager;
+import org.treetank.encryption.database.model.KeySelector;
 
 /**
  * Class for parsing the initial given encryption tree and storing
@@ -61,6 +66,9 @@ public class EncryptionDAGParser extends DefaultHandler {
      */
     private static KeyManagerDatabase mKeyManagerDb;
 
+    /**
+     * Instance for {@link KeyCache}
+     */
     private static KeyCache mKeyCache;
 
     /**
@@ -115,10 +123,10 @@ public class EncryptionDAGParser extends DefaultHandler {
     public final void init() {
 
         mKeySelectorDb =
-            EncryptionHandler.getInstance().getKeySelectorInstance();
-        mKeyManagerDb = EncryptionHandler.getInstance().getKeyManagerInstance();
-        mKeyCache = EncryptionHandler.getInstance().getKeyCacheInstance();
-        mUser = EncryptionHandler.getInstance().getUser();
+            EncryptionController.getInstance().getKeySelectorInstance();
+        mKeyManagerDb = EncryptionController.getInstance().getKeyManagerInstance();
+        mKeyCache = EncryptionController.getInstance().getKeyCacheInstance();
+        mUser = EncryptionController.getInstance().getUser();
 
         try {
 
