@@ -81,7 +81,7 @@ public class ReadTransactionState {
     private final ICache mCache;
 
     /** Configuration of the session */
-    protected final SessionState mSessionState;
+    protected final Session mSessionState;
 
     /**
      * Standard constructor.
@@ -99,7 +99,7 @@ public class ReadTransactionState {
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected ReadTransactionState(final SessionState paramSessionState, final UberPage paramUberPage,
+    protected ReadTransactionState(final Session paramSessionState, final UberPage paramUberPage,
         final long paramRevision, final IItemList paramItemList, final IReader paramReader)
         throws TTIOException {
         mCache = new RAMCache();
@@ -255,7 +255,7 @@ public class ReadTransactionState {
      * 
      * @return The item list.
      */
-    public final IItemList getItemList() {
+    protected final IItemList getItemList() {
         return mItemList;
     }
 

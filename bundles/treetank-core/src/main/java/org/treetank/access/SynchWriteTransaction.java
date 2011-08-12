@@ -38,7 +38,7 @@ public class SynchWriteTransaction extends WriteTransaction {
 
     private LockManager lock;
 
-    protected SynchWriteTransaction(long mTransactionID, SessionState mSessionState,
+    protected SynchWriteTransaction(long mTransactionID, Session mSessionState,
         WriteTransactionState mTransactionState, int maxNodeCount, int maxTime) throws AbsTTException {
         super(mTransactionID, mSessionState, mTransactionState, maxNodeCount, maxTime);
         lock = LockManager.getLockManager();
