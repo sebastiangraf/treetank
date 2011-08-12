@@ -1,30 +1,20 @@
 /**
- * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
- * All rights reserved.
+ * Copyright (c) 2011, Distributed Systems Group, University of Konstanz
  * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
- * * Neither the name of the University of Konstanz nor the
- * names of its contributors may be used to endorse or promote products
- * derived from this software without specific prior written permission.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
  */
-package org.treetank.encryption;
+package org.treetank.encryption.database;
 
 import java.io.File;
 import java.util.SortedMap;
@@ -38,15 +28,16 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 
+import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.exception.TTIOException;
 
 /**
- * Berkeley implementation of a persistent key selector database. That means
- * that all data is stored in this database and it is never removed.
+ * Berkeley implementation of a persistent key manager database. That
+ * means that all data is stored in this database and it is never removed.
  * 
  * @author Patrick Lang, University of Konstanz
  */
-public class KeySelectorDatabase extends AbsKeyDatabase {
+public class KeyManagerDatabase extends AbsKeyDatabase {
 
     /**
      * Berkeley Environment for the database.
@@ -61,7 +52,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
     /**
      * Name for the database.
      */
-    private static final String NAME = "berkeleyKeySelector";
+    private static final String NAME = "berkeleyKeyManager";
 
     /**
      * Constructor. Building up the berkeley db and setting necessary settings.
@@ -69,7 +60,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
      * @param paramFile
      *            the place where the berkeley db is stored.
      */
-    public KeySelectorDatabase(final File paramFile) {
+    public KeyManagerDatabase(final File paramFile) {
         super(paramFile);
         EnvironmentConfig environmentConfig = new EnvironmentConfig();
         environmentConfig.setAllowCreate(true);
@@ -107,6 +98,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
             if (!place.delete()) {
                 throw new TTIOException("Couldn't delete!");
             }
+
             if (mStore != null) {
                 mStore.close();
             }
@@ -122,40 +114,44 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
     }
 
     /**
-     * Putting a {@link KeySelector} into the database with a corresponding
-     * selector key.
+     * Putting a {@link KeyManager} into the database with a corresponding
+     * user.
      * 
      * @param paramEntity
-     *            key selector instance to put into database.
+     *            key manager instance to get information for storage.
      */
-    public final void putEntry(final KeySelector paramEntity) {
-        PrimaryIndex<Long, KeySelector> primaryIndex;
+    public final void putEntry(final KeyManager paramEntity) {
+        PrimaryIndex<String, KeyManager> primaryIndex;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
 
             primaryIndex.put(paramEntity);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
+
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
         }
 
     }
 
     /**
-     * Getting a {@link KeyingSelector} related to a given selector key.
+     * Getting a {@link KeyManager} related to a given user.
      * 
-     * @param paramKey
-     *            selector key for related key selector instance.
+     * @param paramUser
+     *            user for getting related key manager.
      * @return
-     *         key selector instance.
+     *         key manager instance.
      */
-    public final KeySelector getEntry(final long paramKey) {
-        PrimaryIndex<Long, KeySelector> primaryIndex;
-        KeySelector entity = null;
+    public final KeyManager getEntry(final String paramKey) {
+        PrimaryIndex<String, KeyManager> primaryIndex;
+        KeyManager entity = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
-            entity = (KeySelector)primaryIndex.get(paramKey);
+
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+
+            entity = (KeyManager)primaryIndex.get(paramKey);
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
@@ -171,12 +167,12 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
      * @return
      *         status whether deletion was successful or not.
      */
-    public final boolean deleteEntry(final long paramKey) {
-        PrimaryIndex<Long, KeySelector> primaryIndex;
+    public final boolean deleteEntry(final String paramKey) {
+        PrimaryIndex<String, KeyManager> primaryIndex;
         boolean status = false;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
             status = primaryIndex.delete(paramKey);
 
         } catch (final DatabaseException mDbExp) {
@@ -193,11 +189,13 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
      *         number of entries in database.
      */
     public final int count() {
-        PrimaryIndex<Long, KeySelector> primaryIndex;
+        PrimaryIndex<String, KeyManager> primaryIndex;
         long counter = 0;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+
             counter = primaryIndex.count();
 
         } catch (final DatabaseException mDbExp) {
@@ -212,12 +210,14 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
      * @return
      *         all database entries.
      */
-    public final SortedMap<Long, KeySelector> getEntries() {
-        PrimaryIndex<Long, KeySelector> primaryIndex;
-        SortedMap<Long, KeySelector> sMap = null;
+    public final SortedMap<String, KeyManager> getEntries() {
+        PrimaryIndex<String, KeyManager> primaryIndex;
+        SortedMap<String, KeyManager> sMap = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+
             sMap = primaryIndex.sortedMap();
 
         } catch (final DatabaseException mDbExp) {

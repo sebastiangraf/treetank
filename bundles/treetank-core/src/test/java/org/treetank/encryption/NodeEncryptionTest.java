@@ -28,6 +28,7 @@ package org.treetank.encryption;
 
 import org.treetank.Holder;
 import org.treetank.TestHelper;
+import org.treetank.encryption.utils.NodeEncryption;
 import org.treetank.exception.AbsTTException;
 
 import org.junit.After;

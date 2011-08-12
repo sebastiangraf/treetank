@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package org.treetank.encryption;
+package org.treetank.encryption.utils;
 
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
