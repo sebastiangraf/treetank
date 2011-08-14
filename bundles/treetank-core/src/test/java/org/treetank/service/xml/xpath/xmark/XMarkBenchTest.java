@@ -32,6 +32,8 @@ import java.io.File;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import org.treetank.EncryptionHelper;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -42,7 +44,7 @@ import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathStringChecker;
 
 /**
- * Performes the XMark benchmark.
+ * Performs the XMark benchmark.
  * 
  * @author Patrick Lang
  */
@@ -50,8 +52,8 @@ public class XMarkBenchTest {
 
     final XMarkBenchQueries xmbq = new XMarkBenchQueries();
 
-    private static final String FACTOR = "0.1";
-    private static final String XMLFILE = "10mb.xml";
+    private static final String FACTOR = "0.01";
+    private static final String XMLFILE = "1mb.xml";
 
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + XMLFILE;
@@ -61,6 +63,7 @@ public class XMarkBenchTest {
     @BeforeClass
     public static void setUp() throws Exception {
         TestHelper.deleteEverything();
+        //EncryptionHelper.start();
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
         holder = Holder.generateRtx();
     }

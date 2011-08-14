@@ -29,17 +29,20 @@ package org.treetank.service.xml.xpath.xmark;
 
 import java.lang.reflect.Field;
 
+import org.treetank.exception.TTIOException;
+
 /**
- * Defines all xmark queries by factor and its corresponding results.
+ * This class defines all XMark queries by factor and its corresponding results.
  * 
- * @author Patrick Lang
+ * @author Patrick Lang, University of Konstanz
  */
 public class XMarkBenchQueries {
 
     /*
-     * Queries and expected Results for Factor 0.01; Xml File with size 1MB
+     * Queries and expected results for factor 0.01; XML file with size 1MB
      */
-    private final String Q1_Fac001 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
+    private final String Q1_Fac001 =
+        "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
     private final String R1_Fac001 = "Klemens Pelz";
 
     private final String Q2_Fac001 = "";
@@ -55,11 +58,13 @@ public class XMarkBenchQueries {
         "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
     private final String R5_Fac001 = "75";
 
-    private final String Q6_Fac001 = "for $b in //site/regions return fn:count($b//item)";
+    private final String Q6_Fac001 =
+        "for $b in //site/regions return fn:count($b//item)";
     private final String R6_Fac001 = "217";
 
-    private final String Q7_Fac001 = "for $p in /site return fn:count($p//description) + "
-        + "fn:count($p//annotation) + fn:count($p//emailaddress)";
+    private final String Q7_Fac001 =
+        "for $p in /site return fn:count($p//description) + "
+            + "fn:count($p//annotation) + fn:count($p//emailaddress)";
     private final String R7_Fac001 = "916.0";
 
     private final String Q8_Fac001 = "";
@@ -102,8 +107,10 @@ public class XMarkBenchQueries {
     private final String R20_Fac001 = "";
 
     // own queries
-    private final String Q21_Fac001 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
-    private final String R21_Fac001 = "officer embrace such fears distinction attires";
+    private final String Q21_Fac001 =
+        "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
+    private final String R21_Fac001 =
+        "officer embrace such fears distinction attires";
 
     // private final String Q22_Fac001 =
     // "/site/open_auctions/open_auction[@id=\"open_auction0\"]/bidder/personref[@person=\"person175\"]";
@@ -114,9 +121,10 @@ public class XMarkBenchQueries {
     // private final String R23_Fac001 = "<name>Mehrdad Suermann</name>";
 
     /*
-     * Queries and expected Results for Factor 0.1; Xml File with size 10MB
+     * Queries and expected results for factor 0.1; XML file with size 10MB
      */
-    private final String Q1_Fac01 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
+    private final String Q1_Fac01 =
+        "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
     private final String R1_Fac01 = "Krishna Merle";
 
     private final String Q2_Fac01 = "";
@@ -132,11 +140,13 @@ public class XMarkBenchQueries {
         "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
     private final String R5_Fac01 = "670";
 
-    private final String Q6_Fac01 = "for $b in //site/regions return fn:count($b//item)";
+    private final String Q6_Fac01 =
+        "for $b in //site/regions return fn:count($b//item)";
     private final String R6_Fac01 = "2175";
 
-    private final String Q7_Fac01 = "for $p in /site return fn:count($p//description) + "
-        + "fn:count($p//annotation) + fn:count($p//emailaddress)";
+    private final String Q7_Fac01 =
+        "for $p in /site return fn:count($p//description) + "
+            + "fn:count($p//annotation) + fn:count($p//emailaddress)";
     private final String R7_Fac01 = "9175.0";
 
     private final String Q8_Fac01 = "";
@@ -179,13 +189,16 @@ public class XMarkBenchQueries {
     private final String R20_Fac01 = "";
 
     // own queries
-    private final String Q21_Fac01 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
-    private final String R21_Fac01 = "officer embrace such fears distinction attires";
+    private final String Q21_Fac01 =
+        "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
+    private final String R21_Fac01 =
+        "officer embrace such fears distinction attires";
 
     /*
-     * Queries for Factor 1.0; Xml File with size 100 MB
+     * Queries for factor 1.0; XML file with size 100 MB
      */
-    private final String Q1_Fac1 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
+    private final String Q1_Fac1 =
+        "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
     private final String R1_Fac1 = "Kasidit Treweek";
 
     private final String Q2_Fac1 = "";
@@ -201,11 +214,13 @@ public class XMarkBenchQueries {
         "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
     private final String R5_Fac1 = "6539";
 
-    private final String Q6_Fac1 = "for $b in //site/regions return fn:count($b//item)";
+    private final String Q6_Fac1 =
+        "for $b in //site/regions return fn:count($b//item)";
     private final String R6_Fac1 = "21750";
 
-    private final String Q7_Fac1 = "for $p in /site return fn:count($p//description) + "
-        + "fn:count($p//annotation) + fn:count($p//emailaddress)";
+    private final String Q7_Fac1 =
+        "for $p in /site return fn:count($p//description) + "
+            + "fn:count($p//annotation) + fn:count($p//emailaddress)";
     private final String R7_Fac1 = "91750.0";
 
     private final String Q8_Fac1 = "";
@@ -248,13 +263,16 @@ public class XMarkBenchQueries {
     private final String R20_Fac1 = "";
 
     // own queries
-    private final String Q21_Fac1 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
-    private final String R21_Fac1 = "officer embrace such fears distinction attires";
+    private final String Q21_Fac1 =
+        "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
+    private final String R21_Fac1 =
+        "officer embrace such fears distinction attires";
 
     /*
-     * Queries for Factor 10.0; Xml File with size 1000 MB
+     * Queries for factor 10.0; XML file with size 1000 MB
      */
-    private final String Q1_Fac10 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
+    private final String Q1_Fac10 =
+        "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
     private final String R1_Fac10 = "Waldo Birch";
 
     private final String Q2_Fac10 = "";
@@ -270,11 +288,13 @@ public class XMarkBenchQueries {
         "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
     private final String R5_Fac10 = "65851";
 
-    private final String Q6_Fac10 = "for $b in //site/regions return fn:count($b//item)";
+    private final String Q6_Fac10 =
+        "for $b in //site/regions return fn:count($b//item)";
     private final String R6_Fac10 = "217500";
 
-    private final String Q7_Fac10 = "for $p in /site return fn:count($p//description) + "
-        + "fn:count($p//annotation) + fn:count($p//emailaddress)";
+    private final String Q7_Fac10 =
+        "for $p in /site return fn:count($p//description) + "
+            + "fn:count($p//annotation) + fn:count($p//emailaddress)";
     private final String R7_Fac10 = "917500";
 
     private final String Q8_Fac10 = "";
@@ -320,11 +340,14 @@ public class XMarkBenchQueries {
      * Return the query by query number and factor
      * 
      * @param queryNr
+     *            XMark query number.
      * @param factor
+     *            Factor of XML size.
      * @return query
+     *         Query by number and factor.
      */
     public String getQuery(final int queryNr, final String factor) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Q");
         sb.append(Integer.toString(queryNr));
         sb.append("_Fac");
@@ -337,17 +360,25 @@ public class XMarkBenchQueries {
             fac = "1";
         } else if (factor.equals("10.0")) {
             fac = "10";
+        } else {
+            try {
+                throw new TTIOException(
+                    "XMark Benchmarking query factor does not exist!");
+            } catch (final TTIOException mExp) {
+                mExp.printStackTrace();
+            }
         }
         sb.append(fac);
 
         String queryValue = null;
         try {
-            Field privateStringField = XMarkBenchQueries.class.getDeclaredField(sb.toString());
+            final Field privateStringField =
+                XMarkBenchQueries.class.getDeclaredField(sb.toString());
             privateStringField.setAccessible(true);
             queryValue = (String)privateStringField.get(this);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (final Exception mExp) {
+            mExp.printStackTrace();
         }
         return queryValue;
     }
@@ -356,11 +387,14 @@ public class XMarkBenchQueries {
      * Return the result by query number and factor
      * 
      * @param queryNr
+     *            XMark query number.
      * @param factor
+     *            Factor of XML size.
      * @return result
+     *         Query by number and factor.
      */
     public String getResult(final int queryNr, final String factor) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("R");
         sb.append(Integer.toString(queryNr));
         sb.append("_Fac");
@@ -373,17 +407,25 @@ public class XMarkBenchQueries {
             fac = "1";
         } else if (factor.equals("10.0")) {
             fac = "10";
+        } else {
+            try {
+                throw new TTIOException(
+                    "XMark Benchmarking result factor does not exist!");
+            } catch (final TTIOException mExp) {
+                mExp.printStackTrace();
+            }
         }
         sb.append(fac);
 
         String resultValue = null;
         try {
-            Field privateStringField = XMarkBenchQueries.class.getDeclaredField(sb.toString());
+            final Field privateStringField =
+                XMarkBenchQueries.class.getDeclaredField(sb.toString());
             privateStringField.setAccessible(true);
             resultValue = (String)privateStringField.get(this);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (final Exception mExp) {
+            mExp.printStackTrace();
         }
         return resultValue;
 

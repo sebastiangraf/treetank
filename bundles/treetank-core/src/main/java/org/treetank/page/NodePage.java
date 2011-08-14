@@ -71,81 +71,99 @@ public class NodePage extends AbsPage {
         mNodePageKey = mIn.readLong();
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
 
-        final EncryptionController enHandler = EncryptionController.getInstance();
+        final EncryptionController enController =
+            EncryptionController.getInstance();
 
-        if (enHandler.checkEncryption()) {
+        if (enController.checkEncryption()) {
             for (int i = 0; i < mNodes.length; i++) {
                 final long mRightKey = mIn.readLong();
                 mIn.readInt();
                 mIn.readInt();
 
-                final List<Long> mUserKeys = enHandler.getKeyCache();
+                final List<Long> mUserKeys = enController.getKeyCache();
                 byte[] mSecretKey = null;
 
-                if (mUserKeys.contains(mRightKey)) {
-                    // get secret key
-                    mSecretKey = enHandler.getKeySelectorInstance().getEntry(mRightKey).getSecretKey();
-
+                if (mUserKeys.contains(mRightKey) || mRightKey == -1) {
                     final int mElementKind = mIn.readInt();
+                    
+                    if (mRightKey != -1) {
+                    
+                    // get secret key
+                    mSecretKey =
+                        enController.getKeySelectorInstance().getEntry(
+                            mRightKey).getSecretKey();
 
-                    final int mNodeBytes = mIn.readInt();
-                    final int mPointerBytes = mIn.readInt();
+                        final int mNodeBytes = mIn.readInt();
+                        final int mPointerBytes = mIn.readInt();
 
-                    final byte[] mDecryptedNode;
+                        final byte[] mDecryptedNode;
 
-                    if (mPointerBytes == 0) {
+                        if (mPointerBytes == 0) {
 
-                        final byte[] mEncryptedNode = new byte[mNodeBytes];
+                            final byte[] mEncryptedNode = new byte[mNodeBytes];
 
-                        for (int j = 0; j < mNodeBytes; j++) {
-                            mEncryptedNode[j] = mIn.readByte();
+                            for (int j = 0; j < mNodeBytes; j++) {
+                                mEncryptedNode[j] = mIn.readByte();
+                            }
+
+                            mDecryptedNode =
+                                NodeEncryption.decrypt(mEncryptedNode,
+                                    mSecretKey);
+
+                        } else {
+
+                            final byte[] mEncryptedPointer =
+                                new byte[mPointerBytes];
+                            for (int j = 0; j < mPointerBytes; j++) {
+                                mEncryptedPointer[j] = mIn.readByte();
+                            }
+
+                            final int mDataBytes = mNodeBytes - mPointerBytes;
+                            final byte[] mEncryptedData = new byte[mDataBytes];
+                            for (int j = 0; j < mDataBytes; j++) {
+                                mEncryptedData[j] = mIn.readByte();
+                            }
+
+                            final byte[] mDecryptedPointer =
+                                NodeEncryption.decrypt(mEncryptedPointer,
+                                    mSecretKey);
+
+                            final byte[] mDecryptedData =
+                                NodeEncryption.decrypt(mEncryptedData,
+                                    mSecretKey);
+
+                            mDecryptedNode =
+                                new byte[mDecryptedPointer.length
+                                    + mDecryptedData.length];
+
+                            int mCounter = 0;
+                            for (int j = 0; j < mDecryptedPointer.length; j++) {
+                                mDecryptedNode[mCounter] = mDecryptedPointer[j];
+                                mCounter++;
+                            }
+                            for (int j = 0; j < mDecryptedData.length; j++) {
+                                mDecryptedNode[mCounter] = mDecryptedData[j];
+                                mCounter++;
+                            }
+
                         }
 
-                        mDecryptedNode = NodeEncryption.decrypt(mEncryptedNode, mSecretKey);
+                        final NodeInputSource mNodeInput =
+                            new NodeInputSource(mDecryptedNode);
 
-                    } else {
+                        final ENodes mEnumKind =
+                            ENodes.getEnumKind(mElementKind);
 
-                        final byte[] mEncryptedPointer = new byte[mPointerBytes];
-                        for (int j = 0; j < mPointerBytes; j++) {
-                            mEncryptedPointer[j] = mIn.readByte();
+                        if (mEnumKind != ENodes.UNKOWN_KIND) {
+                            getNodes()[i] =
+                                mEnumKind.createNodeFromPersistence(mNodeInput);
                         }
-
-                        final int mDataBytes = mNodeBytes - mPointerBytes;
-                        final byte[] mEncryptedData = new byte[mDataBytes];
-                        for (int j = 0; j < mDataBytes; j++) {
-                            mEncryptedData[j] = mIn.readByte();
-                        }
-
-                        final byte[] mDecryptedPointer =
-                            NodeEncryption.decrypt(mEncryptedPointer, mSecretKey);
-
-                        final byte[] mDecryptedData = NodeEncryption.decrypt(mEncryptedData, mSecretKey);
-
-                        mDecryptedNode = new byte[mDecryptedPointer.length + mDecryptedData.length];
-
-                        int mCounter = 0;
-                        for (int j = 0; j < mDecryptedPointer.length; j++) {
-                            mDecryptedNode[mCounter] = mDecryptedPointer[j];
-                            mCounter++;
-                        }
-                        for (int j = 0; j < mDecryptedData.length; j++) {
-                            mDecryptedNode[mCounter] = mDecryptedData[j];
-                            mCounter++;
-                        }
-
-                    }
-
-                    final NodeInputSource mNodeInput = new NodeInputSource(mDecryptedNode);
-
-                    final ENodes mEnumKind = ENodes.getEnumKind(mElementKind);
-
-                    if (mEnumKind != ENodes.UNKOWN_KIND) {
-                        getNodes()[i] = mEnumKind.createNodeFromPersistence(mNodeInput);
                     }
 
                 } else {
                     try {
-                        throw new TTEncryptionException("User has no permission to access the node");
+                        throw new TTEncryptionException(
+                            "User has no permission to access the node");
 
                     } catch (final TTEncryptionException mExp) {
                         mExp.printStackTrace();
@@ -162,7 +180,8 @@ public class NodePage extends AbsPage {
                 final int kind = kinds[offset];
                 final ENodes enumKind = ENodes.getEnumKind(kind);
                 if (enumKind != ENodes.UNKOWN_KIND) {
-                    getNodes()[offset] = enumKind.createNodeFromPersistence(mIn);
+                    getNodes()[offset] =
+                        enumKind.createNodeFromPersistence(mIn);
                 }
             }
 
@@ -175,7 +194,8 @@ public class NodePage extends AbsPage {
      * @param mCommittedNodePage
      *            Node page to clone.
      */
-    protected NodePage(final NodePage mCommittedNodePage, final long mRevisionToUse) {
+    protected NodePage(final NodePage mCommittedNodePage,
+        final long mRevisionToUse) {
         super(0, mCommittedNodePage, mRevisionToUse);
         mNodePageKey = mCommittedNodePage.mNodePageKey;
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
@@ -229,18 +249,20 @@ public class NodePage extends AbsPage {
         super.serialize(mOut);
         mOut.writeLong(mNodePageKey);
 
-        final EncryptionController enHandler = EncryptionController.getInstance();
+        final EncryptionController enController =
+            EncryptionController.getInstance();
 
-        if (enHandler.checkEncryption()) {
+        if (enController.checkEncryption()) {
             NodeOutputSink mNodeOut = null;
             for (final AbsNode node : getNodes()) {
-                mNodeOut = new NodeOutputSink();
-
-                final long mDek = enHandler.getDataEncryptionKey();
-                final KeySelector mKeySel = enHandler.getKeySelectorInstance().getEntry(mDek);
-                final byte[] mSecretKey = mKeySel.getSecretKey();
-
                 if (node != null) {
+                    mNodeOut = new NodeOutputSink();
+
+                    final long mDek = enController.getDataEncryptionKey();
+                    final KeySelector mKeySel =
+                        enController.getKeySelectorInstance().getEntry(mDek);
+                    final byte[] mSecretKey = mKeySel.getSecretKey();
+
                     mOut.writeLong(mKeySel.getPrimaryKey());
                     mOut.writeInt(mKeySel.getRevision());
                     mOut.writeInt(mKeySel.getVersion());
@@ -248,64 +270,70 @@ public class NodePage extends AbsPage {
                     mOut.writeInt(kind);
                     node.serialize(mNodeOut);
 
+                    final byte[] mStream =
+                        mNodeOut.getOutputStream().toByteArray();
+
+                    byte[] mEncrypted = null;
+                    final int pointerEnSize;
+
+                    if (mStream.length > 0) {
+
+                        final byte[] mPointer = new byte[ENodes.MPOINTERSIZE];
+
+                        for (int i = 0; i < mPointer.length; i++) {
+                            mPointer[i] = mStream[i];
+                        }
+
+                        final byte[] mData =
+                            new byte[mStream.length - mPointer.length];
+                        for (int i = 0; i < mData.length; i++) {
+                            mData[i] = mStream[mPointer.length + i];
+                        }
+
+                        final byte[] mEnPointer =
+                            NodeEncryption.encrypt(mPointer, mSecretKey);
+                        pointerEnSize = mEnPointer.length;
+                        final byte[] mEnData =
+                            NodeEncryption.encrypt(mData, mSecretKey);
+
+                        mEncrypted =
+                            new byte[mEnPointer.length + mEnData.length];
+
+                        int mCounter = 0;
+                        for (int i = 0; i < mEnPointer.length; i++) {
+                            mEncrypted[mCounter] = mEnPointer[i];
+                            mCounter++;
+                        }
+                        for (int i = 0; i < mEnData.length; i++) {
+                            mEncrypted[mCounter] = mEnData[i];
+                            mCounter++;
+                        }
+
+                    } else {
+                        pointerEnSize = 0;
+                        mEncrypted =
+                            NodeEncryption.encrypt(mStream, mSecretKey);
+                    }
+
+                    mOut.writeInt(mEncrypted.length);
+                    mOut.writeInt(pointerEnSize);
+
+                    for (byte aByte : mEncrypted) {
+                        mOut.writeByte(aByte);
+                    }
+
                 } else {
-                    mOut.writeLong(mKeySel.getPrimaryKey());
-                    mOut.writeInt(mKeySel.getRevision());
-                    mOut.writeInt(mKeySel.getVersion());
+                    mOut.writeLong(-1);
+                    mOut.writeInt(-1);
+                    mOut.writeInt(-1);
                     mOut.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
                 }
-
-                final byte[] mStream = mNodeOut.getOutputStream().toByteArray();
-
-                byte[] mEncrypted = null;
-                final int pointerEnSize;
-
-                if (mStream.length > 0) {
-
-                    final byte[] mPointer = new byte[ENodes.MPOINTERSIZE];
-
-                    for (int i = 0; i < mPointer.length; i++) {
-                        mPointer[i] = mStream[i];
-                    }
-
-                    final byte[] mData = new byte[mStream.length - mPointer.length];
-                    for (int i = 0; i < mData.length; i++) {
-                        mData[i] = mStream[mPointer.length + i];
-                    }
-
-                    final byte[] mEnPointer = NodeEncryption.encrypt(mPointer, mSecretKey);
-                    pointerEnSize = mEnPointer.length;
-                    final byte[] mEnData = NodeEncryption.encrypt(mData, mSecretKey);
-
-                    mEncrypted = new byte[mEnPointer.length + mEnData.length];
-
-                    int mCounter = 0;
-                    for (int i = 0; i < mEnPointer.length; i++) {
-                        mEncrypted[mCounter] = mEnPointer[i];
-                        mCounter++;
-                    }
-                    for (int i = 0; i < mEnData.length; i++) {
-                        mEncrypted[mCounter] = mEnData[i];
-                        mCounter++;
-                    }
-
-                } else {
-                    pointerEnSize = 0;
-                    mEncrypted = NodeEncryption.encrypt(mStream, mSecretKey);
-                }
-
-                mOut.writeInt(mEncrypted.length);
-                mOut.writeInt(pointerEnSize);
-
-                for (byte aByte : mEncrypted) {
-                    mOut.writeByte(aByte);
-                }
-
             }
         } else {
             for (int i = 0; i < getNodes().length; i++) {
                 if (getNodes()[i] != null) {
-                    final int kind = getNodes()[i].getKind().getNodeIdentifier();
+                    final int kind =
+                        getNodes()[i].getKind().getNodeIdentifier();
                     mOut.writeInt(kind);
                 } else {
                     mOut.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
