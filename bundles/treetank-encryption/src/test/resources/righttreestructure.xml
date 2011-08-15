@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DAG>
+	<NODE name="A" type="group"/>
+	<NODE name ="B" type="group">
+		<EDGE name="A"/>
+	</NODE>
+	<NODE name="C" type="group">
+		<EDGE name="B"/>
+	</NODE>
+	<NODE name="U0" type="user">
+		<EDGE name="C"/>
+	</NODE>
+	<NODE name="D" type="group">
+		<EDGE name="B"/>
+		<EDGE name="E"/>
+	</NODE>
+	<NODE name="U1" type="user">
+		<EDGE name="D"/>
+		<EDGE name="C"/>
+	</NODE>
+	<NODE name="U2" type="user">
+		<EDGE name="D"/>
+		<EDGE name="F"/>
+	</NODE>
+	<NODE name="E" type="group">
+		<EDGE name="A"/>
+	</NODE>
+	<NODE name="F" type="group">
+		<EDGE name="E"/>
+	</NODE>
+	<NODE name="G" type="group">
+		<EDGE name="F"/>
+	</NODE>
+	<NODE name="U3" type="user">
+		<EDGE name="G"/>
+	</NODE>
+
+</DAG>
