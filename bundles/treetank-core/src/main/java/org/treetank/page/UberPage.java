@@ -185,15 +185,6 @@ public final class UberPage extends AbsPage {
         return mBootstrap;
     }
 
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @Override
-    // public final void commit(final WriteTransactionState state) {
-    // super.commit(state);
-    // mBootstrap = false;
-    // }
-
     /**
      * {@inheritDoc}
      */

@@ -46,9 +46,6 @@ public final class NamePage extends AbsPage {
     /** Map the hash of a name to its name. */
     private final Map<Integer, String> mNameMap;
 
-    // /** Map the hash of a name to its name. */
-    // private final Map<Integer, byte[]> mRawNameMap;
-
     /**
      * Create name page.
      * 
@@ -58,7 +55,6 @@ public final class NamePage extends AbsPage {
     public NamePage(final long paramRevision) {
         super(0, paramRevision);
         mNameMap = new HashMap<Integer, String>();
-        // mRawNameMap = new HashMap<Integer, byte[]>();
     }
 
     /**
@@ -81,7 +77,6 @@ public final class NamePage extends AbsPage {
                 bytes[j] = paramIn.readByte();
             }
             mNameMap.put(key, TypedValue.parseString(bytes));
-            // mRawNameMap.put(key, bytes);
         }
     }
 
@@ -96,8 +91,6 @@ public final class NamePage extends AbsPage {
     public NamePage(final NamePage paramCommittedNamePage, final long paramRevisionToUse) {
         super(0, paramCommittedNamePage, paramRevisionToUse);
         mNameMap = new HashMap<Integer, String>(paramCommittedNamePage.mNameMap);
-        // mRawNameMap = new HashMap<Integer, byte[]>(
-        // committedNamePage.mRawNameMap);
     }
 
     /**
@@ -132,7 +125,6 @@ public final class NamePage extends AbsPage {
      */
     public void setName(final int paramKey, final String paramName) {
         mNameMap.put(paramKey, paramName);
-        // mRawNameMap.put(key, TypedValue.getBytes(name));
     }
 
     /**

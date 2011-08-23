@@ -71,9 +71,4 @@ public final class IndirectPage extends AbsPage {
         super(IConstants.INP_REFERENCE_COUNT, page, revisionToUse);
     }
 
-    // @Override
-    // protected void serialize(final ITTSink mOut) {
-    // super.serialize(mOut);
-    // }
-
 }
