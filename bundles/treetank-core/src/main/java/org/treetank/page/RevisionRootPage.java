@@ -146,15 +146,6 @@ public final class RevisionRootPage extends AbsPage {
         mMaxNodeKey += 1;
     }
 
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @Override
-    // public final void commit(final WriteTransactionState state) {
-    // super.commit(state);
-    // mRevisionTimestamp = System.currentTimeMillis();
-    // }
-
     /**
      * {@inheritDoc}
      */

@@ -196,33 +196,6 @@ public final class PageReference {
         }
     }
 
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @Override
-    // public boolean equals(final Object object) {
-    // if (!(object instanceof PageReference)) {
-    // return false;
-    // }
-    // final PageReference pageReference = (PageReference) object;
-    // boolean checksumEquals = true;
-    // byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
-    // pageReference.getChecksum(tmp);
-    // for (int i = 0; i < IConstants.CHECKSUM_SIZE; i++) {
-    // checksumEquals &= (tmp[i] == mChecksum[i]);
-    // }
-    // boolean keyEquals = mKey == pageReference.mKey;
-    // return (checksumEquals && keyEquals);
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @Override
-    // public int hashCode() {
-    //
-    // }
-
     /**
      * {@inheritDoc}
      */

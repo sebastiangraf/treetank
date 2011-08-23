@@ -134,15 +134,12 @@ public final class Session implements ISession {
         // Init session members.
         mWriteSemaphore = new Semaphore(paramSessionConf.mWtxAllowed);
         mReadSemaphore = new Semaphore(paramSessionConf.mRtxAllowed);
-        final PageReference uberPageReference = new PageReference();
 
         mFac = AbsIOFactory.getInstance(mResourceConfig);
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
             mLastCommittedUberPage = new UberPage();
-            uberPageReference.setPage(mLastCommittedUberPage);
-
         } else {
             final IReader reader = mFac.getReader();
             final PageReference firstRef = reader.readFirstReference();
