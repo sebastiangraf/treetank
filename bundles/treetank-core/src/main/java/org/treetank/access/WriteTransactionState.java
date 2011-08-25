@@ -63,6 +63,7 @@ import org.treetank.utils.NamePageHash;
  * See {@link ReadTransactionState}.
  * </p>
  */
+@Deprecated
 public final class WriteTransactionState extends ReadTransactionState {
 
     /** Page writer to serialize. */
