@@ -63,6 +63,7 @@ import org.treetank.utils.IConstants;
  * A path-like cache boosts sequential operations.
  * </p>
  */
+@Deprecated
 public class ReadTransactionState {
 
     /** Page reader exclusively assigned to this transaction. */
@@ -81,7 +82,7 @@ public class ReadTransactionState {
     private final ICache mCache;
 
     /** Configuration of the session */
-    protected final Session nSession;
+    protected final Session mSession;
 
     /**
      * Standard constructor.
@@ -103,7 +104,7 @@ public class ReadTransactionState {
         final long paramRevision, final IItemList paramItemList, final IReader paramReader)
         throws TTIOException {
         mCache = new RAMCache();
-        nSession = paramSessionState;
+        mSession = paramSessionState;
         mPageReader = paramReader;
         mUberPage = paramUberPage;
         mRootPage = loadRevRoot(paramRevision);
@@ -136,10 +137,10 @@ public class ReadTransactionState {
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
 
-            final int mileStoneRevision = nSession.mResourceConfig.mRevisionsToRestore;
+            final int mileStoneRevision = mSession.mResourceConfig.mRevisionsToRestore;
 
             // Build up the complete page.
-            final ERevisioning revision = nSession.mResourceConfig.mRevision;
+            final ERevisioning revision = mSession.mResourceConfig.mRevision;
             final NodePage completePage = revision.combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
@@ -285,7 +286,7 @@ public class ReadTransactionState {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == nSession.mResourceConfig.mRevisionsToRestore) {
+                if (refs.size() == mSession.mResourceConfig.mRevisionsToRestore) {
                     break;
                 }
 
@@ -409,7 +410,7 @@ public class ReadTransactionState {
      */
     @Override
     public String toString() {
-        return new StringBuilder("SessionConfiguration: ").append(nSession.mSessionConfig).append(
+        return new StringBuilder("SessionConfiguration: ").append(mSession.mSessionConfig).append(
             "\nPageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage).append(
             "\nRevRootPage: ").append(mRootPage).toString();
     }
