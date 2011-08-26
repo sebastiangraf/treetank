@@ -25,7 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.exception;
+package org.treetank.encrpytion.exception;
+
+import org.treetank.exception.AbsTTException;
 
 /**
  * Exception thrown when an error during encryption process occurs.

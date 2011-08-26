@@ -37,14 +37,14 @@ import java.util.SortedMap;
 import org.treetank.access.Database;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.api.ISession;
-import org.treetank.cache.KeyCache;
+import org.treetank.encrpytion.exception.TTEncryptionException;
+import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.EncryptionDAGParser;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTEncryptionException;
 import org.treetank.exception.TTIOException;
 
 /**

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.treetank.cache.KeyCache;
+import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.utils.NodeEncryption;
 
