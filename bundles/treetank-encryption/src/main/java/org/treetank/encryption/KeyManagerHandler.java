@@ -36,12 +36,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
+import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.NodeEncryption;
-import org.treetank.exception.TTEncryptionException;
 
 /**
  * This class handles all operations on KeyManager.

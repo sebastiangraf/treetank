@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package org.treetank.cache;
+package org.treetank.encryption.cache;
 
 import java.util.ArrayList;
 import java.util.Collection;

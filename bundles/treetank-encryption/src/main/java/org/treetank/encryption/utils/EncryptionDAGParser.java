@@ -34,8 +34,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.treetank.cache.KeyCache;
 import org.treetank.encryption.EncryptionController;
+import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.database.model.KeyManager;
