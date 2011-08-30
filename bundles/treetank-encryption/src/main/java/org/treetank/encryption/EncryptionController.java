@@ -56,7 +56,7 @@ public final class EncryptionController {
     /**
      * Instance for enabling or disabling encryption process.
      */
-    private final static boolean mNodeEncryption = true;
+    private final static boolean mNodeEncryption = false;
 
     /**
      * The key data should be encrypted.
