@@ -7,6 +7,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.axis.AbsAxis;
+import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
@@ -45,14 +46,14 @@ public class EncryptionMainTest {
 
         @Ignore
         @Test
-        public void executeEncryption() throws AbsTTException {
+        public void executeEncryption() throws AbsTTException, TTEncryptionException  {
             
             enHelper.getManager().joinGroup("U5", "C");     
             enHelper.getManager().leaveGroup("U1", "D");
             enHelper.getManager().joinGroup("U6", "D");
             enHelper.getManager().leaveGroup("U5", "C");
             enHelper.getManager().joinGroup("U7", "F");
-
+            
             AbsAxis axis =
                 new XPathAxis(holder.getRtx(),
                     "/site/people/person[@id=\"person0\"]/name/text()");
@@ -60,6 +61,7 @@ public class EncryptionMainTest {
             XPathStringChecker.testIAxisConventions(axis, new String[] {
                 "Sinisa Farrel"
             });
+
         }
 
     
