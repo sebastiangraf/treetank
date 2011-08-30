@@ -38,8 +38,8 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 
+import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.database.model.KeySelector;
-import org.treetank.exception.TTIOException;
 
 /**
  * Berkeley implementation of a persistent key selector database. That means
@@ -102,11 +102,11 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         try {
             for (final File file : place.listFiles()) {
                 if (!file.delete()) {
-                    throw new TTIOException("Couldn't delete!");
+                    throw new TTEncryptionException("Couldn't delete!");
                 }
             }
             if (!place.delete()) {
-                throw new TTIOException("Couldn't delete!");
+                throw new TTEncryptionException("Couldn't delete!");
             }
             if (mStore != null) {
                 mStore.close();
@@ -116,7 +116,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
             }
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
-        } catch (final TTIOException exc) {
+        } catch (final TTEncryptionException exc) {
             throw new IllegalStateException(exc);
         }
 

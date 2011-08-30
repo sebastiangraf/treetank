@@ -6,12 +6,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
-import org.treetank.api.ISession;
+import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.KeyManagerHandler;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.encryption.database.model.KeySelector;
-import org.treetank.exception.AbsTTException;
 
 /**
  * This class is providing some helping stuff for tests on encryption classes.
@@ -22,7 +21,7 @@ public class EncryptionHelper {
 
     private static EncryptionController mController;
 
-    public static EncryptionHelper start() throws AbsTTException {
+    public static EncryptionHelper start() throws TTEncryptionException {
 
         mController = EncryptionController.getInstance();
 

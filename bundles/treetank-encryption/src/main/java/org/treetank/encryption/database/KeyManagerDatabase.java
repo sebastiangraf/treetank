@@ -28,8 +28,8 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 
+import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.database.model.KeyManager;
-import org.treetank.exception.TTIOException;
 
 /**
  * Berkeley implementation of a persistent key manager database. That
@@ -92,11 +92,11 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             for (final File file : place.listFiles()) {
                 if (!file.delete()) {
-                    throw new TTIOException("Couldn't delete!");
+                    throw new TTEncryptionException("Couldn't delete!");
                 }
             }
             if (!place.delete()) {
-                throw new TTIOException("Couldn't delete!");
+                throw new TTEncryptionException("Couldn't delete!");
             }
 
             if (mStore != null) {
@@ -105,10 +105,8 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
             if (mEnv != null) {
                 mEnv.close();
             }
-        } catch (final DatabaseException mDbExp) {
+        } catch (final TTEncryptionException mDbExp) {
             mDbExp.printStackTrace();
-        } catch (final TTIOException exc) {
-            throw new IllegalStateException(exc);
         }
 
     }
