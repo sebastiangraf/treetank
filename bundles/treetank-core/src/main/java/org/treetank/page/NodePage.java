@@ -20,10 +20,11 @@ package org.treetank.page;
 import java.util.Arrays;
 import java.util.List;
 
+import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.NodeEncryption;
-import org.treetank.exception.TTEncryptionException;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.AbsNode;
@@ -162,10 +163,10 @@ public class NodePage extends AbsPage {
 
                 } else {
                     try {
-                        throw new TTEncryptionException(
+                        throw new TTIOException(
                             "User has no permission to access the node");
 
-                    } catch (final TTEncryptionException mExp) {
+                    } catch (final TTIOException mExp) {
                         mExp.printStackTrace();
                     }
                 }

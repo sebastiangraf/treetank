@@ -104,5 +104,17 @@
 			<artifactId>je</artifactId>
 			<version>4.1.10</version>
 		</dependency>
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>encryption</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>encryption</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>test-jar</type> 
+		</dependency>
 	</dependencies>
 </project>
