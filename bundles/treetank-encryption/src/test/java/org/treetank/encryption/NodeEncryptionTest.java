@@ -26,10 +26,8 @@
  */
 package org.treetank.encryption;
 
-import org.treetank.Holder;
-import org.treetank.TestHelper;
+import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.utils.NodeEncryption;
-import org.treetank.exception.AbsTTException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,21 +41,6 @@ import static org.junit.Assert.*;
  * @author Patrick Lang, University of Konstanz
  */
 public class NodeEncryptionTest {
-
-    private Holder holder;
-
-    @Before
-    public void setUp() throws AbsTTException {
-        TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = Holder.generateSession();
-    }
-
-    @After
-    public void tearDown() throws AbsTTException {
-        holder.close();
-        TestHelper.closeEverything();
-    }
 
     @Test
     public void testEnDecryption() {

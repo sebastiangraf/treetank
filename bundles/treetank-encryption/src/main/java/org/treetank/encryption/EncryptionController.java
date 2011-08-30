@@ -34,9 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
-import org.treetank.access.Database;
-import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.api.ISession;
 import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.KeyManagerDatabase;
@@ -44,8 +41,6 @@ import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.EncryptionDAGParser;
-import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
 
 /**
  * This central singleton class holding and handling data and instances for encryption operations.
@@ -98,7 +93,7 @@ public final class EncryptionController {
     /**
      * Instance of Session.
      */
-    private static ISession mSession;
+   // private static ISession mSession;
 
     /**
      * Selector key counter.
@@ -158,7 +153,7 @@ public final class EncryptionController {
      * 
      * @throws AbsTTException
      */
-    public void clear() throws AbsTTException {
+    public void clear() throws TTEncryptionException {
         if (SEL_STORE.exists()) {
             recursiveDelete(SEL_STORE);
         }

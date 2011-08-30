@@ -27,15 +27,13 @@
 
 package org.treetank.encrpytion.exception;
 
-import org.treetank.exception.AbsTTException;
-
 /**
  * Exception thrown when an error during encryption process occurs.
  * 
  * @author Patrick lang, University of Konstanz
  * 
  */
-public class TTEncryptionException extends AbsTTException {
+public class TTEncryptionException extends Exception {
 
     /**
      * Constructor.
@@ -44,7 +42,7 @@ public class TTEncryptionException extends AbsTTException {
      *            message as string, they are concatenated with spaces in
      *            between
      */
-    public TTEncryptionException(final String... message) {
+    public TTEncryptionException(final String message) {
         super(message);
     }
 
