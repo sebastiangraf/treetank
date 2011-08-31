@@ -37,7 +37,6 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;

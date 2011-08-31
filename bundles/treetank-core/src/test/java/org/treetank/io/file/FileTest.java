@@ -30,11 +30,9 @@ package org.treetank.io.file;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.AbsIOFactory.StorageType;
 import org.treetank.io.IOTestHelper;

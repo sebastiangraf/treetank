@@ -20,7 +20,6 @@ package org.treetank.page;
 import java.util.Arrays;
 import java.util.List;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.NodeEncryption;

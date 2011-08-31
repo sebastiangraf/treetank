@@ -27,6 +27,13 @@
 
 package org.treetank.service.xml.xpath.operators;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IItem;
@@ -36,15 +43,6 @@ import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.utils.TypedValue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.is;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class AbsOpAxisTest {
 

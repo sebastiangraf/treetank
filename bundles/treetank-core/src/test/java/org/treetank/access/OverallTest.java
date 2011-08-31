@@ -27,23 +27,18 @@
 
 package org.treetank.access;
 
-import java.io.File;
 import java.util.Random;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
-import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
 
 public final class OverallTest {
 

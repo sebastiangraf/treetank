@@ -27,24 +27,16 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import java.io.File;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.filter.IFilterTest;
 import org.treetank.axis.filter.TypeFilter;
 import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
 
 public class TypeFilterTest {
