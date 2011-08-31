@@ -34,7 +34,6 @@ import java.io.File;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.exception.AbsTTException;
@@ -46,8 +45,8 @@ public class BerkeleyPersistentCacheTest {
 
     @Before
     public void setUp() throws AbsTTException {
-        TestHelper.deleteEverything();
-        Holder.generateSession();
+    	TestHelper.deleteEverything();
+    	TestHelper.createTestDocument();
         cache =
             new BerkeleyPersistenceCache(new File(new File(TestHelper.PATHS.PATH1.getFile(),
                 DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCE), 1);
