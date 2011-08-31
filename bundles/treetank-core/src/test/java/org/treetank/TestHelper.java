@@ -27,15 +27,18 @@
 
 package org.treetank;
 
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.treetank.access.Database;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
@@ -54,11 +57,6 @@ import org.treetank.node.TextNode;
 import org.treetank.page.NodePage;
 import org.treetank.settings.ECharsForSerializing;
 import org.treetank.utils.DocumentCreater;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
 
 /**
  * 

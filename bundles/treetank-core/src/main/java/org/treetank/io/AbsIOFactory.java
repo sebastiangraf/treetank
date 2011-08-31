@@ -30,7 +30,6 @@ package org.treetank.io;
 import java.io.File;
 
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyFactory;
 import org.treetank.io.file.FileFactory;

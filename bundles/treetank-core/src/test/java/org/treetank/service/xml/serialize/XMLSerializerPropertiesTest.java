@@ -30,14 +30,12 @@ package org.treetank.service.xml.serialize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
 
-import java.io.File;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 

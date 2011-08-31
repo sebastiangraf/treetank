@@ -27,19 +27,16 @@
 
 package org.treetank.io;
 
-import org.treetank.Holder;
+import static org.junit.Assert.assertEquals;
+
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.AbsIOFactory.StorageType;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 /**
  * Helper class for testing the io interfaces

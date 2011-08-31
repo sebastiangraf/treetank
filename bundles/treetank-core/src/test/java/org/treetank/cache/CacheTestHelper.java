@@ -1,7 +1,6 @@
 package org.treetank.cache;
 
 import org.junit.Test;
-import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.page.NodePage;

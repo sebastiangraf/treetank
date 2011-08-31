@@ -27,19 +27,17 @@
 
 package org.treetank.service.xml.shredder;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
 
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.Database;
-import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.serialize.XMLSerializer;
+import java.io.File;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.treetank.TestHelper;
+import org.treetank.TestHelper.PATHS;
+import org.treetank.exception.AbsTTException;
+import org.treetank.service.xml.serialize.XMLSerializer;
 
 /**
  * Test WikipediaImport.

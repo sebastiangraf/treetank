@@ -27,8 +27,6 @@
 
 package org.treetank.access;
 
-import java.lang.reflect.Field;
-
 import javax.xml.namespace.QName;
 
 import org.treetank.annotations.NotNull;
