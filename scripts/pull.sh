@@ -6,5 +6,5 @@ set +e
 #getting disy data
 hg pull
 #getting sf data at the moment is to complicated, only push to sf supported
-#hg pull ssh://sebastiangraf@treetank.hg.sourceforge.net/hgroot/treetank/treetank
+hg pull ssh://sebastiangraf@treetank.hg.sourceforge.net/hgroot/treetank/treetank
 exit 0
