@@ -49,7 +49,7 @@ import org.treetank.encryption.utils.EncryptionDAGParser;
  * 
  * @author Patrick Lang, University of Konstanz
  */
-public final class EncryptionController {
+public final class EncryptionController implements IEncryption {
 
     // #################SETTINGS START#######################
 
@@ -66,7 +66,7 @@ public final class EncryptionController {
     /**
      * Current session user.
      */
-    private static String mLoggedUser = "U3";
+    private static String mLoggedUser = "ALL";
 
     // #################SETTINGS END#######################
     
@@ -144,8 +144,9 @@ public final class EncryptionController {
      * 
      * @throws TTEncryptionException
      */
-    public void init() throws TTEncryptionException {
+    public void init(final String mUser) throws TTEncryptionException {
         if (mNodeEncryption) {
+            mLoggedUser = mUser;
             mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
             mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
             mKeyCache = new KeyCache();
