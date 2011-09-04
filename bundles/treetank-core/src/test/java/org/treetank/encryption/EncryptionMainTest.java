@@ -31,7 +31,11 @@ public class EncryptionMainTest {
         public void setUp() throws Exception {
             TestHelper.deleteEverything();
           
-            enHelper = EncryptionHelper.start();
+            enHelper = EncryptionHelper.start("U3");
+            
+            IEncryption enc = new EncryptionFactory().getController();
+            System.out.println(enc.getUser());
+            
             XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
             holder = Holder.generateRtx();
         }
@@ -60,6 +64,8 @@ public class EncryptionMainTest {
             XPathStringChecker.testIAxisConventions(axis, new String[] {
                 "Sinisa Farrel"
             });
+            
+
 
         }
 
