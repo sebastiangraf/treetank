@@ -50,13 +50,6 @@ import org.treetank.encryption.database.model.KeySelector;
 public class EncryptionDAGParser extends DefaultHandler {
 
     /**
-     * Path of initial right tree XML file.
-     */
-    private static final String FILENAME = "src" + File.separator + "test"
-        + File.separator + "resources" + File.separator
-        + "righttreestructure.xml";
-
-    /**
      * Instance for {@link KeySelectorDatabase}.
      */
     private static KeySelectorDatabase mKeySelectorDb;
@@ -120,20 +113,25 @@ public class EncryptionDAGParser extends DefaultHandler {
      * @param manDb
      *            key manager database instance.
      */
-    public final void init() {
+    public final void init(final String filename,
+        final KeySelectorDatabase keySel, final KeyManagerDatabase keyMan,
+        final KeyCache keyCache, final String user) {
 
-        mKeySelectorDb =
-            EncryptionController.getInstance().getKeySelectorInstance();
-        mKeyManagerDb = EncryptionController.getInstance().getKeyManagerInstance();
-        mKeyCache = EncryptionController.getInstance().getKeyCacheInstance();
-        mUser = EncryptionController.getInstance().getUser();
+        mKeySelectorDb = keySel;
+        mKeyManagerDb = keyMan;
+        mKeyCache = keyCache;
+        mUser = user;
 
+        start(filename);
+    }
+
+    public final void start(final String filename) {
         try {
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
 
-            saxParser.parse(FILENAME, new EncryptionDAGParser());
+            saxParser.parse(filename, new EncryptionDAGParser());
 
         } catch (final Exception mExp) {
             mExp.printStackTrace();
@@ -211,7 +209,8 @@ public class EncryptionDAGParser extends DefaultHandler {
             for (int i = 0; i < mNameList.size(); i++) {
                 final String mName = mNameList.get(i);
 
-                final Iterator innerIter = mKeySelectorDb.getEntries().keySet().iterator();
+                final Iterator innerIter =
+                    mKeySelectorDb.getEntries().keySet().iterator();
                 while (innerIter.hasNext()) {
                     final KeySelector mParentSelector =
                         mKeySelectorDb.getEntries().get(innerIter.next());

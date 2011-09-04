@@ -99,6 +99,13 @@ public final class EncryptionController {
      * Selector key counter.
      */
     private int mSelectorKey = -1;
+    
+    /**
+     * Path of initial right tree XML file.
+     */
+    private static final String FILENAME = "src" + File.separator + "test"
+        + File.separator + "resources" + File.separator
+        + "righttreestructure.xml";
 
     /**
      * Store path of berkeley key selector db.
@@ -142,7 +149,7 @@ public final class EncryptionController {
             mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
             mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
             mKeyCache = new KeyCache();
-            new EncryptionDAGParser().init();
+            new EncryptionDAGParser().init(FILENAME, mKeySelectorDb, mKeyManagerDb, mKeyCache, mLoggedUser);
         } else {
             throw new TTEncryptionException("Encryption is disabled!");
         }
