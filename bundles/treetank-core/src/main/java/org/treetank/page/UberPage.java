@@ -156,11 +156,7 @@ public final class UberPage extends AbsPage {
      * @return Key of last committed revision.
      */
     public long getLastCommittedRevisionNumber() {
-        if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
-            return IConstants.UBP_ROOT_REVISION_NUMBER;
-        } else {
             return mRevisionCount - 2;
-        }
     }
 
     /**
@@ -169,11 +165,7 @@ public final class UberPage extends AbsPage {
      * @return Revision key.
      */
     public long getRevisionNumber() {
-        if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
-            return IConstants.UBP_ROOT_REVISION_NUMBER;
-        } else {
             return mRevisionCount - 1;
-        }
     }
 
     /**
