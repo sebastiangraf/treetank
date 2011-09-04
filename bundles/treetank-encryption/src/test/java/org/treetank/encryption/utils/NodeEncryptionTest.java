@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.encryption;
+package org.treetank.encryption.utils;
 
 import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.utils.NodeEncryption;

@@ -1,5 +1,6 @@
 package org.treetank;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,30 @@ public class EncryptionHelper {
     public void close() {
         print();
         EncryptionController.getInstance().close();
+    }
+    
+    public boolean delete(final File mFile){
+        
+        if (mFile.isDirectory()) {
+            for (final File child : mFile.listFiles()) {
+                if (!recursiveDelete(child)) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    protected static boolean recursiveDelete(final File paramFile) {
+        if (paramFile.isDirectory()) {
+            for (final File child : paramFile.listFiles()) {
+                if (!recursiveDelete(child)) {
+                    return false;
+                }
+            }
+        }
+        return paramFile.delete();
     }
 
     public KeyManagerHandler getManager() {
