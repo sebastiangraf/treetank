@@ -22,12 +22,12 @@ public class EncryptionHelper {
 
     private static EncryptionController mController;
 
-    public static EncryptionHelper start() throws TTEncryptionException {
+    public static EncryptionHelper start(final String mUser) throws TTEncryptionException {
 
         mController = EncryptionController.getInstance();
 
         mController.clear();
-        mController.init();
+        mController.init(mUser);
         mManager = mController.getKMHInstance();
 
         return new EncryptionHelper();
