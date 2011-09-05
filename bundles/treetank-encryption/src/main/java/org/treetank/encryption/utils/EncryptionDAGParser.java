@@ -29,14 +29,15 @@ import java.util.Stack;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.encryption.database.model.KeySelector;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Class for parsing the initial given encryption tree and storing
@@ -197,16 +198,16 @@ public class EncryptionDAGParser extends DefaultHandler {
         /*
          * add not yet stored edges as parents to the nodes.
          */
-        Iterator iter = mUserParents.keySet().iterator();
+        Iterator<Long> iter = mUserParents.keySet().iterator();
         while (iter.hasNext()) {
-            final long mMapKey = (Long)iter.next();
+            final long mMapKey = (Long) iter.next();
             final KeySelector mSelector = mKeySelectorDb.getEntry(mMapKey);
             final List<String> mNameList = mUserParents.get(mMapKey);
 
             for (int i = 0; i < mNameList.size(); i++) {
                 final String mName = mNameList.get(i);
 
-                final Iterator innerIter =
+                final Iterator<Long> innerIter =
                     mKeySelectorDb.getEntries().keySet().iterator();
                 while (innerIter.hasNext()) {
                     final KeySelector mParentSelector =
@@ -226,7 +227,7 @@ public class EncryptionDAGParser extends DefaultHandler {
         // outer loop
         final SortedMap<Long, KeySelector> mOuterSelectorMap =
             mKeySelectorDb.getEntries();
-        final Iterator outerIter = mOuterSelectorMap.keySet().iterator();
+        final Iterator<Long> outerIter = mOuterSelectorMap.keySet().iterator();
         while (outerIter.hasNext()) {
             final KeySelector mOuterSelector =
                 mOuterSelectorMap.get(outerIter.next());
@@ -235,7 +236,7 @@ public class EncryptionDAGParser extends DefaultHandler {
             // inner loop
             final SortedMap<Long, KeySelector> mInnerSelectorMap =
                 mKeySelectorDb.getEntries();
-            final Iterator innerIter = mInnerSelectorMap.keySet().iterator();
+            final Iterator<Long> innerIter = mInnerSelectorMap.keySet().iterator();
             while (innerIter.hasNext()) {
                 final KeySelector mInnerSelector =
                     mInnerSelectorMap.get(innerIter.next());

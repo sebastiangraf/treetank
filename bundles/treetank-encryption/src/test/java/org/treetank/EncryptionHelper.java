@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.KeyManagerHandler;
@@ -21,6 +23,8 @@ public class EncryptionHelper {
     private static KeyManagerHandler mManager;
 
     private static EncryptionController mController;
+    
+    private final static Logger LOGGER = LoggerFactory.getLogger(EncryptionHelper.class);
 
     public static EncryptionHelper start(final String mUser) throws TTEncryptionException {
 
@@ -77,9 +81,9 @@ public class EncryptionHelper {
          */
         final SortedMap<Long, KeySelector> mSelMap =
             mController.getKeySelectorInstance().getEntries();
-        Iterator iter = mSelMap.keySet().iterator();
+        Iterator<Long> iter = mSelMap.keySet().iterator();
 
-        System.out.println("\nSelector DB Size: "
+        LOGGER.trace("\nSelector DB Size: "
             + mController.getKeySelectorInstance().count());
 
         while (iter.hasNext()) {
@@ -98,14 +102,14 @@ public class EncryptionHelper {
                 mChildsString.append("#" + mChildsList.get(k));
             }
 
-            System.out
-                .println("Selector: " + mSelector.getPrimaryKey() + " "
+            LOGGER.trace("Selector: " + mSelector.getPrimaryKey() + " "
                     + mSelector.getName() + " " + mParentsString.toString()
                     + " " + mChildsString.toString() + " "
                     + mSelector.getRevision() + " " + mSelector.getVersion()
                     + " " + mSelector.getSecretKey());
+            
         }
-        System.out.println();
+        LOGGER.trace(" ");
 
         /*
          * print key manager db
@@ -114,28 +118,29 @@ public class EncryptionHelper {
             mController.getKeyManagerInstance().getEntries();
 
         // iterate through all users
-        final Iterator outerIter = sMap.keySet().iterator();
-
-        System.out.println("Key manager DB Size: "
+        final Iterator<String> outerIter = sMap.keySet().iterator();
+        
+        LOGGER.trace("Key manager DB Size: "
             + mController.getKeyManagerInstance().count());
+
 
         StringBuilder sb;
         while (outerIter.hasNext()) {
-            final String user = (String)outerIter.next();
+            final String user = (String) outerIter.next();
             sb = new StringBuilder(user + ": ");
 
             final Set<Long> mKeySet =
                 mController.getKeyManagerInstance().getEntry(user).getKeySet();
 
             // iterate through user's key set.
-            final Iterator innerIter = mKeySet.iterator();
+            final Iterator<Long> innerIter = mKeySet.iterator();
             while (innerIter.hasNext()) {
                 sb.append(innerIter.next() + " ");
             }
 
-            System.out.println(sb.toString());
+            LOGGER.trace(sb.toString());
         }
-        System.out.println();
+        LOGGER.trace(" ");
 
         /*
          * print key cache.
@@ -147,7 +152,7 @@ public class EncryptionHelper {
         for (long aKey : mKeyList) {
             cacheString.append(aKey + " ");
         }
-        System.out.println(cacheString);
+        LOGGER.trace(cacheString.toString());
     }
 
 }

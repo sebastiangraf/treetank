@@ -249,7 +249,7 @@ public class KeyManagerHandler {
                             mOldUserSel.getParents();
 
                         long mId = -1;
-                        final Iterator iter =
+                        final Iterator<Long> iter =
                             mKeySelectorDb.getEntries().keySet().iterator();
                         while (iter.hasNext()) {
                             final KeySelector mSelector =
@@ -297,7 +297,7 @@ public class KeyManagerHandler {
             }
         } catch (final TTEncryptionException mTTExp) {
             mTTExp.printStackTrace();
-            System.exit(0);
+            System.exit(-1);
         }
     }
 
@@ -317,7 +317,7 @@ public class KeyManagerHandler {
         if (mKeyManager != null) {
             final Set<Long> mUserKeySet = mKeyManager.getKeySet();
 
-            final Iterator mSetIter = mUserKeySet.iterator();
+            final Iterator<Long> mSetIter = mUserKeySet.iterator();
             while (mSetIter.hasNext()) {
                 final long mMapId = (Long)mSetIter.next();
                 if (paramList.contains(mMapId)) {
@@ -391,14 +391,14 @@ public class KeyManagerHandler {
      *            map containing all through join effected nodes with old and new id.
      */
     private void updateKeyManagerJoin(final Map<Long, Long> paramMap) {
-        final Iterator mOuterIter =
+        final Iterator<String> mOuterIter =
             mKeyManagerDb.getEntries().keySet().iterator();
         while (mOuterIter.hasNext()) { // iterate through all users.
             final String mKeyUser = (String)mOuterIter.next();
             final KeyManager mManager =
                 mKeyManagerDb.getEntries().get(mKeyUser);
 
-            final Iterator mInnerIter = paramMap.keySet().iterator();
+            final Iterator<Long> mInnerIter = paramMap.keySet().iterator();
             while (mInnerIter.hasNext()) { // iterate through all keys that have changed.
                 final long mId = (Long)mInnerIter.next();
                 if (mKeyUser.equals(mGroupUser)) {
@@ -418,14 +418,14 @@ public class KeyManagerHandler {
      *            map containing all through leave effected nodes with old and new id.
      */
     private void updateKeyManagerLeave(final Map<Long, Long> paramMap) {
-        final Iterator mOuterIter =
+        final Iterator<String> mOuterIter =
             mKeyManagerDb.getEntries().keySet().iterator();
         while (mOuterIter.hasNext()) { // iterate through all users.
             final String mKeyUser = (String)mOuterIter.next();
             final KeyManager mManager =
                 mKeyManagerDb.getEntries().get(mKeyUser);
 
-            final Iterator mInnerIter = paramMap.keySet().iterator();
+            final Iterator<Long> mInnerIter = paramMap.keySet().iterator();
             while (mInnerIter.hasNext()) { // iterate through all keys that have changed.
                 long mId = (Long)mInnerIter.next();
                 if (mKeyUser.equals(mGroupUser)) {
@@ -443,7 +443,7 @@ public class KeyManagerHandler {
 
             // remove all old keys from user's key manager it is losing through group leaving.
             if (mKeyUser.equals(mGroupUser)) {
-                final Iterator mapIter = paramMap.keySet().iterator();
+                final Iterator<Long> mapIter = paramMap.keySet().iterator();
                 while (mapIter.hasNext()) {
                     final long mMapKey = (Long)mapIter.next();
                     if (mManager.getKeySet().contains(mMapKey)) {
@@ -451,7 +451,7 @@ public class KeyManagerHandler {
                             paramMap.get(mMapKey))) {
                             mManager.removeKey(mMapKey);
 
-                            final Iterator mIter =
+                            final Iterator<Long> mIter =
                                 mKeySelectorDb.getEntries().keySet().iterator();
                             while (mIter.hasNext()) {
                                 long mMapId = (Long)mIter.next();
@@ -477,7 +477,8 @@ public class KeyManagerHandler {
      *            map of key trails.
      */
     private void transmitKeyTrails(final Map<Long, byte[]> paramKeyTails) {
-         EncryptionController.getInstance().getCHInstance().decryptKeyTrails(paramKeyTails);
+        EncryptionController.getInstance().getCHInstance().decryptKeyTrails(
+            paramKeyTails);
     }
 
     /**
@@ -489,7 +490,8 @@ public class KeyManagerHandler {
      *         node existence.
      */
     private boolean nodeExists(final String paramNodeName) {
-        final Iterator iter = mKeySelectorDb.getEntries().keySet().iterator();
+        final Iterator<Long> iter =
+            mKeySelectorDb.getEntries().keySet().iterator();
         while (iter.hasNext()) {
             final KeySelector mSelector =
                 mKeySelectorDb.getEntries().get(iter.next());
@@ -543,7 +545,7 @@ public class KeyManagerHandler {
     private long getRecentNodeKey(final String paramNodeName) {
         final SortedMap<Long, KeySelector> mSelMap =
             mKeySelectorDb.getEntries();
-        final Iterator iter = mSelMap.keySet().iterator();
+        final Iterator<Long> iter = mSelMap.keySet().iterator();
         long mNodeId = -1;
         while (iter.hasNext()) {
             final KeySelector mSelector = mSelMap.get(iter.next());
@@ -568,7 +570,7 @@ public class KeyManagerHandler {
         long mGroupId = mNodeId;
         final String mGroupName = mKeySelectorDb.getEntry(mGroupId).getName();
 
-        final Iterator mGroupIter =
+        final Iterator<Long> mGroupIter =
             mKeySelectorDb.getEntries().keySet().iterator();
         while (mGroupIter.hasNext()) {
             final KeySelector mSelector =
@@ -588,7 +590,7 @@ public class KeyManagerHandler {
                     long mParentId = parentId;
                     final String mNodeName =
                         mKeySelectorDb.getEntry(mParentId).getName();
-                    final Iterator iter =
+                    final Iterator<Long> iter =
                         mKeySelectorDb.getEntries().keySet().iterator();
                     while (iter.hasNext()) {
                         final KeySelector mSelector =
@@ -613,7 +615,8 @@ public class KeyManagerHandler {
     private void init() {
         mKeySelectorDb =
             EncryptionController.getInstance().getKeySelectorInstance();
-        mKeyManagerDb = EncryptionController.getInstance().getKeyManagerInstance();
+        mKeyManagerDb =
+            EncryptionController.getInstance().getKeyManagerInstance();
         mLoggedUser = EncryptionController.getInstance().getUser();
     }
 
