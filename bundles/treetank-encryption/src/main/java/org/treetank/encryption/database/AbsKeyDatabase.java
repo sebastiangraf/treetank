@@ -27,28 +27,28 @@ import java.io.File;
  */
 public abstract class AbsKeyDatabase {
 
-	/**
-	 * Place to store the data.
-	 */
-	protected final File place;
+    /**
+     * Place to store the data.
+     */
+    protected final File place;
 
-	/**
-	 * Counter to give every instance a different place.
-	 */
-	private static int counter;
+    /**
+     * Counter to give every instance a different place.
+     */
+    private static int counter;
 
-	/**
-	 * Constructor with the place to store the data.
-	 * 
-	 * @param paramFile
-	 *            {@link File} which holds the place to store the data.
-	 */
-	protected AbsKeyDatabase(final File paramFile) {
-		place = new File(paramFile, new StringBuilder(
-				new File("keyselector").getName())
-				.append(File.separator).append(counter).toString());
-		place.mkdirs();
-		counter++;
-	}
+    /**
+     * Constructor with the place to store the data.
+     * 
+     * @param paramFile
+     *            {@link File} which holds the place to store the data.
+     */
+    protected AbsKeyDatabase(final File paramFile) {
+        place =
+            new File(paramFile, new StringBuilder(new File("keyselector")
+                .getName()).append(File.separator).append(counter).toString());
+        place.mkdirs();
+        counter++;
+    }
 
 }

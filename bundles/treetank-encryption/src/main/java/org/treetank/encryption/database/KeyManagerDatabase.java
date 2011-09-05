@@ -19,9 +19,6 @@ package org.treetank.encryption.database;
 import java.io.File;
 import java.util.SortedMap;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
-import org.treetank.encryption.database.model.KeyManager;
-
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -30,6 +27,9 @@ import com.sleepycat.je.EnvironmentLockedException;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
+
+import org.treetank.encrpytion.exception.TTEncryptionException;
+import org.treetank.encryption.database.model.KeyManager;
 
 /**
  * Berkeley implementation of a persistent key manager database. That
@@ -123,7 +123,8 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             primaryIndex =
 
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+                (PrimaryIndex<String, KeyManager>) mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
 
             primaryIndex.put(paramEntity);
 
@@ -147,9 +148,10 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             primaryIndex =
 
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+                (PrimaryIndex<String, KeyManager>) mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
 
-            entity = (KeyManager)primaryIndex.get(paramKey);
+            entity = (KeyManager) primaryIndex.get(paramKey);
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
@@ -170,7 +172,8 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         boolean status = false;
         try {
             primaryIndex =
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+                (PrimaryIndex<String, KeyManager>) mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
             status = primaryIndex.delete(paramKey);
 
         } catch (final DatabaseException mDbExp) {
@@ -192,7 +195,8 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             primaryIndex =
 
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+                (PrimaryIndex<String, KeyManager>) mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
 
             counter = primaryIndex.count();
 
@@ -214,7 +218,8 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             primaryIndex =
 
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+                (PrimaryIndex<String, KeyManager>) mStore.getPrimaryIndex(
+                    String.class, KeyManager.class);
 
             sMap = primaryIndex.sortedMap();
 

@@ -45,241 +45,241 @@ import org.treetank.encryption.utils.EncryptionDAGParser;
  */
 public final class EncryptionController implements IEncryption {
 
-	// #################SETTINGS START#######################
+    // #################SETTINGS START#######################
 
-	/**
-	 * Instance for enabling or disabling encryption process.
-	 */
-	private final static boolean mNodeEncryption = false;
+    /**
+     * Instance for enabling or disabling encryption process.
+     */
+    private final static boolean mNodeEncryption = false;
 
-	/**
-	 * The key data should be encrypted.
-	 */
-	private long mDataEncryptionKey = 0;
+    /**
+     * The key data should be encrypted.
+     */
+    private long mDataEncryptionKey = 0;
 
-	/**
-	 * Current session user.
-	 */
-	private static String mLoggedUser = "ALL";
+    /**
+     * Current session user.
+     */
+    private static String mLoggedUser = "ALL";
 
-	// #################SETTINGS END#######################
+    // #################SETTINGS END#######################
 
-	/**
-	 * Singleton instance.
-	 */
-	private static EncryptionController mINSTANCE = new EncryptionController();
+    /**
+     * Singleton instance.
+     */
+    private static EncryptionController mINSTANCE = new EncryptionController();
 
-	/**
-	 * Instance of KeySelectorDatabase holding key selection stuff.
-	 */
-	private static KeySelectorDatabase mKeySelectorDb;
+    /**
+     * Instance of KeySelectorDatabase holding key selection stuff.
+     */
+    private static KeySelectorDatabase mKeySelectorDb;
 
-	/**
-	 * Instance of KeyManagerDatabase holding key manager stuff.
-	 */
-	private static KeyManagerDatabase mKeyManagerDb;
+    /**
+     * Instance of KeyManagerDatabase holding key manager stuff.
+     */
+    private static KeyManagerDatabase mKeyManagerDb;
 
-	/**
-	 * Instance of KeyCache holding all current keys of user.
-	 */
-	private static KeyCache mKeyCache;
+    /**
+     * Instance of KeyCache holding all current keys of user.
+     */
+    private static KeyCache mKeyCache;
 
-	/**
-	 * Instance of Session.
-	 */
-	// private static ISession mSession;
+    /**
+     * Instance of Session.
+     */
+    // private static ISession mSession;
 
-	/**
-	 * Selector key counter.
-	 */
-	private int mSelectorKey = -1;
+    /**
+     * Selector key counter.
+     */
+    private int mSelectorKey = -1;
 
-	/**
-	 * Path of initial right tree XML file.
-	 */
-	private static final String FILENAME = "src" + File.separator + "main"
-			+ File.separator + "resources" + File.separator
-			+ "righttreestructure.xml";
+    /**
+     * Path of initial right tree XML file.
+     */
+    private static final String FILENAME = "src" + File.separator + "main"
+        + File.separator + "resources" + File.separator
+        + "righttreestructure.xml";
 
-	/**
-	 * Store path of berkeley key selector db.
-	 */
-	private static final File SEL_STORE = new File(new StringBuilder(
-			File.separator).append("tmp").append(File.separator).append("tnk")
-			.append(File.separator).append("selectordb").toString());
+    /**
+     * Store path of berkeley key selector db.
+     */
+    private static final File SEL_STORE = new File(new StringBuilder(
+        File.separator).append("tmp").append(File.separator).append("tnk")
+        .append(File.separator).append("selectordb").toString());
 
-	/**
-	 * Store path of berkeley key manager db.
-	 */
-	private static final File MAN_STORE = new File(new StringBuilder(
-			File.separator).append("tmp").append(File.separator).append("tnk")
-			.append(File.separator).append("keymanagerdb").toString());
+    /**
+     * Store path of berkeley key manager db.
+     */
+    private static final File MAN_STORE = new File(new StringBuilder(
+        File.separator).append("tmp").append(File.separator).append("tnk")
+        .append(File.separator).append("keymanagerdb").toString());
 
-	/**
-	 * Standard constructor.
-	 */
-	private EncryptionController() {
-	}
+    /**
+     * Standard constructor.
+     */
+    private EncryptionController() {
+    }
 
-	/**
-	 * Returns singleton instance of handler.
-	 * 
-	 * @return Handler instance.
-	 */
-	public static EncryptionController getInstance() {
-		return mINSTANCE;
-	}
+    /**
+     * Returns singleton instance of handler.
+     * 
+     * @return Handler instance.
+     */
+    public static EncryptionController getInstance() {
+        return mINSTANCE;
+    }
 
-	/**
-	 * Initiates all needed instances comprising Berkeley DBs and key cache.
-	 * Additionally it initiates parsing of initial right tree and setup of
-	 * Berkeley DBs.
-	 * 
-	 * @throws TTEncryptionException
-	 */
-	public void init(final String mUser) throws TTEncryptionException {
-		if (mNodeEncryption) {
-			mLoggedUser = mUser;
-			mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
-			mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
-			mKeyCache = new KeyCache();
-			new EncryptionDAGParser().init(FILENAME, mKeySelectorDb,
-					mKeyManagerDb, mKeyCache, mLoggedUser);
-		} else {
-			throw new TTEncryptionException("Encryption is disabled!");
-		}
-	}
+    /**
+     * Initiates all needed instances comprising Berkeley DBs and key cache.
+     * Additionally it initiates parsing of initial right tree and setup of
+     * Berkeley DBs.
+     * 
+     * @throws TTEncryptionException
+     */
+    public void init(final String mUser) throws TTEncryptionException {
+        if (mNodeEncryption) {
+            mLoggedUser = mUser;
+            mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
+            mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
+            mKeyCache = new KeyCache();
+            new EncryptionDAGParser().init(FILENAME, mKeySelectorDb,
+                mKeyManagerDb, mKeyCache, mLoggedUser);
+        } else {
+            throw new TTEncryptionException("Encryption is disabled!");
+        }
+    }
 
-	/**
-	 * Clears all established berkeley dbs.
-	 * 
-	 * @throws AbsTTException
-	 */
-	public void clear() throws TTEncryptionException {
-		if (SEL_STORE.exists()) {
-			recursiveDelete(SEL_STORE);
-		}
-		if (MAN_STORE.exists()) {
-			recursiveDelete(SEL_STORE);
-		}
+    /**
+     * Clears all established berkeley dbs.
+     * 
+     * @throws AbsTTException
+     */
+    public void clear() throws TTEncryptionException {
+        if (SEL_STORE.exists()) {
+            recursiveDelete(SEL_STORE);
+        }
+        if (MAN_STORE.exists()) {
+            recursiveDelete(SEL_STORE);
+        }
 
-	}
+    }
 
-	/**
-	 * Deletes berkeley db file recursively.
-	 * 
-	 * @param paramFile
-	 *            File to delete.
-	 * @return if some more files available.
-	 */
-	protected static boolean recursiveDelete(final File paramFile) {
-		if (paramFile.isDirectory()) {
-			for (final File child : paramFile.listFiles()) {
-				if (!recursiveDelete(child)) {
-					return false;
-				}
-			}
-		}
-		return paramFile.delete();
-	}
+    /**
+     * Deletes berkeley db file recursively.
+     * 
+     * @param paramFile
+     *            File to delete.
+     * @return if some more files available.
+     */
+    protected static boolean recursiveDelete(final File paramFile) {
+        if (paramFile.isDirectory()) {
+            for (final File child : paramFile.listFiles()) {
+                if (!recursiveDelete(child)) {
+                    return false;
+                }
+            }
+        }
+        return paramFile.delete();
+    }
 
-	/**
-	 * Closes all databases.
-	 */
-	public void close() {
-		mKeySelectorDb.clearPersistent();
-		mKeyManagerDb.clearPersistent();
-	}
+    /**
+     * Closes all databases.
+     */
+    public void close() {
+        mKeySelectorDb.clearPersistent();
+        mKeyManagerDb.clearPersistent();
+    }
 
-	/**
-	 * Returns whether encryption is enabled or not.
-	 * 
-	 * @return encryption enabled.
-	 */
-	public boolean checkEncryption() {
-		return mNodeEncryption;
-	}
+    /**
+     * Returns whether encryption is enabled or not.
+     * 
+     * @return encryption enabled.
+     */
+    public boolean checkEncryption() {
+        return mNodeEncryption;
+    }
 
-	/**
-	 * Returns session user.
-	 * 
-	 * @return current logged user.
-	 */
-	public String getUser() {
-		// return mSession.getUser();
-		return mLoggedUser;
-	}
+    /**
+     * Returns session user.
+     * 
+     * @return current logged user.
+     */
+    public String getUser() {
+        // return mSession.getUser();
+        return mLoggedUser;
+    }
 
-	/**
-	 * Returns cache list of current logged user.
-	 * 
-	 * @return cache list of user.
-	 */
-	public LinkedList<Long> getKeyCache() {
-		return mKeyCache.get(getUser());
-	}
+    /**
+     * Returns cache list of current logged user.
+     * 
+     * @return cache list of user.
+     */
+    public LinkedList<Long> getKeyCache() {
+        return mKeyCache.get(getUser());
+    }
 
-	/**
-	 * Create new selector key by increasing current state by 1.
-	 * 
-	 * @return new unique selector key.
-	 */
-	public final int newSelectorKey() {
-		return ++mSelectorKey;
-	}
+    /**
+     * Create new selector key by increasing current state by 1.
+     * 
+     * @return new unique selector key.
+     */
+    public final int newSelectorKey() {
+        return ++mSelectorKey;
+    }
 
-	/**
-	 * Returns data encryption key.
-	 * 
-	 * @return data encryption key.
-	 */
-	public long getDataEncryptionKey() {
-		return mDataEncryptionKey;
-	}
+    /**
+     * Returns data encryption key.
+     * 
+     * @return data encryption key.
+     */
+    public long getDataEncryptionKey() {
+        return mDataEncryptionKey;
+    }
 
-	/**
-	 * Returns key selector database instance.
-	 * 
-	 * @return KeySelector instance.
-	 */
-	public KeySelectorDatabase getKeySelectorInstance() {
-		return mKeySelectorDb;
-	}
+    /**
+     * Returns key selector database instance.
+     * 
+     * @return KeySelector instance.
+     */
+    public KeySelectorDatabase getKeySelectorInstance() {
+        return mKeySelectorDb;
+    }
 
-	/**
-	 * Returns key manager database instance.
-	 * 
-	 * @return KeyManager instance.
-	 */
-	public KeyManagerDatabase getKeyManagerInstance() {
-		return mKeyManagerDb;
-	}
+    /**
+     * Returns key manager database instance.
+     * 
+     * @return KeyManager instance.
+     */
+    public KeyManagerDatabase getKeyManagerInstance() {
+        return mKeyManagerDb;
+    }
 
-	/**
-	 * Returns key cache instance.
-	 * 
-	 * @return KeyCache instance.
-	 */
-	public KeyCache getKeyCacheInstance() {
-		return mKeyCache;
-	}
+    /**
+     * Returns key cache instance.
+     * 
+     * @return KeyCache instance.
+     */
+    public KeyCache getKeyCacheInstance() {
+        return mKeyCache;
+    }
 
-	/**
-	 * Returns key manager handler instance.
-	 * 
-	 * @return
-	 */
-	public KeyManagerHandler getKMHInstance() {
-		return new KeyManagerHandler();
-	}
+    /**
+     * Returns key manager handler instance.
+     * 
+     * @return
+     */
+    public KeyManagerHandler getKMHInstance() {
+        return new KeyManagerHandler();
+    }
 
-	/**
-	 * Returns key cac
-	 * 
-	 * @return
-	 */
-	public ClientHandler getCHInstance() {
-		return new ClientHandler();
-	}
+    /**
+     * Returns key cac
+     * 
+     * @return
+     */
+    public ClientHandler getCHInstance() {
+        return new ClientHandler();
+    }
 
 }

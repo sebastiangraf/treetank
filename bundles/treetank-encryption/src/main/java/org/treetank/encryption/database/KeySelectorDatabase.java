@@ -29,9 +29,6 @@ package org.treetank.encryption.database;
 import java.io.File;
 import java.util.SortedMap;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
-import org.treetank.encryption.database.model.KeySelector;
-
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -40,6 +37,9 @@ import com.sleepycat.je.EnvironmentLockedException;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
+
+import org.treetank.encrpytion.exception.TTEncryptionException;
+import org.treetank.encryption.database.model.KeySelector;
 
 /**
  * Berkeley implementation of a persistent key selector database. That means
@@ -133,7 +133,8 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         PrimaryIndex<Long, KeySelector> primaryIndex;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                    Long.class, KeySelector.class);
 
             primaryIndex.put(paramEntity);
         } catch (DatabaseException e) {
@@ -155,8 +156,9 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         KeySelector entity = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
-            entity = (KeySelector)primaryIndex.get(paramKey);
+                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                    Long.class, KeySelector.class);
+            entity = (KeySelector) primaryIndex.get(paramKey);
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
@@ -177,7 +179,8 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         boolean status = false;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                    Long.class, KeySelector.class);
             status = primaryIndex.delete(paramKey);
 
         } catch (final DatabaseException mDbExp) {
@@ -198,7 +201,8 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         long counter = 0;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                    Long.class, KeySelector.class);
             counter = primaryIndex.count();
 
         } catch (final DatabaseException mDbExp) {
@@ -218,7 +222,8 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         SortedMap<Long, KeySelector> sMap = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(Long.class, KeySelector.class);
+                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                    Long.class, KeySelector.class);
             sMap = primaryIndex.sortedMap();
 
         } catch (final DatabaseException mDbExp) {

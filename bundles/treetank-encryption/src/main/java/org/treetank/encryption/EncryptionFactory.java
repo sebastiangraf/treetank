@@ -32,13 +32,14 @@ package org.treetank.encryption;
  * @author Patrick Lang, University of Konstanz
  */
 public class EncryptionFactory {
-    
+
     /**
      * Returns instance of singleton controller.
+     * 
      * @return
-     *          encryption controller instance.
+     *         encryption controller instance.
      */
-    public IEncryption getController(){
+    public IEncryption getController() {
         return EncryptionController.getInstance();
     }
 
