@@ -1,21 +1,20 @@
 package org.treetank.encryption.utils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedMap;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.treetank.EncryptionHelper;
 import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.database.model.KeySelector;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class EncryptionDAGParserTest {
 

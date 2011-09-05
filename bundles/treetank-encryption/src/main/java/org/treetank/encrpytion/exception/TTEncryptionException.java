@@ -35,15 +35,20 @@ package org.treetank.encrpytion.exception;
  */
 public class TTEncryptionException extends Exception {
 
-    /**
-     * Constructor.
-     * 
-     * @param message
-     *            message as string, they are concatenated with spaces in
-     *            between
-     */
-    public TTEncryptionException(final String message) {
-        super(message);
-    }
+	/**
+	 * Because of serialization.
+	 */
+	private static final long serialVersionUID = 4103301910166194388L;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param message
+	 *            message as string, they are concatenated with spaces in
+	 *            between
+	 */
+	public TTEncryptionException(final String message) {
+		super(message);
+	}
 
 }

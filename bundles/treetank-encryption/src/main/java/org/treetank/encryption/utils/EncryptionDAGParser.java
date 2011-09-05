@@ -16,7 +16,6 @@
  */
 package org.treetank.encryption.utils;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,16 +29,14 @@ import java.util.Stack;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.encryption.database.model.KeySelector;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Class for parsing the initial given encryption tree and storing
