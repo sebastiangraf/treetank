@@ -192,7 +192,7 @@ public class KeyManagerHandler {
             }
         } catch (final TTEncryptionException mTTExp) {
             mTTExp.printStackTrace();
-            System.exit(0);
+            System.exit(-1);
         }
 
     }

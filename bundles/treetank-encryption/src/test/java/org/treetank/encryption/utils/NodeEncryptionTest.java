@@ -26,14 +26,9 @@
  */
 package org.treetank.encryption.utils;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
-import org.treetank.encryption.utils.NodeEncryption;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * JUnit-test class to test the functionality of the NodeEncryption methods.

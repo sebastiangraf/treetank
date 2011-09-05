@@ -27,12 +27,12 @@
 package org.treetank.encryption.database.model;
 
 import java.util.LinkedList;
-import java.util.List;
-import com.sleepycat.persist.model.Entity;
-import com.sleepycat.persist.model.PrimaryKey;
 
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.utils.NodeEncryption;
+
+import com.sleepycat.persist.model.Entity;
+import com.sleepycat.persist.model.PrimaryKey;
 
 /**
  * This class represents the key selector model holding all data
