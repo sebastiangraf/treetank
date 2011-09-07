@@ -23,27 +23,37 @@ public class EncryptionHelper {
     private static KeyManagerHandler mManager;
 
     private static EncryptionController mController;
-    
-    private final static Logger LOGGER = LoggerFactory.getLogger(EncryptionHelper.class);
 
-    public static EncryptionHelper start(final String mUser) throws TTEncryptionException {
+    private final static Logger LOGGER = LoggerFactory
+        .getLogger(EncryptionHelper.class);
 
+    public EncryptionHelper() {
         mController = EncryptionController.getInstance();
+    }
+
+    public void start() throws TTEncryptionException {
 
         mController.clear();
-        mController.init(mUser);
+        mController.init();
         mManager = mController.getKMHInstance();
 
-        return new EncryptionHelper();
     }
 
     public void close() {
         print();
-        EncryptionController.getInstance().close();
+        mController.close();
     }
-    
-    public boolean delete(final File mFile){
-        
+
+    public void setSessionUser(final String user) {
+        mController.setUser(user);
+    }
+
+    public void setEncryption(final boolean bol) {
+        mController.setEncryptionOption(bol);
+    }
+
+    public boolean delete(final File mFile) {
+
         if (mFile.isDirectory()) {
             for (final File child : mFile.listFiles()) {
                 if (!recursiveDelete(child)) {
@@ -51,10 +61,10 @@ public class EncryptionHelper {
                 }
             }
         }
-        
+
         return true;
     }
-    
+
     protected static boolean recursiveDelete(final File paramFile) {
         if (paramFile.isDirectory()) {
             for (final File child : paramFile.listFiles()) {
@@ -70,6 +80,10 @@ public class EncryptionHelper {
         return mManager;
     }
 
+    public EncryptionController getController() {
+        return mController;
+    }
+
     /**
      * Prints all stored information of KeySelector and KeyManager database. This method is just for testing
      * issues.
@@ -83,7 +97,7 @@ public class EncryptionHelper {
             mController.getKeySelectorInstance().getEntries();
         Iterator<Long> iter = mSelMap.keySet().iterator();
 
-        LOGGER.trace("\nSelector DB Size: "
+        LOGGER.info("\nSelector DB Size: "
             + mController.getKeySelectorInstance().count());
 
         while (iter.hasNext()) {
@@ -102,14 +116,15 @@ public class EncryptionHelper {
                 mChildsString.append("#" + mChildsList.get(k));
             }
 
-            LOGGER.trace("Selector: " + mSelector.getPrimaryKey() + " "
+            LOGGER
+                .info("Selector: " + mSelector.getPrimaryKey() + " "
                     + mSelector.getName() + " " + mParentsString.toString()
                     + " " + mChildsString.toString() + " "
                     + mSelector.getRevision() + " " + mSelector.getVersion()
                     + " " + mSelector.getSecretKey());
-            
+
         }
-        LOGGER.trace(" ");
+        LOGGER.info(" ");
 
         /*
          * print key manager db
@@ -119,14 +134,13 @@ public class EncryptionHelper {
 
         // iterate through all users
         final Iterator<String> outerIter = sMap.keySet().iterator();
-        
-        LOGGER.trace("Key manager DB Size: "
-            + mController.getKeyManagerInstance().count());
 
+        LOGGER.info("Key manager DB Size: "
+            + mController.getKeyManagerInstance().count());
 
         StringBuilder sb;
         while (outerIter.hasNext()) {
-            final String user = (String) outerIter.next();
+            final String user = (String)outerIter.next();
             sb = new StringBuilder(user + ": ");
 
             final Set<Long> mKeySet =
@@ -138,9 +152,10 @@ public class EncryptionHelper {
                 sb.append(innerIter.next() + " ");
             }
 
-            LOGGER.trace(sb.toString());
+            LOGGER.info(sb.toString());
+
         }
-        LOGGER.trace(" ");
+        LOGGER.info(" ");
 
         /*
          * print key cache.
@@ -152,7 +167,8 @@ public class EncryptionHelper {
         for (long aKey : mKeyList) {
             cacheString.append(aKey + " ");
         }
-        LOGGER.trace(cacheString.toString());
+        LOGGER.info(cacheString.toString());
+
     }
 
 }

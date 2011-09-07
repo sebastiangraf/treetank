@@ -33,7 +33,6 @@ import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.EnvironmentLockedException;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
@@ -88,10 +87,8 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
             storeConfig.setTransactional(true);
             mStore = new EntityStore(mEnv, NAME, storeConfig);
 
-        } catch (final EnvironmentLockedException mELExp) {
+        } catch (final Exception mELExp) {
             mELExp.printStackTrace();
-        } catch (final DatabaseException mDbExp) {
-            mDbExp.printStackTrace();
         }
     }
 
@@ -114,10 +111,8 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
             if (mEnv != null) {
                 mEnv.close();
             }
-        } catch (final DatabaseException mDbExp) {
+        } catch (final Exception mDbExp) {
             mDbExp.printStackTrace();
-        } catch (final TTEncryptionException exc) {
-            throw new IllegalStateException(exc);
         }
 
     }
@@ -133,7 +128,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         PrimaryIndex<Long, KeySelector> primaryIndex;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(
                     Long.class, KeySelector.class);
 
             primaryIndex.put(paramEntity);
@@ -156,38 +151,14 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         KeySelector entity = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(
                     Long.class, KeySelector.class);
-            entity = (KeySelector) primaryIndex.get(paramKey);
+            entity = (KeySelector)primaryIndex.get(paramKey);
 
         } catch (final DatabaseException mDbExp) {
             mDbExp.printStackTrace();
         }
         return entity;
-    }
-
-    /**
-     * Deletes an entry from storage.
-     * 
-     * @param paramKey
-     *            primary key of entry to delete.
-     * @return
-     *         status whether deletion was successful or not.
-     */
-    public final boolean deleteEntry(final long paramKey) {
-        PrimaryIndex<Long, KeySelector> primaryIndex;
-        boolean status = false;
-        try {
-            primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
-                    Long.class, KeySelector.class);
-            status = primaryIndex.delete(paramKey);
-
-        } catch (final DatabaseException mDbExp) {
-            mDbExp.printStackTrace();
-        }
-
-        return status;
     }
 
     /**
@@ -201,7 +172,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         long counter = 0;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(
                     Long.class, KeySelector.class);
             counter = primaryIndex.count();
 
@@ -222,7 +193,7 @@ public class KeySelectorDatabase extends AbsKeyDatabase {
         SortedMap<Long, KeySelector> sMap = null;
         try {
             primaryIndex =
-                (PrimaryIndex<Long, KeySelector>) mStore.getPrimaryIndex(
+                (PrimaryIndex<Long, KeySelector>)mStore.getPrimaryIndex(
                     Long.class, KeySelector.class);
             sMap = primaryIndex.sortedMap();
 
