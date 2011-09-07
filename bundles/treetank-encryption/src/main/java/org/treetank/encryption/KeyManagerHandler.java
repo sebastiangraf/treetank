@@ -71,6 +71,89 @@ public class KeyManagerHandler {
     private String mGroupName;
 
     /**
+     * Adds user(s) and group(s) to the DAG.
+     * 
+     * @param paramUser
+     *            Array of users to add to the last group of group array.
+     * @param paramGroup
+     *            Array of groups to add to the DAG.
+     * @param paramParent
+     *            Parent of the first group in group array.
+     * @throws TTEncryptionException
+     */
+    public void join(final String[] paramUser, final String[] paramGroup,
+        final String paramParent) throws TTEncryptionException {
+        init();
+        if (paramUser.length >= 1 && paramGroup.length == 1) {
+            if (!nodeExists(paramGroup[0])) {
+                addGroup(paramGroup[0], paramParent);
+            }
+
+            for (int i = 0; i < paramUser.length; i++) {
+                joinGroup(paramUser[i], paramGroup[0]);
+            }
+        } else if (paramUser.length >= 1 && paramGroup.length > 1) {
+            for (int i = 0; i < paramGroup.length; i++) {
+                if (i == 0) {
+                    if (!nodeExists(paramGroup[i])) {
+                        addGroup(paramGroup[i], paramParent);
+                    }
+                } else {
+                    if (!nodeExists(paramGroup[i])) {
+                        addGroup(paramGroup[i], paramGroup[i - 1]);
+                    }
+                }
+            }
+
+            final int lastGroup = paramGroup.length - 1;
+            for (int i = 0; i < paramUser.length; i++) {
+                joinGroup(paramUser[i], paramGroup[lastGroup]);
+            }
+        } else {
+            throw new TTEncryptionException(
+                "Group or user array may not be empty!");
+        }
+    }
+
+    /**
+     * Remove user(s) and group(s) from the DAG.
+     * 
+     * @param paramUser
+     *            User to remove.
+     * @param paramGroup
+     *            The group the user should be removed, or if user is empty, the group that has to be removed
+     *            including its subtree.
+     * @throws TTEncryptionException
+     */
+    public void leave(final String[] paramUser, final String[] paramGroup)
+        throws TTEncryptionException {
+        init();
+        if (paramUser.length >= 1 && paramGroup.length == 1) {
+            for (int i = 0; i < paramUser.length; i++) {
+                leaveGroup(paramUser[i], paramGroup[0]);
+            }
+        } else if (paramUser.length == 0 && paramGroup.length == 1) {
+            final Iterator<Long> iter =
+                mKeySelectorDb.getEntries().keySet().iterator();
+            while (iter.hasNext()) {
+                final KeySelector mSelector =
+                    mKeySelectorDb.getEntries().get(iter.next());
+                if (mSelector.getName().equals(paramGroup[0])) {
+                    for (long parent : mSelector.getParents()) {
+                        leaveGroup(paramGroup[0], mKeySelectorDb.getEntry(
+                            parent).getName());
+                    }
+                    break;
+                }
+            }
+
+        } else {
+            throw new TTEncryptionException("Group array may not be empty!");
+        }
+
+    }
+
+    /**
      * Invoked when a new user is joining a group.
      * 
      * @param paramUser
@@ -80,116 +163,110 @@ public class KeyManagerHandler {
      * @throws TTEncryptionException
      *             Exception occurred during joining process.
      */
-    public void joinGroup(final String paramUser, final String paramGroup)
+    private void joinGroup(final String paramUser, final String paramGroup)
         throws TTEncryptionException {
-        init();
         mGroupUser = paramUser;
         mGroupName = paramGroup;
         try {
-            // check if group exits.
-            if (nodeExists(paramGroup)) {
-                final long mGroupId = getRecentNodeKey(paramGroup);
-                final boolean mUserExists = nodeExists(paramUser);
+            final long mGroupId = getRecentNodeKey(paramGroup);
+            final boolean mUserExists = nodeExists(paramUser);
 
-                // check if user exists and if is already member of group
-                if (!userGroupCheck(paramUser, paramGroup)) {
-                    // all nodes that are affected by leave.
-                    final List<Long> mTreePath =
-                        getTreePathNodes(getRecentNodeKey(paramGroup));
+            // check if user exists and if is already member of group
+            if (!userGroupCheck(paramUser, paramGroup)) {
+                // all nodes that are affected by leave.
+                final List<Long> mTreePath =
+                    getTreePathNodes(getRecentNodeKey(paramGroup));
 
-                    // map of old node id (key), new node id (value).
-                    final Map<Long, Long> mNewSelIds =
-                        new HashMap<Long, Long>();
+                // map of old node id (key), new node id (value).
+                final Map<Long, Long> mNewSelIds = new HashMap<Long, Long>();
 
-                    // ids of all new created nodes.
-                    final List<Long> mNewIdsList = new LinkedList<Long>();
+                // ids of all new created nodes.
+                final List<Long> mNewIdsList = new LinkedList<Long>();
 
-                    // new id of joining group
-                    long mNewGroupId = -1;
+                // new id of joining group
+                long mNewGroupId = -1;
 
-                    // create new node for each node affected by join and it's version.
-                    for (int i = 0; i < mTreePath.size(); i++) {
-                        final KeySelector mOldSel =
-                            mKeySelectorDb.getEntry(mTreePath.get(i));
-                        int mNewVersion = mOldSel.getVersion() + 1;
+                int mRev = 0;
+                int mVer = 0;
 
-                        final KeySelector mNewSel =
-                            new KeySelector(mOldSel.getName(), mOldSel
-                                .getParents(), mOldSel.getChilds(), mOldSel
+                // create new node for each node affected by join and it's version.
+                for (int i = 0; i < mTreePath.size(); i++) {
+                    final KeySelector mOldSel =
+                        mKeySelectorDb.getEntry(mTreePath.get(i));
+                    int mNewVersion = mOldSel.getVersion() + 1;
+
+                    final KeySelector mNewSel =
+                        new KeySelector(mOldSel.getName(),
+                            mOldSel.getParents(), mOldSel.getChilds(), mOldSel
                                 .getRevision(), mNewVersion);
 
-                        mKeySelectorDb.putEntry(mNewSel);
-                        mNewSelIds.put(mOldSel.getPrimaryKey(), mNewSel
-                            .getPrimaryKey());
-                        mNewIdsList.add(mNewSel.getPrimaryKey());
+                    mKeySelectorDb.putEntry(mNewSel);
+                    mNewSelIds.put(mOldSel.getPrimaryKey(), mNewSel
+                        .getPrimaryKey());
+                    mNewIdsList.add(mNewSel.getPrimaryKey());
 
-                        if (mOldSel.getPrimaryKey() == mGroupId) {
-                            mNewGroupId = mNewSel.getPrimaryKey();
-                        }
+                    if (mOldSel.getPrimaryKey() == mGroupId) {
+                        mNewGroupId = mNewSel.getPrimaryKey();
                     }
 
-                    // update parent and child list of each new node.
-                    updateParentsChilds(mNewIdsList);
-
-                    // create new user node with new version, parent list and add it's new id as child to the
-                    // new node of its joining group.
-                    final KeySelector mNewUserSel;
-                    if (mUserExists) {
-                        final KeySelector mOldUserSel =
-                            mKeySelectorDb
-                                .getEntry(getRecentNodeKey(paramUser));
-
-                        final LinkedList<Long> mUserParentList =
-                            mOldUserSel.getParents();
-                        mUserParentList.add(mNewGroupId);
-
-                        final int mNewVersion = mOldUserSel.getVersion() + 1;
-
-                        mNewUserSel =
-                            new KeySelector(mOldUserSel.getName(),
-                                mUserParentList, mOldUserSel.getChilds(),
-                                mOldUserSel.getRevision(), mNewVersion);
-
-                        mKeySelectorDb.putEntry(mNewUserSel);
-                        mNewSelIds.put(mOldUserSel.getPrimaryKey(), mNewUserSel
-                            .getPrimaryKey());
-                        mNewIdsList.add(mNewUserSel.getPrimaryKey());
-                    } else {
-                        mNewUserSel =
-                            new KeySelector(paramUser, new LinkedList<Long>(),
-                                new LinkedList<Long>(), 0, 0);
-                        mNewUserSel.addParent(mNewGroupId);
-                        mKeySelectorDb.putEntry(mNewUserSel);
-                        mNewSelIds.put(-1L, mNewUserSel.getPrimaryKey());
-                        mNewIdsList.add(mNewUserSel.getPrimaryKey());
-
-                        // create key manager entry for new user.
-                        mKeyManagerDb.putEntry(new KeyManager(paramUser,
-                            new HashSet<Long>()));
-                    }
-
-                    final KeySelector mGroupSel =
-                        mKeySelectorDb.getEntry(mNewGroupId);
-                    mGroupSel.addChild(mNewUserSel.getPrimaryKey());
-                    mKeySelectorDb.putEntry(mGroupSel);
-
-                    // update each user key set in key manager.
-                    updateKeyManagerJoin(mNewSelIds);
-
-                    // create and encrypt key trails for logged user.
-                    final Map<Long, byte[]> mKeyTrails =
-                        encryptKeyTrails(mNewIdsList);
-                    transmitKeyTrails(mKeyTrails);
-
-                } else {
-                    throw new TTEncryptionException("User " + paramUser
-                        + " is already member of given group " + paramGroup
-                        + "!");
+                    mRev = mOldSel.getRevision();
+                    mVer = mNewVersion;
                 }
+
+                // update parent and child list of each new node.
+                updateParentsChilds(mNewIdsList);
+
+                // create new user node with new version, parent list and add it's new id as child to the
+                // new node of its joining group.
+                final KeySelector mNewUserSel;
+                if (mUserExists) {
+                    final KeySelector mOldUserSel =
+                        mKeySelectorDb.getEntry(getRecentNodeKey(paramUser));
+
+                    final LinkedList<Long> mUserParentList =
+                        mOldUserSel.getParents();
+                    mUserParentList.add(mNewGroupId);
+
+                    mNewUserSel =
+                        new KeySelector(mOldUserSel.getName(), mUserParentList,
+                            mOldUserSel.getChilds(), mRev, mVer);
+
+                    mKeySelectorDb.putEntry(mNewUserSel);
+                    mNewSelIds.put(mOldUserSel.getPrimaryKey(), mNewUserSel
+                        .getPrimaryKey());
+                    mNewIdsList.add(mNewUserSel.getPrimaryKey());
+                } else {
+                    mNewUserSel =
+                        new KeySelector(paramUser, new LinkedList<Long>(),
+                            new LinkedList<Long>(), mRev, mVer);
+                    mNewUserSel.addParent(mNewGroupId);
+                    mKeySelectorDb.putEntry(mNewUserSel);
+                    mNewSelIds.put(-1L, mNewUserSel.getPrimaryKey());
+                    mNewIdsList.add(mNewUserSel.getPrimaryKey());
+
+                    // create key manager entry for new user.
+                    mKeyManagerDb.putEntry(new KeyManager(paramUser,
+                        new HashSet<Long>()));
+                }
+
+                final KeySelector mGroupSel =
+                    mKeySelectorDb.getEntry(mNewGroupId);
+                mGroupSel.addChild(mNewUserSel.getPrimaryKey());
+                mKeySelectorDb.putEntry(mGroupSel);
+
+                // update each user key set in key manager.
+                updateKeyManagerJoin(mNewSelIds);
+
+                // create and encrypt key trails for logged user.
+                final Map<Long, byte[]> mKeyTrails =
+                    encryptKeyTrails(mNewIdsList);
+                transmitKeyTrails(mKeyTrails);
+
             } else {
-                throw new TTEncryptionException("Group " + paramGroup
-                    + " does not exist!");
+                throw new TTEncryptionException("User " + paramUser
+                    + " is already member of given group " + paramGroup + "!");
             }
+
         } catch (final TTEncryptionException mTTExp) {
             mTTExp.printStackTrace();
             System.exit(-1);
@@ -205,8 +282,7 @@ public class KeyManagerHandler {
      * @param paramGroup
      *            name of group the user leaves.
      */
-    public void leaveGroup(final String paramUser, final String paramGroup) {
-        init();
+    private void leaveGroup(final String paramUser, final String paramGroup) {
         mGroupUser = paramUser;
         mGroupName = paramGroup;
         try {
@@ -341,6 +417,53 @@ public class KeyManagerHandler {
         }
 
         return mKeyTrails;
+    }
+
+    /**
+     * Adds an new group to the DAG.
+     * 
+     * @param paramGroup
+     *            Group name.
+     * @param paramParent
+     *            Parent name of new group.
+     * @return
+     *         if group was create successfully
+     * 
+     * @throws TTEncryptionException
+     */
+    public boolean addGroup(final String paramGroup, final String paramParent)
+        throws TTEncryptionException {
+
+        if (nodeExists(paramParent)) {
+
+            final Iterator<Long> iter =
+                mKeySelectorDb.getEntries().keySet().iterator();
+            while (iter.hasNext()) {
+                final KeySelector mSelector =
+                    mKeySelectorDb.getEntries().get(iter.next());
+                if (mSelector.getName().equals(paramParent)) {
+
+                    final LinkedList<Long> parents = new LinkedList<Long>();
+                    parents.add(mSelector.getPrimaryKey());
+                    final KeySelector mGroupSel =
+                        new KeySelector(paramGroup, parents,
+                            new LinkedList<Long>(), mSelector.getRevision(),
+                            mSelector.getVersion());
+
+                    mSelector.addChild(mGroupSel.getPrimaryKey());
+
+                    mKeySelectorDb.putEntry(mSelector);
+                    mKeySelectorDb.putEntry(mGroupSel);
+
+                    return true;
+                }
+            }
+
+        } else {
+            throw new TTEncryptionException("Group parent does not exist!");
+        }
+        return false;
+
     }
 
     /**

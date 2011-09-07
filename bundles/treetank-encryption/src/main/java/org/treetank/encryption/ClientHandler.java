@@ -29,8 +29,10 @@ package org.treetank.encryption;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import org.treetank.encryption.cache.KeyCache;
+import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.utils.NodeEncryption;
 
@@ -45,6 +47,12 @@ public class ClientHandler {
      * Instance of KeySelectorDatabase holding key selection stuff.
      */
     private static KeySelectorDatabase mKeySelectorDb;
+
+    /**
+     * Instance of KeyManagerDatabase holding key selection stuff.
+     */
+    private static KeyManagerDatabase mKeyManagerDb;
+
     /**
      * Instance of KeyCache holding all current keys of user.
      */
@@ -61,6 +69,7 @@ public class ClientHandler {
     public ClientHandler() {
         mEnHandler = EncryptionController.getInstance();
         mKeySelectorDb = mEnHandler.getKeySelectorInstance();
+        mKeyManagerDb = mEnHandler.getKeyManagerInstance();
         mKeyCache = mEnHandler.getKeyCacheInstance();
     }
 
@@ -75,9 +84,14 @@ public class ClientHandler {
         // if map contains no key trails user has been completely removed
         // from DAG and all keys for user has to be removed.
         if (paramKeyTails.size() != 0) {
+
+            if (mEnHandler.getKeyCache() == null) {
+                initKeyCacheKeys(mEnHandler.getUser());
+            }
+
             final Iterator<Long> mIter = paramKeyTails.keySet().iterator();
             while (mIter.hasNext()) {
-                long mapKey = (Long) mIter.next();
+                long mapKey = (Long)mIter.next();
 
                 byte[] mChildSecretKey =
                     mKeySelectorDb.getEntry(mapKey).getSecretKey();
@@ -95,9 +109,30 @@ public class ClientHandler {
                 }
                 mKeyCache.put(mEnHandler.getUser(), mUserCache);
             }
-        } else {
-            mKeyCache.put(mEnHandler.getUser(), new LinkedList<Long>());
         }
+        // } else {
+        // mKeyCache.put(mEnHandler.getUser(), new LinkedList<Long>());
+        // }
+    }
+
+    /**
+     * When user is changed, keys for this user has to be brought from key manager to the cache.
+     * 
+     * @param paramUser
+     *            new user.
+     */
+    public final void initKeyCacheKeys(final String paramUser) {
+
+        final Set<Long> keySet = mKeyManagerDb.getEntry(paramUser).getKeySet();
+
+        final LinkedList<Long> keyList = new LinkedList<Long>();
+        final Iterator<Long> mIter = keySet.iterator();
+        while (mIter.hasNext()) {
+            keyList.add(mIter.next());
+        }
+
+        mKeyCache.put(paramUser, keyList);
+
     }
 
 }

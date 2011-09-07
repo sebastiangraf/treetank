@@ -28,11 +28,11 @@ package org.treetank.encryption.database.model;
 
 import java.util.LinkedList;
 
-import org.treetank.encryption.EncryptionController;
-import org.treetank.encryption.utils.NodeEncryption;
-
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
+
+import org.treetank.encryption.EncryptionController;
+import org.treetank.encryption.utils.NodeEncryption;
 
 /**
  * This class represents the key selector model holding all data
@@ -183,6 +183,16 @@ public class KeySelector {
      */
     public void removeChild(final long paramChild) {
         mChilds.remove(paramChild);
+    }
+
+    /**
+     * Sets new primary key. Usually not needed.
+     * 
+     * @param paramKey
+     *            new key for node.
+     */
+    public final void setPrimaryKey(final long paramKey) {
+        this.mSelectorKey = paramKey;
     }
 
     /**

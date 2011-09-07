@@ -27,13 +27,16 @@
 package org.treetank.encryption;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
-import org.treetank.encryption.utils.EncryptionDAGParser;
+import org.treetank.encryption.database.model.KeyManager;
+import org.treetank.encryption.database.model.KeySelector;
 
 /**
  * This central singleton class holding and handling data and instances for
@@ -50,7 +53,7 @@ public final class EncryptionController implements IEncryption {
     /**
      * Instance for enabling or disabling encryption process.
      */
-    private final static boolean mNodeEncryption = false;
+    private static boolean mNodeEncryption = false;
 
     /**
      * The key data should be encrypted.
@@ -60,7 +63,7 @@ public final class EncryptionController implements IEncryption {
     /**
      * Current session user.
      */
-    private static String mLoggedUser = "ALL";
+    private static String mLoggedUser;
 
     // #################SETTINGS END#######################
 
@@ -95,13 +98,6 @@ public final class EncryptionController implements IEncryption {
     private int mSelectorKey = -1;
 
     /**
-     * Path of initial right tree XML file.
-     */
-    private static final String FILENAME = "src" + File.separator + "main"
-        + File.separator + "resources" + File.separator
-        + "righttreestructure.xml";
-
-    /**
      * Store path of berkeley key selector db.
      */
     private static final File SEL_STORE = new File(new StringBuilder(
@@ -115,11 +111,20 @@ public final class EncryptionController implements IEncryption {
         File.separator).append("tmp").append(File.separator).append("tnk")
         .append(File.separator).append("keymanagerdb").toString());
 
-    /**
-     * Standard constructor.
-     */
-    private EncryptionController() {
-    }
+    // /**
+    // * Store path of berkeley key selector db.
+    // */
+    // private static final File SEL_STORE = new File(new
+    // StringBuilder(File.separator).append("tmp").append(File.separator).append(
+    // "tnk").append(File.separator).append("path1").append(File.separator).append("keymanagerdb").toString());
+    //
+    // /**
+    // * Store path of berkeley key manager db.
+    // */
+    // private static final File MAN_STORE = new File(new
+    // StringBuilder(File.separator).append("tmp").append(File.separator).append(
+    // "tnk").append(File.separator).append("path1").append(File.separator).append("keymanagerdb").toString());
+    //
 
     /**
      * Returns singleton instance of handler.
@@ -137,14 +142,26 @@ public final class EncryptionController implements IEncryption {
      * 
      * @throws TTEncryptionException
      */
-    public void init(final String mUser) throws TTEncryptionException {
+    public void init() throws TTEncryptionException {
         if (mNodeEncryption) {
-            mLoggedUser = mUser;
+            mLoggedUser = "ALL";
+
             mKeySelectorDb = new KeySelectorDatabase(SEL_STORE);
+            final KeySelector rootSel =
+                new KeySelector(mLoggedUser, new LinkedList<Long>(),
+                    new LinkedList<Long>(), 0, 0);
+            mKeySelectorDb.putEntry(rootSel);
+
             mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
+            final Set<Long> manSet = new HashSet<Long>();
+            manSet.add(rootSel.getPrimaryKey());
+            mKeyManagerDb.putEntry(new KeyManager(mLoggedUser, manSet));
+
             mKeyCache = new KeyCache();
-            new EncryptionDAGParser().init(FILENAME, mKeySelectorDb,
-                mKeyManagerDb, mKeyCache, mLoggedUser);
+            final LinkedList<Long> keyList = new LinkedList<Long>();
+            keyList.add(rootSel.getPrimaryKey());
+            mKeyCache.put(mLoggedUser, keyList);
+
         } else {
             throw new TTEncryptionException("Encryption is disabled!");
         }
@@ -201,12 +218,28 @@ public final class EncryptionController implements IEncryption {
     }
 
     /**
+     * Enables or disables encryption option.
+     * 
+     * @param paramBol
+     *            if encryption should be enabled or not.
+     */
+    public void setEncryptionOption(final boolean paramBol) {
+        mNodeEncryption = paramBol;
+    }
+
+    /**
+     * Set session user.
+     */
+    public void setUser(final String paramUser) {
+        mLoggedUser = paramUser;
+    }
+
+    /**
      * Returns session user.
      * 
      * @return current logged user.
      */
     public String getUser() {
-        // return mSession.getUser();
         return mLoggedUser;
     }
 

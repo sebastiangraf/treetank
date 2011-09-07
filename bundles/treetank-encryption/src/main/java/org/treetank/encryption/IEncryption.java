@@ -26,6 +26,8 @@
  */
 package org.treetank.encryption;
 
+import org.treetank.encrpytion.exception.TTEncryptionException;
+
 /**
  * Interface to access encryption controller methods.
  * 
@@ -33,12 +35,6 @@ package org.treetank.encryption;
  */
 public interface IEncryption {
 
-    /**
-     * Returns current logged user.
-     * 
-     * @return
-     *         session user.
-     */
-    String getUser();
+    void init() throws TTEncryptionException;
 
 }
