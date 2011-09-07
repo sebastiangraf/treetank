@@ -2,10 +2,6 @@ package org.treetank.encryption;
 
 import java.io.File;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.treetank.EncryptionHelper;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
@@ -16,6 +12,11 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathStringChecker;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class EncryptionMainTest {
 
@@ -31,31 +32,33 @@ public class EncryptionMainTest {
         public void setUp() throws Exception {
             TestHelper.deleteEverything();
           
-            enHelper = EncryptionHelper.start("U3");
-            
-            IEncryption enc = new EncryptionFactory().getController();
-            System.out.println(enc.getUser());
-            
+            enHelper = new EncryptionHelper();
+            enHelper.setEncryption(true);
+            enHelper.start();
             XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
             holder = Holder.generateRtx();
+            
+            enHelper.setSessionUser(holder.getSession().getUser());
         }
 
         @After
         public void tearDown() throws AbsTTException {
             holder.close();
+            enHelper.setEncryption(false);
             enHelper.close();
             TestHelper.closeEverything();
         }
 
-        @Ignore
+
         @Test
         public void executeEncryption() throws AbsTTException, TTEncryptionException  {
             
-            enHelper.getManager().joinGroup("U5", "C");     
-            enHelper.getManager().leaveGroup("U1", "D");
-            enHelper.getManager().joinGroup("U6", "D");
-            enHelper.getManager().leaveGroup("U5", "C");
-            enHelper.getManager().joinGroup("U7", "F");
+            enHelper.getManager().join(new String[]{"User1"}, new String[]{"Inf", "Disy"}, "ALL");
+            enHelper.getManager().join(new String[]{"User2"}, new String[]{"Inf", "Disy"}, "ALL");
+            enHelper.getManager().leave(new String[]{"User2"}, new String[]{"Disy"});
+            enHelper.getManager().join(new String[]{"User3"}, new String[]{"TT"}, "Disy");   
+            enHelper.getManager().leave(new String[]{}, new String[]{"Disy"});
+            enHelper.getManager().join(new String[]{"User4"}, new String[]{"Inf", "Dbis"}, "ALL");
             
             AbsAxis axis =
                 new XPathAxis(holder.getRtx(),
@@ -64,8 +67,6 @@ public class EncryptionMainTest {
             XPathStringChecker.testIAxisConventions(axis, new String[] {
                 "Sinisa Farrel"
             });
-            
-
 
         }
 
