@@ -23,7 +23,7 @@ import java.util.List;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.NodeEncryption;
-import org.treetank.exception.TTIOException;
+import org.treetank.exception.TTUsageException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.AbsNode;
@@ -68,6 +68,7 @@ public class NodePage extends AbsPage {
      */
     protected NodePage(final ITTSource mIn) {
         super(0, mIn);
+        
         mNodePageKey = mIn.readLong();
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
 
@@ -76,9 +77,7 @@ public class NodePage extends AbsPage {
 
         if (enController.checkEncryption()) {
             for (int i = 0; i < mNodes.length; i++) {
-                final long mRightKey = mIn.readLong();
-                mIn.readInt();
-                mIn.readInt();
+                final long mRightKey = getRightKey(mIn);
 
                 final List<Long> mUserKeys = enController.getKeyCache();
                 byte[] mSecretKey = null;
@@ -162,10 +161,10 @@ public class NodePage extends AbsPage {
 
                 } else {
                     try {
-                        throw new TTIOException(
+                        throw new TTUsageException(
                             "User has no permission to access the node");
 
-                    } catch (final TTIOException mExp) {
+                    } catch (final TTUsageException mExp) {
                         mExp.printStackTrace();
                     }
                 }
@@ -217,6 +216,13 @@ public class NodePage extends AbsPage {
     public final long getNodePageKey() {
         return mNodePageKey;
     }
+    
+    private long getRightKey(final ITTSource mIn){
+        final long rightKey = mIn.readLong();
+        mIn.readInt();
+        mIn.readInt();
+        return rightKey;
+    }
 
     /**
      * Get node at a given offset.
@@ -259,6 +265,7 @@ public class NodePage extends AbsPage {
                     mNodeOut = new NodeOutputSink();
 
                     final long mDek = enController.getDataEncryptionKey();
+                    
                     final KeySelector mKeySel =
                         enController.getKeySelectorInstance().getEntry(mDek);
                     final byte[] mSecretKey = mKeySel.getSecretKey();
