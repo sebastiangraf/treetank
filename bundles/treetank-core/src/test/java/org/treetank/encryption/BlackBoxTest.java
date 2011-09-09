@@ -19,7 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class BlackBoxTest {
-
+/*
     private static EncryptionHelper enHelper;
 
     private static Holder holder;
@@ -92,6 +92,6 @@ public class BlackBoxTest {
             "disy"
         });
 
-    }
+    }*/
 
 }
