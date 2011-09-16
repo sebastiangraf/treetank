@@ -24,15 +24,12 @@ public class EncryptionHelper {
 
     private static EncryptionController mController;
 
-    private final static Logger LOGGER = LoggerFactory
-        .getLogger(EncryptionHelper.class);
 
     public EncryptionHelper() {
         mController = EncryptionController.getInstance();
     }
 
     public void start() throws TTEncryptionException {
-
         mController.clear();
         mController.init();
         mManager = mController.getKMHInstance();
@@ -40,7 +37,6 @@ public class EncryptionHelper {
     }
 
     public void close() {
-        print();
         mController.close();
     }
 
@@ -82,93 +78,6 @@ public class EncryptionHelper {
 
     public EncryptionController getController() {
         return mController;
-    }
-
-    /**
-     * Prints all stored information of KeySelector and KeyManager database. This method is just for testing
-     * issues.
-     */
-    public void print() {
-
-        /*
-         * print key selector db.
-         */
-        final SortedMap<Long, KeySelector> mSelMap =
-            mController.getKeySelectorInstance().getEntries();
-        Iterator<Long> iter = mSelMap.keySet().iterator();
-
-        LOGGER.info("\nSelector DB Size: "
-            + mController.getKeySelectorInstance().count());
-
-        while (iter.hasNext()) {
-
-            final KeySelector mSelector = mSelMap.get(iter.next());
-            final LinkedList<Long> mParentsList = mSelector.getParents();
-            final List<Long> mChildsList = mSelector.getChilds();
-
-            final StringBuilder mParentsString = new StringBuilder();
-            for (int k = 0; k < mParentsList.size(); k++) {
-                mParentsString.append("#" + mParentsList.get(k));
-            }
-
-            final StringBuilder mChildsString = new StringBuilder();
-            for (int k = 0; k < mChildsList.size(); k++) {
-                mChildsString.append("#" + mChildsList.get(k));
-            }
-
-            LOGGER
-                .info("Selector: " + mSelector.getPrimaryKey() + " "
-                    + mSelector.getName() + " " + mParentsString.toString()
-                    + " " + mChildsString.toString() + " "
-                    + mSelector.getRevision() + " " + mSelector.getVersion()
-                    + " " + mSelector.getSecretKey());
-
-        }
-        LOGGER.info(" ");
-
-        /*
-         * print key manager db
-         */
-        final SortedMap<String, KeyManager> sMap =
-            mController.getKeyManagerInstance().getEntries();
-
-        // iterate through all users
-        final Iterator<String> outerIter = sMap.keySet().iterator();
-
-        LOGGER.info("Key manager DB Size: "
-            + mController.getKeyManagerInstance().count());
-
-        StringBuilder sb;
-        while (outerIter.hasNext()) {
-            final String user = (String)outerIter.next();
-            sb = new StringBuilder(user + ": ");
-
-            final Set<Long> mKeySet =
-                mController.getKeyManagerInstance().getEntry(user).getKeySet();
-
-            // iterate through user's key set.
-            final Iterator<Long> innerIter = mKeySet.iterator();
-            while (innerIter.hasNext()) {
-                sb.append(innerIter.next() + " ");
-            }
-
-            LOGGER.info(sb.toString());
-
-        }
-        LOGGER.info(" ");
-
-        /*
-         * print key cache.
-         */
-        final LinkedList<Long> mKeyList =
-            mController.getKeyCacheInstance().get(mController.getUser());
-        final StringBuilder cacheString =
-            new StringBuilder("Key Cache of " + mController.getUser() + ": ");
-        for (long aKey : mKeyList) {
-            cacheString.append(aKey + " ");
-        }
-        LOGGER.info(cacheString.toString());
-
     }
 
 }
