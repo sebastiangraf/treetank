@@ -33,21 +33,25 @@ public class KeyManagerHandlerTest {
         }, new String[] {
             "Inf", "Disy"
         }, "ALL");
+        
         enHelper.getManager().join(new String[] {
             "User2"
         }, new String[] {
             "Inf", "Disy"
         }, "ALL");
+        
         enHelper.getManager().leave(new String[] {
             "User2"
         }, new String[] {
             "Disy"
         });
+        
         enHelper.getManager().join(new String[] {
             "User3"
         }, new String[] {
             "TT"
         }, "Disy");
+        
         enHelper.getManager().join(new String[] {
             "User4"
         }, new String[] {
