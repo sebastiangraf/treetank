@@ -1,77 +1,62 @@
 package org.treetank.encryption;
 
-import org.treetank.EncryptionHelper;
 import org.treetank.encrpytion.exception.TTEncryptionException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class KeyManagerHandlerTest {
 
-    private static EncryptionHelper enHelper;
 
     @Before
     public void setUp() throws Exception {
-        enHelper = new EncryptionHelper();
-        enHelper.setEncryption(true);
-        enHelper.start();
+        new EncryptionController().clear();
+        new EncryptionController().setEncryptionOption(true);
+        new EncryptionController().init();
     }
 
     @After
     public void tearDown() {
-        enHelper.setEncryption(false);
-        enHelper.close();
+        new EncryptionController().setEncryptionOption(false);
     }
 
     @Test
     public void testJoinAndLeave() throws TTEncryptionException {
-        enHelper.getManager().join(new String[] {
-            "User1"
-        }, new String[] {
-            "Inf", "Disy"
-        }, "ALL");
-        
-        enHelper.getManager().join(new String[] {
-            "User2"
-        }, new String[] {
-            "Inf", "Disy"
-        }, "ALL");
-        
-        enHelper.getManager().leave(new String[] {
-            "User2"
-        }, new String[] {
-            "Disy"
-        });
-        
-        enHelper.getManager().join(new String[] {
-            "User3"
-        }, new String[] {
-            "TT"
-        }, "Disy");
-        
-        enHelper.getManager().join(new String[] {
-            "User4"
-        }, new String[] {
-            "Inf", "Dbis"
-        }, "ALL");
+        String [] nodes = new String[]{"Inf", "Disy", "TT", "Group1"};
+        EncryptionOperator op = new EncryptionOperator();
+        op.join("ROOT", nodes);
 
-        enHelper.setSessionUser("User1");
-        enHelper.getManager().join(new String[] {
-            "User5"
-        }, new String[] {
-            "Disy"
-        }, "ALL");
+        
+        String [] nodes2 = new String[]{"BaseX", "Group2"};
+        EncryptionOperator op2 = new EncryptionOperator();
+        op2.join("Inf", nodes2);
+        
+        String [] nodes3 = new String[]{"RZ", "Waldvogel"};
+        EncryptionOperator op3 = new EncryptionOperator();
+        op3.join("ROOT", nodes3);
+       
+        String [] nodes4 = new String[]{"Waldvogel"};
+        EncryptionOperator op4 = new EncryptionOperator();
+        op4.join("TT", nodes4);
+        
 
-        enHelper.getManager().leave(new String[] {}, new String[] {
-            "Disy"
-        });
+        
+      EncryptionOperator op10 = new EncryptionOperator();
+      op10.leave("Group2", new String[]{"BaseX"});
+      
+    EncryptionOperator op9 = new EncryptionOperator();
+    op9.leave("Waldvogel", new String[]{});
 
         // after all joins and leaves and join/leave updates database size must be 31.
-        assertEquals(enHelper.getController().getKeySelectorInstance().count(),
-            31);
+        assertEquals(new EncryptionController().getSelDb().count(),
+            35);
+        assertEquals(new EncryptionController().getDAGDb().count(),
+            7);
+        assertEquals(new EncryptionController().getManDb().count(),
+            2);
 
     }
 }
