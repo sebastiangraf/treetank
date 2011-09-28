@@ -79,7 +79,7 @@ public class NodePage extends AbsPage {
             for (int i = 0; i < mNodes.length; i++) {
                 final long mRightKey = getRightKey(mIn);
 
-                final List<Long> mUserKeys = enController.getKeyCache();
+                final List<Long> mUserKeys = enController.getKeyCache().get(enController.getUser());
                 byte[] mSecretKey = null;
 
                 if (mUserKeys.contains(mRightKey) || mRightKey == -1) {
@@ -89,7 +89,7 @@ public class NodePage extends AbsPage {
                     
                     // get secret key
                     mSecretKey =
-                        enController.getKeySelectorInstance().getEntry(
+                        enController.getSelDb().getEntry(
                             mRightKey).getSecretKey();
 
                         final int mNodeBytes = mIn.readInt();
@@ -267,7 +267,7 @@ public class NodePage extends AbsPage {
                     final long mDek = enController.getDataEncryptionKey();
                     
                     final KeySelector mKeySel =
-                        enController.getKeySelectorInstance().getEntry(mDek);
+                        enController.getSelDb().getEntry(mDek);
                     final byte[] mSecretKey = mKeySel.getSecretKey();
 
                     mOut.writeLong(mKeySel.getPrimaryKey());
