@@ -1,6 +1,7 @@
 package org.treetank.encryption.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,9 +16,9 @@ import org.treetank.encryption.EncryptionOperator;
 
 public class TestDataParser2 {
 
-    private static final String DATAFILE = "/mnt/data/home/pop218053/Dropbox/encryption2/testdata10000.txt";
-
- 
+    private static final String DATAFILE = new StringBuilder(File.separator).append("src").append(
+        File.separator).append("test").append(File.separator).append("resources").append(File.separator)
+        .append("testdata100.txt").toString();
 
     public static void main(String[] args) {
         try {
@@ -30,7 +31,6 @@ public class TestDataParser2 {
             init();
             System.out.println("Ended...");
             System.out.println("Total time needed: " + (System.currentTimeMillis() - time) + "ms");
-
 
             new EncryptionController().clear();
 
@@ -50,13 +50,12 @@ public class TestDataParser2 {
             long time = System.currentTimeMillis();
 
             LinkedList<String> uniqueUser = new LinkedList<String>();
-            
+
             EncryptionOperator op;
 
             while ((line = in.readLine()) != null) {
                 op = new EncryptionOperator();
                 counter++;
-
 
                 final char[] chars = line.toCharArray();
                 final String[] dataString = new String[5];
@@ -76,8 +75,6 @@ public class TestDataParser2 {
                     charCount++;
                 }
 
-                
-
                 String cleanedGroup = cleanGroup(dataString[2]);
                 String[] splittedGroup = splitGroup(cleanedGroup);
 
@@ -94,90 +91,89 @@ public class TestDataParser2 {
                 newGroups[newGroups.length - 1] = dataString[0];
                 sb2.append(dataString[0]);
 
-                //System.out.println(sb2.toString());
+                // System.out.println(sb2.toString());
 
                 // at least one user and one group must exist.
                 if (newGroups.length > 1) {
-                    
-                   
-                    
+
                     String user = newGroups[newGroups.length - 1];
                     String group = newGroups[newGroups.length - 2];
-                    
-                    if(!uniqueUser.contains(user)){
+
+                    if (!uniqueUser.contains(user)) {
                         uniqueUser.add(user);
                     }
 
                     if (op.nodeExists(user)) {
-                        
+
                         if (op.nodeExists(group)) {
-                          //if user and group exist, and user is not member of group, add user to group
+                            // if user and group exist, and user is not member of group, add user to group
                             if (!op.checkMembership(user, group)) {
                                 op.join(group, new String[] {
                                     user
                                 });
-                   
+
                             }
-                           
-                        }else {
-                            //if user exist but not group, check which groups of hierarchy already exist, create it and add user.
+
+                        } else {
+                            // if user exist but not group, check which groups of hierarchy already exist,
+                            // create it and add user.
                             LinkedList<String> groupList = new LinkedList<String>();
                             String parent = "ROOT";
-                            for(int i = 0; i< newGroups.length-1; i++){
-                                if(!op.nodeExists(newGroups[i])){
+                            for (int i = 0; i < newGroups.length - 1; i++) {
+                                if (!op.nodeExists(newGroups[i])) {
                                     groupList.add(newGroups[i]);
-                                }
-                                else{
+                                } else {
                                     parent = newGroups[i];
                                 }
-                                //groupList.add(newGroups[newGroups.length-1]);
+                                // groupList.add(newGroups[newGroups.length-1]);
                             }
-                            
-                            if(groupList.size() == newGroups.length-1){
+
+                            if (groupList.size() == newGroups.length - 1) {
                                 op.join("ROOT", newGroups);
-                     
-                                op.join(newGroups[newGroups.length-1], new String[]{user});
-                    
-                            }
-                            else{
-                                if(groupList.size() > 1){
+
+                                op.join(newGroups[newGroups.length - 1], new String[] {
+                                    user
+                                });
+
+                            } else {
+                                if (groupList.size() > 1) {
                                     op.join(parent, groupList.toArray(new String[0]));
-                              
-                                    op.join(newGroups[newGroups.length-1], new String[]{user});
-                                
+
+                                    op.join(newGroups[newGroups.length - 1], new String[] {
+                                        user
+                                    });
+
                                 }
                             }
                         }
 
                     } else {
-                        //if user not exists, but group exists, add user to group
-                        if(op.nodeExists(group)){
+                        // if user not exists, but group exists, add user to group
+                        if (op.nodeExists(group)) {
                             op.join(group, new String[] {
                                 user
                             });
-                     
-                        }
-                        else{ //if user and group does not exist, check which groups of hierarchy exists, create it and add user.
+
+                        } else { // if user and group does not exist, check which groups of hierarchy exists,
+                                 // create it and add user.
                             LinkedList<String> groupList = new LinkedList<String>();
                             String parent = "ROOT";
-                            for(int i = 0; i< newGroups.length-1; i++){
-                                if(!op.nodeExists(newGroups[i])){
+                            for (int i = 0; i < newGroups.length - 1; i++) {
+                                if (!op.nodeExists(newGroups[i])) {
                                     groupList.add(newGroups[i]);
-                                }
-                                else{
+                                } else {
                                     parent = newGroups[i];
                                 }
-                                groupList.add(newGroups[newGroups.length-1]);
+                                groupList.add(newGroups[newGroups.length - 1]);
                             }
-                            
-                            if(groupList.size() == newGroups.length){
+
+                            if (groupList.size() == newGroups.length) {
                                 op.join("ROOT", newGroups);
-                              
-                            }
-                            else{
-                                if(groupList.size() > 1){
+
+                            } else {
+                                if (groupList.size() > 1) {
                                     op.join(parent, groupList.toArray(new String[0]));
-                              
+
                                 }
                             }
                         }
@@ -185,12 +181,9 @@ public class TestDataParser2 {
                     }
 
                 }
-                
-                
-
 
             }
-            
+
             System.out.println("Unique User: " + uniqueUser.size());
 
         } catch (final FileNotFoundException e) {
