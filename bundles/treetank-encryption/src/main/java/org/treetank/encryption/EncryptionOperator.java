@@ -59,10 +59,6 @@ public class EncryptionOperator {
         String user = "ALL";
         if (descendants.length > 0) {
             user = descendants[descendants.length - 1];
-            if (!nodeExists(user)) {
-                // create key manager entry for new user.
-                EncryptionController.getInstance().getManDb().putEntry(new KeyManager(user, new HashSet<Long>()));
-            }
         }
         if (nodeExists(parent)) {
             final long parentKey = getNodeKey(parent);
@@ -111,6 +107,9 @@ public class EncryptionOperator {
                         }
                     }
                 }
+            }else {
+                // create key manager entry for new user.
+                EncryptionController.getInstance().getManDb().putEntry(new KeyManager(user, new HashSet<Long>()));
             }
 
             // create all new nodes
