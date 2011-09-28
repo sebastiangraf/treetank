@@ -1,29 +1,3 @@
-/**
- * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
- * * Neither the name of the University of Konstanz nor the
- * names of its contributors may be used to endorse or promote products
- * derived from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package org.treetank.encryption.database.model;
 
 import java.util.LinkedList;
@@ -32,22 +6,15 @@ import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 
 import org.treetank.encryption.EncryptionController;
-import org.treetank.encryption.utils.NodeEncryption;
 
-/**
- * This class represents the key selector model holding all data
- * for a node of the right tree consisting of group and user nodes.
- * 
- * @author Patrick Lang, University of Konstanz
- */
 @Entity
-public class KeySelector {
+public class DAGSelector {
 
     /**
-     * Selector key and primary key of database.
+     * DAG key and primary key of database.
      */
     @PrimaryKey
-    private long mSelectorKey;
+    private long mDAGKey;
 
     /**
      * Name of the node (group or user name).
@@ -75,34 +42,39 @@ public class KeySelector {
     private int mVersion;
 
     /**
+     * Last revision in key selector.
+     */
+    private long mLastRevSelectorKey;
+    
+    /**
      * Secret key using for data en-/decryption.
      */
     private byte[] mSecretKey;
-
+    
     /**
      * Standard constructor.
      */
-    public KeySelector() {
+    public DAGSelector() {
         super();
     }
 
     /**
-     * Constructor for building an new key selector instance.
+     * Constructor for building an new dag selector instance.
      * 
      * @param paramName
      *            node name.
      */
-    public KeySelector(final String paramName, final LinkedList<Long> paramPar,
+    public DAGSelector(final String paramName, final LinkedList<Long> paramPar,
         final LinkedList<Long> paramChild, final int paramRev,
-        final int paramVer) {
-        this.mSelectorKey = EncryptionController.getInstance().newSelectorKey();
+        final int paramVer, byte[] mSecretKey) {
+        this.mDAGKey = EncryptionController.getInstance().newDAGKey();
 
         this.mName = paramName;
         this.mParents = paramPar;
         this.mChilds = paramChild;
         this.mRevision = paramRev;
         this.mVersion = paramVer;
-        this.mSecretKey = NodeEncryption.generateSecretKey();
+        this.mSecretKey = mSecretKey;
     }
 
     /**
@@ -112,7 +84,7 @@ public class KeySelector {
      *         selector id.
      */
     public final long getPrimaryKey() {
-        return mSelectorKey;
+        return mDAGKey;
     }
 
     /**
@@ -192,7 +164,7 @@ public class KeySelector {
      *            new key for node.
      */
     public final void setPrimaryKey(final long paramKey) {
-        this.mSelectorKey = paramKey;
+        this.mDAGKey = paramKey;
     }
 
     /**
@@ -228,7 +200,7 @@ public class KeySelector {
     public final void increaseVersion() {
         this.mVersion += 1;
     }
-
+    
     /**
      * Returns secret key.
      * 
@@ -237,5 +209,23 @@ public class KeySelector {
      */
     public final byte[] getSecretKey() {
         return mSecretKey;
+    }
+    
+    /**
+     * Sets secret key.
+     * 
+     * @return
+     *         secret key.
+     */
+    public final void setSecretKey(final byte[] mSecretKey) {
+        this.mSecretKey = mSecretKey;
+    }
+    
+    public final void setRevSelKey(final long mSelKey){
+        this.mLastRevSelectorKey = mSelKey;
+    }
+    
+    public final long getLastRevSelKey(){
+        return mLastRevSelectorKey;
     }
 }

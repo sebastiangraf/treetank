@@ -10,9 +10,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class KeySelectorTest {
+public class DAGSelectorTest {
 
-    KeySelector testSelector;
+    DAGSelector testSelector;
 
     @Before
     public void setUp() throws Exception {
@@ -23,7 +23,7 @@ public class KeySelectorTest {
         
         final byte [] mSecret = NodeEncryption.generateSecretKey();
 
-        testSelector = new KeySelector("aName", parents, childs, 0, 0, mSecret);
+        testSelector = new DAGSelector("aName", parents, childs, 0, 0, mSecret);
 
         testSelector.setPrimaryKey(0);
         testSelector.addChild(3L);

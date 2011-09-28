@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.treetank.encryption.cache.KeyCache;
+import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.database.KeyManagerDatabase;
 import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.utils.NodeEncryption;
@@ -42,36 +43,6 @@ import org.treetank.encryption.utils.NodeEncryption;
  * @author Patrick Lang, University of Konstanz
  */
 public class ClientHandler {
-
-    /**
-     * Instance of KeySelectorDatabase holding key selection stuff.
-     */
-    private static KeySelectorDatabase mKeySelectorDb;
-
-    /**
-     * Instance of KeyManagerDatabase holding key selection stuff.
-     */
-    private static KeyManagerDatabase mKeyManagerDb;
-
-    /**
-     * Instance of KeyCache holding all current keys of user.
-     */
-    private static KeyCache mKeyCache;
-
-    /**
-     * Instance of singleton class EncryptionHandler.
-     */
-    private static EncryptionController mEnHandler;
-
-    /**
-     * Standard constructor.
-     */
-    public ClientHandler() {
-        mEnHandler = EncryptionController.getInstance();
-        mKeySelectorDb = mEnHandler.getKeySelectorInstance();
-        mKeyManagerDb = mEnHandler.getKeyManagerInstance();
-        mKeyCache = mEnHandler.getKeyCacheInstance();
-    }
 
     /**
      * Decrypts key trails and put it to users key cache to make it available to
@@ -85,8 +56,8 @@ public class ClientHandler {
         // from DAG and all keys for user has to be removed.
         if (paramKeyTails.size() != 0) {
 
-            if (mEnHandler.getKeyCache() == null) {
-                initKeyCacheKeys(mEnHandler.getUser());
+            if (EncryptionController.getInstance().getKeyCache().get(EncryptionController.getInstance().getUser()) == null) {
+                initKeyCacheKeys(EncryptionController.getInstance().getUser());
             }
 
             final Iterator<Long> mIter = paramKeyTails.keySet().iterator();
@@ -94,7 +65,9 @@ public class ClientHandler {
                 long mapKey = (Long)mIter.next();
 
                 byte[] mChildSecretKey =
-                    mKeySelectorDb.getEntry(mapKey).getSecretKey();
+                    EncryptionController.getInstance().getDAGDb().getEntry(mapKey)
+                        .getSecretKey();
+                
                 byte[] mDecryptedBytes =
                     NodeEncryption.decrypt(paramKeyTails.get(mapKey),
                         mChildSecretKey);
@@ -102,17 +75,21 @@ public class ClientHandler {
                 long mEncryptedKey =
                     NodeEncryption.byteArrayToLong(mDecryptedBytes);
 
-                final LinkedList<Long> mUserCache = mEnHandler.getKeyCache();
+                final LinkedList<Long> mUserCache =
+                    EncryptionController.getInstance().getKeyCache().get(
+                        EncryptionController.getInstance().getUser());
+                
 
                 if (!mUserCache.contains(mEncryptedKey)) {
                     mUserCache.add(mEncryptedKey);
                 }
-                mKeyCache.put(mEnHandler.getUser(), mUserCache);
+                
+                
+                EncryptionController.getInstance().getKeyCache().put(
+                    EncryptionController.getInstance().getUser(), mUserCache);
             }
         }
-        // } else {
-        // mKeyCache.put(mEnHandler.getUser(), new LinkedList<Long>());
-        // }
+
     }
 
     /**
@@ -123,7 +100,8 @@ public class ClientHandler {
      */
     public final void initKeyCacheKeys(final String paramUser) {
 
-        final Set<Long> keySet = mKeyManagerDb.getEntry(paramUser).getKeySet();
+        final Set<Long> keySet =
+            EncryptionController.getInstance().getManDb().getEntry(paramUser).getKeySet();
 
         final LinkedList<Long> keyList = new LinkedList<Long>();
         final Iterator<Long> mIter = keySet.iterator();
@@ -131,7 +109,7 @@ public class ClientHandler {
             keyList.add(mIter.next());
         }
 
-        mKeyCache.put(paramUser, keyList);
+        EncryptionController.getInstance().getKeyCache().put(paramUser, keyList);
 
     }
 

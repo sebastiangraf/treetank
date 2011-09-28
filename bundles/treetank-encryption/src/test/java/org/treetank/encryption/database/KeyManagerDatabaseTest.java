@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.SortedMap;
 
-import org.treetank.EncryptionHelper;
+import org.treetank.encrpytion.exception.TTEncryptionException;
+import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.database.model.KeyManager;
 
 import org.junit.Test;
@@ -18,10 +19,9 @@ public class KeyManagerDatabaseTest {
         .append(File.separator).append("keymanagerdb").toString());
 
     @Test
-    public void testFunctions() {
+    public void testFunctions() throws TTEncryptionException {
 
-        final EncryptionHelper helper = new EncryptionHelper();
-        helper.delete(MAN_STORE);
+        EncryptionController.getInstance().clear();
 
         final KeyManagerDatabase mKeyManagerDb =
             new KeyManagerDatabase(MAN_STORE);
