@@ -100,11 +100,6 @@
 			<version>1.6.10</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sleepycat</groupId>
-			<artifactId>je</artifactId>
-			<version>4.1.10</version>
-		</dependency>
-		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>encryption</artifactId>
 			<version>0.0.1-SNAPSHOT</version>

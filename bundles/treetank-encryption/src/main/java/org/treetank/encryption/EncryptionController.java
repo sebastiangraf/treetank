@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
 import org.treetank.encryption.cache.KeyCache;
 import org.treetank.encryption.database.CurrentDAGDatabase;
 import org.treetank.encryption.database.KeyManagerDatabase;
@@ -17,6 +16,8 @@ import org.treetank.encryption.database.model.DAGSelector;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.NodeEncryption;
+import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTEncryptionException;
 
 public class EncryptionController implements IEncryption{
 

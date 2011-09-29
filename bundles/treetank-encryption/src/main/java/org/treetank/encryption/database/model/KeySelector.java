@@ -28,10 +28,10 @@ package org.treetank.encryption.database.model;
 
 import java.util.LinkedList;
 
+import org.treetank.encryption.EncryptionController;
+
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
-
-import org.treetank.encryption.EncryptionController;
 
 /**
  * This class represents the key selector model holding all data

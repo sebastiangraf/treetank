@@ -19,6 +19,9 @@ package org.treetank.encryption.database;
 import java.io.File;
 import java.util.SortedMap;
 
+import org.treetank.encryption.database.model.KeyManager;
+import org.treetank.exception.TTEncryptionException;
+
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -26,9 +29,6 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
-
-import org.treetank.encrpytion.exception.TTEncryptionException;
-import org.treetank.encryption.database.model.KeyManager;
 
 /**
  * Berkeley implementation of a persistent key manager database. That

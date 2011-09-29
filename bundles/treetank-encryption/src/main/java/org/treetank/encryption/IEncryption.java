@@ -26,7 +26,7 @@
  */
 package org.treetank.encryption;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
+import org.treetank.exception.TTEncryptionException;
 
 /**
  * Interface to access encryption controller methods.
