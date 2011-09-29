@@ -71,6 +71,7 @@
 		<module>bundles/treetank-saxon</module>
         <module>bundles/treetank-eclipse</module>
         <module>bundles/treetank-encryption</module>
+        <module>bundles/treetank-commons</module>
 	</modules>
 <repositories>
 <repository>

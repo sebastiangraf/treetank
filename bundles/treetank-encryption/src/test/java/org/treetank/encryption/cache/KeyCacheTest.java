@@ -1,5 +1,7 @@
 package org.treetank.encryption.cache;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,8 +10,6 @@ import java.util.Map.Entry;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class KeyCacheTest {
 

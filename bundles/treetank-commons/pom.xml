@@ -30,33 +30,10 @@
 		<version>1.0.5-SNAPSHOT</version>
 	</parent>
 
-	<groupId>treetank</groupId>
-	<artifactId>encryption</artifactId>
+	<artifactId>commons</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>treetank-encryption</name>
+	<name>treetank-commons</name>
 	<packaging>jar</packaging>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-
-
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 
 	<repositories>
 		<repository>

@@ -1,9 +1,8 @@
 package org.treetank.encryption;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
-
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.exception.TTEncryptionException;
 
 public class EncryptionFactoryTest {
 

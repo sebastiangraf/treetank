@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 import com.sleepycat.je.UniqueConstraintException;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
+import org.treetank.exception.TTEncryptionException;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.EncryptionOperator;
 

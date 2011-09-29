@@ -1,14 +1,13 @@
 package org.treetank.encryption.database.model;
 
-import java.util.LinkedList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.treetank.encryption.utils.NodeEncryption;
+import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.treetank.encryption.utils.NodeEncryption;
 
 public class DAGSelectorTest {
 

@@ -1,16 +1,15 @@
 package org.treetank.encryption.database;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.SortedMap;
 
-import org.treetank.encrpytion.exception.TTEncryptionException;
+import org.junit.Test;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.database.model.KeyManager;
-
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.treetank.exception.TTEncryptionException;
 
 public class KeyManagerDatabaseTest {
 

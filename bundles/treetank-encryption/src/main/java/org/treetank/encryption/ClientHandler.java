@@ -31,10 +31,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import org.treetank.encryption.cache.KeyCache;
-import org.treetank.encryption.EncryptionController;
-import org.treetank.encryption.database.KeyManagerDatabase;
-import org.treetank.encryption.database.KeySelectorDatabase;
 import org.treetank.encryption.utils.NodeEncryption;
 
 /**

@@ -26,9 +26,9 @@
  */
 package org.treetank.encryption.utils;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * JUnit-test class to test the functionality of the NodeEncryption methods.
