@@ -120,8 +120,7 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             primaryIndex =
 
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
-                    String.class, KeyManager.class);
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
 
             primaryIndex.put(paramEntity);
 
@@ -145,8 +144,7 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             primaryIndex =
 
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
-                    String.class, KeyManager.class);
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
 
             entity = (KeyManager)primaryIndex.get(paramKey);
 
@@ -169,8 +167,7 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         boolean status = false;
         try {
             primaryIndex =
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
-                    String.class, KeyManager.class);
+                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
             status = primaryIndex.delete(paramKey);
 
         } catch (final DatabaseException mDbExp) {
@@ -192,8 +189,7 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             primaryIndex =
 
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
-                    String.class, KeyManager.class);
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
 
             counter = primaryIndex.count();
 
@@ -215,8 +211,7 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
         try {
             primaryIndex =
 
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(
-                    String.class, KeyManager.class);
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
 
             sMap = primaryIndex.sortedMap();
 
@@ -224,6 +219,31 @@ public class KeyManagerDatabase extends AbsKeyDatabase {
             mDbExp.printStackTrace();
         }
         return sMap;
+    }
+
+    /**
+     * Checking whether user is contained into the database.
+     * 
+     * @param key
+     *            user name.
+     * @return
+     *         containing user or not.
+     * 
+     */
+    public final boolean containsEntry(final String key) {
+        PrimaryIndex<String, KeyManager> primaryIndex;
+        try {
+            primaryIndex =
+
+            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+
+            return primaryIndex.contains(key);
+
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return false;
+
     }
 
 }
