@@ -50,7 +50,8 @@ import org.treetank.exception.TTEncryptionException;
  */
 public class EncryptionOperator {
 
-    final LinkedList<Long> idsChanged = new LinkedList<Long>();
+	/** Marker for changed IDs.*/
+    private final LinkedList<Long> idsChanged = new LinkedList<Long>();
 
     /**
      * Adds nodes to the DAG.
