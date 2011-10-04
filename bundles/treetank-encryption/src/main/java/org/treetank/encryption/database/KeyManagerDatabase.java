@@ -22,228 +22,181 @@ import java.util.SortedMap;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.exception.TTEncryptionException;
 
-import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
-import com.sleepycat.persist.StoreConfig;
 
 /**
- * Berkeley implementation of a persistent key manager database. That
- * means that all data is stored in this database and it is never removed.
+ * Berkeley implementation of a persistent key manager database. That means that
+ * all data is stored in this database and it is never removed.
  * 
  * @author Patrick Lang, University of Konstanz
  */
-public class KeyManagerDatabase extends AbsKeyDatabase {
+public class KeyManagerDatabase {
 
-    /**
-     * Berkeley Environment for the database.
-     */
-    private Environment mEnv;
+	/**
+	 * Name for the database.
+	 */
+	private static final String NAME = "berkeleyKeyManager";
 
-    /**
-     * Berkeley Entity store instance for the database.
-     */
-    private EntityStore mStore;
+	/**
+	 * DB-Util for summarizing common access.
+	 */
+	private final DatabaseUtil mUtil;
 
-    /**
-     * Name for the database.
-     */
-    private static final String NAME = "berkeleyKeyManager";
+	/**
+	 * Constructor. Building up the berkeley db and setting necessary settings.
+	 * 
+	 * @param paramFile
+	 *            the place where the berkeley db is stored.
+	 */
+	public KeyManagerDatabase(final File paramFile) {
+		mUtil = new DatabaseUtil(paramFile, NAME);
+	}
 
-    /**
-     * Constructor. Building up the berkeley db and setting necessary settings.
-     * 
-     * @param paramFile
-     *            the place where the berkeley db is stored.
-     */
-    public KeyManagerDatabase(final File paramFile) {
-        super(paramFile);
-        EnvironmentConfig environmentConfig = new EnvironmentConfig();
-        environmentConfig.setAllowCreate(true);
-        environmentConfig.setTransactional(true);
+	/**
+	 * Clearing the database. That is removing all elements
+	 * 
+	 * @throws TTEncryptionException
+	 */
+	public final void clearPersistent() throws TTEncryptionException {
+		mUtil.clearPersistent();
+	}
 
-        final DatabaseConfig conf = new DatabaseConfig();
-        conf.setTransactional(true);
-        conf.setKeyPrefixing(true);
+	/**
+	 * Putting a {@link KeyManager} into the database with a corresponding user.
+	 * 
+	 * @param paramEntity
+	 *            key manager instance to get information for storage.
+	 */
+	public final void putEntry(final KeyManager paramEntity) {
+		PrimaryIndex<String, KeyManager> primaryIndex;
+		try {
+			primaryIndex =
 
-        try {
-            mEnv = new Environment(place, environmentConfig);
+			(PrimaryIndex<String, KeyManager>) mUtil.mStore.getPrimaryIndex(
+					String.class, KeyManager.class);
 
-            StoreConfig storeConfig = new StoreConfig();
-            storeConfig.setAllowCreate(true);
-            storeConfig.setTransactional(true);
-            mStore = new EntityStore(mEnv, NAME, storeConfig);
+			primaryIndex.put(paramEntity);
 
-        } catch (final Exception mELExp) {
-            mELExp.printStackTrace();
-        }
-    }
+		} catch (final DatabaseException mDbExp) {
+			mDbExp.printStackTrace();
+		}
 
-    /**
-     * Clearing the database. That is removing all elements
-     */
-    public final void clearPersistent() {
-        try {
-            for (final File file : place.listFiles()) {
-                if (!file.delete()) {
-                    throw new TTEncryptionException("Couldn't delete!");
-                }
-            }
-            if (!place.delete()) {
-                throw new TTEncryptionException("Couldn't delete!");
-            }
+	}
 
-            if (mStore != null) {
-                mStore.close();
-            }
-            if (mEnv != null) {
-                mEnv.close();
-            }
-        } catch (final TTEncryptionException mDbExp) {
-            mDbExp.printStackTrace();
-        }
+	/**
+	 * Getting a {@link KeyManager} related to a given user.
+	 * 
+	 * @param paramUser
+	 *            user for getting related key manager.
+	 * @return key manager instance.
+	 */
+	public final KeyManager getEntry(final String paramKey) {
+		PrimaryIndex<String, KeyManager> primaryIndex;
+		KeyManager entity = null;
+		try {
+			primaryIndex =
 
-    }
+			(PrimaryIndex<String, KeyManager>) mUtil.mStore.getPrimaryIndex(
+					String.class, KeyManager.class);
 
-    /**
-     * Putting a {@link KeyManager} into the database with a corresponding
-     * user.
-     * 
-     * @param paramEntity
-     *            key manager instance to get information for storage.
-     */
-    public final void putEntry(final KeyManager paramEntity) {
-        PrimaryIndex<String, KeyManager> primaryIndex;
-        try {
-            primaryIndex =
+			entity = (KeyManager) primaryIndex.get(paramKey);
 
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+		} catch (final DatabaseException mDbExp) {
+			mDbExp.printStackTrace();
+		}
+		return entity;
+	}
 
-            primaryIndex.put(paramEntity);
+	/**
+	 * Deletes an entry from storage.
+	 * 
+	 * @param paramKey
+	 *            primary key of entry to delete.
+	 * @return status whether deletion was successful or not.
+	 */
+	public final boolean deleteEntry(final String paramKey) {
+		PrimaryIndex<String, KeyManager> primaryIndex;
+		boolean status = false;
+		try {
+			primaryIndex = (PrimaryIndex<String, KeyManager>) mUtil.mStore
+					.getPrimaryIndex(String.class, KeyManager.class);
+			status = primaryIndex.delete(paramKey);
 
-        } catch (final DatabaseException mDbExp) {
-            mDbExp.printStackTrace();
-        }
+		} catch (final DatabaseException mDbExp) {
+			mDbExp.printStackTrace();
+		}
 
-    }
+		return status;
+	}
 
-    /**
-     * Getting a {@link KeyManager} related to a given user.
-     * 
-     * @param paramUser
-     *            user for getting related key manager.
-     * @return
-     *         key manager instance.
-     */
-    public final KeyManager getEntry(final String paramKey) {
-        PrimaryIndex<String, KeyManager> primaryIndex;
-        KeyManager entity = null;
-        try {
-            primaryIndex =
+	/**
+	 * Returns number of database entries.
+	 * 
+	 * @return number of entries in database.
+	 */
+	public final int count() {
+		PrimaryIndex<String, KeyManager> primaryIndex;
+		long counter = 0;
+		try {
+			primaryIndex =
 
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+			(PrimaryIndex<String, KeyManager>) mUtil.mStore.getPrimaryIndex(
+					String.class, KeyManager.class);
 
-            entity = (KeyManager)primaryIndex.get(paramKey);
+			counter = primaryIndex.count();
 
-        } catch (final DatabaseException mDbExp) {
-            mDbExp.printStackTrace();
-        }
-        return entity;
-    }
+		} catch (final DatabaseException mDbExp) {
+			mDbExp.printStackTrace();
+		}
+		return (int) counter;
+	}
 
-    /**
-     * Deletes an entry from storage.
-     * 
-     * @param paramKey
-     *            primary key of entry to delete.
-     * @return
-     *         status whether deletion was successful or not.
-     */
-    public final boolean deleteEntry(final String paramKey) {
-        PrimaryIndex<String, KeyManager> primaryIndex;
-        boolean status = false;
-        try {
-            primaryIndex =
-                (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
-            status = primaryIndex.delete(paramKey);
+	/**
+	 * Returns all database entries as {@link SortedMap}.
+	 * 
+	 * @return all database entries.
+	 */
+	public final SortedMap<String, KeyManager> getEntries() {
+		PrimaryIndex<String, KeyManager> primaryIndex;
+		SortedMap<String, KeyManager> sMap = null;
+		try {
+			primaryIndex =
 
-        } catch (final DatabaseException mDbExp) {
-            mDbExp.printStackTrace();
-        }
+			(PrimaryIndex<String, KeyManager>) mUtil.mStore.getPrimaryIndex(
+					String.class, KeyManager.class);
 
-        return status;
-    }
+			sMap = primaryIndex.sortedMap();
 
-    /**
-     * Returns number of database entries.
-     * 
-     * @return
-     *         number of entries in database.
-     */
-    public final int count() {
-        PrimaryIndex<String, KeyManager> primaryIndex;
-        long counter = 0;
-        try {
-            primaryIndex =
+		} catch (final DatabaseException mDbExp) {
+			mDbExp.printStackTrace();
+		}
+		return sMap;
+	}
 
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
+	/**
+	 * Checking whether user is contained into the database.
+	 * 
+	 * @param key
+	 *            user name.
+	 * @return containing user or not.
+	 * 
+	 */
+	public final boolean containsEntry(final String key) {
+		PrimaryIndex<String, KeyManager> primaryIndex;
+		try {
+			primaryIndex =
 
-            counter = primaryIndex.count();
+			(PrimaryIndex<String, KeyManager>) mUtil.mStore.getPrimaryIndex(
+					String.class, KeyManager.class);
 
-        } catch (final DatabaseException mDbExp) {
-            mDbExp.printStackTrace();
-        }
-        return (int)counter;
-    }
+			return primaryIndex.contains(key);
 
-    /**
-     * Returns all database entries as {@link SortedMap}.
-     * 
-     * @return
-     *         all database entries.
-     */
-    public final SortedMap<String, KeyManager> getEntries() {
-        PrimaryIndex<String, KeyManager> primaryIndex;
-        SortedMap<String, KeyManager> sMap = null;
-        try {
-            primaryIndex =
+		} catch (final DatabaseException mDbExp) {
+			mDbExp.printStackTrace();
+		}
+		return false;
 
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
-
-            sMap = primaryIndex.sortedMap();
-
-        } catch (final DatabaseException mDbExp) {
-            mDbExp.printStackTrace();
-        }
-        return sMap;
-    }
-
-    /**
-     * Checking whether user is contained into the database.
-     * 
-     * @param key
-     *            user name.
-     * @return
-     *         containing user or not.
-     * 
-     */
-    public final boolean containsEntry(final String key) {
-        PrimaryIndex<String, KeyManager> primaryIndex;
-        try {
-            primaryIndex =
-
-            (PrimaryIndex<String, KeyManager>)mStore.getPrimaryIndex(String.class, KeyManager.class);
-
-            return primaryIndex.contains(key);
-
-        } catch (final DatabaseException mDbExp) {
-            mDbExp.printStackTrace();
-        }
-        return false;
-
-    }
+	}
 
 }
