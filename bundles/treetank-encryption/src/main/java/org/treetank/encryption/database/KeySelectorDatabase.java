@@ -43,112 +43,112 @@ import com.sleepycat.persist.PrimaryIndex;
  */
 public class KeySelectorDatabase {
 
-	/**
-	 * Name for the database.
-	 */
-	private static final String NAME = "berkeleyKeySelector";
+    /**
+     * Name for the database.
+     */
+    private static final String NAME = "berkeleyKeySelector";
 
-	/**
-	 * DB-Util for summarizing common access.
-	 */
-	private final DatabaseUtil mUtil;
+    /**
+     * DB-Util for summarizing common access.
+     */
+    private final DatabaseUtil mUtil;
 
-	/**
-	 * Constructor. Building up the berkeley db and setting necessary settings.
-	 * 
-	 * @param paramFile
-	 *            the place where the berkeley db is stored.
-	 */
-	public KeySelectorDatabase(final File paramFile) {
-		mUtil = new DatabaseUtil(paramFile, NAME);
-	}
+    /**
+     * Constructor. Building up the berkeley db and setting necessary settings.
+     * 
+     * @param paramFile
+     *            the place where the berkeley db is stored.
+     */
+    public KeySelectorDatabase(final File paramFile) {
+        mUtil = new DatabaseUtil(paramFile, NAME);
+    }
 
-	/**
-	 * Clearing the database. That is removing all elements
-	 * 
-	 * @throws TTEncryptionException
-	 */
-	public final void clearPersistent() throws TTEncryptionException {
-		mUtil.clearPersistent();
-	}
+    /**
+     * Clearing the database. That is removing all elements
+     * 
+     * @throws TTEncryptionException
+     */
+    public final void clearPersistent() throws TTEncryptionException {
+        mUtil.clearPersistent();
+    }
 
-	/**
-	 * Putting a {@link KeySelector} into the database with a corresponding
-	 * selector key.
-	 * 
-	 * @param paramEntity
-	 *            key selector instance to put into database.
-	 */
-	public final void putEntry(final KeySelector paramEntity) {
-		PrimaryIndex<Long, KeySelector> primaryIndex;
-		try {
-			primaryIndex = (PrimaryIndex<Long, KeySelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, KeySelector.class);
+    /**
+     * Putting a {@link KeySelector} into the database with a corresponding
+     * selector key.
+     * 
+     * @param paramEntity
+     *            key selector instance to put into database.
+     */
+    public final void putEntry(final KeySelector paramEntity) {
+        PrimaryIndex<Long, KeySelector> primaryIndex;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, KeySelector>)mUtil.mStore.getPrimaryIndex(Long.class, KeySelector.class);
 
-			primaryIndex.put(paramEntity);
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-		}
+            primaryIndex.put(paramEntity);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	/**
-	 * Getting a {@link KeyingSelector} related to a given selector key.
-	 * 
-	 * @param paramKey
-	 *            selector key for related key selector instance.
-	 * @return key selector instance.
-	 */
-	public final KeySelector getEntry(final long paramKey) {
-		PrimaryIndex<Long, KeySelector> primaryIndex;
-		KeySelector entity = null;
-		try {
-			primaryIndex = (PrimaryIndex<Long, KeySelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, KeySelector.class);
-			entity = (KeySelector) primaryIndex.get(paramKey);
+    /**
+     * Getting a {@link KeyingSelector} related to a given selector key.
+     * 
+     * @param paramKey
+     *            selector key for related key selector instance.
+     * @return key selector instance.
+     */
+    public final KeySelector getEntry(final long paramKey) {
+        PrimaryIndex<Long, KeySelector> primaryIndex;
+        KeySelector entity = null;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, KeySelector>)mUtil.mStore.getPrimaryIndex(Long.class, KeySelector.class);
+            entity = (KeySelector)primaryIndex.get(paramKey);
 
-		} catch (final DatabaseException mDbExp) {
-			mDbExp.printStackTrace();
-		}
-		return entity;
-	}
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return entity;
+    }
 
-	/**
-	 * Returns number of database entries.
-	 * 
-	 * @return number of entries in database.
-	 */
-	public final int count() {
-		PrimaryIndex<Long, KeySelector> primaryIndex;
-		long counter = 0;
-		try {
-			primaryIndex = (PrimaryIndex<Long, KeySelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, KeySelector.class);
-			counter = primaryIndex.count();
+    /**
+     * Returns number of database entries.
+     * 
+     * @return number of entries in database.
+     */
+    public final int count() {
+        PrimaryIndex<Long, KeySelector> primaryIndex;
+        long counter = 0;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, KeySelector>)mUtil.mStore.getPrimaryIndex(Long.class, KeySelector.class);
+            counter = primaryIndex.count();
 
-		} catch (final DatabaseException mDbExp) {
-			mDbExp.printStackTrace();
-		}
-		return (int) counter;
-	}
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return (int)counter;
+    }
 
-	/**
-	 * Returns all database entries as {@link SortedMap}.
-	 * 
-	 * @return all database entries.
-	 */
-	public final SortedMap<Long, KeySelector> getEntries() {
-		PrimaryIndex<Long, KeySelector> primaryIndex;
-		SortedMap<Long, KeySelector> sMap = null;
-		try {
-			primaryIndex = (PrimaryIndex<Long, KeySelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, KeySelector.class);
-			sMap = primaryIndex.sortedMap();
+    /**
+     * Returns all database entries as {@link SortedMap}.
+     * 
+     * @return all database entries.
+     */
+    public final SortedMap<Long, KeySelector> getEntries() {
+        PrimaryIndex<Long, KeySelector> primaryIndex;
+        SortedMap<Long, KeySelector> sMap = null;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, KeySelector>)mUtil.mStore.getPrimaryIndex(Long.class, KeySelector.class);
+            sMap = primaryIndex.sortedMap();
 
-		} catch (final DatabaseException mDbExp) {
-			mDbExp.printStackTrace();
-		}
-		return sMap;
-	}
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return sMap;
+    }
 
 }

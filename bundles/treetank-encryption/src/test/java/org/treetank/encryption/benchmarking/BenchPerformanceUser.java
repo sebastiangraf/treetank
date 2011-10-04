@@ -86,36 +86,37 @@ public class BenchPerformanceUser {
                     String user = newGroups[newGroups.length - 1];
                     String group = newGroups[newGroups.length - 2];
 
-                    //if (!op.userExists(user)) { //check not further necessary, after building a unique user data set
-                        userCounter++;
-                        if (op.nodeExists(group)) {
-                            op.join(group, new String[] {
-                                user
-                            });
-                            joinOps++;
-                        } else { // if user and group does not exist, check which groups of hierarchy exists,
-                                 // create it and add user.
-                            LinkedList<String> groupList = new LinkedList<String>();
-                            String parent = "ROOT";
-                            for (int i = 0; i < newGroups.length - 1; i++) {
-                                if (!op.nodeExists(newGroups[i])) {
-                                    groupList.add(newGroups[i]);
-                                } else {
-                                    parent = newGroups[i];
-                                }
-                                groupList.add(newGroups[newGroups.length - 1]);
-                            }
-
-                            if (groupList.size() == newGroups.length) {
-                                op.join("ROOT", newGroups);
-                                joinOps++;
+                    // if (!op.userExists(user)) { //check not further necessary, after building a unique user
+                    // data set
+                    userCounter++;
+                    if (op.nodeExists(group)) {
+                        op.join(group, new String[] {
+                            user
+                        });
+                        joinOps++;
+                    } else { // if user and group does not exist, check which groups of hierarchy exists,
+                             // create it and add user.
+                        LinkedList<String> groupList = new LinkedList<String>();
+                        String parent = "ROOT";
+                        for (int i = 0; i < newGroups.length - 1; i++) {
+                            if (!op.nodeExists(newGroups[i])) {
+                                groupList.add(newGroups[i]);
                             } else {
-                                if (groupList.size() > 1) {
-                                    op.join(parent, groupList.toArray(new String[0]));
-                                    joinOps++;
-                                }
+                                parent = newGroups[i];
                             }
-                        //}
+                            groupList.add(newGroups[newGroups.length - 1]);
+                        }
+
+                        if (groupList.size() == newGroups.length) {
+                            op.join("ROOT", newGroups);
+                            joinOps++;
+                        } else {
+                            if (groupList.size() > 1) {
+                                op.join(parent, groupList.toArray(new String[0]));
+                                joinOps++;
+                            }
+                        }
+                        // }
 
                     }
                 }

@@ -52,7 +52,8 @@ public class ClientHandler {
         // from DAG and all keys for user has to be removed.
         if (paramKeyTails.size() != 0) {
 
-            if (EncryptionController.getInstance().getKeyCache().get(EncryptionController.getInstance().getUser()) == null) {
+            if (EncryptionController.getInstance().getKeyCache().get(
+                EncryptionController.getInstance().getUser()) == null) {
                 initKeyCacheKeys(EncryptionController.getInstance().getUser());
             }
 
@@ -61,26 +62,20 @@ public class ClientHandler {
                 long mapKey = (Long)mIter.next();
 
                 byte[] mChildSecretKey =
-                    EncryptionController.getInstance().getDAGDb().getEntry(mapKey)
-                        .getSecretKey();
-                
-                byte[] mDecryptedBytes =
-                    NodeEncryption.decrypt(paramKeyTails.get(mapKey),
-                        mChildSecretKey);
+                    EncryptionController.getInstance().getDAGDb().getEntry(mapKey).getSecretKey();
 
-                long mEncryptedKey =
-                    NodeEncryption.byteArrayToLong(mDecryptedBytes);
+                byte[] mDecryptedBytes = NodeEncryption.decrypt(paramKeyTails.get(mapKey), mChildSecretKey);
+
+                long mEncryptedKey = NodeEncryption.byteArrayToLong(mDecryptedBytes);
 
                 final LinkedList<Long> mUserCache =
                     EncryptionController.getInstance().getKeyCache().get(
                         EncryptionController.getInstance().getUser());
-                
 
                 if (!mUserCache.contains(mEncryptedKey)) {
                     mUserCache.add(mEncryptedKey);
                 }
-                
-                
+
                 EncryptionController.getInstance().getKeyCache().put(
                     EncryptionController.getInstance().getUser(), mUserCache);
             }

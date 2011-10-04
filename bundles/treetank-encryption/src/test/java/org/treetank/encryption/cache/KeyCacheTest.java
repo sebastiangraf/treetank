@@ -70,8 +70,7 @@ public class KeyCacheTest {
             1, 2, 3, 4
         };
 
-        final Collection<Map.Entry<String, LinkedList<Long>>> map =
-            cache.getAll();
+        final Collection<Map.Entry<String, LinkedList<Long>>> map = cache.getAll();
 
         final Iterator<Entry<String, LinkedList<Long>>> iter = map.iterator();
 

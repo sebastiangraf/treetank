@@ -22,7 +22,7 @@ public class BenchPerformanceDataset {
     private static int dataCounter = 0;
 
     private static int dataRuns = 10000;
-    
+
     private static long time = 0;
 
     public static void main(String[] args) {
@@ -64,7 +64,7 @@ public class BenchPerformanceDataset {
             while (((line = in.readLine()) != null && dataCounter < dataRuns)) {
                 op = new EncryptionOperator();
                 dataCounter++;
-                
+
                 if (dataCounter % 1000 == 0) {
                     System.out.println(dataCounter);
                     System.out.println("Time needed: " + (System.currentTimeMillis() - time) + "ms");
