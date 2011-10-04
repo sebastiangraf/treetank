@@ -24,7 +24,7 @@ public class UniqueUserExtractor {
         + File.separator + "testdata.txt";
 
     private static final String OUTFILE = "src" + File.separator + "test" + File.separator + "resources"
-    + File.separator + "testdataUser.txt";
+        + File.separator + "testdataUser.txt";
 
     public static void main(String[] args) {
         System.out.println("Started...");

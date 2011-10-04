@@ -30,10 +30,9 @@ public class BenchUpdateOnDAG {
     private final static int userTotal = 8010;
     private final static String userToDelete = "8A6AEDB9BB95C043DBAB58F091A04032";
     private final static String groupOfUser = "11508";
-    
+
     private static long time = 0;
-    
-    
+
     private final static LinkedList<Integer> benchPos = new LinkedList<Integer>();
 
     public static void main(String[] args) {
@@ -101,9 +100,12 @@ public class BenchUpdateOnDAG {
 
                     // EncryptionController.getInstance().print();
 
-                    //String userDelete = EncryptionController.getInstance().getManDb().getEntries().lastKey();
+                    // String userDelete =
+                    // EncryptionController.getInstance().getManDb().getEntries().lastKey();
 
-                    op.leave(userToDelete, new String[] {groupOfUser});
+                    op.leave(userToDelete, new String[] {
+                        groupOfUser
+                    });
 
                     long timeNeeded = System.currentTimeMillis() - benchTime;
 
@@ -111,24 +113,27 @@ public class BenchUpdateOnDAG {
                     System.out.println("Time needed Leave: " + timeNeeded + " ms");
                     System.out.println("Nodes affected: " + op.getAffectedNodes().size());
                     System.out.println("DAG Size: " + EncryptionController.getInstance().getDAGDb().count());
-                    System.out.println("DAG Revisions Size: " + new EncryptionController().getSelDb().count());
+                    System.out
+                        .println("DAG Revisions Size: " + new EncryptionController().getSelDb().count());
                     System.out.println("Key Manager Size: " + new EncryptionController().getManDb().count());
-                    System.out.println("Total Time: " + (System.currentTimeMillis()- time));
-                    System.out.println("Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+                    System.out.println("Total Time: " + (System.currentTimeMillis() - time));
+                    System.out.println("Memory Usage: "
+                        + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
                     System.out.println("");
-                    
-//                    EncryptionController.getInstance().print();
+
+                    // EncryptionController.getInstance().print();
 
                     benchTime = System.currentTimeMillis();
                     ;
-                    
-                    op.join(groupOfUser, new String[]{userToDelete});
-                    
+
+                    op.join(groupOfUser, new String[] {
+                        userToDelete
+                    });
+
                     timeNeeded = System.currentTimeMillis() - benchTime;
                     System.out.println("Time needed Join: " + timeNeeded + " ms");
-                    
+
                     userCounter++;
-                    
 
                 } else {
 

@@ -92,8 +92,7 @@ public class KeySelector {
      *            node name.
      */
     public KeySelector(final String paramName, final LinkedList<Long> paramPar,
-        final LinkedList<Long> paramChild, final int paramRev,
-        final int paramVer, byte[] mSecretKey) {
+        final LinkedList<Long> paramChild, final int paramRev, final int paramVer, byte[] mSecretKey) {
         this.mSelectorKey = EncryptionController.getInstance().newSelectorKey();
 
         this.mName = paramName;

@@ -45,12 +45,12 @@ public class DAGSelector {
      * Last revision in key selector.
      */
     private long mLastRevSelectorKey;
-    
+
     /**
      * Secret key using for data en-/decryption.
      */
     private byte[] mSecretKey;
-    
+
     /**
      * Standard constructor.
      */
@@ -65,8 +65,7 @@ public class DAGSelector {
      *            node name.
      */
     public DAGSelector(final String paramName, final LinkedList<Long> paramPar,
-        final LinkedList<Long> paramChild, final int paramRev,
-        final int paramVer, byte[] mSecretKey) {
+        final LinkedList<Long> paramChild, final int paramRev, final int paramVer, byte[] mSecretKey) {
         this.mDAGKey = EncryptionController.getInstance().newDAGKey();
 
         this.mName = paramName;
@@ -200,7 +199,7 @@ public class DAGSelector {
     public final void increaseVersion() {
         this.mVersion += 1;
     }
-    
+
     /**
      * Returns secret key.
      * 
@@ -210,7 +209,7 @@ public class DAGSelector {
     public final byte[] getSecretKey() {
         return mSecretKey;
     }
-    
+
     /**
      * Sets secret key.
      * 
@@ -220,12 +219,12 @@ public class DAGSelector {
     public final void setSecretKey(final byte[] mSecretKey) {
         this.mSecretKey = mSecretKey;
     }
-    
-    public final void setRevSelKey(final long mSelKey){
+
+    public final void setRevSelKey(final long mSelKey) {
         this.mLastRevSelectorKey = mSelKey;
     }
-    
-    public final long getLastRevSelKey(){
+
+    public final long getLastRevSelKey() {
         return mLastRevSelectorKey;
     }
 }

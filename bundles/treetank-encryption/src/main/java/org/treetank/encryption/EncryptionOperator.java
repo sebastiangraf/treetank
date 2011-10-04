@@ -50,7 +50,7 @@ import org.treetank.exception.TTEncryptionException;
  */
 public class EncryptionOperator {
 
-	/** Marker for changed IDs.*/
+    /** Marker for changed IDs. */
     private final LinkedList<Long> idsChanged = new LinkedList<Long>();
 
     /**

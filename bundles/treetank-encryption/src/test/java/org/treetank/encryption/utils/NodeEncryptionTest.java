@@ -44,11 +44,9 @@ public class NodeEncryptionTest {
 
         final byte[] mSecretKey = NodeEncryption.generateSecretKey();
 
-        final byte[] mEncryptedBytes =
-            NodeEncryption.encrypt(mStringAsByteArray, mSecretKey);
+        final byte[] mEncryptedBytes = NodeEncryption.encrypt(mStringAsByteArray, mSecretKey);
 
-        final byte[] mDecryptedBytes =
-            NodeEncryption.decrypt(mEncryptedBytes, mSecretKey);
+        final byte[] mDecryptedBytes = NodeEncryption.decrypt(mEncryptedBytes, mSecretKey);
 
         final String mDecryptedString = new String(mDecryptedBytes);
 
@@ -60,11 +58,9 @@ public class NodeEncryptionTest {
     public void testLongByteConversion() {
         final long mOrginialLong = 1000000;
 
-        final byte[] mLongAsByteArray =
-            NodeEncryption.longToByteArray(mOrginialLong);
+        final byte[] mLongAsByteArray = NodeEncryption.longToByteArray(mOrginialLong);
 
-        final long mByteArrayAsLong =
-            NodeEncryption.byteArrayToLong(mLongAsByteArray);
+        final long mByteArrayAsLong = NodeEncryption.byteArrayToLong(mLongAsByteArray);
 
         assertEquals(mOrginialLong, mByteArrayAsLong);
 
@@ -74,11 +70,9 @@ public class NodeEncryptionTest {
     public void testIntByteConversion() {
         final int mOrginialInt = 1000;
 
-        final byte[] mIntAsByteArray =
-            NodeEncryption.intToByteArray(mOrginialInt);
+        final byte[] mIntAsByteArray = NodeEncryption.intToByteArray(mOrginialInt);
 
-        final int mByteArrayAsInt =
-            NodeEncryption.byteArrayToInt(mIntAsByteArray);
+        final int mByteArrayAsInt = NodeEncryption.byteArrayToInt(mIntAsByteArray);
 
         assertEquals(mOrginialInt, mByteArrayAsInt);
 

@@ -13,17 +13,15 @@ import org.treetank.exception.TTEncryptionException;
 
 public class KeyManagerDatabaseTest {
 
-    private static final File MAN_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("keymanagerdb").toString());
+    private static final File MAN_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("keymanagerdb").toString());
 
     @Test
     public void testFunctions() throws TTEncryptionException {
 
         EncryptionController.getInstance().clear();
 
-        final KeyManagerDatabase mKeyManagerDb =
-            new KeyManagerDatabase(MAN_STORE);
+        final KeyManagerDatabase mKeyManagerDb = new KeyManagerDatabase(MAN_STORE);
 
         final KeyManager man1 = new KeyManager("User1", new HashSet<Long>());
         final KeyManager man2 = new KeyManager("User2", new HashSet<Long>());
@@ -46,10 +44,8 @@ public class KeyManagerDatabaseTest {
 
         // get entries as sorted map
         final SortedMap<String, KeyManager> map = mKeyManagerDb.getEntries();
-        assertEquals(map.get("User2").getUser(), mKeyManagerDb
-            .getEntry("User2").getUser());
-        assertEquals(map.get("User3").getUser(), mKeyManagerDb
-            .getEntry("User3").getUser());
+        assertEquals(map.get("User2").getUser(), mKeyManagerDb.getEntry("User2").getUser());
+        assertEquals(map.get("User3").getUser(), mKeyManagerDb.getEntry("User3").getUser());
 
         mKeyManagerDb.clearPersistent();
 

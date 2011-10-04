@@ -19,8 +19,8 @@ public class KeySelectorTest {
         parents.add(1L);
         final LinkedList<Long> childs = new LinkedList<Long>();
         childs.add(2L);
-        
-        final byte [] mSecret = NodeEncryption.generateSecretKey();
+
+        final byte[] mSecret = NodeEncryption.generateSecretKey();
 
         testSelector = new KeySelector("aName", parents, childs, 0, 0, mSecret);
 

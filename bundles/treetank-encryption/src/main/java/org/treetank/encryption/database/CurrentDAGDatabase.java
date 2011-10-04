@@ -43,149 +43,149 @@ import com.sleepycat.persist.PrimaryIndex;
  */
 public class CurrentDAGDatabase {
 
-	/**
-	 * Name for the database.
-	 */
-	private static final String NAME = "berkeleyDAGSelector";
+    /**
+     * Name for the database.
+     */
+    private static final String NAME = "berkeleyDAGSelector";
 
-	/**
-	 * DB-Util for summarizing common access.
-	 */
-	private final DatabaseUtil mUtil;
+    /**
+     * DB-Util for summarizing common access.
+     */
+    private final DatabaseUtil mUtil;
 
-	/**
-	 * Constructor. Building up the berkeley db and setting necessary settings.
-	 * 
-	 * @param paramFile
-	 *            the place where the berkeley db is stored.
-	 */
-	public CurrentDAGDatabase(final File paramFile) {
-		mUtil = new DatabaseUtil(paramFile, NAME);
-	}
+    /**
+     * Constructor. Building up the berkeley db and setting necessary settings.
+     * 
+     * @param paramFile
+     *            the place where the berkeley db is stored.
+     */
+    public CurrentDAGDatabase(final File paramFile) {
+        mUtil = new DatabaseUtil(paramFile, NAME);
+    }
 
-	/**
-	 * Clearing the database. That is removing all elements
-	 * 
-	 * @throws TTEncryptionException
-	 */
-	public final void clearPersistent() throws TTEncryptionException {
-		mUtil.clearPersistent();
-	}
+    /**
+     * Clearing the database. That is removing all elements
+     * 
+     * @throws TTEncryptionException
+     */
+    public final void clearPersistent() throws TTEncryptionException {
+        mUtil.clearPersistent();
+    }
 
-	/**
-	 * Putting a {@link DAGSelector} into the database.
-	 * 
-	 * @param paramEntity
-	 *            key selector instance to put into database.
-	 */
-	public final void putEntry(final DAGSelector paramEntity) {
-		PrimaryIndex<Long, DAGSelector> primaryIndex;
-		try {
-			primaryIndex = (PrimaryIndex<Long, DAGSelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, DAGSelector.class);
+    /**
+     * Putting a {@link DAGSelector} into the database.
+     * 
+     * @param paramEntity
+     *            key selector instance to put into database.
+     */
+    public final void putEntry(final DAGSelector paramEntity) {
+        PrimaryIndex<Long, DAGSelector> primaryIndex;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, DAGSelector>)mUtil.mStore.getPrimaryIndex(Long.class, DAGSelector.class);
 
-			primaryIndex.put(paramEntity);
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-		}
+            primaryIndex.put(paramEntity);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	/**
-	 * Getting a {@link DAGSelector} related to a given key.
-	 * 
-	 * @param paramKey
-	 *            key for related dag selector instance.
-	 * @return dag selector instance.
-	 */
-	public final DAGSelector getEntry(final long paramKey) {
-		PrimaryIndex<Long, DAGSelector> primaryIndex;
-		DAGSelector entity = null;
-		try {
-			primaryIndex = (PrimaryIndex<Long, DAGSelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, DAGSelector.class);
+    /**
+     * Getting a {@link DAGSelector} related to a given key.
+     * 
+     * @param paramKey
+     *            key for related dag selector instance.
+     * @return dag selector instance.
+     */
+    public final DAGSelector getEntry(final long paramKey) {
+        PrimaryIndex<Long, DAGSelector> primaryIndex;
+        DAGSelector entity = null;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, DAGSelector>)mUtil.mStore.getPrimaryIndex(Long.class, DAGSelector.class);
 
-			entity = (DAGSelector) primaryIndex.get(paramKey);
+            entity = (DAGSelector)primaryIndex.get(paramKey);
 
-		} catch (final DatabaseException mDbExp) {
-			mDbExp.printStackTrace();
-		}
-		return entity;
-	}
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return entity;
+    }
 
-	/**
-	 * Deletes an entry from database.
-	 * 
-	 * @param paramKey
-	 *            key to delete.
-	 * @return status of deletion.
-	 */
-	public final boolean deleteEntry(final long paramKey) {
-		PrimaryIndex<Long, DAGSelector> primaryIndex;
-		boolean status = false;
-		try {
-			primaryIndex = (PrimaryIndex<Long, DAGSelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, DAGSelector.class);
+    /**
+     * Deletes an entry from database.
+     * 
+     * @param paramKey
+     *            key to delete.
+     * @return status of deletion.
+     */
+    public final boolean deleteEntry(final long paramKey) {
+        PrimaryIndex<Long, DAGSelector> primaryIndex;
+        boolean status = false;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, DAGSelector>)mUtil.mStore.getPrimaryIndex(Long.class, DAGSelector.class);
 
-			status = primaryIndex.delete(paramKey);
+            status = primaryIndex.delete(paramKey);
 
-		} catch (final DatabaseException mDbExp) {
-			mDbExp.printStackTrace();
-		}
-		return status;
-	}
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return status;
+    }
 
-	/**
-	 * Returns number of database entries.
-	 * 
-	 * @return number of entries in database.
-	 */
-	public final int count() {
-		PrimaryIndex<Long, DAGSelector> primaryIndex;
-		long counter = 0;
-		try {
-			primaryIndex = (PrimaryIndex<Long, DAGSelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, DAGSelector.class);
-			counter = primaryIndex.count();
+    /**
+     * Returns number of database entries.
+     * 
+     * @return number of entries in database.
+     */
+    public final int count() {
+        PrimaryIndex<Long, DAGSelector> primaryIndex;
+        long counter = 0;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, DAGSelector>)mUtil.mStore.getPrimaryIndex(Long.class, DAGSelector.class);
+            counter = primaryIndex.count();
 
-		} catch (final DatabaseException mDbExp) {
-			mDbExp.printStackTrace();
-		}
-		return (int) counter;
-	}
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return (int)counter;
+    }
 
-	/**
-	 * Returns all database entries as {@link SortedMap}.
-	 * 
-	 * @return all database entries.
-	 */
-	public final SortedMap<Long, DAGSelector> getEntries() {
-		PrimaryIndex<Long, DAGSelector> primaryIndex;
-		SortedMap<Long, DAGSelector> sMap = null;
-		try {
-			primaryIndex = (PrimaryIndex<Long, DAGSelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, DAGSelector.class);
-			sMap = primaryIndex.sortedMap();
+    /**
+     * Returns all database entries as {@link SortedMap}.
+     * 
+     * @return all database entries.
+     */
+    public final SortedMap<Long, DAGSelector> getEntries() {
+        PrimaryIndex<Long, DAGSelector> primaryIndex;
+        SortedMap<Long, DAGSelector> sMap = null;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, DAGSelector>)mUtil.mStore.getPrimaryIndex(Long.class, DAGSelector.class);
+            sMap = primaryIndex.sortedMap();
 
-		} catch (final DatabaseException mDbExp) {
-			mDbExp.printStackTrace();
-		}
-		return sMap;
-	}
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return sMap;
+    }
 
-	public final boolean containsKey(final long paramKey) {
-		PrimaryIndex<Long, DAGSelector> primaryIndex;
-		boolean mContains = false;
-		try {
-			primaryIndex = (PrimaryIndex<Long, DAGSelector>) mUtil.mStore
-					.getPrimaryIndex(Long.class, DAGSelector.class);
-			mContains = primaryIndex.contains(paramKey);
+    public final boolean containsKey(final long paramKey) {
+        PrimaryIndex<Long, DAGSelector> primaryIndex;
+        boolean mContains = false;
+        try {
+            primaryIndex =
+                (PrimaryIndex<Long, DAGSelector>)mUtil.mStore.getPrimaryIndex(Long.class, DAGSelector.class);
+            mContains = primaryIndex.contains(paramKey);
 
-		} catch (final DatabaseException mDbExp) {
-			mDbExp.printStackTrace();
-		}
-		return mContains;
+        } catch (final DatabaseException mDbExp) {
+            mDbExp.printStackTrace();
+        }
+        return mContains;
 
-	}
+    }
 
 }

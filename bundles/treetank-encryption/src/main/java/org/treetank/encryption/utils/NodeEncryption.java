@@ -41,8 +41,7 @@ public class NodeEncryption {
     /**
      * Encryption algorithm padding type.
      */
-    protected static final String ENCRYPTION_PADDING_TYPE =
-        "AES/CBC/PKCS5Padding";
+    protected static final String ENCRYPTION_PADDING_TYPE = "AES/CBC/PKCS5Padding";
 
     /**
      * Number of bits for encryption.
@@ -60,12 +59,10 @@ public class NodeEncryption {
      * @return
      *         encrypted node as byte array.
      */
-    public static final synchronized byte[] encrypt(
-        final byte[] bytesToEncrypt, final byte[] rawSKey) {
+    public static final synchronized byte[] encrypt(final byte[] bytesToEncrypt, final byte[] rawSKey) {
 
         // restore secret key from byte array
-        final SecretKeySpec restoredSKey =
-            new SecretKeySpec(rawSKey, ENCRYPTION_TYPE);
+        final SecretKeySpec restoredSKey = new SecretKeySpec(rawSKey, ENCRYPTION_TYPE);
 
         // initialize secret key specifications and cipher
         final IvParameterSpec ivParams = new IvParameterSpec(rawSKey);
@@ -94,12 +91,10 @@ public class NodeEncryption {
      * @return
      *         Original byte array of node.
      */
-    public static final synchronized byte[] decrypt(
-        final byte[] bytesToDecrypt, final byte[] rawSKey) {
+    public static final synchronized byte[] decrypt(final byte[] bytesToDecrypt, final byte[] rawSKey) {
 
         // restore secret key from byte array
-        final SecretKeySpec restoredSKey =
-            new SecretKeySpec(rawSKey, ENCRYPTION_TYPE);
+        final SecretKeySpec restoredSKey = new SecretKeySpec(rawSKey, ENCRYPTION_TYPE);
 
         final Cipher cipher;
         byte[] decrypted = null;
@@ -185,8 +180,8 @@ public class NodeEncryption {
      */
     public final static int byteArrayToInt(final byte[] mByteArray) {
         final int mConvInt =
-            ((mByteArray[0] & 0xff) << 24) | ((mByteArray[1] & 0xff) << 16)
-                | ((mByteArray[2] & 0xff) << 8) | (mByteArray[3] & 0xff);
+            ((mByteArray[0] & 0xff) << 24) | ((mByteArray[1] & 0xff) << 16) | ((mByteArray[2] & 0xff) << 8)
+                | (mByteArray[3] & 0xff);
 
         return mConvInt;
     }
@@ -200,14 +195,10 @@ public class NodeEncryption {
      */
     public final static long byteArrayToLong(final byte[] mByteArray) {
         final long mConvLong =
-            ((long)(mByteArray[0] & 0xff) << 56)
-                | ((long)(mByteArray[1] & 0xff) << 48)
-                | ((long)(mByteArray[2] & 0xff) << 40)
-                | ((long)(mByteArray[3] & 0xff) << 32)
-                | ((long)(mByteArray[4] & 0xff) << 24)
-                | ((long)(mByteArray[5] & 0xff) << 16)
-                | ((long)(mByteArray[6] & 0xff) << 8)
-                | ((long)(mByteArray[7] & 0xff));
+            ((long)(mByteArray[0] & 0xff) << 56) | ((long)(mByteArray[1] & 0xff) << 48)
+                | ((long)(mByteArray[2] & 0xff) << 40) | ((long)(mByteArray[3] & 0xff) << 32)
+                | ((long)(mByteArray[4] & 0xff) << 24) | ((long)(mByteArray[5] & 0xff) << 16)
+                | ((long)(mByteArray[6] & 0xff) << 8) | ((long)(mByteArray[7] & 0xff));
 
         return mConvLong;
     }

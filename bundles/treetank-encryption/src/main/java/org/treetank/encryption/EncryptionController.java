@@ -19,7 +19,7 @@ import org.treetank.encryption.utils.NodeEncryption;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTEncryptionException;
 
-public class EncryptionController implements IEncryption{
+public class EncryptionController implements IEncryption {
 
     // #################SETTINGS START#######################
 
@@ -86,23 +86,20 @@ public class EncryptionController implements IEncryption{
     /**
      * Store path of berkeley key selector db.
      */
-    private static final File SEL_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("selectordb").toString());
+    private static final File SEL_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("selectordb").toString());
 
     /**
      * Store path of berkeley dag selector db.
      */
-    private static final File DAG_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("dagdb").toString());
+    private static final File DAG_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("dagdb").toString());
 
     /**
      * Store path of berkeley key manager db.
      */
-    private static final File MAN_STORE = new File(new StringBuilder(
-        File.separator).append("tmp").append(File.separator).append("tnk")
-        .append(File.separator).append("keymanagerdb").toString());
+    private static final File MAN_STORE = new File(new StringBuilder(File.separator).append("tmp").append(
+        File.separator).append("tnk").append(File.separator).append("keymanagerdb").toString());
 
     /**
      * Initiates all needed instances comprising Berkeley DBs and key cache.
@@ -116,16 +113,14 @@ public class EncryptionController implements IEncryption{
             mLoggedUser = "ALL";
             mKeyDB = new KeySelectorDatabase(SEL_STORE);
             final KeySelector rootSel =
-                new KeySelector("ROOT", new LinkedList<Long>(),
-                    new LinkedList<Long>(), 0, 0, NodeEncryption
-                        .generateSecretKey());
+                new KeySelector("ROOT", new LinkedList<Long>(), new LinkedList<Long>(), 0, 0, NodeEncryption
+                    .generateSecretKey());
             mKeyDB.putEntry(rootSel);
 
             mDAGDB = new CurrentDAGDatabase(DAG_STORE);
             final DAGSelector rootDAG =
-                new DAGSelector("ROOT", new LinkedList<Long>(),
-                    new LinkedList<Long>(), 0, 0, NodeEncryption
-                        .generateSecretKey());
+                new DAGSelector("ROOT", new LinkedList<Long>(), new LinkedList<Long>(), 0, 0, NodeEncryption
+                    .generateSecretKey());
             mDAGDB.putEntry(rootDAG);
 
             mManDB = new KeyManagerDatabase(MAN_STORE);
@@ -146,6 +141,7 @@ public class EncryptionController implements IEncryption{
 
     /**
      * Creates a new key selector key.
+     * 
      * @return
      */
     public int newSelectorKey() {
@@ -154,6 +150,7 @@ public class EncryptionController implements IEncryption{
 
     /**
      * Creates a new dag selector key.
+     * 
      * @return
      */
     public int newDAGKey() {
@@ -183,12 +180,9 @@ public class EncryptionController implements IEncryption{
                 mChildsString.append("#" + mChildsList.get(k));
             }
 
-            System.out
-                .println("Selector: " + mSelector.getPrimaryKey() + " "
-                    + mSelector.getName() + " " + mParentsString.toString()
-                    + " " + mChildsString.toString() + " "
-                    + mSelector.getRevision() + " " + mSelector.getVersion()
-                    + " " + mSelector.getSecretKey());
+            System.out.println("Selector: " + mSelector.getPrimaryKey() + " " + mSelector.getName() + " "
+                + mParentsString.toString() + " " + mChildsString.toString() + " " + mSelector.getRevision()
+                + " " + mSelector.getVersion() + " " + mSelector.getSecretKey());
         }
         System.out.println(" ");
 
@@ -213,12 +207,10 @@ public class EncryptionController implements IEncryption{
                 mChildsString.append("#" + mChildsList.get(k));
             }
 
-            System.out
-                .println("Selector: " + mSelector.getPrimaryKey() + " "
-                    + mSelector.getName() + " " + mParentsString.toString()
-                    + " " + mChildsString.toString() + " "
-                    + mSelector.getRevision() + " " + mSelector.getVersion()
-                    + " " + mSelector.getSecretKey() + " " + mSelector.getLastRevSelKey());
+            System.out.println("Selector: " + mSelector.getPrimaryKey() + " " + mSelector.getName() + " "
+                + mParentsString.toString() + " " + mChildsString.toString() + " " + mSelector.getRevision()
+                + " " + mSelector.getVersion() + " " + mSelector.getSecretKey() + " "
+                + mSelector.getLastRevSelKey());
         }
         System.out.println(" ");
 
@@ -253,10 +245,8 @@ public class EncryptionController implements IEncryption{
         /*
          * print key cache.
          */
-        final LinkedList<Long> mKeyList =
-            mKeyCache.get(getUser());
-        final StringBuilder cacheString =
-            new StringBuilder("Key Cache of " + getUser() + ": ");
+        final LinkedList<Long> mKeyList = mKeyCache.get(getUser());
+        final StringBuilder cacheString = new StringBuilder("Key Cache of " + getUser() + ": ");
         for (long aKey : mKeyList) {
             cacheString.append(aKey + " ");
         }
@@ -281,6 +271,7 @@ public class EncryptionController implements IEncryption{
     public CurrentDAGDatabase getDAGDb() {
         return mDAGDB;
     }
+
     /**
      * Returns key manager database instance.
      * 
@@ -289,6 +280,7 @@ public class EncryptionController implements IEncryption{
     public KeyManagerDatabase getManDb() {
         return mManDB;
     }
+
     /**
      * Returns key cache instance.
      * 
@@ -375,7 +367,7 @@ public class EncryptionController implements IEncryption{
     public String getUser() {
         return mLoggedUser;
     }
-    
+
     /**
      * Returns data encryption key.
      * 
