@@ -69,18 +69,27 @@ public class EncryptionOperator {
             user = descendants[descendants.length - 1];
         }
         if (nodeExists(parent)) {
-            final long parentKey = getNodeKey(parent);
+
+            final Queue<Long> queue = new LinkedList<Long>();
+            final LinkedList<Long> visited = new LinkedList<Long>();
+
+            long mStartKey = -1;
+            if (nodeExists(user)) {
+                mStartKey = getNodeKey(user);
+            } else {
+                mStartKey = getNodeKey(parent);
+                // create key manager entry for new user.
+                EncryptionController.getInstance().getManDb().putEntry(
+                    new KeyManager(user, new HashSet<Long>()));
+            }
 
             // calculate all nodes that are affected by the join update
-            // bottom up from parent
-            Queue<Long> queue = new LinkedList<Long>();
-            LinkedList<Long> visited = new LinkedList<Long>();
-            queue.add(parentKey);
-            visited.add(parentKey);
-            idsChanged.add(parentKey);
+            // bottom up from start key
+            queue.add(mStartKey);
+            visited.add(mStartKey);
+            idsChanged.add(mStartKey);
             while (!queue.isEmpty()) {
-                final DAGSelector mDAG = getDAGSelector(queue.remove());
-                final LinkedList<Long> parents = mDAG.getParents();
+                final Long[] parents = getDAGSelector(queue.remove()).getParents().toArray(new Long[0]);
                 for (long aParent : parents) {
                     if (!visited.contains(aParent)) {
                         queue.add(aParent);
@@ -90,35 +99,6 @@ public class EncryptionOperator {
                         visited.add(aParent);
                     }
                 }
-            }
-
-            if (nodeExists(user)) {
-                // calculate all nodes that are affected by the join update
-                // only when parent and child already exists
-                // bottom up from child
-                final long childKey = getNodeKey(user);
-                queue = new LinkedList<Long>();
-                visited = new LinkedList<Long>();
-                queue.add(childKey);
-                visited.add(childKey);
-                idsChanged.add(childKey);
-                while (!queue.isEmpty()) {
-                    final DAGSelector mDAG = getDAGSelector(queue.remove());
-                    final LinkedList<Long> parents = mDAG.getParents();
-                    for (long aParent : parents) {
-                        if (!visited.contains(aParent)) {
-                            queue.add(aParent);
-                            if (!idsChanged.contains(aParent)) {
-                                idsChanged.add(aParent);
-                            }
-                            visited.add(aParent);
-                        }
-                    }
-                }
-            } else {
-                // create key manager entry for new user.
-                EncryptionController.getInstance().getManDb().putEntry(
-                    new KeyManager(user, new HashSet<Long>()));
             }
 
             // create all new nodes
@@ -140,18 +120,17 @@ public class EncryptionOperator {
 
                 } else {
 
-                    final LinkedList<Long> parentList = new LinkedList<Long>();
                     final LinkedList<Long> childList = new LinkedList<Long>();
-
                     if (prevNode != -1) {
                         childList.add(prevNode);
                     }
 
                     final DAGSelector mNewNode =
-                        new DAGSelector(descendants[i], parentList, childList, 0, 0, NodeEncryption
-                            .generateSecretKey());
+                        new DAGSelector(descendants[i], new LinkedList<Long>(), childList, 0, 0,
+                            NodeEncryption.generateSecretKey());
 
                     if (i == 0) {
+                        final long parentKey = getNodeKey(parent);
                         mNewNode.addParent(parentKey);
 
                         final DAGSelector mPrevNode =
@@ -221,50 +200,7 @@ public class EncryptionOperator {
             }
 
             // update selector key parents and childs
-            for (int i = 0; i < keySels.size(); i++) {
-                final KeySelector aSel = keySels.get(i);
-                final LinkedList<Long> replacedParents = new LinkedList<Long>();
-                final LinkedList<Long> replacedChilds = new LinkedList<Long>();
-                final Iterator<Long> mIter = newOldIds.keySet().iterator();
-                while (mIter.hasNext()) {
-                    final long key = mIter.next();
-                    final long value = newOldIds.get(key);
-
-                    if (aSel.getParents().contains(key) && !replacedParents.contains(key)) {
-                        aSel.removeParent(key);
-                        aSel.addParent(value);
-                        replacedParents.add(value);
-
-                    }
-
-                    if (affectedChilds.contains(key) && aSel.getPrimaryKey() == value) {
-                        final Long[] childList = aSel.getChilds().toArray(new Long[0]);
-                        for (int j = 0; j < childList.length; j++) {
-
-                            if (EncryptionController.getInstance().getDAGDb().containsKey(childList[j])) {
-                                long mLastSelId =
-                                    EncryptionController.getInstance().getDAGDb().getEntry(childList[j])
-                                        .getLastRevSelKey();
-
-                                aSel.removeChild(childList[j]);
-
-                                aSel.addChild(mLastSelId);
-                                replacedChilds.add(mLastSelId);
-                            }
-                        }
-
-                    }
-
-                    else if (aSel.getChilds().contains(key) && !replacedChilds.contains(key)) {
-                        aSel.removeChild(key);
-                        aSel.addChild(value);
-                        replacedChilds.add(value);
-
-                    }
-                }
-
-                EncryptionController.getInstance().getSelDb().putEntry(aSel);
-            }
+            updateSelectorRefs(keySels, newOldIds, affectedChilds);
 
             updateKeyManagerJoin(newOldIds, user);
 
@@ -352,17 +288,12 @@ public class EncryptionOperator {
             }
 
             // update version and secret material and node references
-            LinkedList<DAGSelector> dagList = new LinkedList<DAGSelector>();
+            final LinkedList<DAGSelector> dagList = new LinkedList<DAGSelector>();
             for (long idChanged : idsChanged) {
                 final DAGSelector mNode = EncryptionController.getInstance().getDAGDb().getEntry(idChanged);
                 mNode.increaseVersion();
                 mNode.setSecretKey(NodeEncryption.generateSecretKey());
 
-                // delete all references which reference to deleted node
-                // if (mNode.getParents().contains(childKey)) {
-                // mNode.removeParent(childKey);
-                //
-                // }
                 if (mNode.getChilds().contains(childKey)) {
                     int i = 0;
                     while (i < parents.length) {
@@ -382,7 +313,6 @@ public class EncryptionOperator {
                             mNode.removeParent(parentKey);
                         }
                     }
-
                     if (mNode.getParents().size() > 0) {
                         dagList.add(mNode);
                     }
@@ -396,7 +326,7 @@ public class EncryptionOperator {
 
             // remove node from DAG if node should be deleted from all its parents; if not, remove its
             // references from the corresponding parents
-            DAGSelector node = EncryptionController.getInstance().getDAGDb().getEntry(childKey);
+            final DAGSelector node = EncryptionController.getInstance().getDAGDb().getEntry(childKey);
             final Map<Long, Long> newOldIds = new HashMap<Long, Long>();
             if (node.getParents().size() == 0) {
                 EncryptionController.getInstance().getDAGDb().deleteEntry(childKey);
@@ -419,50 +349,7 @@ public class EncryptionOperator {
             }
 
             // update selector key parents and childs
-            for (int i = 0; i < keySels.size(); i++) {
-                final KeySelector aSel = keySels.get(i);
-                final LinkedList<Long> replacedParents = new LinkedList<Long>();
-                final LinkedList<Long> replacedChilds = new LinkedList<Long>();
-                final Iterator<Long> mIter = newOldIds.keySet().iterator();
-                while (mIter.hasNext()) {
-                    final long key = mIter.next();
-                    final long value = newOldIds.get(key);
-
-                    if (aSel.getParents().contains(key) && !replacedParents.contains(key)) {
-                        aSel.removeParent(key);
-                        aSel.addParent(value);
-                        replacedParents.add(value);
-
-                    }
-
-                    if (affectedChilds.contains(key) && aSel.getPrimaryKey() == value) {
-                        final Long[] childList = aSel.getChilds().toArray(new Long[0]);
-                        for (int j = 0; j < childList.length; j++) {
-
-                            if (EncryptionController.getInstance().getDAGDb().containsKey(childList[j])) {
-                                long mLastSelId =
-                                    EncryptionController.getInstance().getDAGDb().getEntry(childList[j])
-                                        .getLastRevSelKey();
-
-                                aSel.removeChild(childList[j]);
-
-                                aSel.addChild(mLastSelId);
-                                replacedChilds.add(mLastSelId);
-                            }
-                        }
-
-                    }
-
-                    else if (aSel.getChilds().contains(key) && !replacedChilds.contains(key)) {
-                        aSel.removeChild(key);
-                        aSel.addChild(value);
-                        replacedChilds.add(value);
-
-                    }
-                }
-
-                EncryptionController.getInstance().getSelDb().putEntry(aSel);
-            }
+            updateSelectorRefs(keySels, newOldIds, affectedChilds);
 
             updateKeyManagerLeave(newOldIds, user);
 
@@ -472,6 +359,59 @@ public class EncryptionOperator {
 
         } else {
             throw new TTEncryptionException("Leave: Node to be deleted does not exist or is not a leaf node!");
+        }
+    }
+
+    /**
+     * Updates all child and parents references of a node after an update.s
+     * 
+     * @param keySels
+     * @param newOldIds
+     * @param affectedChilds
+     */
+    public void updateSelectorRefs(final LinkedList<KeySelector> keySels, final Map<Long, Long> newOldIds,
+        final LinkedList<Long> affectedChilds) {
+        // update selector key parents and childs
+        for (int i = 0; i < keySels.size(); i++) {
+            final KeySelector aSel = keySels.get(i);
+            final LinkedList<Long> replacedParents = new LinkedList<Long>();
+            final LinkedList<Long> replacedChilds = new LinkedList<Long>();
+            final Iterator<Long> mIter = newOldIds.keySet().iterator();
+            while (mIter.hasNext()) {
+                final long key = mIter.next();
+                final long value = newOldIds.get(key);
+
+                if (aSel.getParents().contains(key) && !replacedParents.contains(key)) {
+                    aSel.removeParent(key);
+                    aSel.addParent(value);
+                    replacedParents.add(value);
+
+                }
+
+                if (affectedChilds.contains(key) && aSel.getPrimaryKey() == value) {
+                    final Long[] childList = aSel.getChilds().toArray(new Long[0]);
+                    for (int j = 0; j < childList.length; j++) {
+
+                        if (EncryptionController.getInstance().getDAGDb().containsKey(childList[j])) {
+                            long mLastSelId =
+                                EncryptionController.getInstance().getDAGDb().getEntry(childList[j])
+                                    .getLastRevSelKey();
+
+                            aSel.removeChild(childList[j]);
+
+                            aSel.addChild(mLastSelId);
+                            replacedChilds.add(mLastSelId);
+                        }
+                    }
+
+                } else if (aSel.getChilds().contains(key) && !replacedChilds.contains(key)) {
+                    aSel.removeChild(key);
+                    aSel.addChild(value);
+                    replacedChilds.add(value);
+
+                }
+            }
+            EncryptionController.getInstance().getSelDb().putEntry(aSel);
         }
     }
 
@@ -593,17 +533,6 @@ public class EncryptionOperator {
      */
     private void updateKeyManagerJoin(final Map<Long, Long> paramMap, final String user) {
 
-        // final KeyManager mManager =
-        // EncryptionController.getInstance().getManDb().getEntry(
-        // EncryptionController.getInstance().getUser());
-        //
-        // final Iterator<Long> mInnerIter = paramMap.keySet().iterator();
-        // while (mInnerIter.hasNext()) { // iterate through all keys that have changed.
-        // final long mId = (Long)mInnerIter.next();
-        // mManager.addKey(paramMap.get(mId));
-        // }
-        // EncryptionController.getInstance().getManDb().putEntry(mManager);
-
         final Iterator<String> mOuterIter =
             EncryptionController.getInstance().getManDb().getEntries().keySet().iterator();
 
@@ -633,20 +562,6 @@ public class EncryptionOperator {
      *            map containing all through leave effected nodes with old and new id.
      */
     private void updateKeyManagerLeave(final Map<Long, Long> paramMap, final String user) {
-
-        //
-        // KeyManager mManager =
-        // EncryptionController.getInstance().getManDb().getEntry(EncryptionController.getInstance().getUser());
-        //
-        // final Iterator<Long> mInnerIter = paramMap.keySet().iterator();
-        // while (mInnerIter.hasNext()) { // iterate through all keys that have changed.
-        // long mId = (Long)mInnerIter.next();
-        //
-        // mManager.addKey(paramMap.get(mId));
-        //
-        // }
-        //
-        // EncryptionController.getInstance().getManDb().putEntry(mManager);
 
         final Iterator<String> mOuterIter =
             EncryptionController.getInstance().getManDb().getEntries().keySet().iterator();
