@@ -54,9 +54,11 @@ public class KeyManagerHandlerTest {
 
         EncryptionOperator op9 = new EncryptionOperator();
         op9.leave("Waldvogel", new String[] {});
+        
+
 
         // after all joins and leaves and join/leave updates database size must be 31.
-        assertEquals(new EncryptionController().getSelDb().count(), 35);
+        assertEquals(new EncryptionController().getSelDb().count(), 31);
         assertEquals(new EncryptionController().getDAGDb().count(), 7);
         assertEquals(new EncryptionController().getManDb().count(), 2);
 
