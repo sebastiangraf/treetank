@@ -36,6 +36,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.SortedMap;
 
+import org.treetank.encryption.benchmarking.KtsMeter;
 import org.treetank.encryption.database.model.DAGSelector;
 import org.treetank.encryption.database.model.KeyManager;
 import org.treetank.encryption.database.model.KeySelector;
@@ -651,7 +652,7 @@ public class EncryptionOperator {
                 }
             }
         }
-
+        KtsMeter.getInstance().count(mKeyTrails.size());
         return mKeyTrails;
     }
 
