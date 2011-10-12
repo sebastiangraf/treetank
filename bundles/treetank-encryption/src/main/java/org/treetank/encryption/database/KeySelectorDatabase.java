@@ -41,6 +41,7 @@ import com.sleepycat.persist.PrimaryIndex;
  * 
  * @author Patrick Lang, University of Konstanz
  */
+@Deprecated
 public class KeySelectorDatabase {
 
     /**
