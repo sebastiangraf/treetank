@@ -8,6 +8,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
+import org.perfidix.AbstractConfig;
+import org.perfidix.Benchmark;
+import org.perfidix.annotation.BeforeBenchClass;
+import org.perfidix.annotation.Bench;
+import org.perfidix.element.KindOfArrangement;
+import org.perfidix.meter.AbstractMeter;
+import org.perfidix.ouput.AbstractOutput;
+import org.perfidix.ouput.TabularSummaryOutput;
+import org.perfidix.result.BenchmarkResult;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.EncryptionOperator;
 import org.treetank.exception.TTEncryptionException;
@@ -35,7 +44,8 @@ public class BenchUpdateOnDAG {
 
     private final static LinkedList<Integer> benchPos = new LinkedList<Integer>();
 
-    public static void main(String[] args) {
+    @BeforeBenchClass
+    public void before() {
         try {
             new EncryptionController().clear();
             new EncryptionController().setEncryptionOption(true);
@@ -72,9 +82,19 @@ public class BenchUpdateOnDAG {
         } catch (TTEncryptionException e) {
             e.printStackTrace();
         }
+
     }
 
-    public static void init() throws TTEncryptionException {
+    public static void main(String[] args) {
+
+        final Benchmark bench = new Benchmark(new ThisConfiguration());
+        bench.add(BenchUpdateOnDAG.class);
+        final BenchmarkResult res = bench.run();
+        new TabularSummaryOutput().visitBenchmark(res);
+    }
+
+    @Bench
+    public void init() {
         BufferedReader in;
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(DATAFILE)));
@@ -111,6 +131,7 @@ public class BenchUpdateOnDAG {
 
                     System.out.println("User: " + userCounter);
                     System.out.println("Time needed Leave: " + timeNeeded + " ms");
+                    System.out.println("Key Trails: " + KtsMeter.getInstance().getValue() + " kts");
                     System.out.println("Nodes affected: " + op.getAffectedNodes().size());
                     System.out.println("DAG Size: " + EncryptionController.getInstance().getDAGDb().count());
                     System.out
@@ -129,6 +150,8 @@ public class BenchUpdateOnDAG {
                     op.join(groupOfUser, new String[] {
                         userToDelete
                     });
+
+                    KtsMeter.getInstance().reset();
 
                     timeNeeded = System.currentTimeMillis() - benchTime;
                     System.out.println("Time needed Join: " + timeNeeded + " ms");
@@ -200,11 +223,29 @@ public class BenchUpdateOnDAG {
 
             }
 
-        } catch (final FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
 
     }
+
+    static final int runs = 1;
+    static final AbstractMeter[] meters = {
+        KtsMeter.getInstance()
+    };
+    static final AbstractOutput[] output = {
+        new TabularSummaryOutput()
+    };
+    static final KindOfArrangement arrang = KindOfArrangement.SequentialMethodArrangement;
+    static final double gc = 1;
+
+    static class ThisConfiguration extends AbstractConfig {
+
+        protected ThisConfiguration() {
+            super(runs, meters, output, arrang, gc);
+
+        }
+
+    }
+
 }
