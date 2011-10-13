@@ -88,9 +88,9 @@ public class BenchRandomDAG {
                     final String parent = elements[1];
                     final String group = elements[0];
 
-                    op.singleJoin(new String[] {
-                        parent
-                    }, group);
+//                    op.singleJoin(new String[] {
+//                        parent
+//                    }, group);
                 } else {
                     // add a user to DAG.
                     final String[] elements = splitData(line);
