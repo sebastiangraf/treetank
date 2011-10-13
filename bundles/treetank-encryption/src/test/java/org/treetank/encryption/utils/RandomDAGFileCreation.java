@@ -36,9 +36,8 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * This class creates a random DAG file with a given number of groups and given number of users. The creator
- * allows to
- * define a maximal depth of the DAG and optionally the activation of considering and defining the fanout.
+ * This class creates a two random DAG files. One for random users and one for random groups. During creation
+ * a fanout (if activated) and a maximal depth of DAG is considered.
  */
 public class RandomDAGFileCreation {
 
@@ -75,12 +74,12 @@ public class RandomDAGFileCreation {
     /**
      * Number of groups in DAG.
      */
-    final private static int mGroups = 30;
+    final private static int mGroups = 10000;
 
     /**
      * Number of users in DAG.
      */
-    final private static int mUsers = 50;
+    final private static int mUsers = 50000;
 
     /**
      * Length of random group names.
@@ -158,6 +157,7 @@ public class RandomDAGFileCreation {
                         nodeChilds = mNodeChildNum.get(parent);
                     }
 
+                    // max fanout is considered when activated.
                     if (mFanoutStatus) {
                         // check childs of parent. If child number is less than fanout, add node. Otherwise,
                         // check
@@ -237,7 +237,6 @@ public class RandomDAGFileCreation {
                     if (!mParent.contains(group) && group != null) {
 
                         if (mFanoutStatus) {
-
                             final int nodeChilds = mNodeChildNum.get(group);
                             if (nodeChilds < mFanout) {
                                 mNodeChildNum.put(group, nodeChilds + 1);
@@ -295,7 +294,7 @@ public class RandomDAGFileCreation {
                             }
                         }
                     }
-                    
+
                 }
                 out_users.write(mUserList.get(k) + ";" + parents.toString() + "\n");
             }
