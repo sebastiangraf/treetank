@@ -47,10 +47,16 @@ import org.treetank.exception.TTEncryptionException;
 public class BenchRandomDAG {
 
     /**
-     * Input file.
+     * Input file groups.
      */
-    private static final String INPUTFILE = "src" + File.separator + "test"
-        + File.separator + "resources" + File.separator + "randomDAG.txt";
+    private static final String INPUTFILE_GROUPS = "src" + File.separator + "test" + File.separator
+        + "resources" + File.separator + "randomDAGGroups.txt";
+
+    /**
+     * Input file users.
+     */
+    private static final String INPUTFILE_USERS = "src" + File.separator + "test" + File.separator
+        + "resources" + File.separator + "randomDAGUsers.txt";
 
     /**
      * Data splitter.
@@ -58,7 +64,8 @@ public class BenchRandomDAG {
     final private static char splitter = ';';
 
     public static void main(String[] args) {
-        BufferedReader in;
+        BufferedReader in_groups;
+        BufferedReader in_users;
         try {
 
             System.out.println("Starting...");
@@ -69,43 +76,37 @@ public class BenchRandomDAG {
 
             EncryptionOperator op = new EncryptionOperator();
 
-            in =
-                new BufferedReader(new InputStreamReader(new FileInputStream(
-                    INPUTFILE)));
+            in_groups = new BufferedReader(new InputStreamReader(new FileInputStream(INPUTFILE_GROUPS)));
 
-            boolean userParsing = false;
+            in_users = new BufferedReader(new InputStreamReader(new FileInputStream(INPUTFILE_USERS)));
+
             String line;
-            while (((line = in.readLine()) != null)) {
-                if (line.equals("//")) { // seperates group data from user data; after // group parsing is
-                                         // finished and user parsing starts.
-                    userParsing = true;
-                }
+         // add a groups to DAG.
+            while (((line = in_groups.readLine()) != null)) {
+                final String[] elements = splitData(line);
+                final String parent = elements[1];
+                final String group = elements[0];
 
-                if (!userParsing) {
-                    // add a group to DAG.
-                    System.out.println(line);
-                    final String[] elements = splitData(line);
-                    final String parent = elements[1];
-                    final String group = elements[0];
-
-//                    op.singleJoin(new String[] {
-//                        parent
-//                    }, group);
-                } else {
-                    // add a user to DAG.
-                    final String[] elements = splitData(line);
-                    final String userName = elements[0];
-
-                    for (int i = 1; i < elements.length; i++) {
-                        System.out.println(userName + " " + elements[i]);
-                        op.join(elements[i], new String[] {
-                            userName
-                        });
-                    }
-                }
+                // op.singleJoin(new String[] {
+                // parent
+                // }, group);
 
             }
 
+         // add a users to DAG.
+            while (((line = in_users.readLine()) != null)) {
+                final String[] elements = splitData(line);
+                final String userName = elements[0];
+
+                for (int i = 1; i < elements.length; i++) {
+                    System.out.println(userName + " " + elements[i]);
+                    op.join(elements[i], new String[] {
+                        userName
+                    });
+                }
+
+            }    
+            
             System.out.println("Done!");
 
         } catch (final TTEncryptionException e) {
