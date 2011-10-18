@@ -1,4 +1,30 @@
-package org.treetank.encryption.utils;
+/**
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package org.treetank.encryption.benchmarking.old;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,17 +34,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-import com.sleepycat.je.UniqueConstraintException;
-
-import org.treetank.exception.TTEncryptionException;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.EncryptionOperator;
+import org.treetank.encryption.utils.BenchUtils;
+import org.treetank.exception.TTEncryptionException;
 
-public class TestDataParser2 {
+public class BenchPerformanceDataset {
 
-    private static final String DATAFILE = new StringBuilder(File.separator).append("src").append(
-        File.separator).append("test").append(File.separator).append("resources").append(File.separator)
-        .append("testdata100.txt").toString();
+    private static final String DATAFILE = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "testdata.txt";
+
+    private static int joinOps = 0;
+    private static int leaveOps = 0;
+    private static int dataCounter = 0;
+
+    private static int dataRuns = 10000;
+    
+    private static long time = 0;
 
     public static void main(String[] args) {
         try {
@@ -26,11 +58,19 @@ public class TestDataParser2 {
             new EncryptionController().setEncryptionOption(true);
             new EncryptionController().init();
 
-            long time = System.currentTimeMillis();
+            time = System.currentTimeMillis();
             System.out.println("Started...");
             init();
             System.out.println("Ended...");
+            System.out.println("Parsed lines: " + dataCounter);
             System.out.println("Total time needed: " + (System.currentTimeMillis() - time) + "ms");
+            System.out.println("Total joins: " + joinOps);
+            System.out.println("Total leaves: " + leaveOps);
+            System.out.println("Total ops: " + (joinOps + leaveOps));
+
+            System.out.println("Nodes DAG: " + new EncryptionController().getDAGDb().count());
+            System.out.println("Nodes Revision: " + new EncryptionController().getSelDb().count());
+            System.out.println("Nodes KeyManager: " + new EncryptionController().getManDb().count());
 
             new EncryptionController().clear();
 
@@ -44,65 +84,35 @@ public class TestDataParser2 {
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(DATAFILE)));
 
-            char splitter = '$';
             String line;
-            int counter = 0;
-            long time = System.currentTimeMillis();
-
-            LinkedList<String> uniqueUser = new LinkedList<String>();
 
             EncryptionOperator op;
 
-            while ((line = in.readLine()) != null) {
+            while (((line = in.readLine()) != null && dataCounter < dataRuns)) {
                 op = new EncryptionOperator();
-                counter++;
-
-                final char[] chars = line.toCharArray();
-                final String[] dataString = new String[5];
-
-                int stringCount = 0;
-                int charCount = 1;
-
-                final StringBuilder sb = new StringBuilder();
-
-                for (char aChar : chars) {
-                    if (aChar == splitter || charCount == chars.length) {
-                        dataString[stringCount++] = sb.toString();
-                        sb.setLength(0);
-                    } else {
-                        sb.append(aChar);
-                    }
-                    charCount++;
+                dataCounter++;
+                
+                if (dataCounter % 1000 == 0) {
+                    System.out.println(dataCounter);
+                    System.out.println("Time needed: " + (System.currentTimeMillis() - time) + "ms");
+                    System.out.println("Joins: " + joinOps + " Leaves: " + leaveOps);
+                    System.out.println("");
                 }
 
-                String cleanedGroup = cleanGroup(dataString[2]);
-                String[] splittedGroup = splitGroup(cleanedGroup);
+                final String[] dataArray = new BenchUtils().parseData(line);
 
-                String[] newGroups = new String[splittedGroup.length + 1];
+                final String cleanedGroup = new BenchUtils().cleanGroup(dataArray[2]);
+                final LinkedList<String> splittedGroupList = new BenchUtils().splitGroup(cleanedGroup);
 
-                StringBuilder sb2 = new StringBuilder();
+                splittedGroupList.add(dataArray[0]); // add user
 
-                // rebuild array + user
-                for (int i = 0; i < newGroups.length - 1; i++) {
-                    newGroups[i] = splittedGroup[i];
-                    sb2.append(splittedGroup[i]);
-                    sb2.append(" - ");
-                }
-                newGroups[newGroups.length - 1] = dataString[0];
-                sb2.append(dataString[0]);
-
-                // System.out.println(sb2.toString());
+                final String[] newGroups = splittedGroupList.toArray(new String[0]);
 
                 // at least one user and one group must exist.
                 if (newGroups.length > 1) {
 
                     String user = newGroups[newGroups.length - 1];
                     String group = newGroups[newGroups.length - 2];
-
-                    if (!uniqueUser.contains(user)) {
-                        uniqueUser.add(user);
-                    }
-
                     if (op.nodeExists(user)) {
 
                         if (op.nodeExists(group)) {
@@ -111,12 +121,13 @@ public class TestDataParser2 {
                                 op.join(group, new String[] {
                                     user
                                 });
-
+                                joinOps++;
                             }
 
                         } else {
                             // if user exist but not group, check which groups of hierarchy already exist,
-                            // create it and add user.
+                            // create it
+                            // and add user.
                             LinkedList<String> groupList = new LinkedList<String>();
                             String parent = "ROOT";
                             for (int i = 0; i < newGroups.length - 1; i++) {
@@ -130,19 +141,19 @@ public class TestDataParser2 {
 
                             if (groupList.size() == newGroups.length - 1) {
                                 op.join("ROOT", newGroups);
-
+                                joinOps++;
                                 op.join(newGroups[newGroups.length - 1], new String[] {
                                     user
                                 });
-
+                                joinOps++;
                             } else {
                                 if (groupList.size() > 1) {
                                     op.join(parent, groupList.toArray(new String[0]));
-
+                                    joinOps++;
                                     op.join(newGroups[newGroups.length - 1], new String[] {
                                         user
                                     });
-
+                                    joinOps++;
                                 }
                             }
                         }
@@ -153,9 +164,9 @@ public class TestDataParser2 {
                             op.join(group, new String[] {
                                 user
                             });
-
+                            joinOps++;
                         } else { // if user and group does not exist, check which groups of hierarchy exists,
-                                 // create it and add user.
+                            // create it and add user.
                             LinkedList<String> groupList = new LinkedList<String>();
                             String parent = "ROOT";
                             for (int i = 0; i < newGroups.length - 1; i++) {
@@ -169,11 +180,11 @@ public class TestDataParser2 {
 
                             if (groupList.size() == newGroups.length) {
                                 op.join("ROOT", newGroups);
-
+                                joinOps++;
                             } else {
                                 if (groupList.size() > 1) {
                                     op.join(parent, groupList.toArray(new String[0]));
-
+                                    joinOps++;
                                 }
                             }
                         }
@@ -181,69 +192,13 @@ public class TestDataParser2 {
                     }
 
                 }
-
             }
-
-            System.out.println("Unique User: " + uniqueUser.size());
 
         } catch (final FileNotFoundException e) {
             e.printStackTrace();
         } catch (final IOException e) {
             e.printStackTrace();
         }
-
-    }
-
-    public static String cleanGroup(final String group) {
-        char[] groupChars = group.toCharArray();
-        int pos = 0;
-        // entferne Nullen
-        int i = groupChars.length - 1;
-        while (i >= 0) {
-            if (groupChars[i] != '0') {
-                pos = i;
-                break;
-            }
-            i--;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (int j = 0; j < pos + 1; j++) {
-            sb.append(groupChars[j]);
-        }
-
-        return sb.toString();
-
-    }
-
-    public static String[] splitGroup(final String group) {
-        char[] groupChars = group.toCharArray();
-
-        String[] groups;
-
-        if (groupChars.length > 1) {
-            groups = new String[groupChars.length - 1];
-        } else {
-            groups = new String[groupChars.length];
-        }
-
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        int j = 0;
-        while (i < groupChars.length) {
-            if (i == 0) {
-                sb.append(groupChars[i++]);
-                if (groupChars.length > 1) {
-                    sb.append(groupChars[i++]);
-                }
-                groups[j++] = sb.toString();
-            } else {
-                sb.append(groupChars[i++]);
-                groups[j++] = sb.toString();
-            }
-        }
-
-        return groups;
 
     }
 

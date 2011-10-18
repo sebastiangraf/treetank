@@ -48,6 +48,7 @@ public class ClientHandler {
      *            map of key trails.
      */
     public final void decryptKeyTrails(final Map<Long, byte[]> paramKeyTails) {
+        
         // if map contains no key trails user has been completely removed
         // from DAG and all keys for user has to be removed.
         if (paramKeyTails.size() != 0) {
