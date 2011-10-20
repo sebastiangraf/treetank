@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-import org.treetank.encryption.benchmarking.BenchUtils;
 
 /**
  * This class extracts only one data set of each user and builds a new data set only with unique users.
@@ -24,7 +23,7 @@ public class UniqueUserExtractor {
         + File.separator + "testdata.txt";
 
     private static final String OUTFILE = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "testdataUser.txt";
+    + File.separator + "testdataUser.txt";
 
     public static void main(String[] args) {
         System.out.println("Started...");

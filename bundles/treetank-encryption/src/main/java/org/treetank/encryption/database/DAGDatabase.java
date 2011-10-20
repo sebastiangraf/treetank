@@ -41,7 +41,7 @@ import com.sleepycat.persist.PrimaryIndex;
  * 
  * @author Patrick Lang, University of Konstanz
  */
-public class CurrentDAGDatabase {
+public class DAGDatabase {
 
     /**
      * Name for the database.
@@ -59,7 +59,7 @@ public class CurrentDAGDatabase {
      * @param paramFile
      *            the place where the berkeley db is stored.
      */
-    public CurrentDAGDatabase(final File paramFile) {
+    public DAGDatabase(final File paramFile) {
         mUtil = new DatabaseUtil(paramFile, NAME);
     }
 

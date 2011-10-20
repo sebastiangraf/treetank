@@ -9,11 +9,13 @@ import org.treetank.exception.TTEncryptionException;
 
 public class KeyManagerHandlerTest {
 
+
     @Before
     public void setUp() throws Exception {
         new EncryptionController().clear();
         new EncryptionController().setEncryptionOption(true);
         new EncryptionController().init();
+
     }
 
     @After
@@ -61,6 +63,5 @@ public class KeyManagerHandlerTest {
         assertEquals(new EncryptionController().getSelDb().count(), 31);
         assertEquals(new EncryptionController().getDAGDb().count(), 7);
         assertEquals(new EncryptionController().getManDb().count(), 2);
-
     }
 }
