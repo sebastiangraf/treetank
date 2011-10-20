@@ -36,89 +36,46 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * This class creates a two random DAG files. One for random users and one for random groups. During creation
- * a fanout (if activated) and a maximal depth of DAG is considered.
+ * This class creates two random DAG files. One for random users and one for random groups. During creation
+ * a maximal depth for DAG is considered.
+ * 
+ * @author Patrick Lang, University of Konstanz
  */
 public class RandomDAGFileCreation {
-
-    /**
-     * Output File for random groups.
-     */
-    private static final String OUTFILE_GROUPS = "src" + File.separator + "test" + File.separator
-        + "resources" + File.separator + "randomDAGGroups.txt";
-
-    /**
-     * Output File for random users.
-     */
-    private static final String OUTFILE_USERS = "src" + File.separator + "test" + File.separator
-        + "resources" + File.separator + "randomDAGUsers.txt";
 
     /**
      * Char set for random group names.
      */
     final private static char[] mChars = {
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-        'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1',
+        '2', '3', '4', '5', '6', '7', '8', '9',
     };
 
     /**
      * List of generated users.
      */
-    final private static LinkedList<String> mUserList = new LinkedList<String>();
+    final private static LinkedList<String> mUserList =
+        new LinkedList<String>();
 
     /**
      * List of generated groups.
      */
-    final private static LinkedList<String> mGroupList = new LinkedList<String>();
+    final private static LinkedList<String> mGroupList =
+        new LinkedList<String>();
+
 
     /**
-     * Number of groups in DAG.
+     * DAG files generation.
      */
-    final private static int mGroups = 10000;
-
-    /**
-     * Number of users in DAG.
-     */
-    final private static int mUsers = 50000;
-
-    /**
-     * Length of random group names.
-     */
-    final private static int mGroupNameLength = 10;
-
-    /**
-     * Max number of parents a user can has.
-     */
-    final private static int mMaxParents = 3;
-
-    /**
-     * Max depth of the DAG.
-     */
-    final private static int mMaxDepth = 5;
-
-    /**
-     * Sets whether fanout should be considered.
-     */
-    final private static boolean mFanoutStatus = true;
-
-    /**
-     * Fanout of DAG.
-     */
-    final private static int mFanout = 4;
-
-    public static void main(String[] args) {
-
+    public void create() {
         // Map holding added nodes with its depth.
-        final Map<String, Integer> mDeepCtrlList = new HashMap<String, Integer>();
+        final Map<String, Integer> mDeepCtrlList =
+            new HashMap<String, Integer>();
 
         // Map holding all added nodes with a counter of its childs.
-        final Map<String, Integer> mNodeChildNum = new HashMap<String, Integer>();
-
-        // Map holding all nodes having more childs than given fanout and its corresponding proxy node.
-        final Map<String, String> mProxyNodes = new HashMap<String, String>();
-
-        // counter of proxy nodes that where generated.
-        int proxyCounter = 0;
+        final Map<String, Integer> mNodeChildNum =
+            new HashMap<String, Integer>();
 
         try {
             initUserList();
@@ -126,194 +83,95 @@ public class RandomDAGFileCreation {
 
             // List of groups already added to DAG. Just to prevent double group adding.
             final LinkedList<String> groupsInDag = new LinkedList<String>();
-            // add an initial null value. all nodes getting null value as root are root nodes itself.
-            groupsInDag.add(null);
-            mDeepCtrlList.put(null, -1);
+  
+            final FileWriter fstream_groups = new FileWriter(BenchParams.getBenchFileGroups());
+            final BufferedWriter out_groups =
+                new BufferedWriter(fstream_groups);
 
-            final FileWriter fstream_groups = new FileWriter(OUTFILE_GROUPS);
-            final BufferedWriter out_groups = new BufferedWriter(fstream_groups);
-
-            final FileWriter fstream_users = new FileWriter(OUTFILE_USERS);
+            final FileWriter fstream_users = new FileWriter(BenchParams.getBenchFileUsers());
             final BufferedWriter out_users = new BufferedWriter(fstream_users);
+            
+            final LinkedList<String> rootNodesList = new LinkedList<String>();
+            
+            // create and add inital root nodes.
+            for(int i=0; i<BenchParams.getRootNodes(); i++){
+                final String rootNode = createGroupName();
+                groupsInDag.add(rootNode);
+                mDeepCtrlList.put(rootNode, 0);
+                rootNodesList.add(rootNode);
+                out_groups.write(rootNode + ";null\n");
+            }
 
             // add groups to DAG.
-            int i = 0;
+            int i = BenchParams.getRootNodes()-1;
             while (i < mGroupList.size()) {
                 final String groupName = mGroupList.get(i);
 
                 // choose randomly an parent of already added group for the new group. If null node is chosen,
                 // the group will be added as an
                 // another root node.
-                final int randParentGroup = new Random().nextInt(groupsInDag.size());
+                final int randParentGroup =
+                    new Random().nextInt(groupsInDag.size());
                 final String parent = groupsInDag.get(randParentGroup);
 
                 // check whether depth of parent is less than max depth. If so, add node with parent,
                 // otherwise, choose another random parent.
                 final int deepOfParent = mDeepCtrlList.get(parent);
-                if (deepOfParent < mMaxDepth) {
-
+                if (deepOfParent < BenchParams.getMaxDepth()) {
                     int nodeChilds = 0;
-                    if (parent != null) {
+                    if (!rootNodesList.contains(parent)) {
                         nodeChilds = mNodeChildNum.get(parent);
                     }
 
-                    // max fanout is considered when activated.
-                    if (mFanoutStatus) {
-                        // check childs of parent. If child number is less than fanout, add node. Otherwise,
-                        // check
-                        // if proxy node already exist. If not create it, otherwise check childs of proxy node
-                        // and
-                        // so on. Loop through all proxy nodes until a empty space for adding node is found.
-                        if (nodeChilds < mFanout) {
-                            out_groups.write(groupName + ";" + parent + "\n");
-                            groupsInDag.add(groupName);
-                            mNodeChildNum.put(parent, nodeChilds + 1); // increase childs of parent by one
-                            mNodeChildNum.put(groupName, 0); // add new node to map with child value 0.
-                            mDeepCtrlList.put(groupName, deepOfParent + 1);
-                            i++;
-                        } else {
-                            if (mProxyNodes.containsKey(parent)) {
-                                boolean emptySpaceFound = false;
-                                String curProxy = mProxyNodes.get(parent);
-                                while (emptySpaceFound == false) {
-                                    int proxyFanout = mNodeChildNum.get(curProxy);
-                                    if (proxyFanout < mFanout) {
-                                        out_groups.write(groupName + ";" + curProxy + "\n");
-                                        groupsInDag.add(groupName);
-                                        mNodeChildNum.put(curProxy, proxyFanout + 1);
-                                        mNodeChildNum.put(groupName, 0);
-                                        mDeepCtrlList.put(groupName, deepOfParent + 1);
-                                        i++;
-                                        emptySpaceFound = true;
-                                    } else {
-                                        if (!mProxyNodes.containsKey(curProxy)) {
-                                            final String proxyNode = "Proxy_" + proxyCounter;
-                                            out_groups.write(proxyNode + ";" + curProxy + "\n");
-                                            out_groups.write(groupName + ";" + proxyNode + "\n");
-                                            mNodeChildNum.put(proxyNode, 1);
-                                            mProxyNodes.put(curProxy, proxyNode);
-                                            proxyCounter++;
-                                            i++;
-                                        } else {
-                                            curProxy = mProxyNodes.get(curProxy);
-                                        }
-                                    }
-                                }
-
-                            } else {
-                                final String proxyNode = "Proxy_" + proxyCounter;
-                                out_groups.write(proxyNode + ";" + parent + "\n");
-                                out_groups.write(groupName + ";" + proxyNode + "\n");
-                                mNodeChildNum.put(proxyNode, 1);
-                                mProxyNodes.put(parent, proxyNode);
-                                proxyCounter++;
-                                i++;
-
-                            }
-                        }
-                    } else {
-
-                        out_groups.write(groupName + ";" + parent + "\n");
-                        groupsInDag.add(groupName);
-                        mNodeChildNum.put(parent, nodeChilds + 1); // increase childs of parent by one
-                        mNodeChildNum.put(groupName, 0); // add new node to map with child value 0.
-                        mDeepCtrlList.put(groupName, deepOfParent + 1);
-                        i++;
-                    }
+                    out_groups.write(groupName + ";" + parent + "\n");
+                    groupsInDag.add(groupName);
+                    mNodeChildNum.put(parent, nodeChilds + 1); // increase childs of parent by one
+                    mNodeChildNum.put(groupName, 0); // add new node to map with child value 0.
+                    mDeepCtrlList.put(groupName, deepOfParent + 1);
+                    i++;
                 }
             }
 
             for (int k = 0; k < mUserList.size(); k++) {
-                final int randParentsNumber = (int)(Math.random() * mMaxParents) + 1;
+                final int randParentsNumber =
+                    (int)(Math.random() * BenchParams.getMaxParents()) + 1;
 
-                final LinkedList<String> mParent = new LinkedList<String>();
-                final StringBuilder parents = new StringBuilder();
+                LinkedList<String> mParent = new LinkedList<String>();
+                StringBuilder parents = new StringBuilder();
                 int j = 0;
 
                 while (j < randParentsNumber) {
 
-                    final int randParentPos = new Random().nextInt(groupsInDag.size());
+                    final int randParentPos =
+                        new Random().nextInt(groupsInDag.size());
                     final String group = groupsInDag.get(randParentPos);
+
                     if (!mParent.contains(group) && group != null) {
+                        mParent.add(group);
+                        parents.append(group);
 
-                        if (mFanoutStatus) {
-                            final int nodeChilds = mNodeChildNum.get(group);
-                            if (nodeChilds < mFanout) {
-                                mNodeChildNum.put(group, nodeChilds + 1);
-                                mParent.add(group);
-                                parents.append(group);
-                            } else {
-                                if (mProxyNodes.containsKey(group)) {
-                                    boolean emptySpaceFound = false;
-                                    String curProxy = mProxyNodes.get(group);
-                                    while (emptySpaceFound == false) {
-                                        int proxyFanout = mNodeChildNum.get(curProxy);
-                                        if (proxyFanout < mFanout) {
-                                            mNodeChildNum.put(group, nodeChilds + 1);
-                                            mParent.add(group);
-                                            parents.append(group);
-                                            emptySpaceFound = true;
-                                        } else {
-                                            if (!mProxyNodes.containsKey(curProxy)) {
-                                                final String proxyNode = "Proxy_" + proxyCounter;
-                                                out_groups.write(proxyNode + ";" + curProxy + "\n");
-                                                mParent.add(group);
-                                                parents.append(group);
-                                                mProxyNodes.put(curProxy, proxyNode);
-                                                mNodeChildNum.put(proxyNode, 1);
-                                                proxyCounter++;
-                                            } else {
-                                                curProxy = mProxyNodes.get(curProxy);
-                                            }
-                                        }
-                                    }
-
-                                } else {
-                                    final String proxyNode = "Proxy_" + proxyCounter;
-                                    out_groups.write(proxyNode + ";" + group + "\n");
-                                    mParent.add(group);
-                                    parents.append(group);
-                                    mProxyNodes.put(group, proxyNode);
-                                    mNodeChildNum.put(proxyNode, 1);
-                                    proxyCounter++;
-                                }
-                            }
-
-                            j++;
-                            if (j != randParentsNumber) {
-                                parents.append(";");
-                            }
-
-                        } else {
-                            mParent.add(group);
-                            parents.append(group);
-
-                            j++;
-                            if (j != randParentsNumber) {
-                                parents.append(";");
-                            }
+                        j++;
+                        if (j != randParentsNumber) {
+                            parents.append(";");
                         }
                     }
-
                 }
-                out_users.write(mUserList.get(k) + ";" + parents.toString() + "\n");
+                out_users.write(mUserList.get(k) + ";" + parents.toString()
+                    + "\n");
             }
-
             out_groups.close();
             out_users.close();
 
-            System.out.println("DAG files have been created!");
         } catch (final IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
      * Inits users list with given number of user in for of User_<number>
      */
     public static void initUserList() {
-        for (int i = 0; i < mUsers; i++) {
+        for (int i = 0; i < BenchParams.getUsers(); i++) {
             mUserList.add("User_" + i);
         }
     }
@@ -323,16 +181,27 @@ public class RandomDAGFileCreation {
      */
     public static void initGroupList() {
         int i = 0;
-        while (i < mGroups) {
-            final StringBuilder groupName = new StringBuilder();
-            for (int j = 0; j < mGroupNameLength; j++) {
-                final int randCharPos = new Random().nextInt(mChars.length);
-                groupName.append(mChars[randCharPos]);
-            }
-            if (!mGroupList.contains(groupName.toString())) {
-                mGroupList.add(groupName.toString());
+        while (i < BenchParams.getGroups()) {
+            final String groupName = createGroupName();
+            if (!mGroupList.contains(groupName)) {
+                mGroupList.add(groupName);
                 i++;
             }
         }
+    }
+
+    /**
+     * Creates a random group name.
+     * 
+     * @return
+     *         a random group name.
+     */
+    private static String createGroupName() {
+        final StringBuilder groupName = new StringBuilder();
+        for (int j = 0; j < BenchParams.getGroupNameLength(); j++) {
+            final int randCharPos = new Random().nextInt(mChars.length);
+            groupName.append(mChars[randCharPos]);
+        }
+        return groupName.toString();
     }
 }

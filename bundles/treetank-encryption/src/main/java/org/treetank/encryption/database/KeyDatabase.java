@@ -42,7 +42,7 @@ import com.sleepycat.persist.PrimaryIndex;
  * @author Patrick Lang, University of Konstanz
  */
 @Deprecated
-public class KeySelectorDatabase {
+public class KeyDatabase {
 
     /**
      * Name for the database.
@@ -60,7 +60,7 @@ public class KeySelectorDatabase {
      * @param paramFile
      *            the place where the berkeley db is stored.
      */
-    public KeySelectorDatabase(final File paramFile) {
+    public KeyDatabase(final File paramFile) {
         mUtil = new DatabaseUtil(paramFile, NAME);
     }
 
