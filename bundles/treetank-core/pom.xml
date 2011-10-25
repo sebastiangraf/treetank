@@ -95,11 +95,6 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>1.6.10</version>
-		</dependency>
-		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>encryption</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
