@@ -37,7 +37,7 @@
 	<parent>
 		<artifactId>pom</artifactId>
 		<groupId>treetank</groupId>
-		<version>1.0.3</version>
+		<version>1.0.5-SNAPSHOT</version>
 	</parent>
 	<scm>
 		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-eclipse</connection>
