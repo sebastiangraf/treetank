@@ -27,7 +27,8 @@
 
 package org.treetank.io.file;
 
-import org.treetank.io.AbsKey;
+import org.treetank.io.KeyDelegate;
+import org.treetank.io.IKey;
 import org.treetank.io.ITTSource;
 
 /**
@@ -37,54 +38,61 @@ import org.treetank.io.ITTSource;
  * @author Sebastian Graf, University of Konstnz
  * 
  */
-public final class FileKey extends AbsKey {
+public final class FileKey implements IKey {
 
-    /**
-     * Constructor for {@link ITTSource}.
-     * 
-     * @param mInSource
-     *            Source for Input
-     */
-    public FileKey(final ITTSource mInSource) {
-        super(mInSource.readLong(), mInSource.readLong());
-    }
+	private final KeyDelegate mKey;
 
-    /**
-     * Constructor for direct data.
-     * 
-     * @param mOffset
-     *            Offset of data
-     * @param mLength
-     *            Length of data
-     */
-    public FileKey(final long mOffset, final long mLength) {
-        super(mOffset, mLength);
-    }
+	/**
+	 * Constructor for {@link ITTSource}.
+	 * 
+	 * @param paramInSource
+	 *            Source for Input
+	 */
+	public FileKey(final ITTSource paramInSource) {
+		mKey = new KeyDelegate(paramInSource.readLong(), paramInSource.readLong());
+	}
 
-    /**
-     * Getting the length of the file fragment.
-     * 
-     * @return the length of the file fragment
-     */
-    public int getLength() {
-        return (int)super.getKeys()[1];
-    }
+	/**
+	 * Constructor for direct data.
+	 * 
+	 * @param mOffset
+	 *            Offset of data
+	 * @param mLength
+	 *            Length of data
+	 */
+	public FileKey(final long mOffset, final long mLength) {
+		mKey = new KeyDelegate(mOffset, mLength);
+	}
 
-    /**
-     * Getting the offset of the file fragment.
-     * 
-     * @return the offset
-     */
-    public long getOffset() {
-        return super.getKeys()[0];
-    }
+	/**
+	 * Getting the length of the file fragment.
+	 * 
+	 * @return the length of the file fragment
+	 */
+	public int getLength() {
+		return (int) getKeys()[1];
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getIdentifier() {
-        return super.getKeys()[0];
-    }
+	/**
+	 * Getting the offset of the file fragment.
+	 * 
+	 * @return the offset
+	 */
+	public long getOffset() {
+		return getKeys()[0];
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getIdentifier() {
+		return getKeys()[0];
+	}
+
+	@Override
+	public long[] getKeys() {
+		return mKey.getKeys();
+	}
 
 }
