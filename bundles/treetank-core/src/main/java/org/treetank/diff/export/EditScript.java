@@ -63,8 +63,8 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
     }
 
     /**
-     * Calculates the size of the edit script. This can be used to
-     * estimate the amicability of an algorithm.
+     * Calculates the size of the edit script. This can be used to estimate the
+     * amicability of an algorithm.
      * 
      * @return number of changes
      */
@@ -86,7 +86,8 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      * 
      * @param paramItem
      *            {@link IItem} implementation
-     * @return true if the changes {@link List} already contains the node, false otherwise
+     * @return true if the changes {@link List} already contains the node, false
+     *         otherwise
      */
     public boolean containsNode(final IItem paramItem) {
         assert paramItem != null;

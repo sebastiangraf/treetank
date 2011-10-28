@@ -36,8 +36,8 @@ import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
 
 /**
- * Implements {@link IDiffObservable}, which can be used for all classes, which implement the {@link IDiff}
- * interface.
+ * Implements {@link IDiffObservable}, which can be used for all classes, which
+ * implement the {@link IDiff} interface.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -50,7 +50,10 @@ abstract class AbsDiffObservable implements IDiffObservable {
     /** {@link IReadTransaction} on old revision. */
     transient IReadTransaction mOldRtx;
 
-    /** {@link Set} of observers, which want to be notified of the encountered differences. */
+    /**
+     * {@link Set} of observers, which want to be notified of the encountered
+     * differences.
+     */
     private final Set<IDiffObserver> mDiffObservers;
 
     /**

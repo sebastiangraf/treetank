@@ -30,6 +30,8 @@ package org.treetank.page;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.treetank.access.WriteTransactionState;
+import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.utils.TypedValue;
@@ -41,10 +43,12 @@ import org.treetank.utils.TypedValue;
  * Name page holds all names and their keys for a revision.
  * </p>
  */
-public final class NamePage extends AbsPage {
+public final class NamePage implements IPage {
 
     /** Map the hash of a name to its name. */
     private final Map<Integer, String> mNameMap;
+
+    private final AbsPage mDelegate;
 
     /**
      * Create name page.
@@ -53,7 +57,7 @@ public final class NamePage extends AbsPage {
      *            Revision number.
      */
     public NamePage(final long paramRevision) {
-        super(0, paramRevision);
+        mDelegate = new AbsPage(0, paramRevision);
         mNameMap = new HashMap<Integer, String>();
     }
 
@@ -64,8 +68,8 @@ public final class NamePage extends AbsPage {
      *            Input bytes to read from.
      */
     protected NamePage(final ITTSource paramIn) {
-        super(0, paramIn);
-
+        mDelegate = new AbsPage(0, paramIn.readLong());
+        mDelegate.initialize(0, paramIn);
         final int mapSize = paramIn.readInt();
 
         mNameMap = new HashMap<Integer, String>(mapSize);
@@ -89,7 +93,8 @@ public final class NamePage extends AbsPage {
      *            Revision Number to use.
      */
     public NamePage(final NamePage paramCommittedNamePage, final long paramRevisionToUse) {
-        super(0, paramCommittedNamePage, paramRevisionToUse);
+        mDelegate = new AbsPage(0, paramRevisionToUse);
+        mDelegate.initialize(0, paramCommittedNamePage);
         mNameMap = new HashMap<Integer, String>(paramCommittedNamePage.mNameMap);
     }
 
@@ -131,8 +136,8 @@ public final class NamePage extends AbsPage {
      * {@inheritDoc}
      */
     @Override
-    protected void serialize(final ITTSink paramOut) {
-        super.serialize(paramOut);
+    public void serialize(final ITTSink paramOut) {
+        mDelegate.serialize(paramOut);
 
         paramOut.writeInt(mNameMap.size());
 
@@ -161,6 +166,26 @@ public final class NamePage extends AbsPage {
      */
     public Map<Integer, String> getNameMap() {
         return mNameMap;
+    }
+
+    @Override
+    public PageReference getChildren(int paramOffset) {
+        return mDelegate.getChildren(paramOffset);
+    }
+
+    @Override
+    public void commit(WriteTransactionState paramState) throws AbsTTException {
+        mDelegate.commit(paramState);
+    }
+
+    @Override
+    public PageReference[] getReferences() {
+        return mDelegate.getReferences();
+    }
+
+    @Override
+    public long getRevision() {
+        return mDelegate.getRevision();
     }
 
 }

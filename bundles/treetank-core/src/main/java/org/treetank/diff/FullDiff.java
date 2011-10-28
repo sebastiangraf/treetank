@@ -34,7 +34,8 @@ import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 
 /**
- * Full diff including attributes and namespaces. Note that this class is thread safe.
+ * Full diff including attributes and namespaces. Note that this class is thread
+ * safe.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

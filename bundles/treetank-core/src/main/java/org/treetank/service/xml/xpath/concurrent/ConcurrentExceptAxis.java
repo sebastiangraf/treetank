@@ -114,7 +114,8 @@ public class ConcurrentExceptAxis extends AbsAxis {
 
         final long nodeKey;
 
-        // if 1st axis has a result left that is not contained in the 2nd it is returned
+        // if 1st axis has a result left that is not contained in the 2nd it is
+        // returned
         while (!mOp1.isFinished()) {
             while (!mOp2.isFinished()) {
                 if (mOp1.isFinished())

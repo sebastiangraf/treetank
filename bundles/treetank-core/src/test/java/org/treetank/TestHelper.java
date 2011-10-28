@@ -114,8 +114,8 @@ public final class TestHelper {
     }
 
     /**
-     * Getting a database and create one of not existing. This includes the creation of a resource with the
-     * settings in the builder as standard.
+     * Getting a database and create one of not existing. This includes the
+     * creation of a resource with the settings in the builder as standard.
      * 
      * @param file
      *            to be created

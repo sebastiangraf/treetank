@@ -38,8 +38,8 @@ import org.treetank.node.ENodes;
 public interface IItem {
 
     /**
-     * Setting the actual hash of the structure. The hash of one node should have the entire integrity of the
-     * related subtree.
+     * Setting the actual hash of the structure. The hash of one node should
+     * have the entire integrity of the related subtree.
      * 
      * @param paramHash
      *            hash to be set for this node

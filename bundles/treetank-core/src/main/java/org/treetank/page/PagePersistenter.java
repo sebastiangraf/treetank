@@ -53,9 +53,9 @@ public final class PagePersistenter {
      *            source to read from
      * @return the created page
      */
-    public static AbsPage createPage(final ITTSource paramSource) {
+    public static IPage createPage(final ITTSource paramSource) {
         final int kind = paramSource.readInt();
-        AbsPage returnVal = null;
+        IPage returnVal = null;
         switch (kind) {
         case NODEPAGE:
             returnVal = new NodePage(paramSource);
@@ -87,7 +87,7 @@ public final class PagePersistenter {
      * @param paramPage
      *            the page to serialize
      */
-    public static void serializePage(final ITTSink paramSink, final AbsPage paramPage) {
+    public static void serializePage(final ITTSink paramSink, final IPage paramPage) {
         if (paramPage instanceof NodePage) {
             paramSink.writeInt(PagePersistenter.NODEPAGE);
         } else if (paramPage instanceof IndirectPage) {

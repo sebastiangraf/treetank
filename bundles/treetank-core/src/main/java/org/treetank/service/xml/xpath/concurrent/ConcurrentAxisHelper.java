@@ -72,9 +72,9 @@ public class ConcurrentAxisHelper implements Runnable {
     private final boolean callNext;
 
     /**
-     * Bind axis step to transaction.
-     * Make sure to create a new ReadTransaction instead of using the parameter
-     * rtx. Because of concurrency every axis has to have it's own transaction.
+     * Bind axis step to transaction. Make sure to create a new ReadTransaction
+     * instead of using the parameter rtx. Because of concurrency every axis has
+     * to have it's own transaction.
      * 
      * @param rtx
      *            Transaction to operate with.
@@ -92,7 +92,8 @@ public class ConcurrentAxisHelper implements Runnable {
     }
 
     public void run() {
-        // Compute all results of the given axis and store the results in the queue.
+        // Compute all results of the given axis and store the results in the
+        // queue.
         while (mAxis.hasNext()) {
             // for some axis next(( has to be called here
             if (callNext) {
@@ -100,7 +101,8 @@ public class ConcurrentAxisHelper implements Runnable {
             }
             try {
                 // store result in queue as soon as there is space left
-                // System.out.println("put: " + mAxis.getTransaction().getNode().getNodeKey());
+                // System.out.println("put: " +
+                // mAxis.getTransaction().getNode().getNodeKey());
                 mResults.put(mAxis.getTransaction().getNode().getNodeKey());
                 // wait until next thread arrives and exchange blocking queue
             } catch (final InterruptedException mExp) {

@@ -125,7 +125,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         mDiff = EDiff.SAME;
         mDiffKind = paramBuilder.mKind;
         mDepth = new DepthCounter(paramBuilder.mNewDepth, paramBuilder.mOldDepth);
-        // System.out.println("NEW REV: " + paramBuilder.mNewRev + " new rev: " +
+        // System.out.println("NEW REV: " + paramBuilder.mNewRev + " new rev: "
+        // +
         // mNewRtx.getRevisionNumber());
     }
 
@@ -170,7 +171,8 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         // Nodes deleted in old rev at the end of the tree.
         if (mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
-            // First time it might be EDiff.INSERTED where the cursor doesn't move.
+            // First time it might be EDiff.INSERTED where the cursor doesn't
+            // move.
             while (mDiff == EDiff.INSERTED || moveCursor(mOldRtx, ERevision.OLD)) {
                 if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                     mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
@@ -274,7 +276,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      * @param paramDepth
-     *            {@link DepthCounter} container for current depths of both transaction cursors
+     *            {@link DepthCounter} container for current depths of both
+     *            transaction cursors
      * @param paramFireDiff
      *            determines if a diff should be fired
      * @return kind of difference
@@ -315,7 +318,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      * @param paramDepth
-     *            {@link DepthCounter} container for current depths of both transaction cursors
+     *            {@link DepthCounter} container for current depths of both
+     *            transaction cursors
      * @param paramFireDiff
      *            determines if a diff should be fired
      * @return kind of difference
@@ -380,7 +384,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      * @param paramDepth
-     *            {@link DepthCounter} container for current depths of both transaction cursors
+     *            {@link DepthCounter} container for current depths of both
+     *            transaction cursors
      * @return kind of diff
      */
     private EDiff diffAlgorithm(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
@@ -390,7 +395,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         // Check if node has been deleted.
         if (paramDepth.getOldDepth() > paramDepth.getNewDepth()) {
             diff = EDiff.DELETED;
-        } else if (checkUpdate(paramNewRtx, paramOldRtx)) { // Check if node has been updated.
+        } else if (checkUpdate(paramNewRtx, paramOldRtx)) { // Check if node has
+                                                            // been updated.
             diff = EDiff.UPDATED;
         } else {
             // See if one of the right sibling matches.
@@ -419,7 +425,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            {@link IReadTransaction} on new revision
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
-     * @return true if nodes are "equal" according to their {@link QName}s, otherwise false
+     * @return true if nodes are "equal" according to their {@link QName}s,
+     *         otherwise false
      */
     boolean checkName(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
         assert paramNewRtx != null;

@@ -53,7 +53,8 @@ public final class Diff {
      * Constructor.
      * 
      * @param paramDiff
-     *            {@link EDiff} which specifies the kind of diff between two nodes
+     *            {@link EDiff} which specifies the kind of diff between two
+     *            nodes
      * @param paramNewNode
      *            {@link IStructuralItem} in new revision
      * @param paramOldNode

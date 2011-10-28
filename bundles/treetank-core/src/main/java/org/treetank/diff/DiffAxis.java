@@ -56,7 +56,8 @@ public class DiffAxis extends AbsAxis {
         // if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
         // mDiff = diff(getTransaction(), mOldRtx, mDepth, EFireDiff.TRUE);
         // } else {
-        // mDiff = optimizedDiff(getTransaction(), mOldRtx, mDepth, EFireDiff.TRUE);
+        // mDiff = optimizedDiff(getTransaction(), mOldRtx, mDepth,
+        // EFireDiff.TRUE);
         // }
         // }
 

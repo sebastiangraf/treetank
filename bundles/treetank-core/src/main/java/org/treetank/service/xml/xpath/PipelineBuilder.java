@@ -330,7 +330,8 @@ public final class PipelineBuilder {
         //
         // axis = new NodeComp(rtx, paramOperandOne, paramOperandTwo, kind);
         // } else {
-        // throw new IllegalStateException(mComp + " is not a valid comparison.");
+        // throw new IllegalStateException(mComp +
+        // " is not a valid comparison.");
         //
         // }
 
@@ -556,16 +557,20 @@ public final class PipelineBuilder {
                 // return; // TODO: YES! it is dirty!
 
                 // AtomicValue pos =
-                // new AtomicValue(mTransaction.getNode().getRawValue(), mTransaction
+                // new AtomicValue(mTransaction.getNode().getRawValue(),
+                // mTransaction
                 // .keyForName("xs:integer"));
                 // long position = mTransaction.getItemList().addItem(pos);
                 // mPredicate.reset(mTransaction.getNode().getNodeKey());
                 // IAxis function =
-                // new FNPosition(mTransaction, new ArrayList<IAxis>(), FuncDef.POS.getMin(), FuncDef.POS
-                // .getMax(), mTransaction.keyForName(FuncDef.POS.getReturnType()));
+                // new FNPosition(mTransaction, new ArrayList<IAxis>(),
+                // FuncDef.POS.getMin(), FuncDef.POS
+                // .getMax(),
+                // mTransaction.keyForName(FuncDef.POS.getReturnType()));
                 // IAxis expectedPos = new LiteralExpr(mTransaction, position);
                 //
-                // mPredicate = new ValueComp(mTransaction, function, expectedPos, CompKind.EQ);
+                // mPredicate = new ValueComp(mTransaction, function,
+                // expectedPos, CompKind.EQ);
 
             }
         }

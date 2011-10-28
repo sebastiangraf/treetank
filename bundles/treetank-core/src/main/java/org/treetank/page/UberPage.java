@@ -27,6 +27,8 @@
 
 package org.treetank.page;
 
+import org.treetank.access.WriteTransactionState;
+import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.DocumentRootNode;
@@ -40,7 +42,7 @@ import org.treetank.utils.IConstants;
  * Uber page holds a reference to the static revision root page tree.
  * </p>
  */
-public final class UberPage extends AbsPage {
+public final class UberPage implements IPage {
 
     /** Offset of indirect page reference. */
     private static final int INDIRECT_REFERENCE_OFFSET = 0;
@@ -51,11 +53,13 @@ public final class UberPage extends AbsPage {
     /** True if this uber page is the uber page of a fresh TreeTank file. */
     private boolean mBootstrap;
 
+    private final AbsPage mDelegate;
+
     /**
      * Create uber page.
      */
     public UberPage() {
-        super(1, IConstants.UBP_ROOT_REVISION_NUMBER);
+        mDelegate = new AbsPage(1, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
         mBootstrap = true;
 
@@ -64,14 +68,14 @@ public final class UberPage extends AbsPage {
 
         // Initialize revision tree to guarantee that there is a revision root
         // page.
-        AbsPage page = null;
-        PageReference reference = getReference(INDIRECT_REFERENCE_OFFSET);
+        IPage page = null;
+        PageReference reference = getChildren(INDIRECT_REFERENCE_OFFSET);
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
             page = new IndirectPage(IConstants.UBP_ROOT_REVISION_NUMBER);
             reference.setPage(page);
-            reference = page.getReference(0);
+            reference = page.getChildren(0);
         }
 
         final RevisionRootPage rrp = new RevisionRootPage();
@@ -89,7 +93,7 @@ public final class UberPage extends AbsPage {
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
             page = new IndirectPage(IConstants.UBP_ROOT_REVISION_NUMBER);
             reference.setPage(page);
-            reference = page.getReference(0);
+            reference = page.getChildren(0);
         }
 
         final NodePage ndp =
@@ -108,7 +112,9 @@ public final class UberPage extends AbsPage {
      *            Input bytes.
      */
     protected UberPage(final ITTSource paramIn) {
-        super(1, paramIn);
+
+        mDelegate = new AbsPage(1, paramIn.readLong());
+        mDelegate.initialize(1, paramIn);
         mRevisionCount = paramIn.readLong();
         mBootstrap = false;
     }
@@ -122,7 +128,8 @@ public final class UberPage extends AbsPage {
      *            Revision number to use.
      */
     public UberPage(final UberPage paramCommittedUberPage, final long paramRevisionToUse) {
-        super(1, paramCommittedUberPage, paramRevisionToUse);
+        mDelegate = new AbsPage(1, paramRevisionToUse);
+        mDelegate.initialize(1, paramCommittedUberPage);
         if (paramCommittedUberPage.isBootstrap()) {
             mRevisionCount = paramCommittedUberPage.mRevisionCount;
             mBootstrap = paramCommittedUberPage.mBootstrap;
@@ -138,7 +145,7 @@ public final class UberPage extends AbsPage {
      * @return Indirect page reference.
      */
     public PageReference getIndirectPageReference() {
-        return getReference(INDIRECT_REFERENCE_OFFSET);
+        return getChildren(INDIRECT_REFERENCE_OFFSET);
     }
 
     /**
@@ -156,7 +163,7 @@ public final class UberPage extends AbsPage {
      * @return Key of last committed revision.
      */
     public long getLastCommittedRevisionNumber() {
-            return mRevisionCount - 2;
+        return mRevisionCount - 2;
     }
 
     /**
@@ -165,7 +172,7 @@ public final class UberPage extends AbsPage {
      * @return Revision key.
      */
     public long getRevisionNumber() {
-            return mRevisionCount - 1;
+        return mRevisionCount - 1;
     }
 
     /**
@@ -181,9 +188,9 @@ public final class UberPage extends AbsPage {
      * {@inheritDoc}
      */
     @Override
-    protected void serialize(final ITTSink paramOut) {
+    public void serialize(final ITTSink paramOut) {
         mBootstrap = false;
-        super.serialize(paramOut);
+        mDelegate.serialize(paramOut);
         paramOut.writeLong(mRevisionCount);
     }
 
@@ -193,7 +200,27 @@ public final class UberPage extends AbsPage {
     @Override
     public String toString() {
         return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
-            + getReference(INDIRECT_REFERENCE_OFFSET) + "), isBootstrap=" + mBootstrap;
+            + getChildren(INDIRECT_REFERENCE_OFFSET) + "), isBootstrap=" + mBootstrap;
+    }
+
+    @Override
+    public PageReference getChildren(int paramOffset) {
+        return mDelegate.getChildren(paramOffset);
+    }
+
+    @Override
+    public void commit(WriteTransactionState paramState) throws AbsTTException {
+        mDelegate.commit(paramState);
+    }
+
+    @Override
+    public PageReference[] getReferences() {
+        return mDelegate.getReferences();
+    }
+
+    @Override
+    public long getRevision() {
+        return mDelegate.getRevision();
     }
 
 }

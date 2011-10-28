@@ -32,8 +32,8 @@ import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.exception.AbsTTException;
 
 /**
- * Structural diff, thus no attributes and namespace nodes are taken into account. Note that this class is
- * thread safe.
+ * Structural diff, thus no attributes and namespace nodes are taken into
+ * account. Note that this class is thread safe.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

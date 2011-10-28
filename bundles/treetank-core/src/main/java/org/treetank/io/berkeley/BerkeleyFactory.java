@@ -33,14 +33,15 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.AbsIOFactory;
-import org.treetank.io.KeyDelegate;
 import org.treetank.io.IKey;
 import org.treetank.io.IReader;
 import org.treetank.io.IWriter;
+import org.treetank.io.KeyDelegate;
 import org.treetank.io.berkeley.binding.AbstractPageBinding;
 import org.treetank.io.berkeley.binding.KeyBinding;
 import org.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
 import org.treetank.page.AbsPage;
+import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -69,7 +70,7 @@ public final class BerkeleyFactory extends AbsIOFactory {
     public static final TupleBinding<IKey> KEY = new KeyBinding();
 
     /** Binding for {@link AbsPage}. */
-    public static final TupleBinding<AbsPage> PAGE_VAL_B = new AbstractPageBinding();
+    public static final TupleBinding<IPage> PAGE_VAL_B = new AbstractPageBinding();
 
     /** Binding for {@link PageReference}. */
     public static final TupleBinding<PageReference> FIRST_REV_VAL_B = new PageReferenceUberPageBinding();

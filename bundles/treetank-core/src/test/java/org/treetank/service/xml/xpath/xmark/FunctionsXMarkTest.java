@@ -59,8 +59,8 @@ public class FunctionsXMarkTest {
     private static Holder holder;
 
     /**
-     * Method is called once before each test. It deletes all states, shreds XML file to database and
-     * initializes the required variables.
+     * Method is called once before each test. It deletes all states, shreds XML
+     * file to database and initializes the required variables.
      * 
      * @throws Exception
      */
@@ -225,8 +225,8 @@ public class FunctionsXMarkTest {
     }
 
     /**
-     * Test function exactly-one().
-     * alternative query: exactly-one('a') -> result: a
+     * Test function exactly-one(). alternative query: exactly-one('a') ->
+     * result: a
      * 
      * @throws TTXPathException
      */
@@ -256,8 +256,8 @@ public class FunctionsXMarkTest {
     }
 
     /**
-     * Test function zero-or-one().
-     * alternative query: zero-or-one('a') -> result: a
+     * Test function zero-or-one(). alternative query: zero-or-one('a') ->
+     * result: a
      * 
      * @throws TTXPathException
      */

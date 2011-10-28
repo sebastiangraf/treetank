@@ -40,59 +40,59 @@ import org.treetank.io.ITTSource;
  */
 public final class FileKey implements IKey {
 
-	private final KeyDelegate mKey;
+    private final KeyDelegate mKey;
 
-	/**
-	 * Constructor for {@link ITTSource}.
-	 * 
-	 * @param paramInSource
-	 *            Source for Input
-	 */
-	public FileKey(final ITTSource paramInSource) {
-		mKey = new KeyDelegate(paramInSource.readLong(), paramInSource.readLong());
-	}
+    /**
+     * Constructor for {@link ITTSource}.
+     * 
+     * @param paramInSource
+     *            Source for Input
+     */
+    public FileKey(final ITTSource paramInSource) {
+        mKey = new KeyDelegate(paramInSource.readLong(), paramInSource.readLong());
+    }
 
-	/**
-	 * Constructor for direct data.
-	 * 
-	 * @param mOffset
-	 *            Offset of data
-	 * @param mLength
-	 *            Length of data
-	 */
-	public FileKey(final long mOffset, final long mLength) {
-		mKey = new KeyDelegate(mOffset, mLength);
-	}
+    /**
+     * Constructor for direct data.
+     * 
+     * @param mOffset
+     *            Offset of data
+     * @param mLength
+     *            Length of data
+     */
+    public FileKey(final long mOffset, final long mLength) {
+        mKey = new KeyDelegate(mOffset, mLength);
+    }
 
-	/**
-	 * Getting the length of the file fragment.
-	 * 
-	 * @return the length of the file fragment
-	 */
-	public int getLength() {
-		return (int) getKeys()[1];
-	}
+    /**
+     * Getting the length of the file fragment.
+     * 
+     * @return the length of the file fragment
+     */
+    public int getLength() {
+        return (int)getKeys()[1];
+    }
 
-	/**
-	 * Getting the offset of the file fragment.
-	 * 
-	 * @return the offset
-	 */
-	public long getOffset() {
-		return getKeys()[0];
-	}
+    /**
+     * Getting the offset of the file fragment.
+     * 
+     * @return the offset
+     */
+    public long getOffset() {
+        return getKeys()[0];
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public long getIdentifier() {
-		return getKeys()[0];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getIdentifier() {
+        return getKeys()[0];
+    }
 
-	@Override
-	public long[] getKeys() {
-		return mKey.getKeys();
-	}
+    @Override
+    public long[] getKeys() {
+        return mKey.getKeys();
+    }
 
 }

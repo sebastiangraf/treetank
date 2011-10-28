@@ -37,7 +37,8 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 
 /**
- * This class contains test cases for not yet implemented xpath/xquery functions with test.xml file.
+ * This class contains test cases for not yet implemented xpath/xquery functions
+ * with test.xml file.
  * 
  * @author Patrick Lang, Konstanz University
  */
@@ -46,8 +47,8 @@ public class FunctionsTest {
     private Holder holder;
 
     /**
-     * Method is called once before each test. It deletes all states, shreds XML file to database and
-     * initializes the required variables.
+     * Method is called once before each test. It deletes all states, shreds XML
+     * file to database and initializes the required variables.
      * 
      * @throws Exception
      *             of any kind

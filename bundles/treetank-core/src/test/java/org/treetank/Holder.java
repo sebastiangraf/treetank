@@ -10,8 +10,8 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
 /**
- * Generating a standard resource within the {@link PATHS#PATH1} path. It also generates a standard resource
- * defined within {@link TestHelper#RESOURCE}.
+ * Generating a standard resource within the {@link PATHS#PATH1} path. It also
+ * generates a standard resource defined within {@link TestHelper#RESOURCE}.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 

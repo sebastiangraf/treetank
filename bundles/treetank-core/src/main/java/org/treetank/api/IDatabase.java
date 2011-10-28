@@ -38,7 +38,8 @@ import org.treetank.exception.TTIOException;
  * done with the help of {@link ISession}s.
  * 
  * Furthermore, databases can be created with the help of {@link org.access.conf.DatabaseConfiguration}s.
- * After creation, the settings of a database cannot be changed.
+ * After creation, the settings
+ * of a database cannot be changed.
  * 
  * 
  * <h2>Usage Example</h2>
@@ -69,9 +70,10 @@ import org.treetank.exception.TTIOException;
  */
 public interface IDatabase {
     /**
-     * Creation of a resource. Since databases can consist out of several resources, those can be created
-     * within this method. This includes the creation of a suitable folder structure as well as the
-     * serialization of the configuration of this resource.
+     * Creation of a resource. Since databases can consist out of several
+     * resources, those can be created within this method. This includes the
+     * creation of a suitable folder structure as well as the serialization of
+     * the configuration of this resource.
      * 
      * @param paramConfig
      *            the config of the resource
@@ -93,8 +95,8 @@ public interface IDatabase {
     ISession getSession(final SessionConfiguration paramBuilder) throws AbsTTException;
 
     /**
-     * Truncating a resource.
-     * This includes the removal of all data stored within this resource.
+     * Truncating a resource. This includes the removal of all data stored
+     * within this resource.
      * 
      * @param paramBuilder
      *            storing the name of the resource

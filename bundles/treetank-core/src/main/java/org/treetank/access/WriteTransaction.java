@@ -73,7 +73,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     public enum HashKind {
         /** Rolling hash, only nodes on ancestor axis are touched. */
         Rolling,
-        /** Postorder hash, all nodes on ancestor plus postorder are at least read. */
+        /**
+         * Postorder hash, all nodes on ancestor plus postorder are at least
+         * read.
+         */
         Postorder,
         /** No hash structure after all. */
         None;
@@ -250,9 +253,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @param paramFromNode
      *            root {@link AbsStructNode} of the subtree to be moved
      * @param paramToNode
-     *            the {@link AbsStructNode} which is the anchor of the new subtree
+     *            the {@link AbsStructNode} which is the anchor of the new
+     *            subtree
      * @param paramInsert
-     *            determines if it has to be inserted as a first child or a right sibling
+     *            determines if it has to be inserted as a first child or a
+     *            right sibling
      * @throws AbsTTException
      *             if removing a node fails after merging text nodes
      */
@@ -446,7 +451,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
             final int uriKey = getTransactionState().createNameKey(paramQName.getNamespaceURI());
             // final String name =
-            // paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" + paramQName.getPrefix();
+            // paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" +
+            // paramQName.getPrefix();
             final int prefixKey = getTransactionState().createNameKey(paramQName.getPrefix());
             final long elementKey = getCurrentNode().getNodeKey();
 
@@ -656,8 +662,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
-        setTransactionState(mSession.createWriteTransactionState(getTransactionID(),
-            getRevisionNumber(), getRevisionNumber()));
+        setTransactionState(mSession.createWriteTransactionState(getTransactionID(), getRevisionNumber(),
+            getRevisionNumber()));
 
     }
 
@@ -922,7 +928,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     }
 
     /**
-     * Adapting the structure with a rolling hash for all ancestors only with insert.
+     * Adapting the structure with a rolling hash for all ancestors only with
+     * insert.
      * 
      * @throws TTIOException
      *             if anything weird happened
@@ -981,7 +988,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     }
 
     /**
-     * Adapting the structure with a rolling hash for all ancestors only with update.
+     * Adapting the structure with a rolling hash for all ancestors only with
+     * update.
      * 
      * @param paramOldHash
      *            paramOldHash to be removed
@@ -1013,7 +1021,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     }
 
     /**
-     * Adapting the structure with a rolling hash for all ancestors only with remove.
+     * Adapting the structure with a rolling hash for all ancestors only with
+     * remove.
      * 
      * @throws TTIOException
      *             if anything weird happened
@@ -1050,7 +1059,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     }
 
     /**
-     * Adapting the structure with a rolling hash for all ancestors only with insert.
+     * Adapting the structure with a rolling hash for all ancestors only with
+     * insert.
      * 
      * @throws TTIOException
      *             if anything weird happened
@@ -1074,7 +1084,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                     newHash = possibleOldHash + hashToAdd * PRIME;
                     hashToAdd = newHash;
                 } else {
-                    // at the rest, remove the existing old key for this element and add the new one
+                    // at the rest, remove the existing old key for this element
+                    // and add the new one
                     newHash = getCurrentNode().getHash() - (possibleOldHash * PRIME);
                     newHash = newHash + hashToAdd * PRIME;
                     hashToAdd = newHash;
@@ -1106,7 +1117,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     }
 
     /**
-     * Get an instance from a {@link IReadTransaction} transaction implementation.
+     * Get an instance from a {@link IReadTransaction} transaction
+     * implementation.
      * 
      * @param paramNodeKey
      *            node key of the root node of the subtree to copy

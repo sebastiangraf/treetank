@@ -43,7 +43,7 @@ import org.treetank.node.DeletedNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
-import org.treetank.page.AbsPage;
+import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
@@ -320,7 +320,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      *             if the write fails
      */
     public void commit(final PageReference reference) throws AbsTTException {
-        AbsPage page = null;
+        IPage page = null;
 
         // if reference is not null, get one from the persistent storage.
         if (reference != null) {
@@ -329,7 +329,8 @@ public final class WriteTransactionState extends ReadTransactionState {
             if (cont != null) {
                 page = cont.getModified();
             }
-            // if none is in the log, test if one is instantiated, if so, get the one flexible from the
+            // if none is in the log, test if one is instantiated, if so, get
+            // the one flexible from the
             // reference
             if (page == null) {
                 if (!reference.isInstantiated()) {
@@ -345,7 +346,8 @@ public final class WriteTransactionState extends ReadTransactionState {
             page.commit(this);
             mPageWriter.write(reference);
             reference.setPage(null);
-            // afterwards synchronize all logs since the changes must to be written to the transaction log as
+            // afterwards synchronize all logs since the changes must to be
+            // written to the transaction log as
             // well
             if (cont != null) {
                 mSession.syncLogs(cont, mTransactionID);
@@ -542,7 +544,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final IndirectPage page = prepareIndirectPage(reference);
-            reference = page.getReference(offset);
+            reference = page.getChildren(offset);
 
         }
 

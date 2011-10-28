@@ -27,6 +27,8 @@
 
 package org.treetank.page;
 
+import org.treetank.access.WriteTransactionState;
+import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.utils.IConstants;
@@ -38,7 +40,7 @@ import org.treetank.utils.IConstants;
  * Revision root page holds a reference to the name page as well as the static node page tree.
  * </p>
  */
-public final class RevisionRootPage extends AbsPage {
+public final class RevisionRootPage implements IPage {
 
     /** Offset of name page reference. */
     private static final int NAME_REFERENCE_OFFSET = 0;
@@ -55,13 +57,15 @@ public final class RevisionRootPage extends AbsPage {
     /** Timestamp of revision. */
     private long mRevisionTimestamp;
 
+    private final AbsPage mDelegate;
+
     /**
      * Create revision root page.
      */
     public RevisionRootPage() {
-        super(2, IConstants.UBP_ROOT_REVISION_NUMBER);
+        mDelegate = new AbsPage(2, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionSize = 0L;
-        final PageReference ref = getReference(NAME_REFERENCE_OFFSET);
+        final PageReference ref = getChildren(NAME_REFERENCE_OFFSET);
         ref.setPage(new NamePage(IConstants.UBP_ROOT_REVISION_NUMBER));
         mMaxNodeKey = -1L;
     }
@@ -73,7 +77,8 @@ public final class RevisionRootPage extends AbsPage {
      *            Input bytes.
      */
     protected RevisionRootPage(final ITTSource paramIn) {
-        super(2, paramIn);
+        mDelegate = new AbsPage(2, paramIn.readLong());
+        mDelegate.initialize(2, paramIn);
         mRevisionSize = paramIn.readLong();
         mMaxNodeKey = paramIn.readLong();
         mRevisionTimestamp = paramIn.readLong();
@@ -89,7 +94,8 @@ public final class RevisionRootPage extends AbsPage {
      */
     public RevisionRootPage(final RevisionRootPage paramCommittedRevisionRootPage,
         final long paramRevisionToUse) {
-        super(2, paramCommittedRevisionRootPage, paramRevisionToUse);
+        mDelegate = new AbsPage(2, paramRevisionToUse);
+        mDelegate.initialize(2, paramCommittedRevisionRootPage);
         mRevisionSize = paramCommittedRevisionRootPage.mRevisionSize;
         mMaxNodeKey = paramCommittedRevisionRootPage.mMaxNodeKey;
     }
@@ -100,7 +106,7 @@ public final class RevisionRootPage extends AbsPage {
      * @return Name page reference.
      */
     public PageReference getNamePageReference() {
-        return getReference(NAME_REFERENCE_OFFSET);
+        return getChildren(NAME_REFERENCE_OFFSET);
     }
 
     /**
@@ -109,7 +115,7 @@ public final class RevisionRootPage extends AbsPage {
      * @return Indirect page reference.
      */
     public PageReference getIndirectPageReference() {
-        return getReference(INDIRECT_REFERENCE_OFFSET);
+        return getChildren(INDIRECT_REFERENCE_OFFSET);
     }
 
     /**
@@ -150,9 +156,9 @@ public final class RevisionRootPage extends AbsPage {
      * {@inheritDoc}
      */
     @Override
-    protected void serialize(final ITTSink mOut) {
+    public void serialize(final ITTSink mOut) {
         mRevisionTimestamp = System.currentTimeMillis();
-        super.serialize(mOut);
+        mDelegate.serialize(mOut);
         mOut.writeLong(mRevisionSize);
         mOut.writeLong(mMaxNodeKey);
         mOut.writeLong(mRevisionTimestamp);
@@ -164,8 +170,28 @@ public final class RevisionRootPage extends AbsPage {
     @Override
     public String toString() {
         return super.toString() + " revisionSize=" + mRevisionSize + ", revisionTimestamp="
-            + mRevisionTimestamp + ", namePage=(" + getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
-            + getReference(INDIRECT_REFERENCE_OFFSET) + ")";
+            + mRevisionTimestamp + ", namePage=(" + getChildren(NAME_REFERENCE_OFFSET) + "), indirectPage=("
+            + getChildren(INDIRECT_REFERENCE_OFFSET) + ")";
+    }
+
+    @Override
+    public PageReference getChildren(int paramOffset) {
+        return mDelegate.getChildren(paramOffset);
+    }
+
+    @Override
+    public void commit(WriteTransactionState paramState) throws AbsTTException {
+        mDelegate.commit(paramState);
+    }
+
+    @Override
+    public PageReference[] getReferences() {
+        return mDelegate.getReferences();
+    }
+
+    @Override
+    public long getRevision() {
+        return mDelegate.getRevision();
     }
 
 }

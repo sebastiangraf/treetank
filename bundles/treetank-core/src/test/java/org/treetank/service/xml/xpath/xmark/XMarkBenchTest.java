@@ -61,7 +61,7 @@ public class XMarkBenchTest {
     @BeforeClass
     public static void setUp() throws Exception {
         TestHelper.deleteEverything();
-        //EncryptionHelper.start();
+        // EncryptionHelper.start();
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
         holder = Holder.generateRtx();
     }
@@ -103,29 +103,20 @@ public class XMarkBenchTest {
     }
 
     /*
-     * @Test
-     * public void xMarkTest_Q21() {
-     * String query = xmbq.getQuery(21, FACTOR);
-     * String result = xmbq.getResult(21, FACTOR);
+     * @Test public void xMarkTest_Q21() { String query = xmbq.getQuery(21,
+     * FACTOR); String result = xmbq.getResult(21, FACTOR);
      * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
-     * new String[] { result });
-     * }
+     * new String[] { result }); }
      * 
-     * @Test
-     * public void xMarkTest_Q22() {
-     * String query = xmbq.getQuery(22, FACTOR);
-     * String result = xmbq.getResult(22, FACTOR);
+     * @Test public void xMarkTest_Q22() { String query = xmbq.getQuery(22,
+     * FACTOR); String result = xmbq.getResult(22, FACTOR);
      * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
-     * new String[] { result });
-     * }
+     * new String[] { result }); }
      * 
-     * @Test
-     * public void xMarkTest_Q23() {
-     * String query = xmbq.getQuery(23, FACTOR);
-     * String result = xmbq.getResult(23, FACTOR);
+     * @Test public void xMarkTest_Q23() { String query = xmbq.getQuery(23,
+     * FACTOR); String result = xmbq.getResult(23, FACTOR);
      * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
-     * new String[] { result });
-     * }
+     * new String[] { result }); }
      */
 
     @AfterClass

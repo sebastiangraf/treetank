@@ -175,9 +175,11 @@ public final class XMLSerializerProperties {
     // // User has already specified key/values, so cache it.
     // final StringBuilder strBuilder = new StringBuilder();
     // if (file.exists()) {
-    // final BufferedReader buffReader = new BufferedReader(new FileReader(file));
+    // final BufferedReader buffReader = new BufferedReader(new
+    // FileReader(file));
     //
-    // for (String line = buffReader.readLine(); line != null; line = buffReader.readLine()) {
+    // for (String line = buffReader.readLine(); line != null; line =
+    // buffReader.readLine()) {
     // strBuilder.append(line + ECharsForSerializing.NEWLINE);
     // }
     //
@@ -185,7 +187,8 @@ public final class XMLSerializerProperties {
     // }
     //
     // // Write map properties to file.
-    // final BufferedWriter buffWriter = new BufferedWriter(new FileWriter(file));
+    // final BufferedWriter buffWriter = new BufferedWriter(new
+    // FileWriter(file));
     // for (final Field f : getClass().getFields()) {
     // final Object obj = f.get(null);
     // if (!(obj instanceof Object[]))

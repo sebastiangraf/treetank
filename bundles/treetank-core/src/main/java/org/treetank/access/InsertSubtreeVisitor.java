@@ -40,10 +40,14 @@ import org.treetank.node.TextNode;
  * 
  */
 class InsertSubtreeVisitor extends AbsVisitorSupport {
-    /** Read-transaction which implements the {@link IReadTransaction} interface. */
+    /**
+     * Read-transaction which implements the {@link IReadTransaction} interface.
+     */
     private final IReadTransaction mRtx;
 
-    /** Write-transaction which implements the {@link IWriteTransaction} interface. */
+    /**
+     * Write-transaction which implements the {@link IWriteTransaction} interface.
+     */
     private final IWriteTransaction mWtx;
 
     /** Determines how to insert a node. */

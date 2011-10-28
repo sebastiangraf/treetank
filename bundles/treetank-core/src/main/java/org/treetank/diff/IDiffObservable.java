@@ -40,8 +40,8 @@ import org.treetank.exception.AbsTTException;
  */
 interface IDiffObservable {
     /**
-     * Fire a diff for exactly one node comparsion. Must call the diffListener(EDiff) method defined in the
-     * {@link IDiffObserver} interface.
+     * Fire a diff for exactly one node comparsion. Must call the
+     * diffListener(EDiff) method defined in the {@link IDiffObserver} interface.
      * 
      * @param paramDiff
      *            the encountered diff
@@ -64,8 +64,8 @@ interface IDiffObservable {
     void done() throws AbsTTException;
 
     /**
-     * Add an observer. This means add an instance of a class which implements the {@link IDiffObserver}
-     * interface.
+     * Add an observer. This means add an instance of a class which implements
+     * the {@link IDiffObserver} interface.
      * 
      * @param paramObserver
      *            instance of the class which implements {@link IDiffObserver}.

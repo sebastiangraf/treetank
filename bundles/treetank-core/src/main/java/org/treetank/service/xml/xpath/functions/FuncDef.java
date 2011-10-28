@@ -1888,8 +1888,8 @@ public enum FuncDef {
         STATIC_BASE_URI(AbsFunction.class, 0, 0, "xs:anyURI", "fn:static-base-uri");
 
     /**
-     * Name of the function. Can inherit XPath 2.0 function name or XPath1.0 and XPath2.0 names for
-     * compatibility reasons.
+     * Name of the function. Can inherit XPath 2.0 function name or XPath1.0 and
+     * XPath2.0 names for compatibility reasons.
      */
     private final String[] mNames;
 

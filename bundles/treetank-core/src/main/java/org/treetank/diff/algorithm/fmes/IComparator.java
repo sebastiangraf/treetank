@@ -27,9 +27,9 @@
 package org.treetank.diff.algorithm.fmes;
 
 /**
- * Interface for the LCS algorithm in the Util class.
- * The comparator is a functional class which provides a
- * method isEqual, which compares two instances of a type.
+ * Interface for the LCS algorithm in the Util class. The comparator is a
+ * functional class which provides a method isEqual, which compares two
+ * instances of a type.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

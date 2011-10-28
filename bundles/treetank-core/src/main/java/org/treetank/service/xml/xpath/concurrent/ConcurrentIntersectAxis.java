@@ -114,20 +114,23 @@ public class ConcurrentIntersectAxis extends AbsAxis {
 
         final long nodeKey;
 
-        // if 1st axis has a result left that is not contained in the 2nd it is returned
+        // if 1st axis has a result left that is not contained in the 2nd it is
+        // returned
         while (!mOp1.isFinished()) {
             while (!mOp2.isFinished()) {
 
                 // if both results are not equal get next values
                 while (mCurrentResult1 != mCurrentResult2 && !mOp1.isFinished() && !mOp2.isFinished()) {
 
-                    // get next result from 1st axis, if current is smaller than 2nd
+                    // get next result from 1st axis, if current is smaller than
+                    // 2nd
                     while (mCurrentResult1 < mCurrentResult2 && !mOp1.isFinished() && !mOp2.isFinished()) {
                         mCurrentResult1 = getNext(mOp1);
 
                     }
 
-                    // get next result from 2nd axis if current is smaller than 1st
+                    // get next result from 2nd axis if current is smaller than
+                    // 1st
                     while (mCurrentResult1 > mCurrentResult2 && !mOp1.isFinished() && !mOp2.isFinished()) {
                         mCurrentResult2 = getNext(mOp2);
 

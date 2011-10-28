@@ -40,66 +40,66 @@ import org.treetank.io.ITTSource;
  */
 public class BerkeleyKey implements IKey {
 
-	private final KeyDelegate mKey;
+    private final KeyDelegate mKey;
 
-	/**
-	 * Public constructor.
-	 * 
-	 * @param paramInput
-	 *            base for the key (coming from the db)
-	 */
-	public BerkeleyKey(final ITTSource paramInput) {
-		mKey = new KeyDelegate(paramInput.readLong());
-	}
+    /**
+     * Public constructor.
+     * 
+     * @param paramInput
+     *            base for the key (coming from the db)
+     */
+    public BerkeleyKey(final ITTSource paramInput) {
+        mKey = new KeyDelegate(paramInput.readLong());
+    }
 
-	/**
-	 * Public constructor.
-	 * 
-	 * @param paramKey
-	 *            key coming from the application
-	 */
-	public BerkeleyKey(final long paramKey) {
-		mKey = new KeyDelegate(paramKey);
-	}
+    /**
+     * Public constructor.
+     * 
+     * @param paramKey
+     *            key coming from the application
+     */
+    public BerkeleyKey(final long paramKey) {
+        mKey = new KeyDelegate(paramKey);
+    }
 
-	/**
-	 * Static method to get the key for the <code>StorageProperties</code>.
-	 * 
-	 * @return the key for the
-	 */
-	public static final BerkeleyKey getPropsKey() {
-		return new BerkeleyKey(-3);
-	}
+    /**
+     * Static method to get the key for the <code>StorageProperties</code>.
+     * 
+     * @return the key for the
+     */
+    public static final BerkeleyKey getPropsKey() {
+        return new BerkeleyKey(-3);
+    }
 
-	/**
-	 * Static method to get the key about the information about the last
-	 * nodepagekey given.
-	 * 
-	 * @return the key for the last nodepage key
-	 */
-	public static final BerkeleyKey getDataInfoKey() {
-		return new BerkeleyKey(-2);
-	}
+    /**
+     * Static method to get the key about the information about the last
+     * nodepagekey given.
+     * 
+     * @return the key for the last nodepage key
+     */
+    public static final BerkeleyKey getDataInfoKey() {
+        return new BerkeleyKey(-2);
+    }
 
-	/**
-	 * Static method to get the key about the first reference of the Nodepages.
-	 * 
-	 * @return the key for the first nodepage
-	 */
-	public static final BerkeleyKey getFirstRevKey() {
-		return new BerkeleyKey(-1);
-	}
+    /**
+     * Static method to get the key about the first reference of the Nodepages.
+     * 
+     * @return the key for the first nodepage
+     */
+    public static final BerkeleyKey getFirstRevKey() {
+        return new BerkeleyKey(-1);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final long getIdentifier() {
-		return getKeys()[0];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final long getIdentifier() {
+        return getKeys()[0];
+    }
 
-	@Override
-	public long[] getKeys() {
-		return mKey.getKeys();
-	}
+    @Override
+    public long[] getKeys() {
+        return mKey.getKeys();
+    }
 }

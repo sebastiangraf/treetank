@@ -143,9 +143,9 @@ public class XMLSerializerTest {
     }
 
     /**
-     * This test check the XPath //books expression and expects 6 books as result. But the failure is, that
-     * only
-     * the children of the books will be serialized and NOT the book node itself.
+     * This test check the XPath //books expression and expects 6 books as
+     * result. But the failure is, that only the children of the books will be
+     * serialized and NOT the book node itself.
      */
     @Test
     public void testKeyStart() throws Exception {

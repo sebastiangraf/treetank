@@ -33,7 +33,7 @@ import java.io.RandomAccessFile;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.page.AbsPage;
+import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
@@ -93,7 +93,7 @@ public final class FileReader implements IReader {
      * @throws TTIOException
      *             if there was an error during reading.
      */
-    public AbsPage read(final PageReference pageReference) throws TTIOException {
+    public IPage read(final PageReference pageReference) throws TTIOException {
 
         if (!pageReference.isCommitted()) {
             return null;

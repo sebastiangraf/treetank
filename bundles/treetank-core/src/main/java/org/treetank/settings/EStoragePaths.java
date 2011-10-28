@@ -34,8 +34,7 @@ import java.io.File;
  * Enumeration for determining all storage relevant stuff like paths to
  * different resources, etc.
  * 
- * @deprecated
- *             use DatabaseConfiguration$Paths instead
+ * @deprecated use DatabaseConfiguration$Paths instead
  * @author Sebastian Graf, University of Konstanz
  * 
  * 

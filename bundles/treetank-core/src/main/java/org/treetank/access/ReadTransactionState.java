@@ -40,7 +40,7 @@ import org.treetank.cache.RAMCache;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.node.DeletedNode;
-import org.treetank.page.AbsPage;
+import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
@@ -351,12 +351,12 @@ public class ReadTransactionState {
         for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            final AbsPage page = dereferenceIndirectPage(reference);
+            final IPage page = dereferenceIndirectPage(reference);
             if (page == null) {
                 reference = null;
                 break;
             } else {
-                reference = page.getReference(offset);
+                reference = page.getChildren(offset);
             }
         }
 

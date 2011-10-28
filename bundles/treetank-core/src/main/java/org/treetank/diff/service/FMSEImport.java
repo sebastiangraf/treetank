@@ -59,7 +59,8 @@ public final class FMSEImport {
      * @param paramResNewRev
      *            {@link File} reference for new revision (XML resource)
      * @param paramNewRev
-     *            {@link File} reference for shreddered new revision (Treetank resource)
+     *            {@link File} reference for shreddered new revision (Treetank
+     *            resource)
      * @throws AbsTTException
      *             if Treetank fails to shredder the file
      * @throws IOException

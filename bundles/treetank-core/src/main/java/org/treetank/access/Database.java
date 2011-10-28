@@ -135,7 +135,8 @@ public final class Database implements IDatabase {
     }
 
     /**
-     * Truncate a database. This deletes all relevant data. All running sessions must be closed beforehand.
+     * Truncate a database. This deletes all relevant data. All running sessions
+     * must be closed beforehand.
      * 
      * @param paramConfig
      *            the database at this path should be deleted.
@@ -169,7 +170,8 @@ public final class Database implements IDatabase {
     @Override
     public synchronized boolean createResource(final ResourceConfiguration paramConfig) throws TTIOException {
         boolean returnVal = true;
-        // Setting the missing params in the settings, this overrides already set data.
+        // Setting the missing params in the settings, this overrides already
+        // set data.
         final File path =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 paramConfig.mPath.getName());
@@ -368,8 +370,8 @@ public final class Database implements IDatabase {
     }
 
     /**
-     * Closing a resource. This callback is necessary due to centralized handling of all sessions within a
-     * database.
+     * Closing a resource. This callback is necessary due to centralized
+     * handling of all sessions within a database.
      * 
      * @param paramFile
      *            to be closed
@@ -380,7 +382,8 @@ public final class Database implements IDatabase {
     }
 
     /**
-     * Serializing any {@link IConfigureSerializable} instance to a denoted file.
+     * Serializing any {@link IConfigureSerializable} instance to a denoted
+     * file.
      * 
      * @param paramToSerialize
      *            to be serializied, containing the file
