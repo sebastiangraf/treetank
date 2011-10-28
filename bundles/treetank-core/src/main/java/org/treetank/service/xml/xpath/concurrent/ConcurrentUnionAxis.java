@@ -109,7 +109,8 @@ public class ConcurrentUnionAxis extends AbsAxis {
 
         final long nodeKey;
 
-        // if both operands have results left return the smallest value (doc order)
+        // if both operands have results left return the smallest value (doc
+        // order)
         if (!mOp1.isFinished()) {
             if (!mOp2.isFinished()) {
                 if (mCurrentResult1 < mCurrentResult2) {

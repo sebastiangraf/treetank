@@ -308,8 +308,8 @@ public interface IReadTransaction {
     /**
      * This method returns the current {@link IItem} as a {@link IStructuralItem}.
      * 
-     * @return the current node as {@link IStructuralItem} if possible, otherwise wrap the {@link AbsNode} in
-     *         a {@link IStructuralItem}
+     * @return the current node as {@link IStructuralItem} if possible,
+     *         otherwise wrap the {@link AbsNode} in a {@link IStructuralItem}
      */
     IStructuralItem getStructuralNode();
 }

@@ -54,12 +54,14 @@ import org.treetank.settings.EFixed;
  */
 public class ConcurrentAxis extends AbsAxis {
 
-    /** Axis that is running in an own thread and produces results for this axis. */
+    /**
+     * Axis that is running in an own thread and produces results for this axis.
+     */
     private final AbsAxis mProducer;
 
     /**
-     * Queue that stores result keys already computed by the producer. End of the
-     * result sequence is marked by the NULL_NODE_KEY.
+     * Queue that stores result keys already computed by the producer. End of
+     * the result sequence is marked by the NULL_NODE_KEY.
      */
     private final BlockingQueue<Long> mResults;
 

@@ -85,7 +85,8 @@ public final class ItemList implements IItemList {
     public IItem getItem(final long mKey) {
         assert mKey <= Integer.MAX_VALUE;
 
-        int index = (int)mKey; // cast to integer, because the list only accepts
+        int index = (int)mKey; // cast to integer, because the list only
+                               // accepts
         // int
 
         if (index < 0) {

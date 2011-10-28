@@ -52,7 +52,8 @@ public class LockManager {
     private static LockManager lock;
 
     /**
-     * The LockManager with HashMaps of locked nodes and used transaction root nodes
+     * The LockManager with HashMaps of locked nodes and used transaction root
+     * nodes
      */
     private LockManager() {
         this.lockedNodes = new HashMap<Long, Integer>(128);
@@ -82,7 +83,8 @@ public class LockManager {
             swtx.moveTo(current);
         }
 
-        // first write operation or after intermediate commit, there may be no registered trn
+        // first write operation or after intermediate commit, there may be no
+        // registered trn
         if (!this.transactionRootNodes.containsKey(swtx)) {
             // try to conquer the node - will throw exception if unsuccessfull
             conquer(swtx, nodekey);
@@ -99,7 +101,8 @@ public class LockManager {
     /**
      * 
      * @param swtx
-     *            The locks of the Trn(s) of this SynchWriteTransaction will be released
+     *            The locks of the Trn(s) of this SynchWriteTransaction will be
+     *            released
      */
     public synchronized void releaseWritePermission(SynchWriteTransaction swtx) {
         Set<Long> hset = transactionRootNodes.get(swtx);
@@ -133,13 +136,11 @@ public class LockManager {
      */
     private boolean isConquerable(SynchWriteTransaction swtx, long NodeToConquer) {
         /*
-         * (1)Node locked?
-         * (2) Yes:Do locks originate only from own swtx?
-         * (3) Yes:Unlock corresponding trns and lock nodeToConquer -> TRUE
-         * (4) No: Locking not possible: FALSE
-         * (5) No: Is there an ancestor of trn registered as trn?
-         * (6) Yes: Locking not possible: FALSE
-         * (7) No: Lock nodeToConquer TRUE
+         * (1)Node locked? (2) Yes:Do locks originate only from own swtx? (3)
+         * Yes:Unlock corresponding trns and lock nodeToConquer -> TRUE (4) No:
+         * Locking not possible: FALSE (5) No: Is there an ancestor of trn
+         * registered as trn? (6) Yes: Locking not possible: FALSE (7) No: Lock
+         * nodeToConquer TRUE
          */
 
         if (lockedNodes.containsKey(NodeToConquer)) { // (1)
@@ -175,7 +176,9 @@ public class LockManager {
 
         // (5)
         swtx.moveTo(NodeToConquer);
-        Set<SynchWriteTransaction> keyset = transactionRootNodes.keySet(); // get all swtx
+        Set<SynchWriteTransaction> keyset = transactionRootNodes.keySet(); // get
+                                                                           // all
+                                                                           // swtx
         while (swtx.moveToParent()) {
             Iterator iterate = keyset.iterator();
             long currentNodekey = swtx.getCurrentNode().getNodeKey();
@@ -191,11 +194,10 @@ public class LockManager {
     }
 
     /*
-     * Increments the lock count of the nodekey <code>key</code> by 1.
-     * Creates new entry in HashMap if the key is not present yet.
+     * Increments the lock count of the nodekey <code>key</code> by 1. Creates
+     * new entry in HashMap if the key is not present yet.
      * 
-     * @param key
-     * The key of the node to lock
+     * @param key The key of the node to lock
      * 
      * @return
      */
@@ -208,11 +210,10 @@ public class LockManager {
     }
 
     /*
-     * Decrements the lock count of the nodekey <code>key</code> by 1.
-     * Removes the entry in HashMap if the lock count would become 0.
+     * Decrements the lock count of the nodekey <code>key</code> by 1. Removes
+     * the entry in HashMap if the lock count would become 0.
      * 
-     * @param key
-     * The key of the node to unlock
+     * @param key The key of the node to unlock
      */
     private void unlockKey(long key) {
         if (lockedNodes.containsKey(key)) {
@@ -230,8 +231,7 @@ public class LockManager {
     /*
      * Adds a nodekey to the list of transation root nodes
      * 
-     * @param key
-     * Nodekey to add to the list
+     * @param key Nodekey to add to the list
      */
     private void registerTransactionRootNodeKey(SynchWriteTransaction swtx, long key) {
         if (!this.transactionRootNodes.containsKey(swtx)) {
@@ -248,7 +248,8 @@ public class LockManager {
         if (transactionRootNodes.get(swtx).contains(nodeKey)) { // node is a trn
             return true;
         }
-        while (swtx.moveTo(swtx.getCurrentNode().getParentKey())) { // check ancestors
+        while (swtx.moveTo(swtx.getCurrentNode().getParentKey())) { // check
+                                                                    // ancestors
             if (transactionRootNodes.get(swtx).contains(swtx.getCurrentNode().getNodeKey())) {
                 swtx.moveTo(current);
                 return true;

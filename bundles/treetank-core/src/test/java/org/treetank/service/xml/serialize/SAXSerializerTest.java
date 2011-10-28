@@ -89,7 +89,8 @@ public class SAXSerializerTest extends XMLTestCase {
             }
 
             // @Override
-            // public void startPrefixMapping(final String prefix, final String uri) throws SAXException {
+            // public void startPrefixMapping(final String prefix, final String
+            // uri) throws SAXException {
             // strBuilder.append(" " + prefix + "=\"" + uri + "\"");
             // };
 

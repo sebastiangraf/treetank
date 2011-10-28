@@ -35,8 +35,8 @@ import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 
 /**
- * Interface which must be implemented from visitors to implement functionality based on the
- * visitor pattern.
+ * Interface which must be implemented from visitors to implement functionality
+ * based on the visitor pattern.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

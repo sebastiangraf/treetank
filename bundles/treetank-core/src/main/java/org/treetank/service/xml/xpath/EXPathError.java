@@ -102,14 +102,13 @@ public enum EXPathError {
         FONS0004("err:FONS0004, No namespace found for prefix."), FONS0005(
             "err:FONS0005, Base-uri not defined in the static context."),
         /**
-         * XQuery and XPath Function and Operators error 0001. This error is
-         * raised whenever an attempt is made to divide by zero.
+         * XQuery and XPath Function and Operators error 0001. This error is raised
+         * whenever an attempt is made to divide by zero.
          */
         FOAR0001("err:FOAR0001: Division by zero."),
         /**
-         * XQuery and XPath Function and Operators error 0002. This error is
-         * raised whenever numeric operations result in an overflow or
-         * underflow.
+         * XQuery and XPath Function and Operators error 0002. This error is raised
+         * whenever numeric operations result in an overflow or underflow.
          */
         FOAR0002("err:FOAR0002: Numeric operation overflow/underflow."), FOER0000(
             "err:FOER0000: Unidentified error."), FORG0001(

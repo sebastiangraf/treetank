@@ -28,8 +28,8 @@
 package org.treetank.api;
 
 /**
- * Class to denote that an {@link IItem} has structural attributes. That means that a class can have pointers
- * to neighbours.
+ * Class to denote that an {@link IItem} has structural attributes. That means
+ * that a class can have pointers to neighbours.
  */
 public interface IStructuralItem extends IItem {
 

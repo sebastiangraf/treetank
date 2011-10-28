@@ -115,7 +115,8 @@ public final class StAXSerializer implements XMLEventReader {
      * the tank ids.
      * 
      * @param paramAxis
-     *            {@link AbsAxis} which is used to iterate over and generate StAX events.
+     *            {@link AbsAxis} which is used to iterate over and generate
+     *            StAX events.
      */
     public StAXSerializer(final AbsAxis paramAxis) {
         this(paramAxis, true);
@@ -127,7 +128,8 @@ public final class StAXSerializer implements XMLEventReader {
      * the tank ids.
      * 
      * @param paramAxis
-     *            {@link AbsAxis} which is used to iterate over and generate StAX events.
+     *            {@link AbsAxis} which is used to iterate over and generate
+     *            StAX events.
      * @param paramCloseRtx
      *            Determines if rtx should be closed afterwards.
      */
@@ -196,9 +198,9 @@ public final class StAXSerializer implements XMLEventReader {
         final long nodeKey = rtx.getNode().getNodeKey();
 
         /*
-         * The cursor has to move back (once) after determining, that a closing tag
-         * would be the next event (precond: closeElement and either goBack or goUp
-         * is true).
+         * The cursor has to move back (once) after determining, that a closing
+         * tag would be the next event (precond: closeElement and either goBack
+         * or goUp is true).
          */
         if (mCloseElements && (mGoBack || mGoUp)) {
             if (mGoUp) {
@@ -239,8 +241,9 @@ public final class StAXSerializer implements XMLEventReader {
 
         if (!mStack.empty() && (mCloseElements || mCloseElementsEmitted)) {
             /*
-             * mAxis.hasNext() can't be used in this case, because it would iterate
-             * to the next node but at first all end-tags have to be emitted.
+             * mAxis.hasNext() can't be used in this case, because it would
+             * iterate to the next node but at first all end-tags have to be
+             * emitted.
              */
             retVal = true;
         } else {
@@ -484,7 +487,8 @@ public final class StAXSerializer implements XMLEventReader {
     }
 
     /**
-     * Implements a namespace iterator, which is needed for the StAX implementation.
+     * Implements a namespace iterator, which is needed for the StAX
+     * implementation.
      * 
      * @author Johannes Lichtenberger, University of Konstanz
      * 

@@ -475,8 +475,8 @@ public final class XPathScanner {
     }
 
     /**
-     * Return the token that will be returned by the scanner after the call of nextToken(), without changing
-     * the internal state of the scanner.
+     * Return the token that will be returned by the scanner after the call of
+     * nextToken(), without changing the internal state of the scanner.
      * 
      * @param paramNext
      *            number of next tokens to be read

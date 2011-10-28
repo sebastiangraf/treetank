@@ -86,28 +86,26 @@ public final class FMES implements IImportDiff {
     private static final String NAME = "Fast Matching / Edit Script";
 
     /**
-     * Matching Criterion 1.
-     * For the "good matching problem", the following
+     * Matching Criterion 1. For the "good matching problem", the following
      * conditions must hold for leafs x and y:
      * <ul>
      * <li>label(x) == label(y)</li>
      * <li>compare(value(x), value(y)) <= FMESF</li>
      * </ul>
-     * where FMESF is in the range [0,1] and compare() computes the
-     * cost of updating a leaf node.
+     * where FMESF is in the range [0,1] and compare() computes the cost of
+     * updating a leaf node.
      */
     private static final double FMESF = 0.6;
 
     /**
-     * Matching Criterion 2.
-     * For the "good matching problem", the following
+     * Matching Criterion 2. For the "good matching problem", the following
      * conditions must hold inner nodes x and y:
      * <ul>
      * <li>label(x) == label(y)</li>
      * <li>|common(x,y)| / max(|x|, |y|) > FMESTHRESHOLD</li>
      * </ul>
-     * where FMESTHRESHOLD is in the range [0.5, 1] and common(x,y)
-     * computes the number of leafs that can be matched between x and y.
+     * where FMESTHRESHOLD is in the range [0.5, 1] and common(x,y) computes the
+     * number of leafs that can be matched between x and y.
      */
     private static final double FMESTHRESHOLD = 0.4;
 
@@ -115,8 +113,8 @@ public final class FMES implements IImportDiff {
     // less expensive and more accurate for our use than x.equals(y).
 
     /**
-     * Used by emitInsert: when inserting a whole subtree - keep track that nodes
-     * are not inserted multiple times.
+     * Used by emitInsert: when inserting a whole subtree - keep track that
+     * nodes are not inserted multiple times.
      */
     private final Map<IItem, Boolean> mAlreadyInserted;
 
@@ -131,9 +129,8 @@ public final class FMES implements IImportDiff {
     private transient Matching mTotalMatching;
 
     /**
-     * Stores the in-order property for each node
-     * One map is sufficient for both trees since
-     * the reference (identity) is compared.
+     * Stores the in-order property for each node One map is sufficient for both
+     * trees since the reference (identity) is compared.
      */
     private final Map<IItem, Boolean> mInOrder;
 
@@ -200,9 +197,11 @@ public final class FMES implements IImportDiff {
      * Do the diff.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     @Override
     public void diff(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
@@ -214,13 +213,15 @@ public final class FMES implements IImportDiff {
     }
 
     /**
-     * First step of the edit script algorithm.
-     * Combines the update, insert, align and move phases.
+     * First step of the edit script algorithm. Combines the update, insert,
+     * align and move phases.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     private void firstFMESStep(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         // 2. Iterate over new shreddered file
@@ -253,9 +254,11 @@ public final class FMES implements IImportDiff {
      * Do the actual first step of FSME.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     private void doFirstFSMEStep(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         // 2(a) - Parent of x.
@@ -272,7 +275,8 @@ public final class FMES implements IImportDiff {
         if (w == null) {
             mInOrder.put(x, true);
             final int k = findPos(x, paramWtx, paramRtx);
-            // System.err.println("Node: " + x.getNodeType() + ", " + x.getNodeName() + " -> " +
+            // System.err.println("Node: " + x.getNodeType() + ", " +
+            // x.getNodeName() + " -> " +
             // x.getNodeValue() + ", Position: " + k);
             w = emitInsert(x, z, k, paramWtx, paramRtx);
         } else if (!x.equals(paramWtx.getNode())) {
@@ -296,13 +300,14 @@ public final class FMES implements IImportDiff {
     }
 
     /**
-     * Second step of the edit script algorithm.
-     * This is the delete phase.
+     * Second step of the edit script algorithm. This is the delete phase.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     private void secondFMESStep(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         try {
@@ -346,9 +351,11 @@ public final class FMES implements IImportDiff {
      * @param paramX
      *            node in the second document
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     private void alignChildren(final IItem paramW, final IItem paramX, final IWriteTransaction paramWtx,
         final IReadTransaction paramRtx) {
@@ -400,8 +407,8 @@ public final class FMES implements IImportDiff {
     }
 
     /**
-     * The sequence of children of n whose partners are children of o.
-     * This is used by alignChildren().
+     * The sequence of children of n whose partners are children of o. This is
+     * used by alignChildren().
      * 
      * @param paramN
      *            parent node in a document tree
@@ -459,9 +466,11 @@ public final class FMES implements IImportDiff {
      * @param paramPos
      *            position among the childs to move to
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     private void emitMove(final IItem paramChild, final IItem paramParent, final int paramPos,
         final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
@@ -509,9 +518,11 @@ public final class FMES implements IImportDiff {
      * @param paramToNode
      *            the new node
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     private void emitUpdate(final IItem paramFromNode, final IItem paramToNode,
         final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
@@ -550,15 +561,18 @@ public final class FMES implements IImportDiff {
      * Emit an insert operation.
      * 
      * @param paramParent
-     *            parent of the current {@link IItem} implementation reference to insert
+     *            parent of the current {@link IItem} implementation reference
+     *            to insert
      * @param paramChild
      *            the current node to insert
      * @param paramPos
      *            position of the insert
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      * @return inserted {@link IItem} implementation reference
      */
     private IItem emitInsert(final IItem paramParent, final IItem paramChild, final int paramPos,
@@ -657,9 +671,11 @@ public final class FMES implements IImportDiff {
      * Insert attributes or namespaces.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      * @throws AbsTTException
      *             if insertion fails
      */
@@ -693,9 +709,11 @@ public final class FMES implements IImportDiff {
      * @param paramX
      *            a node in the second document
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      * @return it's position, with respect to already inserted/deleted nodes
      */
     private int
@@ -707,7 +725,8 @@ public final class FMES implements IImportDiff {
             // 1 - Let y = p(x) in T2.
             paramRtx.moveToParent();
 
-            // 2 - If x is the leftmost child of y that is marked "in order", return 0
+            // 2 - If x is the leftmost child of y that is marked "in order",
+            // return 0
             if (paramRtx.getStructuralNode().hasFirstChild()) {
                 paramRtx.moveToFirstChild();
                 boolean found = false;
@@ -735,7 +754,8 @@ public final class FMES implements IImportDiff {
                 v = paramRtx.getStructuralNode();
             }
 
-            // Step 2 states that in ``in order'' node exists, but this is not true.
+            // Step 2 states that in ``in order'' node exists, but this is not
+            // true.
             if (mInOrder.get(v) == null) {
                 // Assume it is the first node (undefined in the paper).
                 return 0;
@@ -745,7 +765,8 @@ public final class FMES implements IImportDiff {
             IItem u = mTotalMatching.reversePartner(v);
             paramWtx.moveTo(u.getNodeKey());
 
-            // Suppose u is the i-th child of its parent (counting from left to right)
+            // Suppose u is the i-th child of its parent (counting from left to
+            // right)
             // that is marked "in order". Return i+1
             int i = -1;
             while (u != null) {
@@ -766,13 +787,14 @@ public final class FMES implements IImportDiff {
     }
 
     /**
-     * The fast match algorithm.
-     * Try to resolve the "good matching problem".
+     * The fast match algorithm. Try to resolve the "good matching problem".
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      * @return {@link Matching} reference with matched nodes
      */
     private Matching fastMatch(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
@@ -807,9 +829,11 @@ public final class FMES implements IImportDiff {
      * Actual matching.
      * 
      * @param paramOldLabels
-     *            nodes in tree1, sorted by node type (element, attribute, text, comment, ...)
+     *            nodes in tree1, sorted by node type (element, attribute, text,
+     *            comment, ...)
      * @param paramNewLabels
-     *            nodes in tree2, sorted by node type (element, attribute, text, comment, ...)
+     *            nodes in tree2, sorted by node type (element, attribute, text,
+     *            comment, ...)
      * @param paramMatching
      *            {@link Matching} reference
      * @param paramCmp
@@ -871,9 +895,11 @@ public final class FMES implements IImportDiff {
      * Initialize data structures.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     private void init(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         for (final AbsAxis axis = new PostOrderAxis(paramWtx); axis.hasNext(); axis.next()) {
@@ -885,10 +911,10 @@ public final class FMES implements IImportDiff {
     }
 
     /**
-     * Creates a flat list of all nodes by doing an in-order-traversal.
-     * NOTE: Since this is not a binary tree, we use post-order-traversal (wrong in paper).
-     * For each node type (element, attribute, text, comment, ...) there is
-     * a separate list.
+     * Creates a flat list of all nodes by doing an in-order-traversal. NOTE:
+     * Since this is not a binary tree, we use post-order-traversal (wrong in
+     * paper). For each node type (element, attribute, text, comment, ...) there
+     * is a separate list.
      * 
      * @param paramRtx
      *            {@link IReadTransaction} reference
@@ -904,9 +930,9 @@ public final class FMES implements IImportDiff {
     }
 
     /**
-     * Compares the values of two nodes. Values are the text content, if
-     * the nodes do have child nodes or the name for inner nodes such as
-     * element or attribute (an attribute has one child: the value).
+     * Compares the values of two nodes. Values are the text content, if the
+     * nodes do have child nodes or the name for inner nodes such as element or
+     * attribute (an attribute has one child: the value).
      * 
      * @param paramX
      *            first node
@@ -960,10 +986,9 @@ public final class FMES implements IImportDiff {
     }
 
     /**
-     * This functional class is used to compare leaf nodes.
-     * The comparison is done by comparing the (characteristic)
-     * string for two nodes. If the strings are sufficient similar,
-     * the nodes are considered to be equal.
+     * This functional class is used to compare leaf nodes. The comparison is
+     * done by comparing the (characteristic) string for two nodes. If the
+     * strings are sufficient similar, the nodes are considered to be equal.
      */
     private class LeafEqual implements IComparator<IItem> {
 
@@ -998,11 +1023,10 @@ public final class FMES implements IImportDiff {
     }
 
     /**
-     * This functional class is used to compare inner nodes.
-     * FMES uses different comparison criteria for leaf nodes
-     * and inner nodes. This class compares two nodes by calculating
-     * the number of common children (i.e. children contained in the
-     * matching) in relation to the total number of children.
+     * This functional class is used to compare inner nodes. FMES uses different
+     * comparison criteria for leaf nodes and inner nodes. This class compares
+     * two nodes by calculating the number of common children (i.e. children
+     * contained in the matching) in relation to the total number of children.
      */
     private class InnerNodeEqual implements IComparator<IItem> {
 
@@ -1021,9 +1045,11 @@ public final class FMES implements IImportDiff {
          * @param paramMatching
          *            {@link Matching} reference
          * @param paramWtx
-         *            {@link IWriteTransaction} implementation reference on old revision
+         *            {@link IWriteTransaction} implementation reference on old
+         *            revision
          * @param paramRtx
-         *            {@link IReadTransaction} implementation reference on new revision
+         *            {@link IReadTransaction} implementation reference on new
+         *            revision
          */
         public InnerNodeEqual(final Matching paramMatching, final IWriteTransaction paramWtx,
             final IReadTransaction paramRtx) {
@@ -1045,7 +1071,8 @@ public final class FMES implements IImportDiff {
             if (paramFirstNode.getKind() == ENodes.ATTRIBUTE_KIND
                 && nodeValuesEqual(paramFirstNode, paramSecondNode, mWtx, mRtx)) {
                 // This allows us to detect the update of values for attributes
-                // because when a value is changed, 100% of the children have changed
+                // because when a value is changed, 100% of the children have
+                // changed
                 // and the attribute node would not be considered to be same.
                 common = 1;
             } else {

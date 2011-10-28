@@ -1038,7 +1038,8 @@ public enum Type {
 
         if (!mTargetType.isPrimitive() && mTargetType.derivesFrom(this)) {
             // (4.d) if target type is non-primitive-atomic-type and target type
-            // is supertype of source type, the source type must satisfy all facets
+            // is supertype of source type, the source type must satisfy all
+            // facets
             // of the target type.
             return mTargetType.facetIsSatisfiedBy(mValue);
 

@@ -104,7 +104,8 @@ public final class RelationalDBImport implements IImport<Object> {
     @Override
     public void importData(final char paramDateRange, final List<Object> mObj) {
         // try {
-        // final PreparedStatement prepStatement = mConnection.prepareStatement((String) mObj);
+        // final PreparedStatement prepStatement =
+        // mConnection.prepareStatement((String) mObj);
         // final ResultSet result = prepStatement.executeQuery();
         // String tmpTimestamp;
         //
@@ -155,7 +156,8 @@ public final class RelationalDBImport implements IImport<Object> {
         // }
         // }
         //
-        // final XPathSelector selector = xpath.compile("//record[./prefix/" + prefix + "]/").load();
+        // final XPathSelector selector = xpath.compile("//record[./prefix/" +
+        // prefix + "]/").load();
         // selector.setContextItem(booksDoc);
         //
         // for (final XdmItem item : selector) {

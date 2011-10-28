@@ -30,6 +30,7 @@ package org.treetank.io.berkeley;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.AbsPage;
+import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
 import com.sleepycat.je.Database;
@@ -102,7 +103,7 @@ public final class BerkeleyWriter implements IWriter {
      */
     @Override
     public void write(final PageReference pageReference) throws TTIOException {
-        final AbsPage page = pageReference.getPage();
+        final IPage page = pageReference.getPage();
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -200,7 +201,7 @@ public final class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public AbsPage read(final PageReference pageReference) throws TTIOException {
+    public IPage read(final PageReference pageReference) throws TTIOException {
         return mReader.read(pageReference);
     }
 

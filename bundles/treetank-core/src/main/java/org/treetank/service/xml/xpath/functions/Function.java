@@ -190,7 +190,8 @@ public class Function {
     public static boolean fnNilled(final IReadTransaction rtx, final AbsAxis axis) {
 
         if (axis.hasNext() && rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-            final boolean nilled = false; // TODO how is the nilled property defined?
+            final boolean nilled = false; // TODO how is the nilled property
+                                          // defined?
             final int itemKey = rtx.getItemList().addItem(new AtomicValue(nilled));
             rtx.moveTo(itemKey);
             return true;
@@ -297,7 +298,8 @@ public class Function {
 
         Double value = 0.0;
         if (!axis.hasNext()) {
-            mZero.hasNext(); // if is empty sequence, return values specified for
+            mZero.hasNext(); // if is empty sequence, return values specified
+                             // for
             // zero
         } else {
             do {

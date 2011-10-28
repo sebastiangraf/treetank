@@ -29,6 +29,7 @@ package org.treetank.io;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.page.AbsPage;
+import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
 /**
@@ -57,7 +58,7 @@ public interface IReader {
      * @throws TTIOException
      *             if something bad happens during read
      */
-    AbsPage read(final PageReference pageReference) throws TTIOException;
+    IPage read(final PageReference pageReference) throws TTIOException;
 
     /**
      * Closing the storage.

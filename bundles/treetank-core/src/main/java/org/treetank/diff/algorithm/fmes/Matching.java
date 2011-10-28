@@ -49,9 +49,9 @@ public final class Matching {
     private final Map<IItem, IItem> mReverseMapping;
 
     /**
-     * Tracks the (grand-)parent-child relation of nodes.
-     * We use this to speed up the calculation of the number of nodes
-     * in the subtree of two nodes that are in the matching.
+     * Tracks the (grand-)parent-child relation of nodes. We use this to speed
+     * up the calculation of the number of nodes in the subtree of two nodes
+     * that are in the matching.
      */
     private final ConnectionMap<IItem> mIsInSubtree;
 
@@ -78,8 +78,8 @@ public final class Matching {
     }
 
     /**
-     * Copy constructor. Creates a new matching with the
-     * same state as the matching paramMatch.
+     * Copy constructor. Creates a new matching with the same state as the
+     * matching paramMatch.
      * 
      * @param paramMatch
      *            the original
@@ -143,8 +143,8 @@ public final class Matching {
     }
 
     /**
-     * Counts the number of child nodes in the subtrees
-     * of x and y that are also in the matching.
+     * Counts the number of child nodes in the subtrees of x and y that are also
+     * in the matching.
      * 
      * @param paramNodeX
      *            first subtree root node

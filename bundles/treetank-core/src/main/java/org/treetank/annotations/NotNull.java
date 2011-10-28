@@ -33,7 +33,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Designates that a field, return value, argument, or variable is guaranteed to be non-null.
+ * Designates that a field, return value, argument, or variable is guaranteed to
+ * be non-null.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

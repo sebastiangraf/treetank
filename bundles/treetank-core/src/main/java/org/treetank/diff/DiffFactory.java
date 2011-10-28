@@ -51,7 +51,10 @@ public final class DiffFactory {
         /** Nodes are the same. */
         SAME,
 
-        /** Nodes are the same (including subtrees), internally used for optimizations. */
+        /**
+         * Nodes are the same (including subtrees), internally used for
+         * optimizations.
+         */
         SAMEHASH,
 
         /** Node has been inserted. */
@@ -65,7 +68,8 @@ public final class DiffFactory {
     }
 
     /**
-     * Determines if an optimized diff calculation should be done, which is faster.
+     * Determines if an optimized diff calculation should be done, which is
+     * faster.
      */
     public enum EDiffOptimized {
         /** Normal diff. */
@@ -86,7 +90,10 @@ public final class DiffFactory {
             }
         },
 
-        /** Structural diff (doesn't recognize differences in namespace and attribute nodes. */
+        /**
+         * Structural diff (doesn't recognize differences in namespace and
+         * attribute nodes.
+         */
         STRUCTURAL {
             @Override
             void invoke(final Builder paramBuilder) throws AbsTTException {

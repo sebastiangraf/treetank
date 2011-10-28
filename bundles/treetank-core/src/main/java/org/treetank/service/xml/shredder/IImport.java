@@ -48,7 +48,8 @@ public interface IImport<T> {
      * Import data.
      * 
      * @param paramDateRange
-     *            Date range, which is used to determine the time between single revisions.
+     *            Date range, which is used to determine the time between single
+     *            revisions.
      * @param paramTimestamps
      *            {@link List} of Timestamp objects.
      */

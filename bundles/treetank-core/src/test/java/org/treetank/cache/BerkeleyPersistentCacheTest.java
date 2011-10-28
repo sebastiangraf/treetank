@@ -45,8 +45,8 @@ public class BerkeleyPersistentCacheTest {
 
     @Before
     public void setUp() throws AbsTTException {
-    	TestHelper.deleteEverything();
-    	TestHelper.createTestDocument();
+        TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
         cache =
             new BerkeleyPersistenceCache(new File(new File(TestHelper.PATHS.PATH1.getFile(),
                 DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCE), 1);

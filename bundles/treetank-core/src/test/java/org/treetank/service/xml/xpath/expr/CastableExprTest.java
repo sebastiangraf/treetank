@@ -101,7 +101,8 @@ public class CastableExprTest {
         // final IAxis axis5 = new XPathAxis(holder.getRtx(),
         // "\"hello\" castable as xs:decimal");
         // assertEquals(true, axis5.hasNext());
-        // assertEquals(holder.getRtx().keyForName("xs:boolean"), holder.getRtx().getTypeKey());
+        // assertEquals(holder.getRtx().keyForName("xs:boolean"),
+        // holder.getRtx().getTypeKey());
         // assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValue()));
         // assertEquals(false, axis5.hasNext());
 

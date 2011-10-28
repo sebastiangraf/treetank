@@ -42,9 +42,8 @@ public final class Util {
     }
 
     /**
-     * Longest common subsequence algorithm.
-     * cf. E. Myers. An O(ND) difference algorithm and its variations.
-     * Algorithmica, 1(2): 251-266, 1986
+     * Longest common subsequence algorithm. cf. E. Myers. An O(ND) difference
+     * algorithm and its variations. Algorithmica, 1(2): 251-266, 1986
      * 
      * @param <T>
      *            type of data
@@ -54,7 +53,8 @@ public final class Util {
      *            second list
      * @param paramCmp
      *            function to compare the items in both lists (equality)
-     * @return lcs, the items in the pairs are equal and taken from list x and list y.
+     * @return lcs, the items in the pairs are equal and taken from list x and
+     *         list y.
      */
     public static <T> List<Pair<T, T>> longestCommonSubsequence(final List<T> paramX, final List<T> paramY,
         final IComparator<T> paramCmp) {
@@ -107,9 +107,8 @@ public final class Util {
     }
 
     /**
-     * Calculates the similarity of two strings.
-     * This is done by comparing the frequency each
-     * character occures in both strings.
+     * Calculates the similarity of two strings. This is done by comparing the
+     * frequency each character occures in both strings.
      * 
      * @param paramFirst
      *            first string

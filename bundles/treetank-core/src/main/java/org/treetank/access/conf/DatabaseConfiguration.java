@@ -46,8 +46,7 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
     private static final long serialVersionUID = -5005030622296323912L;
 
     /**
-     * Paths for a {@link org.access.Database}. Each {@link org.access.Database} has the same
-     * folder.layout.
+     * Paths for a {@link org.access.Database}. Each {@link org.access.Database} has the same folder.layout.
      */
     public enum Paths {
 

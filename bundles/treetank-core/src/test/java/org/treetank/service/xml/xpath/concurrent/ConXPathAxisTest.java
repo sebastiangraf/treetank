@@ -460,10 +460,12 @@ public class ConXPathAxisTest {
             // "child::b[fn:position() = 1]"), new long[] { 4L });
             //
             // // IAxisTest.testIAxisConventions(new XPathAxis(
-            // holder.getRtx(), "child::b[fn:position() = fn:last()]"), new long[] {8L});
+            // holder.getRtx(), "child::b[fn:position() = fn:last()]"), new
+            // long[] {8L});
             //
             // IAxisTest.testIAxisConventions(new XPathAxis(
-            // holder.getRtx(), "child::b[fn:position() = fn:last()-1]"), new long[] {4L});
+            // holder.getRtx(), "child::b[fn:position() = fn:last()-1]"), new
+            // long[] {4L});
             //
             // IAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
             // "child::b[fn:position() > 1]"), new long[] { 8L });
@@ -481,7 +483,8 @@ public class ConXPathAxisTest {
             // "child::b[attribute::p:x = \"y\"][1]"), new long[] { 8L });
 
             // IAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
-            // "child::b[attribute::p:x = \"y\"][fn:position() = 3]"), new long[]
+            // "child::b[attribute::p:x = \"y\"][fn:position() = 3]"), new
+            // long[]
             // {});
 
             // IAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
@@ -502,7 +505,8 @@ public class ConXPathAxisTest {
                 });
 
             // IAxisTest.testIAxisConventions(new XPathAxis(
-            // holder.getRtx(), "child::*[text() or c][fn:position() = fn:last()]"), new long[]
+            // holder.getRtx(),
+            // "child::*[text() or c][fn:position() = fn:last()]"), new long[]
             // {8L});
 
             AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),

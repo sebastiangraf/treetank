@@ -40,9 +40,11 @@ public interface IImportDiff {
      * Do the diff.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old revision
+     *            {@link IWriteTransaction} implementation reference on old
+     *            revision
      * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new revision
+     *            {@link IReadTransaction} implementation reference on new
+     *            revision
      */
     void diff(final IWriteTransaction paramWtx, final IReadTransaction paramRtx);
 

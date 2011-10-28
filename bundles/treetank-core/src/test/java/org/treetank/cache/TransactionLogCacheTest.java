@@ -41,8 +41,8 @@ public class TransactionLogCacheTest {
 
     @Before
     public void setUp() throws AbsTTException {
-    	TestHelper.deleteEverything();
-    	TestHelper.createTestDocument();
+        TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
         cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1);
         CacheTestHelper.setUp(cache);
     }

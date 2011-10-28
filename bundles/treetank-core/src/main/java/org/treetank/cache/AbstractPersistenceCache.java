@@ -55,8 +55,7 @@ public abstract class AbstractPersistenceCache implements ICache {
      * Constructor with the place to store the data.
      * 
      * @param paramFile
-     *            {@link File} which holds the place to store
-     *            the data.
+     *            {@link File} which holds the place to store the data.
      */
     protected AbstractPersistenceCache(final File paramFile) {
         place =

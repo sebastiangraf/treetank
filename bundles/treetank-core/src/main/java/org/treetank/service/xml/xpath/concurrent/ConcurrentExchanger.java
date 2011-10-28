@@ -41,7 +41,8 @@ import java.util.concurrent.Exchanger;
 public class ConcurrentExchanger {
 
     /**
-     * Singleton instance that is initialized only once on first class access through JVM.
+     * Singleton instance that is initialized only once on first class access
+     * through JVM.
      */
     private static Exchanger<BlockingQueue<Long>> EXCHANGER = new Exchanger<BlockingQueue<Long>>();
 

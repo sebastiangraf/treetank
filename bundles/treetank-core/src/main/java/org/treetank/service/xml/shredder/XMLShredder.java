@@ -91,7 +91,10 @@ public class XMLShredder implements Callable<Long> {
     /** Determines if changes are going to be commit right after shredding. */
     private transient EShredderCommit mCommit;
 
-    /** {@link CountDownLatch} reference to allow other threads to wait for the shredding to finish. */
+    /**
+     * {@link CountDownLatch} reference to allow other threads to wait for the
+     * shredding to finish.
+     */
     private transient CountDownLatch mLatch;
 
     /**
@@ -117,15 +120,18 @@ public class XMLShredder implements Callable<Long> {
      * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} where the new XML Fragment should be placed
+     *            {@link IWriteTransaction} where the new XML Fragment should be
+     *            placed
      * @param paramReader
-     *            {@link XMLEventReader} to parse the xml fragment, which should be inserted
+     *            {@link XMLEventReader} to parse the xml fragment, which should
+     *            be inserted
      * @param paramAddAsFirstChild
-     *            determines if the insert is occuring on a node in an existing tree. <code>false</code> is
-     *            not possible
-     *            when wtx is on root node
+     *            determines if the insert is occuring on a node in an existing
+     *            tree. <code>false</code> is not possible when wtx is on root
+     *            node
      * @param paramCommit
-     *            determines if inserted nodes should be commited right afterwards
+     *            determines if inserted nodes should be commited right
+     *            afterwards
      * @throws TTUsageException
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true

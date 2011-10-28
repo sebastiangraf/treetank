@@ -45,19 +45,19 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public final class KeyBinding extends TupleBinding<IKey> {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IKey entryToObject(final TupleInput arg0) {
-		return KeyPersistenter.createKey(new TupleInputSource(arg0));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IKey entryToObject(final TupleInput arg0) {
+        return KeyPersistenter.createKey(new TupleInputSource(arg0));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void objectToEntry(final IKey arg0, final TupleOutput arg1) {
-		KeyPersistenter.serializeKey(new TupleOutputSink(arg1), arg0);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void objectToEntry(final IKey arg0, final TupleOutput arg1) {
+        KeyPersistenter.serializeKey(new TupleOutputSink(arg1), arg0);
+    }
 }

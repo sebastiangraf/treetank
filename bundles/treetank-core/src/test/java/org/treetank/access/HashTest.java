@@ -200,7 +200,8 @@ public class HashTest {
         wtx.moveTo(rootKey);
         assertEquals(secondRootHash, wtx.getNode().getHash());
 
-        // adding additional element for showing that hashes are computed incrementilly
+        // adding additional element for showing that hashes are computed
+        // incrementilly
         wtx.insertTextAsFirstChild(NAME1);
         wtx.insertElementAsRightSibling(new QName(NAME1));
         wtx.insertAttribute(new QName(NAME1), NAME2);

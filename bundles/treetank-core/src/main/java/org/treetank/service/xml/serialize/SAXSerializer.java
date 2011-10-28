@@ -154,7 +154,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
                 mContHandler.startPrefixMapping(qName.getPrefix(), qName.getNamespaceURI());
                 final String mURI = paramRtx.nameForKey(paramRtx.getNode().getURIKey());
                 if (paramRtx.nameForKey(paramRtx.getNode().getNameKey()).length() == 0) {
-                    // if (qName.getPrefix() == null || qName.getPrefix() == "") {
+                    // if (qName.getPrefix() == null || qName.getPrefix() == "")
+                    // {
                     atts.addAttribute(mURI, "xmlns", "xmlns", "CDATA", mURI);
                 } else {
                     atts.addAttribute(mURI, "xmlns", "xmlns:"

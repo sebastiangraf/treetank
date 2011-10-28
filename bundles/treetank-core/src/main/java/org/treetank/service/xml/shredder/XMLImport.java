@@ -61,7 +61,8 @@ public final class XMLImport {
     // /**
     // * Log wrapper for better output.
     // */
-    // private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(XMLImport.class));
+    // private static final LogWrapper LOGWRAPPER = new
+    // LogWrapper(LoggerFactory.getLogger(XMLImport.class));
     //
     // /** {@link Session}. */
     // private transient ISession mSession;
@@ -162,7 +163,8 @@ public final class XMLImport {
     // mLog.debug(mEvent.toString());
     //
     // if (XMLStreamConstants.START_ELEMENT == mEvent.getEventType()
-    // && checkTimestampNodes((StartElement)mEvent, mNodes.toArray(new RevNode[mNodes.size()]))) {
+    // && checkTimestampNodes((StartElement)mEvent, mNodes.toArray(new
+    // RevNode[mNodes.size()]))) {
     // // Found revision node.
     // wtx.moveToDocumentRoot();
     //
@@ -192,7 +194,8 @@ public final class XMLImport {
     // * Timestamp nodes.
     // * @return true if they match, otherwise false.
     // */
-    // private boolean checkTimestampNodes(final StartElement mEvent, final RevNode... mTsns) {
+    // private boolean checkTimestampNodes(final StartElement mEvent, final
+    // RevNode... mTsns) {
     // boolean mRetVal = false;
     //
     // for (final RevNode tsn : mTsns) {

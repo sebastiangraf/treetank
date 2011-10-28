@@ -29,10 +29,12 @@ package org.treetank.service.xml.xpath.xmark;
 
 public class XPathTestQueries {
 
-    // final private static String XMLFILE = "src" + File.separator + "test" + File.separator + "resources"
+    // final private static String XMLFILE = "src" + File.separator + "test" +
+    // File.separator + "resources"
     // + File.separator + "factbook.xml";
     //
-    // final private static File OUTPUTFILE = new File(File.separatorChar + "tmp" + File.separatorChar + "tt"
+    // final private static File OUTPUTFILE = new File(File.separatorChar +
+    // "tmp" + File.separatorChar + "tt"
     // + File.separatorChar + "factbook.tnk");
     //
     // final private static String QUERY = "//country/name";
@@ -75,7 +77,8 @@ public class XPathTestQueries {
     //
     // final Properties dbProps = new Properties();
     // dbProps.setProperty(EDatabaseSetting.REVISION_TO_RESTORE.name(), "1");
-    // final DatabaseConfiguration conf = new DatabaseConfiguration(OUTPUTFILE, dbProps);
+    // final DatabaseConfiguration conf = new DatabaseConfiguration(OUTPUTFILE,
+    // dbProps);
     //
     // Database.createDatabase(conf);
     // database = Database.openDatabase(OUTPUTFILE);
@@ -89,7 +92,8 @@ public class XPathTestQueries {
     // }
     //
     // final XMLEventReader reader = createReader(new File(XMLFILE));
-    // final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
+    // final XMLShredder shredder = new XMLShredder(wtx, reader,
+    // EShredderInsert.ADDASFIRSTCHILD);
     // shredder.call();
     //
     // wtx.close();
@@ -98,13 +102,15 @@ public class XPathTestQueries {
     // long endTime = System.currentTimeMillis();
     //
     // System.out
-    // .println("Datenbank in " + ((endTime - startTime) / 1000) + " sec erfolgreich angelegt");
+    // .println("Datenbank in " + ((endTime - startTime) / 1000) +
+    // " sec erfolgreich angelegt");
     // } catch (Exception e) {
     // e.printStackTrace();
     // }
     // }
     //
-    // public static synchronized XMLEventReader createReader(final File paramFile) throws IOException,
+    // public static synchronized XMLEventReader createReader(final File
+    // paramFile) throws IOException,
     // XMLStreamException {
     // final XMLInputFactory factory = XMLInputFactory.newInstance();
     // final InputStream in = new FileInputStream(paramFile);

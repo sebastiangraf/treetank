@@ -86,7 +86,8 @@ public class FNBoolean extends AbsFunction {
 
             final IReadTransaction rtx = axis.getTransaction();
 
-            if (rtx.getNode().getNodeKey() >= 0) { // first item is a real node ->
+            if (rtx.getNode().getNodeKey() >= 0) { // first item is a real node
+                                                   // ->
                 // true
                 value = true;
             } else {

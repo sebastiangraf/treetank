@@ -30,16 +30,16 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
- * Stores whether two objects have a (unidirectional) connection.
- * /!\ The identities of the objects are used, not equals()!
+ * Stores whether two objects have a (unidirectional) connection. /!\ The
+ * identities of the objects are used, not equals()!
  * 
  * @param <T>
  */
 public final class ConnectionMap<T> {
 
     /**
-     * First, we search the first node in the map, then
-     * the second in the returned IdentityHashMap.
+     * First, we search the first node in the map, then the second in the
+     * returned IdentityHashMap.
      */
     private final Map<T, IdentityHashMap<T, Boolean>> mMap;
 
@@ -82,8 +82,8 @@ public final class ConnectionMap<T> {
     }
 
     /**
-     * Returns whether there is a connection between a and b.
-     * Unknown objects do never have a connection.
+     * Returns whether there is a connection between a and b. Unknown objects do
+     * never have a connection.
      * 
      * @param paramOrigin
      *            origin object

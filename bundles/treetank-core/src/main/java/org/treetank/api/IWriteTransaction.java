@@ -117,7 +117,8 @@ public interface IWriteTransaction extends IReadTransaction {
     // --------------------------------------------------------
 
     /**
-     * Move a subtree rooted at paramToKey to the first child rooted at paramToKey.
+     * Move a subtree rooted at paramToKey to the first child rooted at
+     * paramToKey.
      * 
      * @param paramFromKey
      *            root node key of the subtree to move
@@ -128,7 +129,8 @@ public interface IWriteTransaction extends IReadTransaction {
     long moveSubtreeToFirstChild(final long paramFromKey) throws AbsTTException;
 
     /**
-     * Move a subtree rooted at paramToKey to the right sibling of the node at paramToKey.
+     * Move a subtree rooted at paramToKey to the right sibling of the node at
+     * paramToKey.
      * 
      * @param paramFromKey
      *            root node key of the subtree to move
@@ -309,7 +311,8 @@ public interface IWriteTransaction extends IReadTransaction {
     void close() throws AbsTTException;
 
     /**
-     * Copy subtree from another database/resource/revision and insert as right sibling of the current node.
+     * Copy subtree from another database/resource/revision and insert as right
+     * sibling of the current node.
      * 
      * @param paramNodeKey
      *            node key of the root node of the subtree to copy
@@ -324,7 +327,8 @@ public interface IWriteTransaction extends IReadTransaction {
     long copySubtreeAsFirstChild(final long paramNodeKey, final long paramRevision) throws AbsTTException;
 
     /**
-     * Copy subtree from another database/resource/revision and insert as right sibling of the current node.
+     * Copy subtree from another database/resource/revision and insert as right
+     * sibling of the current node.
      * 
      * @param paramNodeKey
      *            node key of the root node of the subtree to copy

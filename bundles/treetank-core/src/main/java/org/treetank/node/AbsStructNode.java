@@ -31,12 +31,14 @@ import org.treetank.api.IStructuralItem;
 import org.treetank.settings.EFixed;
 
 /**
- * Abstact class to represent all structural nodes which are the base for a tree.
+ * Abstact class to represent all structural nodes which are the base for a
+ * tree.
  * 
- * Each AbsStructNode represents pointers to the parent, the left- and rightsibling plus a pointer to
- * the firstchild.
+ * Each AbsStructNode represents pointers to the parent, the left- and
+ * rightsibling plus a pointer to the firstchild.
  * 
- * The pointers of a node is stored in a longArray while additional data is stored in a intarray.
+ * The pointers of a node is stored in a longArray while additional data is
+ * stored in a intarray.
  * 
  * @author Sebastian Graf, University of Konstanz
  */

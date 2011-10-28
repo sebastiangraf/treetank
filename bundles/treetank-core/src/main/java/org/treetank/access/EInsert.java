@@ -75,7 +75,8 @@ public enum EInsert {
                     paramWtx.moveTo(paramToNode.getFirstChildKey());
                     paramWtx.remove();
 
-                    // Adapt left sibling key of former right sibling of first child.
+                    // Adapt left sibling key of former right sibling of first
+                    // child.
                     paramWtx.moveTo(moved.getRightSiblingKey());
                     final AbsStructNode rightSibling =
                         (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
@@ -106,7 +107,8 @@ public enum EInsert {
                 paramWtx.getTransactionState().finishNodeModification(moved);
             }
 
-            // Adapt first child key and childCount of parent where the subtree has to be inserted.
+            // Adapt first child key and childCount of parent where the subtree
+            // has to be inserted.
             final AbsStructNode newParent =
                 (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                     paramToNode.getNodeKey());
@@ -158,7 +160,8 @@ public enum EInsert {
                 paramWtx.moveTo(paramToNode.getNodeKey());
                 final StringBuilder builder = new StringBuilder(paramWtx.getValueOfCurrentNode());
 
-                // Adapt left sibling key of former right sibling of first child.
+                // Adapt left sibling key of former right sibling of first
+                // child.
                 final AbsStructNode rightSibling =
                     (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         ((TextNode)paramWtx.getCurrentNode()).getRightSiblingKey());
@@ -182,7 +185,8 @@ public enum EInsert {
                 final AbsStructNode insertAnchor =
                     (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramToNode.getNodeKey());
-                // Adapt right sibling key of node where the subtree has to be inserted.
+                // Adapt right sibling key of node where the subtree has to be
+                // inserted.
                 insertAnchor.setRightSiblingKey(paramFromNode.getNodeKey());
                 paramWtx.getTransactionState().finishNodeModification(insertAnchor);
 
@@ -193,7 +197,8 @@ public enum EInsert {
                 && paramWtx.getCurrentNode().getKind() == ENodes.TEXT_KIND) {
                 final StringBuilder builder = new StringBuilder(paramWtx.getValueOfCurrentNode());
 
-                // Adapt left sibling key of former right sibling of first child.
+                // Adapt left sibling key of former right sibling of first
+                // child.
                 final AbsStructNode rightSibling =
                     (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramWtx.getCurrentNode().getNodeKey());
@@ -220,7 +225,8 @@ public enum EInsert {
                 final AbsStructNode insertAnchor =
                     (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramToNode.getNodeKey());
-                // Adapt right sibling key of node where the subtree has to be inserted.
+                // Adapt right sibling key of node where the subtree has to be
+                // inserted.
                 insertAnchor.setRightSiblingKey(paramFromNode.getNodeKey());
                 paramWtx.getTransactionState().finishNodeModification(insertAnchor);
             } else {
@@ -228,7 +234,8 @@ public enum EInsert {
                     (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramToNode.getNodeKey());
                 final long rightSiblKey = insertAnchor.getRightSiblingKey();
-                // Adapt right sibling key of node where the subtree has to be inserted.
+                // Adapt right sibling key of node where the subtree has to be
+                // inserted.
                 insertAnchor.setRightSiblingKey(paramFromNode.getNodeKey());
                 paramWtx.getTransactionState().finishNodeModification(insertAnchor);
 

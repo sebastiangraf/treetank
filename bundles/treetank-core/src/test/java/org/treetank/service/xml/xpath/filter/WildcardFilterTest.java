@@ -69,11 +69,13 @@ public class WildcardFilterTest {
             assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
 
         }
-        // IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b",
+        // IFilterTest.testIFilterConventions(new
+        // WildcardFilter(holder.getRtx(), "b",
         // true), true);
 
         // holder.getRtx().moveTo(3L);
-        // IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
+        // IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()),
+        // true);
 
         holder.getRtx().moveTo(1L);
         IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);

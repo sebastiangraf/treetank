@@ -35,29 +35,29 @@ package org.treetank.io;
  */
 public final class KeyDelegate {
 
-	/** All keys. */
-	private final long[] mKeys;
+    /** All keys. */
+    private final long[] mKeys;
 
-	/**
-	 * Public constructor, just setting the keys.
-	 * 
-	 * @param paramKeys
-	 *            setting the keys
-	 */
-	public KeyDelegate(final long... paramKeys) {
-		assert paramKeys.length > 0;
-		mKeys = paramKeys;
-	}
+    /**
+     * Public constructor, just setting the keys.
+     * 
+     * @param paramKeys
+     *            setting the keys
+     */
+    public KeyDelegate(final long... paramKeys) {
+        assert paramKeys.length > 0;
+        mKeys = paramKeys;
+    }
 
-	/**
-	 * Getting all keys.
-	 * 
-	 * @return the keys
-	 */
-	public long[] getKeys() {
-		final long[] returnKeys = new long[mKeys.length];
-		System.arraycopy(mKeys, 0, returnKeys, 0, mKeys.length);
-		return returnKeys;
-	}
+    /**
+     * Getting all keys.
+     * 
+     * @return the keys
+     */
+    public long[] getKeys() {
+        final long[] returnKeys = new long[mKeys.length];
+        System.arraycopy(mKeys, 0, returnKeys, 0, mKeys.length);
+        return returnKeys;
+    }
 
 }

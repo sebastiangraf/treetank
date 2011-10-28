@@ -94,7 +94,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private static final String XMLALLNINETH = RESOURCES + File.separator + "revXMLsAll8";
 
-    // private static final String XMLLINGUISTICS = RESOURCES + File.separator + "linguistics";
+    // private static final String XMLLINGUISTICS = RESOURCES + File.separator +
+    // "linguistics";
 
     static {
         XMLUnit.setIgnoreComments(true);
@@ -269,7 +270,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 final Diff diff = new Diff(sBuilder.toString(), out.toString());
                 // final DetailedDiff detDiff = new DetailedDiff(diff);
                 // @SuppressWarnings("unchecked")
-                // final List<Difference> differences = detDiff.getAllDifferences();
+                // final List<Difference> differences =
+                // detDiff.getAllDifferences();
                 // for (final Difference difference : differences) {
                 // // System.out.println("***********************");
                 // // System.out.println(difference);

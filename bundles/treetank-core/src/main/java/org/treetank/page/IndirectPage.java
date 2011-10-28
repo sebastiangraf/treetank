@@ -27,6 +27,9 @@
 
 package org.treetank.page;
 
+import org.treetank.access.WriteTransactionState;
+import org.treetank.exception.AbsTTException;
+import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.utils.IConstants;
 
@@ -37,7 +40,9 @@ import org.treetank.utils.IConstants;
  * Indirect page holds a set of references to build a reference tree.
  * </p>
  */
-public final class IndirectPage extends AbsPage {
+public final class IndirectPage implements IPage {
+
+    private final AbsPage mDelegate;
 
     /**
      * Create indirect page.
@@ -46,7 +51,7 @@ public final class IndirectPage extends AbsPage {
      *            Revision Number
      */
     public IndirectPage(final long paramRevision) {
-        super(IConstants.INP_REFERENCE_COUNT, paramRevision);
+        mDelegate = new AbsPage(IConstants.INP_REFERENCE_COUNT, paramRevision);
     }
 
     /**
@@ -56,7 +61,8 @@ public final class IndirectPage extends AbsPage {
      *            Input bytes.
      */
     protected IndirectPage(final ITTSource paramIn) {
-        super(IConstants.INP_REFERENCE_COUNT, paramIn);
+        mDelegate = new AbsPage(IConstants.INP_REFERENCE_COUNT, paramIn.readLong());
+        mDelegate.initialize(IConstants.INP_REFERENCE_COUNT, paramIn);
     }
 
     /**
@@ -68,7 +74,33 @@ public final class IndirectPage extends AbsPage {
      *            Revision number to use
      */
     public IndirectPage(final IndirectPage page, final long revisionToUse) {
-        super(IConstants.INP_REFERENCE_COUNT, page, revisionToUse);
+        mDelegate = new AbsPage(IConstants.INP_REFERENCE_COUNT, revisionToUse);
+        mDelegate.initialize(IConstants.INP_REFERENCE_COUNT, page);
+    }
+
+    @Override
+    public PageReference getChildren(int paramOffset) {
+        return mDelegate.getChildren(paramOffset);
+    }
+
+    @Override
+    public void commit(WriteTransactionState paramState) throws AbsTTException {
+        mDelegate.commit(paramState);
+    }
+
+    @Override
+    public void serialize(ITTSink paramOut) {
+        mDelegate.serialize(paramOut);
+    }
+
+    @Override
+    public PageReference[] getReferences() {
+        return mDelegate.getReferences();
+    }
+
+    @Override
+    public long getRevision() {
+        return mDelegate.getRevision();
     }
 
 }
