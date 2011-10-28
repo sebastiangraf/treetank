@@ -38,108 +38,109 @@ import org.treetank.io.file.FileKey;
  */
 public final class KeyPersistenter {
 
-    /** Constant to define the file-keys. */
-    private static final int FILEKIND = 1;
-    /** Constant to define the berkeley-keys. */
-    private static final int BERKELEYKIND = 2;
-    /** Constant to define that no key is stored. */
-    private static final int NULLKIND = 3;
+	/** Constant to define the file-keys. */
+	private static final int FILEKIND = 1;
+	/** Constant to define the berkeley-keys. */
+	private static final int BERKELEYKIND = 2;
+	/** Constant to define that no key is stored. */
+	private static final int NULLKIND = 3;
 
-    // /**
-    // private enum Keys {
-    // /** File-keys. */
-    // FILE(1),
-    //
-    // /** Berkeley-keys. */
-    // BERKELEY(2),
-    //
-    // /** No key is stored. */
-    // NULL(3);
-    //
-    // /** The actual key. */
-    // private final int mKey;
-    //
-    // /**
-    // * Constructor.
-    // *
-    // * @param paramKey
-    // * the actual key
-    // */
-    // Keys(final int paramKey) {
-    // mKey = paramKey;
-    // }
-    //
-    // /**
-    // * Get key.
-    // *
-    // * @return the Key
-    // */
-    // public int getKey() {
-    // return mKey;
-    // }
-    // }
+	// /**
+	// private enum Keys {
+	// /** File-keys. */
+	// FILE(1),
+	//
+	// /** Berkeley-keys. */
+	// BERKELEY(2),
+	//
+	// /** No key is stored. */
+	// NULL(3);
+	//
+	// /** The actual key. */
+	// private final int mKey;
+	//
+	// /**
+	// * Constructor.
+	// *
+	// * @param paramKey
+	// * the actual key
+	// */
+	// Keys(final int paramKey) {
+	// mKey = paramKey;
+	// }
+	//
+	// /**
+	// * Get key.
+	// *
+	// * @return the Key
+	// */
+	// public int getKey() {
+	// return mKey;
+	// }
+	// }
 
-    /**
-     * Empty constructor for this class, should never be initialized.
-     */
-    private KeyPersistenter() {
-        // Method to prohibit instantiation.
-        throw new AssertionError("Can't be instantiated!");
-    }
+	/**
+	 * Empty constructor for this class, should never be initialized.
+	 */
+	private KeyPersistenter() {
+		// Method to prohibit instantiation.
+		throw new AssertionError("Can't be instantiated!");
+	}
 
-    /**
-     * Simple create-method.
-     * 
-     * @param paramSource
-     *            the input from the storage
-     * @return the Key.
-     */
-    public static AbsKey createKey(final ITTSource paramSource) {
-        final int kind = paramSource.readInt();
-        AbsKey returnVal = null;
-        switch (kind) {
-        case FILEKIND:
-            returnVal = new FileKey(paramSource);
-            break;
-        case BERKELEYKIND:
-            returnVal = new BerkeleyKey(paramSource);
-            break;
-        case NULLKIND:
-            returnVal = null;
-            break;
-        default:
-            throw new IllegalStateException(new StringBuilder("Kind ").append(kind).append(" is not known")
-                .toString());
-        }
+	/**
+	 * Simple create-method.
+	 * 
+	 * @param paramSource
+	 *            the input from the storage
+	 * @return the Key.
+	 */
+	public static IKey createKey(final ITTSource paramSource) {
+		final int kind = paramSource.readInt();
+		IKey returnVal = null;
+		switch (kind) {
+		case FILEKIND:
+			returnVal = new FileKey(paramSource);
+			break;
+		case BERKELEYKIND:
+			returnVal = new BerkeleyKey(paramSource);
+			break;
+		case NULLKIND:
+			returnVal = null;
+			break;
+		default:
+			throw new IllegalStateException(new StringBuilder("Kind ")
+					.append(kind).append(" is not known").toString());
+		}
 
-        return returnVal;
-    }
+		return returnVal;
+	}
 
-    /**
-     * Serialize a key to a designated {@link ITTSink}.
-     * 
-     * @param paramSink
-     *            where the data should be serialized to
-     * @param paramKey
-     *            key which is serialized
-     */
-    public static void serializeKey(final ITTSink paramSink, final AbsKey paramKey) {
-        if (paramKey == null) {
-            paramSink.writeInt(NULLKIND);
-        } else {
-            if (paramKey instanceof FileKey) {
-                paramSink.writeInt(FILEKIND);
-            } else if (paramKey instanceof BerkeleyKey) {
-                paramSink.writeInt(BERKELEYKIND);
-            } else {
-                throw new IllegalStateException(new StringBuilder("Key ").append(paramKey.getClass()).append(
-                    " cannot be serialized").toString());
-            }
+	/**
+	 * Serialize a key to a designated {@link ITTSink}.
+	 * 
+	 * @param paramSink
+	 *            where the data should be serialized to
+	 * @param paramKey
+	 *            key which is serialized
+	 */
+	public static void serializeKey(final ITTSink paramSink, final IKey paramKey) {
+		if (paramKey == null) {
+			paramSink.writeInt(NULLKIND);
+		} else {
+			if (paramKey instanceof FileKey) {
+				paramSink.writeInt(FILEKIND);
+			} else if (paramKey instanceof BerkeleyKey) {
+				paramSink.writeInt(BERKELEYKIND);
+			} else {
+				throw new IllegalStateException(new StringBuilder("Key ")
+						.append(paramKey.getClass())
+						.append(" cannot be serialized").toString());
+			}
 
-            for (final long val : paramKey.getKeys()) {
-                paramSink.writeLong(val);
-            }
-        }
+			for (final long val : paramKey.getKeys()) {
+				paramSink.writeLong(val);
+			}
+		}
 
-    }
+	}
 }

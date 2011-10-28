@@ -41,162 +41,151 @@ import org.treetank.io.ITTSource;
  */
 public abstract class AbsPage {
 
-    /** Page references. */
-    private final PageReference[] mReferences;
+	/** Page references. */
+	private final PageReference[] mReferences;
 
-    /** revision of this page. */
-    private final long mRevision;
+	/** revision of this page. */
+	private final long mRevision;
 
-    /**
-     * Constructor to initialize instance.
-     * 
-     * @param paramReferenceCount
-     *            Number of references of page.
-     * @param paramRevision
-     *            Revision Number.
-     */
-    protected AbsPage(final int paramReferenceCount, final long paramRevision) {
-        mReferences = new PageReference[paramReferenceCount];
-        mRevision = paramRevision;
-    }
+	/**
+	 * Constructor to initialize instance.
+	 * 
+	 * @param paramReferenceCount
+	 *            Number of references of page.
+	 * @param paramRevision
+	 *            Revision Number.
+	 */
+	protected AbsPage(final int paramReferenceCount, final long paramRevision) {
+		mReferences = new PageReference[paramReferenceCount];
+		mRevision = paramRevision;
+	}
 
-    /**
-     * Read constructor.
-     * 
-     * @param paramReferenceCount
-     *            Number of references of page.
-     * @param paramIn
-     *            Input reader to read from.
-     */
-    protected AbsPage(final int paramReferenceCount, final ITTSource paramIn) {
-        this(paramReferenceCount, paramIn.readLong());
-        final int[] values = new int[paramReferenceCount];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = paramIn.readInt();
-        }
-        for (int offset = 0; offset < paramReferenceCount; offset++) {
-            if (values[offset] == 1) {
-                getReferences()[offset] = new PageReference(paramIn);
-            }
-        }
-    }
+	/**
+	 * Read constructor.
+	 * 
+	 * @param paramReferenceCount
+	 *            Number of references of page.
+	 * @param paramIn
+	 *            Input reader to read from.
+	 */
+	protected AbsPage(final int paramReferenceCount, final ITTSource paramIn) {
+		this(paramReferenceCount, paramIn.readLong());
+		final int[] values = new int[paramReferenceCount];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = paramIn.readInt();
+		}
+		for (int offset = 0; offset < paramReferenceCount; offset++) {
+			if (values[offset] == 1) {
+				getReferences()[offset] = new PageReference(paramIn);
+			}
+		}
+	}
 
-    /**
-     * Clone constructor used for COW.
-     * 
-     * @param paramReferenceCount
-     *            Number of references of page.
-     * @param paramCommittedPage
-     *            Page to clone.
-     * @param paramRevision
-     *            Number of Revision.
-     */
-    protected AbsPage(final int paramReferenceCount, final AbsPage paramCommittedPage,
-        final long paramRevision) {
-        this(paramReferenceCount, paramRevision);
-        for (int offset = 0; offset < paramReferenceCount; offset++) {
-            if (paramCommittedPage.getReferences()[offset] != null) {
-                final PageReference ref = paramCommittedPage.getReferences()[offset];
-                getReferences()[offset] = new PageReference(ref);
-            }
-        }
-    }
+	/**
+	 * Clone constructor used for COW.
+	 * 
+	 * @param paramReferenceCount
+	 *            Number of references of page.
+	 * @param paramCommittedPage
+	 *            Page to clone.
+	 * @param paramRevision
+	 *            Number of Revision.
+	 */
+	protected AbsPage(final int paramReferenceCount,
+			final AbsPage paramCommittedPage, final long paramRevision) {
+		this(paramReferenceCount, paramRevision);
+		for (int offset = 0; offset < paramReferenceCount; offset++) {
+			if (paramCommittedPage.getReferences()[offset] != null) {
+				final PageReference ref = paramCommittedPage.getReferences()[offset];
+				getReferences()[offset] = new PageReference(ref);
+			}
+		}
+	}
 
-    /**
-     * Get page reference of given offset.
-     * 
-     * @param paramOffset
-     *            Offset of page reference.
-     * @return PageReference at given offset.
-     */
-    public final PageReference getReference(final int paramOffset) {
-        if (getReferences()[paramOffset] == null) {
-            getReferences()[paramOffset] = new PageReference();
-        }
-        return getReferences()[paramOffset];
-    }
+	/**
+	 * Get page reference of given offset.
+	 * 
+	 * @param paramOffset
+	 *            Offset of page reference.
+	 * @return PageReference at given offset.
+	 */
+	public final PageReference getReference(final int paramOffset) {
+		if (getReferences()[paramOffset] == null) {
+			getReferences()[paramOffset] = new PageReference();
+		}
+		return getReferences()[paramOffset];
+	}
 
-    /**
-     * Set page reference at given offset.
-     * 
-     * @param paramOffset
-     *            Offset of page reference.
-     * @param paramReference
-     *            Page reference to set.
-     */
-    public final void setReference(final int paramOffset, final PageReference paramReference) {
-        getReferences()[paramOffset] = paramReference;
-    }
+	/**
+	 * Recursively call commit on all referenced pages.
+	 * 
+	 * @param paramState
+	 *            IWriteTransaction state.
+	 * @throws AbsTTException
+	 *             thorw when write error
+	 */
 
-    /**
-     * Recursively call commit on all referenced pages.
-     * 
-     * @param paramState
-     *            IWriteTransaction state.
-     * @throws AbsTTException
-     *             thorw when write error
-     */
+	public final void commit(final WriteTransactionState paramState)
+			throws AbsTTException {
+		for (final PageReference reference : getReferences()) {
+			paramState.commit(reference);
+		}
+	}
 
-    public final void commit(final WriteTransactionState paramState) throws AbsTTException {
-        for (final PageReference reference : getReferences()) {
-            paramState.commit(reference);
-        }
-    }
+	/**
+	 * Serialize page references into output.
+	 * 
+	 * @param paramOut
+	 *            Output stream.
+	 */
+	protected void serialize(final ITTSink paramOut) {
+		paramOut.writeLong(mRevision);
+		for (int i = 0; i < getReferences().length; i++) {
+			if (getReferences()[i] != null) {
+				paramOut.writeInt(1);
+			} else {
+				paramOut.writeInt(0);
+			}
+		}
 
-    /**
-     * Serialize page references into output.
-     * 
-     * @param paramOut
-     *            Output stream.
-     */
-    protected void serialize(final ITTSink paramOut) {
-        paramOut.writeLong(mRevision);
-        for (int i = 0; i < getReferences().length; i++) {
-            if (getReferences()[i] != null) {
-                paramOut.writeInt(1);
-            } else {
-                paramOut.writeInt(0);
-            }
-        }
+		for (final PageReference reference : getReferences()) {
+			if (reference != null) {
+				reference.serialize(paramOut);
+			}
+		}
+	}
 
-        for (final PageReference reference : getReferences()) {
-            if (reference != null) {
-                reference.serialize(paramOut);
-            }
-        }
-    }
+	/**
+	 * @return the mReferences
+	 */
+	public final PageReference[] getReferences() {
+		return mReferences;
+	}
 
-    /**
-     * @return the mReferences
-     */
-    public final PageReference[] getReferences() {
-        return mReferences;
-    }
+	/**
+	 * @return the mRevision
+	 */
+	public final long getRevision() {
+		return mRevision;
+	}
 
-    /**
-     * @return the mRevision
-     */
-    public final long getRevision() {
-        return mRevision;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        if (getReferences().length > 0) {
-            builder.append("References: ");
-            for (final PageReference ref : getReferences()) {
-                if (ref != null) {
-                    builder.append(ref.getKey().getIdentifier()).append(",");
-                }
-            }
-        } else {
-            builder.append("No references");
-        }
-        return builder.toString();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		if (getReferences().length > 0) {
+			builder.append("References: ");
+			for (final PageReference ref : getReferences()) {
+				if (ref != null) {
+					builder.append(ref.getKey().getIdentifier()).append(",");
+				}
+			}
+		} else {
+			builder.append("No references");
+		}
+		return builder.toString();
+	}
 
 }

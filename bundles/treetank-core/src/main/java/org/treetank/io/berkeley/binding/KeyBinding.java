@@ -27,7 +27,8 @@
 
 package org.treetank.io.berkeley.binding;
 
-import org.treetank.io.AbsKey;
+import org.treetank.io.KeyDelegate;
+import org.treetank.io.IKey;
 import org.treetank.io.KeyPersistenter;
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;
@@ -37,26 +38,26 @@ import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
- * Class to store {@link AbsKey} objects in the BerkeleyDB.
+ * Class to store {@link KeyDelegate} objects in the BerkeleyDB.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class KeyBinding extends TupleBinding<AbsKey> {
+public final class KeyBinding extends TupleBinding<IKey> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public AbsKey entryToObject(final TupleInput arg0) {
-        return KeyPersistenter.createKey(new TupleInputSource(arg0));
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IKey entryToObject(final TupleInput arg0) {
+		return KeyPersistenter.createKey(new TupleInputSource(arg0));
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void objectToEntry(final AbsKey arg0, final TupleOutput arg1) {
-        KeyPersistenter.serializeKey(new TupleOutputSink(arg1), arg0);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void objectToEntry(final IKey arg0, final TupleOutput arg1) {
+		KeyPersistenter.serializeKey(new TupleOutputSink(arg1), arg0);
+	}
 }
