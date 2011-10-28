@@ -57,13 +57,13 @@ public final class RevisionRootPage implements IPage {
     /** Timestamp of revision. */
     private long mRevisionTimestamp;
 
-    private final AbsPage mDelegate;
+    private final PageDelegate mDelegate;
 
     /**
      * Create revision root page.
      */
     public RevisionRootPage() {
-        mDelegate = new AbsPage(2, IConstants.UBP_ROOT_REVISION_NUMBER);
+        mDelegate = new PageDelegate(2, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionSize = 0L;
         final PageReference ref = getChildren(NAME_REFERENCE_OFFSET);
         ref.setPage(new NamePage(IConstants.UBP_ROOT_REVISION_NUMBER));
@@ -77,8 +77,8 @@ public final class RevisionRootPage implements IPage {
      *            Input bytes.
      */
     protected RevisionRootPage(final ITTSource paramIn) {
-        mDelegate = new AbsPage(2, paramIn.readLong());
-        mDelegate.initialize(2, paramIn);
+        mDelegate = new PageDelegate(2, paramIn.readLong());
+        mDelegate.initialize(paramIn);
         mRevisionSize = paramIn.readLong();
         mMaxNodeKey = paramIn.readLong();
         mRevisionTimestamp = paramIn.readLong();
@@ -94,8 +94,8 @@ public final class RevisionRootPage implements IPage {
      */
     public RevisionRootPage(final RevisionRootPage paramCommittedRevisionRootPage,
         final long paramRevisionToUse) {
-        mDelegate = new AbsPage(2, paramRevisionToUse);
-        mDelegate.initialize(2, paramCommittedRevisionRootPage);
+        mDelegate = new PageDelegate(2, paramRevisionToUse);
+        mDelegate.initialize(paramCommittedRevisionRootPage);
         mRevisionSize = paramCommittedRevisionRootPage.mRevisionSize;
         mMaxNodeKey = paramCommittedRevisionRootPage.mMaxNodeKey;
     }

@@ -40,7 +40,7 @@ import org.treetank.io.KeyDelegate;
 import org.treetank.io.berkeley.binding.AbstractPageBinding;
 import org.treetank.io.berkeley.binding.KeyBinding;
 import org.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
-import org.treetank.page.AbsPage;
+import org.treetank.page.PageDelegate;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
@@ -69,7 +69,7 @@ public final class BerkeleyFactory extends AbsIOFactory {
     /** Binding for {@link KeyDelegate}. */
     public static final TupleBinding<IKey> KEY = new KeyBinding();
 
-    /** Binding for {@link AbsPage}. */
+    /** Binding for {@link PageDelegate}. */
     public static final TupleBinding<IPage> PAGE_VAL_B = new AbstractPageBinding();
 
     /** Binding for {@link PageReference}. */

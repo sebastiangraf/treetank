@@ -99,17 +99,18 @@ public final class KeyPersistenter {
         IKey returnVal = null;
         switch (kind) {
         case FILEKIND:
-            returnVal = new FileKey(paramSource);
+            returnVal = new FileKey(paramSource.readLong(),
+                    paramSource.readLong());
             break;
         case BERKELEYKIND:
-            returnVal = new BerkeleyKey(paramSource);
+            returnVal = new BerkeleyKey(paramSource.readLong());
             break;
         case NULLKIND:
             returnVal = null;
             break;
         default:
-            throw new IllegalStateException(new StringBuilder("Kind ").append(kind).append(" is not known")
-                .toString());
+            throw new IllegalStateException(new StringBuilder("Kind ")
+                    .append(kind).append(" is not known").toString());
         }
 
         return returnVal;
@@ -132,8 +133,9 @@ public final class KeyPersistenter {
             } else if (paramKey instanceof BerkeleyKey) {
                 paramSink.writeInt(BERKELEYKIND);
             } else {
-                throw new IllegalStateException(new StringBuilder("Key ").append(paramKey.getClass()).append(
-                    " cannot be serialized").toString());
+                throw new IllegalStateException(new StringBuilder("Key ")
+                        .append(paramKey.getClass())
+                        .append(" cannot be serialized").toString());
             }
 
             for (final long val : paramKey.getKeys()) {

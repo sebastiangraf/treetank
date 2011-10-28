@@ -28,7 +28,7 @@
 package org.treetank.io;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.page.AbsPage;
+import org.treetank.page.PageDelegate;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
@@ -54,7 +54,7 @@ public interface IReader {
      * 
      * @param pageReference
      *            the reference for the page to be determined
-     * @return a {@link AbsPage} as the base for a page
+     * @return a {@link PageDelegate} as the base for a page
      * @throws TTIOException
      *             if something bad happens during read
      */

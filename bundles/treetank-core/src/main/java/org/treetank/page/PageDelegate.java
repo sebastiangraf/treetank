@@ -39,7 +39,7 @@ import org.treetank.io.ITTSource;
  * Class to provide basic reference handling functionality.
  * </p>
  */
-public class AbsPage {
+public class PageDelegate {
 
     /** Page references. */
     private final PageReference[] mReferences;
@@ -55,28 +55,30 @@ public class AbsPage {
      * @param paramRevision
      *            Revision Number.
      */
-    protected AbsPage(final int paramReferenceCount, final long paramRevision) {
+    protected PageDelegate(final int paramReferenceCount,
+            final long paramRevision) {
         mReferences = new PageReference[paramReferenceCount];
         mRevision = paramRevision;
     }
 
-    protected void initialize(final int paramReferenceCount, final ITTSource paramIn) {
-        final int[] values = new int[paramReferenceCount];
+    protected void initialize(final ITTSource paramIn) {
+        final int[] values = new int[mReferences.length];
         for (int i = 0; i < values.length; i++) {
             values[i] = paramIn.readInt();
         }
-        for (int offset = 0; offset < paramReferenceCount; offset++) {
+        for (int offset = 0; offset < values.length; offset++) {
             if (values[offset] == 1) {
                 getReferences()[offset] = new PageReference(paramIn);
             }
         }
     }
 
-    protected void initialize(final int paramReferenceCount, final IPage paramCommittedPage) {
-        for (int offset = 0; offset < paramReferenceCount; offset++) {
-            if (paramCommittedPage.getReferences()[offset] != null) {
-                final PageReference ref = paramCommittedPage.getReferences()[offset];
+    protected void initialize(final IPage paramCommittedPage) {
+        int offset = 0;
+        for (PageReference ref : paramCommittedPage.getReferences()) {
+            if (ref != null) {
                 getReferences()[offset] = new PageReference(ref);
+                offset++;
             }
         }
     }
@@ -104,7 +106,8 @@ public class AbsPage {
      *             thorw when write error
      */
 
-    public final void commit(final WriteTransactionState paramState) throws AbsTTException {
+    public final void commit(final WriteTransactionState paramState)
+            throws AbsTTException {
         for (final PageReference reference : getReferences()) {
             paramState.commit(reference);
         }

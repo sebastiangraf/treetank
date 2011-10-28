@@ -29,7 +29,7 @@ package org.treetank.io.berkeley.binding;
 
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;
-import org.treetank.page.AbsPage;
+import org.treetank.page.PageDelegate;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 
@@ -38,7 +38,7 @@ import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
- * Binding for storing {@link AbsPage} objects within the Berkeley DB.
+ * Binding for storing {@link PageDelegate} objects within the Berkeley DB.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
