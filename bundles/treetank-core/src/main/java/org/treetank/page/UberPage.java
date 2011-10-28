@@ -53,13 +53,13 @@ public final class UberPage implements IPage {
     /** True if this uber page is the uber page of a fresh TreeTank file. */
     private boolean mBootstrap;
 
-    private final AbsPage mDelegate;
+    private final PageDelegate mDelegate;
 
     /**
      * Create uber page.
      */
     public UberPage() {
-        mDelegate = new AbsPage(1, IConstants.UBP_ROOT_REVISION_NUMBER);
+        mDelegate = new PageDelegate(1, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
         mBootstrap = true;
 
@@ -96,8 +96,8 @@ public final class UberPage implements IPage {
             reference = page.getChildren(0);
         }
 
-        final NodePage ndp =
-            new NodePage((Long)EFixed.ROOT_PAGE_KEY.getStandardProperty(),
+        final NodePage ndp = new NodePage(
+                (Long) EFixed.ROOT_PAGE_KEY.getStandardProperty(),
                 IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
@@ -113,8 +113,8 @@ public final class UberPage implements IPage {
      */
     protected UberPage(final ITTSource paramIn) {
 
-        mDelegate = new AbsPage(1, paramIn.readLong());
-        mDelegate.initialize(1, paramIn);
+        mDelegate = new PageDelegate(1, paramIn.readLong());
+        mDelegate.initialize(paramIn);
         mRevisionCount = paramIn.readLong();
         mBootstrap = false;
     }
@@ -127,9 +127,10 @@ public final class UberPage implements IPage {
      * @param paramRevisionToUse
      *            Revision number to use.
      */
-    public UberPage(final UberPage paramCommittedUberPage, final long paramRevisionToUse) {
-        mDelegate = new AbsPage(1, paramRevisionToUse);
-        mDelegate.initialize(1, paramCommittedUberPage);
+    public UberPage(final UberPage paramCommittedUberPage,
+            final long paramRevisionToUse) {
+        mDelegate = new PageDelegate(1, paramRevisionToUse);
+        mDelegate.initialize(paramCommittedUberPage);
         if (paramCommittedUberPage.isBootstrap()) {
             mRevisionCount = paramCommittedUberPage.mRevisionCount;
             mBootstrap = paramCommittedUberPage.mBootstrap;
@@ -199,8 +200,9 @@ public final class UberPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
-            + getChildren(INDIRECT_REFERENCE_OFFSET) + "), isBootstrap=" + mBootstrap;
+        return super.toString() + ": revisionCount=" + mRevisionCount
+                + ", indirectPage=(" + getChildren(INDIRECT_REFERENCE_OFFSET)
+                + "), isBootstrap=" + mBootstrap;
     }
 
     @Override

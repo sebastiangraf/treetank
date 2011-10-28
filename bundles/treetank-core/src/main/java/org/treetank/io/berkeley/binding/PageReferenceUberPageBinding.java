@@ -41,7 +41,8 @@ import com.sleepycat.bind.tuple.TupleOutput;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class PageReferenceUberPageBinding extends TupleBinding<PageReference> {
+public final class PageReferenceUberPageBinding extends
+        TupleBinding<PageReference> {
 
     /**
      * {@inheritDoc}

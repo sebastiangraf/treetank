@@ -42,7 +42,7 @@ import org.treetank.utils.IConstants;
  */
 public final class IndirectPage implements IPage {
 
-    private final AbsPage mDelegate;
+    private final PageDelegate mDelegate;
 
     /**
      * Create indirect page.
@@ -51,7 +51,8 @@ public final class IndirectPage implements IPage {
      *            Revision Number
      */
     public IndirectPage(final long paramRevision) {
-        mDelegate = new AbsPage(IConstants.INP_REFERENCE_COUNT, paramRevision);
+        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT,
+                paramRevision);
     }
 
     /**
@@ -61,8 +62,9 @@ public final class IndirectPage implements IPage {
      *            Input bytes.
      */
     protected IndirectPage(final ITTSource paramIn) {
-        mDelegate = new AbsPage(IConstants.INP_REFERENCE_COUNT, paramIn.readLong());
-        mDelegate.initialize(IConstants.INP_REFERENCE_COUNT, paramIn);
+        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT,
+                paramIn.readLong());
+        mDelegate.initialize(paramIn);
     }
 
     /**
@@ -74,8 +76,9 @@ public final class IndirectPage implements IPage {
      *            Revision number to use
      */
     public IndirectPage(final IndirectPage page, final long revisionToUse) {
-        mDelegate = new AbsPage(IConstants.INP_REFERENCE_COUNT, revisionToUse);
-        mDelegate.initialize(IConstants.INP_REFERENCE_COUNT, page);
+        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT,
+                revisionToUse);
+        mDelegate.initialize(page);
     }
 
     @Override

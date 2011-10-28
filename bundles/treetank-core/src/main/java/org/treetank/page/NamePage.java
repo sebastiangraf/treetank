@@ -48,7 +48,7 @@ public final class NamePage implements IPage {
     /** Map the hash of a name to its name. */
     private final Map<Integer, String> mNameMap;
 
-    private final AbsPage mDelegate;
+    private final PageDelegate mDelegate;
 
     /**
      * Create name page.
@@ -57,7 +57,7 @@ public final class NamePage implements IPage {
      *            Revision number.
      */
     public NamePage(final long paramRevision) {
-        mDelegate = new AbsPage(0, paramRevision);
+        mDelegate = new PageDelegate(0, paramRevision);
         mNameMap = new HashMap<Integer, String>();
     }
 
@@ -68,12 +68,12 @@ public final class NamePage implements IPage {
      *            Input bytes to read from.
      */
     protected NamePage(final ITTSource paramIn) {
-        mDelegate = new AbsPage(0, paramIn.readLong());
-        mDelegate.initialize(0, paramIn);
+        mDelegate = new PageDelegate(0, paramIn.readLong());
+        mDelegate.initialize(paramIn);
         final int mapSize = paramIn.readInt();
 
         mNameMap = new HashMap<Integer, String>(mapSize);
-        for (int i = 0, l = (int)mapSize; i < l; i++) {
+        for (int i = 0, l = (int) mapSize; i < l; i++) {
             final int key = paramIn.readInt();
             final int valSize = paramIn.readInt();
             final byte[] bytes = new byte[valSize];
@@ -82,20 +82,6 @@ public final class NamePage implements IPage {
             }
             mNameMap.put(key, TypedValue.parseString(bytes));
         }
-    }
-
-    /**
-     * Clone name page.
-     * 
-     * @param paramCommittedNamePage
-     *            Page to clone.
-     * @param paramRevisionToUse
-     *            Revision Number to use.
-     */
-    public NamePage(final NamePage paramCommittedNamePage, final long paramRevisionToUse) {
-        mDelegate = new AbsPage(0, paramRevisionToUse);
-        mDelegate.initialize(0, paramCommittedNamePage);
-        mNameMap = new HashMap<Integer, String>(paramCommittedNamePage.mNameMap);
     }
 
     /**

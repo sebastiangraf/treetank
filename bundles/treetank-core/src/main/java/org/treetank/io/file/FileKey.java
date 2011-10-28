@@ -27,9 +27,8 @@
 
 package org.treetank.io.file;
 
-import org.treetank.io.KeyDelegate;
 import org.treetank.io.IKey;
-import org.treetank.io.ITTSource;
+import org.treetank.io.KeyDelegate;
 
 /**
  * FileKey, storing the offset and the length. The key is used for the mapping
@@ -40,17 +39,8 @@ import org.treetank.io.ITTSource;
  */
 public final class FileKey implements IKey {
 
+    /** Delegate for the key. */
     private final KeyDelegate mKey;
-
-    /**
-     * Constructor for {@link ITTSource}.
-     * 
-     * @param paramInSource
-     *            Source for Input
-     */
-    public FileKey(final ITTSource paramInSource) {
-        mKey = new KeyDelegate(paramInSource.readLong(), paramInSource.readLong());
-    }
 
     /**
      * Constructor for direct data.
@@ -70,7 +60,7 @@ public final class FileKey implements IKey {
      * @return the length of the file fragment
      */
     public int getLength() {
-        return (int)getKeys()[1];
+        return (int) getKeys()[1];
     }
 
     /**
@@ -90,6 +80,9 @@ public final class FileKey implements IKey {
         return getKeys()[0];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long[] getKeys() {
         return mKey.getKeys();

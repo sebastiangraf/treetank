@@ -27,9 +27,8 @@
 
 package org.treetank.io.berkeley;
 
-import org.treetank.io.KeyDelegate;
 import org.treetank.io.IKey;
-import org.treetank.io.ITTSource;
+import org.treetank.io.KeyDelegate;
 
 /**
  * Key for reference the data in the berkeley-db. The key is also the
@@ -40,17 +39,8 @@ import org.treetank.io.ITTSource;
  */
 public class BerkeleyKey implements IKey {
 
+    /** Delegate for the key. */
     private final KeyDelegate mKey;
-
-    /**
-     * Public constructor.
-     * 
-     * @param paramInput
-     *            base for the key (coming from the db)
-     */
-    public BerkeleyKey(final ITTSource paramInput) {
-        mKey = new KeyDelegate(paramInput.readLong());
-    }
 
     /**
      * Public constructor.
@@ -98,6 +88,9 @@ public class BerkeleyKey implements IKey {
         return getKeys()[0];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long[] getKeys() {
         return mKey.getKeys();
