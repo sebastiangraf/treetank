@@ -33,7 +33,7 @@ import java.util.zip.Inflater;
 
 import org.treetank.io.file.ByteBufferSinkAndSource;
 
-public class CryptoJavaImpl implements ICrypto {
+public class CryptoJavaImpl{
 
     private final Deflater mCompressor;
 

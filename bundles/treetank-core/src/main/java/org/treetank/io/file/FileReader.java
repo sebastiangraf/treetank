@@ -39,7 +39,6 @@ import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 import org.treetank.utils.CryptoJavaImpl;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.ICrypto;
 
 /**
  * File Reader. Used for ReadTransaction to provide read only access on a
@@ -56,7 +55,7 @@ public final class FileReader implements IReader {
     private transient final RandomAccessFile mFile;
 
     /** Inflater to decompress. */
-    private transient final ICrypto mDecompressor;
+    private transient final CryptoJavaImpl mDecompressor;
 
     /** Temporary data buffer. */
     private transient ByteBufferSinkAndSource mBuffer;
