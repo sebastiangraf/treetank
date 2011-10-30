@@ -34,13 +34,11 @@ import java.io.RandomAccessFile;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
-import org.treetank.page.PageDelegate;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
 import org.treetank.utils.CryptoJavaImpl;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.ICrypto;
 
 /**
  * File Writer for providing read/write access for file as a treetank backend.
@@ -55,7 +53,7 @@ public final class FileWriter implements IWriter {
     private transient final RandomAccessFile mFile;
 
     /** Compressor to compress the page. */
-    private transient final ICrypto mCompressor;
+    private transient final CryptoJavaImpl mCompressor;
 
     /** Temporary data buffer. */
     private final transient ByteBufferSinkAndSource mBuffer;
@@ -74,9 +72,6 @@ public final class FileWriter implements IWriter {
      */
     public FileWriter(final File paramStorage) throws TTIOException {
         try {
-            if (!paramStorage.getParentFile().exists()) {
-                paramStorage.getParentFile().mkdirs();
-            }
             mFile = new RandomAccessFile(paramStorage, IConstants.READ_WRITE);
         } catch (final FileNotFoundException fileExc) {
             throw new TTIOException(fileExc);
@@ -123,7 +118,8 @@ public final class FileWriter implements IWriter {
             // Getting actual offset and appending to the end of the current
             // file
             final long fileSize = mFile.length();
-            final long offset = fileSize == 0 ? IConstants.BEACON_START + IConstants.BEACON_LENGTH : fileSize;
+            final long offset = fileSize == 0 ? IConstants.BEACON_START
+                    + IConstants.BEACON_LENGTH : fileSize;
             mFile.seek(offset);
             final byte[] tmp = new byte[outputLength - 24];
             mBuffer.get(tmp, 0, outputLength - 24);
@@ -171,18 +167,21 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void writeFirstReference(final PageReference pageReference) throws TTIOException {
+    public void writeFirstReference(final PageReference pageReference)
+            throws TTIOException {
         final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
         try {
             // Check to writer ensure writing after the Beacon_Start
-            if (mFile.getFilePointer() < IConstants.BEACON_START + IConstants.BEACON_LENGTH) {
-                mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
+            if (mFile.getFilePointer() < IConstants.BEACON_START
+                    + IConstants.BEACON_LENGTH) {
+                mFile.setLength(IConstants.BEACON_START
+                        + IConstants.BEACON_LENGTH);
             }
 
             write(pageReference);
 
             mFile.seek(IConstants.BEACON_START);
-            final FileKey key = (FileKey)pageReference.getKey();
+            final FileKey key = (FileKey) pageReference.getKey();
             mFile.writeLong(key.getOffset());
             mFile.writeInt(key.getLength());
             pageReference.getChecksum(tmp);

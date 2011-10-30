@@ -31,8 +31,8 @@ package org.treetank.utils;
  * <h1>IConstants</h1>
  * 
  * <p>
- * Interface to hold all constants of the node layer. The node kinds are equivalent to DOM node kinds for
- * interoperability with saxon.
+ * Interface to hold all constants of the node layer. The node kinds are
+ * equivalent to DOM node kinds for interoperability with saxon.
  * </p>
  */
 public final class IConstants {
@@ -69,9 +69,6 @@ public final class IConstants {
     /** Size of write buffer. */
     public static final int BUFFER_SIZE = 32767;
 
-    /** Size of read buffer. */
-    public static final int REFERENCE_SIZE = 24;
-
     /** Size of checksum. */
     public static final int CHECKSUM_SIZE = 12;
 
@@ -86,9 +83,9 @@ public final class IConstants {
 
     /** Exponent of pages per level (root level = 0, leaf level = 5). */
     public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = {
-        4 * INP_REFERENCE_COUNT_EXPONENT, 3 * INP_REFERENCE_COUNT_EXPONENT, 2 * INP_REFERENCE_COUNT_EXPONENT,
-        1 * INP_REFERENCE_COUNT_EXPONENT, 0 * INP_REFERENCE_COUNT_EXPONENT
-    };
+            4 * INP_REFERENCE_COUNT_EXPONENT, 3 * INP_REFERENCE_COUNT_EXPONENT,
+            2 * INP_REFERENCE_COUNT_EXPONENT, 1 * INP_REFERENCE_COUNT_EXPONENT,
+            0 * INP_REFERENCE_COUNT_EXPONENT };
 
     // --- Uber Page
     // -------------------------------------------------------------
