@@ -57,7 +57,7 @@ import org.treetank.io.IReader;
 import org.treetank.io.IWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.utils.ItemList;
+import org.treetank.service.xml.xpath.ItemList;
 
 /**
  * <h1>Session</h1>

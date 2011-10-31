@@ -48,8 +48,8 @@ import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 import org.treetank.page.UberPage;
+import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.settings.EFixed;
-import org.treetank.utils.ItemList;
 import org.treetank.utils.TypedValue;
 
 /**

@@ -27,10 +27,11 @@
 
 package org.treetank.axis;
 
+import java.util.Stack;
+
 import org.treetank.api.IReadTransaction;
 import org.treetank.node.AbsStructNode;
 import org.treetank.settings.EFixed;
-import org.treetank.utils.FastStack;
 
 /**
  * <h1>DescendantAxis</h1>
@@ -42,7 +43,7 @@ import org.treetank.utils.FastStack;
 public final class DescendantAxis extends AbsAxis {
 
     /** Stack for remembering next nodeKey in document order. */
-    private FastStack<Long> mRightSiblingKeyStack;
+    private Stack<Long> mRightSiblingKeyStack;
 
     /** The nodeKey of the next node to visit. */
     private long mNextKey;
@@ -75,7 +76,7 @@ public final class DescendantAxis extends AbsAxis {
     @Override
     public void reset(final long mNodeKey) {
         super.reset(mNodeKey);
-        mRightSiblingKeyStack = new FastStack<Long>();
+        mRightSiblingKeyStack = new Stack<Long>();
         if (isSelfIncluded()) {
             mNextKey = getTransaction().getNode().getNodeKey();
         } else {

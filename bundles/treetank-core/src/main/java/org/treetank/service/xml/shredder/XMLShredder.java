@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
@@ -63,12 +64,11 @@ import org.treetank.exception.TTUsageException;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.settings.EFixed;
-import org.treetank.utils.FastStack;
 import org.treetank.utils.TypedValue;
 
 /**
- * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
- * stream is added as a subtree.
+ * This class appends a given {@link XMLStreamReader} to a
+ * {@link IWriteTransaction}. The content of the stream is added as a subtree.
  * Based on an enum which identifies the point of insertion, the subtree is
  * either added as first child or as right sibling.
  * 
@@ -98,26 +98,30 @@ public class XMLShredder implements Callable<Long> {
     private transient CountDownLatch mLatch;
 
     /**
-     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
+     * Normal constructor to invoke a shredding process on a existing
+     * {@link WriteTransaction}.
      * 
      * @param paramWtx
      *            where the new XML Fragment should be placed
      * @param paramReader
      *            of the XML Fragment
      * @param paramAddAsFirstChild
-     *            if the insert is occuring on a node in an existing tree. <code>false</code> is not possible
-     *            when wtx is on root node.
+     *            if the insert is occuring on a node in an existing tree.
+     *            <code>false</code> is not possible when wtx is on root node.
      * @throws TTUsageException
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
      */
-    public XMLShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
-        final EShredderInsert paramAddAsFirstChild) throws TTUsageException {
-        this(paramWtx, paramReader, paramAddAsFirstChild, EShredderCommit.COMMIT);
+    public XMLShredder(final IWriteTransaction paramWtx,
+            final XMLEventReader paramReader,
+            final EShredderInsert paramAddAsFirstChild) throws TTUsageException {
+        this(paramWtx, paramReader, paramAddAsFirstChild,
+                EShredderCommit.COMMIT);
     }
 
     /**
-     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
+     * Normal constructor to invoke a shredding process on a existing
+     * {@link WriteTransaction}.
      * 
      * @param paramWtx
      *            {@link IWriteTransaction} where the new XML Fragment should be
@@ -136,11 +140,14 @@ public class XMLShredder implements Callable<Long> {
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
      */
-    public XMLShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
-        final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit)
-        throws TTUsageException {
-        if (paramWtx == null || paramReader == null || paramAddAsFirstChild == null || paramCommit == null) {
-            throw new IllegalArgumentException("None of the constructor parameters may be null!");
+    public XMLShredder(final IWriteTransaction paramWtx,
+            final XMLEventReader paramReader,
+            final EShredderInsert paramAddAsFirstChild,
+            final EShredderCommit paramCommit) throws TTUsageException {
+        if (paramWtx == null || paramReader == null
+                || paramAddAsFirstChild == null || paramCommit == null) {
+            throw new IllegalArgumentException(
+                    "None of the constructor parameters may be null!");
         }
         mWtx = paramWtx;
         mReader = paramReader;
@@ -175,9 +182,10 @@ public class XMLShredder implements Callable<Long> {
      */
     protected final void insertNewContent() throws AbsTTException {
         try {
-            FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+            Stack<Long> leftSiblingKeyStack = new Stack<Long>();
 
-            leftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+            leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty());
             boolean firstElement = true;
             int level = 0;
             QName rootElement = null;
@@ -191,7 +199,8 @@ public class XMLShredder implements Callable<Long> {
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
                     level++;
-                    leftSiblingKeyStack = addNewElement(leftSiblingKeyStack, (StartElement)event);
+                    leftSiblingKeyStack = addNewElement(leftSiblingKeyStack,
+                            (StartElement) event);
                     if (firstElement) {
                         firstElement = false;
                         rootElement = event.asStartElement().getName();
@@ -199,8 +208,10 @@ public class XMLShredder implements Callable<Long> {
                     break;
                 case XMLStreamConstants.END_ELEMENT:
                     level--;
-                    if (level == 0 && rootElement != null
-                        && rootElement.equals(event.asEndElement().getName())) {
+                    if (level == 0
+                            && rootElement != null
+                            && rootElement.equals(event.asEndElement()
+                                    .getName())) {
                         endElemReached = true;
                     }
                     leftSiblingKeyStack.pop();
@@ -211,7 +222,8 @@ public class XMLShredder implements Callable<Long> {
                         sBuilder.append(event.asCharacters().getData().trim());
                     } else {
                         sBuilder.append(event.asCharacters().getData().trim());
-                        leftSiblingKeyStack = addNewText(leftSiblingKeyStack, sBuilder.toString());
+                        leftSiblingKeyStack = addNewText(leftSiblingKeyStack,
+                                sBuilder.toString());
                         sBuilder = new StringBuilder();
                     }
                     break;
@@ -237,8 +249,9 @@ public class XMLShredder implements Callable<Long> {
      * @throws AbsTTException
      *             if adding {@link ElementNode} fails
      */
-    protected final FastStack<Long> addNewElement(final FastStack<Long> paramLeftSiblingKeyStack,
-        final StartElement paramEvent) throws AbsTTException {
+    protected final Stack<Long> addNewElement(
+            final Stack<Long> paramLeftSiblingKeyStack,
+            final StartElement paramEvent) throws AbsTTException {
         assert paramLeftSiblingKeyStack != null && paramEvent != null;
         long key;
 
@@ -246,12 +259,14 @@ public class XMLShredder implements Callable<Long> {
 
         if (mFirstChildAppend == EShredderInsert.ADDASRIGHTSIBLING) {
             if (mWtx.getNode().getKind() == ENodes.ROOT_KIND) {
-                throw new TTUsageException("Subtree can not be inserted as sibling of Root");
+                throw new TTUsageException(
+                        "Subtree can not be inserted as sibling of Root");
             }
             key = mWtx.insertElementAsRightSibling(name);
             mFirstChildAppend = EShredderInsert.ADDASFIRSTCHILD;
         } else {
-            if (paramLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+            if (paramLeftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty()) {
                 key = mWtx.insertElementAsFirstChild(name);
             } else {
                 key = mWtx.insertElementAsRightSibling(name);
@@ -260,18 +275,20 @@ public class XMLShredder implements Callable<Long> {
 
         paramLeftSiblingKeyStack.pop();
         paramLeftSiblingKeyStack.push(key);
-        paramLeftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        paramLeftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                .getStandardProperty());
 
         // Parse namespaces.
         for (final Iterator<?> it = paramEvent.getNamespaces(); it.hasNext();) {
-            final Namespace namespace = (Namespace)it.next();
-            mWtx.insertNamespace(new QName(namespace.getNamespaceURI(), "", namespace.getPrefix()));
+            final Namespace namespace = (Namespace) it.next();
+            mWtx.insertNamespace(new QName(namespace.getNamespaceURI(), "",
+                    namespace.getPrefix()));
             mWtx.moveTo(key);
         }
 
         // Parse attributes.
         for (final Iterator<?> it = paramEvent.getAttributes(); it.hasNext();) {
-            final Attribute attribute = (Attribute)it.next();
+            final Attribute attribute = (Attribute) it.next();
             mWtx.insertAttribute(attribute.getName(), attribute.getValue());
             mWtx.moveTo(key);
         }
@@ -291,18 +308,23 @@ public class XMLShredder implements Callable<Long> {
      * @throws AbsTTException
      *             if adding text fails
      */
-    protected final FastStack<Long> addNewText(final FastStack<Long> paramLeftSiblingKeyStack,
-        final String paramText) throws AbsTTException {
+    protected final Stack<Long> addNewText(
+            final Stack<Long> paramLeftSiblingKeyStack, final String paramText)
+            throws AbsTTException {
         assert paramLeftSiblingKeyStack != null;
         final String text = paramText;
         long key;
-        final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
+        final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue
+                .getBytes(text));
         if (textByteBuffer.array().length > 0) {
 
-            if (paramLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
-                key = mWtx.insertTextAsFirstChild(new String(textByteBuffer.array()));
+            if (paramLeftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty()) {
+                key = mWtx.insertTextAsFirstChild(new String(textByteBuffer
+                        .array()));
             } else {
-                key = mWtx.insertTextAsRightSibling(new String(textByteBuffer.array()));
+                key = mWtx.insertTextAsRightSibling(new String(textByteBuffer
+                        .array()));
             }
 
             paramLeftSiblingKeyStack.pop();
@@ -322,27 +344,34 @@ public class XMLShredder implements Callable<Long> {
      */
     public static void main(final String... paramArgs) throws Exception {
         if (paramArgs.length != 2) {
-            throw new IllegalArgumentException("Usage: XMLShredder input.xml output.tnk");
+            throw new IllegalArgumentException(
+                    "Usage: XMLShredder input.xml output.tnk");
         }
 
-        System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1] + "' ... ");
+        System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1]
+                + "' ... ");
         final long time = System.currentTimeMillis();
         final File target = new File(paramArgs[1]);
         final DatabaseConfiguration config = new DatabaseConfiguration(target);
         Database.truncateDatabase(config);
         Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(target);
-        db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
-        final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
+        db.createResource(new ResourceConfiguration.Builder("shredded", config)
+                .build());
+        final ISession session = db
+                .getSession(new SessionConfiguration.Builder("shredded")
+                        .build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = createReader(new File(paramArgs[0]));
-        final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
+        final XMLShredder shredder = new XMLShredder(wtx, reader,
+                EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
 
         wtx.close();
         session.close();
 
-        System.out.println(" done [" + (System.currentTimeMillis() - time) + "ms].");
+        System.out.println(" done [" + (System.currentTimeMillis() - time)
+                + "ms].");
     }
 
     /**
@@ -356,8 +385,8 @@ public class XMLShredder implements Callable<Long> {
      * @throws XMLStreamException
      *             if any parsing error occurs
      */
-    public static synchronized XMLEventReader createReader(final File paramFile) throws IOException,
-        XMLStreamException {
+    public static synchronized XMLEventReader createReader(final File paramFile)
+            throws IOException, XMLStreamException {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         final InputStream in = new FileInputStream(paramFile);
@@ -375,8 +404,8 @@ public class XMLShredder implements Callable<Long> {
      * @throws XMLStreamException
      *             if any parsing error occurs
      */
-    public static synchronized XMLEventReader createStringReader(final String paramString)
-        throws IOException, XMLStreamException {
+    public static synchronized XMLEventReader createStringReader(
+            final String paramString) throws IOException, XMLStreamException {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         final InputStream in = new ByteArrayInputStream(paramString.getBytes());
@@ -394,8 +423,9 @@ public class XMLShredder implements Callable<Long> {
      * @throws XMLStreamException
      *             if any parsing error occurs
      */
-    public static synchronized XMLEventReader createListReader(final List<XMLEvent> paramEvents)
-        throws IOException, XMLStreamException {
+    public static synchronized XMLEventReader createListReader(
+            final List<XMLEvent> paramEvents) throws IOException,
+            XMLStreamException {
         if (paramEvents == null) {
             throw new IllegalArgumentException("paramEvents may not be null!");
         }

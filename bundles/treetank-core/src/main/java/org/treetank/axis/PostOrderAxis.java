@@ -27,10 +27,11 @@
 
 package org.treetank.axis;
 
+import java.util.Stack;
+
 import org.treetank.api.IReadTransaction;
 import org.treetank.node.AbsStructNode;
 import org.treetank.settings.EFixed;
-import org.treetank.utils.FastStack;
 
 /**
  * <h1>PostOrder</h1>
@@ -42,7 +43,7 @@ import org.treetank.utils.FastStack;
 public class PostOrderAxis extends AbsAxis {
 
     /** For remembering last parent. */
-    private FastStack<Long> mLastParent;
+    private Stack<Long> mLastParent;
 
     /** The nodeKey of the next node to visit. */
     private long mNextKey;
@@ -63,7 +64,7 @@ public class PostOrderAxis extends AbsAxis {
     @Override
     public final void reset(final long mNodeKey) {
         super.reset(mNodeKey);
-        mLastParent = new FastStack<Long>();
+        mLastParent = new Stack<Long>();
         mLastParent.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
         mNextKey = mNodeKey;
     }

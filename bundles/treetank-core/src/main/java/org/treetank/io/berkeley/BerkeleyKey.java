@@ -95,4 +95,12 @@ public class BerkeleyKey implements IKey {
     public long[] getKeys() {
         return mKey.getKeys();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return mKey.toString();
+    }
 }

@@ -52,7 +52,7 @@ public final class IConstants {
     public static final int BEACON_START = 0;
 
     /** Length of beacon in bytes. */
-    public static final int BEACON_LENGTH = 24;
+    public static final int BEACON_LENGTH = 12;
 
     /** Default internal encoding. */
     public static final String DEFAULT_ENCODING = "UTF-8";
@@ -68,9 +68,6 @@ public final class IConstants {
 
     /** Size of write buffer. */
     public static final int BUFFER_SIZE = 32767;
-
-    /** Size of checksum. */
-    public static final int CHECKSUM_SIZE = 12;
 
     // --- Indirect Page
     // ----------------------------------------------------------

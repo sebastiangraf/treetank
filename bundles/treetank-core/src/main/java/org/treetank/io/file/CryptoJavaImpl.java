@@ -25,15 +25,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.utils;
+package org.treetank.io.file;
 
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import org.treetank.io.file.ByteBufferSinkAndSource;
+import org.treetank.utils.IConstants;
 
-public class CryptoJavaImpl{
+public class CryptoJavaImpl {
 
     private final Deflater mCompressor;
 
@@ -56,17 +56,18 @@ public class CryptoJavaImpl{
     /**
      * Compress data.
      * 
-     * @param mLength
+     * @param paramLength
      *            of the data to be compressed
-     * @param mBuffer
+     * @param paramBuffer
      *            data that should be compressed
      * @return compressed data, null if failed
      */
-    public int crypt(final int mLength, final ByteBufferSinkAndSource mBuffer) {
+    public int crypt(final int paramLength,
+            final ByteBufferSinkAndSource paramBuffer) {
         try {
-            mBuffer.position(24);
-            final byte[] tmp = new byte[mLength - 24];
-            mBuffer.get(tmp, 0, tmp.length);
+            paramBuffer.position(IConstants.BEACON_LENGTH);
+            final byte[] tmp = new byte[paramLength - IConstants.BEACON_LENGTH];
+            paramBuffer.get(tmp, 0, tmp.length);
             mCompressor.reset();
             mOut.reset();
             mCompressor.setInput(tmp);
@@ -81,31 +82,28 @@ public class CryptoJavaImpl{
             return 0;
         }
         final byte[] result = mOut.toByteArray();
-        final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
-        mBuffer.position(12);
-        for (final byte byteVal : checksum) {
-            mBuffer.writeByte(byteVal);
-        }
+        paramBuffer.position(12);
         for (final byte byteVal : result) {
-            mBuffer.writeByte(byteVal);
+            paramBuffer.writeByte(byteVal);
         }
-        return mBuffer.position();
+        return paramBuffer.position();
     }
 
     /**
      * Decompress data.
      * 
-     * @param mBuffer
+     * @param paramBuffer
      *            data that should be decompressed
-     * @param mLength
+     * @param paramLength
      *            of the data to be decompressed
      * @return Decompressed data, null if failed
      */
-    public int decrypt(final int mLength, final ByteBufferSinkAndSource mBuffer) {
+    public int decrypt(final int paramLength,
+            final ByteBufferSinkAndSource paramBuffer) {
         try {
-            mBuffer.position(24);
-            final byte[] tmp = new byte[mLength - 24];
-            mBuffer.get(tmp, 0, tmp.length);
+            paramBuffer.position(IConstants.BEACON_LENGTH);
+            final byte[] tmp = new byte[paramLength - IConstants.BEACON_LENGTH];
+            paramBuffer.get(tmp, 0, tmp.length);
             mDecompressor.reset();
             mOut.reset();
             mDecompressor.setInput(tmp);
@@ -119,15 +117,11 @@ public class CryptoJavaImpl{
             return 0;
         }
         final byte[] result = mOut.toByteArray();
-        final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
-        mBuffer.position(12);
-        for (final byte byteVal : checksum) {
-            mBuffer.writeByte(byteVal);
-        }
+        paramBuffer.position(IConstants.BEACON_LENGTH);
         for (final byte byteVal : result) {
-            mBuffer.writeByte(byteVal);
+            paramBuffer.writeByte(byteVal);
         }
-        return result.length + 24;
+        return result.length + IConstants.BEACON_LENGTH;
     }
 
 }
