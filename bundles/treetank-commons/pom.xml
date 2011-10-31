@@ -65,8 +65,8 @@
 		</repository>
 	</repositories>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-commons</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-commons</developerConnection>
+		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-commons</url>
 	</scm>
 </project>
