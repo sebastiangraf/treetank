@@ -37,7 +37,6 @@ import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.utils.CryptoJavaImpl;
 import org.treetank.utils.IConstants;
 
 /**
@@ -102,13 +101,8 @@ public final class FileReader implements IReader {
             final FileKey fileKey = (FileKey)pageReference.getKey();
 
             // Prepare environment for read.
-            final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
-            pageReference.getChecksum(checksum);
-            final int inputLength = fileKey.getLength() + 24;
+            final int inputLength = fileKey.getLength() + IConstants.BEACON_LENGTH;
             mBuffer.position(12);
-            for (final byte byteVal : checksum) {
-                mBuffer.writeByte(byteVal);
-            }
 
             // Read page from file.
             final byte[] page = new byte[fileKey.getLength()];
@@ -129,7 +123,7 @@ public final class FileReader implements IReader {
         }
 
         // Return reader required to instantiate and deserialize page.
-        mBuffer.position(24);
+        mBuffer.position(12);
         return PagePersistenter.createPage(mBuffer);
 
     }
@@ -137,16 +131,12 @@ public final class FileReader implements IReader {
     public PageReference readFirstReference() throws TTIOException {
         final PageReference uberPageReference = new PageReference();
         try {
-            final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
-
             // Read primary beacon.
             mFile.seek(IConstants.BEACON_START);
 
             final FileKey key = new FileKey(mFile.readLong(), mFile.readInt());
 
             uberPageReference.setKey(key);
-            mFile.read(tmp);
-            uberPageReference.setChecksum(tmp);
 
             // Check to writer ensure writing after the Beacon_Start
             if (mFile.getFilePointer() < IConstants.BEACON_START + IConstants.BEACON_LENGTH) {

@@ -50,10 +50,10 @@ import org.treetank.page.NodePage;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.settings.EFixed;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.ItemList;
 import org.treetank.utils.NamePageHash;
 
 /**

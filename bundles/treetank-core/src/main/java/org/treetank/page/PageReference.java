@@ -27,20 +27,20 @@
 
 package org.treetank.page;
 
-import org.treetank.io.KeyDelegate;
 import org.treetank.io.IKey;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
+import org.treetank.io.KeyDelegate;
 import org.treetank.io.KeyPersistenter;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>PageReference</h1>
  * 
  * <p>
- * Page reference pointing to a page. This might be on stable storage pointing to the start byte in a file,
- * including the length in bytes, and the checksum of the serialized page. Or it might be an immediate
- * reference to an in-memory instance of the deserialized page.
+ * Page reference pointing to a page. This might be on stable storage pointing
+ * to the start byte in a file, including the length in bytes, and the checksum
+ * of the serialized page. Or it might be an immediate reference to an in-memory
+ * instance of the deserialized page.
  * </p>
  * 
  * 
@@ -57,14 +57,11 @@ public final class PageReference {
     /** Key in persistent storage. */
     private IKey mKey;
 
-    /** Checksum of serialized page. */
-    private byte[] mChecksum = new byte[IConstants.CHECKSUM_SIZE];
-
     /**
      * Default constructor setting up an uninitialized page reference.
      */
     public PageReference() {
-        this(null, null, new byte[IConstants.CHECKSUM_SIZE]);
+        this(null, null);
     }
 
     /**
@@ -74,7 +71,7 @@ public final class PageReference {
      *            Page reference to clone.
      */
     public PageReference(final PageReference paramPageReference) {
-        this(paramPageReference.mPage, paramPageReference.mKey, paramPageReference.mChecksum);
+        this(paramPageReference.mPage, paramPageReference.mKey);
     }
 
     /**
@@ -85,13 +82,10 @@ public final class PageReference {
      * @param paramKey
      *            {@link KeyDelegate} of the page to be referenced in the
      *            persistent storage
-     * @param paramChecksum
-     *            Checksum of serialized page.
      */
-    public PageReference(final IPage paramPage, final IKey paramKey, final byte[] paramChecksum) {
+    public PageReference(final IPage paramPage, final IKey paramKey) {
         mPage = paramPage;
         mKey = paramKey;
-        System.arraycopy(paramChecksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
     }
 
     /**
@@ -103,10 +97,6 @@ public final class PageReference {
     public PageReference(final ITTSource paramIn) {
         mPage = null;
         mKey = KeyPersistenter.createKey(paramIn);
-        mChecksum = new byte[IConstants.CHECKSUM_SIZE];
-        for (int i = 0; i < mChecksum.length; i++) {
-            mChecksum[i] = paramIn.readByte();
-        }
     }
 
     /**
@@ -125,26 +115,6 @@ public final class PageReference {
      */
     public boolean isCommitted() {
         return mKey != null;
-    }
-
-    /**
-     * Get the checksum of the serialized page.
-     * 
-     * @param paramChecksum
-     *            getting the checksum of the page in this byte array
-     */
-    public void getChecksum(final byte[] paramChecksum) {
-        System.arraycopy(mChecksum, 0, paramChecksum, 0, IConstants.CHECKSUM_SIZE);
-    }
-
-    /**
-     * Set the checksum of the serialized page.
-     * 
-     * @param paramChecksum
-     *            checksum of serialized page
-     */
-    public void setChecksum(final byte[] paramChecksum) {
-        System.arraycopy(paramChecksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
     }
 
     /**
@@ -193,9 +163,6 @@ public final class PageReference {
      */
     public void serialize(final ITTSink mOut) {
         KeyPersistenter.serializeKey(mOut, mKey);
-        for (final byte byteVal : mChecksum) {
-            mOut.writeByte(byteVal);
-        }
     }
 
     /**
@@ -210,8 +177,6 @@ public final class PageReference {
         } else {
             builder.append(": key=null");
         }
-        builder.append(", checksum");
-        builder.append(mChecksum);
         builder.append(", page=(");
         builder.append(mPage);
         builder.append(")");

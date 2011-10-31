@@ -27,6 +27,8 @@
 
 package org.treetank.io;
 
+import java.util.Arrays;
+
 /**
  * Delegate to host common data for the <link>IKey</link> interface.
  * 
@@ -60,4 +62,11 @@ public final class KeyDelegate {
         return returnKeys;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return Arrays.toString(mKeys);
+    }
 }

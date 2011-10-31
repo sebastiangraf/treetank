@@ -27,10 +27,11 @@
 
 package org.treetank.axis;
 
+import java.util.Stack;
+
 import org.treetank.api.IReadTransaction;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
-import org.treetank.utils.FastStack;
 
 /**
  * <h1>FollowingAxis</h1>
@@ -43,7 +44,7 @@ public class FollowingAxis extends AbsAxis {
 
     private boolean mIsFirst;
 
-    private FastStack<Long> mRightSiblingStack;
+    private Stack<Long> mRightSiblingStack;
 
     /**
      * Constructor initializing internal state.
@@ -55,7 +56,7 @@ public class FollowingAxis extends AbsAxis {
 
         super(rtx);
         mIsFirst = true;
-        mRightSiblingStack = new FastStack<Long>();
+        mRightSiblingStack = new Stack<Long>();
 
     }
 
@@ -67,7 +68,7 @@ public class FollowingAxis extends AbsAxis {
 
         super.reset(mNodeKey);
         mIsFirst = true;
-        mRightSiblingStack = new FastStack<Long>();
+        mRightSiblingStack = new Stack<Long>();
 
     }
 

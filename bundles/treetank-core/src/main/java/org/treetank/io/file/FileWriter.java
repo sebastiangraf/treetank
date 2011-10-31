@@ -37,7 +37,6 @@ import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
-import org.treetank.utils.CryptoJavaImpl;
 import org.treetank.utils.IConstants;
 
 /**
@@ -95,13 +94,13 @@ public final class FileWriter implements IWriter {
     public void write(final PageReference pageReference) throws TTIOException {
 
         // Serialise page.
-        mBuffer.position(24);
+        // mBuffer.position(24);
+        mBuffer.position(12);
         final IPage page = pageReference.getPage();
         PagePersistenter.serializePage(mBuffer, page);
         final int inputLength = mBuffer.position();
 
         // Perform crypto operations.
-        mBuffer.position(0);
         final int outputLength = mCompressor.crypt(inputLength, mBuffer);
         if (outputLength == 0) {
             throw new TTIOException("Page crypt error.");
@@ -110,10 +109,6 @@ public final class FileWriter implements IWriter {
         // Write page to file.
         mBuffer.position(12);
 
-        final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
-        for (int i = 0; i < checksum.length; i++) {
-            checksum[i] = mBuffer.readByte();
-        }
         try {
             // Getting actual offset and appending to the end of the current
             // file
@@ -121,14 +116,13 @@ public final class FileWriter implements IWriter {
             final long offset = fileSize == 0 ? IConstants.BEACON_START
                     + IConstants.BEACON_LENGTH : fileSize;
             mFile.seek(offset);
-            final byte[] tmp = new byte[outputLength - 24];
-            mBuffer.get(tmp, 0, outputLength - 24);
+            final byte[] tmp = new byte[outputLength - 12];
+            mBuffer.get(tmp, 0, tmp.length);
             mFile.write(tmp);
-            final FileKey key = new FileKey(offset, outputLength - 24);
+            final FileKey key = new FileKey(offset, tmp.length);
 
             // Remember page coordinates.
             pageReference.setKey(key);
-            pageReference.setChecksum(checksum);
         } catch (final IOException paramExc) {
             throw new TTIOException(paramExc);
         }
@@ -169,7 +163,6 @@ public final class FileWriter implements IWriter {
      */
     public void writeFirstReference(final PageReference pageReference)
             throws TTIOException {
-        final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
         try {
             // Check to writer ensure writing after the Beacon_Start
             if (mFile.getFilePointer() < IConstants.BEACON_START
@@ -184,8 +177,8 @@ public final class FileWriter implements IWriter {
             final FileKey key = (FileKey) pageReference.getKey();
             mFile.writeLong(key.getOffset());
             mFile.writeInt(key.getLength());
-            pageReference.getChecksum(tmp);
-            mFile.write(tmp);
+            // pageReference.getChecksum(tmp);
+            // mFile.write(tmp);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }

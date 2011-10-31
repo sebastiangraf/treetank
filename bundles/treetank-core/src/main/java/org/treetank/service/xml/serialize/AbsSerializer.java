@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.serialize;
 
+import java.util.Stack;
 import java.util.concurrent.Callable;
 
 import org.treetank.api.IReadTransaction;
@@ -36,7 +37,6 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
-import org.treetank.utils.FastStack;
 
 /**
  * Class implements main serialization algorithm. Other classes can extend it.
@@ -50,7 +50,7 @@ abstract class AbsSerializer implements Callable<Void> {
     protected final ISession mSession;
 
     /** Stack for reading end element. */
-    protected final FastStack<Long> mStack;
+    protected final Stack<Long> mStack;
 
     /** Array with versions to print. */
     protected final long[] mVersions;
@@ -66,11 +66,9 @@ abstract class AbsSerializer implements Callable<Void> {
      * @param paramVersions
      *            versions which should be serialized: -
      */
-    public AbsSerializer(final ISession paramSession, final long... paramVersions) {
-        mStack = new FastStack<Long>();
-        mVersions = paramVersions;
-        mSession = paramSession;
-        mNodeKey = 0;
+    public AbsSerializer(final ISession paramSession,
+            final long... paramVersions) {
+        this(paramSession, 0, paramVersions);
     }
 
     /**
@@ -83,8 +81,9 @@ abstract class AbsSerializer implements Callable<Void> {
      * @param paramVersions
      *            versions which should be serialized: -
      */
-    public AbsSerializer(final ISession paramSession, final long paramKey, final long... paramVersions) {
-        mStack = new FastStack<Long>();
+    public AbsSerializer(final ISession paramSession, final long paramKey,
+            final long... paramVersions) {
+        mStack = new Stack<Long>();
         mVersions = paramVersions;
         mSession = paramSession;
         mNodeKey = paramKey;
@@ -108,9 +107,7 @@ abstract class AbsSerializer implements Callable<Void> {
 
         // if there is one negative number in there, serialize all versions
         if (mVersions.length == 0) {
-            versionsToUse = new long[] {
-                lastRevisionNumber
-            };
+            versionsToUse = new long[] { lastRevisionNumber };
         } else {
             if (mVersions.length == 1 && mVersions[0] < 0) {
                 versionsToUse = null;
@@ -119,9 +116,11 @@ abstract class AbsSerializer implements Callable<Void> {
             }
         }
 
-        for (long i = 0; versionsToUse == null ? i < lastRevisionNumber : i < versionsToUse.length; i++) {
+        for (long i = 0; versionsToUse == null ? i < lastRevisionNumber
+                : i < versionsToUse.length; i++) {
 
-            rtx = mSession.beginReadTransaction(versionsToUse == null ? i : versionsToUse[(int)i]);
+            rtx = mSession.beginReadTransaction(versionsToUse == null ? i
+                    : versionsToUse[(int) i]);
             if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);
             }
@@ -141,7 +140,8 @@ abstract class AbsSerializer implements Callable<Void> {
                 // Emit all pending end elements.
                 if (closeElements) {
                     while (!mStack.empty()
-                        && mStack.peek() != ((AbsStructNode)rtx.getNode()).getLeftSiblingKey()) {
+                            && mStack.peek() != ((AbsStructNode) rtx.getNode())
+                                    .getLeftSiblingKey()) {
                         rtx.moveTo(mStack.pop());
                         emitEndElement(rtx);
                         rtx.moveTo(key);
@@ -160,14 +160,14 @@ abstract class AbsSerializer implements Callable<Void> {
                 // Push end element to stack if we are a start element with
                 // children.
                 if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                    && ((AbsStructNode)rtx.getNode()).hasFirstChild()) {
+                        && ((AbsStructNode) rtx.getNode()).hasFirstChild()) {
                     mStack.push(rtx.getNode().getNodeKey());
                 }
 
                 // Remember to emit all pending end elements from stack if
                 // required.
-                if (!((AbsStructNode)rtx.getNode()).hasFirstChild()
-                    && !((AbsStructNode)rtx.getNode()).hasRightSibling()) {
+                if (!((AbsStructNode) rtx.getNode()).hasFirstChild()
+                        && !((AbsStructNode) rtx.getNode()).hasRightSibling()) {
                     closeElements = true;
                 }
 
