@@ -26,10 +26,10 @@
 	<packaging>pom</packaging>
 	<name>treetank-pom</name>
 	<version>1.0.5-SNAPSHOT</version>
-	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
+	<url>http://www.treetank.org</url>
 	<scm>
 		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/parent</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/parent</developerConnection>
+	    <developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/parent</developerConnection>
 		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/parent</url>
 	</scm>
 	<issueManagement>
@@ -99,20 +99,6 @@
 		<developer>
 			<name>Daniel Kech</name>
 			<email>daniel.kech@uni-konstanz.de</email>
-			<roles>
-				<role>Developer</role>
-			</roles>
-			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme
-			</url>
-			<organization>University of Konstanz, Distributed Systems Lab
-			</organization>
-			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/
-			</organizationUrl>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<name>Christoph Neu</name>
-			<email>christoph.neu@uni-konstanz.de</email>
 			<roles>
 				<role>Developer</role>
 			</roles>
@@ -271,7 +257,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<sourceEncoding>utf-8</sourceEncoding>
+					<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
 					<descriptors>
 						<descriptor>src/main/assembly/jarAssembly.xml</descriptor>
 					</descriptors>
@@ -286,7 +272,7 @@
 			</extension>
 			<extension>
 			<groupId>org.apache.maven.wagon</groupId>
-<artifactId> wagon-ssh-external </artifactId>
+			<artifactId> wagon-ssh-external </artifactId>
 			<version> 1.0-beta-6 </version>
 			</extension>
 		</extensions>
