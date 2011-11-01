@@ -64,14 +64,8 @@ public class PageDelegate {
     }
 
     protected void initialize(final ITTSource paramIn) {
-        final int[] values = new int[mReferences.length];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = paramIn.readInt();
-        }
-        for (int offset = 0; offset < values.length; offset++) {
-            if (values[offset] == 1) {
-                getReferences()[offset] = new PageReference(paramIn);
-            }
+        for (int offset = 0; offset < mReferences.length; offset++) {
+            getReferences()[offset] = new PageReference(paramIn);
         }
     }
 
@@ -116,18 +110,9 @@ public class PageDelegate {
      */
     protected void serialize(final ITTSink paramOut) {
         paramOut.writeLong(mRevision);
-        for (int i = 0; i < getReferences().length; i++) {
-            if (getReferences()[i] != null) {
-                paramOut.writeInt(1);
-            } else {
-                paramOut.writeInt(0);
-            }
-        }
 
         for (final PageReference reference : getReferences()) {
-            if (reference != null) {
-                reference.serialize(paramOut);
-            }
+            reference.serialize(paramOut);
         }
     }
 
