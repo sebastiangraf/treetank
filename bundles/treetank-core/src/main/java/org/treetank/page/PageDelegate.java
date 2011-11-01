@@ -42,7 +42,7 @@ import org.treetank.io.ITTSource;
 public class PageDelegate {
 
     /** Page references. */
-    private final PageReference[] mReferences;
+    private PageReference[] mReferences;
 
     /** revision of this page. */
     private final long mRevision;
@@ -55,8 +55,7 @@ public class PageDelegate {
      * @param paramRevision
      *            Revision Number.
      */
-    protected PageDelegate(final int paramReferenceCount,
-            final long paramRevision) {
+    protected PageDelegate(final int paramReferenceCount, final long paramRevision) {
         mReferences = new PageReference[paramReferenceCount];
         mRevision = paramRevision;
     }
@@ -74,13 +73,7 @@ public class PageDelegate {
     }
 
     protected void initialize(final IPage paramCommittedPage) {
-        int offset = 0;
-        for (PageReference ref : paramCommittedPage.getReferences()) {
-            if (ref != null) {
-                getReferences()[offset] = new PageReference(ref);
-                offset++;
-            }
-        }
+        mReferences = paramCommittedPage.getReferences();
     }
 
     /**
@@ -106,8 +99,7 @@ public class PageDelegate {
      *             thorw when write error
      */
 
-    public final void commit(final WriteTransactionState paramState)
-            throws AbsTTException {
+    public final void commit(final WriteTransactionState paramState) throws AbsTTException {
         for (final PageReference reference : getReferences()) {
             paramState.commit(reference);
         }
