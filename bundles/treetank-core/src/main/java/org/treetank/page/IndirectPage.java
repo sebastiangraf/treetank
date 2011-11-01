@@ -82,11 +82,6 @@ public final class IndirectPage implements IPage {
     }
 
     @Override
-    public PageReference getChildren(int paramOffset) {
-        return mDelegate.getChildren(paramOffset);
-    }
-
-    @Override
     public void commit(WriteTransactionState paramState) throws AbsTTException {
         mDelegate.commit(paramState);
     }

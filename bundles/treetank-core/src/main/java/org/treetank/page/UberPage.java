@@ -69,13 +69,13 @@ public final class UberPage implements IPage {
         // Initialize revision tree to guarantee that there is a revision root
         // page.
         IPage page = null;
-        PageReference reference = getChildren(INDIRECT_REFERENCE_OFFSET);
+        PageReference reference = getReferences()[INDIRECT_REFERENCE_OFFSET];
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
             page = new IndirectPage(IConstants.UBP_ROOT_REVISION_NUMBER);
             reference.setPage(page);
-            reference = page.getChildren(0);
+            reference = page.getReferences()[0];
         }
 
         final RevisionRootPage rrp = new RevisionRootPage();
@@ -93,11 +93,11 @@ public final class UberPage implements IPage {
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
             page = new IndirectPage(IConstants.UBP_ROOT_REVISION_NUMBER);
             reference.setPage(page);
-            reference = page.getChildren(0);
+            reference = page.getReferences()[0];
         }
 
-        final NodePage ndp = new NodePage(
-                (Long) EFixed.ROOT_PAGE_KEY.getStandardProperty(),
+        final NodePage ndp =
+            new NodePage((Long)EFixed.ROOT_PAGE_KEY.getStandardProperty(),
                 IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
@@ -127,8 +127,7 @@ public final class UberPage implements IPage {
      * @param paramRevisionToUse
      *            Revision number to use.
      */
-    public UberPage(final UberPage paramCommittedUberPage,
-            final long paramRevisionToUse) {
+    public UberPage(final UberPage paramCommittedUberPage, final long paramRevisionToUse) {
         mDelegate = new PageDelegate(1, paramRevisionToUse);
         mDelegate.initialize(paramCommittedUberPage);
         if (paramCommittedUberPage.isBootstrap()) {
@@ -146,7 +145,7 @@ public final class UberPage implements IPage {
      * @return Indirect page reference.
      */
     public PageReference getIndirectPageReference() {
-        return getChildren(INDIRECT_REFERENCE_OFFSET);
+        return getReferences()[INDIRECT_REFERENCE_OFFSET];
     }
 
     /**
@@ -200,14 +199,8 @@ public final class UberPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": revisionCount=" + mRevisionCount
-                + ", indirectPage=(" + getChildren(INDIRECT_REFERENCE_OFFSET)
-                + "), isBootstrap=" + mBootstrap;
-    }
-
-    @Override
-    public PageReference getChildren(int paramOffset) {
-        return mDelegate.getChildren(paramOffset);
+        return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
+            + getReferences()[INDIRECT_REFERENCE_OFFSET] + "), isBootstrap=" + mBootstrap;
     }
 
     @Override

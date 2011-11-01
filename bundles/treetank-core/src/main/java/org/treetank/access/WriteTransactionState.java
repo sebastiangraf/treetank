@@ -544,7 +544,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final IndirectPage page = prepareIndirectPage(reference);
-            reference = page.getChildren(offset);
+            reference = page.getReferences()[offset];
 
         }
 

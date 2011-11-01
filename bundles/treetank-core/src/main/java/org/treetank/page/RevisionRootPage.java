@@ -65,7 +65,7 @@ public final class RevisionRootPage implements IPage {
     public RevisionRootPage() {
         mDelegate = new PageDelegate(2, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionSize = 0L;
-        final PageReference ref = getChildren(NAME_REFERENCE_OFFSET);
+        final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
         ref.setPage(new NamePage(IConstants.UBP_ROOT_REVISION_NUMBER));
         mMaxNodeKey = -1L;
     }
@@ -106,7 +106,7 @@ public final class RevisionRootPage implements IPage {
      * @return Name page reference.
      */
     public PageReference getNamePageReference() {
-        return getChildren(NAME_REFERENCE_OFFSET);
+        return getReferences()[NAME_REFERENCE_OFFSET];
     }
 
     /**
@@ -115,7 +115,7 @@ public final class RevisionRootPage implements IPage {
      * @return Indirect page reference.
      */
     public PageReference getIndirectPageReference() {
-        return getChildren(INDIRECT_REFERENCE_OFFSET);
+        return getReferences()[INDIRECT_REFERENCE_OFFSET];
     }
 
     /**
@@ -170,13 +170,8 @@ public final class RevisionRootPage implements IPage {
     @Override
     public String toString() {
         return super.toString() + " revisionSize=" + mRevisionSize + ", revisionTimestamp="
-            + mRevisionTimestamp + ", namePage=(" + getChildren(NAME_REFERENCE_OFFSET) + "), indirectPage=("
-            + getChildren(INDIRECT_REFERENCE_OFFSET) + ")";
-    }
-
-    @Override
-    public PageReference getChildren(int paramOffset) {
-        return mDelegate.getChildren(paramOffset);
+            + mRevisionTimestamp + ", namePage=(" + getReferences()[NAME_REFERENCE_OFFSET]
+            + "), indirectPage=(" + getReferences()[INDIRECT_REFERENCE_OFFSET] + ")";
     }
 
     @Override
