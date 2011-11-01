@@ -356,7 +356,7 @@ public class ReadTransactionState {
                 reference = null;
                 break;
             } else {
-                reference = page.getChildren(offset);
+                reference = page.getReferences()[offset];
             }
         }
 

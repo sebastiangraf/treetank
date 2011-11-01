@@ -58,6 +58,9 @@ public class PageDelegate {
     protected PageDelegate(final int paramReferenceCount, final long paramRevision) {
         mReferences = new PageReference[paramReferenceCount];
         mRevision = paramRevision;
+        for (int i = 0; i < paramReferenceCount; i++) {
+            mReferences[i] = new PageReference();
+        }
     }
 
     protected void initialize(final ITTSource paramIn) {

@@ -6,8 +6,6 @@ import org.treetank.io.ITTSink;
 
 public interface IPage {
 
-    PageReference getChildren(final int paramOffset);
-
     void commit(final WriteTransactionState paramState) throws AbsTTException;
 
     void serialize(final ITTSink paramOut);
