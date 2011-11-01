@@ -37,10 +37,9 @@ import org.treetank.io.KeyPersistenter;
  * <h1>PageReference</h1>
  * 
  * <p>
- * Page reference pointing to a page. This might be on stable storage pointing
- * to the start byte in a file, including the length in bytes, and the checksum
- * of the serialized page. Or it might be an immediate reference to an in-memory
- * instance of the deserialized page.
+ * Page reference pointing to a page. This might be on stable storage pointing to the start byte in a file,
+ * including the length in bytes, and the checksum of the serialized page. Or it might be an immediate
+ * reference to an in-memory instance of the deserialized page.
  * </p>
  * 
  * 
@@ -62,16 +61,6 @@ public final class PageReference {
      */
     public PageReference() {
         this(null, null);
-    }
-
-    /**
-     * Constructor to clone an existing page reference.
-     * 
-     * @param paramPageReference
-     *            Page reference to clone.
-     */
-    public PageReference(final PageReference paramPageReference) {
-        this(paramPageReference.mPage, paramPageReference.mKey);
     }
 
     /**
