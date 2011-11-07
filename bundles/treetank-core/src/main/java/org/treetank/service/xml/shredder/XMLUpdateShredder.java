@@ -1189,7 +1189,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
              * StAX parser is.
              */
             if (mFile != null) {
-                mParser = createReader(mFile);
+                mParser = createFileReader(mFile);
             } else if (mEvents != null) {
                 mParser = createListReader(mEvents);
             } else {
@@ -1405,7 +1405,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
             final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
             final IWriteTransaction wtx = session.beginWriteTransaction();
-            final XMLEventReader reader = createReader(new File(args[0]));
+            final XMLEventReader reader = createFileReader(new File(args[0]));
             final XMLUpdateShredder shredder =
                 new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD, new File(args[0]),
                     EShredderCommit.COMMIT);

@@ -65,7 +65,7 @@ public final class SessionConfiguration {
     // END MEMBERS FOR FIXED FIELDS
 
     /** ResourceConfiguration for this ResourceConfig. */
-    private final String mFile;
+    private final String mResource;
 
     /**
      * Convenience constructor using the standard settings.
@@ -78,7 +78,7 @@ public final class SessionConfiguration {
         mRtxAllowed = paramBuilder.mRtxAllowed;
         mCommitThreshold = paramBuilder.mCommitThreshold;
         mUser = paramBuilder.mUser;
-        mFile = paramBuilder.mFile;
+        mResource = paramBuilder.mResource;
     }
 
     /**
@@ -119,8 +119,8 @@ public final class SessionConfiguration {
      * 
      * @return the file for the configuration.
      */
-    public String getFile() {
-        return mFile;
+    public String getResource() {
+        return mResource;
     }
 
     /**
@@ -141,7 +141,7 @@ public final class SessionConfiguration {
         private String mUser = SessionConfiguration.DEFAULT_USER;
 
         /** Resource for the this session. */
-        private String mFile;
+        private String mResource;
 
         /**
          * Constructor for the {@link Builder} with fixed fields to be set.
@@ -153,7 +153,7 @@ public final class SessionConfiguration {
             if (paramResource == null) {
                 throw new IllegalArgumentException("Parameter must not be null!");
             }
-            this.mFile = paramResource;
+            this.mResource = paramResource;
         }
 
         /**

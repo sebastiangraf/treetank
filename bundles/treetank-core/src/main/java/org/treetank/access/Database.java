@@ -294,7 +294,7 @@ public final class Database implements IDatabase {
 
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                paramConfig.getFile());
+                paramConfig.getResource());
         Session returnVal = mSessions.get(resourceFile);
         if (returnVal == null) {
             if (!resourceFile.exists()) {

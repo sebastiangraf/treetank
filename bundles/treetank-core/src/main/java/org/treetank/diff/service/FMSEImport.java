@@ -82,7 +82,7 @@ public final class FMSEImport {
         final ISession session =
             db.getSession(new SessionConfiguration.Builder(DiffFactory.RESOURCENAME).build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLEventReader reader = XMLShredder.createReader(paramResNewRev);
+        final XMLEventReader reader = XMLShredder.createFileReader(paramResNewRev);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
 

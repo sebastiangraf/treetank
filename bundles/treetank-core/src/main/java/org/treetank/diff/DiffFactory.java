@@ -28,11 +28,8 @@
 package org.treetank.diff;
 
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.treetank.api.IDatabase;
+import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 
 /**
@@ -116,8 +113,8 @@ public final class DiffFactory {
     /** Builder to simplify static methods. */
     public static final class Builder {
 
-        /** {@link IDatabase} reference. */
-        final IDatabase mDb;
+        /** {@link ISession} reference. */
+        final ISession mSession;
 
         /** Start key. */
         final long mKey;
@@ -140,14 +137,11 @@ public final class DiffFactory {
         /** {@link Set} of {@link IDiffObserver}s. */
         final Set<IDiffObserver> mObservers;
 
-        /** Kind of diff to invoke. */
-        transient DiffKind mDiffKind;
-
         /**
          * Constructor.
          * 
          * @param paramDb
-         *            {@link IDatabase} instance
+         *            {@link ISession} instance
          * @param paramKey
          *            key of start node
          * @param paramNewRev
@@ -159,10 +153,10 @@ public final class DiffFactory {
          * @param paramObservers
          *            {@link Set} of observers
          */
-        public Builder(final IDatabase paramDb, final long paramKey, final long paramNewRev,
+        public Builder(final ISession paramDb, final long paramKey, final long paramNewRev,
             final long paramOldRev, final EDiffOptimized paramDiffKind,
             final Set<IDiffObserver> paramObservers) {
-            mDb = paramDb;
+            mSession = paramDb;
             mKey = paramKey;
             mNewRev = paramNewRev;
             mOldRev = paramOldRev;
@@ -170,42 +164,6 @@ public final class DiffFactory {
             mObservers = paramObservers;
         }
 
-        /**
-         * Set new depth.
-         * 
-         * @param paramNewDepth
-         *            depth of "root" node in new revision
-         * @return this builder
-         */
-        public Builder setNewDepth(final int paramNewDepth) {
-            mNewDepth = paramNewDepth;
-            return this;
-        }
-
-        /**
-         * Set old depth.
-         * 
-         * @param paramOldDepth
-         *            depth of "root" node in old revision
-         * @return this builder
-         */
-        public Builder setOldDepth(final int paramOldDepth) {
-            mOldDepth = paramOldDepth;
-            return this;
-        }
-
-        /**
-         * Set kind of diff.
-         * 
-         * @param paramDiffKind
-         *            {@link DiffKind} instance
-         * 
-         * @return this builder
-         */
-        Builder setDiffKind(final DiffKind paramDiffKind) {
-            mDiffKind = paramDiffKind;
-            return this;
-        }
     }
 
     /**
@@ -221,12 +179,11 @@ public final class DiffFactory {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
+     * @throws AbsTTException
      */
-    public static synchronized void invokeFullDiff(final Builder paramBuilder) {
-        paramBuilder.setDiffKind(DiffKind.FULL);
-        final ExecutorService exes = Executors.newSingleThreadExecutor();
-        exes.submit(new Invoke(paramBuilder));
-        exes.shutdown();
+    public static synchronized void invokeFullDiff(final Builder paramBuilder) throws AbsTTException {
+        checkParams(paramBuilder);
+        DiffKind.FULL.invoke(paramBuilder);
     }
 
     /**
@@ -234,58 +191,28 @@ public final class DiffFactory {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
+     * @throws AbsTTException
      */
-    public static synchronized void invokeStructuralDiff(final Builder paramBuilder) {
-        paramBuilder.setDiffKind(DiffKind.STRUCTURAL);
-        final ExecutorService exes = Executors.newSingleThreadExecutor();
-        exes.submit(new Invoke(paramBuilder));
-        exes.shutdown();
+    public static synchronized void invokeStructuralDiff(final Builder paramBuilder) throws AbsTTException {
+        checkParams(paramBuilder);
+        DiffKind.STRUCTURAL.invoke(paramBuilder);
     }
 
-    /** Invoke diff. */
-    private static class Invoke implements Callable<Void> {
-
-        /** {@link Builder} reference. */
-        private final Builder mBuilder;
-
-        /**
-         * Constructor.
-         * 
-         * @param paramBuilder
-         *            {@link Builder} reference
-         */
-        Invoke(final Builder paramBuilder) {
-            assert paramBuilder != null;
-            checkParams(paramBuilder);
-            mBuilder = paramBuilder;
+    /**
+     * Check parameters for validity and assign global static variables.
+     * 
+     * @param paramBuilder
+     *            {@link Builder} reference
+     */
+    private static void checkParams(final Builder paramBuilder) {
+        if (paramBuilder.mSession == null || paramBuilder.mKey < -1L || paramBuilder.mNewRev < 0
+            || paramBuilder.mOldRev < 0 || paramBuilder.mObservers == null || paramBuilder.mKind == null) {
+            throw new IllegalArgumentException("No valid arguments specified!");
         }
-
-        @Override
-        public Void call() throws AbsTTException {
-            final DiffKind kind = mBuilder.mDiffKind;
-            kind.invoke(mBuilder);
-            // final StructuralDiff diff = new StructuralDiff(mBuilder);
-            // diff.diffMovement();
-            return null;
+        if (paramBuilder.mNewRev == paramBuilder.mOldRev || paramBuilder.mNewRev < paramBuilder.mOldRev) {
+            throw new IllegalArgumentException(
+                "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
         }
-
-        /**
-         * Check parameters for validity and assign global static variables.
-         * 
-         * @param paramBuilder
-         *            {@link Builder} reference
-         */
-        private static void checkParams(final Builder paramBuilder) {
-            if (paramBuilder.mDb == null || paramBuilder.mKey < -1L || paramBuilder.mNewRev < 0
-                || paramBuilder.mOldRev < 0 || paramBuilder.mObservers == null || paramBuilder.mKind == null) {
-                throw new IllegalArgumentException("No valid arguments specified!");
-            }
-            if (paramBuilder.mNewRev == paramBuilder.mOldRev || paramBuilder.mNewRev < paramBuilder.mOldRev) {
-                throw new IllegalArgumentException(
-                    "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
-            }
-        }
-
     }
 
 }

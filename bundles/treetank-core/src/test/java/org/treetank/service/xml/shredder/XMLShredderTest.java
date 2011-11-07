@@ -140,13 +140,13 @@ public class XMLShredderTest extends XMLTestCase {
 
         final IWriteTransaction wtx = holder.getWtx();
         final XMLShredder shredder =
-            new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
+            new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         assertEquals(1, wtx.getRevisionNumber());
         wtx.moveToDocumentRoot();
         wtx.moveToFirstChild();
         final XMLShredder shredder2 =
-            new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASRIGHTSIBLING);
+            new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)), EShredderInsert.ADDASRIGHTSIBLING);
         shredder2.call();
         assertEquals(2, wtx.getRevisionNumber());
         wtx.close();
@@ -204,7 +204,7 @@ public class XMLShredderTest extends XMLTestCase {
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final IWriteTransaction wtx = session2.beginWriteTransaction();
         final XMLShredder shredder =
-            new XMLShredder(wtx, XMLShredder.createReader(new File(XML2)), EShredderInsert.ADDASFIRSTCHILD);
+            new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML2)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.commit();
         wtx.close();
@@ -248,7 +248,7 @@ public class XMLShredderTest extends XMLTestCase {
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder =
-            new XMLShredder(wtx, XMLShredder.createReader(new File(XML3)), EShredderInsert.ADDASFIRSTCHILD);
+            new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML3)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.close();
 
@@ -266,7 +266,7 @@ public class XMLShredderTest extends XMLTestCase {
         rtx.close();
         session.close();
 
-        final XMLEventReader validater = XMLShredder.createReader(new File(XML3));
+        final XMLEventReader validater = XMLShredder.createFileReader(new File(XML3));
         final StringBuilder xmlBuilder = new StringBuilder();
         while (validater.hasNext()) {
             final XMLEvent event = validater.nextEvent();
