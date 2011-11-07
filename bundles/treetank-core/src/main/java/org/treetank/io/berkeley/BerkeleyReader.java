@@ -29,7 +29,6 @@ package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.page.PageDelegate;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;

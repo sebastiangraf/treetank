@@ -40,7 +40,6 @@ import org.treetank.io.KeyDelegate;
 import org.treetank.io.berkeley.binding.AbstractPageBinding;
 import org.treetank.io.berkeley.binding.KeyBinding;
 import org.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
-import org.treetank.page.PageDelegate;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 

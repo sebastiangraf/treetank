@@ -29,7 +29,6 @@ package org.treetank.io.berkeley.binding;
 
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;
-import org.treetank.page.PageDelegate;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 

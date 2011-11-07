@@ -39,7 +39,7 @@ import org.treetank.io.ITTSource;
  * Class to provide basic reference handling functionality.
  * </p>
  */
-public class PageDelegate {
+class PageDelegate implements IPage {
 
     /** Page references. */
     private PageReference[] mReferences;
@@ -108,7 +108,7 @@ public class PageDelegate {
      * @param paramOut
      *            Output stream.
      */
-    protected void serialize(final ITTSink paramOut) {
+    public void serialize(final ITTSink paramOut) {
         paramOut.writeLong(mRevision);
 
         for (final PageReference reference : getReferences()) {
