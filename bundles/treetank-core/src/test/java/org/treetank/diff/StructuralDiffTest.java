@@ -65,35 +65,32 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffFirst() throws Exception {
         DiffTestHelper.setUpFirst(mHolder);
         final IDiffObserver listener = DiffTestHelper.testDiffFirst();
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.NO, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testOptimizedFirst() throws Exception {
         DiffTestHelper.setUpFirst(mHolder);
         final IDiffObserver listener = DiffTestHelper.testOptimizedFirst();
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.HASHED, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffSecond() throws AbsTTException, InterruptedException, IOException,
         XMLStreamException {
 
@@ -102,7 +99,7 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.NO, observer));
 
         DiffTestHelper.verifyInternal(listener);
@@ -117,14 +114,13 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.HASHED, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = DiffTestHelper.testDiffThird();
@@ -132,14 +128,13 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.NO, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffOptimizedThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = DiffTestHelper.testOptimizedThird();
@@ -147,21 +142,20 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.HASHED, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffFourth() throws Exception {
         final IDiffObserver listener = DiffTestHelper.testDiffFourth();
         DiffTestHelper.setUpFourth(mHolder);
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.NO, observer));
 
         DiffTestHelper.verifyInternal(listener);
@@ -175,63 +169,59 @@ public final class StructuralDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.HASHED, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffFifth() throws Exception {
         final IDiffObserver listener = DiffTestHelper.testDiffFifth();
         DiffTestHelper.setUpFifth(mHolder);
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.NO, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffOptimizedFifth() throws Exception {
         final IDiffObserver listener = DiffTestHelper.testDiffFifth();
         DiffTestHelper.setUpFifth(mHolder);
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.HASHED, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffSixth() throws Exception {
         final IDiffObserver listener = DiffTestHelper.testDiffSixth();
         DiffTestHelper.setUpSixth(mHolder);
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.NO, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffOptimizedSixth() throws Exception {
         final IDiffObserver listener = DiffTestHelper.testDiffSixth();
         DiffTestHelper.setUpSixth(mHolder);
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeStructuralDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.HASHED, observer));
 
         DiffTestHelper.verifyInternal(listener);
