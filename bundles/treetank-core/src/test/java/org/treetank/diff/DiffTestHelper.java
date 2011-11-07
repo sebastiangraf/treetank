@@ -1,22 +1,19 @@
 package org.treetank.diff;
 
-import static org.easymock.EasyMock.createStrictMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.easymock.IAnswer;
+import org.mockito.InOrder;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IStructuralItem;
@@ -31,14 +28,10 @@ import org.treetank.utils.DocumentCreater;
 
 public final class DiffTestHelper {
 
-    protected static transient CountDownLatch mStart;
-
     protected static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
-
     protected static final long TIMEOUT_S = 5;
 
     static void setUp() throws AbsTTException {
-        mStart = new CountDownLatch(1);
         TestHelper.deleteEverything();
     }
 
@@ -93,180 +86,108 @@ public final class DiffTestHelper {
 
     }
 
-    static IDiffObserver testDiffFirst() {
-        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffDone();
-        replayInternal(listener);
-        return listener;
+    static IDiffObserver createMock() {
+        return mock(IDiffObserver.class);
     }
 
-    static IDiffObserver testOptimizedFirst() {
-        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffDone();
-        replayInternal(listener);
-        return listener;
+    static void verifyDiffFirst(final IDiffObserver paramListener) {
+        final InOrder inOrder = inOrder(paramListener);
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(10)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffDone();
     }
 
-    static IDiffObserver testDiffSecond() {
-        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffDone();
-        replayInternal(listener);
-        return listener;
+    static void verifyOptimizedFirst(final IDiffObserver paramListener) {
+        final InOrder inOrder = inOrder(paramListener);
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffDone();
     }
 
-    static IDiffObserver testDiffThird() {
-        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffDone();
-        replayInternal(listener);
-        return listener;
+    static void verifyDiffSecond(final IDiffObserver paramListener) {
+        final InOrder inOrder = inOrder(paramListener);
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(4)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffDone();
     }
 
-    static IDiffObserver testOptimizedThird() {
-        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffDone();
-        replayInternal(listener);
-        return listener;
+    static void verifyDiffThird(final IDiffObserver paramListener) {
+        final InOrder inOrder = inOrder(paramListener);
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(3)).diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffDone();
     }
 
-    static IDiffObserver testDiffFourth() {
-        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffDone();
-        replayInternal(listener);
-        return listener;
+    static void verifyOptimizedThird(final IDiffObserver paramListener) {
+        final InOrder inOrder = inOrder(paramListener);
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffDone();
     }
 
-    static IDiffObserver testDiffFifth() {
-        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffDone();
-        replayInternal(listener);
-        return listener;
+    static void verifyDiffFourth(final IDiffObserver paramListener) {
+        final InOrder inOrder = inOrder(paramListener);
+        inOrder.verify(paramListener, times(3)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffDone();
     }
 
-    static IDiffObserver testDiffSixth() {
-        final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class), isA(IStructuralItem.class),
-            isA(DiffDepth.class));
-        listener.diffDone();
-        replayInternal(listener);
-        return listener;
+    static void verifyDiffFifth(final IDiffObserver paramListener) {
+        final InOrder inOrder = inOrder(paramListener);
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffDone();
     }
 
-    static void verifyInternal(final IDiffObserver paramListener) throws InterruptedException {
-        DiffTestHelper.mStart.await(DiffTestHelper.TIMEOUT_S, TimeUnit.SECONDS);
-        verify(paramListener);
-    }
-
-    static void replayInternal(final IDiffObserver paramListener) {
-        expectLastCall().andAnswer(new IAnswer<Void>() {
-            @Override
-            public Void answer() throws Throwable {
-                mStart.countDown();
-                return null;
-            }
-        });
-        replay(paramListener);
+    static void verifyDiffSixth(final IDiffObserver paramListener) {
+        final InOrder inOrder = inOrder(paramListener);
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
+            isA(IStructuralItem.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffDone();
     }
 
     static void check(final Holder paramHolder, final IDiffObserver paramObserver,
@@ -275,8 +196,6 @@ public final class DiffTestHelper {
         observers.add(paramObserver);
         DiffFactory.invokeFullDiff(new DiffFactory.Builder(paramHolder.getSession(), 0, 1, 0, paramOptimized,
             observers));
-
-        DiffTestHelper.verifyInternal(paramObserver);
     }
 
 }
