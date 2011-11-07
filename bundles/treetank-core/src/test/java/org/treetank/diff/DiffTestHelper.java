@@ -45,72 +45,54 @@ public class DiffTestHelper {
 
     public static void setUpSecond(final Holder paramHolder) throws AbsTTException, IOException,
         XMLStreamException {
-        final XMLShredder init =
-            new XMLShredder(paramHolder.getWtx(), XMLShredder.createFileReader(new File(RESOURCES
-                + File.separator + "revXMLsAll4" + File.separator + "1.xml")),
-                EShredderInsert.ADDASFIRSTCHILD);
-        init.call();
-        final File file = new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator + "2.xml");
-        final XMLShredder shredder =
-            new XMLUpdateShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
-                EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
-        shredder.call();
+        initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator
+            + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator + "2.xml"));
     }
 
     public static void setUpThird(final Holder paramHolder) throws AbsTTException, IOException,
         XMLStreamException {
-        final XMLShredder init =
-            new XMLShredder(paramHolder.getWtx(), XMLShredder.createFileReader(new File(RESOURCES
-                + File.separator + "revXMLsDelete1" + File.separator + "1.xml")),
-                EShredderInsert.ADDASFIRSTCHILD);
-        init.call();
-        final File file = new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "2.xml");
-        final XMLShredder shredder =
-            new XMLUpdateShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
-                EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
-        shredder.call();
+        initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator
+            + "1.xml"), new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "2.xml"));
     }
 
     public static void setUpFourth(final Holder paramHolder) throws AbsTTException, IOException,
         XMLStreamException {
-        final XMLShredder init =
-            new XMLShredder(paramHolder.getWtx(), XMLShredder.createFileReader(new File(RESOURCES
-                + File.separator + "revXMLsAll3" + File.separator + "1.xml")),
-                EShredderInsert.ADDASFIRSTCHILD);
-        init.call();
-        final File file = new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml");
-        final XMLShredder shredder =
-            new XMLUpdateShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
-                EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
-        shredder.call();
+        initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator
+            + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml"));
     }
 
     public static void setUpFifth(final Holder paramHolder) throws AbsTTException, IOException,
         XMLStreamException {
-        final XMLShredder init =
-            new XMLShredder(paramHolder.getWtx(), XMLShredder.createFileReader(new File(RESOURCES
-                + File.separator + "revXMLsAll2" + File.separator + "1.xml")),
-                EShredderInsert.ADDASFIRSTCHILD);
-        init.call();
-        final File file = new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml");
-        final XMLShredder shredder =
-            new XMLUpdateShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
-                EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
-        shredder.call();
+        initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator
+            + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml"));
     }
 
     public static void setUpSixth(final Holder paramHolder) throws AbsTTException, IOException,
         XMLStreamException {
-        final XMLShredder init =
-            new XMLShredder(paramHolder.getWtx(), XMLShredder.createFileReader(new File(RESOURCES
-                + File.separator + "revXMLsDelete2" + File.separator + "1.xml")),
-                EShredderInsert.ADDASFIRSTCHILD);
-        init.call();
-        final File file = new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator + "2.xml");
-        final XMLShredder shredder =
-            new XMLUpdateShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
-                EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
-        shredder.call();
+        initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator
+            + "1.xml"), new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator + "2.xml"));
+
+    }
+
+    private static void initializeData(final Holder paramHolder, final File... paramFile)
+        throws AbsTTException, IOException, XMLStreamException {
+
+        int i = 0;
+        for (final File file : paramFile) {
+            XMLShredder init;
+            if (i == 0) {
+                init =
+                    new XMLShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
+                        EShredderInsert.ADDASFIRSTCHILD);
+            } else {
+                init =
+                    new XMLUpdateShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
+                        EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
+            }
+            i++;
+            init.call();
+        }
+
     }
 
     public final static IDiffObserver testDiffFirst() {
