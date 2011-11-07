@@ -28,8 +28,6 @@
 package org.treetank.diff;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -53,10 +51,13 @@ public class FullDiffTest {
 
     private Holder mHolder;
 
+    private IDiffObserver mObserver;
+
     @Before
     public void setUp() throws AbsTTException {
         DiffTestHelper.setUp();
         mHolder = Holder.generateWtx();
+        mObserver = null;
     }
 
     @After
@@ -65,379 +66,54 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testFullDiffFirst() throws Exception {
+    public void testFullDiffFirst() throws AbsTTException, InterruptedException {
         DiffTestHelper.setUpFirst(mHolder);
-        final IDiffObserver listener = DiffTestHelper.testDiffFirst();
-
-        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-        observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
-            observer));
-
-        DiffTestHelper.verifyInternal(listener);
+        mObserver = DiffTestHelper.testDiffFirst();
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
     }
 
     @Test
     @Ignore
     public void testOptimizedFirst() throws InterruptedException, AbsTTException {
         DiffTestHelper.setUpFirst(mHolder);
-        final IDiffObserver listener = DiffTestHelper.testDiffFirst();
-
-        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-        observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
-            EDiffOptimized.HASHED, observer));
-
-        DiffTestHelper.verifyInternal(listener);
+        mObserver = DiffTestHelper.testDiffFirst();
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
     }
 
     @Test
-    public void testFullDiffSecond() throws AbsTTException, IOException, XMLStreamException,
-        InterruptedException {
+    public void testFullDiffSecond() throws AbsTTException, InterruptedException, IOException,
+        XMLStreamException {
         DiffTestHelper.setUpSecond(mHolder);
-        final IDiffObserver listener = DiffTestHelper.testDiffSecond();
-
-        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-        observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
-            observer));
-
-        DiffTestHelper.verifyInternal(listener);
+        mObserver = DiffTestHelper.testDiffSecond();
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
     }
 
     @Test
     public void testFullDiffThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
-        final IDiffObserver listener = DiffTestHelper.testDiffThird();
+        mObserver = DiffTestHelper.testDiffThird();
         DiffTestHelper.setUpThird(mHolder);
-
-        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-        observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
-            observer));
-
-        DiffTestHelper.verifyInternal(listener);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
     }
 
     @Test
     public void testFullDiffFourth() throws Exception {
-        final IDiffObserver listener = DiffTestHelper.testDiffFourth();
+        mObserver = DiffTestHelper.testDiffFourth();
         DiffTestHelper.setUpFourth(mHolder);
-
-        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-        observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
-            observer));
-
-        DiffTestHelper.verifyInternal(listener);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
     }
 
     @Test
     public void testFullDiffFifth() throws Exception {
-        final IDiffObserver listener = DiffTestHelper.testDiffFifth();
+        mObserver = DiffTestHelper.testDiffFifth();
         DiffTestHelper.setUpFifth(mHolder);
-
-        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-        observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
-            observer));
-
-        DiffTestHelper.verifyInternal(listener);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
     }
 
     @Test
     public void testFullDiffSixth() throws Exception {
-        final IDiffObserver listener = DiffTestHelper.testDiffSixth();
+        mObserver = DiffTestHelper.testDiffSixth();
         DiffTestHelper.setUpSixth(mHolder);
-
-        final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-        observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
-            observer));
-        DiffTestHelper.verifyInternal(listener);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
     }
-
-    // @Test
-    // public void testFullDiffSeventh() throws Exception {
-    // final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffDone();
-    //
-    // expectLastCall().andAnswer(new IAnswer<Void>() {
-    // @Override
-    // public Void answer() throws Throwable {
-    // mStart.countDown();
-    // return null;
-    // }
-    // });
-    // replay(listener);
-    //
-    // final Holder holder = Holder.generateWtx();
-    // final IWriteTransaction wtx = holder.getWtx();
-    // final XMLShredder init =
-    // new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES +
-    // File.separator + "revXMLsAll5"
-    // + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-    // init.call();
-    // final File file = new File(RESOURCES + File.separator + "revXMLsAll5" +
-    // File.separator + "2.xml");
-    // final XMLShredder shredder =
-    // new XMLUpdateShredder(wtx, XMLShredder.createReader(file),
-    // EShredderInsert.ADDASFIRSTCHILD, file,
-    // EShredderCommit.COMMIT);
-    // shredder.call();
-    //
-    // final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-    // observer.add(listener);
-    // DiffFactory.invokeFullDiff(new DiffFactory.Builder(holder.getDatabase(),
-    // 0, 1, 0, EDiffOptimized.NO,
-    // observer));
-    //
-    // mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-    // verify(listener);
-    // }
-    //
-    // @Test
-    // public void testFullDiffEighth() throws Exception {
-    // final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffDone();
-    //
-    // expectLastCall().andAnswer(new IAnswer<Void>() {
-    // @Override
-    // public Void answer() throws Throwable {
-    // mStart.countDown();
-    // return null;
-    // }
-    // });
-    // replay(listener);
-    //
-    // final Holder holder = Holder.generateWtx();
-    // final IWriteTransaction wtx = holder.getWtx();
-    // final XMLShredder init =
-    // new XMLShredder(wtx, XMLShredder.createReader(new File(RESOURCES +
-    // File.separator + "revXMLsAll6"
-    // + File.separator + "1.xml")), EShredderInsert.ADDASFIRSTCHILD);
-    // init.call();
-    // final File file = new File(RESOURCES + File.separator + "revXMLsAll6" +
-    // File.separator + "2.xml");
-    // final XMLShredder shredder =
-    // new XMLUpdateShredder(wtx, XMLShredder.createReader(file),
-    // EShredderInsert.ADDASFIRSTCHILD, file,
-    // EShredderCommit.COMMIT);
-    // shredder.call();
-    //
-    // final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-    // observer.add(listener);
-    // DiffFactory.invokeFullDiff(new DiffFactory.Builder(holder.getDatabase(),
-    // 0, 1, 0, EDiffOptimized.NO,
-    // observer));
-    //
-    // mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-    // verify(listener);
-    // }
-    //
-    // @Test
-    // public final void testFullDiffTenth() throws Exception {
-    // final IDiffObserver listener = createStrictMock(IDiffObserver.class);
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.UPDATED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.DELETED), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class),
-    // isA(IStructuralItem.class),
-    // isA(DiffDepth.class));
-    // listener.diffDone();
-    //
-    // expectLastCall().andAnswer(new IAnswer<Void>() {
-    // @Override
-    // public Void answer() throws Throwable {
-    // mStart.countDown();
-    // return null;
-    // }
-    // });
-    // replay(listener);
-    //
-    // TestHelper.closeEverything();
-    // TestHelper.deleteEverything();
-    // final Holder holder = Holder.generateSession();
-    //
-    // DocumentCreater.createRevisioned(holder.getDatabase());
-    //
-    // final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-    // observer.add(listener);
-    //
-    // DiffFactory.invokeFullDiff(new DiffFactory.Builder(holder.getDatabase(),
-    // 0, 1, 0, EDiffOptimized.NO,
-    // observer));
-    //
-    // mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-    // verify(listener);
-    // }
-    //
-    // void invokeFullDiff(final IDiffObserver paramListener) throws
-    // TTUsageException, AbsTTException,
-    // InterruptedException {
-    // expectLastCall().andAnswer(new IAnswer<Void>() {
-    // @Override
-    // public Void answer() throws Throwable {
-    // mStart.countDown();
-    // return null;
-    // }
-    // });
-    // replay(paramListener);
-    //
-    // final Holder holder = Holder.generateWtx();
-    // DocumentCreater.createVersioned(holder.getWtx());
-    //
-    // final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
-    // observer.add(paramListener);
-    // DiffFactory.invokeFullDiff(new DiffFactory.Builder(holder.getDatabase(),
-    // 0, 1, 0,
-    // EDiffOptimized.HASHED, observer));
-    //
-    // mStart.await(TIMEOUT_S, TimeUnit.SECONDS);
-    // verify(paramListener);
-    // }
 }

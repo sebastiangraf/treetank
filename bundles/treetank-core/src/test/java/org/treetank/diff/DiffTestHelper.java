@@ -9,6 +9,8 @@ import static org.easymock.EasyMock.verify;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +21,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.EDiff;
+import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderCommit;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -26,7 +29,7 @@ import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.shredder.XMLUpdateShredder;
 import org.treetank.utils.DocumentCreater;
 
-public class DiffTestHelper {
+public final class DiffTestHelper {
 
     protected static transient CountDownLatch mStart;
 
@@ -34,41 +37,36 @@ public class DiffTestHelper {
 
     protected static final long TIMEOUT_S = 5;
 
-    public static void setUp() throws AbsTTException {
+    static void setUp() throws AbsTTException {
         mStart = new CountDownLatch(1);
         TestHelper.deleteEverything();
     }
 
-    public static void setUpFirst(final Holder paramHolder) throws AbsTTException {
+    static void setUpFirst(final Holder paramHolder) throws AbsTTException {
         DocumentCreater.createVersioned(paramHolder.getWtx());
     }
 
-    public static void setUpSecond(final Holder paramHolder) throws AbsTTException, IOException,
-        XMLStreamException {
+    static void setUpSecond(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator + "2.xml"));
     }
 
-    public static void setUpThird(final Holder paramHolder) throws AbsTTException, IOException,
-        XMLStreamException {
+    static void setUpThird(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "2.xml"));
     }
 
-    public static void setUpFourth(final Holder paramHolder) throws AbsTTException, IOException,
-        XMLStreamException {
+    static void setUpFourth(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml"));
     }
 
-    public static void setUpFifth(final Holder paramHolder) throws AbsTTException, IOException,
-        XMLStreamException {
+    static void setUpFifth(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml"));
     }
 
-    public static void setUpSixth(final Holder paramHolder) throws AbsTTException, IOException,
-        XMLStreamException {
+    static void setUpSixth(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator + "2.xml"));
 
@@ -95,7 +93,7 @@ public class DiffTestHelper {
 
     }
 
-    public final static IDiffObserver testDiffFirst() {
+    static IDiffObserver testDiffFirst() {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
             isA(DiffDepth.class));
@@ -126,7 +124,7 @@ public class DiffTestHelper {
         return listener;
     }
 
-    public final static IDiffObserver testOptimizedFirst() {
+    static IDiffObserver testOptimizedFirst() {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.INSERTED), isA(IStructuralItem.class), isA(IStructuralItem.class),
             isA(DiffDepth.class));
@@ -139,7 +137,7 @@ public class DiffTestHelper {
         return listener;
     }
 
-    public final static IDiffObserver testDiffSecond() {
+    static IDiffObserver testDiffSecond() {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
             isA(DiffDepth.class));
@@ -160,7 +158,7 @@ public class DiffTestHelper {
         return listener;
     }
 
-    public final static IDiffObserver testDiffThird() {
+    static IDiffObserver testDiffThird() {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
             isA(DiffDepth.class));
@@ -185,7 +183,7 @@ public class DiffTestHelper {
         return listener;
     }
 
-    public final static IDiffObserver testOptimizedThird() {
+    static IDiffObserver testOptimizedThird() {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
             isA(DiffDepth.class));
@@ -208,7 +206,7 @@ public class DiffTestHelper {
         return listener;
     }
 
-    public final static IDiffObserver testDiffFourth() {
+    static IDiffObserver testDiffFourth() {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
             isA(DiffDepth.class));
@@ -227,7 +225,7 @@ public class DiffTestHelper {
         return listener;
     }
 
-    public final static IDiffObserver testDiffFifth() {
+    static IDiffObserver testDiffFifth() {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
             isA(DiffDepth.class));
@@ -238,7 +236,7 @@ public class DiffTestHelper {
         return listener;
     }
 
-    public final static IDiffObserver testDiffSixth() {
+    static IDiffObserver testDiffSixth() {
         final IDiffObserver listener = createStrictMock(IDiffObserver.class);
         listener.diffListener(eq(EDiff.SAME), isA(IStructuralItem.class), isA(IStructuralItem.class),
             isA(DiffDepth.class));
@@ -255,12 +253,12 @@ public class DiffTestHelper {
         return listener;
     }
 
-    public final static void verifyInternal(final IDiffObserver paramListener) throws InterruptedException {
+    static void verifyInternal(final IDiffObserver paramListener) throws InterruptedException {
         DiffTestHelper.mStart.await(DiffTestHelper.TIMEOUT_S, TimeUnit.SECONDS);
         verify(paramListener);
     }
 
-    private static final void replayInternal(final IDiffObserver paramListener) {
+    static void replayInternal(final IDiffObserver paramListener) {
         expectLastCall().andAnswer(new IAnswer<Void>() {
             @Override
             public Void answer() throws Throwable {
@@ -269,6 +267,16 @@ public class DiffTestHelper {
             }
         });
         replay(paramListener);
+    }
+
+    static void check(final Holder paramHolder, final IDiffObserver paramObserver,
+        final EDiffOptimized paramOptimized) throws AbsTTException, InterruptedException {
+        final Set<IDiffObserver> observers = new HashSet<IDiffObserver>();
+        observers.add(paramObserver);
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(paramHolder.getSession(), 0, 1, 0, paramOptimized,
+            observers));
+
+        DiffTestHelper.verifyInternal(paramObserver);
     }
 
 }
