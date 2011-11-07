@@ -248,12 +248,12 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 final IWriteTransaction wtx = session.beginWriteTransaction();
                 if (first) {
                     final XMLShredder shredder =
-                        new XMLShredder(wtx, XMLShredder.createReader(file), EShredderInsert.ADDASFIRSTCHILD);
+                        new XMLShredder(wtx, XMLShredder.createFileReader(file), EShredderInsert.ADDASFIRSTCHILD);
                     shredder.call();
                     first = false;
                 } else {
                     final XMLShredder shredder =
-                        new XMLUpdateShredder(wtx, XMLShredder.createReader(file),
+                        new XMLUpdateShredder(wtx, XMLShredder.createFileReader(file),
                             EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
                     shredder.call();
                 }

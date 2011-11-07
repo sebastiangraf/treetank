@@ -362,7 +362,7 @@ public class XMLShredder implements Callable<Long> {
                 .getSession(new SessionConfiguration.Builder("shredded")
                         .build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLEventReader reader = createReader(new File(paramArgs[0]));
+        final XMLEventReader reader = createFileReader(new File(paramArgs[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader,
                 EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
@@ -385,7 +385,7 @@ public class XMLShredder implements Callable<Long> {
      * @throws XMLStreamException
      *             if any parsing error occurs
      */
-    public static synchronized XMLEventReader createReader(final File paramFile)
+    public static synchronized XMLEventReader createFileReader(final File paramFile)
             throws IOException, XMLStreamException {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);

@@ -225,7 +225,7 @@ public class HashTest {
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder =
-            new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
+            new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.close();
         final IReadTransaction rtx = session.beginReadTransaction();
