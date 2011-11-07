@@ -61,7 +61,7 @@ public abstract class AbstractPersistenceCache implements ICache {
         place =
             new File(new File(paramFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()),
                 Integer.toString(counter));
-        final boolean bla = place.mkdirs();
+        place.mkdirs();
         counter++;
     }
 
