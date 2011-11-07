@@ -28,7 +28,6 @@
 package org.treetank.io;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.page.PageDelegate;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
