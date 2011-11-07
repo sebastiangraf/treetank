@@ -65,14 +65,13 @@ public class FullDiffTest {
     }
 
     @Test
-    @Ignore
     public void testFullDiffFirst() throws Exception {
         DiffTestHelper.setUpFirst(mHolder);
         final IDiffObserver listener = DiffTestHelper.testDiffFirst();
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0, EDiffOptimized.NO,
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
             observer));
 
         DiffTestHelper.verifyInternal(listener);
@@ -86,14 +85,13 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0,
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0,
             EDiffOptimized.HASHED, observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testFullDiffSecond() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         DiffTestHelper.setUpSecond(mHolder);
@@ -101,14 +99,13 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0, EDiffOptimized.NO,
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
             observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testFullDiffThird() throws AbsTTException, IOException, XMLStreamException,
         InterruptedException {
         final IDiffObserver listener = DiffTestHelper.testDiffThird();
@@ -116,49 +113,46 @@ public class FullDiffTest {
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0, EDiffOptimized.NO,
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
             observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testFullDiffFourth() throws Exception {
         final IDiffObserver listener = DiffTestHelper.testDiffFourth();
         DiffTestHelper.setUpFourth(mHolder);
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0, EDiffOptimized.NO,
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
             observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testFullDiffFifth() throws Exception {
         final IDiffObserver listener = DiffTestHelper.testDiffFifth();
         DiffTestHelper.setUpFifth(mHolder);
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0, EDiffOptimized.NO,
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
             observer));
 
         DiffTestHelper.verifyInternal(listener);
     }
 
     @Test
-    @Ignore
     public void testFullDiffSixth() throws Exception {
         final IDiffObserver listener = DiffTestHelper.testDiffSixth();
         DiffTestHelper.setUpSixth(mHolder);
 
         final Set<IDiffObserver> observer = new HashSet<IDiffObserver>();
         observer.add(listener);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getDatabase(), 0, 1, 0, EDiffOptimized.NO,
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(mHolder.getSession(), 0, 1, 0, EDiffOptimized.NO,
             observer));
         DiffTestHelper.verifyInternal(listener);
     }
