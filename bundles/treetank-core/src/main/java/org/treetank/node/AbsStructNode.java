@@ -42,6 +42,7 @@ import org.treetank.settings.EFixed;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
+@Deprecated
 public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
 
     /**

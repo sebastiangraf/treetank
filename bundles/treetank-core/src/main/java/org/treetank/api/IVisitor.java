@@ -29,7 +29,6 @@ package org.treetank.api;
 
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DocumentRootNode;
-import org.treetank.node.DummyNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
@@ -82,11 +81,4 @@ public interface IVisitor {
      */
     void visit(final DocumentRootNode paramNode);
 
-    /**
-     * Do something when visiting a {@link DummyNode}.
-     * 
-     * @param paramNode
-     *            the {@link ElementNode}
-     */
-    void visit(final DummyNode paramNode);
 }

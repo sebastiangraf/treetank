@@ -36,8 +36,6 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.IStructuralItem;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.AbsStructNode;
-import org.treetank.node.DummyNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.settings.EFixed;
@@ -429,10 +427,10 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final IStructuralItem getStructuralNode() {
-        if (mCurrentNode instanceof AbsStructNode) {
+        if (mCurrentNode instanceof IStructuralItem) {
             return (IStructuralItem)mCurrentNode;
         } else {
-            return DummyNode.createData(mCurrentNode.getNodeKey(), mCurrentNode.getParentKey());
+            return null;
         }
     }
 }

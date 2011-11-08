@@ -93,14 +93,6 @@ public final class TextNode extends AbsStructNode {
      * {@inheritDoc}
      */
     @Override
-    public void setType(final int paramValueType) {
-        writeIntBytes(AbsNode.TYPE_KEY, paramValueType);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void serialize(final ITTSink paramNodeOut) {
         super.serialize(paramNodeOut);
         for (final byte byteVal : mValue) {

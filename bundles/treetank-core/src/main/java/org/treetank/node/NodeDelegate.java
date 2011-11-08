@@ -4,10 +4,13 @@ import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
 import org.treetank.settings.EFixed;
 
-public class NodeDelegate implements IItem, Comparable<IItem> {
+public class NodeDelegate implements IItem {
 
     private long mNodeKey;
     private long mParentKey;
+    private long mHash;
+
+    private int mType;
 
     public NodeDelegate() {
 
@@ -15,14 +18,12 @@ public class NodeDelegate implements IItem, Comparable<IItem> {
 
     @Override
     public void setHash(long paramHash) {
-        // TODO Auto-generated method stub
-
+        mHash = paramHash;
     }
 
     @Override
     public long getHash() {
-        // TODO Auto-generated method stub
-        return 0;
+        return mHash;
     }
 
     @Override
@@ -64,19 +65,13 @@ public class NodeDelegate implements IItem, Comparable<IItem> {
 
     @Override
     public int getTypeKey() {
-        return 0;
+        return mType;
     }
 
     @Override
     public void acceptVisitor(IVisitor paramVisitor) {
         // TODO Auto-generated method stub
 
-    }
-
-    @Override
-    public int compareTo(IItem o) {
-        // TODO Auto-generated method stub
-        return 0;
     }
 
     @Override

@@ -40,6 +40,7 @@ import org.treetank.settings.EFixed;
  * implement those methods that are required to provide proper subclass functionality.
  * </p>
  */
+@Deprecated
 public abstract class AbsNode implements IItem, Comparable<AbsNode> {
 
     /** standard NODE_KEY. */
@@ -53,9 +54,6 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
 
     /** standard TYPE_KEY. */
     protected static final int TYPE_KEY = 0;
-
-    /** standard ELEMENT KIND. */
-    protected static final int ELEMENT_KIND = 56;
 
     protected final byte[] mByteData;
 
@@ -142,20 +140,9 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
-    public int getElementKind() {
-        return readIntPointer(ELEMENT_KIND);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public byte[] getRawValue() {
         return null;
-    }
-
-    public int getPointerSize() {
-        return mPointerData.length;
     }
 
     /**
@@ -194,16 +181,6 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     }
 
     /**
-     * Setting the type of this node.
-     * 
-     * @param mValueType
-     *            to be set.
-     */
-    public void setType(final int mValueType) {
-        writeIntBytes(TYPE_KEY, mValueType);
-    }
-
-    /**
      * setting hash to current node.
      * 
      * @param paramHash
@@ -212,16 +189,6 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     @Override
     public final void setHash(final long mHashcode) {
         writeLongPointer(HASHCODE, mHashcode);
-    }
-
-    /**
-     * setting element kind to current node.
-     * 
-     * @param mKind
-     *            to be set
-     */
-    public final void setElementKind(final int mKind) {
-        writeIntPointer(ELEMENT_KIND, mKind);
     }
 
     /**
