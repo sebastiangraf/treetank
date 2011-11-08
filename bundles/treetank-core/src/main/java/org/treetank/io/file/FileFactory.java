@@ -31,8 +31,9 @@ import java.io.File;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.AbsIOFactory;
+import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
+import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
 
 /**
@@ -41,10 +42,13 @@ import org.treetank.io.IWriter;
  * @author Sebastian Graf, University of Konstanz.
  * 
  */
-public final class FileFactory extends AbsIOFactory {
+public final class FileFactory implements IStorage {
 
     /** private constant for fileName. */
     private static final String FILENAME = "tt.tnk";
+
+    /** Instance to storage. */
+    private final File mFile;
 
     /**
      * Constructor.
@@ -54,7 +58,7 @@ public final class FileFactory extends AbsIOFactory {
      * 
      */
     public FileFactory(final File paramFile) {
-        super(paramFile);
+        mFile = paramFile;
     }
 
     /**
@@ -87,7 +91,7 @@ public final class FileFactory extends AbsIOFactory {
      * @return the concrete storage for this database
      */
     private File getConcreteStorage() {
-        return new File(super.mFile, new StringBuilder(ResourceConfiguration.Paths.Data.getFile().getName())
+        return new File(mFile, new StringBuilder(ResourceConfiguration.Paths.Data.getFile().getName())
             .append(File.separator).append(FILENAME).toString());
     }
 
@@ -106,7 +110,7 @@ public final class FileFactory extends AbsIOFactory {
      */
     @Override
     public void truncate() throws TTIOException {
-        recursiveDelete(super.mFile);
+        EStorage.recursiveDelete(mFile);
     }
 
 }

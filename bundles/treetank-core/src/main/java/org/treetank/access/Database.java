@@ -47,6 +47,7 @@ import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.io.EStorage;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -151,7 +152,7 @@ public final class Database implements IDatabase {
             if (paramConfig.mFile.exists()
                 && DatabaseConfiguration.Paths.compareStructure(paramConfig.mFile) == 0) {
                 // instantiate the database for deletion
-                recursiveDelete(paramConfig.mFile);
+                EStorage.recursiveDelete(paramConfig.mFile);
             }
         }
     }
@@ -226,7 +227,7 @@ public final class Database implements IDatabase {
             // if file is existing and folder is a tt-dataplace, delete it
             if (resourceFile.exists() && ResourceConfiguration.Paths.compareStructure(resourceFile) == 0) {
                 // instantiate the database for deletion
-                recursiveDelete(resourceFile);
+                EStorage.recursiveDelete(resourceFile);
             }
         }
     }
@@ -349,24 +350,6 @@ public final class Database implements IDatabase {
         final StringBuilder builder = new StringBuilder();
         builder.append(this.mDBConfig);
         return builder.toString();
-    }
-
-    /**
-     * Deleting a storage recursive. Used for deleting a databases
-     * 
-     * @param paramFile
-     *            which should be deleted included descendants
-     * @return true if delete is valid
-     */
-    private static boolean recursiveDelete(final File paramFile) {
-        if (paramFile.isDirectory()) {
-            for (final File child : paramFile.listFiles()) {
-                if (!recursiveDelete(child)) {
-                    return false;
-                }
-            }
-        }
-        return paramFile.delete();
     }
 
     /**

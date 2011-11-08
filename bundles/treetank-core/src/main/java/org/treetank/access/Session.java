@@ -52,8 +52,9 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTThreadedException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.AbsIOFactory;
+import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
+import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
@@ -99,7 +100,7 @@ public final class Session implements ISession {
     private final Map<Long, Map<Long, Collection<Future<Void>>>> mSyncTransactionsReturns;
 
     /** abstract factory for all interaction to the storage. */
-    private final AbsIOFactory mFac;
+    private final IStorage mFac;
 
     /** Atomic counter for concurrent generation of transaction id. */
     private final AtomicLong mTransactionIDCounter;
@@ -135,7 +136,7 @@ public final class Session implements ISession {
         mWriteSemaphore = new Semaphore(paramSessionConf.mWtxAllowed);
         mReadSemaphore = new Semaphore(paramSessionConf.mRtxAllowed);
 
-        mFac = AbsIOFactory.getInstance(mResourceConfig);
+        mFac = EStorage.getStorage(mResourceConfig);
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.

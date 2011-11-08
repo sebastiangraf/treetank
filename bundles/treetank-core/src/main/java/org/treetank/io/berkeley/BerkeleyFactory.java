@@ -32,9 +32,9 @@ import java.io.File;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.AbsIOFactory;
 import org.treetank.io.IKey;
 import org.treetank.io.IReader;
+import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
 import org.treetank.io.KeyDelegate;
 import org.treetank.io.berkeley.binding.AbstractPageBinding;
@@ -63,7 +63,7 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyFactory extends AbsIOFactory {
+public final class BerkeleyFactory implements IStorage {
 
     /** Binding for {@link KeyDelegate}. */
     public static final TupleBinding<IKey> KEY = new KeyBinding();
@@ -92,6 +92,9 @@ public final class BerkeleyFactory extends AbsIOFactory {
      */
     private final Database mDatabase;
 
+    /** Storage of DB. */
+    private final File mFile;
+
     /**
      * Private constructor.
      * 
@@ -105,7 +108,8 @@ public final class BerkeleyFactory extends AbsIOFactory {
      *             of something odd happens while database-connection
      */
     public BerkeleyFactory(final File paramFile) throws TTIOException {
-        super(paramFile);
+
+        mFile = paramFile;
 
         final File repoFile = new File(paramFile, ResourceConfiguration.Paths.Data.getFile().getName());
         if (!repoFile.exists()) {

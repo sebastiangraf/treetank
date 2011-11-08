@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.treetank.access.Session;
 import org.treetank.access.WriteTransaction.HashKind;
-import org.treetank.io.AbsIOFactory.StorageType;
+import org.treetank.io.EStorage;
 import org.treetank.settings.ERevisioning;
 
 /**
@@ -95,7 +95,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
 
     // FIXED STANDARD FIELDS
     /** Standard storage. */
-    public static final StorageType STORAGE = StorageType.File;
+    public static final EStorage STORAGE = EStorage.File;
     /** Standard Versioning Approach. */
     public static final ERevisioning VERSIONING = ERevisioning.INCREMENTAL;
     /** Type of hashing. */
@@ -108,7 +108,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
 
     // MEMBERS FOR FIXED FIELDS
     /** Type of Storage (File, Berkeley). */
-    public final StorageType mType;
+    public final EStorage mType;
 
     /** Kind of revisioning (Incremental, Differential). */
     public final ERevisioning mRevision;
@@ -198,7 +198,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     public static final class Builder {
 
         /** Type of Storage (File, Berkeley). */
-        private StorageType mType = STORAGE;
+        private EStorage mType = STORAGE;
 
         /** Kind of revisioning (Incremental, Differential). */
         private ERevisioning mRevision = VERSIONING;
@@ -238,7 +238,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
          *            to be set
          * @return reference to the builder object
          */
-        public Builder setType(final StorageType paramType) {
+        public Builder setType(final EStorage paramType) {
             if (paramType == null) {
                 throw new NullPointerException("paramType may not be null!");
             }

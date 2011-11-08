@@ -27,7 +27,7 @@
 
 package org.treetank.io.berkeley.binding;
 
-import org.treetank.io.KeyPersistenter;
+import org.treetank.io.EStorage;
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;
 import org.treetank.page.PageReference;
@@ -50,7 +50,8 @@ public final class PageReferenceUberPageBinding extends TupleBinding<PageReferen
     @Override
     public PageReference entryToObject(final TupleInput arg0) {
         final PageReference ref = new PageReference();
-        ref.setKey(KeyPersistenter.createKey(new TupleInputSource(arg0)));
+        final int storageId = arg0.readInt();
+        ref.setKey(EStorage.getInstance(storageId).deserializeKey(new TupleInputSource(arg0)));
         return ref;
     }
 
@@ -59,8 +60,10 @@ public final class PageReferenceUberPageBinding extends TupleBinding<PageReferen
      */
     @Override
     public void objectToEntry(final PageReference arg0, final TupleOutput arg1) {
-        KeyPersistenter.serializeKey(new TupleOutputSink(arg1), arg0.getKey());
-
+        EStorage storage = EStorage.getInstance(arg0.getKey().getClass());
+        if (storage != null) {
+            storage.serializeKey(new TupleOutputSink(arg1), arg0.getKey());
+        }
     }
 
 }

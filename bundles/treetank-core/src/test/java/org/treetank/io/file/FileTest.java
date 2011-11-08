@@ -34,7 +34,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.AbsIOFactory.StorageType;
+import org.treetank.io.EStorage;
 import org.treetank.io.IOTestHelper;
 
 public class FileTest {
@@ -44,7 +44,7 @@ public class FileTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         Holder.generateSession().close();
-        resourceConf = IOTestHelper.registerIO(StorageType.File);
+        resourceConf = IOTestHelper.registerIO(EStorage.File);
     }
 
     @Test

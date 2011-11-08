@@ -34,7 +34,6 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.AbsIOFactory.StorageType;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
@@ -57,7 +56,7 @@ public final class IOTestHelper {
      * @return a suitable {@link ResourceConfiguration}
      * @throws TTUsageException
      */
-    public static ResourceConfiguration registerIO(final StorageType type) throws AbsTTException {
+    public static ResourceConfiguration registerIO(final EStorage type) throws AbsTTException {
         final ResourceConfiguration.Builder resourceConfig =
             new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1.getConfig());
         resourceConfig.setType(type);
@@ -73,7 +72,7 @@ public final class IOTestHelper {
     }
 
     public static void testReadWriteFirstRef(final ResourceConfiguration resourceConf) throws AbsTTException {
-        final AbsIOFactory fac = AbsIOFactory.getInstance(resourceConf);
+        final IStorage fac = EStorage.getStorage(resourceConf);
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();
         pageRef1.setPage(page1);

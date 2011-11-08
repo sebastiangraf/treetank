@@ -34,7 +34,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.AbsIOFactory.StorageType;
+import org.treetank.io.EStorage;
 import org.treetank.io.IOTestHelper;
 
 public class BerkeleyTest {
@@ -45,7 +45,7 @@ public class BerkeleyTest {
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         Holder.generateSession().close();
-        resourceConf = IOTestHelper.registerIO(StorageType.Berkeley);
+        resourceConf = IOTestHelper.registerIO(EStorage.Berkeley);
     }
 
     @Test
