@@ -333,10 +333,9 @@ public final class WriteTransactionState extends ReadTransactionState {
             // the one flexible from the
             // reference
             if (page == null) {
-                if (!reference.isInstantiated()) {
+                page = reference.getPage();
+                if (page == null) {
                     return;
-                } else {
-                    page = reference.getPage();
                 }
             }
 
@@ -450,18 +449,16 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected IndirectPage prepareIndirectPage(final PageReference paramReference) throws TTIOException {
 
         IndirectPage page = (IndirectPage)paramReference.getPage();
-        if (!paramReference.isInstantiated()) {
-            if (paramReference.isCommitted()) {
+        if (page == null) {
+            if (paramReference.getKey() == null) {
+                page = new IndirectPage(getUberPage().getRevision());
+            } else {
                 page =
                     new IndirectPage((IndirectPage)dereferenceIndirectPage(paramReference), mNewRoot
                         .getRevision() + 1);
-            } else {
-                page = new IndirectPage(getUberPage().getRevision());
 
             }
             paramReference.setPage(page);
-        } else {
-            page = (IndirectPage)paramReference.getPage();
         }
         return page;
     }
@@ -475,24 +472,18 @@ public final class WriteTransactionState extends ReadTransactionState {
             // Indirect reference.
             final PageReference reference =
                 prepareLeafOfTree(mNewRoot.getIndirectPageReference(), paramNodePageKey);
+            NodePage page = (NodePage)reference.getPage();
 
-            if (!reference.isInstantiated()) {
-
-                if (reference.isCommitted()) {
-                    cont = dereferenceNodePageForModification(paramNodePageKey);
-                } else {
+            if (page == null) {
+                if (reference.getKey() == null) {
                     cont =
                         new NodePageContainer(new NodePage(paramNodePageKey,
                             IConstants.UBP_ROOT_REVISION_NUMBER));
+                } else {
+                    cont = dereferenceNodePageForModification(paramNodePageKey);
                 }
-
             } else {
-                // TODO Nodepage is just used as bootstrap-begin. Perhaps this
-                // can be done otherwise
-                final NodePage page = (NodePage)reference.getPage();
                 cont = new NodePageContainer(page);
-
-                reference.setPage(null);
             }
 
             reference.setNodePageKey(paramNodePageKey);
