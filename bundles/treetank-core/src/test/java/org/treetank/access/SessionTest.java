@@ -27,16 +27,6 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -48,13 +38,23 @@ import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.DocumentRootNode;
-import org.treetank.node.DummyNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.TypedValue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SessionTest {
 
@@ -239,39 +239,6 @@ public class SessionTest {
         rtx.close();
         holder.getSession().close();
 
-    }
-
-    @Test
-    public void testGetStructuralNode() throws AbsTTException {
-
-        final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
-
-        DocumentCreater.create(wtx);
-        wtx.moveToDocumentRoot();
-        assertEquals(DocumentRootNode.class, wtx.getStructuralNode().getClass());
-        wtx.moveToFirstChild();
-        assertEquals(ElementNode.class, wtx.getStructuralNode().getClass());
-        wtx.moveToAttribute(0);
-        assertEquals(DummyNode.class, wtx.getStructuralNode().getClass());
-        assertFalse(wtx.getStructuralNode().hasLeftSibling());
-        assertFalse(wtx.getStructuralNode().hasRightSibling());
-        assertFalse(wtx.getStructuralNode().hasFirstChild());
-        assertEquals(((Long)EFixed.NULL_NODE_KEY.getStandardProperty()).longValue(), wtx.getStructuralNode()
-            .getRightSiblingKey());
-        assertEquals(((Long)EFixed.NULL_NODE_KEY.getStandardProperty()).longValue(), wtx.getStructuralNode()
-            .getRightSiblingKey());
-        wtx.moveToParent();
-        wtx.moveToNamespace(0);
-        assertEquals(DummyNode.class, wtx.getStructuralNode().getClass());
-        assertFalse(wtx.getStructuralNode().hasLeftSibling());
-        assertFalse(wtx.getStructuralNode().hasRightSibling());
-        assertFalse(wtx.getStructuralNode().hasFirstChild());
-        assertEquals(((Long)EFixed.NULL_NODE_KEY.getStandardProperty()).longValue(), wtx.getStructuralNode()
-            .getRightSiblingKey());
-        assertEquals(((Long)EFixed.NULL_NODE_KEY.getStandardProperty()).longValue(), wtx.getStructuralNode()
-            .getRightSiblingKey());
-        wtx.abort();
-        wtx.close();
     }
 
     @Test

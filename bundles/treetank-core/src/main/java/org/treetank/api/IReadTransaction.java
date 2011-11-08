@@ -31,8 +31,6 @@ import javax.xml.namespace.QName;
 
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.AbsNode;
-
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -309,7 +307,7 @@ public interface IReadTransaction {
      * This method returns the current {@link IItem} as a {@link IStructuralItem}.
      * 
      * @return the current node as {@link IStructuralItem} if possible,
-     *         otherwise wrap the {@link AbsNode} in a {@link IStructuralItem}
+     *         otherwise null.
      */
     IStructuralItem getStructuralNode();
 }

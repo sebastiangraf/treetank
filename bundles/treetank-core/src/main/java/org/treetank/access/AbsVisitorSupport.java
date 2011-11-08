@@ -30,7 +30,6 @@ package org.treetank.access;
 import org.treetank.api.IVisitor;
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DocumentRootNode;
-import org.treetank.node.DummyNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
@@ -94,12 +93,6 @@ public abstract class AbsVisitorSupport implements IVisitor {
     /** {@inheritDoc} */
     @Override
     public void visit(final AttributeNode paramNode) {
-
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void visit(final DummyNode paramNode) {
 
     }
 
