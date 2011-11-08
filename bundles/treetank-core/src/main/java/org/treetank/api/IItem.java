@@ -27,6 +27,7 @@
 
 package org.treetank.api;
 
+import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 
 /**
@@ -35,7 +36,7 @@ import org.treetank.node.ENodes;
  * Common interface for all item kinds. An item can be a node or an atomic value.
  * </p>
  */
-public interface IItem {
+public interface IItem extends Cloneable {
 
     /**
      * Setting the actual hash of the structure. The hash of one node should
@@ -128,4 +129,15 @@ public interface IItem {
      *            implementation of the {@link IVisitor} interface
      */
     void acceptVisitor(final IVisitor paramVisitor);
+
+    IItem clone();
+
+    void serialize(ITTSink paramSink);
+
+    void setNameKey(int paramNameKey);
+
+    void setURIKey(int paramUriKey);
+
+    void setValue(int paramUriKey, byte[] paramVal);
+
 }

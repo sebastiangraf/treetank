@@ -121,7 +121,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected AbsNode prepareNodeForModification(final long paramNodeKey) throws TTIOException {
+    protected IItem prepareNodeForModification(final long paramNodeKey) throws TTIOException {
         if (paramNodeKey < 0) {
             throw new IllegalArgumentException("paramNodeKey must be >= 0!");
         }
@@ -134,13 +134,13 @@ public final class WriteTransactionState extends ReadTransactionState {
         final int nodePageOffset = nodePageOffset(paramNodeKey);
         prepareNodePage(nodePageKey);
 
-        AbsNode node = mNodePageCon.getModified().getNode(nodePageOffset);
+        IItem node = mNodePageCon.getModified().getNode(nodePageOffset);
         if (node == null) {
-            final AbsNode oldNode = mNodePageCon.getComplete().getNode(nodePageOffset);
+            final IItem oldNode = mNodePageCon.getComplete().getNode(nodePageOffset);
             if (oldNode == null) {
                 throw new TTIOException("Cannot retrieve node from cache");
             }
-            node = oldNode.clone();
+            node = oldNode;
             mNodePageCon.getModified().setNode(nodePageOffset, node);
         }
         return node;

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.treetank.access.WriteTransactionState;
+import org.treetank.api.IItem;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.NodeEncryption;
@@ -77,15 +78,13 @@ public class NodePage implements IPage {
         mNodePageKey = mIn.readLong();
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
 
-        final EncryptionController enController = EncryptionController
-                .getInstance();
+        final EncryptionController enController = EncryptionController.getInstance();
 
         if (enController.checkEncryption()) {
             for (int i = 0; i < mNodes.length; i++) {
                 final long mRightKey = getRightKey(mIn);
 
-                final List<Long> mUserKeys = enController.getKeyCache().get(
-                        enController.getUser());
+                final List<Long> mUserKeys = enController.getKeyCache().get(enController.getUser());
                 byte[] mSecretKey = null;
 
                 if (mUserKeys.contains(mRightKey) || mRightKey == -1) {
@@ -94,8 +93,7 @@ public class NodePage implements IPage {
                     if (mRightKey != -1) {
 
                         // get secret key
-                        mSecretKey = enController.getSelDb()
-                                .getEntry(mRightKey).getSecretKey();
+                        mSecretKey = enController.getSelDb().getEntry(mRightKey).getSecretKey();
 
                         final int mNodeBytes = mIn.readInt();
                         final int mPointerBytes = mIn.readInt();
@@ -110,8 +108,7 @@ public class NodePage implements IPage {
                                 mEncryptedNode[j] = mIn.readByte();
                             }
 
-                            mDecryptedNode = NodeEncryption.decrypt(
-                                    mEncryptedNode, mSecretKey);
+                            mDecryptedNode = NodeEncryption.decrypt(mEncryptedNode, mSecretKey);
 
                         } else {
 
@@ -126,14 +123,12 @@ public class NodePage implements IPage {
                                 mEncryptedData[j] = mIn.readByte();
                             }
 
-                            final byte[] mDecryptedPointer = NodeEncryption
-                                    .decrypt(mEncryptedPointer, mSecretKey);
+                            final byte[] mDecryptedPointer =
+                                NodeEncryption.decrypt(mEncryptedPointer, mSecretKey);
 
-                            final byte[] mDecryptedData = NodeEncryption
-                                    .decrypt(mEncryptedData, mSecretKey);
+                            final byte[] mDecryptedData = NodeEncryption.decrypt(mEncryptedData, mSecretKey);
 
-                            mDecryptedNode = new byte[mDecryptedPointer.length
-                                    + mDecryptedData.length];
+                            mDecryptedNode = new byte[mDecryptedPointer.length + mDecryptedData.length];
 
                             int mCounter = 0;
                             for (int j = 0; j < mDecryptedPointer.length; j++) {
@@ -147,22 +142,18 @@ public class NodePage implements IPage {
 
                         }
 
-                        final NodeInputSource mNodeInput = new NodeInputSource(
-                                mDecryptedNode);
+                        final NodeInputSource mNodeInput = new NodeInputSource(mDecryptedNode);
 
-                        final ENodes mEnumKind = ENodes
-                                .getEnumKind(mElementKind);
+                        final ENodes mEnumKind = ENodes.getEnumKind(mElementKind);
 
                         if (mEnumKind != ENodes.UNKOWN_KIND) {
-                            getNodes()[i] = mEnumKind
-                                    .createNodeFromPersistence(mNodeInput);
+                            getNodes()[i] = mEnumKind.createNodeFromPersistence(mNodeInput);
                         }
                     }
 
                 } else {
                     try {
-                        throw new TTUsageException(
-                                "User has no permission to access the node");
+                        throw new TTUsageException("User has no permission to access the node");
 
                     } catch (final TTUsageException mExp) {
                         mExp.printStackTrace();
@@ -179,8 +170,7 @@ public class NodePage implements IPage {
                 final int kind = kinds[offset];
                 final ENodes enumKind = ENodes.getEnumKind(kind);
                 if (enumKind != ENodes.UNKOWN_KIND) {
-                    getNodes()[offset] = enumKind
-                            .createNodeFromPersistence(mIn);
+                    getNodes()[offset] = enumKind.createNodeFromPersistence(mIn);
                 }
             }
 
@@ -210,7 +200,7 @@ public class NodePage implements IPage {
      *            Offset of node within local node page.
      * @return Node at given offset.
      */
-    public AbsNode getNode(final int mOffset) {
+    public IItem getNode(final int mOffset) {
         return getNodes()[mOffset];
     }
 
@@ -222,7 +212,7 @@ public class NodePage implements IPage {
      * @param mNode
      *            Node to store at given nodeOffset.
      */
-    public void setNode(final int mOffset, final AbsNode mNode) {
+    public void setNode(final int mOffset, final IItem mNode) {
         getNodes()[mOffset] = mNode;
     }
 
@@ -234,19 +224,17 @@ public class NodePage implements IPage {
         mDelegate.serialize(mOut);
         mOut.writeLong(mNodePageKey);
 
-        final EncryptionController enController = EncryptionController
-                .getInstance();
+        final EncryptionController enController = EncryptionController.getInstance();
 
         if (enController.checkEncryption()) {
             NodeOutputSink mNodeOut = null;
-            for (final AbsNode node : getNodes()) {
+            for (final IItem node : getNodes()) {
                 if (node != null) {
                     mNodeOut = new NodeOutputSink();
 
                     final long mDek = enController.getDataEncryptionKey();
 
-                    final KeySelector mKeySel = enController.getSelDb()
-                            .getEntry(mDek);
+                    final KeySelector mKeySel = enController.getSelDb().getEntry(mDek);
                     final byte[] mSecretKey = mKeySel.getSecretKey();
 
                     mOut.writeLong(mKeySel.getPrimaryKey());
@@ -256,8 +244,7 @@ public class NodePage implements IPage {
                     mOut.writeInt(kind);
                     node.serialize(mNodeOut);
 
-                    final byte[] mStream = mNodeOut.getOutputStream()
-                            .toByteArray();
+                    final byte[] mStream = mNodeOut.getOutputStream().toByteArray();
 
                     byte[] mEncrypted = null;
                     final int pointerEnSize;
@@ -270,20 +257,16 @@ public class NodePage implements IPage {
                             mPointer[i] = mStream[i];
                         }
 
-                        final byte[] mData = new byte[mStream.length
-                                - mPointer.length];
+                        final byte[] mData = new byte[mStream.length - mPointer.length];
                         for (int i = 0; i < mData.length; i++) {
                             mData[i] = mStream[mPointer.length + i];
                         }
 
-                        final byte[] mEnPointer = NodeEncryption.encrypt(
-                                mPointer, mSecretKey);
+                        final byte[] mEnPointer = NodeEncryption.encrypt(mPointer, mSecretKey);
                         pointerEnSize = mEnPointer.length;
-                        final byte[] mEnData = NodeEncryption.encrypt(mData,
-                                mSecretKey);
+                        final byte[] mEnData = NodeEncryption.encrypt(mData, mSecretKey);
 
-                        mEncrypted = new byte[mEnPointer.length
-                                + mEnData.length];
+                        mEncrypted = new byte[mEnPointer.length + mEnData.length];
 
                         int mCounter = 0;
                         for (int i = 0; i < mEnPointer.length; i++) {
@@ -297,8 +280,7 @@ public class NodePage implements IPage {
 
                     } else {
                         pointerEnSize = 0;
-                        mEncrypted = NodeEncryption
-                                .encrypt(mStream, mSecretKey);
+                        mEncrypted = NodeEncryption.encrypt(mStream, mSecretKey);
                     }
 
                     mOut.writeInt(mEncrypted.length);
@@ -318,15 +300,14 @@ public class NodePage implements IPage {
         } else {
             for (int i = 0; i < getNodes().length; i++) {
                 if (getNodes()[i] != null) {
-                    final int kind = getNodes()[i].getKind()
-                            .getNodeIdentifier();
+                    final int kind = getNodes()[i].getKind().getNodeIdentifier();
                     mOut.writeInt(kind);
                 } else {
                     mOut.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
                 }
             }
 
-            for (final AbsNode node : getNodes()) {
+            for (final IItem node : getNodes()) {
                 if (node != null) {
                     node.serialize(mOut);
                 }
@@ -343,7 +324,7 @@ public class NodePage implements IPage {
         returnString.append("pagekey=");
         returnString.append(mNodePageKey);
         returnString.append(", nodes: ");
-        for (final AbsNode node : getNodes()) {
+        for (final IItem node : getNodes()) {
             if (node != null) {
                 returnString.append(node.getNodeKey());
                 returnString.append(",");
@@ -355,7 +336,7 @@ public class NodePage implements IPage {
     /**
      * @return the mNodes
      */
-    public final AbsNode[] getNodes() {
+    public final IItem[] getNodes() {
         return mNodes;
     }
 
@@ -363,7 +344,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -382,7 +363,7 @@ public class NodePage implements IPage {
             return false;
         }
 
-        final NodePage mOther = (NodePage) mObj;
+        final NodePage mOther = (NodePage)mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
             return false;
         }

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.treetank.api.IItem;
 import org.treetank.io.ITTSource;
 
 /**
@@ -32,19 +33,10 @@ import org.treetank.io.ITTSource;
  */
 public enum ENodes {
 
-    /** Dummy kind. */
-    DUMMY_KIND(-1, 7, 0) {
-        @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
-            return null;
-        }
-
-    },
-
     /** Unknown kind. */
     UNKOWN_KIND(0, 0, 0) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -52,7 +44,7 @@ public enum ENodes {
     /** Node kind is element. */
     ELEMENT_KIND(1, 7, 5) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
 
             final byte[] pointerData = readPointerData(paramSource);
 
@@ -95,7 +87,7 @@ public enum ENodes {
     /** Node kind is attribute. */
     ATTRIBUTE_KIND(2, 3, 4) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
 
             final byte[] pointerData = readPointerData(paramSource);
 
@@ -112,7 +104,7 @@ public enum ENodes {
     /** Node kind is text. */
     TEXT_KIND(3, 7, 2) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
 
             final byte[] pointerData = readPointerData(paramSource);
 
@@ -129,7 +121,7 @@ public enum ENodes {
     NAMESPACE_KIND(13, 3, 3) {
 
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
             final byte[] pointerData = readPointerData(paramSource);
             final byte[] byteData = readByteData(paramSource);
             return new NamespaceNode(byteData, pointerData);
@@ -139,7 +131,7 @@ public enum ENodes {
     /** Node kind is processing instruction. */
     PROCESSING_KIND(7, 0, 0) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -147,7 +139,7 @@ public enum ENodes {
     /** Node kind is comment. */
     COMMENT_KIND(8, 0, 0) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -155,7 +147,7 @@ public enum ENodes {
     /** Node kind is document root. */
     ROOT_KIND(9, 7, 1) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
             final byte[] pointerData = readPointerData(paramSource);
             final byte[] byteData = readByteData(paramSource);
             return new DocumentRootNode(byteData, pointerData);
@@ -165,7 +157,7 @@ public enum ENodes {
     /** Whitespace text. */
     WHITESPACE_KIND(4, 0, 0) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -173,7 +165,7 @@ public enum ENodes {
     /** Node kind is deleted node. */
     DELETE_KIND(5, 3, 1) {
         @Override
-        public AbsNode createNodeFromPersistence(final ITTSource paramSource) {
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
             final byte[] pointerData = readPointerData(paramSource);
             final byte[] byteData = readByteData(paramSource);
             return new DeletedNode(byteData, pointerData);
@@ -220,7 +212,7 @@ public enum ENodes {
         return mKind;
     }
 
-    public abstract AbsNode createNodeFromPersistence(final ITTSource paramSource);
+    public abstract IItem createNodeFromPersistence(final ITTSource paramSource);
 
     /**
      * @return the byte size
@@ -261,30 +253,6 @@ public enum ENodes {
      */
     public static ENodes getEnumKind(final int paramKind) {
         return MAPPING.get(paramKind);
-    }
-
-    /**
-     * Cloning long-array
-     * 
-     * @param paramInput
-     * @return the cloned array
-     */
-    public static long[] cloneData(final long[] paramInput) {
-        final long[] data = new long[paramInput.length];
-        System.arraycopy(paramInput, 0, data, 0, data.length);
-        return data;
-    }
-
-    /**
-     * Cloning int-array
-     * 
-     * @param paramInput
-     * @return the cloned array
-     */
-    public static int[] cloneData(final int[] paramInput) {
-        final int[] data = new int[paramInput.length];
-        System.arraycopy(paramInput, 0, data, 0, data.length);
-        return data;
     }
 
     /**
@@ -345,6 +313,30 @@ public enum ENodes {
             mBuffer[i] = mByteData[mOffset + i];
         }
         return byteArrayToInt(mBuffer);
+    }
+
+    /**
+     * Cloning long-array
+     * 
+     * @param paramInput
+     * @return the cloned array
+     */
+    public static long[] cloneData(final long[] paramInput) {
+        final long[] data = new long[paramInput.length];
+        System.arraycopy(paramInput, 0, data, 0, data.length);
+        return data;
+    }
+
+    /**
+     * Cloning int-array
+     * 
+     * @param paramInput
+     * @return the cloned array
+     */
+    public static int[] cloneData(final int[] paramInput) {
+        final int[] data = new int[paramInput.length];
+        System.arraycopy(paramInput, 0, data, 0, data.length);
+        return data;
     }
 
 }
