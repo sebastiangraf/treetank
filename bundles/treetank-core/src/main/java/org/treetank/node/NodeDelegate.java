@@ -2,6 +2,7 @@ package org.treetank.node;
 
 import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
+import org.treetank.io.ITTSink;
 import org.treetank.settings.EFixed;
 
 public class NodeDelegate implements IItem {
@@ -70,14 +71,42 @@ public class NodeDelegate implements IItem {
 
     @Override
     public void acceptVisitor(IVisitor paramVisitor) {
+        // TODO Do nothing, only stub
+    }
+
+    @Override
+    public byte[] getRawValue() {
+        return null;
+    }
+
+    @Override
+    public void serialize(ITTSink paramSink) {
+        paramSink.writeLong(mNodeKey);
+        paramSink.writeLong(mParentKey);
+        paramSink.writeLong(mHash);
+        paramSink.writeInt(mType);
+    }
+
+    @Override
+    public void setNameKey(int paramNameKey) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public byte[] getRawValue() {
+    public void setURIKey(int paramUriKey) {
         // TODO Auto-generated method stub
-        return null;
+
+    }
+
+    @Override
+    public void setValue(int paramUriKey, byte[] paramVal) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public NodeDelegate clone() {
+        return this;
     }
 
 }

@@ -29,6 +29,7 @@ package org.treetank.service.xml.xpath;
 
 import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
+import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.settings.EFixed;
@@ -297,5 +298,32 @@ public class AtomicValue implements IItem {
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
         // Do nothing.
+    }
+
+    @Override
+    public void serialize(ITTSink paramSink) {
+        // TODO Auto-generated method stub
+    }
+
+    public AtomicValue clone() {
+        return this;
+    }
+
+    @Override
+    public void setNameKey(int paramNameKey) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setURIKey(int paramUriKey) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setValue(int paramUriKey, byte[] paramVal) {
+        // TODO Auto-generated method stub
+
     }
 }

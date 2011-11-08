@@ -422,7 +422,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             final AttributeNode node =
                 getTransactionState().createAttributeNode(elementKey, paramQName, value);
 
-            final AbsNode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
+            final IItem parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
             ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
@@ -459,7 +459,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             final NamespaceNode node =
                 getTransactionState().createNamespaceNode(elementKey, uriKey, prefixKey);
 
-            final AbsNode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
+            final IItem parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
             ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
@@ -531,7 +531,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         mModificationCount++;
         final long oldHash = getCurrentNode().hashCode();
 
-        final AbsNode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        final IItem node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
         node.setNameKey(getTransactionState().createNameKey(WriteTransactionState.buildName(paramName)));
         getTransactionState().finishNodeModification(node);
 
@@ -560,7 +560,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         mModificationCount++;
         final long oldHash = getCurrentNode().hashCode();
 
-        final AbsNode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        final IItem node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
         node.setURIKey(getTransactionState().createNameKey(paramUri));
         getTransactionState().finishNodeModification(node);
 
@@ -589,7 +589,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         mModificationCount++;
         final long oldHash = getCurrentNode().hashCode();
 
-        final AbsNode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        final IItem node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
         node.setValue(paramValueType, paramValue);
         getTransactionState().finishNodeModification(node);
 

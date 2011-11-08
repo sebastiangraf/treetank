@@ -2,6 +2,7 @@ package org.treetank.node;
 
 import org.treetank.api.IStructuralItem;
 import org.treetank.api.IVisitor;
+import org.treetank.io.ITTSink;
 import org.treetank.settings.EFixed;
 
 public class StructNodeDelegate implements IStructuralItem {
@@ -110,6 +111,35 @@ public class StructNodeDelegate implements IStructuralItem {
     @Override
     public long getRightSiblingKey() {
         return mRightSibling;
+    }
+
+    @Override
+    public void serialize(ITTSink paramSink) {
+        mNodeDelegate.serialize(paramSink);
+        paramSink.writeLong(mFirstChild);
+        paramSink.writeLong(mRightSibling);
+        paramSink.writeLong(mLeftSibling);
+        paramSink.writeLong(mChildCount);
+    }
+
+    public StructNodeDelegate clone() {
+        return this;
+    }
+
+    @Override
+    public void setNameKey(int paramNameKey) {
+        mNodeDelegate.setNameKey(paramNameKey);
+    }
+
+    @Override
+    public void setURIKey(int paramUriKey) {
+        mNodeDelegate.setURIKey(paramUriKey);
+
+    }
+
+    @Override
+    public void setValue(int paramUriKey, byte[] paramVal) {
+        mNodeDelegate.setValue(paramUriKey, paramVal);
     }
 
 }
