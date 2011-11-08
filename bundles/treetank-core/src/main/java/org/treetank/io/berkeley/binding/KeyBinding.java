@@ -27,8 +27,8 @@
 
 package org.treetank.io.berkeley.binding;
 
-import org.treetank.io.KeyDelegate;
 import org.treetank.io.IKey;
+import org.treetank.io.KeyDelegate;
 import org.treetank.io.KeyPersistenter;
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;

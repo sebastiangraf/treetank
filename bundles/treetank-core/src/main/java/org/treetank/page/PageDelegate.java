@@ -31,6 +31,7 @@ import org.treetank.access.WriteTransactionState;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
+import org.treetank.io.KeyPersistenter;
 
 /**
  * <h1>Page</h1>
@@ -65,7 +66,8 @@ class PageDelegate implements IPage {
 
     protected void initialize(final ITTSource paramIn) {
         for (int offset = 0; offset < mReferences.length; offset++) {
-            getReferences()[offset] = new PageReference(paramIn);
+            getReferences()[offset] = new PageReference();
+            getReferences()[offset].setKey(KeyPersistenter.createKey(paramIn));
         }
     }
 
@@ -112,7 +114,7 @@ class PageDelegate implements IPage {
         paramOut.writeLong(mRevision);
 
         for (final PageReference reference : getReferences()) {
-            reference.serialize(paramOut);
+            KeyPersistenter.serializeKey(paramOut, reference.getKey());
         }
     }
 

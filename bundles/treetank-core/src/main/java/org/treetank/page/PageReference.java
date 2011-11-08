@@ -28,10 +28,6 @@
 package org.treetank.page;
 
 import org.treetank.io.IKey;
-import org.treetank.io.ITTSink;
-import org.treetank.io.ITTSource;
-import org.treetank.io.KeyDelegate;
-import org.treetank.io.KeyPersistenter;
 
 /**
  * <h1>PageReference</h1>
@@ -60,32 +56,6 @@ public final class PageReference {
      * Default constructor setting up an uninitialized page reference.
      */
     public PageReference() {
-        this(null, null);
-    }
-
-    /**
-     * Constructor to properly set up a page reference.
-     * 
-     * @param paramPage
-     *            In-memory deserialized page instance.
-     * @param paramKey
-     *            {@link KeyDelegate} of the page to be referenced in the
-     *            persistent storage
-     */
-    public PageReference(final IPage paramPage, final IKey paramKey) {
-        mPage = paramPage;
-        mKey = paramKey;
-    }
-
-    /**
-     * Read page reference from storage.
-     * 
-     * @param paramIn
-     *            Input bytes.
-     */
-    public PageReference(final ITTSource paramIn) {
-        mPage = null;
-        mKey = KeyPersistenter.createKey(paramIn);
     }
 
     /**
@@ -142,16 +112,6 @@ public final class PageReference {
      */
     public void setKey(final IKey paramKey) {
         mKey = paramKey;
-    }
-
-    /**
-     * Serialize page reference to output.
-     * 
-     * @param mOut
-     *            Output bytes that get written to a file.
-     */
-    public void serialize(final ITTSink mOut) {
-        KeyPersistenter.serializeKey(mOut, mKey);
     }
 
     /**
