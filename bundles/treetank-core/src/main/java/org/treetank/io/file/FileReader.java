@@ -93,7 +93,7 @@ public final class FileReader implements IReader {
      */
     public IPage read(final PageReference pageReference) throws TTIOException {
 
-        if (!pageReference.isCommitted()) {
+        if (pageReference.getKey() == null) {
             return null;
         }
 

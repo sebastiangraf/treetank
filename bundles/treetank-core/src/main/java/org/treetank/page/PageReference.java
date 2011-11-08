@@ -59,24 +59,6 @@ public final class PageReference {
     }
 
     /**
-     * Is there an instantiated page?
-     * 
-     * @return True if the reference points to an in-memory instance.
-     */
-    public boolean isInstantiated() {
-        return mPage != null;
-    }
-
-    /**
-     * Was the referenced page ever committed?
-     * 
-     * @return True if the page was committed.
-     */
-    public boolean isCommitted() {
-        return mKey != null;
-    }
-
-    /**
      * Get in-memory instance of deserialized page.
      * 
      * @return In-memory instance of deserialized page.
