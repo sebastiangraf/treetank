@@ -63,7 +63,6 @@ import org.treetank.utils.NamePageHash;
  * See {@link ReadTransactionState}.
  * </p>
  */
-@Deprecated
 public final class WriteTransactionState extends ReadTransactionState {
 
     /** Page writer to serialize. */
@@ -179,7 +178,6 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected AbsNode createNode(final AbsNode paramNode) throws TTIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
-        // Prepare node nodePageReference (COW).
         final long nodeKey = mNewRoot.getMaxNodeKey();
         final long nodePageKey = nodePageKey(nodeKey);
         final int nodePageOffset = nodePageOffset(nodeKey);

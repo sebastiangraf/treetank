@@ -63,7 +63,6 @@ import org.treetank.utils.IConstants;
  * A path-like cache boosts sequential operations.
  * </p>
  */
-@Deprecated
 public class ReadTransactionState {
 
     /** Page reader exclusively assigned to this transaction. */
