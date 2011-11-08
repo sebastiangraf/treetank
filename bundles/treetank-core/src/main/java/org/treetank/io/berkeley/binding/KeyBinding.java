@@ -27,9 +27,9 @@
 
 package org.treetank.io.berkeley.binding;
 
+import org.treetank.io.EStorage;
 import org.treetank.io.IKey;
 import org.treetank.io.KeyDelegate;
-import org.treetank.io.KeyPersistenter;
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;
 
@@ -50,7 +50,8 @@ public final class KeyBinding extends TupleBinding<IKey> {
      */
     @Override
     public IKey entryToObject(final TupleInput arg0) {
-        return KeyPersistenter.createKey(new TupleInputSource(arg0));
+        final int kind = arg0.readInt();
+        return EStorage.getInstance(kind).deserializeKey(new TupleInputSource(arg0));
     }
 
     /**
@@ -58,6 +59,6 @@ public final class KeyBinding extends TupleBinding<IKey> {
      */
     @Override
     public void objectToEntry(final IKey arg0, final TupleOutput arg1) {
-        KeyPersistenter.serializeKey(new TupleOutputSink(arg1), arg0);
+        EStorage.getInstance(arg0.getClass()).serializeKey(new TupleOutputSink(arg1), arg0);
     }
 }
