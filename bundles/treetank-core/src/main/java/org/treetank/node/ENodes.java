@@ -33,15 +33,6 @@ import org.treetank.io.ITTSource;
  */
 public enum ENodes {
 
-    /** Dummy kind. */
-    DUMMY_KIND(-1, 7, 0) {
-        @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
-            return null;
-        }
-
-    },
-
     /** Unknown kind. */
     UNKOWN_KIND(0, 0, 0) {
         @Override
