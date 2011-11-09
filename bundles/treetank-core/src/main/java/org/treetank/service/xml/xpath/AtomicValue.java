@@ -326,4 +326,10 @@ public class AtomicValue implements IItem {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void setParentKey(long paramKey) {
+        // TODO Auto-generated method stub
+
+    }
 }

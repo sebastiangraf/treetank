@@ -36,7 +36,6 @@ import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 
 /**
@@ -396,7 +395,7 @@ abstract class AbsDiff extends AbsDiffObservable {
             EFoundEqualNode found = EFoundEqualNode.FALSE;
             final long key = paramOldRtx.getNode().getNodeKey();
 
-            while (((AbsStructNode)paramOldRtx.getNode()).hasRightSibling()
+            while (((IStructuralItem)paramOldRtx.getNode()).hasRightSibling()
                 && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE) {
                 if (checkNodes(paramNewRtx, paramOldRtx)) {
                     found = EFoundEqualNode.TRUE;

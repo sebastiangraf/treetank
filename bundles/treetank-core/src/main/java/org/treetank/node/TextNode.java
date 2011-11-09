@@ -29,6 +29,7 @@ package org.treetank.node;
 
 import java.util.Arrays;
 
+import org.treetank.api.IStructuralItem;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 import org.treetank.settings.EFixed;
@@ -40,7 +41,7 @@ import org.treetank.settings.EFixed;
  * Node representing a text node.
  * </p>
  */
-public final class TextNode extends AbsStructNode {
+public final class TextNode extends AbsStructNode implements IStructuralItem {
 
     protected static final int VALUE_LENGTH = 20;
 

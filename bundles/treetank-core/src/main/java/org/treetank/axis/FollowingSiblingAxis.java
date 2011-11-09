@@ -28,7 +28,7 @@
 package org.treetank.axis;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.AbsStructNode;
+import org.treetank.api.IStructuralItem;
 import org.treetank.node.ENodes;
 
 /**
@@ -85,7 +85,7 @@ public class FollowingSiblingAxis extends AbsAxis {
 
         resetToLastKey();
 
-        if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+        if (((IStructuralItem)getTransaction().getNode()).hasRightSibling()) {
             getTransaction().moveToRightSibling();
             return true;
         }
