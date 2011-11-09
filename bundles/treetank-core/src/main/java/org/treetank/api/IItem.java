@@ -142,4 +142,6 @@ public interface IItem extends Cloneable {
 
     void setParentKey(long paramKey);
 
+    void setType(int paramType);
+
 }

@@ -117,4 +117,10 @@ public class NodeDelegate implements IItem {
         mParentKey = paramKey;
     }
 
+    @Override
+    public void setType(int paramType) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

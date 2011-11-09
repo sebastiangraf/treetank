@@ -332,4 +332,10 @@ public class AtomicValue implements IItem {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void setType(int paramType) {
+        // TODO Auto-generated method stub
+
+    }
 }

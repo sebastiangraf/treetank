@@ -391,4 +391,8 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
         }
     }
 
+    @Override
+    public void setType(int paramType) {
+        writeIntPointer(TYPE_KEY, paramType);
+    }
 }
