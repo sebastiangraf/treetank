@@ -262,7 +262,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      *            Integer value to convert.
      * @return Byte array of integer value.
      */
-    protected static byte[] intToByteArray(final int mIntVal) {
+    public static byte[] intToByteArray(final int mIntVal) {
         final byte[] mBuffer = new byte[4];
 
         mBuffer[0] = (byte)(0xff & (mIntVal >>> 24));
@@ -280,7 +280,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      *            Long value to convert.
      * @return Byte array of long value.
      */
-    protected static byte[] longToByteArray(final long mLongVal) {
+    public static byte[] longToByteArray(final long mLongVal) {
         final byte[] mBuffer = new byte[8];
 
         mBuffer[0] = (byte)(0xff & (mLongVal >> 56));
@@ -302,7 +302,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      *            Byte array to convert.
      * @return converted integer value.
      */
-    protected static int byteArrayToInt(final byte[] mByteArray) {
+    public static int byteArrayToInt(final byte[] mByteArray) {
         final int mConvInt =
             ((mByteArray[0] & 0xff) << 24) | ((mByteArray[1] & 0xff) << 16) | ((mByteArray[2] & 0xff) << 8)
                 | (mByteArray[3] & 0xff);
@@ -317,7 +317,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      *            Byte array to convert.
      * @return converted long value.
      */
-    protected static long byteArrayToLong(final byte[] mByteArray) {
+    public static long byteArrayToLong(final byte[] mByteArray) {
         final long mConvLong =
             ((long)(mByteArray[0] & 0xff) << 56) | ((long)(mByteArray[1] & 0xff) << 48)
                 | ((long)(mByteArray[2] & 0xff) << 40) | ((long)(mByteArray[3] & 0xff) << 32)
