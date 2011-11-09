@@ -251,7 +251,7 @@ public class NodePage implements IPage {
 
                     if (mStream.length > 0) {
 
-                        final byte[] mPointer = new byte[ENodes.MPOINTERSIZE];
+                        final byte[] mPointer = new byte[60];
 
                         for (int i = 0; i < mPointer.length; i++) {
                             mPointer[i] = mStream[i];

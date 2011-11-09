@@ -33,6 +33,15 @@ import org.treetank.io.ITTSource;
  */
 public enum ENodes {
 
+    /** Dummy kind. */
+    DUMMY_KIND(-1, 7, 0) {
+        @Override
+        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+            return null;
+        }
+
+    },
+
     /** Unknown kind. */
     UNKOWN_KIND(0, 0, 0) {
         @Override
@@ -177,9 +186,9 @@ public enum ENodes {
     private final int mKind;
 
     /** Size in the long data array. */
-    public static final int MDATASIZE = 24;
+    private final int mByteSize;
 
-    public static final int MPOINTERSIZE = 60;
+    private final int mPointerSize;
 
     /** Mapping of keys -> Nodes */
     private final static Map<Integer, ENodes> MAPPING = new HashMap<Integer, ENodes>();
@@ -201,6 +210,8 @@ public enum ENodes {
      */
     private ENodes(final int paramKind, final int paramLongSize, final int paramIntSize) {
         mKind = paramKind;
+        mByteSize = 24;
+        mPointerSize = 60;
     }
 
     /**
@@ -218,14 +229,14 @@ public enum ENodes {
      * @return the byte size
      */
     int getByteSize() {
-        return MDATASIZE;
+        return mByteSize;
     }
 
     /**
      * @return the pointer size
      */
     int getPointerSize() {
-        return MPOINTERSIZE;
+        return mPointerSize;
     }
 
     byte[] readByteData(final ITTSource mSource) {
@@ -253,6 +264,30 @@ public enum ENodes {
      */
     public static ENodes getEnumKind(final int paramKind) {
         return MAPPING.get(paramKind);
+    }
+
+    /**
+     * Cloning long-array
+     * 
+     * @param paramInput
+     * @return the cloned array
+     */
+    public static long[] cloneData(final long[] paramInput) {
+        final long[] data = new long[paramInput.length];
+        System.arraycopy(paramInput, 0, data, 0, data.length);
+        return data;
+    }
+
+    /**
+     * Cloning int-array
+     * 
+     * @param paramInput
+     * @return the cloned array
+     */
+    public static int[] cloneData(final int[] paramInput) {
+        final int[] data = new int[paramInput.length];
+        System.arraycopy(paramInput, 0, data, 0, data.length);
+        return data;
     }
 
     /**
@@ -313,30 +348,6 @@ public enum ENodes {
             mBuffer[i] = mByteData[mOffset + i];
         }
         return byteArrayToInt(mBuffer);
-    }
-
-    /**
-     * Cloning long-array
-     * 
-     * @param paramInput
-     * @return the cloned array
-     */
-    public static long[] cloneData(final long[] paramInput) {
-        final long[] data = new long[paramInput.length];
-        System.arraycopy(paramInput, 0, data, 0, data.length);
-        return data;
-    }
-
-    /**
-     * Cloning int-array
-     * 
-     * @param paramInput
-     * @return the cloned array
-     */
-    public static int[] cloneData(final int[] paramInput) {
-        final int[] data = new int[paramInput.length];
-        System.arraycopy(paramInput, 0, data, 0, data.length);
-        return data;
     }
 
 }
