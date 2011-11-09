@@ -12,11 +12,11 @@ public class StructNodeDelegate implements IStructuralItem {
     private long mLeftSibling;
     private long mChildCount;
 
-    private final NodeDelegate mNodeDelegate;
+    private final NodeDelegate mDelegate;
 
     public StructNodeDelegate(final long paramNodeKey, final long paramParentKey, final long paramFirstChild,
         final long paramRightSibling, final long paramLeftSibling, final long paramChildCount) {
-        mNodeDelegate = new NodeDelegate(paramNodeKey, paramParentKey, 0, 0);
+        mDelegate = new NodeDelegate(paramNodeKey, paramParentKey, 0, 0);
         mFirstChild = paramFirstChild;
         mRightSibling = paramRightSibling;
         mLeftSibling = paramLeftSibling;
@@ -25,62 +25,62 @@ public class StructNodeDelegate implements IStructuralItem {
 
     @Override
     public void setHash(long paramHash) {
-        mNodeDelegate.setHash(paramHash);
+        mDelegate.setHash(paramHash);
     }
 
     @Override
     public long getHash() {
-        return mNodeDelegate.getHash();
+        return mDelegate.getHash();
     }
 
     @Override
     public void setNodeKey(long paramKey) {
-        mNodeDelegate.setNodeKey(paramKey);
+        mDelegate.setNodeKey(paramKey);
     }
 
     @Override
     public long getNodeKey() {
-        return mNodeDelegate.getNodeKey();
+        return mDelegate.getNodeKey();
     }
 
     @Override
     public long getParentKey() {
-        return mNodeDelegate.getParentKey();
+        return mDelegate.getParentKey();
     }
 
     @Override
     public boolean hasParent() {
-        return mNodeDelegate.hasParent();
+        return mDelegate.hasParent();
     }
 
     @Override
     public byte[] getRawValue() {
-        return mNodeDelegate.getRawValue();
+        return mDelegate.getRawValue();
     }
 
     @Override
     public ENodes getKind() {
-        return mNodeDelegate.getKind();
+        return mDelegate.getKind();
     }
 
     @Override
     public int getNameKey() {
-        return mNodeDelegate.getNameKey();
+        return mDelegate.getNameKey();
     }
 
     @Override
     public int getURIKey() {
-        return mNodeDelegate.getURIKey();
+        return mDelegate.getURIKey();
     }
 
     @Override
     public int getTypeKey() {
-        return mNodeDelegate.getTypeKey();
+        return mDelegate.getTypeKey();
     }
 
     @Override
     public void acceptVisitor(IVisitor paramVisitor) {
-        mNodeDelegate.acceptVisitor(paramVisitor);
+        mDelegate.acceptVisitor(paramVisitor);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class StructNodeDelegate implements IStructuralItem {
 
     @Override
     public void serialize(ITTSink paramSink) {
-        mNodeDelegate.serialize(paramSink);
+        mDelegate.serialize(paramSink);
         paramSink.writeLong(mFirstChild);
         paramSink.writeLong(mRightSibling);
         paramSink.writeLong(mLeftSibling);
@@ -133,18 +133,18 @@ public class StructNodeDelegate implements IStructuralItem {
 
     @Override
     public void setNameKey(int paramNameKey) {
-        mNodeDelegate.setNameKey(paramNameKey);
+        mDelegate.setNameKey(paramNameKey);
     }
 
     @Override
     public void setURIKey(int paramUriKey) {
-        mNodeDelegate.setURIKey(paramUriKey);
+        mDelegate.setURIKey(paramUriKey);
 
     }
 
     @Override
     public void setValue(int paramUriKey, byte[] paramVal) {
-        mNodeDelegate.setValue(paramUriKey, paramVal);
+        mDelegate.setValue(paramUriKey, paramVal);
     }
 
     @Override
@@ -174,7 +174,11 @@ public class StructNodeDelegate implements IStructuralItem {
 
     @Override
     public void setParentKey(long paramKey) {
-        mNodeDelegate.setParentKey(paramKey);
+        mDelegate.setParentKey(paramKey);
     }
 
+    @Override
+    public void setType(int paramType) {
+        mDelegate.setType(paramType);
+    }
 }
