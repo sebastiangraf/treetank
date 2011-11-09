@@ -67,9 +67,9 @@ public final class DeletedNode extends AbsNode implements IItem {
 
     public static AbsNode createData(final long mNodeKey, final long mParentKey) {
 
-        final byte[] byteData = new byte[ENodes.DELETE_KIND.getByteSize()];
+        final byte[] byteData = new byte[ENodes.DELETE_KIND.getIntSize()];
 
-        final byte[] pointerData = new byte[ENodes.DELETE_KIND.getPointerSize()];
+        final byte[] pointerData = new byte[ENodes.DELETE_KIND.getLongSize()];
 
         int mCount = AbsNode.NODE_KEY;
         for (byte aByte : longToByteArray(mNodeKey)) {

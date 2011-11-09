@@ -43,7 +43,7 @@ import org.treetank.settings.EFixed;
  */
 public final class TextNode extends AbsStructNode implements IStructuralItem {
 
-    protected static final int VALUE_LENGTH = 20;
+    protected static final int VALUE_LENGTH = 4;
 
     /** Typed value of node. */
     private byte[] mValue;
@@ -152,9 +152,9 @@ public final class TextNode extends AbsStructNode implements IStructuralItem {
     public static AbsNode createData(final long mNodeKey, final long mParentKey, final long mLeftSibKey,
         final long mRightSibKey, final int mType, final byte[] mValue) {
 
-        final byte[] byteData = new byte[ENodes.TEXT_KIND.getByteSize()];
+        final byte[] byteData = new byte[ENodes.TEXT_KIND.getIntSize()];
 
-        final byte[] pointerData = new byte[ENodes.TEXT_KIND.getPointerSize()];
+        final byte[] pointerData = new byte[ENodes.TEXT_KIND.getLongSize()];
 
         int mCount = AbsNode.NODE_KEY;
         for (byte aByte : longToByteArray(mNodeKey)) {

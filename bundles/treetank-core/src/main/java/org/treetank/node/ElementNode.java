@@ -262,9 +262,9 @@ public final class ElementNode extends AbsStructNode implements IStructuralItem{
         final long mRightSibKey, final long mFirstChild, final long mChildCount, final int mNameKey,
         final int mUriKey, final int mType, final long oldHash) {
 
-        final byte[] byteData = new byte[ENodes.ELEMENT_KIND.getByteSize()];
+        final byte[] byteData = new byte[ENodes.ELEMENT_KIND.getIntSize()];
 
-        final byte[] pointerData = new byte[ENodes.ELEMENT_KIND.getPointerSize()];
+        final byte[] pointerData = new byte[ENodes.ELEMENT_KIND.getLongSize()];
 
         int mCount = AbsNode.NODE_KEY;
         for (byte aByte : longToByteArray(mNodeKey)) {
