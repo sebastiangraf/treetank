@@ -82,4 +82,13 @@ public interface IStructuralItem extends IItem {
      */
     long getRightSiblingKey();
 
+    void setRightSiblingKey(long paramKey);
+
+    void setLeftSiblingKey(long paramKey);
+
+    void setFirstChildKey(long paramKey);
+
+    void decrementChildCount();
+
+    void incrementChildCount();
 }

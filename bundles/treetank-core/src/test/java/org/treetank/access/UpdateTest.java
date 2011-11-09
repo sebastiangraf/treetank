@@ -32,6 +32,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.imageio.stream.ImageInputStream;
 import javax.xml.namespace.QName;
 
 import org.junit.After;
@@ -40,6 +41,7 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.IStructuralItem;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
@@ -177,7 +179,7 @@ public class UpdateTest {
         assertEquals(0, rtx.getNode().getNodeKey());
         assertTrue(rtx.moveToFirstChild());
         assertEquals(1, rtx.getNode().getNodeKey());
-        assertEquals(4, ((AbsStructNode)rtx.getNode()).getChildCount());
+        assertEquals(4, ((IStructuralItem)rtx.getNode()).getChildCount());
         assertTrue(rtx.moveToFirstChild());
         assertEquals(4, rtx.getNode().getNodeKey());
         assertTrue(rtx.moveToRightSibling());

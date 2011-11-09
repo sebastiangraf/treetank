@@ -14,8 +14,13 @@ public class StructNodeDelegate implements IStructuralItem {
 
     private final NodeDelegate mNodeDelegate;
 
-    public StructNodeDelegate(final NodeDelegate paramNodeDelegate) {
-        mNodeDelegate = paramNodeDelegate;
+    public StructNodeDelegate(final long paramNodeKey, final long paramParentKey, final long paramFirstChild,
+        final long paramRightSibling, final long paramLeftSibling, final long paramChildCount) {
+        mNodeDelegate = new NodeDelegate(paramNodeKey, paramParentKey, 0, 0);
+        mFirstChild = paramFirstChild;
+        mRightSibling = paramRightSibling;
+        mLeftSibling = paramLeftSibling;
+        mChildCount = paramChildCount;
     }
 
     @Override
@@ -140,6 +145,31 @@ public class StructNodeDelegate implements IStructuralItem {
     @Override
     public void setValue(int paramUriKey, byte[] paramVal) {
         mNodeDelegate.setValue(paramUriKey, paramVal);
+    }
+
+    @Override
+    public void setRightSiblingKey(long paramKey) {
+        mRightSibling = paramKey;
+    }
+
+    @Override
+    public void setLeftSiblingKey(long paramKey) {
+        mLeftSibling = paramKey;
+    }
+
+    @Override
+    public void setFirstChildKey(long paramKey) {
+        mFirstChild = paramKey;
+    }
+
+    @Override
+    public void decrementChildCount() {
+        mChildCount--;
+    }
+
+    @Override
+    public void incrementChildCount() {
+        mChildCount++;
     }
 
 }

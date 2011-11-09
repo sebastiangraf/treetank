@@ -389,7 +389,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             final byte[] value = TypedValue.getBytes(paramValueAsString);
             final long parentKey = getCurrentNode().getParentKey();
             final long leftSibKey = getCurrentNode().getNodeKey();
-            final long rightSibKey = ((AbsStructNode)getCurrentNode()).getRightSiblingKey();
+            final long rightSibKey = ((IStructuralItem)getCurrentNode()).getRightSiblingKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
@@ -480,11 +480,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         checkAccessAndCommit();
         if (getCurrentNode().getKind() == ENodes.ROOT_KIND) {
             throw new TTUsageException("Document root can not be removed.");
-        } else if (getCurrentNode() instanceof AbsStructNode) {
-            final AbsStructNode node = (AbsStructNode)getCurrentNode();
+        } else if (getCurrentNode() instanceof IStructuralItem) {
+            final IStructuralItem node = (IStructuralItem)getCurrentNode();
             // Remove subtree.
             for (final AbsAxis desc = new DescendantAxis(this, false); desc.hasNext(); desc.next()) {
-                getTransactionState().removeNode((AbsNode)getCurrentNode());
+                getTransactionState().removeNode(getCurrentNode());
             }
             moveTo(node.getNodeKey());
             adaptForRemove(node);
@@ -499,7 +499,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                 moveTo(node.getParentKey());
             }
         } else if (getCurrentNode().getKind() == ENodes.ATTRIBUTE_KIND) {
-            final AbsNode node = (AbsNode)getCurrentNode();
+            final IItem node = getCurrentNode();
 
             final ElementNode parent =
                 (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
@@ -508,7 +508,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             adaptHashesWithRemove();
             moveToParent();
         } else if (getCurrentNode().getKind() == ENodes.NAMESPACE_KIND) {
-            final AbsNode node = (AbsNode)getCurrentNode();
+            final IItem node = getCurrentNode();
 
             final ElementNode parent =
                 (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
@@ -535,15 +535,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         node.setNameKey(getTransactionState().createNameKey(WriteTransactionState.buildName(paramName)));
         getTransactionState().finishNodeModification(node);
 
-        // final AbsNode oldNode = (AbsNode)getCurrentNode();
-        // final AbsNode newNode = createNodeToModify(oldNode);
-        //
-        // if (oldNode instanceof AbsStructNode) {
-        // adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
-        // }
-        // newNode.setNameKey(getTransactionState().createNameKey(mName));
-        // getTransactionState().removeNode(oldNode);
-
         setCurrentNode(node);
         adaptHashedWithUpdate(oldHash);
     }
@@ -563,15 +554,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         final IItem node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
         node.setURIKey(getTransactionState().createNameKey(paramUri));
         getTransactionState().finishNodeModification(node);
-
-        // final AbsNode oldNode = (AbsNode)getCurrentNode();
-        // final AbsNode newNode = createNodeToModify(oldNode);
-        //
-        // if (oldNode instanceof AbsStructNode) {
-        // adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
-        // }
-        // newNode.setURIKey(getTransactionState().createNameKey(mUri));
-        // getTransactionState().removeNode(oldNode);
 
         setCurrentNode(node);
         adaptHashedWithUpdate(oldHash);
@@ -736,14 +718,15 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForInsert(final AbsNode paramNewNode, final EInsert paramInsert) throws TTIOException {
+    private void adaptForInsert(final IItem paramNewNode, final EInsert paramInsert) throws TTIOException {
         assert paramNewNode != null;
         assert paramInsert != null;
 
-        if (paramNewNode instanceof AbsStructNode) {
-            final AbsStructNode strucNode = (AbsStructNode)paramNewNode;
-            final AbsStructNode parent =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(paramNewNode.getParentKey());
+        if (paramNewNode instanceof IStructuralItem) {
+            final IStructuralItem strucNode = (IStructuralItem)paramNewNode;
+            final IStructuralItem parent =
+                (IStructuralItem)getTransactionState()
+                    .prepareNodeForModification(paramNewNode.getParentKey());
             parent.incrementChildCount();
             if (paramInsert == EInsert.ASFIRSTCHILD) {
                 parent.setFirstChildKey(paramNewNode.getNodeKey());
@@ -751,15 +734,15 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             getTransactionState().finishNodeModification(parent);
 
             if (strucNode.hasRightSibling()) {
-                final AbsStructNode rightSiblingNode =
-                    (AbsStructNode)getTransactionState().prepareNodeForModification(
+                final IStructuralItem rightSiblingNode =
+                    (IStructuralItem)getTransactionState().prepareNodeForModification(
                         strucNode.getRightSiblingKey());
                 rightSiblingNode.setLeftSiblingKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(rightSiblingNode);
             }
             if (strucNode.hasLeftSibling()) {
-                final AbsStructNode leftSiblingNode =
-                    (AbsStructNode)getTransactionState().prepareNodeForModification(
+                final IStructuralItem leftSiblingNode =
+                    (IStructuralItem)getTransactionState().prepareNodeForModification(
                         strucNode.getLeftSiblingKey());
                 leftSiblingNode.setRightSiblingKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(leftSiblingNode);
@@ -784,13 +767,13 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForRemove(final AbsStructNode paramOldNode) throws TTIOException {
+    private void adaptForRemove(final IStructuralItem paramOldNode) throws TTIOException {
         assert paramOldNode != null;
 
         // Adapt left sibling node if there is one.
         if (paramOldNode.hasLeftSibling()) {
-            final AbsStructNode leftSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(
+            final IStructuralItem leftSibling =
+                (IStructuralItem)getTransactionState().prepareNodeForModification(
                     paramOldNode.getLeftSiblingKey());
             leftSibling.setRightSiblingKey(paramOldNode.getRightSiblingKey());
             getTransactionState().finishNodeModification(leftSibling);
@@ -798,16 +781,16 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         // Adapt right sibling node if there is one.
         if (paramOldNode.hasRightSibling()) {
-            final AbsStructNode rightSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(
+            final IStructuralItem rightSibling =
+                (IStructuralItem)getTransactionState().prepareNodeForModification(
                     paramOldNode.getRightSiblingKey());
             rightSibling.setLeftSiblingKey(paramOldNode.getLeftSiblingKey());
             getTransactionState().finishNodeModification(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
-        final AbsStructNode parent =
-            (AbsStructNode)getTransactionState().prepareNodeForModification(paramOldNode.getParentKey());
+        final IStructuralItem parent =
+            (IStructuralItem)getTransactionState().prepareNodeForModification(paramOldNode.getParentKey());
         if (!paramOldNode.hasLeftSibling()) {
             parent.setFirstChildKey(paramOldNode.getRightSiblingKey());
         }
@@ -818,18 +801,18 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             // removing attributes
             for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
                 moveTo(((ElementNode)paramOldNode).getAttributeKey(i));
-                getTransactionState().removeNode((AbsNode)this.getCurrentNode());
+                getTransactionState().removeNode(this.getCurrentNode());
             }
             // removing namespaces
             moveTo(paramOldNode.getNodeKey());
             for (int i = 0; i < ((ElementNode)paramOldNode).getNamespaceCount(); i++) {
                 moveTo(((ElementNode)paramOldNode).getNamespaceKey(i));
-                getTransactionState().removeNode((AbsNode)this.getCurrentNode());
+                getTransactionState().removeNode(this.getCurrentNode());
             }
         }
 
         // Remove old node.
-        getTransactionState().removeNode((AbsNode)paramOldNode);
+        getTransactionState().removeNode(paramOldNode);
     }
 
     // ////////////////////////////////////////////////////////////

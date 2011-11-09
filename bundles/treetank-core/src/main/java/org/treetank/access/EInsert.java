@@ -78,30 +78,30 @@ public enum EInsert {
                     // Adapt left sibling key of former right sibling of first
                     // child.
                     paramWtx.moveTo(moved.getRightSiblingKey());
-                    final AbsStructNode rightSibling =
-                        (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
+                    final IStructuralItem rightSibling =
+                        (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
                             paramWtx.getCurrentNode().getNodeKey());
                     rightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
                     paramWtx.getTransactionState().finishNodeModification(rightSibling);
                 } else {
                     // Adapt left sibling key of former first child.
-                    final AbsStructNode oldFirstChild =
-                        (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
+                    final IStructuralItem oldFirstChild =
+                        (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
                             paramToNode.getFirstChildKey());
                     oldFirstChild.setLeftSiblingKey(paramFromNode.getNodeKey());
                     paramWtx.getTransactionState().finishNodeModification(oldFirstChild);
 
                     // Adapt right sibling key of moved node.
-                    final AbsStructNode moved =
-                        (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
+                    final IStructuralItem moved =
+                        (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
                             paramFromNode.getNodeKey());
                     moved.setRightSiblingKey(oldFirstChild.getNodeKey());
                     paramWtx.getTransactionState().finishNodeModification(moved);
                 }
             } else {
                 // Adapt right sibling key of moved node.
-                final AbsStructNode moved =
-                    (AbsStructNode)paramWtx.getTransactionState().prepareNodeForModification(
+                final IStructuralItem moved =
+                    (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
                         paramFromNode.getNodeKey());
                 moved.setRightSiblingKey((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
                 paramWtx.getTransactionState().finishNodeModification(moved);

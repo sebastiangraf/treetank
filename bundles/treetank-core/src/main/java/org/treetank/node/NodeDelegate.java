@@ -8,13 +8,16 @@ import org.treetank.settings.EFixed;
 public class NodeDelegate implements IItem {
 
     private long mNodeKey;
-    private long mParentKey;
+    private final long mParentKey;
     private long mHash;
-
     private int mType;
 
-    public NodeDelegate() {
-
+    public NodeDelegate(final long paramNodeKey, final long paramParentKey, final long paramHash,
+        final int paramType) {
+        mNodeKey = paramNodeKey;
+        mParentKey = paramParentKey;
+        mHash = paramHash;
+        mType = paramType;
     }
 
     @Override
