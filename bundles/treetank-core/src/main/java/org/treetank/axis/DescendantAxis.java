@@ -30,7 +30,7 @@ package org.treetank.axis;
 import java.util.Stack;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.AbsStructNode;
+import org.treetank.api.IStructuralItem;
 import org.treetank.settings.EFixed;
 
 /**
@@ -80,7 +80,7 @@ public final class DescendantAxis extends AbsAxis {
         if (isSelfIncluded()) {
             mNextKey = getTransaction().getNode().getNodeKey();
         } else {
-            mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
+            mNextKey = ((IStructuralItem)getTransaction().getNode()).getFirstChildKey();
         }
     }
 
@@ -100,23 +100,24 @@ public final class DescendantAxis extends AbsAxis {
         getTransaction().moveTo(mNextKey);
 
         // Fail if the subtree is finished.
-        if (((AbsStructNode)getTransaction().getNode()).getLeftSiblingKey() == getStartKey()) {
+        if (((IStructuralItem)getTransaction().getNode()).getLeftSiblingKey() == getStartKey()) {
             resetToStartKey();
             return false;
         }
 
         // Always follow first child if there is one.
-        if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
-            mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
-            if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
-                mRightSiblingKeyStack.push(((AbsStructNode)getTransaction().getNode()).getRightSiblingKey());
+        if (((IStructuralItem)getTransaction().getNode()).hasFirstChild()) {
+            mNextKey = ((IStructuralItem)getTransaction().getNode()).getFirstChildKey();
+            if (((IStructuralItem)getTransaction().getNode()).hasRightSibling()) {
+                mRightSiblingKeyStack
+                    .push(((IStructuralItem)getTransaction().getNode()).getRightSiblingKey());
             }
             return true;
         }
 
         // Then follow right sibling if there is one.
-        if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
-            mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
+        if (((IStructuralItem)getTransaction().getNode()).hasRightSibling()) {
+            mNextKey = ((IStructuralItem)getTransaction().getNode()).getRightSiblingKey();
             return true;
         }
 

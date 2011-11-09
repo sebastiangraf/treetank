@@ -264,7 +264,7 @@ public final class FMES implements IImportDiff {
         // 2(a) - Parent of x.
         final IItem x = paramRtx.getNode();
         paramRtx.moveToParent();
-        assert paramRtx.getNode() instanceof AbsStructNode;
+        assert paramRtx.getNode() instanceof IStructuralItem;
         final IItem y = paramRtx.getStructuralNode();
 
         final IItem z = mTotalMatching.reversePartner(y);

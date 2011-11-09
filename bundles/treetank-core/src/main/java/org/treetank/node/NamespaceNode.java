@@ -29,6 +29,7 @@ package org.treetank.node;
 
 import java.util.Arrays;
 
+import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
 
 /**
@@ -38,7 +39,7 @@ import org.treetank.api.IVisitor;
  * Node representing a namespace.
  * </p>
  */
-public final class NamespaceNode extends AbsNode {
+public final class NamespaceNode extends AbsNode implements IItem {
 
     protected static final int NAME_KEY = 4;
     protected static final int URI_KEY = 8;

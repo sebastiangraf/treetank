@@ -27,6 +27,7 @@
 
 package org.treetank.node;
 
+import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 
@@ -36,7 +37,7 @@ import org.treetank.io.ITTSink;
  * @author Sebastian Graf
  * 
  */
-public final class DeletedNode extends AbsNode {
+public final class DeletedNode extends AbsNode implements IItem {
 
     DeletedNode(final byte[] mByteBuilder, final byte[] mPointerBuilder) {
         super(mByteBuilder, mPointerBuilder);

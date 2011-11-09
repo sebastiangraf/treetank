@@ -130,11 +130,8 @@ public class ReadTransaction implements IReadTransaction {
                 mCurrentNode = mTransactionState.getNode(paramNodeKey);
             } catch (final Exception e) {
                 mCurrentNode = null;
-                // mCurrentNode = oldNode;
-                // return false;
             }
 
-            // return true;
             if (mCurrentNode == null) {
                 mCurrentNode = oldNode;
                 return false;

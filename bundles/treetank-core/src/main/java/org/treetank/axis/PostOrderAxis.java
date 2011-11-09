@@ -30,7 +30,7 @@ package org.treetank.axis;
 import java.util.Stack;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.AbsStructNode;
+import org.treetank.api.IStructuralItem;
 import org.treetank.settings.EFixed;
 
 /**
@@ -78,17 +78,17 @@ public class PostOrderAxis extends AbsAxis {
         long key = mNextKey;
         if (key != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
             getTransaction().moveTo(mNextKey);
-            while (((AbsStructNode)getTransaction().getNode()).hasFirstChild() && key != mLastParent.peek()) {
+            while (((IStructuralItem)getTransaction().getNode()).hasFirstChild() && key != mLastParent.peek()) {
                 mLastParent.push(key);
-                key = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
+                key = ((IStructuralItem)getTransaction().getNode()).getFirstChildKey();
                 getTransaction().moveToFirstChild();
             }
             if (key == mLastParent.peek()) {
                 mLastParent.pop();
             }
 
-            if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
-                mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
+            if (((IStructuralItem)getTransaction().getNode()).hasRightSibling()) {
+                mNextKey = ((IStructuralItem)getTransaction().getNode()).getRightSiblingKey();
 
             } else {
                 mNextKey = mLastParent.peek();

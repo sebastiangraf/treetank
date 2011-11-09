@@ -172,4 +172,9 @@ public class StructNodeDelegate implements IStructuralItem {
         mChildCount++;
     }
 
+    @Override
+    public void setParentKey(long paramKey) {
+        mNodeDelegate.setParentKey(paramKey);
+    }
+
 }

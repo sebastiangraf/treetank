@@ -8,7 +8,7 @@ import org.treetank.settings.EFixed;
 public class NodeDelegate implements IItem {
 
     private long mNodeKey;
-    private final long mParentKey;
+    private long mParentKey;
     private long mHash;
     private int mType;
 
@@ -109,7 +109,12 @@ public class NodeDelegate implements IItem {
     }
 
     public NodeDelegate clone() {
-        return this;
+        return new NodeDelegate(mNodeKey, mParentKey, mHash, mType);
+    }
+
+    @Override
+    public void setParentKey(long paramKey) {
+        mParentKey = paramKey;
     }
 
 }
