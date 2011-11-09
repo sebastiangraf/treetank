@@ -201,10 +201,8 @@ public enum ENodes {
      */
     private ENodes(final int paramKind, final int paramLongSize, final int paramIntSize) {
         mKind = paramKind;
-        // mIntSize = paramIntSize * 4;
-        // mLongSize = paramLongSize * 8;
-        mIntSize = 20;
-        mLongSize = 56;
+        mIntSize = paramIntSize * 4;
+        mLongSize = paramLongSize * 8;
     }
 
     /**
