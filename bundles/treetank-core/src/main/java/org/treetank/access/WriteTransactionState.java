@@ -37,7 +37,6 @@ import org.treetank.cache.TransactionLogCache;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
-import org.treetank.node.AbsNode;
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DeletedNode;
 import org.treetank.node.ElementNode;
@@ -113,11 +112,11 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Prepare a node for modification. This is getting the node from the
      * (persistence) layer, storing the page in the cache and setting up the
-     * node for upcoming modification. Note that this only occurs for {@link AbsNode}s.
+     * node for upcoming modification. Note that this only occurs for {@link IItem}s.
      * 
      * @param paramNodeKey
      *            key of the node to be modified
-     * @return an {@link AbsNode} instance
+     * @return an {@link IItem} instance
      * @throws TTIOException
      *             if IO Error
      */
@@ -175,7 +174,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected AbsNode createNode(final AbsNode paramNode) throws TTIOException {
+    protected IItem createNode(final IItem paramNode) throws TTIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         final long nodeKey = mNewRoot.getMaxNodeKey();
@@ -228,15 +227,15 @@ public final class WriteTransactionState extends ReadTransactionState {
      * Removing a node from the storage.
      * 
      * @param paramNode
-     *            {@link AbsNode} to be removed
+     *            {@link IItem} to be removed
      * @throws TTIOException
      *             if the removal fails
      */
-    protected void removeNode(final AbsNode paramNode) throws TTIOException {
+    protected void removeNode(final IItem paramNode) throws TTIOException {
         assert paramNode != null;
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         prepareNodePage(nodePageKey);
-        final AbsNode delNode = DeletedNode.createData(paramNode.getNodeKey(), paramNode.getParentKey());
+        final IItem delNode = DeletedNode.createData(paramNode.getNodeKey(), paramNode.getParentKey());
         mNodePageCon.getModified().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         mNodePageCon.getComplete().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         finishNodeModification(paramNode);

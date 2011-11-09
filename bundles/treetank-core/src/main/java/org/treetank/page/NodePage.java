@@ -48,7 +48,7 @@ public class NodePage implements IPage {
     private final long mNodePageKey;
 
     /** Array of nodes. This can have null nodes that were removed. */
-    private final AbsNode[] mNodes;
+    private final IItem[] mNodes;
 
     private final PageDelegate mDelegate;
 
@@ -61,7 +61,7 @@ public class NodePage implements IPage {
     public NodePage(final long nodePageKey, final long mRevision) {
         mDelegate = new PageDelegate(0, mRevision);
         mNodePageKey = nodePageKey;
-        mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
+        mNodes = new IItem[IConstants.NDP_NODE_COUNT];
     }
 
     /**
@@ -76,7 +76,7 @@ public class NodePage implements IPage {
         mDelegate.initialize(mIn);
 
         mNodePageKey = mIn.readLong();
-        mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
+        mNodes = new IItem[IConstants.NDP_NODE_COUNT];
 
         final EncryptionController enController = EncryptionController.getInstance();
 
