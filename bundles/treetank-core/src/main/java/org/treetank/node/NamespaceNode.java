@@ -105,9 +105,9 @@ public final class NamespaceNode extends AbsNode implements IItem {
     public static AbsNode createData(final long mNodeKey, final long mParentKey, final int mUriKey,
         final int prefixKey) {
 
-        final byte[] byteData = new byte[ENodes.NAMESPACE_KIND.getByteSize()];
+        final byte[] byteData = new byte[ENodes.NAMESPACE_KIND.getIntSize()];
 
-        final byte[] pointerData = new byte[ENodes.NAMESPACE_KIND.getPointerSize()];
+        final byte[] pointerData = new byte[ENodes.NAMESPACE_KIND.getLongSize()];
 
         int mCount = AbsNode.NODE_KEY;
         for (byte aByte : longToByteArray(mNodeKey)) {

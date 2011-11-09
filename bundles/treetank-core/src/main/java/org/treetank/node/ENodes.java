@@ -177,9 +177,9 @@ public enum ENodes {
     private final int mKind;
 
     /** Size in the long data array. */
-    private final int mByteSize;
+    private final int mIntSize;
 
-    private final int mPointerSize;
+    private final int mLongSize;
 
     /** Mapping of keys -> Nodes */
     private final static Map<Integer, ENodes> MAPPING = new HashMap<Integer, ENodes>();
@@ -201,8 +201,10 @@ public enum ENodes {
      */
     private ENodes(final int paramKind, final int paramLongSize, final int paramIntSize) {
         mKind = paramKind;
-        mByteSize = 24;
-        mPointerSize = 60;
+        // mIntSize = paramIntSize * 4;
+        // mLongSize = paramLongSize * 8;
+        mIntSize = 20;
+        mLongSize = 56;
     }
 
     /**
@@ -219,19 +221,19 @@ public enum ENodes {
     /**
      * @return the byte size
      */
-    int getByteSize() {
-        return mByteSize;
+    int getIntSize() {
+        return mIntSize;
     }
 
     /**
      * @return the pointer size
      */
-    int getPointerSize() {
-        return mPointerSize;
+    int getLongSize() {
+        return mLongSize;
     }
 
     byte[] readByteData(final ITTSource mSource) {
-        final byte[] mData = new byte[getByteSize()];
+        final byte[] mData = new byte[getIntSize()];
         for (int i = 0; i < mData.length; i++) {
             mData[i] = mSource.readByte();
         }
@@ -239,7 +241,7 @@ public enum ENodes {
     }
 
     byte[] readPointerData(final ITTSource mSource) {
-        final byte[] mData = new byte[getPointerSize()];
+        final byte[] mData = new byte[getLongSize()];
         for (int i = 0; i < mData.length; i++) {
             mData[i] = mSource.readByte();
         }

@@ -81,9 +81,9 @@ public final class DocumentRootNode extends AbsStructNode implements IStructural
 
     public static DocumentRootNode createData() {
 
-        final byte[] byteData = new byte[ENodes.ROOT_KIND.getByteSize()];
+        final byte[] byteData = new byte[ENodes.ROOT_KIND.getIntSize()];
 
-        final byte[] pointerData = new byte[ENodes.ROOT_KIND.getPointerSize()];
+        final byte[] pointerData = new byte[ENodes.ROOT_KIND.getLongSize()];
 
         int mCount = AbsNode.NODE_KEY;
         for (byte aByte : longToByteArray((Long)EFixed.ROOT_NODE_KEY.getStandardProperty())) {

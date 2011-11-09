@@ -46,7 +46,7 @@ public final class AttributeNode extends AbsNode implements IItem {
 
     protected static final int URI_KEY = 8;
 
-    protected static final int VALUE_LENGTH = 20;
+    protected static final int VALUE_LENGTH = 12;
 
     /** Value of attribute. */
     private byte[] mValue;
@@ -139,9 +139,9 @@ public final class AttributeNode extends AbsNode implements IItem {
     public static AbsNode createData(final long mNodeKey, final long mParentKey, final int mNameKey,
         final int mUriKey, final int mType, final byte[] mValue) {
 
-        final byte[] byteData = new byte[ENodes.ATTRIBUTE_KIND.getByteSize()];
+        final byte[] byteData = new byte[ENodes.ATTRIBUTE_KIND.getIntSize()];
 
-        final byte[] pointerData = new byte[ENodes.ATTRIBUTE_KIND.getPointerSize()];
+        final byte[] pointerData = new byte[ENodes.ATTRIBUTE_KIND.getLongSize()];
 
         int mCount = AbsNode.NODE_KEY;
         for (byte aByte : longToByteArray(mNodeKey)) {
