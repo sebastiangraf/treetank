@@ -52,8 +52,8 @@ public final class DeletedNode implements IItem {
      * @param paramParent
      *            parent of this key.
      */
-    public DeletedNode(final long paramNode, final long paramParent) {
-        mDelegate = new NodeDelegate(paramNode, paramParent);
+    public DeletedNode(final long paramNode, final long paramParent, final long paramHash) {
+        mDelegate = new NodeDelegate(paramNode, paramParent, paramHash);
     }
 
     /**
@@ -74,7 +74,8 @@ public final class DeletedNode implements IItem {
 
     @Override
     public IItem clone() {
-        final IItem toClone = new DeletedNode(mDelegate.getNodeKey(), mDelegate.getParentKey());
+        final IItem toClone =
+            new DeletedNode(mDelegate.getNodeKey(), mDelegate.getParentKey(), mDelegate.getHash());
         return toClone;
     }
 
