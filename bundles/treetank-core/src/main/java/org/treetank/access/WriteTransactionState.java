@@ -235,7 +235,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         assert paramNode != null;
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         prepareNodePage(nodePageKey);
-        final IItem delNode = new DeletedNode(paramNode.getNodeKey(), paramNode.getParentKey());
+        final IItem delNode =
+            new DeletedNode(paramNode.getNodeKey(), paramNode.getParentKey(), paramNode.getHash());
         mNodePageCon.getModified().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         mNodePageCon.getComplete().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         finishNodeModification(paramNode);

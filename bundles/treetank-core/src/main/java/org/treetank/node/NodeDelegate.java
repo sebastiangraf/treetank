@@ -11,21 +11,22 @@ public class NodeDelegate implements IItem {
 
     private long mNodeKey;
     private long mParentKey;
+    private long mHash;
 
-    public NodeDelegate(final long paramNodeKey, final long paramParentKey) {
+    public NodeDelegate(final long paramNodeKey, final long paramParentKey, final long paramHash) {
         mNodeKey = paramNodeKey;
         mParentKey = paramParentKey;
+        mHash = paramHash;
     }
 
     @Override
     public void setHash(long paramHash) {
-        // Do nothing, only stub
+        mHash = paramHash;
     }
 
     @Override
     public long getHash() {
-        // Do nothing, only stub
-        return NULL_VAL;
+        return mHash;
     }
 
     @Override
@@ -85,6 +86,7 @@ public class NodeDelegate implements IItem {
     public void serialize(ITTSink paramSink) {
         paramSink.writeLong(mNodeKey);
         paramSink.writeLong(mParentKey);
+        paramSink.writeLong(mHash);
     }
 
     @Override
@@ -103,7 +105,7 @@ public class NodeDelegate implements IItem {
     }
 
     public NodeDelegate clone() {
-        return new NodeDelegate(mNodeKey, mParentKey);
+        return new NodeDelegate(mNodeKey, mParentKey, mHash);
     }
 
     @Override
