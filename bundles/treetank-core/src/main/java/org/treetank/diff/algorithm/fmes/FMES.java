@@ -40,10 +40,8 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IStructuralItem;
 import org.treetank.api.IVisitor;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
@@ -57,6 +55,8 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Provides the fast match / edit script (fmes) tree to tree correction
@@ -116,7 +116,7 @@ public final class FMES implements IImportDiff {
      * Used by emitInsert: when inserting a whole subtree - keep track that
      * nodes are not inserted multiple times.
      */
-    private final Map<IItem, Boolean> mAlreadyInserted;
+    private final Map<INode, Boolean> mAlreadyInserted;
 
     /**
      * This is the matching M between nodes as described in the paper.
@@ -132,12 +132,12 @@ public final class FMES implements IImportDiff {
      * Stores the in-order property for each node One map is sufficient for both
      * trees since the reference (identity) is compared.
      */
-    private final Map<IItem, Boolean> mInOrder;
+    private final Map<INode, Boolean> mInOrder;
 
     /**
      * Number of descendants in subtree of node.
      */
-    private final Map<IItem, Long> mDescendants;
+    private final Map<INode, Long> mDescendants;
 
     /** {@link IVisitor} implementation on old revision. */
     private final IVisitor mOldRevVisitor;
@@ -162,9 +162,9 @@ public final class FMES implements IImportDiff {
      *             if setup of Treetank fails
      */
     public FMES(final File paramOldFile, final File paramNewFile) throws AbsTTException {
-        mDescendants = new IdentityHashMap<IItem, Long>();
-        mInOrder = new IdentityHashMap<IItem, Boolean>();
-        mAlreadyInserted = new IdentityHashMap<IItem, Boolean>();
+        mDescendants = new IdentityHashMap<INode, Long>();
+        mInOrder = new IdentityHashMap<INode, Boolean>();
+        mAlreadyInserted = new IdentityHashMap<INode, Boolean>();
 
         final DatabaseConfiguration oldConfig = new DatabaseConfiguration(paramOldFile);
         Database.createDatabase(oldConfig);
@@ -226,7 +226,7 @@ public final class FMES implements IImportDiff {
     private void firstFMESStep(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         // 2. Iterate over new shreddered file
         for (final AbsAxis axis = new LevelOrderAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-            final IStructuralItem node = axis.getTransaction().getStructuralNode();
+            final IStructNode node = axis.getTransaction().getStructuralNode();
             final long nodeKey = node.getNodeKey();
             if (node.getKind() == ENodes.ELEMENT_KIND) {
                 final ElementNode element = (ElementNode)node;
@@ -262,13 +262,13 @@ public final class FMES implements IImportDiff {
      */
     private void doFirstFSMEStep(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         // 2(a) - Parent of x.
-        final IItem x = paramRtx.getNode();
+        final INode x = paramRtx.getNode();
         paramRtx.moveToParent();
-        assert paramRtx.getNode() instanceof IStructuralItem;
-        final IItem y = paramRtx.getStructuralNode();
+        assert paramRtx.getNode() instanceof IStructNode;
+        final INode y = paramRtx.getStructuralNode();
 
-        final IItem z = mTotalMatching.reversePartner(y);
-        IItem w = mTotalMatching.reversePartner(x);
+        final INode z = mTotalMatching.reversePartner(y);
+        INode w = mTotalMatching.reversePartner(x);
 
         paramWtx.moveToDocumentRoot();
         // 2(b) - insert
@@ -283,7 +283,7 @@ public final class FMES implements IImportDiff {
             // 2(c) not the root.
             paramRtx.moveTo(w.getNodeKey());
             paramRtx.moveToParent();
-            final IItem v = paramRtx.getNode();
+            final INode v = paramRtx.getNode();
             if (!nodeValuesEqual(w, x, paramWtx, paramRtx)) {
                 emitUpdate(w, x, paramWtx, paramRtx);
             }
@@ -312,7 +312,7 @@ public final class FMES implements IImportDiff {
     private void secondFMESStep(final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         try {
             for (final AbsAxis axis = new DescendantAxis(paramWtx, true); axis.hasNext(); axis.next()) {
-                final IStructuralItem node = axis.getTransaction().getStructuralNode();
+                final IStructNode node = axis.getTransaction().getStructuralNode();
                 if (mTotalMatching.partner(node) == null) {
                     paramWtx.remove();
                 }
@@ -357,7 +357,7 @@ public final class FMES implements IImportDiff {
      *            {@link IReadTransaction} implementation reference on new
      *            revision
      */
-    private void alignChildren(final IItem paramW, final IItem paramX, final IWriteTransaction paramWtx,
+    private void alignChildren(final INode paramW, final INode paramX, final IWriteTransaction paramWtx,
         final IReadTransaction paramRtx) {
         assert paramW != null;
         assert paramX != null;
@@ -376,26 +376,26 @@ public final class FMES implements IImportDiff {
         }
 
         // 2
-        final List<IItem> first = commonChildren(paramW, paramX, paramWtx, paramRtx, EReverseMap.FALSE);
-        final List<IItem> second = commonChildren(paramX, paramW, paramRtx, paramWtx, EReverseMap.TRUE);
+        final List<INode> first = commonChildren(paramW, paramX, paramWtx, paramRtx, EReverseMap.FALSE);
+        final List<INode> second = commonChildren(paramX, paramW, paramRtx, paramWtx, EReverseMap.TRUE);
         // 3 && 4
-        List<Pair<IItem, IItem>> s = Util.longestCommonSubsequence(first, second, new IComparator<IItem>() {
+        List<Pair<INode, INode>> s = Util.longestCommonSubsequence(first, second, new IComparator<INode>() {
             /** {@inheritDoc} */
             @Override
-            public boolean isEqual(final IItem paramX, final IItem paramY) {
+            public boolean isEqual(final INode paramX, final INode paramY) {
                 return mTotalMatching.contains(paramX, paramY);
             }
         });
         // 5
-        final Map<IItem, IItem> seen = new IdentityHashMap<IItem, IItem>();
-        for (final Pair<IItem, IItem> p : s) {
+        final Map<INode, INode> seen = new IdentityHashMap<INode, INode>();
+        for (final Pair<INode, INode> p : s) {
             mInOrder.put(p.mFirst, true);
             mInOrder.put(p.mSecond, true);
             seen.put(p.mFirst, p.mSecond);
         }
         // 6
-        for (final IItem a : first) {
-            final IItem b = mFastMatching.partner(a);
+        for (final INode a : first) {
+            final INode b = mFastMatching.partner(a);
             if (!(seen.get(a) == b) && !mInOrder.get(a)) { // (a, b) \notIn S
                 final int k = findPos(b, paramWtx, paramRtx);
                 // System.err.println("Move in align children: " + k);
@@ -422,7 +422,7 @@ public final class FMES implements IImportDiff {
      *            determines if...
      * @return {@link List} of common child nodes
      */
-    private List<IItem> commonChildren(final IItem paramN, final IItem paramO,
+    private List<INode> commonChildren(final INode paramN, final INode paramO,
         final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx,
         final EReverseMap paramReverse) {
         assert paramN != null;
@@ -430,13 +430,13 @@ public final class FMES implements IImportDiff {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
         assert paramReverse != null;
-        final List<IItem> retVal = new LinkedList<IItem>();
+        final List<INode> retVal = new LinkedList<INode>();
         paramFirstRtx.moveTo(paramN.getNodeKey());
         if (paramFirstRtx.getStructuralNode().hasFirstChild()) {
             paramFirstRtx.moveToFirstChild();
 
             do {
-                IItem partner;
+                INode partner;
                 if (paramReverse == EReverseMap.TRUE) {
                     partner = mTotalMatching.reversePartner(paramFirstRtx.getNode());
                 } else {
@@ -472,7 +472,7 @@ public final class FMES implements IImportDiff {
      *            {@link IReadTransaction} implementation reference on new
      *            revision
      */
-    private void emitMove(final IItem paramChild, final IItem paramParent, final int paramPos,
+    private void emitMove(final INode paramChild, final INode paramParent, final int paramPos,
         final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         assert paramChild != null;
         assert paramParent != null;
@@ -524,7 +524,7 @@ public final class FMES implements IImportDiff {
      *            {@link IReadTransaction} implementation reference on new
      *            revision
      */
-    private void emitUpdate(final IItem paramFromNode, final IItem paramToNode,
+    private void emitUpdate(final INode paramFromNode, final INode paramToNode,
         final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         assert paramFromNode != null;
         assert paramToNode != null;
@@ -561,7 +561,7 @@ public final class FMES implements IImportDiff {
      * Emit an insert operation.
      * 
      * @param paramParent
-     *            parent of the current {@link IItem} implementation reference
+     *            parent of the current {@link INode} implementation reference
      *            to insert
      * @param paramChild
      *            the current node to insert
@@ -573,9 +573,9 @@ public final class FMES implements IImportDiff {
      * @param paramRtx
      *            {@link IReadTransaction} implementation reference on new
      *            revision
-     * @return inserted {@link IItem} implementation reference
+     * @return inserted {@link INode} implementation reference
      */
-    private IItem emitInsert(final IItem paramParent, final IItem paramChild, final int paramPos,
+    private INode emitInsert(final INode paramParent, final INode paramChild, final int paramPos,
         final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         paramWtx.moveTo(paramParent.getNodeKey());
         paramRtx.moveTo(paramChild.getNodeKey());
@@ -637,7 +637,7 @@ public final class FMES implements IImportDiff {
 
         // Mark all nodes in subtree as inserted.
         for (final AbsAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
-            final IStructuralItem node = axis.getTransaction().getStructuralNode();
+            final IStructNode node = axis.getTransaction().getStructuralNode();
             mAlreadyInserted.put(node, true);
             mInOrder.put(node, true);
             final long nodeKey = node.getNodeKey();
@@ -717,7 +717,7 @@ public final class FMES implements IImportDiff {
      * @return it's position, with respect to already inserted/deleted nodes
      */
     private int
-        findPos(final IItem paramX, final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
+        findPos(final INode paramX, final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         final long nodeKey = paramRtx.getStructuralNode().getNodeKey();
         if (paramX.getKind() == ENodes.ATTRIBUTE_KIND) {
             return -1;
@@ -732,7 +732,7 @@ public final class FMES implements IImportDiff {
                 boolean found = false;
 
                 do {
-                    final IItem v = paramRtx.getStructuralNode();
+                    final INode v = paramRtx.getStructuralNode();
                     if (mInOrder.get(v)) {
                         if (v == paramX) {
                             return 0;
@@ -748,7 +748,7 @@ public final class FMES implements IImportDiff {
             // that is to the left of x and is marked "in order".
             paramRtx.moveTo(nodeKey);
             paramRtx.moveToLeftSibling();
-            IItem v = paramRtx.getStructuralNode();
+            INode v = paramRtx.getStructuralNode();
             while (paramRtx.getStructuralNode().hasLeftSibling() && !mInOrder.get(v)) {
                 paramRtx.moveToLeftSibling();
                 v = paramRtx.getStructuralNode();
@@ -762,7 +762,7 @@ public final class FMES implements IImportDiff {
             }
 
             // 4 - Let u be the partner of v in T1
-            IItem u = mTotalMatching.reversePartner(v);
+            INode u = mTotalMatching.reversePartner(v);
             paramWtx.moveTo(u.getNodeKey());
 
             // Suppose u is the i-th child of its parent (counting from left to
@@ -811,8 +811,8 @@ public final class FMES implements IImportDiff {
             new LeafEqual(paramWtx, paramRtx));
 
         // Remove roots ('/') from labels and append them to mapping.
-        final Map<ENodes, List<IItem>> oldLabels = mLabelOldRevVisitor.getLabels();
-        final Map<ENodes, List<IItem>> newLabels = mLabelNewRevVisitor.getLabels();
+        final Map<ENodes, List<INode>> oldLabels = mLabelOldRevVisitor.getLabels();
+        final Map<ENodes, List<INode>> newLabels = mLabelNewRevVisitor.getLabels();
         oldLabels.remove(ENodes.ROOT_KIND);
         newLabels.remove(ENodes.ROOT_KIND);
 
@@ -839,31 +839,31 @@ public final class FMES implements IImportDiff {
      * @param paramCmp
      *            functional class
      */
-    private void match(final Map<ENodes, List<IItem>> paramOldLabels,
-        final Map<ENodes, List<IItem>> paramNewLabels, final Matching paramMatching,
-        final IComparator<IItem> paramCmp) {
+    private void match(final Map<ENodes, List<INode>> paramOldLabels,
+        final Map<ENodes, List<INode>> paramNewLabels, final Matching paramMatching,
+        final IComparator<INode> paramCmp) {
         final Set<ENodes> labels = paramOldLabels.keySet();
         labels.retainAll(paramNewLabels.keySet()); // intersection
 
         // 2 - for each label do
         for (final ENodes label : labels) {
-            final List<IItem> first = paramOldLabels.get(label); // 2(a)
-            final List<IItem> second = paramNewLabels.get(label); // 2(b)
+            final List<INode> first = paramOldLabels.get(label); // 2(a)
+            final List<INode> second = paramNewLabels.get(label); // 2(b)
 
             // 2(c)
-            final List<Pair<IItem, IItem>> common = Util.longestCommonSubsequence(first, second, paramCmp);
+            final List<Pair<INode, INode>> common = Util.longestCommonSubsequence(first, second, paramCmp);
             // Used to remove the nodes in common from s1 and s2 in step 2(e).
-            final Map<IItem, Boolean> seen = new IdentityHashMap<IItem, Boolean>();
+            final Map<INode, Boolean> seen = new IdentityHashMap<INode, Boolean>();
 
             // 2(d) - for each pair of nodes in the lcs: add to matching.
-            for (Pair<IItem, IItem> p : common) {
+            for (Pair<INode, INode> p : common) {
                 paramMatching.add(p.mFirst, p.mSecond);
                 seen.put(p.mFirst, true);
                 seen.put(p.mSecond, true);
             }
 
             // 2(e) (prepare) - remove nodes in common from s1, s2.
-            for (Iterator<IItem> i : new Iterator[] {
+            for (Iterator<INode> i : new Iterator[] {
                 first.iterator(), second.iterator()
             }) {
                 while (i.hasNext()) {
@@ -874,9 +874,9 @@ public final class FMES implements IImportDiff {
             }
 
             // 2(e) - For each unmatched node x \in s1.
-            for (final IItem firstItem : first) {
+            for (final INode firstItem : first) {
                 // If there is an unmatched node y \in s2.
-                for (final IItem secondItem : second) {
+                for (final INode secondItem : second) {
                     // Such that equal.
                     if (paramCmp.isEqual(firstItem, secondItem)) {
                         // 2(e)A
@@ -944,7 +944,7 @@ public final class FMES implements IImportDiff {
      *            {@link IWriteTransaction} implementation reference
      * @return true iff the values of the nodes are equal
      */
-    public boolean nodeValuesEqual(final IItem paramX, final IItem paramY, final IWriteTransaction paramWtx,
+    public boolean nodeValuesEqual(final INode paramX, final INode paramY, final IWriteTransaction paramWtx,
         final IReadTransaction paramRtx) {
         assert paramX != null;
         assert paramY != null;
@@ -966,7 +966,7 @@ public final class FMES implements IImportDiff {
      *            {@link IReadTransaction} implementation reference
      * @return string value of current node
      */
-    private String getNodeValue(final IItem paramNode, final IReadTransaction paramRtx) {
+    private String getNodeValue(final INode paramNode, final IReadTransaction paramRtx) {
         assert paramNode != null;
         assert paramRtx != null;
         paramRtx.moveTo(paramNode.getNodeKey());
@@ -990,7 +990,7 @@ public final class FMES implements IImportDiff {
      * done by comparing the (characteristic) string for two nodes. If the
      * strings are sufficient similar, the nodes are considered to be equal.
      */
-    private class LeafEqual implements IComparator<IItem> {
+    private class LeafEqual implements IComparator<INode> {
 
         /** {@link IWriteTransaction} implementation on old revision. */
         private final IWriteTransaction mWtx;
@@ -1015,7 +1015,7 @@ public final class FMES implements IImportDiff {
 
         /** {@inheritDoc} */
         @Override
-        public boolean isEqual(final IItem paramFirstNode, final IItem paramSecondNode) {
+        public boolean isEqual(final INode paramFirstNode, final INode paramSecondNode) {
             final double ratio =
                 Util.quickRatio(getNodeValue(paramFirstNode, mWtx), getNodeValue(paramSecondNode, mRtx));
             return ratio > FMESF;
@@ -1028,7 +1028,7 @@ public final class FMES implements IImportDiff {
      * two nodes by calculating the number of common children (i.e. children
      * contained in the matching) in relation to the total number of children.
      */
-    private class InnerNodeEqual implements IComparator<IItem> {
+    private class InnerNodeEqual implements IComparator<INode> {
 
         /** {@link Matching} reference. */
         private final Matching mMatching;
@@ -1063,7 +1063,7 @@ public final class FMES implements IImportDiff {
 
         /** {@inheritDoc} */
         @Override
-        public boolean isEqual(final IItem paramFirstNode, final IItem paramSecondNode) {
+        public boolean isEqual(final INode paramFirstNode, final INode paramSecondNode) {
             assert paramFirstNode != null;
             assert paramSecondNode != null;
             long common = 0;

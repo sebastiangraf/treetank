@@ -37,7 +37,6 @@ import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.TypedValue;
 
 public class XPathParserTest {
 
@@ -65,38 +64,37 @@ public class XPathParserTest {
 
         axis = new XPathAxis(holder.getRtx(), "\"12.5\"");
         assertEquals(true, axis.hasNext());
-        assertEquals("12.5", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("12.5", holder.getRtx().getValueOfCurrentNode());
         assertEquals(holder.getRtx().keyForName("xs:string"), holder.getRtx().getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getRtx(), "\"He said, \"\"I don't like it\"\"\"");
         assertEquals(true, axis.hasNext());
-        assertEquals("He said, I don't like it", TypedValue.parseString(holder.getRtx().getNode()
-            .getRawValue()));
+        assertEquals("He said, I don't like it", holder.getRtx().getValueOfCurrentNode());
         assertEquals(holder.getRtx().keyForName("xs:string"), holder.getRtx().getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getRtx(), "12");
         assertEquals(true, axis.hasNext());
         assertEquals(holder.getRtx().keyForName("xs:integer"), holder.getRtx().getNode().getTypeKey());
-        assertEquals("12", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("12", holder.getRtx().getValueOfCurrentNode());
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getRtx(), "12.5");
         assertEquals(true, axis.hasNext());
         assertEquals(holder.getRtx().keyForName("xs:decimal"), holder.getRtx().getNode().getTypeKey());
-        assertEquals("12.5", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("12.5", holder.getRtx().getValueOfCurrentNode());
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getRtx(), "12.5E2");
         assertEquals(true, axis.hasNext());
         assertEquals(holder.getRtx().keyForName("xs:double"), holder.getRtx().getNode().getTypeKey());
-        assertEquals("12.5E2", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("12.5E2", holder.getRtx().getValueOfCurrentNode());
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getRtx(), "1");
         assertEquals(true, axis.hasNext());
-        assertEquals("1", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("1", holder.getRtx().getValueOfCurrentNode());
         assertEquals(holder.getRtx().keyForName("xs:integer"), holder.getRtx().getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 

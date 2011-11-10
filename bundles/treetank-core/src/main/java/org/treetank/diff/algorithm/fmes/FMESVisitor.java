@@ -29,12 +29,12 @@ package org.treetank.diff.algorithm.fmes;
 import java.util.Map;
 
 import org.treetank.access.AbsVisitorSupport;
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
+import org.treetank.node.interfaces.INode;
 
 /**
  * Initialize data structures.
@@ -48,10 +48,10 @@ public final class FMESVisitor extends AbsVisitorSupport {
     private final IReadTransaction mRtx;
 
     /** Determines if nodes are in order. */
-    private final Map<IItem, Boolean> mInOrder;
+    private final Map<INode, Boolean> mInOrder;
 
     /** Descendant count per node. */
-    private final Map<IItem, Long> mDescendants;
+    private final Map<INode, Long> mDescendants;
 
     /**
      * Constructor.
@@ -65,8 +65,8 @@ public final class FMESVisitor extends AbsVisitorSupport {
      * @throws AbsTTException
      *             if setting up treetank fails
      */
-    public FMESVisitor(final ISession paramSession, final Map<IItem, Boolean> paramInOrder,
-        final Map<IItem, Long> paramDescendants) throws AbsTTException {
+    public FMESVisitor(final ISession paramSession, final Map<INode, Boolean> paramInOrder,
+        final Map<INode, Long> paramDescendants) throws AbsTTException {
         assert paramSession != null;
         assert paramInOrder != null;
         assert paramDescendants != null;
@@ -97,7 +97,7 @@ public final class FMESVisitor extends AbsVisitorSupport {
      * Fill data structures.
      */
     private void fillDataStructures() {
-        final IItem node = mRtx.getNode();
+        final INode node = mRtx.getNode();
         mInOrder.put(node, true);
         mDescendants.put(node, 1L);
     }

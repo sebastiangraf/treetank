@@ -27,10 +27,10 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
@@ -64,7 +64,7 @@ public class IDivOpAxis extends AbsObAxis {
      * {@inheritDoc}
      */
     @Override
-    public IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
+    public INode operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
 
         final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
         final int typeKey = getTransaction().keyForName(returnType.getStringRepr());
@@ -72,8 +72,8 @@ public class IDivOpAxis extends AbsObAxis {
         final byte[] value;
 
         try {
-            final int op1 = (int)Double.parseDouble(TypedValue.parseString(mOperand1.getRawValue()));
-            final int op2 = (int)Double.parseDouble(TypedValue.parseString(mOperand2.getRawValue()));
+            final int op1 = (int)Double.parseDouble(new String(mOperand1.getRawValue()));
+            final int op2 = (int)Double.parseDouble(new String(mOperand2.getRawValue()));
             final int iValue = op1 / op2;
             value = TypedValue.getBytes(iValue);
             return new AtomicValue(value, typeKey);

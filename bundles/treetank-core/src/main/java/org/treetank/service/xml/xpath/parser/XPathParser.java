@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.treetank.api.IFilter;
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AncestorAxis;
@@ -58,6 +57,8 @@ import org.treetank.axis.filter.TextFilter;
 import org.treetank.axis.filter.TypeFilter;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.PipelineBuilder;
@@ -1602,7 +1603,7 @@ public final class XPathParser {
             String stringLiteral;
             if (isQuote()) {
                 final byte[] param =
-                    getTransaction().getItemList().getItem(parseStringLiteral()).getRawValue();
+                    ((IValNode)getTransaction().getItemList().getItem(parseStringLiteral())).getRawValue();
                 stringLiteral = Arrays.toString(param);
             } else {
                 stringLiteral = parseNCName();
@@ -1903,7 +1904,7 @@ public final class XPathParser {
 
         is(TokenType.SPACE, true);
 
-        final IItem mIntLiteral =
+        final INode mIntLiteral =
             new AtomicValue(TypedValue.getBytes(value), getTransaction().keyForName(type));
         return getTransaction().getItemList().addItem(mIntLiteral);
     }
@@ -2014,7 +2015,7 @@ public final class XPathParser {
 
         }
 
-        final IItem mStringLiteral =
+        final INode mStringLiteral =
             new AtomicValue(TypedValue.getBytes(mValue.toString()), getTransaction().keyForName("xs:string"));
         return (getTransaction().getItemList().addItem(mStringLiteral));
     }

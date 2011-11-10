@@ -30,7 +30,6 @@ package org.treetank.access;
 import javax.xml.namespace.QName;
 
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IItem;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.TransactionLogCache;
@@ -42,6 +41,7 @@ import org.treetank.node.DeletedNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
+import org.treetank.node.interfaces.INode;
 import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
@@ -112,15 +112,15 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Prepare a node for modification. This is getting the node from the
      * (persistence) layer, storing the page in the cache and setting up the
-     * node for upcoming modification. Note that this only occurs for {@link IItem}s.
+     * node for upcoming modification. Note that this only occurs for {@link INode}s.
      * 
      * @param paramNodeKey
      *            key of the node to be modified
-     * @return an {@link IItem} instance
+     * @return an {@link INode} instance
      * @throws TTIOException
      *             if IO Error
      */
-    protected IItem prepareNodeForModification(final long paramNodeKey) throws TTIOException {
+    protected INode prepareNodeForModification(final long paramNodeKey) throws TTIOException {
         if (paramNodeKey < 0) {
             throw new IllegalArgumentException("paramNodeKey must be >= 0!");
         }
@@ -133,9 +133,9 @@ public final class WriteTransactionState extends ReadTransactionState {
         final int nodePageOffset = nodePageOffset(paramNodeKey);
         prepareNodePage(nodePageKey);
 
-        IItem node = mNodePageCon.getModified().getNode(nodePageOffset);
+        INode node = mNodePageCon.getModified().getNode(nodePageOffset);
         if (node == null) {
-            final IItem oldNode = mNodePageCon.getComplete().getNode(nodePageOffset);
+            final INode oldNode = mNodePageCon.getComplete().getNode(nodePageOffset);
             if (oldNode == null) {
                 throw new TTIOException("Cannot retrieve node from cache");
             }
@@ -152,7 +152,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @param paramNode
      *            the node to be modified
      */
-    protected void finishNodeModification(final IItem paramNode) {
+    protected void finishNodeModification(final INode paramNode) {
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         if (mNodePageCon == null || paramNode == null || mLog.get(nodePageKey) == null) {
             throw new IllegalStateException();
@@ -174,7 +174,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected IItem createNode(final IItem paramNode) throws TTIOException {
+    protected INode createNode(final INode paramNode) throws TTIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         final long nodeKey = mNewRoot.getMaxNodeKey();
@@ -227,15 +227,15 @@ public final class WriteTransactionState extends ReadTransactionState {
      * Removing a node from the storage.
      * 
      * @param paramNode
-     *            {@link IItem} to be removed
+     *            {@link INode} to be removed
      * @throws TTIOException
      *             if the removal fails
      */
-    protected void removeNode(final IItem paramNode) throws TTIOException {
+    protected void removeNode(final INode paramNode) throws TTIOException {
         assert paramNode != null;
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         prepareNodePage(nodePageKey);
-        final IItem delNode =
+        final INode delNode =
             new DeletedNode(paramNode.getNodeKey(), paramNode.getParentKey(), paramNode.getHash());
         mNodePageCon.getModified().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         mNodePageCon.getComplete().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
@@ -246,7 +246,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * {@inheritDoc}
      */
     @Override
-    protected IItem getNode(final long mNodeKey) throws TTIOException {
+    protected INode getNode(final long mNodeKey) throws TTIOException {
 
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = nodePageKey(mNodeKey);
@@ -256,11 +256,11 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (pageCont == null) {
             return super.getNode(mNodeKey);
         } else if (pageCont.getModified().getNode(nodePageOffset) == null) {
-            final IItem item = pageCont.getComplete().getNode(nodePageOffset);
+            final INode item = pageCont.getComplete().getNode(nodePageOffset);
             return checkItemIfDeleted(item);
 
         } else {
-            final IItem item = pageCont.getModified().getNode(nodePageOffset);
+            final INode item = pageCont.getModified().getNode(nodePageOffset);
             return checkItemIfDeleted(item);
         }
 

@@ -30,8 +30,8 @@ package org.treetank.service.xml.xpath;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IItemList;
+import org.treetank.node.interfaces.INode;
 
 /**
  * <h1>ItemList</h1>
@@ -54,20 +54,20 @@ public final class ItemList implements IItemList {
     /**
      * Internal storage of items.
      */
-    private final List<IItem> mList;
+    private final List<INode> mList;
 
     /**
      * Constructor. Initializes the list.
      */
     public ItemList() {
-        mList = new ArrayList<IItem>();
+        mList = new ArrayList<INode>();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int addItem(final IItem mItem) {
+    public int addItem(final INode mItem) {
         final int key = mList.size();
         mItem.setNodeKey(key);
         // TODO: +2 is necessary, because key -1 is the NULL_NODE
@@ -82,7 +82,7 @@ public final class ItemList implements IItemList {
      * {@inheritDoc}
      */
     @Override
-    public IItem getItem(final long mKey) {
+    public INode getItem(final long mKey) {
         assert mKey <= Integer.MAX_VALUE;
 
         int index = (int)mKey; // cast to integer, because the list only

@@ -34,7 +34,6 @@ import org.treetank.service.xml.xpath.SingleType;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
 import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.TypedValue;
 
 /**
  * <h1>CastExpr</h1>
@@ -106,7 +105,7 @@ public class CastExpr extends AbsExpression {
         if (mSourceExpr.hasNext()) {
 
             final Type sourceType = Type.getType(getTransaction().getNode().getTypeKey());
-            final String sourceValue = TypedValue.parseString(getTransaction().getNode().getRawValue());
+            final String sourceValue = getTransaction().getValueOfCurrentNode();
 
             // cast source to target type, if possible
             if (sourceType.isCastableTo(mTargetType, sourceValue)) {
@@ -134,5 +133,4 @@ public class CastExpr extends AbsExpression {
         }
 
     }
-
 }

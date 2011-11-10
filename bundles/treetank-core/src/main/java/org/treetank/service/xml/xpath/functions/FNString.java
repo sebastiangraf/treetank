@@ -121,7 +121,7 @@ public class FNString extends AbsFunction {
         if (getTransaction().getNode().getNodeKey() >= 0) { // is node
             if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
                 || getTransaction().getNode().getKind() == ENodes.TEXT_KIND) {
-                value.append(TypedValue.parseString(getTransaction().getNode().getRawValue()));
+                value.append(getTransaction().getValueOfCurrentNode());
             } else if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND
                 || getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
                 final AbsAxis axis =
@@ -130,7 +130,7 @@ public class FNString extends AbsFunction {
                     if (value.length() > 0) {
                         value.append(" ");
                     }
-                    value.append(TypedValue.parseString(getTransaction().getNode().getRawValue()));
+                    value.append(getTransaction().getValueOfCurrentNode());
 
                 }
 
@@ -139,7 +139,7 @@ public class FNString extends AbsFunction {
             }
 
         } else {
-            value.append(TypedValue.parseString(getTransaction().getNode().getRawValue()));
+            value.append(getTransaction().getValueOfCurrentNode());
         }
 
         return value.toString();

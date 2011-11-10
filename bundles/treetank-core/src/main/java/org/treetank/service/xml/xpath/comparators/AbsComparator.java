@@ -27,10 +27,10 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
@@ -131,7 +131,7 @@ public abstract class AbsComparator extends AbsAxis {
                         try {
                             // get comparison result
                             final boolean resultValue = compare(operandOne, operandTwo);
-                            final IItem result = new AtomicValue(resultValue);
+                            final INode result = new AtomicValue(resultValue);
 
                             // add retrieved AtomicValue to item list
                             final int itemKey = getTransaction().getItemList().addItem(result);

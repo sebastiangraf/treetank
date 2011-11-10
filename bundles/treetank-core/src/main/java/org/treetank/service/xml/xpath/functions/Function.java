@@ -30,11 +30,12 @@ package org.treetank.service.xml.xpath.functions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.functions.sequences.FNBoolean;
@@ -52,8 +53,7 @@ public class Function {
                 .keyForName(ebv.getReturnType()));
         if (bAxis.hasNext()) {
             bAxis.next();
-            final boolean result =
-                Boolean.parseBoolean(TypedValue.parseString(bAxis.getTransaction().getNode().getRawValue()));
+            final boolean result = Boolean.parseBoolean(bAxis.getTransaction().getValueOfCurrentNode());
             if (!bAxis.hasNext()) {
                 bAxis.reset(axis.getTransaction().getNode().getNodeKey());
 
@@ -156,7 +156,7 @@ public class Function {
 
                 final int itemKey =
                     rtx.getItemList().addItem(
-                        new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey()));
+                        new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.getNode().getTypeKey()));
                 rtx.moveTo(itemKey);
                 return true;
             } else {
@@ -234,7 +234,7 @@ public class Function {
     public static boolean fnnot(final IReadTransaction rtx, final AbsAxis axis) {
 
         if (axis.hasNext()) {
-            final IItem item = new AtomicValue(!(TypedValue.parseBoolean(rtx.getNode().getRawValue())));
+            final INode item = new AtomicValue(((IValNode)rtx.getNode()).getRawValue()[0] == 0);
             final int itemKey = rtx.getItemList().addItem(item);
             rtx.moveTo(itemKey);
             return true;
@@ -255,9 +255,8 @@ public class Function {
     public static boolean fnnumber(final IReadTransaction rtx) {
 
         // TODO: add error handling
-        final IItem item =
-            new AtomicValue(TypedValue.getBytes(TypedValue.parseString(rtx.getNode().getRawValue())), rtx
-                .keyForName("xs:double"));
+        final INode item =
+            new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.keyForName("xs:double"));
         final int itemKey = rtx.getItemList().addItem(item);
         rtx.moveTo(itemKey);
 
@@ -266,7 +265,7 @@ public class Function {
 
     public static AtomicValue not(final AtomicValue mValue) {
 
-        return new AtomicValue(!Boolean.parseBoolean(TypedValue.parseString(mValue.getRawValue())));
+        return new AtomicValue(!Boolean.parseBoolean(new String(mValue.getRawValue())));
     }
 
     public static boolean oneOrMore(final IReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
@@ -286,7 +285,7 @@ public class Function {
 
         Double value = 0.0;
         while (axis.hasNext()) {
-            value = value + Double.parseDouble(TypedValue.parseString(rtx.getNode().getRawValue()));
+            value = value + Double.parseDouble(rtx.getValueOfCurrentNode());
         }
 
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(value, Type.DOUBLE));
@@ -303,7 +302,7 @@ public class Function {
             // zero
         } else {
             do {
-                value = value + Double.parseDouble(TypedValue.parseString(rtx.getNode().getRawValue()));
+                value = value + Double.parseDouble(rtx.getValueOfCurrentNode());
             } while (axis.hasNext());
             final int itemKey = rtx.getItemList().addItem(new AtomicValue(value, Type.DOUBLE));
             rtx.moveTo(itemKey);

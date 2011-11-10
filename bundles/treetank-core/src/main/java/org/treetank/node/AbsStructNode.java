@@ -27,7 +27,7 @@
 
 package org.treetank.node;
 
-import org.treetank.api.IStructuralItem;
+import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 
 /**
@@ -43,7 +43,7 @@ import org.treetank.settings.EFixed;
  * @author Sebastian Graf, University of Konstanz
  */
 @Deprecated
-public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
+public abstract class AbsStructNode extends AbsNode implements IStructNode {
 
     /**
      * Pointer to the first child.

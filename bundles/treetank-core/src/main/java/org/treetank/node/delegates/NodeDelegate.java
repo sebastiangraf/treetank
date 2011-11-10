@@ -1,11 +1,12 @@
-package org.treetank.node;
+package org.treetank.node.delegates;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
+import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.INode;
 import org.treetank.settings.EFixed;
 
-public class NodeDelegate implements IItem {
+public class NodeDelegate implements INode {
 
     private final static int NULL_VAL = 0;
 
@@ -78,11 +79,6 @@ public class NodeDelegate implements IItem {
     }
 
     @Override
-    public byte[] getRawValue() {
-        return null;
-    }
-
-    @Override
     public void serialize(ITTSink paramSink) {
         paramSink.writeLong(mNodeKey);
         paramSink.writeLong(mParentKey);
@@ -96,11 +92,6 @@ public class NodeDelegate implements IItem {
 
     @Override
     public void setURIKey(int paramUriKey) {
-        // Do nothing, only stub
-    }
-
-    @Override
-    public void setValue(int paramUriKey, byte[] paramVal) {
         // Do nothing, only stub
     }
 

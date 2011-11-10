@@ -37,7 +37,6 @@ import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.TypedValue;
 
 /**
  * JUnit-test class to test the functionality of the DubFilter.
@@ -105,14 +104,13 @@ public class ForAxisTest {
         final AbsAxis axis = new XPathAxis(rtx, "for $i in (10, 20), $j in (1, 2) return ($i + $j)");
         assertEquals(true, axis.hasNext());
 
-        assertEquals("11.0", TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("11.0", rtx.getValueOfCurrentNode());
         assertEquals(true, axis.hasNext());
-        assertEquals("12.0", TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("12.0", rtx.getValueOfCurrentNode());
         assertEquals(true, axis.hasNext());
-        assertEquals("21.0", TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("21.0", rtx.getValueOfCurrentNode());
         assertEquals(true, axis.hasNext());
-        assertEquals("22.0", TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("22.0", rtx.getValueOfCurrentNode());
         assertEquals(false, axis.hasNext());
     }
-
 }

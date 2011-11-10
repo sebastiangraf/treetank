@@ -28,8 +28,8 @@
 package org.treetank.axis;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IStructuralItem;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>PrecedingSiblingAxis</h1>
@@ -85,7 +85,7 @@ public class PrecedingSiblingAxis extends AbsAxis {
 
         resetToLastKey();
 
-        if (((IStructuralItem)getTransaction().getNode()).hasLeftSibling()) {
+        if (((IStructNode)getTransaction().getNode()).hasLeftSibling()) {
             getTransaction().moveToLeftSibling();
             return true;
         }

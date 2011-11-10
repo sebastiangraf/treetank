@@ -37,7 +37,6 @@ import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.TypedValue;
 
 public class XPathStringChecker {
 
@@ -66,8 +65,8 @@ public class XPathStringChecker {
             if (offset >= expectedValues.length) {
                 fail("More nodes found than expected.");
             }
-            if (rtx.getNode().getRawValue() != null) {
-                strValues[offset++] = TypedValue.parseString(rtx.getNode().getRawValue());
+            if (!"".equals(rtx.getValueOfCurrentNode())) {
+                strValues[offset++] = rtx.getValueOfCurrentNode();
             } else {
                 strValues[offset++] = rtx.getQNameOfCurrentNode().toString();
             }
@@ -92,5 +91,4 @@ public class XPathStringChecker {
         assertArrayEquals(expectedValues, strValues);
 
     }
-
 }

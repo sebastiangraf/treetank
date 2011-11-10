@@ -27,8 +27,8 @@
 
 package org.treetank.diff;
 
-import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.EDiff;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Container for diffs.
@@ -40,11 +40,11 @@ public final class Diff {
     /** {@link EDiff} which specifies the kind of diff between two nodes. */
     private final EDiff mDiff;
 
-    /** {@link IStructuralItem} in new revision. */
-    private final IStructuralItem mNewNode;
+    /** {@link IStructNode} in new revision. */
+    private final IStructNode mNewNode;
 
-    /** {@link IStructuralItem} in old revision. */
-    private final IStructuralItem mOldNode;
+    /** {@link IStructNode} in old revision. */
+    private final IStructNode mOldNode;
 
     /** {@link DiffDepth} instance. */
     private final DiffDepth mDepth;
@@ -56,14 +56,14 @@ public final class Diff {
      *            {@link EDiff} which specifies the kind of diff between two
      *            nodes
      * @param paramNewNode
-     *            {@link IStructuralItem} in new revision
+     *            {@link IStructNode} in new revision
      * @param paramOldNode
-     *            {@link IStructuralItem} in old revision
+     *            {@link IStructNode} in old revision
      * @param paramDepth
      *            current {@link DiffDepth} instance
      */
-    public Diff(final EDiff paramDiff, final IStructuralItem paramNewNode,
-        final IStructuralItem paramOldNode, final DiffDepth paramDepth) {
+    public Diff(final EDiff paramDiff, final IStructNode paramNewNode,
+        final IStructNode paramOldNode, final DiffDepth paramDepth) {
         assert paramDiff != null;
         assert paramNewNode != null;
         assert paramOldNode != null;
@@ -89,7 +89,7 @@ public final class Diff {
      * 
      * @return the new node
      */
-    public IStructuralItem getNewNode() {
+    public IStructNode getNewNode() {
         return mNewNode;
     }
 
@@ -98,7 +98,7 @@ public final class Diff {
      * 
      * @return the old node
      */
-    public IStructuralItem getOldNode() {
+    public IStructNode getOldNode() {
         return mOldNode;
     }
 

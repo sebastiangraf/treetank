@@ -27,10 +27,10 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
@@ -64,7 +64,7 @@ public class ModOpAxis extends AbsObAxis {
      * {@inheritDoc}
      */
     @Override
-    public IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
+    public INode operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
 
         final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
         final int typeKey = getTransaction().keyForName(returnType.getStringRepr());
@@ -75,14 +75,14 @@ public class ModOpAxis extends AbsObAxis {
         case DOUBLE:
         case FLOAT:
         case DECIMAL:
-            final double dOp1 = Double.parseDouble(TypedValue.parseString(mOperand1.getRawValue()));
-            final double dOp2 = Double.parseDouble(TypedValue.parseString(mOperand2.getRawValue()));
+            final double dOp1 = Double.parseDouble(new String(mOperand1.getRawValue()));
+            final double dOp2 = Double.parseDouble(new String(mOperand2.getRawValue()));
             value = TypedValue.getBytes(dOp1 % dOp2);
             break;
         case INTEGER:
             try {
-                final int iOp1 = (int)Double.parseDouble(TypedValue.parseString(mOperand1.getRawValue()));
-                final int iOp2 = (int)Double.parseDouble(TypedValue.parseString(mOperand2.getRawValue()));
+                final int iOp1 = (int)Double.parseDouble(new String(mOperand1.getRawValue()));
+                final int iOp2 = (int)Double.parseDouble(new String(mOperand2.getRawValue()));
                 value = TypedValue.getBytes(iOp1 % iOp2);
             } catch (final ArithmeticException e) {
                 throw new XPathError(ErrorType.FOAR0001);

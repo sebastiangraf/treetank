@@ -29,7 +29,6 @@ package org.treetank.service.xml.xpath.filter;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.utils.TypedValue;
 
 /**
  * <h1>PredicateFilterAxis</h1>
@@ -122,8 +121,7 @@ public class PredicateFilterAxis extends AbsAxis {
             if (getTransaction().getNode().getTypeKey() == getTransaction().keyForName("xs:boolean")) {
                 // atomic value of type boolean
                 // return true, if atomic values's value is false
-                return !(Boolean.parseBoolean(TypedValue
-                    .parseString(getTransaction().getNode().getRawValue())));
+                return !(Boolean.parseBoolean(getTransaction().getValueOfCurrentNode()));
 
             } else {
                 return false;
@@ -131,5 +129,4 @@ public class PredicateFilterAxis extends AbsAxis {
         }
 
     }
-
 }

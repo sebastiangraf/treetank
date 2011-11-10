@@ -170,7 +170,7 @@ public final class XMLSerializer extends AbsSerializer {
                     mOut.write(ECharsForSerializing.SPACE.getBytes());
                     mOut.write(paramRTX.rawNameForKey(paramRTX.getNode().getNameKey()));
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                    mOut.write(paramRTX.getNode().getRawValue());
+                    mOut.write(paramRTX.getValueOfCurrentNode().getBytes());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
                     paramRTX.moveTo(key);
                 }
@@ -185,7 +185,7 @@ public final class XMLSerializer extends AbsSerializer {
                 break;
             case TEXT_KIND:
                 indent();
-                mOut.write(paramRTX.getNode().getRawValue());
+                mOut.write(paramRTX.getValueOfCurrentNode().getBytes());
                 if (mIndent) {
                     mOut.write(ECharsForSerializing.NEWLINE.getBytes());
                 }

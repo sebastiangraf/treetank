@@ -37,7 +37,6 @@ import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.TypedValue;
 
 /**
  * JUnit-test class to test the functionality of the AndExpr.
@@ -69,36 +68,33 @@ public class FunctionAxisTest {
 
         final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "fn:count(text())");
         assertEquals(true, axis1.hasNext());
-        assertEquals(3, (int)TypedValue.parseDouble(holder.getRtx().getNode().getRawValue()));
+        assertEquals(3, Integer.parseInt(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis1.hasNext());
 
         final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "fn:count(//node())");
         assertEquals(true, axis2.hasNext());
-        assertEquals(10, (int)TypedValue.parseDouble(holder.getRtx().getNode().getRawValue()));
+        assertEquals(10, Integer.parseInt(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis2.hasNext());
 
         final AbsAxis axis3 = new XPathAxis(holder.getRtx(), "fn:string(//node())");
         assertEquals(true, axis3.hasNext());
-        assertEquals("oops1 foo oops2 bar oops3 oops1 foo oops2 bar oops3 foo bar", TypedValue
-            .parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("oops1 foo oops2 bar oops3 oops1 foo oops2 bar oops3 foo bar", holder.getRtx().getValueOfCurrentNode());
         assertEquals(false, axis3.hasNext());
 
         final AbsAxis axis4 = new XPathAxis(holder.getRtx(), "fn:string()");
         assertEquals(true, axis4.hasNext());
-        assertEquals("oops1 foo oops2 bar oops3", TypedValue.parseString(holder.getRtx().getNode()
-            .getRawValue()));
+        assertEquals("oops1 foo oops2 bar oops3", holder.getRtx().getValueOfCurrentNode());
         assertEquals(false, axis4.hasNext());
 
         final AbsAxis axis5 = new XPathAxis(holder.getRtx(), "fn:string(./attribute::attribute())");
         assertEquals(true, axis5.hasNext());
-        assertEquals("j", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("j", holder.getRtx().getValueOfCurrentNode());
         assertEquals(false, axis5.hasNext());
 
         holder.getRtx().moveToAttribute(0);
         final AbsAxis axis6 = new XPathAxis(holder.getRtx(), "fn:string()");
         assertEquals(true, axis6.hasNext());
-        assertEquals("j", TypedValue.parseString(holder.getRtx().getNode().getRawValue()));
+        assertEquals("j",holder.getRtx().getValueOfCurrentNode());
         assertEquals(false, axis6.hasNext());
     }
-
 }

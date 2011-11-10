@@ -38,7 +38,6 @@ import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.functions.Function;
 import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.TypedValue;
 
 /**
  * <h1>GeneralComp</h1>
@@ -78,8 +77,8 @@ public class GeneralComp extends AbsComparator {
 
         for (AtomicValue op1 : mOperand1) {
             for (AtomicValue op2 : mOperand2) {
-                String value1 = TypedValue.parseString(op1.getRawValue());
-                String value2 = TypedValue.parseString(op2.getRawValue());
+                String value1 = new String(op1.getRawValue());
+                String value2 = new String(op2.getRawValue());
                 if (getCompKind().compare(value1, value2, getType(op1.getTypeKey(), op2.getTypeKey()))) {
                     return true;
                 }
@@ -106,7 +105,7 @@ public class GeneralComp extends AbsComparator {
             if (convert) { // cast to double
                 Function.fnnumber(rtx);
             }
-            atomized = new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey());
+            atomized = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.getNode().getTypeKey());
             op.add(atomized);
         } while (mOperand.hasNext());
 

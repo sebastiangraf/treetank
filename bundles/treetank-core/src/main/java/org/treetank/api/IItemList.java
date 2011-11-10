@@ -27,6 +27,8 @@
 
 package org.treetank.api;
 
+import org.treetank.node.interfaces.INode;
+
 /**
  * <h1>IItemList</h1>
  * <p>
@@ -54,7 +56,7 @@ public interface IItemList {
      *            The item to add.
      * @return The item key.
      */
-    int addItem(final IItem paramItem);
+    int addItem(final INode paramItem);
 
     /**
      * Returns the item at a given index in the item list. If the given index is
@@ -64,5 +66,5 @@ public interface IItemList {
      *            key of the item, that should be returned
      * @return item at the given index.
      */
-    IItem getItem(final long paramKey);
+    INode getItem(final long paramKey);
 }

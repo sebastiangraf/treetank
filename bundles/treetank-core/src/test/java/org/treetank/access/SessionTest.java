@@ -27,34 +27,28 @@
 
 package org.treetank.access;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ENodes;
-import org.treetank.node.ElementNode;
-import org.treetank.settings.EFixed;
+import org.treetank.node.interfaces.INode;
 import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.TypedValue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class SessionTest {
 
@@ -93,7 +87,7 @@ public class SessionTest {
         rtx.close();
 
         try {
-            final IItem node = rtx.getNode();
+            final INode node = rtx.getNode();
             node.getNodeKey();
             fail();
         } catch (Exception e) {
@@ -159,15 +153,15 @@ public class SessionTest {
         final IReadTransaction rtx1 = holder.getSession().beginReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
-        assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
+        assertEquals("bar", rtx1.getValueOfCurrentNode());
 
         final IWriteTransaction wtx2 = holder.getSession().beginWriteTransaction();
         assertEquals(1L, wtx2.getRevisionNumber());
         wtx2.moveTo(12L);
         wtx2.setValue("bar2");
 
-        assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
-        assertEquals("bar2", TypedValue.parseString(wtx2.getNode().getRawValue()));
+        assertEquals("bar", rtx1.getValueOfCurrentNode());
+        assertEquals("bar2", wtx2.getValueOfCurrentNode());
         rtx1.close();
         wtx2.abort();
         wtx2.close();
@@ -175,7 +169,7 @@ public class SessionTest {
         final IReadTransaction rtx2 = holder.getSession().beginReadTransaction();
         assertEquals(0L, rtx2.getRevisionNumber());
         rtx2.moveTo(12L);
-        assertEquals("bar", TypedValue.parseString(rtx2.getNode().getRawValue()));
+        assertEquals("bar", rtx2.getValueOfCurrentNode());
         rtx2.close();
     }
 
@@ -197,15 +191,15 @@ public class SessionTest {
         final IReadTransaction rtx1 = session2.beginReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
-        assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
+        assertEquals("bar", rtx1.getValueOfCurrentNode());
 
         final IWriteTransaction wtx2 = session2.beginWriteTransaction();
         assertEquals(1L, wtx2.getRevisionNumber());
         wtx2.moveTo(12L);
         wtx2.setValue("bar2");
 
-        assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
-        assertEquals("bar2", TypedValue.parseString(wtx2.getNode().getRawValue()));
+        assertEquals("bar", rtx1.getValueOfCurrentNode());
+        assertEquals("bar2", wtx2.getValueOfCurrentNode());
 
         rtx1.close();
         wtx2.commit();
@@ -218,7 +212,7 @@ public class SessionTest {
         final IReadTransaction rtx2 = session3.beginReadTransaction();
         assertEquals(1L, rtx2.getRevisionNumber());
         rtx2.moveTo(12L);
-        assertEquals("bar2", TypedValue.parseString(rtx2.getNode().getRawValue()));
+        assertEquals("bar2", rtx2.getValueOfCurrentNode());
 
         rtx2.close();
         session3.close();

@@ -31,12 +31,12 @@ import javax.xml.namespace.QName;
 
 import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Abstract diff class which implements common functionality.
@@ -191,7 +191,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         boolean moved = false;
 
-        final IStructuralItem node = paramRtx.getStructuralNode();
+        final IStructNode node = paramRtx.getStructuralNode();
         if (node.hasFirstChild()) {
             if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffOptimized.HASHED
                 && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
@@ -395,7 +395,7 @@ abstract class AbsDiff extends AbsDiffObservable {
             EFoundEqualNode found = EFoundEqualNode.FALSE;
             final long key = paramOldRtx.getNode().getNodeKey();
 
-            while (((IStructuralItem)paramOldRtx.getNode()).hasRightSibling()
+            while (((IStructNode)paramOldRtx.getNode()).hasRightSibling()
                 && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE) {
                 if (checkNodes(paramNewRtx, paramOldRtx)) {
                     found = EFoundEqualNode.TRUE;

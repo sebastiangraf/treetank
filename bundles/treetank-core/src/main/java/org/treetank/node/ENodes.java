@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.treetank.api.IItem;
 import org.treetank.io.ITTSource;
+import org.treetank.node.interfaces.INode;
 
 /**
  * Enumeration for different nodes. All nodes are determined by a unique id.
@@ -36,7 +36,7 @@ public enum ENodes {
     /** Unknown kind. */
     UNKOWN_KIND(0, 0, 0) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -44,7 +44,7 @@ public enum ENodes {
     /** Node kind is element. */
     ELEMENT_KIND(1, 7, 5) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
 
             final byte[] pointerData = readPointerData(paramSource);
 
@@ -87,7 +87,7 @@ public enum ENodes {
     /** Node kind is attribute. */
     ATTRIBUTE_KIND(2, 3, 4) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
 
             final byte[] pointerData = readPointerData(paramSource);
 
@@ -104,7 +104,7 @@ public enum ENodes {
     /** Node kind is text. */
     TEXT_KIND(3, 7, 2) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
 
             final byte[] pointerData = readPointerData(paramSource);
 
@@ -121,7 +121,7 @@ public enum ENodes {
     NAMESPACE_KIND(13, 3, 3) {
 
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
             final byte[] pointerData = readPointerData(paramSource);
             final byte[] byteData = readByteData(paramSource);
             return new NamespaceNode(byteData, pointerData);
@@ -131,7 +131,7 @@ public enum ENodes {
     /** Node kind is processing instruction. */
     PROCESSING_KIND(7, 0, 0) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -139,7 +139,7 @@ public enum ENodes {
     /** Node kind is comment. */
     COMMENT_KIND(8, 0, 0) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -147,7 +147,7 @@ public enum ENodes {
     /** Node kind is document root. */
     ROOT_KIND(9, 7, 1) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
             final byte[] pointerData = readPointerData(paramSource);
             final byte[] byteData = readByteData(paramSource);
             return new DocumentRootNode(byteData, pointerData);
@@ -157,7 +157,7 @@ public enum ENodes {
     /** Whitespace text. */
     WHITESPACE_KIND(4, 0, 0) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
         }
 
@@ -165,13 +165,15 @@ public enum ENodes {
     /** Node kind is deleted node. */
     DELETE_KIND(5, 3, 1) {
         @Override
-        public IItem createNodeFromPersistence(final ITTSource paramSource) {
+        public INode createNodeFromPersistence(final ITTSource paramSource) {
             final DeletedNode node =
                 new DeletedNode(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
             return node;
         }
 
     };
+    
+    
 
     /** Identifier. */
     private final int mKind;
@@ -214,7 +216,7 @@ public enum ENodes {
         return mKind;
     }
 
-    public abstract IItem createNodeFromPersistence(final ITTSource paramSource);
+    public abstract INode createNodeFromPersistence(final ITTSource paramSource);
 
     /**
      * @return the byte size

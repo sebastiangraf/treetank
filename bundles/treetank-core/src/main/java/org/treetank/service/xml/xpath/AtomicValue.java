@@ -27,10 +27,11 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.NamePageHash;
@@ -44,7 +45,7 @@ import org.treetank.utils.TypedValue;
  * Atomic types are anyAtomicType and all types derived from it.)
  * </p>
  */
-public class AtomicValue implements IItem {
+public class AtomicValue implements INode, IValNode {
 
     /** Value of the item as byte array. */
     private byte[] mValue;
@@ -120,15 +121,6 @@ public class AtomicValue implements IItem {
     public void setNodeKey(final long mItemKey) {
 
         this.mItemKey = mItemKey;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public byte[] getRawValue() {
-
-        return mValue.clone();
     }
 
     /**
@@ -244,7 +236,7 @@ public class AtomicValue implements IItem {
      */
     public boolean getBool() {
 
-        return Boolean.parseBoolean(TypedValue.parseString(mValue));
+        return Boolean.parseBoolean(new String(mValue));
     }
 
     /**
@@ -254,7 +246,7 @@ public class AtomicValue implements IItem {
      */
     public float getFLT() {
 
-        return Float.parseFloat(TypedValue.parseString(mValue));
+        return Float.parseFloat(new String(mValue));
     }
 
     /**
@@ -264,7 +256,7 @@ public class AtomicValue implements IItem {
      */
     public double getDBL() {
 
-        return Double.parseDouble(TypedValue.parseString(mValue));
+        return Double.parseDouble(new String(mValue));
     }
 
     /**
@@ -322,12 +314,6 @@ public class AtomicValue implements IItem {
     }
 
     @Override
-    public void setValue(int paramUriKey, byte[] paramVal) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void setParentKey(long paramKey) {
         // TODO Auto-generated method stub
 
@@ -335,6 +321,23 @@ public class AtomicValue implements IItem {
 
     @Override
     public void setType(int paramType) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getRawValue() {
+        return mValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setValue(int paramUriKey, byte[] paramVal) {
         // TODO Auto-generated method stub
 
     }

@@ -27,9 +27,10 @@
 
 package org.treetank.node;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.interfaces.INode;
 
 /**
  * If a node is deleted, it will be encapsulated over this class.
@@ -37,7 +38,7 @@ import org.treetank.io.ITTSink;
  * @author Sebastian Graf
  * 
  */
-public final class DeletedNode implements IItem {
+public final class DeletedNode implements INode {
 
     /**
      * Delegate for common data.
@@ -73,8 +74,8 @@ public final class DeletedNode implements IItem {
     }
 
     @Override
-    public IItem clone() {
-        final IItem toClone =
+    public INode clone() {
+        final INode toClone =
             new DeletedNode(mDelegate.getNodeKey(), mDelegate.getParentKey(), mDelegate.getHash());
         return toClone;
     }
@@ -89,7 +90,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for setHash.
      * 
      * @param paramHash
-     * @see org.treetank.node.NodeDelegate#setHash(long)
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
      */
     public void setHash(long paramHash) {
         mDelegate.setHash(paramHash);
@@ -99,7 +100,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for getHash.
      * 
      * @return
-     * @see org.treetank.node.NodeDelegate#getHash()
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
         return mDelegate.getHash();
@@ -109,7 +110,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for setNodeKey.
      * 
      * @param paramKey
-     * @see org.treetank.node.NodeDelegate#setNodeKey(long)
+     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
     public void setNodeKey(long paramKey) {
         mDelegate.setNodeKey(paramKey);
@@ -119,7 +120,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for getNodeKey.
      * 
      * @return
-     * @see org.treetank.node.NodeDelegate#getNodeKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
     public long getNodeKey() {
         return mDelegate.getNodeKey();
@@ -129,7 +130,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for getParentKey.
      * 
      * @return
-     * @see org.treetank.node.NodeDelegate#getParentKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
         return mDelegate.getParentKey();
@@ -139,7 +140,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for hasParent.
      * 
      * @return
-     * @see org.treetank.node.NodeDelegate#hasParent()
+     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
         return mDelegate.hasParent();
@@ -149,7 +150,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for getNameKey.
      * 
      * @return
-     * @see org.treetank.node.NodeDelegate#getNameKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getNameKey()
      */
     public int getNameKey() {
         return mDelegate.getNameKey();
@@ -159,7 +160,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for getURIKey.
      * 
      * @return
-     * @see org.treetank.node.NodeDelegate#getURIKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getURIKey()
      */
     public int getURIKey() {
         return mDelegate.getURIKey();
@@ -169,27 +170,17 @@ public final class DeletedNode implements IItem {
      * Delegate method for getTypeKey.
      * 
      * @return
-     * @see org.treetank.node.NodeDelegate#getTypeKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
         return mDelegate.getTypeKey();
     }
 
     /**
-     * Delegate method for getRawValue.
-     * 
-     * @return
-     * @see org.treetank.node.NodeDelegate#getRawValue()
-     */
-    public byte[] getRawValue() {
-        return mDelegate.getRawValue();
-    }
-
-    /**
      * Delegate method for setNameKey.
      * 
      * @param paramNameKey
-     * @see org.treetank.node.NodeDelegate#setNameKey(int)
+     * @see org.treetank.node.delegates.NodeDelegate#setNameKey(int)
      */
     public void setNameKey(int paramNameKey) {
         mDelegate.setNameKey(paramNameKey);
@@ -199,28 +190,17 @@ public final class DeletedNode implements IItem {
      * Delegate method for setURIKey.
      * 
      * @param paramUriKey
-     * @see org.treetank.node.NodeDelegate#setURIKey(int)
+     * @see org.treetank.node.delegates.NodeDelegate#setURIKey(int)
      */
     public void setURIKey(int paramUriKey) {
         mDelegate.setURIKey(paramUriKey);
     }
 
     /**
-     * Delegate method for setValue.
-     * 
-     * @param paramUriKey
-     * @param paramVal
-     * @see org.treetank.node.NodeDelegate#setValue(int, byte[])
-     */
-    public void setValue(int paramUriKey, byte[] paramVal) {
-        mDelegate.setValue(paramUriKey, paramVal);
-    }
-
-    /**
      * Delegate method for setParentKey.
      * 
      * @param paramKey
-     * @see org.treetank.node.NodeDelegate#setParentKey(long)
+     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
     public void setParentKey(long paramKey) {
         mDelegate.setParentKey(paramKey);
@@ -230,7 +210,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for setType.
      * 
      * @param paramType
-     * @see org.treetank.node.NodeDelegate#setType(int)
+     * @see org.treetank.node.delegates.NodeDelegate#setType(int)
      */
     public void setType(int paramType) {
         mDelegate.setType(paramType);
@@ -240,7 +220,7 @@ public final class DeletedNode implements IItem {
      * Delegate method for toString.
      * 
      * @return
-     * @see org.treetank.node.NodeDelegate#toString()
+     * @see org.treetank.node.delegates.NodeDelegate#toString()
      */
     public String toString() {
         return mDelegate.toString();
