@@ -32,7 +32,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.imageio.stream.ImageInputStream;
 import javax.xml.namespace.QName;
 
 import org.junit.After;
@@ -41,14 +40,12 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IStructuralItem;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.node.AbsStructNode;
+import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.DocumentCreater;
-import org.treetank.utils.TypedValue;
 
 public class UpdateTest {
 
@@ -87,7 +84,7 @@ public class UpdateTest {
             rtx = holder.getSession().beginReadTransaction();
             rtx.moveToDocumentRoot();
             rtx.moveToFirstChild();
-            assertEquals(Integer.toString(i), TypedValue.parseString(rtx.getNode().getRawValue()));
+            assertEquals(Integer.toString(i), rtx.getValueOfCurrentNode());
             assertEquals(i, rtx.getRevisionNumber());
             rtx.close();
         }
@@ -95,7 +92,7 @@ public class UpdateTest {
         rtx = holder.getSession().beginReadTransaction();
         rtx.moveToDocumentRoot();
         rtx.moveToFirstChild();
-        assertEquals("10", TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("10", rtx.getValueOfCurrentNode());
         assertEquals(10L, rtx.getRevisionNumber());
         rtx.close();
 
@@ -179,7 +176,7 @@ public class UpdateTest {
         assertEquals(0, rtx.getNode().getNodeKey());
         assertTrue(rtx.moveToFirstChild());
         assertEquals(1, rtx.getNode().getNodeKey());
-        assertEquals(4, ((IStructuralItem)rtx.getNode()).getChildCount());
+        assertEquals(4, ((IStructNode)rtx.getNode()).getChildCount());
         assertTrue(rtx.moveToFirstChild());
         assertEquals(4, rtx.getNode().getNodeKey());
         assertTrue(rtx.moveToRightSibling());

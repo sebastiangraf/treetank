@@ -261,7 +261,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws TTIOException
      *             if value couldn't be set
      */
-    void setValue(final int paramValueType, final byte[] paramValue) throws TTIOException;
+    void setValue(final int paramValueType, final byte[] paramValue) throws AbsTTException;
 
     /**
      * Set value of node.
@@ -271,7 +271,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws TTIOException
      *             if value couldn't be set
      */
-    void setValue(final String paramValue) throws TTIOException;
+    void setValue(final String paramValue) throws AbsTTException;
 
     /**
      * Commit all modifications of the exclusive write transaction. Even commit

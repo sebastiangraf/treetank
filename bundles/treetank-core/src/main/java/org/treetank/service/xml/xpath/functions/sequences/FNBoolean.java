@@ -95,14 +95,14 @@ public class FNBoolean extends AbsFunction {
                 final Type type = Type.getType(rtx.getNode().getTypeKey());
 
                 if (type.derivesFrom(Type.BOOLEAN)) {
-                    value = Boolean.parseBoolean(TypedValue.parseString(rtx.getNode().getRawValue()));
+                    value = Boolean.parseBoolean(rtx.getValueOfCurrentNode());
                     // value = TypedValue.parseBoolean(rtx.getRawValue());
                 } else if (type.derivesFrom(Type.STRING) || type.derivesFrom(Type.ANY_URI)
                     || type.derivesFrom(Type.UNTYPED_ATOMIC)) {
                     // if length = 0 -> false
-                    value = (TypedValue.parseString(rtx.getNode().getRawValue()).length() > 0);
+                    value = (rtx.getValueOfCurrentNode().length() > 0);
                 } else if (type.isNumericType()) {
-                    final double dValue = TypedValue.parseDouble(rtx.getNode().getRawValue());
+                    final double dValue = Double.parseDouble(rtx.getValueOfCurrentNode());
                     value = !(Double.isNaN(dValue) || dValue == 0.0d);
                 } else {
                     // for all other types throw error FORG0006
@@ -123,5 +123,4 @@ public class FNBoolean extends AbsFunction {
         return TypedValue.getBytes(Boolean.toString(value));
 
     }
-
 }

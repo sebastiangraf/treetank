@@ -1,11 +1,12 @@
-package org.treetank.node;
+package org.treetank.node.delegates;
 
-import org.treetank.api.IStructuralItem;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
+import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 
-public class StructNodeDelegate implements IStructuralItem {
+public class StructNodeDelegate implements IStructNode {
 
     private long mFirstChild;
     private long mRightSibling;
@@ -52,11 +53,6 @@ public class StructNodeDelegate implements IStructuralItem {
     @Override
     public boolean hasParent() {
         return mDelegate.hasParent();
-    }
-
-    @Override
-    public byte[] getRawValue() {
-        return mDelegate.getRawValue();
     }
 
     @Override
@@ -141,11 +137,6 @@ public class StructNodeDelegate implements IStructuralItem {
     public void setURIKey(int paramUriKey) {
         mDelegate.setURIKey(paramUriKey);
 
-    }
-
-    @Override
-    public void setValue(int paramUriKey, byte[] paramVal) {
-        mDelegate.setValue(paramUriKey, paramVal);
     }
 
     @Override

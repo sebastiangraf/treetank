@@ -27,11 +27,11 @@
 package org.treetank.access;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IStructuralItem;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
 import org.treetank.node.TextNode;
+import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 
 /**
@@ -45,7 +45,7 @@ public enum EInsert {
     ASFIRSTCHILD {
         /** {@inheritDoc} */
         @Override
-        void processMove(final IStructuralItem paramFromNode, final IStructuralItem paramToNode,
+        void processMove(final IStructNode paramFromNode, final IStructNode paramToNode,
             final WriteTransaction paramWtx) throws AbsTTException {
             assert paramFromNode != null;
             assert paramToNode != null;
@@ -77,30 +77,30 @@ public enum EInsert {
                     // Adapt left sibling key of former right sibling of first
                     // child.
                     paramWtx.moveTo(moved.getRightSiblingKey());
-                    final IStructuralItem rightSibling =
-                        (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                    final IStructNode rightSibling =
+                        (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                             paramWtx.getCurrentNode().getNodeKey());
                     rightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
                     paramWtx.getTransactionState().finishNodeModification(rightSibling);
                 } else {
                     // Adapt left sibling key of former first child.
-                    final IStructuralItem oldFirstChild =
-                        (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                    final IStructNode oldFirstChild =
+                        (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                             paramToNode.getFirstChildKey());
                     oldFirstChild.setLeftSiblingKey(paramFromNode.getNodeKey());
                     paramWtx.getTransactionState().finishNodeModification(oldFirstChild);
 
                     // Adapt right sibling key of moved node.
-                    final IStructuralItem moved =
-                        (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                    final IStructNode moved =
+                        (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                             paramFromNode.getNodeKey());
                     moved.setRightSiblingKey(oldFirstChild.getNodeKey());
                     paramWtx.getTransactionState().finishNodeModification(moved);
                 }
             } else {
                 // Adapt right sibling key of moved node.
-                final IStructuralItem moved =
-                    (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                final IStructNode moved =
+                    (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramFromNode.getNodeKey());
                 moved.setRightSiblingKey((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
                 paramWtx.getTransactionState().finishNodeModification(moved);
@@ -108,16 +108,16 @@ public enum EInsert {
 
             // Adapt first child key and childCount of parent where the subtree
             // has to be inserted.
-            final IStructuralItem newParent =
-                (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+            final IStructNode newParent =
+                (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                     paramToNode.getNodeKey());
             newParent.incrementChildCount();
             newParent.setFirstChildKey(paramFromNode.getNodeKey());
             paramWtx.getTransactionState().finishNodeModification(newParent);
 
             // Adapt left sibling key and parent key of moved node.
-            final IStructuralItem moved =
-                (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+            final IStructNode moved =
+                (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                     paramFromNode.getNodeKey());
             moved.setLeftSiblingKey((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
             moved.setParentKey(paramToNode.getNodeKey());
@@ -148,7 +148,7 @@ public enum EInsert {
     ASRIGHTSIBLING {
         /** {@inheritDoc} */
         @Override
-        void processMove(final IStructuralItem paramFromNode, final IStructuralItem paramToNode,
+        void processMove(final IStructNode paramFromNode, final IStructNode paramToNode,
             final WriteTransaction paramWtx) throws AbsTTException {
             assert paramFromNode != null;
             assert paramToNode != null;
@@ -161,8 +161,8 @@ public enum EInsert {
 
                 // Adapt left sibling key of former right sibling of first
                 // child.
-                final IStructuralItem rightSibling =
-                    (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                final IStructNode rightSibling =
+                    (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         ((TextNode)paramWtx.getCurrentNode()).getRightSiblingKey());
                 rightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
                 paramWtx.getTransactionState().finishNodeModification(rightSibling);
@@ -181,8 +181,8 @@ public enum EInsert {
                 builder.append(paramWtx.getValueOfCurrentNode());
                 paramWtx.setValue(builder.toString());
 
-                final IStructuralItem insertAnchor =
-                    (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                final IStructNode insertAnchor =
+                    (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramToNode.getNodeKey());
                 // Adapt right sibling key of node where the subtree has to be
                 // inserted.
@@ -198,8 +198,8 @@ public enum EInsert {
 
                 // Adapt left sibling key of former right sibling of first
                 // child.
-                final IStructuralItem rightSibling =
-                    (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                final IStructNode rightSibling =
+                    (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramWtx.getCurrentNode().getNodeKey());
                 rightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
                 paramWtx.getTransactionState().finishNodeModification(rightSibling);
@@ -221,16 +221,16 @@ public enum EInsert {
                 paramWtx.moveTo(paramToNode.getRightSiblingKey());
                 paramWtx.remove();
 
-                final IStructuralItem insertAnchor =
-                    (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                final IStructNode insertAnchor =
+                    (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramToNode.getNodeKey());
                 // Adapt right sibling key of node where the subtree has to be
                 // inserted.
                 insertAnchor.setRightSiblingKey(paramFromNode.getNodeKey());
                 paramWtx.getTransactionState().finishNodeModification(insertAnchor);
             } else {
-                final IStructuralItem insertAnchor =
-                    (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                final IStructNode insertAnchor =
+                    (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramToNode.getNodeKey());
                 final long rightSiblKey = insertAnchor.getRightSiblingKey();
                 // Adapt right sibling key of node where the subtree has to be
@@ -240,23 +240,23 @@ public enum EInsert {
 
                 if (rightSiblKey > -1) {
                     // Adapt left sibling key of former right sibling.
-                    final IStructuralItem oldRightSibling =
-                        (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                    final IStructNode oldRightSibling =
+                        (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                             rightSiblKey);
                     oldRightSibling.setLeftSiblingKey(paramFromNode.getNodeKey());
                     paramWtx.getTransactionState().finishNodeModification(oldRightSibling);
 
                     // Adapt right sibling key of moved node.
-                    final IStructuralItem movedNode =
-                        (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                    final IStructNode movedNode =
+                        (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                             paramFromNode.getNodeKey());
                     movedNode.setRightSiblingKey(rightSiblKey);
                     paramWtx.getTransactionState().finishNodeModification(movedNode);
                 }
 
                 // Adapt left sibling key of moved node.
-                final IStructuralItem movedNode =
-                    (IStructuralItem)paramWtx.getTransactionState().prepareNodeForModification(
+                final IStructNode movedNode =
+                    (IStructNode)paramWtx.getTransactionState().prepareNodeForModification(
                         paramFromNode.getNodeKey());
                 movedNode.setLeftSiblingKey(insertAnchor.getNodeKey());
                 paramWtx.getTransactionState().finishNodeModification(movedNode);
@@ -288,7 +288,7 @@ public enum EInsert {
     ASNONSTRUCTURAL {
         /** {@inheritDoc} */
         @Override
-        void processMove(final IStructuralItem paramFromNode, final IStructuralItem paramToNode,
+        void processMove(final IStructNode paramFromNode, final IStructNode paramToNode,
             final WriteTransaction paramWtx) throws AbsTTException {
             // Not allowed.
             throw new AssertionError("May never be invoked!");
@@ -326,7 +326,7 @@ public enum EInsert {
      * @throws AbsTTException
      *             if an I/O error occurs
      */
-    abstract void processMove(final IStructuralItem paramFromNode, final IStructuralItem paramToNode,
+    abstract void processMove(final IStructNode paramFromNode, final IStructNode paramToNode,
         final WriteTransaction paramWtx) throws AbsTTException;
 
     /**

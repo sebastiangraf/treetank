@@ -27,10 +27,10 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.types.Type;
@@ -64,7 +64,7 @@ public class AddOpAxis extends AbsObAxis {
      * 
      */
     @Override
-    public IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
+    public INode operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
 
         final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
         final int typeKey = getTransaction().keyForName(returnType.getStringRepr());
@@ -76,8 +76,8 @@ public class AddOpAxis extends AbsObAxis {
         case FLOAT:
         case DECIMAL:
         case INTEGER:
-            final double dOp1 = Double.parseDouble(TypedValue.parseString(mOperand1.getRawValue()));
-            final double dOp2 = Double.parseDouble(TypedValue.parseString(mOperand2.getRawValue()));
+            final double dOp1 = Double.parseDouble(new String(mOperand1.getRawValue()));
+            final double dOp2 = Double.parseDouble(new String(mOperand2.getRawValue()));
             value = TypedValue.getBytes(dOp1 + dOp2);
             break;
         case DATE:

@@ -32,13 +32,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.treetank.access.AbsVisitorSupport;
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
+import org.treetank.node.interfaces.INode;
 
 /**
  * Label visitor.
@@ -52,10 +52,10 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
     private final IReadTransaction mRtx;
 
     /** For each node type: list of inner nodes. */
-    private final Map<ENodes, List<IItem>> mLabels;
+    private final Map<ENodes, List<INode>> mLabels;
 
     /** For each node type: list of leaf nodes. */
-    private final Map<ENodes, List<IItem>> mLeafLabels;
+    private final Map<ENodes, List<INode>> mLeafLabels;
 
     /**
      * Constructor.
@@ -67,8 +67,8 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
      */
     public LabelFMESVisitor(final ISession paramSession) throws AbsTTException {
         mRtx = paramSession.beginReadTransaction();
-        mLabels = new HashMap<ENodes, List<IItem>>();
-        mLeafLabels = new HashMap<ENodes, List<IItem>>();
+        mLabels = new HashMap<ENodes, List<INode>>();
+        mLeafLabels = new HashMap<ENodes, List<INode>>();
     }
 
     /** {@inheritDoc} */
@@ -89,7 +89,7 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
         if (paramNode.hasFirstChild() || paramNode.getAttributeCount() > 0
             || paramNode.getNamespaceCount() > 0) {
             if (!mLabels.containsKey(paramNode.getKind())) {
-                mLabels.put(paramNode.getKind(), new ArrayList<IItem>());
+                mLabels.put(paramNode.getKind(), new ArrayList<INode>());
             }
             mLabels.get(paramNode.getKind()).add(paramNode);
         }
@@ -108,7 +108,7 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
     private void addLeafLabel() {
         final ENodes nodeKind = mRtx.getNode().getKind();
         if (!mLeafLabels.containsKey(nodeKind)) {
-            mLeafLabels.put(nodeKind, new ArrayList<IItem>());
+            mLeafLabels.put(nodeKind, new ArrayList<INode>());
         }
         mLeafLabels.get(nodeKind).add(mRtx.getNode());
     }
@@ -118,7 +118,7 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
      * 
      * @return the Labels
      */
-    public Map<ENodes, List<IItem>> getLabels() {
+    public Map<ENodes, List<INode>> getLabels() {
         return mLabels;
     }
 
@@ -127,7 +127,7 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
      * 
      * @return the leaf labels
      */
-    public Map<ENodes, List<IItem>> getLeafLabels() {
+    public Map<ENodes, List<INode>> getLeafLabels() {
         return mLeafLabels;
     }
 }

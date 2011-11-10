@@ -37,7 +37,6 @@ import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.TypedValue;
 
 /**
  * JUnit-test class to test the functionality of the CompAxis.
@@ -66,20 +65,17 @@ public class CompAxisTest {
 
         final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "1.0 = 1.0");
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
-            .getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis1.hasNext());
 
         final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "(1, 2, 3) < (2, 3)");
         assertEquals(true, axis2.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
-            .getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis2.hasNext());
 
         final AbsAxis axis3 = new XPathAxis(holder.getRtx(), "(1, 2, 3) > (3, 4)");
         assertEquals(true, axis3.hasNext());
-        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
-            .getRawValue()))));
+        assertEquals(false, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis3.hasNext());
 
     }

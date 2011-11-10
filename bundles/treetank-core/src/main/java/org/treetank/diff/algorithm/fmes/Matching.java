@@ -29,10 +29,10 @@ package org.treetank.diff.algorithm.fmes;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.node.interfaces.INode;
 
 /**
  * Keeps track of nodes in a matching.
@@ -43,17 +43,17 @@ import org.treetank.axis.DescendantAxis;
 public final class Matching {
 
     /** Forward matching. */
-    private final Map<IItem, IItem> mMapping;
+    private final Map<INode, INode> mMapping;
 
     /** Backward machting. */
-    private final Map<IItem, IItem> mReverseMapping;
+    private final Map<INode, INode> mReverseMapping;
 
     /**
      * Tracks the (grand-)parent-child relation of nodes. We use this to speed
      * up the calculation of the number of nodes in the subtree of two nodes
      * that are in the matching.
      */
-    private final ConnectionMap<IItem> mIsInSubtree;
+    private final ConnectionMap<INode> mIsInSubtree;
 
     /** {@link IReadTransaction} reference on old revision. */
     private final IReadTransaction mRtxOld;
@@ -70,9 +70,9 @@ public final class Matching {
      *            {@link IReadTransaction} reference on new revision.
      */
     public Matching(final IReadTransaction paramRtxOld, final IReadTransaction paramRtxNew) {
-        mMapping = new IdentityHashMap<IItem, IItem>();
-        mReverseMapping = new IdentityHashMap<IItem, IItem>();
-        mIsInSubtree = new ConnectionMap<IItem>();
+        mMapping = new IdentityHashMap<INode, INode>();
+        mReverseMapping = new IdentityHashMap<INode, INode>();
+        mIsInSubtree = new ConnectionMap<INode>();
         mRtxOld = paramRtxOld;
         mRtxNew = paramRtxNew;
     }
@@ -85,9 +85,9 @@ public final class Matching {
      *            the original
      */
     public Matching(final Matching paramMatch) {
-        mMapping = new IdentityHashMap<IItem, IItem>(paramMatch.mMapping);
-        mReverseMapping = new IdentityHashMap<IItem, IItem>(paramMatch.mReverseMapping);
-        mIsInSubtree = new ConnectionMap<IItem>(paramMatch.mIsInSubtree);
+        mMapping = new IdentityHashMap<INode, INode>(paramMatch.mMapping);
+        mReverseMapping = new IdentityHashMap<INode, INode>(paramMatch.mReverseMapping);
+        mIsInSubtree = new ConnectionMap<INode>(paramMatch.mIsInSubtree);
         mRtxOld = paramMatch.mRtxOld;
         mRtxNew = paramMatch.mRtxNew;
     }
@@ -100,7 +100,7 @@ public final class Matching {
      * @param paramNodeY
      *            partner of paramNodeX
      */
-    public void add(final IItem paramNodeX, final IItem paramNodeY) {
+    public void add(final INode paramNodeX, final INode paramNodeY) {
         mMapping.put(paramNodeX, paramNodeY);
         mReverseMapping.put(paramNodeY, paramNodeX);
         updateSubtreeMap(paramNodeX, mRtxNew);
@@ -115,7 +115,7 @@ public final class Matching {
      * @param paramRtx
      *            {@link IReadTransaction} reference
      */
-    private void updateSubtreeMap(final IItem paramNode, final IReadTransaction paramRtx) {
+    private void updateSubtreeMap(final INode paramNode, final IReadTransaction paramRtx) {
         assert paramNode != null;
         assert paramRtx != null;
 
@@ -138,7 +138,7 @@ public final class Matching {
      *            partner of x
      * @return true iff add(x, y) was invoked first
      */
-    public boolean contains(final IItem paramNodeX, final IItem paramNodeY) {
+    public boolean contains(final INode paramNodeX, final INode paramNodeY) {
         return mMapping.get(paramNodeX) == paramNodeY;
     }
 
@@ -152,7 +152,7 @@ public final class Matching {
      *            second subtree root node
      * @return number of children which have been matched
      */
-    public long containedChildren(final IItem paramNodeX, final IItem paramNodeY) {
+    public long containedChildren(final INode paramNodeX, final INode paramNodeY) {
         assert paramNodeX != null;
         assert paramNodeY != null;
         long retVal = 0;
@@ -172,7 +172,7 @@ public final class Matching {
      *            node for which a partner has to be found
      * @return the other node or null
      */
-    public IItem partner(final IItem paramNode) {
+    public INode partner(final INode paramNode) {
         return mMapping.get(paramNode);
     }
 
@@ -183,7 +183,7 @@ public final class Matching {
      *            node for which a reverse partner has to be found
      * @return x iff add(x, node) was called before
      */
-    public IItem reversePartner(final IItem paramNode) {
+    public INode reversePartner(final INode paramNode) {
         return mReverseMapping.get(paramNode);
     }
 }

@@ -103,8 +103,8 @@ public class NodeComp extends AbsComparator {
     protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2)
         throws TTXPathException {
 
-        final String op1 = TypedValue.parseString(mOperand1[0].getRawValue());
-        final String op2 = TypedValue.parseString(mOperand2[0].getRawValue());
+        final String op1 = new String(mOperand1[0].getRawValue());
+        final String op2 = new String(mOperand2[0].getRawValue());
 
         return getCompKind().compare(op1, op2, getType(mOperand1[0].getTypeKey(), mOperand2[0].getTypeKey()));
     }

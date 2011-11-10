@@ -40,7 +40,6 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathError;
-import org.treetank.utils.TypedValue;
 
 /**
  * JUnit-test class to test the functionality of the CastableExpr.
@@ -70,8 +69,7 @@ public class CastableExprTest {
         final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "1 castable as xs:decimal");
         assertEquals(true, axis1.hasNext());
         assertEquals(holder.getRtx().keyForName("xs:boolean"), holder.getRtx().getNode().getTypeKey());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
-            .getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis1.hasNext());
 
         final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "10.0 castable as xs:anyAtomicType");
@@ -94,8 +92,7 @@ public class CastableExprTest {
         final AbsAxis axis4 = new XPathAxis(holder.getRtx(), "\"hello\" castable as xs:string");
         assertEquals(true, axis4.hasNext());
         assertEquals(holder.getRtx().keyForName("xs:boolean"), holder.getRtx().getNode().getTypeKey());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
-            .getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis4.hasNext());
 
         // final IAxis axis5 = new XPathAxis(holder.getRtx(),

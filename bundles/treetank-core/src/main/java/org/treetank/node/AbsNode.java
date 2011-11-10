@@ -27,8 +27,9 @@
 
 package org.treetank.node;
 
-import org.treetank.api.IItem;
 import org.treetank.io.ITTSink;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.settings.EFixed;
 
 /**
@@ -41,7 +42,7 @@ import org.treetank.settings.EFixed;
  * </p>
  */
 @Deprecated
-public abstract class AbsNode implements IItem, Comparable<AbsNode> {
+public abstract class AbsNode implements INode, IValNode, Comparable<AbsNode> {
 
     /** standard NODE_KEY. */
     protected static final int NODE_KEY = 0;

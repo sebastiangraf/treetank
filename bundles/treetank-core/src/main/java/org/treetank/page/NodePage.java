@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.treetank.access.WriteTransactionState;
-import org.treetank.api.IItem;
 import org.treetank.encryption.EncryptionController;
 import org.treetank.encryption.database.model.KeySelector;
 import org.treetank.encryption.utils.NodeEncryption;
@@ -31,6 +30,7 @@ import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.AbsNode;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.INode;
 import org.treetank.node.io.NodeInputSource;
 import org.treetank.node.io.NodeOutputSink;
 import org.treetank.utils.IConstants;
@@ -48,7 +48,7 @@ public class NodePage implements IPage {
     private final long mNodePageKey;
 
     /** Array of nodes. This can have null nodes that were removed. */
-    private final IItem[] mNodes;
+    private final INode[] mNodes;
 
     private final PageDelegate mDelegate;
 
@@ -61,7 +61,7 @@ public class NodePage implements IPage {
     public NodePage(final long nodePageKey, final long mRevision) {
         mDelegate = new PageDelegate(0, mRevision);
         mNodePageKey = nodePageKey;
-        mNodes = new IItem[IConstants.NDP_NODE_COUNT];
+        mNodes = new INode[IConstants.NDP_NODE_COUNT];
     }
 
     /**
@@ -76,7 +76,7 @@ public class NodePage implements IPage {
         mDelegate.initialize(mIn);
 
         mNodePageKey = mIn.readLong();
-        mNodes = new IItem[IConstants.NDP_NODE_COUNT];
+        mNodes = new INode[IConstants.NDP_NODE_COUNT];
 
         final EncryptionController enController = EncryptionController.getInstance();
 
@@ -200,7 +200,7 @@ public class NodePage implements IPage {
      *            Offset of node within local node page.
      * @return Node at given offset.
      */
-    public IItem getNode(final int mOffset) {
+    public INode getNode(final int mOffset) {
         return getNodes()[mOffset];
     }
 
@@ -212,7 +212,7 @@ public class NodePage implements IPage {
      * @param mNode
      *            Node to store at given nodeOffset.
      */
-    public void setNode(final int mOffset, final IItem mNode) {
+    public void setNode(final int mOffset, final INode mNode) {
         getNodes()[mOffset] = mNode;
     }
 
@@ -228,7 +228,7 @@ public class NodePage implements IPage {
 
         if (enController.checkEncryption()) {
             NodeOutputSink mNodeOut = null;
-            for (final IItem node : getNodes()) {
+            for (final INode node : getNodes()) {
                 if (node != null) {
                     mNodeOut = new NodeOutputSink();
 
@@ -307,7 +307,7 @@ public class NodePage implements IPage {
                 }
             }
 
-            for (final IItem node : getNodes()) {
+            for (final INode node : getNodes()) {
                 if (node != null) {
                     node.serialize(mOut);
                 }
@@ -324,7 +324,7 @@ public class NodePage implements IPage {
         returnString.append("pagekey=");
         returnString.append(mNodePageKey);
         returnString.append(", nodes: ");
-        for (final IItem node : getNodes()) {
+        for (final INode node : getNodes()) {
             if (node != null) {
                 returnString.append(node.getNodeKey());
                 returnString.append(",");
@@ -336,7 +336,7 @@ public class NodePage implements IPage {
     /**
      * @return the mNodes
      */
-    public final IItem[] getNodes() {
+    public final INode[] getNodes() {
         return mNodes;
     }
 

@@ -134,7 +134,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final int mValueType, final byte[] mValue) throws TTIOException {
+    public synchronized void setValue(final int mValueType, final byte[] mValue) throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setValue(mValueType, mValue);
     }
@@ -143,7 +143,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final String mValue) throws TTIOException {
+    public synchronized void setValue(final String mValue) throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setValue(mValue);
     }

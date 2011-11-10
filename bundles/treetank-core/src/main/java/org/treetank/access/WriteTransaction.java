@@ -30,9 +30,7 @@ package org.treetank.access;
 import javax.xml.namespace.QName;
 
 import org.treetank.api.IDatabase;
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IStructuralItem;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
@@ -45,6 +43,9 @@ import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.page.UberPage;
 import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.settings.EFixed;
@@ -142,7 +143,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
             final long parentKey = getCurrentNode().getNodeKey();
             final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-            final long rightSibKey = ((IStructuralItem)getCurrentNode()).getFirstChildKey();
+            final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQName);
 
@@ -169,18 +170,18 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             throw new IllegalArgumentException("Argument must be a valid node key!");
         }
 
-        final IItem nodeToMove = getTransactionState().getNode(paramFromKey);
+        final INode nodeToMove = getTransactionState().getNode(paramFromKey);
 
-        if (nodeToMove instanceof IStructuralItem && getCurrentNode().getKind() == ENodes.ELEMENT_KIND) {
+        if (nodeToMove instanceof IStructNode && getCurrentNode().getKind() == ENodes.ELEMENT_KIND) {
             checkAccessAndCommit();
 
             final ElementNode nodeAnchor = (ElementNode)getCurrentNode();
 
             // Adapt hashes.
-            adaptHashesForMove((IStructuralItem)nodeToMove);
+            adaptHashesForMove((IStructNode)nodeToMove);
 
             // Adapt pointers and merge sibling text nodes.
-            adaptForMove((IStructuralItem)nodeToMove, nodeAnchor, EInsert.ASFIRSTCHILD);
+            adaptForMove((IStructNode)nodeToMove, nodeAnchor, EInsert.ASFIRSTCHILD);
             setCurrentNode(nodeAnchor);
             adaptHashesWithAdd();
 
@@ -203,18 +204,18 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             throw new IllegalArgumentException("Argument must be a valid node key!");
         }
 
-        final IItem nodeToMove = getTransactionState().getNode(paramFromKey);
+        final INode nodeToMove = getTransactionState().getNode(paramFromKey);
 
-        if (nodeToMove instanceof IStructuralItem && getCurrentNode() instanceof IStructuralItem) {
+        if (nodeToMove instanceof IStructNode && getCurrentNode() instanceof IStructNode) {
             checkAccessAndCommit();
 
-            final IStructuralItem nodeAnchor = (IStructuralItem)getCurrentNode();
+            final IStructNode nodeAnchor = (IStructNode)getCurrentNode();
 
             // Adapt hashes.
-            adaptHashesForMove((IStructuralItem)nodeToMove);
+            adaptHashesForMove((IStructNode)nodeToMove);
 
             // Adapt pointers and merge sibling text nodes.
-            adaptForMove((IStructuralItem)nodeToMove, nodeAnchor, EInsert.ASRIGHTSIBLING);
+            adaptForMove((IStructNode)nodeToMove, nodeAnchor, EInsert.ASRIGHTSIBLING);
             setCurrentNode(nodeAnchor);
             adaptHashesWithAdd();
 
@@ -229,9 +230,9 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * Adapt hashes for move operation ("remove" phase).
      * 
      * @param paramNodeToMove
-     *            node which implements {@link IStructuralItem} and is moved
+     *            node which implements {@link IStructNode} and is moved
      */
-    private void adaptHashesForMove(final IStructuralItem paramNodeToMove) {
+    private void adaptHashesForMove(final IStructNode paramNodeToMove) {
         assert paramNodeToMove != null;
         setCurrentNode(paramNodeToMove);
         // while (((AbsStructNode)getCurrentNode()).hasFirstChild()) {
@@ -249,9 +250,9 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * Adapting everything for move operations.
      * 
      * @param paramFromNode
-     *            root {@link IStructuralItem} of the subtree to be moved
+     *            root {@link IStructNode} of the subtree to be moved
      * @param paramToNode
-     *            the {@link IStructuralItem} which is the anchor of the new
+     *            the {@link IStructNode} which is the anchor of the new
      *            subtree
      * @param paramInsert
      *            determines if it has to be inserted as a first child or a
@@ -259,7 +260,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws AbsTTException
      *             if removing a node fails after merging text nodes
      */
-    private void adaptForMove(final IStructuralItem paramFromNode, final IStructuralItem paramToNode,
+    private void adaptForMove(final IStructNode paramFromNode, final IStructNode paramToNode,
         final EInsert paramInsert) throws AbsTTException {
         assert paramFromNode != null;
         assert paramToNode != null;
@@ -267,8 +268,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         // Modify nodes where the subtree has been moved from.
         // ==============================================================================
-        final IStructuralItem parent =
-            (IStructuralItem)getTransactionState().prepareNodeForModification(paramFromNode.getParentKey());
+        final IStructNode parent =
+            (IStructNode)getTransactionState().prepareNodeForModification(paramFromNode.getParentKey());
         parent.decrementChildCount();
         // Adapt first child key of former parent.
         if (parent.getFirstChildKey() == paramFromNode.getNodeKey()) {
@@ -278,8 +279,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         // Adapt right sibling key of former left sibling.
         if (paramFromNode.hasLeftSibling()) {
-            final IStructuralItem leftSibling =
-                (IStructuralItem)getTransactionState().prepareNodeForModification(
+            final IStructNode leftSibling =
+                (IStructNode)getTransactionState().prepareNodeForModification(
                     paramFromNode.getLeftSiblingKey());
             leftSibling.setRightSiblingKey(paramFromNode.getRightSiblingKey());
             getTransactionState().finishNodeModification(leftSibling);
@@ -287,8 +288,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         // Adapt left sibling key of former right sibling.
         if (paramFromNode.hasRightSibling()) {
-            final IStructuralItem rightSibling =
-                (IStructuralItem)getTransactionState().prepareNodeForModification(
+            final IStructNode rightSibling =
+                (IStructNode)getTransactionState().prepareNodeForModification(
                     paramFromNode.getRightSiblingKey());
             rightSibling.setLeftSiblingKey(paramFromNode.getLeftSiblingKey());
             getTransactionState().finishNodeModification(rightSibling);
@@ -322,13 +323,13 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         if (paramQName == null) {
             throw new NullPointerException("paramQName may not be null!");
         }
-        if (getCurrentNode() instanceof IStructuralItem) {
+        if (getCurrentNode() instanceof IStructNode) {
 
             checkAccessAndCommit();
 
             final long parentKey = getCurrentNode().getParentKey();
             final long leftSibKey = getCurrentNode().getNodeKey();
-            final long rightSibKey = ((IStructuralItem)getCurrentNode()).getRightSiblingKey();
+            final long rightSibKey = ((IStructNode)getCurrentNode()).getRightSiblingKey();
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, paramQName);
 
@@ -358,7 +359,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             final byte[] value = TypedValue.getBytes(paramValueAsString);
             final long parentKey = getCurrentNode().getNodeKey();
             final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-            final long rightSibKey = ((IStructuralItem)getCurrentNode()).getFirstChildKey();
+            final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
@@ -387,7 +388,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             final byte[] value = TypedValue.getBytes(paramValueAsString);
             final long parentKey = getCurrentNode().getParentKey();
             final long leftSibKey = getCurrentNode().getNodeKey();
-            final long rightSibKey = ((IStructuralItem)getCurrentNode()).getRightSiblingKey();
+            final long rightSibKey = ((IStructNode)getCurrentNode()).getRightSiblingKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
@@ -408,9 +409,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     @Override
     public synchronized long insertAttribute(final QName paramQName, final String paramValueAsString)
         throws AbsTTException {
-        if (paramQName == null || paramValueAsString == null) {
-            throw new NullPointerException("QName and Value of attribute may not be null!");
-        }
         if (getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
@@ -420,7 +418,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             final AttributeNode node =
                 getTransactionState().createAttributeNode(elementKey, paramQName, value);
 
-            final IItem parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
+            final INode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
             ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
@@ -457,7 +455,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             final NamespaceNode node =
                 getTransactionState().createNamespaceNode(elementKey, uriKey, prefixKey);
 
-            final IItem parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
+            final INode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
             ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
@@ -478,8 +476,8 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         checkAccessAndCommit();
         if (getCurrentNode().getKind() == ENodes.ROOT_KIND) {
             throw new TTUsageException("Document root can not be removed.");
-        } else if (getCurrentNode() instanceof IStructuralItem) {
-            final IStructuralItem node = (IStructuralItem)getCurrentNode();
+        } else if (getCurrentNode() instanceof IStructNode) {
+            final IStructNode node = (IStructNode)getCurrentNode();
             // Remove subtree.
             for (final AbsAxis desc = new DescendantAxis(this, false); desc.hasNext(); desc.next()) {
                 getTransactionState().removeNode(getCurrentNode());
@@ -497,7 +495,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                 moveTo(node.getParentKey());
             }
         } else if (getCurrentNode().getKind() == ENodes.ATTRIBUTE_KIND) {
-            final IItem node = getCurrentNode();
+            final INode node = getCurrentNode();
 
             final ElementNode parent =
                 (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
@@ -506,7 +504,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             adaptHashesWithRemove();
             moveToParent();
         } else if (getCurrentNode().getKind() == ENodes.NAMESPACE_KIND) {
-            final IItem node = getCurrentNode();
+            final INode node = getCurrentNode();
 
             final ElementNode parent =
                 (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
@@ -521,15 +519,12 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setQName(final QName paramName) throws TTIOException, NullPointerException {
-        if (paramName == null) {
-            throw new NullPointerException("Name may not be null!");
-        }
+    public synchronized void setQName(final QName paramName) throws TTIOException {
         assertNotClosed();
         mModificationCount++;
         final long oldHash = getCurrentNode().hashCode();
 
-        final IItem node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        final INode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
         node.setNameKey(getTransactionState().createNameKey(WriteTransactionState.buildName(paramName)));
         getTransactionState().finishNodeModification(node);
 
@@ -542,14 +537,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      */
     @Override
     public synchronized void setURI(final String paramUri) throws TTIOException {
-        if (paramUri == null) {
-            throw new NullPointerException("URI may not be null!");
-        }
         assertNotClosed();
         mModificationCount++;
         final long oldHash = getCurrentNode().hashCode();
 
-        final IItem node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        final INode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
         node.setURIKey(getTransactionState().createNameKey(paramUri));
         getTransactionState().finishNodeModification(node);
 
@@ -561,40 +553,31 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final int paramValueType, final byte[] paramValue) throws TTIOException {
-        if (paramValue == null) {
-            throw new NullPointerException("Value may not be null!");
+    public synchronized void setValue(final int paramValueType, final byte[] paramValue)
+        throws AbsTTException {
+        if (getCurrentNode() instanceof IValNode) {
+            assertNotClosed();
+            mModificationCount++;
+            final long oldHash = getCurrentNode().hashCode();
+
+            final IValNode node =
+                (IValNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            node.setValue(paramValueType, paramValue);
+            getTransactionState().finishNodeModification(node);
+
+            setCurrentNode(node);
+            adaptHashedWithUpdate(oldHash);
+        } else {
+            throw new TTUsageException(
+                "SetValue is not allowed if current node is not an IValNode implementation!");
         }
-        assertNotClosed();
-        mModificationCount++;
-        final long oldHash = getCurrentNode().hashCode();
-
-        final IItem node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-        node.setValue(paramValueType, paramValue);
-        getTransactionState().finishNodeModification(node);
-
-        // final AbsNode oldNode = (AbsNode)getCurrentNode();
-        // // oldNode.setValue(mValueType, mValue);
-        // final AbsNode newNode = createNodeToModify(oldNode);
-        //
-        // if (oldNode instanceof AbsStructNode) {
-        // adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
-        // }
-        // newNode.setValue(mValueType, mValue);
-        // getTransactionState().removeNode(oldNode);
-
-        setCurrentNode(node);
-        adaptHashedWithUpdate(oldHash);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final String paramValue) throws TTIOException {
-        if (paramValue == null) {
-            throw new NullPointerException("Value may not be null!");
-        }
+    public synchronized void setValue(final String paramValue) throws AbsTTException {
         setValue(getTransactionState().createNameKey("xs:untyped"), TypedValue.getBytes(paramValue));
     }
 
@@ -716,15 +699,14 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForInsert(final IItem paramNewNode, final EInsert paramInsert) throws TTIOException {
+    private void adaptForInsert(final INode paramNewNode, final EInsert paramInsert) throws TTIOException {
         assert paramNewNode != null;
         assert paramInsert != null;
 
-        if (paramNewNode instanceof IStructuralItem) {
-            final IStructuralItem strucNode = (IStructuralItem)paramNewNode;
-            final IStructuralItem parent =
-                (IStructuralItem)getTransactionState()
-                    .prepareNodeForModification(paramNewNode.getParentKey());
+        if (paramNewNode instanceof IStructNode) {
+            final IStructNode strucNode = (IStructNode)paramNewNode;
+            final IStructNode parent =
+                (IStructNode)getTransactionState().prepareNodeForModification(paramNewNode.getParentKey());
             parent.incrementChildCount();
             if (paramInsert == EInsert.ASFIRSTCHILD) {
                 parent.setFirstChildKey(paramNewNode.getNodeKey());
@@ -732,15 +714,15 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             getTransactionState().finishNodeModification(parent);
 
             if (strucNode.hasRightSibling()) {
-                final IStructuralItem rightSiblingNode =
-                    (IStructuralItem)getTransactionState().prepareNodeForModification(
+                final IStructNode rightSiblingNode =
+                    (IStructNode)getTransactionState().prepareNodeForModification(
                         strucNode.getRightSiblingKey());
                 rightSiblingNode.setLeftSiblingKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(rightSiblingNode);
             }
             if (strucNode.hasLeftSibling()) {
-                final IStructuralItem leftSiblingNode =
-                    (IStructuralItem)getTransactionState().prepareNodeForModification(
+                final IStructNode leftSiblingNode =
+                    (IStructNode)getTransactionState().prepareNodeForModification(
                         strucNode.getLeftSiblingKey());
                 leftSiblingNode.setRightSiblingKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(leftSiblingNode);
@@ -765,13 +747,13 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForRemove(final IStructuralItem paramOldNode) throws TTIOException {
+    private void adaptForRemove(final IStructNode paramOldNode) throws TTIOException {
         assert paramOldNode != null;
 
         // Adapt left sibling node if there is one.
         if (paramOldNode.hasLeftSibling()) {
-            final IStructuralItem leftSibling =
-                (IStructuralItem)getTransactionState().prepareNodeForModification(
+            final IStructNode leftSibling =
+                (IStructNode)getTransactionState().prepareNodeForModification(
                     paramOldNode.getLeftSiblingKey());
             leftSibling.setRightSiblingKey(paramOldNode.getRightSiblingKey());
             getTransactionState().finishNodeModification(leftSibling);
@@ -779,16 +761,16 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         // Adapt right sibling node if there is one.
         if (paramOldNode.hasRightSibling()) {
-            final IStructuralItem rightSibling =
-                (IStructuralItem)getTransactionState().prepareNodeForModification(
+            final IStructNode rightSibling =
+                (IStructNode)getTransactionState().prepareNodeForModification(
                     paramOldNode.getRightSiblingKey());
             rightSibling.setLeftSiblingKey(paramOldNode.getLeftSiblingKey());
             getTransactionState().finishNodeModification(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
-        final IStructuralItem parent =
-            (IStructuralItem)getTransactionState().prepareNodeForModification(paramOldNode.getParentKey());
+        final IStructNode parent =
+            (IStructNode)getTransactionState().prepareNodeForModification(paramOldNode.getParentKey());
         if (!paramOldNode.hasLeftSibling()) {
             parent.setFirstChildKey(paramOldNode.getRightSiblingKey());
         }
@@ -917,22 +899,22 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      */
     private void postorderAdd() throws TTIOException {
         // start with hash to add
-        final IItem startNode = getCurrentNode();
+        final INode startNode = getCurrentNode();
         // long for adapting the hash of the parent
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
-        if (!(getCurrentNode() instanceof IStructuralItem)) {
+        if (!(getCurrentNode() instanceof IStructNode)) {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
             getCurrentNode().setHash(getCurrentNode().hashCode());
             getTransactionState().finishNodeModification(getCurrentNode());
             moveTo(getCurrentNode().getParentKey());
         }
         // Cursor to root
-        IStructuralItem cursorToRoot;
+        IStructNode cursorToRoot;
         do {
             synchronized (getCurrentNode()) {
                 cursorToRoot =
-                    (IStructuralItem)getTransactionState().prepareNodeForModification(
+                    (IStructNode)getTransactionState().prepareNodeForModification(
                         getCurrentNode().getNodeKey());
                 hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
@@ -978,7 +960,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      *             if anything weird happened
      */
     private void rollingUpdate(final long paramOldHash) throws TTIOException {
-        final IItem newNode = getCurrentNode();
+        final INode newNode = getCurrentNode();
         final long newNodeHash = newNode.hashCode();
         long resultNew = newNode.hashCode();
 
@@ -1009,7 +991,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      *             if anything weird happened
      */
     private void rollingRemove() throws TTIOException {
-        final IItem startNode = getCurrentNode();
+        final INode startNode = getCurrentNode();
         long hashToRemove = startNode.getHash();
         long hashToAdd = 0;
         long newHash = 0;
@@ -1048,7 +1030,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      */
     private void rollingAdd() throws TTIOException {
         // start with hash to add
-        final IItem startNode = getCurrentNode();
+        final INode startNode = getCurrentNode();
         long hashToAdd = startNode.hashCode();
         long newHash = 0;
         long possibleOldHash = 0;

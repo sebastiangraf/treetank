@@ -25,8 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.api;
+package org.treetank.node.interfaces;
 
+import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 
@@ -36,7 +37,7 @@ import org.treetank.node.ENodes;
  * Common interface for all item kinds. An item can be a node or an atomic value.
  * </p>
  */
-public interface IItem extends Cloneable {
+public interface INode extends Cloneable {
 
     /**
      * Setting the actual hash of the structure. The hash of one node should
@@ -85,12 +86,7 @@ public interface IItem extends Cloneable {
      */
     boolean hasParent();
 
-    /**
-     * Return a byte array representation of the item's value.
-     * 
-     * @return returns the value of the item
-     */
-    byte[] getRawValue();
+
 
     /**
      * Gets the kind of the item (atomic value, element node, attribute
@@ -134,7 +130,7 @@ public interface IItem extends Cloneable {
      * 
      * @return the cloned node.
      */
-    IItem clone();
+    INode clone();
 
     /**
      * Serializing the node.
@@ -160,15 +156,7 @@ public interface IItem extends Cloneable {
      */
     void setURIKey(int paramUriKey);
 
-    /**
-     * Setting the value key.
-     * 
-     * @param paramUriKey
-     *            the urikey to be set.
-     * @param paramVal
-     *            the value to be set.
-     */
-    void setValue(int paramUriKey, byte[] paramVal);
+
 
     /**
      * Setting the parent key.

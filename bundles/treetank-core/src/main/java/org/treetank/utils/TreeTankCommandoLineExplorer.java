@@ -245,11 +245,11 @@ public final class TreeTankCommandoLineExplorer {
                     builder.append("Attribute\n");
                     builder.append(mCurrentRtx.nameForKey(mCurrentRtx.getNode().getNameKey()));
                     builder.append("=");
-                    builder.append(TypedValue.parseString(mCurrentRtx.getNode().getRawValue()));
+                    builder.append(mCurrentRtx.getValueOfCurrentNode());
                     break;
                 case TEXT_KIND:
                     builder.append("Text\n");
-                    builder.append(TypedValue.parseString(mCurrentRtx.getNode().getRawValue()));
+                    builder.append(mCurrentRtx.getValueOfCurrentNode());
                     break;
                 case NAMESPACE_KIND:
                     builder.append("Namespace\n");

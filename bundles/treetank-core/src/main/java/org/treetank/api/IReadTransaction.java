@@ -31,6 +31,8 @@ import javax.xml.namespace.QName;
 
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -283,7 +285,7 @@ public interface IReadTransaction {
      * 
      * @return the node
      */
-    IItem getNode();
+    INode getNode();
 
     /**
      * Close shared read transaction and immediately release all resources.
@@ -304,10 +306,10 @@ public interface IReadTransaction {
     boolean isClosed();
 
     /**
-     * This method returns the current {@link IItem} as a {@link IStructuralItem}.
+     * This method returns the current {@link INode} as a {@link IStructNode}.
      * 
-     * @return the current node as {@link IStructuralItem} if possible,
+     * @return the current node as {@link IStructNode} if possible,
      *         otherwise null.
      */
-    IStructuralItem getStructuralNode();
+    IStructNode getStructuralNode();
 }

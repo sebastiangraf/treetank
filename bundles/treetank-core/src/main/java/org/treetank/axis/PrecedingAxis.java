@@ -30,8 +30,8 @@ package org.treetank.axis;
 import java.util.Stack;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IStructuralItem;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>PrecedingAxis</h1>
@@ -98,7 +98,7 @@ public class PrecedingAxis extends AbsAxis {
             return true;
         }
 
-        if (((IStructuralItem)getTransaction().getNode()).hasLeftSibling()) {
+        if (((IStructNode)getTransaction().getNode()).hasLeftSibling()) {
             getTransaction().moveToLeftSibling();
             // because this axis return the precedings in reverse document
             // order, we
@@ -112,7 +112,7 @@ public class PrecedingAxis extends AbsAxis {
         while (getTransaction().getNode().hasParent()) {
             // ancestors are not part of the preceding set
             getTransaction().moveToParent();
-            if (((IStructuralItem)getTransaction().getNode()).hasLeftSibling()) {
+            if (((IStructNode)getTransaction().getNode()).hasLeftSibling()) {
                 getTransaction().moveToLeftSibling();
                 // move to last node in the subtree
                 getLastChild();
@@ -139,15 +139,15 @@ public class PrecedingAxis extends AbsAxis {
         // traverse tree in pre order to the leftmost leaf of the subtree and
         // push
         // all nodes to the stack
-        if (((IStructuralItem)getTransaction().getNode()).hasFirstChild()) {
-            while (((IStructuralItem)getTransaction().getNode()).hasFirstChild()) {
+        if (((IStructNode)getTransaction().getNode()).hasFirstChild()) {
+            while (((IStructNode)getTransaction().getNode()).hasFirstChild()) {
                 mStack.push(getTransaction().getNode().getNodeKey());
                 getTransaction().moveToFirstChild();
             }
 
             // traverse all the siblings of the leftmost leave and all their
             // descendants and push all of them to the stack
-            while (((IStructuralItem)getTransaction().getNode()).hasRightSibling()) {
+            while (((IStructNode)getTransaction().getNode()).hasRightSibling()) {
                 mStack.push(getTransaction().getNode().getNodeKey());
                 getTransaction().moveToRightSibling();
                 getLastChild();
@@ -168,7 +168,7 @@ public class PrecedingAxis extends AbsAxis {
                     // traverse all the siblings of the leftmost leave and all
                     // their
                     // descendants and push all of them to the stack
-                    while (((IStructuralItem)getTransaction().getNode()).hasRightSibling()) {
+                    while (((IStructNode)getTransaction().getNode()).hasRightSibling()) {
 
                         getTransaction().moveToRightSibling();
                         getLastChild();

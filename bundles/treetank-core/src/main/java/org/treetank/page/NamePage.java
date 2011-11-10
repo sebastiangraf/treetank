@@ -73,14 +73,14 @@ public final class NamePage implements IPage {
         final int mapSize = paramIn.readInt();
 
         mNameMap = new HashMap<Integer, String>(mapSize);
-        for (int i = 0, l = (int) mapSize; i < l; i++) {
+        for (int i = 0, l = (int)mapSize; i < l; i++) {
             final int key = paramIn.readInt();
             final int valSize = paramIn.readInt();
             final byte[] bytes = new byte[valSize];
             for (int j = 0; j < bytes.length; j++) {
                 bytes[j] = paramIn.readByte();
             }
-            mNameMap.put(key, TypedValue.parseString(bytes));
+            mNameMap.put(key, new String(bytes));
         }
     }
 

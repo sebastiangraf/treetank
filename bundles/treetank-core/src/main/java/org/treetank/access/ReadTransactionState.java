@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IItemList;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
@@ -40,6 +39,7 @@ import org.treetank.cache.RAMCache;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.node.DeletedNode;
+import org.treetank.node.interfaces.INode;
 import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
@@ -120,7 +120,7 @@ public class ReadTransactionState {
      * @throws TTIOException
      *             if the read to the persistent storage fails
      */
-    protected IItem getNode(final long paramNodeKey) throws TTIOException {
+    protected INode getNode(final long paramNodeKey) throws TTIOException {
 
         // Immediately return node from item list if node key negative.
         if (paramNodeKey < 0) {
@@ -145,18 +145,18 @@ public class ReadTransactionState {
             mCache.put(nodePageKey, cont);
         }
         // If nodePage is a weak one, the moveto is not cached
-        final IItem returnVal = cont.getComplete().getNode(nodePageOffset);
+        final INode returnVal = cont.getComplete().getNode(nodePageOffset);
         return checkItemIfDeleted(returnVal);
     }
 
     /**
-     * Method to check if an {@link IItem} is a deleted one.
+     * Method to check if an {@link INode} is a deleted one.
      * 
      * @param mToCheck
      *            of the IItem
      * @return the item if it is valid, null otherwise
      */
-    protected final IItem checkItemIfDeleted(final IItem mToCheck) {
+    protected final INode checkItemIfDeleted(final INode mToCheck) {
         if (mToCheck instanceof DeletedNode) {
             return null;
         } else {

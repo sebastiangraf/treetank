@@ -44,7 +44,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.TypedValue;
 
 public class ThreadTest {
 
@@ -98,7 +97,7 @@ public class ThreadTest {
             }
 
             mRTX.moveTo(12L);
-            assertEquals("bar", TypedValue.parseString(mRTX.getNode().getRawValue()));
+            assertEquals("bar", mRTX.getValueOfCurrentNode());
             mRTX.close();
             return null;
         }

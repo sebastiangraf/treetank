@@ -34,7 +34,6 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.TypedValue;
 
 public class AtomicValueTest {
 
@@ -88,7 +87,7 @@ public class AtomicValueTest {
     @Test
     public final void testGetString() {
 
-        assertThat(TypedValue.parseString(b.getRawValue()), is(bVal));
+        assertThat(new String(b.getRawValue()), is(bVal));
     }
 
     @Test

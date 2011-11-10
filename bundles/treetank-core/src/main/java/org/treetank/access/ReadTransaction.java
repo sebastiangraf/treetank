@@ -30,17 +30,17 @@ package org.treetank.access;
 import javax.xml.namespace.QName;
 
 import org.treetank.annotations.NotNull;
-import org.treetank.api.IItem;
 import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IStructuralItem;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.NamePageHash;
-import org.treetank.utils.TypedValue;
 
 /**
  * <h1>ReadTransaction</h1>
@@ -62,7 +62,7 @@ public class ReadTransaction implements IReadTransaction {
     private ReadTransactionState mTransactionState;
 
     /** Strong reference to currently selected node. */
-    private IItem mCurrentNode;
+    private INode mCurrentNode;
 
     /** Tracks whether the transaction is closed. */
     private boolean mClosed;
@@ -125,7 +125,7 @@ public class ReadTransaction implements IReadTransaction {
             return false;
         } else {
             // Remember old node and fetch new one.
-            final IItem oldNode = mCurrentNode;
+            final INode oldNode = mCurrentNode;
             try {
                 mCurrentNode = mTransactionState.getNode(paramNodeKey);
             } catch (final Exception e) {
@@ -162,7 +162,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final boolean moveToFirstChild() {
-        final IStructuralItem node = getStructuralNode();
+        final IStructNode node = getStructuralNode();
         return node == null ? false : moveTo(node.getFirstChildKey());
     }
 
@@ -171,7 +171,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final boolean moveToLeftSibling() {
-        final IStructuralItem node = getStructuralNode();
+        final IStructNode node = getStructuralNode();
         return node == null ? false : moveTo(node.getLeftSiblingKey());
     }
 
@@ -180,7 +180,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final boolean moveToRightSibling() {
-        final IStructuralItem node = getStructuralNode();
+        final IStructNode node = getStructuralNode();
         return node == null ? false : moveTo(node.getRightSiblingKey());
     }
 
@@ -215,7 +215,13 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public final String getValueOfCurrentNode() {
         assertNotClosed();
-        return TypedValue.parseString(mCurrentNode.getRawValue());
+        String returnVal;
+        if (mCurrentNode instanceof IValNode) {
+            returnVal = new String(((IValNode)mCurrentNode).getRawValue());
+        } else {
+            returnVal = "";
+        }
+        return returnVal;
     }
 
     /**
@@ -368,7 +374,7 @@ public class ReadTransaction implements IReadTransaction {
      * 
      * @return The current node.
      */
-    protected final IItem getCurrentNode() {
+    protected final INode getCurrentNode() {
         return mCurrentNode;
     }
 
@@ -378,7 +384,7 @@ public class ReadTransaction implements IReadTransaction {
      * @param paramCurrentNode
      *            The current node to set.
      */
-    protected final void setCurrentNode(final IItem paramCurrentNode) {
+    protected final void setCurrentNode(final INode paramCurrentNode) {
         mCurrentNode = paramCurrentNode;
     }
 
@@ -386,7 +392,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public final IItem getNode() {
+    public final INode getNode() {
         return mCurrentNode;
     }
 
@@ -423,9 +429,9 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public final IStructuralItem getStructuralNode() {
-        if (mCurrentNode instanceof IStructuralItem) {
-            return (IStructuralItem)mCurrentNode;
+    public final IStructNode getStructuralNode() {
+        if (mCurrentNode instanceof IStructNode) {
+            return (IStructNode)mCurrentNode;
         } else {
             return null;
         }

@@ -37,7 +37,6 @@ import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.utils.TypedValue;
 
 /**
  * @author Tina Scherer
@@ -66,15 +65,13 @@ public class SomeExprTest {
         final AbsAxis axis1 =
             new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/@i");
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
-            .getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis1.hasNext());
 
         final AbsAxis axis2 =
             new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/@abc");
         assertEquals(true, axis2.hasNext());
-        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
-            .getRawValue()))));
+        assertEquals(false, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis2.hasNext());
 
         holder.getRtx().moveTo(1L);
@@ -82,8 +79,7 @@ public class SomeExprTest {
             new XPathAxis(holder.getRtx(),
                 "some $child in child::node() satisfies $child/attribute::attribute()");
         assertEquals(true, axis3.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((holder.getRtx().getNode()
-            .getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
         assertEquals(false, axis3.hasNext());
     }
 

@@ -25,13 +25,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.api;
+package org.treetank.node.interfaces;
+
 
 /**
- * Class to denote that an {@link IItem} has structural attributes. That means
+ * Class to denote that an {@link INode} has structural attributes. That means
  * that a class can have pointers to neighbours.
  */
-public interface IStructuralItem extends IItem {
+public interface IStructNode extends INode {
 
     /**
      * Declares, whether the item has a first child.

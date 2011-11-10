@@ -36,13 +36,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IItem;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.TypedValue;
 
 public class AbsOpAxisTest {
 
@@ -64,8 +63,8 @@ public class AbsOpAxisTest {
     @Test
     public final void testHasNext() throws AbsTTException {
 
-        IItem item1 = new AtomicValue(1.0, Type.DOUBLE);
-        IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
+        INode item1 = new AtomicValue(1.0, Type.DOUBLE);
+        INode item2 = new AtomicValue(2.0, Type.DOUBLE);
 
         AbsAxis op1 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item1));
         AbsAxis op2 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item2));
@@ -78,7 +77,7 @@ public class AbsOpAxisTest {
         // here both operands are the empty sequence
         axis = new DivOpAxis(holder.getRtx(), op1, op2);
         assertEquals(true, axis.hasNext());
-        assertThat(Double.NaN, is(TypedValue.parseDouble(holder.getRtx().getNode().getRawValue())));
+        assertThat(Double.NaN, is(Double.parseDouble(holder.getRtx().getValueOfCurrentNode())));
         assertEquals(holder.getRtx().keyForName("xs:double"), holder.getRtx().getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 

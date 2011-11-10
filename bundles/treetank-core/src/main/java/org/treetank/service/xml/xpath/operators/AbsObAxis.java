@@ -29,10 +29,10 @@ package org.treetank.service.xml.xpath.operators;
 
 import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.functions.Function;
 import org.treetank.service.xml.xpath.types.Type;
@@ -109,7 +109,7 @@ public abstract class AbsObAxis extends AbsAxis {
                     // atomize operand
                     final AtomicValue mItem2 = atomize(mOperand2);
                     try {
-                        final IItem result = operate(mItem1, mItem2);
+                        final INode result = operate(mItem1, mItem2);
                         // add retrieved AtomicValue to item list
                         final int itemKey = getTransaction().getItemList().addItem(result);
                         getTransaction().moveTo(itemKey);
@@ -122,7 +122,7 @@ public abstract class AbsObAxis extends AbsAxis {
             }
 
             if (XPATH_10_COMP) { // and empty sequence, return NaN
-                final IItem result = new AtomicValue(Double.NaN, Type.DOUBLE);
+                final INode result = new AtomicValue(Double.NaN, Type.DOUBLE);
                 final int itemKey = getTransaction().getItemList().addItem(result);
                 getTransaction().moveTo(itemKey);
                 return true;
@@ -157,7 +157,7 @@ public abstract class AbsObAxis extends AbsAxis {
                 Function.fnnumber(mOperand.getTransaction());
             }
 
-            atom = new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey());
+            atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.getNode().getTypeKey());
         } else {
             // unatomicType is cast to double
             if (type == rtx.keyForName("xs:untypedAtomic")) {
@@ -165,7 +165,7 @@ public abstract class AbsObAxis extends AbsAxis {
                 // TODO: throw error, of cast fails
             }
 
-            atom = new AtomicValue(rtx.getNode().getRawValue(), type);
+            atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), type);
         }
 
         // if (!XPATH_10_COMP && operand.hasNext()) {
@@ -188,7 +188,7 @@ public abstract class AbsObAxis extends AbsAxis {
      * @throws TTXPathException
      *             if the operations fails
      */
-    protected abstract IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2)
+    protected abstract INode operate(final AtomicValue mOperand1, final AtomicValue mOperand2)
         throws TTXPathException;
 
     /**

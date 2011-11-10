@@ -32,9 +32,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.treetank.api.IItem;
 import org.treetank.diff.Diff;
 import org.treetank.diff.DiffFactory.EDiff;
+import org.treetank.node.interfaces.INode;
 
 /**
  * Builds an edit script.
@@ -48,7 +48,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
     private final List<Diff> mChanges;
 
     /** To do a lookup; we use node/object identities. */
-    private final IdentityHashMap<IItem, Diff> mChangeByNode;
+    private final IdentityHashMap<INode, Diff> mChangeByNode;
 
     /** Index in the {@link List} of {@link Diff}s. */
     private transient int mIndex;
@@ -58,7 +58,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      */
     public EditScript() {
         mChanges = new ArrayList<Diff>();
-        mChangeByNode = new IdentityHashMap<IItem, Diff>();
+        mChangeByNode = new IdentityHashMap<INode, Diff>();
         mIndex = 0;
     }
 
@@ -85,11 +85,11 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      * Checks if an item has been added(changed).
      * 
      * @param paramItem
-     *            {@link IItem} implementation
+     *            {@link INode} implementation
      * @return true if the changes {@link List} already contains the node, false
      *         otherwise
      */
-    public boolean containsNode(final IItem paramItem) {
+    public boolean containsNode(final INode paramItem) {
         assert paramItem != null;
         return mChangeByNode.containsKey(paramItem);
     }
@@ -109,7 +109,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      *            (not) changed node
      * @return the change assigned to the node or null
      */
-    public Diff get(final IItem paramItem) {
+    public Diff get(final INode paramItem) {
         return mChangeByNode.get(paramItem);
     }
 
@@ -122,7 +122,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      */
     public Diff add(final Diff paramChange) {
         assert paramChange != null;
-        final IItem item =
+        final INode item =
             paramChange.getDiff() == EDiff.DELETED ? paramChange.getOldNode() : paramChange.getNewNode();
         if (mChangeByNode.containsKey(item)) {
             return paramChange;

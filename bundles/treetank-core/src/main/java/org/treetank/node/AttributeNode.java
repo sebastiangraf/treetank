@@ -29,9 +29,10 @@ package org.treetank.node;
 
 import java.util.Arrays;
 
-import org.treetank.api.IItem;
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IValNode;
 
 /**
  * <h1>AttributeNode</h1>
@@ -40,7 +41,7 @@ import org.treetank.io.ITTSink;
  * Node representing an attribute.
  * </p>
  */
-public final class AttributeNode extends AbsNode implements IItem {
+public final class AttributeNode extends AbsNode implements INode, IValNode {
 
     protected static final int NAME_KEY = 4;
 

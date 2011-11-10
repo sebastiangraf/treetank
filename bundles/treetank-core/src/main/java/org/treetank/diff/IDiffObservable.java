@@ -27,9 +27,9 @@
 
 package org.treetank.diff;
 
-import org.treetank.api.IStructuralItem;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Observable class to fire diffs for interested observers, which implement the {@link IDiffObserver}
@@ -46,14 +46,14 @@ interface IDiffObservable {
      * @param paramDiff
      *            the encountered diff
      * @param paramNewNode
-     *            current {@link IStructuralItem} in new revision
+     *            current {@link IStructNode} in new revision
      * @param paramOldNode
-     *            current {@link IStructuralItem} in old revision
+     *            current {@link IStructNode} in old revision
      * @param paramDepth
      *            current {@link DiffDepth} instance
      */
-    void fireDiff(final EDiff paramDiff, final IStructuralItem paramNewNode,
-        final IStructuralItem paramOldNode, final DiffDepth paramDepth);
+    void fireDiff(final EDiff paramDiff, final IStructNode paramNewNode,
+        final IStructNode paramOldNode, final DiffDepth paramDepth);
 
     /**
      * Diff computation done, thus inform listeners.

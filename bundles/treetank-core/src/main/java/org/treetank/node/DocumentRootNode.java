@@ -29,9 +29,9 @@ package org.treetank.node;
 
 import java.util.Arrays;
 
-import org.treetank.api.IItem;
-import org.treetank.api.IStructuralItem;
 import org.treetank.api.IVisitor;
+import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 
 /**
@@ -42,7 +42,7 @@ import org.treetank.settings.EFixed;
  * removed.
  * </p>
  */
-public final class DocumentRootNode extends AbsStructNode implements IStructuralItem {
+public final class DocumentRootNode extends AbsStructNode implements IStructNode {
 
     /**
      * Constructor.
