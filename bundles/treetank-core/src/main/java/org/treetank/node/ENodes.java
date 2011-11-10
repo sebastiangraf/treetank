@@ -166,9 +166,10 @@ public enum ENodes {
     DELETE_KIND(5, 3, 1) {
         @Override
         public IItem createNodeFromPersistence(final ITTSource paramSource) {
-            final byte[] pointerData = readPointerData(paramSource);
-            final byte[] byteData = readByteData(paramSource);
-            return new DeletedNode(byteData, pointerData);
+            final DeletedNode node = new DeletedNode(paramSource.readLong(), paramSource.readLong());
+            node.setHash(paramSource.readLong());
+            node.setType(paramSource.readInt());
+            return node;
         }
 
     };

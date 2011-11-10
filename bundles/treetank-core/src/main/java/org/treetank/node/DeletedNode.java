@@ -37,10 +37,12 @@ import org.treetank.io.ITTSink;
  * @author Sebastian Graf
  * 
  */
-public final class DeletedNode extends AbsNode implements IItem {
+public final class DeletedNode implements IItem {
 
-    DeletedNode(final byte[] mByteBuilder, final byte[] mPointerBuilder) {
-        super(mByteBuilder, mPointerBuilder);
+    private final NodeDelegate mDelegate;
+
+    public DeletedNode(final long paramNode, final long paramParent) {
+        mDelegate = new NodeDelegate(paramNode, paramParent, 0, 0);
     }
 
     /**
@@ -48,7 +50,7 @@ public final class DeletedNode extends AbsNode implements IItem {
      */
     @Override
     public void serialize(final ITTSink mNodeOut) {
-        super.serialize(mNodeOut);
+        mDelegate.serialize(mNodeOut);
     }
 
     /**
@@ -60,39 +62,176 @@ public final class DeletedNode extends AbsNode implements IItem {
     }
 
     @Override
-    public AbsNode clone() {
-        final AbsNode toClone = new DeletedNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData));
+    public IItem clone() {
+        final IItem toClone = new DeletedNode(mDelegate.getNodeKey(), mDelegate.getParentKey());
         return toClone;
-    }
-
-    public static AbsNode createData(final long mNodeKey, final long mParentKey) {
-
-        final byte[] byteData = new byte[ENodes.DELETE_KIND.getIntSize()];
-
-        final byte[] pointerData = new byte[ENodes.DELETE_KIND.getLongSize()];
-
-        int mCount = AbsNode.NODE_KEY;
-        for (byte aByte : longToByteArray(mNodeKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsNode.PARENT_KEY;
-        for (byte aByte : longToByteArray(mParentKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        return new DeletedNode(byteData, pointerData);
-    }
-
-    @Override
-    public int hashCode() {
-        return 0;
     }
 
     /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
         // Do nothing.
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param paramHash
+     * @see org.treetank.node.NodeDelegate#setHash(long)
+     */
+    public void setHash(long paramHash) {
+        mDelegate.setHash(paramHash);
+    }
+
+    /**
+     * Delegate method for getHash.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDelegate.getHash();
+    }
+
+    /**
+     * Delegate method for setNodeKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.NodeDelegate#setNodeKey(long)
+     */
+    public void setNodeKey(long paramKey) {
+        mDelegate.setNodeKey(paramKey);
+    }
+
+    /**
+     * Delegate method for getNodeKey.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#getNodeKey()
+     */
+    public long getNodeKey() {
+        return mDelegate.getNodeKey();
+    }
+
+    /**
+     * Delegate method for getParentKey.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#getParentKey()
+     */
+    public long getParentKey() {
+        return mDelegate.getParentKey();
+    }
+
+    /**
+     * Delegate method for hasParent.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#hasParent()
+     */
+    public boolean hasParent() {
+        return mDelegate.hasParent();
+    }
+
+    /**
+     * Delegate method for getNameKey.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#getNameKey()
+     */
+    public int getNameKey() {
+        return mDelegate.getNameKey();
+    }
+
+    /**
+     * Delegate method for getURIKey.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#getURIKey()
+     */
+    public int getURIKey() {
+        return mDelegate.getURIKey();
+    }
+
+    /**
+     * Delegate method for getTypeKey.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#getTypeKey()
+     */
+    public int getTypeKey() {
+        return mDelegate.getTypeKey();
+    }
+
+    /**
+     * Delegate method for getRawValue.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#getRawValue()
+     */
+    public byte[] getRawValue() {
+        return mDelegate.getRawValue();
+    }
+
+    /**
+     * Delegate method for setNameKey.
+     * 
+     * @param paramNameKey
+     * @see org.treetank.node.NodeDelegate#setNameKey(int)
+     */
+    public void setNameKey(int paramNameKey) {
+        mDelegate.setNameKey(paramNameKey);
+    }
+
+    /**
+     * Delegate method for setURIKey.
+     * 
+     * @param paramUriKey
+     * @see org.treetank.node.NodeDelegate#setURIKey(int)
+     */
+    public void setURIKey(int paramUriKey) {
+        mDelegate.setURIKey(paramUriKey);
+    }
+
+    /**
+     * Delegate method for setValue.
+     * 
+     * @param paramUriKey
+     * @param paramVal
+     * @see org.treetank.node.NodeDelegate#setValue(int, byte[])
+     */
+    public void setValue(int paramUriKey, byte[] paramVal) {
+        mDelegate.setValue(paramUriKey, paramVal);
+    }
+
+    /**
+     * Delegate method for setParentKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.NodeDelegate#setParentKey(long)
+     */
+    public void setParentKey(long paramKey) {
+        mDelegate.setParentKey(paramKey);
+    }
+
+    /**
+     * Delegate method for setType.
+     * 
+     * @param paramType
+     * @see org.treetank.node.NodeDelegate#setType(int)
+     */
+    public void setType(int paramType) {
+        mDelegate.setType(paramType);
+    }
+
+    /**
+     * Delegate method for toString.
+     * 
+     * @return
+     * @see org.treetank.node.NodeDelegate#toString()
+     */
+    public String toString() {
+        return mDelegate.toString();
     }
 
 }

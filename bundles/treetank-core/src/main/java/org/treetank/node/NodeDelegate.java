@@ -123,4 +123,11 @@ public class NodeDelegate implements IItem {
 
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder("node key: ").append(
+            getNodeKey()).append("\nparentKey: ").append(getParentKey()).append("\ntypeKey: ").append(
+            getTypeKey()).append("\nhash: ").append(getHash()).toString();
+    }
+
 }
