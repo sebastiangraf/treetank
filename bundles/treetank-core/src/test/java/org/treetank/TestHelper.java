@@ -184,7 +184,7 @@ public final class TestHelper {
                 }));
                 break;
             case 1:
-                page.setNode(i, DeletedNode.createData(random.nextLong(), random.nextLong()));
+                page.setNode(i, new DeletedNode(random.nextLong(), random.nextLong()));
                 break;
             case 2:
                 page.setNode(i, ElementNode.createData(random.nextLong(), random.nextLong(), random
