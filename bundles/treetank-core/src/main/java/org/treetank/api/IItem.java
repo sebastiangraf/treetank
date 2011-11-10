@@ -60,13 +60,12 @@ public interface IItem extends Cloneable {
      * 
      * 
      * @param paramKey
-     *            Unique (negative) key of item
+     *            Unique key of item, maybe negative when atomics from the XPath-engine.
      */
     void setNodeKey(final long paramKey);
 
     /**
-     * Gets unique node key. TODO: maybe this should be renamed in
-     * "getItemKey()"
+     * Gets unique node key.
      * 
      * @return node key
      */
@@ -130,18 +129,61 @@ public interface IItem extends Cloneable {
      */
     void acceptVisitor(final IVisitor paramVisitor);
 
+    /**
+     * Cloning a node.
+     * 
+     * @return the cloned node.
+     */
     IItem clone();
 
+    /**
+     * Serializing the node.
+     * 
+     * @param paramSink
+     *            sink to be serialized to.
+     */
     void serialize(ITTSink paramSink);
 
+    /**
+     * Setting the name key.
+     * 
+     * @param paramNameKey
+     *            the namekey to be set.
+     */
     void setNameKey(int paramNameKey);
 
+    /**
+     * Setting the uri key.
+     * 
+     * @param paramUriKey
+     *            the urikey to be set.
+     */
     void setURIKey(int paramUriKey);
 
+    /**
+     * Setting the value key.
+     * 
+     * @param paramUriKey
+     *            the urikey to be set.
+     * @param paramVal
+     *            the value to be set.
+     */
     void setValue(int paramUriKey, byte[] paramVal);
 
+    /**
+     * Setting the parent key.
+     * 
+     * @param paramKey
+     *            the parent to be set.
+     */
     void setParentKey(long paramKey);
 
+    /**
+     * Setting the type key.
+     * 
+     * @param paramType
+     *            the type to be set.
+     */
     void setType(int paramType);
 
 }

@@ -16,7 +16,7 @@ public class StructNodeDelegate implements IStructuralItem {
 
     public StructNodeDelegate(final long paramNodeKey, final long paramParentKey, final long paramFirstChild,
         final long paramRightSibling, final long paramLeftSibling, final long paramChildCount) {
-        mDelegate = new NodeDelegate(paramNodeKey, paramParentKey, 0, 0);
+        mDelegate = new NodeDelegate(paramNodeKey, paramParentKey);
         mFirstChild = paramFirstChild;
         mRightSibling = paramRightSibling;
         mLeftSibling = paramLeftSibling;

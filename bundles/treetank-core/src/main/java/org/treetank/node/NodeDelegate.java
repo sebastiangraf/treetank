@@ -7,27 +7,25 @@ import org.treetank.settings.EFixed;
 
 public class NodeDelegate implements IItem {
 
+    private final static int NULL_VAL = 0;
+
     private long mNodeKey;
     private long mParentKey;
-    private long mHash;
-    private int mType;
 
-    public NodeDelegate(final long paramNodeKey, final long paramParentKey, final long paramHash,
-        final int paramType) {
+    public NodeDelegate(final long paramNodeKey, final long paramParentKey) {
         mNodeKey = paramNodeKey;
         mParentKey = paramParentKey;
-        mHash = paramHash;
-        mType = paramType;
     }
 
     @Override
     public void setHash(long paramHash) {
-        mHash = paramHash;
+        // Do nothing, only stub
     }
 
     @Override
     public long getHash() {
-        return mHash;
+        // Do nothing, only stub
+        return NULL_VAL;
     }
 
     @Override
@@ -69,12 +67,13 @@ public class NodeDelegate implements IItem {
 
     @Override
     public int getTypeKey() {
-        return mType;
+        // Do nothing, only stub
+        return NULL_VAL;
     }
 
     @Override
     public void acceptVisitor(IVisitor paramVisitor) {
-        // TODO Do nothing, only stub
+        // Do nothing, only stub
     }
 
     @Override
@@ -86,30 +85,25 @@ public class NodeDelegate implements IItem {
     public void serialize(ITTSink paramSink) {
         paramSink.writeLong(mNodeKey);
         paramSink.writeLong(mParentKey);
-        paramSink.writeLong(mHash);
-        paramSink.writeInt(mType);
     }
 
     @Override
     public void setNameKey(int paramNameKey) {
-        // TODO Auto-generated method stub
-
+        // Do nothing, only stub
     }
 
     @Override
     public void setURIKey(int paramUriKey) {
-        // TODO Auto-generated method stub
-
+        // Do nothing, only stub
     }
 
     @Override
     public void setValue(int paramUriKey, byte[] paramVal) {
-        // TODO Auto-generated method stub
-
+        // Do nothing, only stub
     }
 
     public NodeDelegate clone() {
-        return new NodeDelegate(mNodeKey, mParentKey, mHash, mType);
+        return new NodeDelegate(mNodeKey, mParentKey);
     }
 
     @Override
@@ -119,15 +113,14 @@ public class NodeDelegate implements IItem {
 
     @Override
     public void setType(int paramType) {
-        // TODO Auto-generated method stub
-
+        // Do nothing, only stub
     }
 
     @Override
     public String toString() {
-        return new StringBuilder("node key: ").append(
-            getNodeKey()).append("\nparentKey: ").append(getParentKey()).append("\ntypeKey: ").append(
-            getTypeKey()).append("\nhash: ").append(getHash()).toString();
+        return new StringBuilder("node key: ").append(getNodeKey()).append("\nparentKey: ").append(
+            getParentKey()).append("\ntypeKey: ").append(getTypeKey()).append("\nhash: ").append(getHash())
+            .toString();
     }
 
 }
