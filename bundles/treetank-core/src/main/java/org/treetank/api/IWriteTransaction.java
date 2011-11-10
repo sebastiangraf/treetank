@@ -254,18 +254,6 @@ public interface IWriteTransaction extends IReadTransaction {
     /**
      * Set value of node.
      * 
-     * @param paramValueType
-     *            type of value
-     * @param paramValue
-     *            new value of node
-     * @throws TTIOException
-     *             if value couldn't be set
-     */
-    void setValue(final int paramValueType, final byte[] paramValue) throws AbsTTException;
-
-    /**
-     * Set value of node.
-     * 
      * @param paramValue
      *            new value of node
      * @throws TTIOException

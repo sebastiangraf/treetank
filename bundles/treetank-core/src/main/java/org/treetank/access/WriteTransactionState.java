@@ -41,6 +41,7 @@ import org.treetank.node.DeletedNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
+import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INode;
 import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
@@ -236,7 +237,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         prepareNodePage(nodePageKey);
         final INode delNode =
-            new DeletedNode(paramNode.getNodeKey(), paramNode.getParentKey(), paramNode.getHash());
+            new DeletedNode(new NodeDelegate(paramNode.getNodeKey(), paramNode.getParentKey(), paramNode
+                .getHash()));
         mNodePageCon.getModified().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         mNodePageCon.getComplete().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         finishNodeModification(paramNode);

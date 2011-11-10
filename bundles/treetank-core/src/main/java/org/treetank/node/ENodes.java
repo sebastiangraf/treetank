@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.treetank.io.ITTSource;
+import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INode;
 
 /**
@@ -167,13 +168,12 @@ public enum ENodes {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             final DeletedNode node =
-                new DeletedNode(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
+                new DeletedNode(new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource
+                    .readLong()));
             return node;
         }
 
     };
-    
-    
 
     /** Identifier. */
     private final int mKind;
