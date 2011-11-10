@@ -167,8 +167,6 @@ public enum ENodes {
         @Override
         public IItem createNodeFromPersistence(final ITTSource paramSource) {
             final DeletedNode node = new DeletedNode(paramSource.readLong(), paramSource.readLong());
-            node.setHash(paramSource.readLong());
-            node.setType(paramSource.readInt());
             return node;
         }
 

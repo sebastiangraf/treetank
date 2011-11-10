@@ -39,10 +39,21 @@ import org.treetank.io.ITTSink;
  */
 public final class DeletedNode implements IItem {
 
+    /**
+     * Delegate for common data.
+     */
     private final NodeDelegate mDelegate;
 
+    /**
+     * Constructor.
+     * 
+     * @param paramNode
+     *            nodekey to be replaced with a deletednode
+     * @param paramParent
+     *            parent of this key.
+     */
     public DeletedNode(final long paramNode, final long paramParent) {
-        mDelegate = new NodeDelegate(paramNode, paramParent, 0, 0);
+        mDelegate = new NodeDelegate(paramNode, paramParent);
     }
 
     /**
