@@ -553,8 +553,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final int paramValueType, final byte[] paramValue)
-        throws AbsTTException {
+    public synchronized void setValue(final String paramValue) throws AbsTTException {
         if (getCurrentNode() instanceof IValNode) {
             assertNotClosed();
             mModificationCount++;
@@ -562,7 +561,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
             final IValNode node =
                 (IValNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            node.setValue(paramValueType, paramValue);
+            node.setValue(TypedValue.getBytes(paramValue));
             getTransactionState().finishNodeModification(node);
 
             setCurrentNode(node);
@@ -571,14 +570,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             throw new TTUsageException(
                 "SetValue is not allowed if current node is not an IValNode implementation!");
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void setValue(final String paramValue) throws AbsTTException {
-        setValue(getTransactionState().createNameKey("xs:untyped"), TypedValue.getBytes(paramValue));
     }
 
     /**

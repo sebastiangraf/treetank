@@ -53,8 +53,8 @@ public final class DeletedNode implements INode {
      * @param paramParent
      *            parent of this key.
      */
-    public DeletedNode(final long paramNode, final long paramParent, final long paramHash) {
-        mDelegate = new NodeDelegate(paramNode, paramParent, paramHash);
+    public DeletedNode(final NodeDelegate paramNodeDelegate) {
+        mDelegate = paramNodeDelegate;
     }
 
     /**
@@ -75,8 +75,7 @@ public final class DeletedNode implements INode {
 
     @Override
     public INode clone() {
-        final INode toClone =
-            new DeletedNode(mDelegate.getNodeKey(), mDelegate.getParentKey(), mDelegate.getHash());
+        final INode toClone = new DeletedNode(mDelegate.clone());
         return toClone;
     }
 

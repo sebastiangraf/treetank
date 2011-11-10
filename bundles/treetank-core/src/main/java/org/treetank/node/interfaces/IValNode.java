@@ -24,6 +24,6 @@ public interface IValNode extends INode {
      * @param paramVal
      *            the value to be set.
      */
-    void setValue(int paramUriKey, byte[] paramVal);
+    void setValue(byte[] paramVal);
 
 }

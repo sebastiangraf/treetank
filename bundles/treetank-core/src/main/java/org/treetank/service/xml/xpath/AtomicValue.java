@@ -337,8 +337,7 @@ public class AtomicValue implements INode, IValNode {
      * {@inheritDoc}
      */
     @Override
-    public void setValue(int paramUriKey, byte[] paramVal) {
-        // TODO Auto-generated method stub
-
+    public void setValue(byte[] paramVal) {
+        mValue = paramVal;
     }
 }

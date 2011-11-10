@@ -106,8 +106,7 @@ public final class AttributeNode extends AbsNode implements INode, IValNode {
 
     /** {@inheritDoc} */
     @Override
-    public void setValue(final int paramValueType, final byte[] paramValue) {
-        writeIntBytes(TYPE_KEY, paramValueType);
+    public void setValue(final byte[] paramValue) {
         writeIntBytes(VALUE_LENGTH, paramValue.length);
 
         mValue = paramValue;

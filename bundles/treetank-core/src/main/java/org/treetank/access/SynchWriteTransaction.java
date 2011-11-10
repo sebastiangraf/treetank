@@ -134,15 +134,6 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final int mValueType, final byte[] mValue) throws AbsTTException {
-        lock.getWritePermission(getCurrentNode().getNodeKey(), this);
-        super.setValue(mValueType, mValue);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public synchronized void setValue(final String mValue) throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setValue(mValue);
