@@ -73,7 +73,6 @@ public class ElementNodeTest {
         assertEquals(2, node.getNamespaceCount());
         assertEquals(18, node.getNameKey());
         assertEquals(19, node.getURIKey());
-        assertNull(null, node.getRawValue());
         assertEquals(20, node.getTypeKey());
         assertEquals(ENodes.ELEMENT_KIND, node.getKind());
         assertEquals(true, node.hasFirstChild());

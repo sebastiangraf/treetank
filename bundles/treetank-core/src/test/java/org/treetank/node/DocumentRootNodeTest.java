@@ -66,7 +66,6 @@ public class DocumentRootNodeTest {
         assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getNameKey());
         assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getURIKey());
         assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getNameKey());
-        assertEquals(null, node.getRawValue());
         assertEquals(ENodes.ROOT_KIND, node.getKind());
 
     }

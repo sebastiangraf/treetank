@@ -65,7 +65,7 @@ public class XPathStringChecker {
             if (offset >= expectedValues.length) {
                 fail("More nodes found than expected.");
             }
-            if (!"".equals(rtx.getValueOfCurrentNode())) {
+            if (!("".equals(rtx.getValueOfCurrentNode()))) {
                 strValues[offset++] = rtx.getValueOfCurrentNode();
             } else {
                 strValues[offset++] = rtx.getQNameOfCurrentNode().toString();

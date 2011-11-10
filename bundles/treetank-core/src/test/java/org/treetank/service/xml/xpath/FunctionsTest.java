@@ -164,8 +164,6 @@ public class FunctionsTest {
      * @throws TTXPathException
      */
     @Test
-    @Ignore
-    //TODO FIX THIS!!!
     public final void testNode() throws TTXPathException {
         final String query = "p:a[./node()/node()]";
         final String result = "{ns}a";
@@ -180,8 +178,6 @@ public class FunctionsTest {
      * @throws TTXPathException
      */
     @Test
-    @Ignore
-    //TODO FIX THIS!!!
     public final void testText() throws TTXPathException {
         final String query = "p:a[./text()]";
         final String result = "{ns}a";
