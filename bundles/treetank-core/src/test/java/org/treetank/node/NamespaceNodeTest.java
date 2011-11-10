@@ -63,7 +63,6 @@ public class NamespaceNodeTest {
 
         assertEquals(14, node.getURIKey());
         assertEquals(15, node.getNameKey());
-        assertNull(node.getRawValue());
         assertEquals(ENodes.NAMESPACE_KIND, node.getKind());
         assertEquals(true, node.hasParent());
     }
