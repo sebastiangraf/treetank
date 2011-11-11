@@ -75,34 +75,34 @@ public interface IDatabase {
      * creation of a suitable folder structure as well as the serialization of
      * the configuration of this resource.
      * 
-     * @param paramConfig
+     * @param pResConf
      *            the config of the resource
      * @return boolean with true if successful, false otherwise
      * @throws TTIOException
      *             if anything happens while creating the resource
      */
-    boolean createResource(final ResourceConfiguration paramConfig) throws TTIOException;
+    boolean createResource(final ResourceConfiguration pResConf) throws TTIOException;
 
     /**
      * Getting the session associated within this database.
      * 
-     * @param paramBuilder
+     * @param pSessionConf
      *            {@link SessionConfiguration.Builder} reference
      * @throws AbsTTException
      *             if can't get session
      * @return the session
      */
-    ISession getSession(final SessionConfiguration paramBuilder) throws AbsTTException;
+    ISession getSession(final SessionConfiguration pSessionConf) throws AbsTTException;
 
     /**
      * Truncating a resource. This includes the removal of all data stored
      * within this resource.
      * 
-     * @param paramBuilder
+     * @param pResConf
      *            storing the name of the resource
      * 
      */
-    void truncateResource(final ResourceConfiguration paramBuilder);
+    void truncateResource(final ResourceConfiguration pResConf);
 
     /**
      * Closing the database for further access.

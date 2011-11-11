@@ -44,14 +44,14 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         /**
          * Constructor.
          * 
-         * @param mFile
+         * @param pFile
          *            to be set
-         * @param mIsFolder
+         * @param pIsFolder
          *            to be set.
          */
-        private Paths(final File mFile, final boolean mIsFolder) {
-            this.mFile = mFile;
-            this.mIsFolder = mIsFolder;
+        private Paths(final File pFile, final boolean pIsFolder) {
+            this.mFile = pFile;
+            this.mIsFolder = pIsFolder;
         }
 
         /**
@@ -76,15 +76,15 @@ public final class ResourceConfiguration implements IConfigureSerializable {
          * Checking a structure in a folder to be equal with the data in this
          * enum.
          * 
-         * @param paramFile
+         * @param pFile
          *            to be checked
          * @return -1 if less folders are there, 0 if the structure is equal to
          *         the one expected, 1 if the structure has more folders
          */
-        public static int compareStructure(final File paramFile) {
+        public static int compareStructure(final File pFile) {
             int existing = 0;
             for (final Paths paths : values()) {
-                final File currentFile = new File(paramFile, paths.getFile().getName());
+                final File currentFile = new File(pFile, paths.getFile().getName());
                 if (currentFile.exists()) {
                     existing++;
                 }
@@ -129,18 +129,18 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @param paramBuilder
+     * @param pBuilder
      *            {@link Builder} reference
      */
-    private ResourceConfiguration(final ResourceConfiguration.Builder paramBuilder) {
-        mType = paramBuilder.mType;
-        mRevision = paramBuilder.mRevision;
-        mHashKind = paramBuilder.mHashKind;
-        mRevisionsToRestore = paramBuilder.mRevisionsToRestore;
-        mDBConfig = paramBuilder.mDBConfig;
+    private ResourceConfiguration(final ResourceConfiguration.Builder pBuilder) {
+        mType = pBuilder.mType;
+        mRevision = pBuilder.mRevision;
+        mHashKind = pBuilder.mHashKind;
+        mRevisionsToRestore = pBuilder.mRevisionsToRestore;
+        mDBConfig = pBuilder.mDBConfig;
         mPath =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                paramBuilder.mResource);
+                pBuilder.mResource);
     }
 
     /**
@@ -162,8 +162,8 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      * {@inheritDoc}
      */
     @Override
-    public final boolean equals(final Object mObj) {
-        return this.hashCode() == mObj.hashCode();
+    public final boolean equals(final Object pObj) {
+        return this.hashCode() == pObj.hashCode();
     }
 
     /**
@@ -220,74 +220,74 @@ public final class ResourceConfiguration implements IConfigureSerializable {
          * 
          * @param paramResource
          *            the name of the resource, must to be set.
-         * @param paramConfig
+         * @param pConfig
          *            the related {@link DatabaseConfiguration}, must to be set.
          */
-        public Builder(final String paramResource, final DatabaseConfiguration paramConfig) {
-            if (paramResource == null || paramConfig == null) {
+        public Builder(final String paramResource, final DatabaseConfiguration pConfig) {
+            if (paramResource == null || pConfig == null) {
                 throw new IllegalArgumentException("Parameter must not be null!");
             }
             mResource = paramResource;
-            mDBConfig = paramConfig;
+            mDBConfig = pConfig;
         }
 
         /**
          * Setter for mType.
          * 
-         * @param paramType
+         * @param pType
          *            to be set
          * @return reference to the builder object
          */
-        public Builder setType(final EStorage paramType) {
-            if (paramType == null) {
+        public Builder setType(final EStorage pType) {
+            if (pType == null) {
                 throw new NullPointerException("paramType may not be null!");
             }
-            mType = paramType;
+            mType = pType;
             return this;
         }
 
         /**
          * Setter for mRevision.
          * 
-         * @param paramRevision
+         * @param pRev
          *            to be set
          * @return reference to the builder object
          */
-        public Builder setRevision(final ERevisioning paramRevision) {
-            if (paramRevision == null) {
+        public Builder setRevision(final ERevisioning pRev) {
+            if (pRev == null) {
                 throw new NullPointerException("paramType may not be null!");
             }
-            mRevision = paramRevision;
+            mRevision = pRev;
             return this;
         }
 
         /**
          * Setter for mHashKind.
          * 
-         * @param paramHashKind
+         * @param pHash
          *            to be set
          * @return reference to the builder object
          */
-        public Builder setHashKind(final HashKind paramHashKind) {
-            if (paramHashKind == null) {
+        public Builder setHashKind(final HashKind pHash) {
+            if (pHash == null) {
                 throw new NullPointerException("paramType may not be null!");
             }
-            mHashKind = paramHashKind;
+            mHashKind = pHash;
             return this;
         }
 
         /**
          * Setter for mRevisionsToRestore.
          * 
-         * @param paramRevisionsToRestore
+         * @param pRevToRestore
          *            to be set
          * @return reference to the builder object
          */
-        public Builder setRevisionsToRestore(final int paramRevisionsToRestore) {
-            if (paramRevisionsToRestore <= 0) {
+        public Builder setRevisionsToRestore(final int pRevToRestore) {
+            if (pRevToRestore <= 0) {
                 throw new IllegalArgumentException("paramRevisionsToRestore must be > 0!");
             }
-            mRevisionsToRestore = paramRevisionsToRestore;
+            mRevisionsToRestore = pRevToRestore;
             return this;
         }
 

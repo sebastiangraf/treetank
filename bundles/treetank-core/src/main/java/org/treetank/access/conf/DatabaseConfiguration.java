@@ -66,14 +66,14 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
         /**
          * Constructor.
          * 
-         * @param mFile
+         * @param pFile
          *            to be set
-         * @param mIsFolder
+         * @param pIsFolder
          *            to be set.
          */
-        private Paths(final File mFile, final boolean mIsFolder) {
-            this.mFile = mFile;
-            this.mIsFolder = mIsFolder;
+        private Paths(final File pFile, final boolean pIsFolder) {
+            this.mFile = pFile;
+            this.mIsFolder = pIsFolder;
         }
 
         /**
@@ -98,15 +98,15 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
          * Checking a structure in a folder to be equal with the data in this
          * enum.
          * 
-         * @param paramFile
+         * @param pFile
          *            to be checked
          * @return -1 if less folders are there, 0 if the structure is equal to
          *         the one expected, 1 if the structure has more folders
          */
-        public static int compareStructure(final File paramFile) {
+        public static int compareStructure(final File pFile) {
             int existing = 0;
             for (final Paths paths : values()) {
-                final File currentFile = new File(paramFile, paths.getFile().getName());
+                final File currentFile = new File(pFile, paths.getFile().getName());
                 if (currentFile.exists()) {
                     existing++;
                 }
@@ -154,8 +154,8 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object paramObj) {
-        return this.hashCode() == paramObj.hashCode();
+    public boolean equals(final Object pObj) {
+        return this.hashCode() == pObj.hashCode();
     }
 
     /**

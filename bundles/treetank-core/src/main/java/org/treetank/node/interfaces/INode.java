@@ -43,11 +43,11 @@ public interface INode extends Cloneable {
      * Setting the actual hash of the structure. The hash of one node should
      * have the entire integrity of the related subtree.
      * 
-     * @param paramHash
+     * @param pHash
      *            hash to be set for this node
      * 
      */
-    void setHash(final long paramHash);
+    void setHash(final long pHash);
 
     /**
      * Getting the persistent stored hash.
@@ -60,10 +60,10 @@ public interface INode extends Cloneable {
      * Sets unique node key.
      * 
      * 
-     * @param paramKey
+     * @param pNodeKey
      *            Unique key of item, maybe negative when atomics from the XPath-engine.
      */
-    void setNodeKey(final long paramKey);
+    void setNodeKey(final long pNodeKey);
 
     /**
      * Gets unique node key.
@@ -104,10 +104,10 @@ public interface INode extends Cloneable {
     /**
      * Accept a visitor and use double dispatching to invoke the visitor method.
      * 
-     * @param paramVisitor
+     * @param pVisitor
      *            implementation of the {@link IVisitor} interface
      */
-    void acceptVisitor(final IVisitor paramVisitor);
+    void acceptVisitor(final IVisitor pVisitor);
 
     /**
      * Cloning a node.
@@ -119,25 +119,25 @@ public interface INode extends Cloneable {
     /**
      * Serializing the node.
      * 
-     * @param paramSink
+     * @param pSink
      *            sink to be serialized to.
      */
-    void serialize(ITTSink paramSink);
+    void serialize(ITTSink pSink);
 
     /**
      * Setting the parent key.
      * 
-     * @param paramKey
+     * @param pNodeKey
      *            the parent to be set.
      */
-    void setParentKey(long paramKey);
+    void setParentKey(long pNodeKey);
 
     /**
      * Setting the type key.
      * 
-     * @param paramType
+     * @param pTypeKey
      *            the type to be set.
      */
-    void setTypeKey(int paramType);
+    void setTypeKey(int pTypeKey);
 
 }

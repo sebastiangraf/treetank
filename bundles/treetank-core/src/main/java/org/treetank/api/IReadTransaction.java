@@ -33,6 +33,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
+
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -163,11 +164,11 @@ public interface IReadTransaction {
     /**
      * Move cursor to a node by its node key.
      * 
-     * @param mNodeKey
+     * @param pKey
      *            Key of node to select.
      * @return True if the node with the given node key is selected.
      */
-    boolean moveTo(final long mNodeKey);
+    boolean moveTo(final long pKey);
 
     /**
      * Move cursor to document root node.
@@ -207,20 +208,20 @@ public interface IReadTransaction {
     /**
      * Move cursor to attribute by its index.
      * 
-     * @param mIndex
+     * @param pIndex
      *            Index of attribute to move to.
      * @return True if the attribute node is selected.
      */
-    boolean moveToAttribute(final int mIndex);
+    boolean moveToAttribute(final int pIndex);
 
     /**
      * Move cursor to namespace declaration by its index.
      * 
-     * @param mIndex
+     * @param pIndex
      *            Index of attribute to move to.
      * @return True if the namespace node is selected.
      */
-    boolean moveToNamespace(final int mIndex);
+    boolean moveToNamespace(final int pIndex);
 
     // --- Node Getters
     // ----------------------------------------------------------
@@ -249,29 +250,29 @@ public interface IReadTransaction {
     /**
      * Get key for given name. This is used for efficient name testing.
      * 
-     * @param mName
+     * @param pName
      *            Name, i.e., local part, URI, or prefix.
      * @return Internal key assigned to given name.
      */
-    int keyForName(final String mName);
+    int keyForName(final String pName);
 
     /**
      * Get name for key. This is used for efficient key testing.
      * 
-     * @param mKey
+     * @param pKey
      *            Key, i.e., local part key, URI key, or prefix key.
      * @return String containing name for given key.
      */
-    String nameForKey(final int mKey);
+    String nameForKey(final int pKey);
 
     /**
      * Get raw name for key. This is used for efficient key testing.
      * 
-     * @param mKey
+     * @param pKey
      *            Key, i.e., local part key, URI key, or prefix key.
      * @return Byte array containing name for given key.
      */
-    byte[] rawNameForKey(final int mKey);
+    byte[] rawNameForKey(final int pKey);
 
     /**
      * Get item list containing volatile items such as atoms or fragments.

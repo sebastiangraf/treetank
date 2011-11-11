@@ -27,7 +27,6 @@
 
 package org.treetank.node.interfaces;
 
-
 /**
  * Class to denote that an {@link INode} has structural attributes. That means
  * that a class can have pointers to neighbours.
@@ -83,13 +82,38 @@ public interface IStructNode extends INode {
      */
     long getRightSiblingKey();
 
-    void setRightSiblingKey(long paramKey);
+    /**
+     * Setting the right sibling key to this node.
+     * 
+     * @param pNodeKey
+     *            the new key to be set.
+     */
+    void setRightSiblingKey(long pNodeKey);
 
-    void setLeftSiblingKey(long paramKey);
+    /**
+     * Setting the left sibling key to this node.
+     * 
+     * @param pNodeKey
+     *            the new key to be set.
+     */
+    void setLeftSiblingKey(long pNodeKey);
 
-    void setFirstChildKey(long paramKey);
+    /**
+     * Setting the first child sibling key to this node.
+     * 
+     * @param pNodeKey
+     *            the new key to be set.
+     */
+    void setFirstChildKey(long pNodeKey);
 
+    /**
+     * Decrementing the child count.
+     * 
+     */
     void decrementChildCount();
 
+    /**
+     * Incrementing the child count.
+     */
     void incrementChildCount();
 }

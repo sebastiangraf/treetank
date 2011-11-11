@@ -56,52 +56,52 @@ class InsertSubtreeVisitor extends AbsVisitorSupport {
     /**
      * Constructor.
      * 
-     * @param paramRtx
+     * @param pRtx
      *            read-transaction which implements the {@link IReadTransaction} interface
-     * @param paramWtx
+     * @param pWtx
      *            write-transaction which implements the {@link IWriteTransaction} interface
      * @param paramInsert
      *            determines how to insert a node
      */
-    InsertSubtreeVisitor(@NotNull final IReadTransaction paramRtx, @NotNull final IWriteTransaction paramWtx,
+    InsertSubtreeVisitor(@NotNull final IReadTransaction pRtx, @NotNull final IWriteTransaction pWtx,
         @NotNull final EInsert paramInsert) {
-        assert paramRtx != null;
-        assert paramWtx != null;
+        assert pRtx != null;
+        assert pWtx != null;
         assert paramInsert != null;
-        mRtx = paramRtx;
-        mWtx = paramWtx;
+        mRtx = pRtx;
+        mWtx = pWtx;
         mInsert = paramInsert;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final ElementNode paramNode) {
-        mRtx.moveTo(paramNode.getNodeKey());
+    public void visit(final ElementNode pNode) {
+        mRtx.moveTo(pNode.getNodeKey());
         try {
             mInsert.insertNode(mWtx, mRtx);
 
-            if (paramNode.getNamespaceCount() > 0) {
+            if (pNode.getNamespaceCount() > 0) {
                 mInsert = EInsert.ASNONSTRUCTURAL;
-                for (int i = 0; i < paramNode.getNamespaceCount(); i++) {
+                for (int i = 0; i < pNode.getNamespaceCount(); i++) {
                     mRtx.moveToNamespace(i);
                     mInsert.insertNode(mWtx, mRtx);
                     mRtx.moveToParent();
                 }
             }
 
-            if (paramNode.getAttributeCount() > 0) {
+            if (pNode.getAttributeCount() > 0) {
                 mInsert = EInsert.ASNONSTRUCTURAL;
-                for (int i = 0; i < paramNode.getAttributeCount(); i++) {
+                for (int i = 0; i < pNode.getAttributeCount(); i++) {
                     mRtx.moveToAttribute(i);
                     mInsert.insertNode(mWtx, mRtx);
                     mRtx.moveToParent();
                 }
             }
 
-            if (paramNode.hasFirstChild()) {
+            if (pNode.hasFirstChild()) {
                 mInsert = EInsert.ASFIRSTCHILD;
                 mRtx.moveToFirstChild();
-            } else if (paramNode.hasRightSibling()) {
+            } else if (pNode.hasRightSibling()) {
                 mInsert = EInsert.ASRIGHTSIBLING;
                 mRtx.moveToRightSibling();
             }

@@ -54,13 +54,13 @@ import org.treetank.utils.NamePageHash;
 public class ReadTransaction implements IReadTransaction {
 
     /** ID of transaction. */
-    private final long mTransactionID;
+    private final long mId;
 
     /** Session state this write transaction is bound to. */
     protected final Session mSession;
 
     /** State of transaction including all cached stuff. */
-    private ReadTransactionState mTransactionState;
+    private ReadTransactionState mState;
 
     /** Strong reference to currently selected node. */
     private INode mCurrentNode;
@@ -84,8 +84,8 @@ public class ReadTransaction implements IReadTransaction {
     protected ReadTransaction(final Session paramSession, final long paramTransactionID,
         final ReadTransactionState paramTransactionState) throws TTIOException {
         mSession = paramSession;
-        mTransactionID = paramTransactionID;
-        mTransactionState = paramTransactionState;
+        mId = paramTransactionID;
+        mState = paramTransactionState;
         mCurrentNode = getTransactionState().getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
         mClosed = false;
     }
@@ -95,7 +95,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final long getTransactionID() {
-        return mTransactionID;
+        return mId;
     }
 
     /**
@@ -104,7 +104,7 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public final long getRevisionNumber() throws TTIOException {
         assertNotClosed();
-        return mTransactionState.getActualRevisionRootPage().getRevision();
+        return mState.getActualRevisionRootPage().getRevision();
     }
 
     /**
@@ -113,7 +113,7 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public final long getRevisionTimestamp() throws TTIOException {
         assertNotClosed();
-        return mTransactionState.getActualRevisionRootPage().getRevisionTimestamp();
+        return mState.getActualRevisionRootPage().getRevisionTimestamp();
     }
 
     /**
@@ -128,7 +128,7 @@ public class ReadTransaction implements IReadTransaction {
             // Remember old node and fetch new one.
             final INode oldNode = mCurrentNode;
             try {
-                mCurrentNode = mTransactionState.getNode(paramNodeKey);
+                mCurrentNode = mState.getNode(paramNodeKey);
             } catch (final Exception e) {
                 mCurrentNode = null;
             }
@@ -234,8 +234,8 @@ public class ReadTransaction implements IReadTransaction {
         String name = "";
         String uri = "";
         if (mCurrentNode instanceof INameNode) {
-            name = mTransactionState.getName(((INameNode)mCurrentNode).getNameKey());
-            uri = mTransactionState.getName(((INameNode)mCurrentNode).getURIKey());
+            name = mState.getName(((INameNode)mCurrentNode).getNameKey());
+            uri = mState.getName(((INameNode)mCurrentNode).getURIKey());
         }
         return buildQName(uri, name);
     }
@@ -246,7 +246,7 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public final String getTypeOfCurrentNode() {
         assertNotClosed();
-        return mTransactionState.getName(mCurrentNode.getTypeKey());
+        return mState.getName(mCurrentNode.getTypeKey());
     }
 
     /**
@@ -264,7 +264,7 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public final String nameForKey(final int mKey) {
         assertNotClosed();
-        return mTransactionState.getName(mKey);
+        return mState.getName(mKey);
     }
 
     /**
@@ -273,7 +273,7 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public final byte[] rawNameForKey(final int paramKey) {
         assertNotClosed();
-        return mTransactionState.getRawName(paramKey);
+        return mState.getRawName(paramKey);
     }
 
     /**
@@ -281,7 +281,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final IItemList getItemList() {
-        return mTransactionState.getItemList();
+        return mState.getItemList();
     }
 
     /**
@@ -291,13 +291,13 @@ public class ReadTransaction implements IReadTransaction {
     public void close() throws AbsTTException {
         if (!mClosed) {
             // Close own state.
-            mTransactionState.close();
+            mState.close();
 
             // Callback on session to make sure everything is cleaned up.
-            mSession.closeReadTransaction(mTransactionID);
+            mSession.closeReadTransaction(mId);
 
             // Immediately release all references.
-            mTransactionState = null;
+            mState = null;
             mCurrentNode = null;
 
             mClosed = true;
@@ -361,7 +361,7 @@ public class ReadTransaction implements IReadTransaction {
      * @return The state of this transaction.
      */
     public ReadTransactionState getTransactionState() {
-        return mTransactionState;
+        return mState;
     }
 
     /**
@@ -371,7 +371,7 @@ public class ReadTransaction implements IReadTransaction {
      *            State of transaction.
      */
     protected final void setTransactionState(final ReadTransactionState paramTransactionState) {
-        mTransactionState = paramTransactionState;
+        mState = paramTransactionState;
     }
 
     /**

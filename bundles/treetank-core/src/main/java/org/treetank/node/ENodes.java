@@ -160,9 +160,12 @@ public enum ENodes {
     ROOT_KIND(9, 7, 1) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
-            final byte[] pointerData = readPointerData(paramSource);
-            final byte[] byteData = readByteData(paramSource);
-            return new DocumentRootNode(byteData, pointerData);
+            final NodeDelegate nodeDel =
+                new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
+            final StructNodeDelegate structDel =
+                new StructNodeDelegate(nodeDel, paramSource.readLong(), paramSource.readLong(), paramSource
+                    .readLong(), paramSource.readLong());
+            return new DocumentRootNode(nodeDel, structDel);
         }
 
     },
