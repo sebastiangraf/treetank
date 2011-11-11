@@ -27,6 +27,8 @@
 
 package org.treetank;
 
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -35,6 +37,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.treetank.access.Database;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
@@ -50,7 +54,6 @@ import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
-import org.treetank.node.TextNodeTest;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -58,11 +61,6 @@ import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.page.NodePage;
 import org.treetank.settings.ECharsForSerializing;
 import org.treetank.utils.DocumentCreater;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.junit.Assert.fail;
 
 /**
  * 
@@ -208,7 +206,11 @@ public final class TestHelper {
                 page.setNode(i, new NamespaceNode(nodeDel, nameDel));
                 break;
             case 4:
-                page.setNode(i, DocumentRootNode.createData());
+                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                strucDel =
+                    new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
+                        random.nextLong());
+                page.setNode(i, new DocumentRootNode(nodeDel, strucDel));
                 break;
             case 5:
                 nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());

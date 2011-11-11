@@ -54,8 +54,8 @@ import org.treetank.node.TextNode;
  * 
  * <code><pre>
  * IVisitor visitor = new AbsVisitorSupport(rtx) {
- *      public void visit(final ElementNode paramNode) {
- *              mRtx.moveTo(paramNode.getNodeKey());
+ *      public void visit(final ElementNode pNode) {
+ *              mRtx.moveTo(pNode.getNodeKey());
  *              System.out.println(
  *                      "Element name: " + mRtx.getCurrentQName().getLocalName()
  *              );
@@ -74,31 +74,31 @@ public abstract class AbsVisitorSupport implements IVisitor {
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final ElementNode paramNode) {
+    public void visit(final ElementNode pNode) {
 
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final TextNode paramNode) {
+    public void visit(final TextNode pNode) {
 
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final DocumentRootNode paramNode) {
+    public void visit(final DocumentRootNode pNode) {
 
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final AttributeNode paramNode) {
+    public void visit(final AttributeNode pNode) {
 
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final NamespaceNode paramNode) {
+    public void visit(final NamespaceNode pNode) {
 
     }
 }

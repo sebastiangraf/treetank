@@ -31,6 +31,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.treetank.io.file.ByteBufferSinkAndSource;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.settings.EFixed;
 
 public class DocumentRootNodeTest {
@@ -39,7 +41,14 @@ public class DocumentRootNodeTest {
     public void testDocumentRootNode() {
 
         // Create empty node.
-        final DocumentRootNode node1 = DocumentRootNode.createData();
+        final NodeDelegate nodeDel =
+            new NodeDelegate((Long)EFixed.ROOT_NODE_KEY.getStandardProperty(), (Long)EFixed.NULL_NODE_KEY
+                .getStandardProperty(), (Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        final StructNodeDelegate strucDel =
+            new StructNodeDelegate(nodeDel, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(),
+                (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), (Long)EFixed.NULL_NODE_KEY
+                    .getStandardProperty(), 0);
+        final DocumentRootNode node1 = new DocumentRootNode(nodeDel, strucDel);
         check(node1);
 
         // Serialize and deserialize node.
@@ -66,31 +75,5 @@ public class DocumentRootNodeTest {
         assertEquals(ENodes.ROOT_KIND, node.getKind());
 
     }
-
-    // @Test
-    // public void testHashCode() {
-    // final long[] data = {
-    // 99, 13, 14, 15, 12, 34
-    // };
-    // final long[] data2 = {
-    // 100, 15, 12, 16, 54, 63
-    // };
-    //
-    // final int[] intData = {
-    // 123
-    // };
-    // final int[] intData2 = {
-    // 23
-    // };
-    //
-    // final DocumentRootNode node = new DocumentRootNode(data, intData);
-    // final DocumentRootNode node2 = new DocumentRootNode(data2, intData2);
-    // final DocumentRootNode node3 = new DocumentRootNode(data, intData);
-    //
-    // assertEquals(node3.hashCode(), node.hashCode());
-    // assertTrue(node3.equals(node));
-    // assertFalse(node3.equals(node2));
-    //
-    // }
 
 }

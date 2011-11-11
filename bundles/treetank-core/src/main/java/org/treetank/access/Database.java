@@ -88,24 +88,24 @@ public final class Database implements IDatabase {
      * building up the structure and preparing everything for login.
      * 
      * 
-     * @param paramConfig
+     * @param pDBConfig
      *            which are used for the database, including storage location
      * @return true if creation is valid, false otherwise
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    public static synchronized boolean createDatabase(final DatabaseConfiguration paramConfig)
+    public static synchronized boolean createDatabase(final DatabaseConfiguration pDBConfig)
         throws TTIOException {
         boolean returnVal = true;
         // if file is existing, skipping
-        if (paramConfig.mFile.exists()) {
+        if (pDBConfig.mFile.exists()) {
             return false;
         } else {
-            returnVal = paramConfig.mFile.mkdirs();
+            returnVal = pDBConfig.mFile.mkdirs();
             if (returnVal) {
                 // creation of folder structure
                 for (DatabaseConfiguration.Paths paths : DatabaseConfiguration.Paths.values()) {
-                    final File toCreate = new File(paramConfig.mFile, paths.getFile().getName());
+                    final File toCreate = new File(pDBConfig.mFile, paths.getFile().getName());
                     if (paths.isFolder()) {
                         returnVal = toCreate.mkdir();
                     } else {
@@ -122,14 +122,14 @@ public final class Database implements IDatabase {
             }
             // serialization of the config
             try {
-                serializeConfiguration(paramConfig);
+                serializeConfiguration(pDBConfig);
             } catch (final IOException exc) {
                 throw new TTIOException(exc);
             }
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
-                paramConfig.mFile.delete();
+                pDBConfig.mFile.delete();
             }
             return returnVal;
         }
@@ -139,20 +139,20 @@ public final class Database implements IDatabase {
      * Truncate a database. This deletes all relevant data. All running sessions
      * must be closed beforehand.
      * 
-     * @param paramConfig
+     * @param pConf
      *            the database at this path should be deleted.
      * @throws AbsTTException
      *             any kind of false Treetank behaviour
      */
-    public static synchronized void truncateDatabase(final DatabaseConfiguration paramConfig)
+    public static synchronized void truncateDatabase(final DatabaseConfiguration pConf)
         throws AbsTTException {
         // check that database must be closed beforehand
-        if (!DATABASEMAP.containsKey(paramConfig.mFile)) {
+        if (!DATABASEMAP.containsKey(pConf.mFile)) {
             // if file is existing and folder is a tt-dataplace, delete it
-            if (paramConfig.mFile.exists()
-                && DatabaseConfiguration.Paths.compareStructure(paramConfig.mFile) == 0) {
+            if (pConf.mFile.exists()
+                && DatabaseConfiguration.Paths.compareStructure(pConf.mFile) == 0) {
                 // instantiate the database for deletion
-                EStorage.recursiveDelete(paramConfig.mFile);
+                EStorage.recursiveDelete(pConf.mFile);
             }
         }
     }
@@ -169,13 +169,13 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public synchronized boolean createResource(final ResourceConfiguration paramConfig) throws TTIOException {
+    public synchronized boolean createResource(final ResourceConfiguration pResConf) throws TTIOException {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already
         // set data.
         final File path =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                paramConfig.mPath.getName());
+                pResConf.mPath.getName());
         // if file is existing, skipping
         if (path.exists()) {
             return false;
@@ -201,14 +201,14 @@ public final class Database implements IDatabase {
             }
             // serialization of the config
             try {
-                serializeConfiguration(paramConfig);
+                serializeConfiguration(pResConf);
             } catch (final IOException exc) {
                 throw new TTIOException(exc);
             }
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
-                paramConfig.mPath.delete();
+                pResConf.mPath.delete();
             }
             return returnVal;
         }
@@ -218,10 +218,10 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void truncateResource(final ResourceConfiguration paramConfig) {
+    public synchronized void truncateResource(final ResourceConfiguration pResConf) {
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                paramConfig.mPath.getName());
+                pResConf.mPath.getName());
         // check that database must be closed beforehand
         if (!mSessions.containsKey(resourceFile)) {
             // if file is existing and folder is a tt-dataplace, delete it
@@ -243,23 +243,23 @@ public final class Database implements IDatabase {
      * Open database. A database can be opened only once. Afterwards the
      * singleton instance bound to the File is given back.
      * 
-     * @param paramFile
+     * @param pFile
      *            where the database is located sessionConf a {@link SessionConfiguration} object to set up
      *            the session
      * @return {@link IDatabase} instance.
      * @throws AbsTTException
      *             if something odd happens
      */
-    public static synchronized IDatabase openDatabase(final File paramFile) throws AbsTTException {
-        if (!paramFile.exists()) {
+    public static synchronized IDatabase openDatabase(final File pFile) throws AbsTTException {
+        if (!pFile.exists()) {
             throw new TTUsageException("DB could not be opened (since it was not created?) at location",
-                paramFile.toString());
+                pFile.toString());
         }
         FileInputStream is = null;
         DatabaseConfiguration config = null;
         try {
             is =
-                new FileInputStream(new File(paramFile, DatabaseConfiguration.Paths.ConfigBinary.getFile()
+                new FileInputStream(new File(pFile, DatabaseConfiguration.Paths.ConfigBinary.getFile()
                     .getName()));
             final ObjectInputStream de = new ObjectInputStream(is);
             config = (DatabaseConfiguration)de.readObject();
@@ -271,7 +271,7 @@ public final class Database implements IDatabase {
             throw new TTIOException(exc.toString());
         }
         final Database database = new Database(config);
-        final IDatabase returnVal = DATABASEMAP.putIfAbsent(paramFile, database);
+        final IDatabase returnVal = DATABASEMAP.putIfAbsent(pFile, database);
         if (returnVal == null) {
             return database;
         } else {
@@ -291,11 +291,11 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public synchronized ISession getSession(final SessionConfiguration paramConfig) throws AbsTTException {
+    public synchronized ISession getSession(final SessionConfiguration pSessionConf) throws AbsTTException {
 
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                paramConfig.getResource());
+                pSessionConf.getResource());
         Session returnVal = mSessions.get(resourceFile);
         if (returnVal == null) {
             if (!resourceFile.exists()) {
@@ -321,7 +321,7 @@ public final class Database implements IDatabase {
 
             // Resource of session must be associated to this database
             assert config.mPath.getParentFile().getParentFile().equals(mDBConfig.mFile);
-            returnVal = new Session(this, config, paramConfig);
+            returnVal = new Session(this, config, pSessionConf);
             mSessions.put(resourceFile, returnVal);
         }
         return returnVal;
@@ -356,29 +356,29 @@ public final class Database implements IDatabase {
      * Closing a resource. This callback is necessary due to centralized
      * handling of all sessions within a database.
      * 
-     * @param paramFile
+     * @param pFile
      *            to be closed
      * @return true if close successful, false otherwise
      */
-    protected boolean removeSession(final File paramFile) {
-        return mSessions.remove(paramFile) != null ? true : false;
+    protected boolean removeSession(final File pFile) {
+        return mSessions.remove(pFile) != null ? true : false;
     }
 
     /**
      * Serializing any {@link IConfigureSerializable} instance to a denoted
      * file.
      * 
-     * @param paramToSerialize
+     * @param pConf
      *            to be serializied, containing the file
      * @throws IOException
      *             if serialization fails
      */
-    private static void serializeConfiguration(final IConfigureSerializable paramToSerialize)
+    private static void serializeConfiguration(final IConfigureSerializable pConf)
         throws IOException {
         FileOutputStream os = null;
-        os = new FileOutputStream(paramToSerialize.getConfigFile());
+        os = new FileOutputStream(pConf.getConfigFile());
         final ObjectOutputStream en = new ObjectOutputStream(os);
-        en.writeObject(paramToSerialize);
+        en.writeObject(pConf);
         en.close();
         os.close();
     }

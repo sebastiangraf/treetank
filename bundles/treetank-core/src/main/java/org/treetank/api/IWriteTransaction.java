@@ -120,80 +120,80 @@ public interface IWriteTransaction extends IReadTransaction {
      * Move a subtree rooted at paramToKey to the first child rooted at
      * paramToKey.
      * 
-     * @param paramFromKey
+     * @param pFromKey
      *            root node key of the subtree to move
      * @return key of rooted subtree
      * @throws AbsTTException
      *             if move adaption fails
      */
-    long moveSubtreeToFirstChild(final long paramFromKey) throws AbsTTException;
+    long moveSubtreeToFirstChild(final long pFromKey) throws AbsTTException;
 
     /**
      * Move a subtree rooted at paramToKey to the right sibling of the node at
      * paramToKey.
      * 
-     * @param paramFromKey
+     * @param pFromKey
      *            root node key of the subtree to move
      * @return key of rooted subtree
      * @throws AbsTTException
      *             if move adaption fails
      */
-    long moveSubtreeToRightSibling(final long paramFromKey) throws AbsTTException;
+    long moveSubtreeToRightSibling(final long pFromKey) throws AbsTTException;
 
     /**
      * Insert new element node as first child of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param mQName
+     * @param pName
      *            {@link QName} of node to insert
      * @throws AbsTTException
      *             if element node couldn't be inserted as first child
      * @return key of inserted node
      */
-    long insertElementAsFirstChild(final QName mQName) throws AbsTTException;
+    long insertElementAsFirstChild(final QName pName) throws AbsTTException;
 
     /**
      * Insert new text node as first child of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param paramValue
+     * @param pValue
      *            value of node to insert
      * @throws AbsTTException
      *             if text node couldn't be inserted as first child.
      * @return Key of inserted node. Already has a first child.
      */
-    long insertTextAsFirstChild(final String paramValue) throws AbsTTException;
+    long insertTextAsFirstChild(final String pValue) throws AbsTTException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param paramQName
+     * @param pFromKey
      *            {@link QName} of the new node
      * @throws AbsTTException
      *             if element node couldn't be inserted as right sibling
      * @return Key of inserted node. Already has a first child.
      */
-    long insertElementAsRightSibling(final QName paramQName) throws AbsTTException;
+    long insertElementAsRightSibling(final QName pFromKey) throws AbsTTException;
 
     /**
      * Insert new text node as right sibling of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param paramValue
+     * @param pValue
      *            value of node to insert
      * @throws AbsTTException
      *             if text node couldn't be inserted as right sibling
      * @return Key of inserted node. the root node which is not allowed to have
      *         right siblings.
      */
-    long insertTextAsRightSibling(final String paramValue) throws AbsTTException;
+    long insertTextAsRightSibling(final String pValue) throws AbsTTException;
 
     /**
      * Insert attribute in currently selected node. The cursor is moved to the
      * inserted node.
      * 
-     * @param paramQName
+     * @param pName
      *            {@link QName} reference
      * @param paramValue
      *            value of inserted node
@@ -201,19 +201,19 @@ public interface IWriteTransaction extends IReadTransaction {
      *             if attribute couldn't be inserted.
      * @return key of inserted node
      */
-    long insertAttribute(final QName paramQName, final String paramValue) throws AbsTTException;
+    long insertAttribute(final QName pName, final String pValue) throws AbsTTException;
 
     /**
      * Insert namespace declaration in currently selected node. The cursor is
      * moved to the inserted node.
      * 
-     * @param paramQName
+     * @param pName
      *            {@link QName} reference
      * @throws AbsTTException
      *             if attribute couldn't be inserted.
      * @return key of inserted node
      */
-    long insertNamespace(final QName paramQName) throws AbsTTException;
+    long insertNamespace(final QName pName) throws AbsTTException;
 
     /**
      * Remove currently selected node. This does automatically remove
@@ -234,32 +234,32 @@ public interface IWriteTransaction extends IReadTransaction {
     /**
      * Set QName of node.
      * 
-     * @param paramName
+     * @param pName
      *            New qualified name of node.
      * @throws TTIOException
      *             If can't set Name in node.
      */
-    void setQName(final QName paramName) throws AbsTTException;
+    void setQName(final QName pName) throws AbsTTException;
 
     /**
      * Set URI of node.
      * 
-     * @param paramUri
+     * @param pUri
      *            new URI of node
      * @throws TTIOException
      *             if URI of node couldn't be set
      */
-    void setURI(final String paramUri) throws AbsTTException;
+    void setURI(final String pUri) throws AbsTTException;
 
     /**
      * Set value of node.
      * 
-     * @param paramValue
+     * @param pValue
      *            new value of node
      * @throws TTIOException
      *             if value couldn't be set
      */
-    void setValue(final String paramValue) throws AbsTTException;
+    void setValue(final String pValue) throws AbsTTException;
 
     /**
      * Commit all modifications of the exclusive write transaction. Even commit
@@ -282,12 +282,12 @@ public interface IWriteTransaction extends IReadTransaction {
      * Reverting all changes to the revision defined. This command has to be
      * finalized with a commit. A revert is always bound to a {@link IReadTransaction#moveToDocumentRoot()}.
      * 
-     * @param paramRevision
+     * @param pRev
      *            revert to the revision
      * @throws AbsTTException
      *             if couldn't revert to revision
      */
-    void revertTo(final long paramRevision) throws AbsTTException;
+    void revertTo(final long pRev) throws AbsTTException;
 
     /**
      * Closing current WriteTransaction.
@@ -302,9 +302,9 @@ public interface IWriteTransaction extends IReadTransaction {
      * Copy subtree from another database/resource/revision and insert as right
      * sibling of the current node.
      * 
-     * @param paramNodeKey
+     * @param pNode
      *            node key of the root node of the subtree to copy
-     * @param paramRevision
+     * @param pRev
      *            revision from which to copy a subtree
      * @param paramDatabase
      *            database reference which implements the {@link IDatabase} interface
@@ -312,15 +312,15 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws AbsTTException
      *             if anything went wrong
      */
-    long copySubtreeAsFirstChild(final long paramNodeKey, final long paramRevision) throws AbsTTException;
+    long copySubtreeAsFirstChild(final long pNode, final long pRev) throws AbsTTException;
 
     /**
      * Copy subtree from another database/resource/revision and insert as right
      * sibling of the current node.
      * 
-     * @param paramNodeKey
+     * @param pNode
      *            node key of the root node of the subtree to copy
-     * @param paramRevision
+     * @param pRev
      *            revision from which to copy a subtree
      * @param paramDatabase
      *            database reference which implements the {@link IDatabase} interface
@@ -328,5 +328,5 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws AbsTTException
      *             if anything went wrong
      */
-    long copySubtreeAsRightSibling(final long paramNodeKey, final long paramRevision) throws AbsTTException;
+    long copySubtreeAsRightSibling(final long pNode, final long pRev) throws AbsTTException;
 }

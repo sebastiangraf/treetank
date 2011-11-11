@@ -70,15 +70,15 @@ public final class SessionConfiguration {
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @param paramBuilder
+     * @param pBuilder
      *            {@link Builder} reference
      */
-    private SessionConfiguration(final SessionConfiguration.Builder paramBuilder) {
-        mWtxAllowed = paramBuilder.mWtxAllowed;
-        mRtxAllowed = paramBuilder.mRtxAllowed;
-        mCommitThreshold = paramBuilder.mCommitThreshold;
-        mUser = paramBuilder.mUser;
-        mResource = paramBuilder.mResource;
+    private SessionConfiguration(final SessionConfiguration.Builder pBuilder) {
+        mWtxAllowed = pBuilder.mWtxAllowed;
+        mRtxAllowed = pBuilder.mRtxAllowed;
+        mCommitThreshold = pBuilder.mCommitThreshold;
+        mUser = pBuilder.mUser;
+        mResource = pBuilder.mResource;
     }
 
     /**
@@ -146,28 +146,28 @@ public final class SessionConfiguration {
         /**
          * Constructor for the {@link Builder} with fixed fields to be set.
          * 
-         * @param paramResource
+         * @param pRes
          *            to be set.
          */
-        public Builder(final String paramResource) {
-            if (paramResource == null) {
+        public Builder(final String pRes) {
+            if (pRes == null) {
                 throw new IllegalArgumentException("Parameter must not be null!");
             }
-            this.mResource = paramResource;
+            this.mResource = pRes;
         }
 
         /**
          * Setter for field mWtxAllowed.
          * 
-         * @param paramWtxAllowed
+         * @param pMaxWtx
          *            new value for field
          * @return reference to the builder object
          */
-        public Builder setWtxAllowed(final int paramWtxAllowed) {
-            if (paramWtxAllowed < 1) {
+        public Builder setWtxAllowed(final int pMaxWtx) {
+            if (pMaxWtx < 1) {
                 throw new IllegalArgumentException("Value must be > 0!");
             }
-            mWtxAllowed = paramWtxAllowed;
+            mWtxAllowed = pMaxWtx;
             return this;
         }
 
@@ -189,30 +189,30 @@ public final class SessionConfiguration {
         /**
          * Setter for field mCommitThreshold.
          * 
-         * @param paramCommitThreshold
+         * @param pCommitThreshold
          *            new value for field
          * @return reference to the builder object
          */
-        public Builder setCommitThreshold(final int paramCommitThreshold) {
-            if (paramCommitThreshold < 100) {
+        public Builder setCommitThreshold(final int pCommitThreshold) {
+            if (pCommitThreshold < 100) {
                 throw new IllegalArgumentException("Value must be > 100!");
             }
-            mCommitThreshold = paramCommitThreshold;
+            mCommitThreshold = pCommitThreshold;
             return this;
         }
 
         /**
          * Setter for field mUser.
          * 
-         * @param paramUser
+         * @param pUser
          *            new value for field
          * @return reference to the builder object
          */
-        public Builder setUser(final String paramUser) {
-            if (paramUser == null) {
+        public Builder setUser(final String pUser) {
+            if (pUser == null) {
                 throw new NullPointerException("paramUser may not be null!");
             }
-            mUser = paramUser;
+            mUser = pUser;
             return this;
         }
 

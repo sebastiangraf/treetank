@@ -18,16 +18,16 @@ public interface INameNode extends INode {
     /**
      * Setting the name key.
      * 
-     * @param paramNameKey
+     * @param pNameKey
      *            the namekey to be set.
      */
-    void setNameKey(int paramNameKey);
+    void setNameKey(int pNameKey);
 
     /**
      * Setting the uri key.
      * 
-     * @param paramUriKey
+     * @param pUriKey
      *            the urikey to be set.
      */
-    void setURIKey(int paramUriKey);
+    void setURIKey(int pUriKey);
 }

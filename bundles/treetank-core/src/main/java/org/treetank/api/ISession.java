@@ -55,16 +55,27 @@ public interface ISession {
     /**
      * Begin a read-only transaction on the given revision key.
      * 
-     * @param revisionKey
+     * @param pRev
      *            Revision key to read from.
      * @throws AbsTTException
      *             If can't begin Read Transaction.
-     * @return IReadTransaction instance.
+     * @return {@link IReadTransaction} instance
      */
-    IReadTransaction beginReadTransaction(final long revisionKey) throws AbsTTException;
+    IReadTransaction beginReadTransaction(final long pRev) throws AbsTTException;
 
-    IReadTransaction beginReadTransaction(final long paramRevisionKey, final IItemList mItemList)
-        throws AbsTTException;
+    /**
+     * Begin a read-only transaction on the given revision and store any results in the fiven
+     * {@link IItemList}.
+     * 
+     * @param pRev
+     *            Revision key to read from.
+     * @param pList
+     *            A list to store the results in.
+     * @return {@link IReadTransaction} instance
+     * @throws AbsTTException
+     *             If can't begin Read Transaction.
+     */
+    IReadTransaction beginReadTransaction(final long pRev, final IItemList pList) throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
@@ -78,15 +89,15 @@ public interface ISession {
     /**
      * Begin exclusive read/write transaction with auto commit.
      * 
-     * @param maxNodeCount
+     * @param pMaxNodes
      *            Count of node modifications after which a commit is issued.
-     * @param maxTime
+     * @param pMaxTime
      *            Time in seconds after which a commit is issued.
      * @throws AbsTTException
      *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime) throws AbsTTException;
+    IWriteTransaction beginWriteTransaction(final int pMaxNodes, final int pMaxTime) throws AbsTTException;
 
     /**
      * Safely close session and immediately release all resources. If there are

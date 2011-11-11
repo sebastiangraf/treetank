@@ -44,41 +44,41 @@ public interface IVisitor {
     /**
      * Do something when visiting an {@link ElementNode}.
      * 
-     * @param paramNode
+     * @param pNode
      *            the {@link ElementNode}
      */
-    void visit(final ElementNode paramNode);
+    void visit(final ElementNode pNode);
 
     /**
      * Do something when visiting a {@link AttributeNode}.
      * 
-     * @param paramNode
+     * @param pNode
      *            the {@link AttributeNode}
      */
-    void visit(final AttributeNode paramNode);
+    void visit(final AttributeNode pNode);
 
     /**
      * Do something when visiting a {@link NamespaceNode}.
      * 
-     * @param paramNode
+     * @param pNode
      *            the {@link NamespaceNode}
      */
-    void visit(final NamespaceNode paramNode);
+    void visit(final NamespaceNode pNode);
 
     /**
      * Do something when visiting a {@link TextNode}.
      * 
-     * @param paramNode
+     * @param pNode
      *            the {@link ElementNode}
      */
-    void visit(final TextNode paramNode);
+    void visit(final TextNode pNode);
 
     /**
      * Do something when visiting the {@link DocumentRootNode}.
      * 
-     * @param paramNode
+     * @param pNode
      *            the {@link DocumentRootNode}
      */
-    void visit(final DocumentRootNode paramNode);
+    void visit(final DocumentRootNode pNode);
 
 }

@@ -19,11 +19,9 @@ public interface IValNode extends INode {
     /**
      * Setting the value key.
      * 
-     * @param paramUriKey
-     *            the urikey to be set.
-     * @param paramVal
+     * @param pValue
      *            the value to be set.
      */
-    void setValue(byte[] paramVal);
+    void setValue(byte[] pValue);
 
 }

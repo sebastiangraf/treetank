@@ -32,6 +32,8 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.DocumentRootNode;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.IConstants;
 
@@ -101,7 +103,14 @@ public final class UberPage implements IPage {
                 IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
-        ndp.setNode(0, DocumentRootNode.createData());
+        final NodeDelegate nodeDel =
+            new NodeDelegate((Long)EFixed.ROOT_NODE_KEY.getStandardProperty(), (Long)EFixed.NULL_NODE_KEY
+                .getStandardProperty(), (Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        final StructNodeDelegate strucDel =
+            new StructNodeDelegate(nodeDel, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(),
+                (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), (Long)EFixed.NULL_NODE_KEY
+                    .getStandardProperty(), 0);
+        ndp.setNode(0, new DocumentRootNode(nodeDel, strucDel));
         rrp.incrementMaxNodeKey();
     }
 

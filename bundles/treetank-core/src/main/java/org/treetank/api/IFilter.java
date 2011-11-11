@@ -83,13 +83,6 @@ package org.treetank.api;
 public interface IFilter {
 
     /**
-     * Access transaction to which this filter is bound.
-     * 
-     * @return Transaction to which this filter is bound.
-     */
-    // IReadTransaction getTransaction();
-
-    /**
      * Apply filter on current node of transaction.
      * 
      * @return True if node passes filter. False else.
@@ -99,10 +92,10 @@ public interface IFilter {
     /**
      * Set transaction to which this filter is bound.
      * 
-     * @param rtx
+     * @param pRtx
      *            read transaction which is bound to transaction.
      * 
      */
-    void setTransaction(final IReadTransaction rtx);
+    void setTransaction(final IReadTransaction pRtx);
 
 }

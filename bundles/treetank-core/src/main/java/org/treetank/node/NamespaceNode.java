@@ -27,14 +27,10 @@
 
 package org.treetank.node;
 
-import java.util.Arrays;
-
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 

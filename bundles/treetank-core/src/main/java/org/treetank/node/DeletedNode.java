@@ -43,7 +43,7 @@ public final class DeletedNode implements INode {
     /**
      * Delegate for common data.
      */
-    private final NodeDelegate mDelegate;
+    private final NodeDelegate mDel;
 
     /**
      * Constructor.
@@ -53,16 +53,16 @@ public final class DeletedNode implements INode {
      * @param paramParent
      *            parent of this key.
      */
-    public DeletedNode(final NodeDelegate paramNodeDelegate) {
-        mDelegate = paramNodeDelegate;
+    public DeletedNode(final NodeDelegate pDel) {
+        mDel = pDel;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink mNodeOut) {
-        mDelegate.serialize(mNodeOut);
+    public void serialize(final ITTSink pSink) {
+        mDel.serialize(pSink);
     }
 
     /**
@@ -75,7 +75,7 @@ public final class DeletedNode implements INode {
 
     @Override
     public INode clone() {
-        final INode toClone = new DeletedNode(mDelegate.clone());
+        final INode toClone = new DeletedNode(mDel.clone());
         return toClone;
     }
 
@@ -92,7 +92,7 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
      */
     public void setHash(long paramHash) {
-        mDelegate.setHash(paramHash);
+        mDel.setHash(paramHash);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
-        return mDelegate.getHash();
+        return mDel.getHash();
     }
 
     /**
@@ -112,7 +112,7 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
     public void setNodeKey(long paramKey) {
-        mDelegate.setNodeKey(paramKey);
+        mDel.setNodeKey(paramKey);
     }
 
     /**
@@ -122,7 +122,7 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
     public long getNodeKey() {
-        return mDelegate.getNodeKey();
+        return mDel.getNodeKey();
     }
 
     /**
@@ -132,7 +132,7 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
-        return mDelegate.getParentKey();
+        return mDel.getParentKey();
     }
 
     /**
@@ -142,7 +142,7 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
-        return mDelegate.hasParent();
+        return mDel.hasParent();
     }
 
     /**
@@ -152,7 +152,7 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
-        return mDelegate.getTypeKey();
+        return mDel.getTypeKey();
     }
 
     /**
@@ -162,17 +162,17 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
     public void setParentKey(long paramKey) {
-        mDelegate.setParentKey(paramKey);
+        mDel.setParentKey(paramKey);
     }
 
     /**
-     * Delegate method for setType.
+     * Delegate method for setTypeKey.
      * 
      * @param paramType
      * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
     public void setTypeKey(int paramType) {
-        mDelegate.setTypeKey(paramType);
+        mDel.setTypeKey(paramType);
     }
 
     /**
@@ -182,7 +182,7 @@ public final class DeletedNode implements INode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
         return result;
     }
 
@@ -198,10 +198,10 @@ public final class DeletedNode implements INode {
         if (getClass() != obj.getClass())
             return false;
         DeletedNode other = (DeletedNode)obj;
-        if (mDelegate == null) {
-            if (other.mDelegate != null)
+        if (mDel == null) {
+            if (other.mDel != null)
                 return false;
-        } else if (!mDelegate.equals(other.mDelegate))
+        } else if (!mDel.equals(other.mDel))
             return false;
         return true;
     }
@@ -213,7 +213,7 @@ public final class DeletedNode implements INode {
      * @see org.treetank.node.delegates.NodeDelegate#toString()
      */
     public String toString() {
-        return mDelegate.toString();
+        return mDel.toString();
     }
 
 }
