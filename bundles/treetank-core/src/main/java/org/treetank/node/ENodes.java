@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.treetank.io.ITTSource;
+import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
@@ -131,9 +132,11 @@ public enum ENodes {
 
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
-            final byte[] pointerData = readPointerData(paramSource);
-            final byte[] byteData = readByteData(paramSource);
-            return new NamespaceNode(byteData, pointerData);
+            final NodeDelegate nodeDel =
+                new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
+            final NameNodeDelegate nameDel =
+                new NameNodeDelegate(nodeDel, paramSource.readInt(), paramSource.readInt());
+            return new NamespaceNode(nodeDel, nameDel);
         }
 
     },
@@ -175,9 +178,9 @@ public enum ENodes {
     DELETE_KIND(5, 3, 1) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
-            final DeletedNode node =
-                new DeletedNode(new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource
-                    .readLong()));
+            final NodeDelegate delegate =
+                new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
+            final DeletedNode node = new DeletedNode(delegate);
             return node;
         }
 

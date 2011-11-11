@@ -30,6 +30,11 @@ package org.treetank.node;
 import java.util.Arrays;
 
 import org.treetank.api.IVisitor;
+import org.treetank.io.ITTSink;
+import org.treetank.node.delegates.NameNodeDelegate;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
@@ -40,10 +45,10 @@ import org.treetank.node.interfaces.INode;
  * Node representing a namespace.
  * </p>
  */
-public final class NamespaceNode extends AbsNode implements INode, INameNode {
+public final class NamespaceNode implements INode, INameNode {
 
-    protected static final int NAME_KEY = 4;
-    protected static final int URI_KEY = 8;
+    private final NodeDelegate mDelegate;
+    private final NameNodeDelegate mNameDelegate;
 
     /**
      * Constructor.
@@ -53,8 +58,9 @@ public final class NamespaceNode extends AbsNode implements INode, INameNode {
      * @param mIntBuilder
      *            building int data
      */
-    NamespaceNode(final byte[] mByteBuilder, final byte[] mPointerBuilder) {
-        super(mByteBuilder, mPointerBuilder);
+    public NamespaceNode(final NodeDelegate paramDelegate, final NameNodeDelegate paramNameDelegate) {
+        mDelegate = paramDelegate;
+        mNameDelegate = paramNameDelegate;
     }
 
     /**
@@ -70,7 +76,7 @@ public final class NamespaceNode extends AbsNode implements INode, INameNode {
      */
     @Override
     public int getNameKey() {
-        return readIntBytes(NAME_KEY);
+        return mNameDelegate.getNameKey();
     }
 
     /**
@@ -78,7 +84,7 @@ public final class NamespaceNode extends AbsNode implements INode, INameNode {
      */
     @Override
     public void setNameKey(final int mNameKey) {
-        writeIntBytes(NAME_KEY, mNameKey);
+        mNameDelegate.setNameKey(mNameKey);
     }
 
     /**
@@ -86,74 +92,174 @@ public final class NamespaceNode extends AbsNode implements INode, INameNode {
      */
     @Override
     public int getURIKey() {
-        return readIntBytes(URI_KEY);
+        return mNameDelegate.getURIKey();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setURIKey(final int mUriKey) {
-        writeIntBytes(URI_KEY, mUriKey);
+    public void setURIKey(final int paramUriKey) {
+        mNameDelegate.setURIKey(paramUriKey);
     }
 
     /** {@inheritDoc} */
     @Override
-    public AbsNode clone() {
-        return new NamespaceNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData));
-    }
-
-    public static AbsNode createData(final long mNodeKey, final long mParentKey, final int mUriKey,
-        final int prefixKey) {
-
-        final byte[] byteData = new byte[ENodes.NAMESPACE_KIND.getIntSize()];
-
-        final byte[] pointerData = new byte[ENodes.NAMESPACE_KIND.getLongSize()];
-
-        int mCount = AbsNode.NODE_KEY;
-        for (byte aByte : longToByteArray(mNodeKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsNode.PARENT_KEY;
-        for (byte aByte : longToByteArray(mParentKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = NamespaceNode.URI_KEY;
-        for (byte aByte : intToByteArray(mUriKey)) {
-            byteData[mCount++] = aByte;
-        }
-
-        mCount = NamespaceNode.NAME_KEY;
-        for (byte aByte : intToByteArray(prefixKey)) {
-            byteData[mCount++] = aByte;
-        }
-
-        return new NamespaceNode(byteData, pointerData);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tname key: ").append(getNameKey())
-            .toString();
-        return returnVal.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        final int prime = 98807;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(mByteData);
-        return result;
+    public NamespaceNode clone() {
+        return new NamespaceNode(mDelegate.clone(), mNameDelegate.clone());
     }
 
     /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
         paramVisitor.visit(this);
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param paramHash
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     */
+    public void setHash(long paramHash) {
+        mDelegate.setHash(paramHash);
+    }
+
+    /**
+     * Delegate method for getHash.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDelegate.getHash();
+    }
+
+    /**
+     * Delegate method for setNodeKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
+     */
+    public void setNodeKey(long paramKey) {
+        mDelegate.setNodeKey(paramKey);
+    }
+
+    /**
+     * Delegate method for getNodeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     */
+    public long getNodeKey() {
+        return mDelegate.getNodeKey();
+    }
+
+    /**
+     * Delegate method for getParentKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     */
+    public long getParentKey() {
+        return mDelegate.getParentKey();
+    }
+
+    /**
+     * Delegate method for hasParent.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     */
+    public boolean hasParent() {
+        return mDelegate.hasParent();
+    }
+
+    /**
+     * Delegate method for getTypeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     */
+    public int getTypeKey() {
+        return mDelegate.getTypeKey();
+    }
+
+    /**
+     * Delegate method for serialize.
+     * 
+     * @param paramSink
+     * @see org.treetank.node.delegates.NodeDelegate#serialize(org.treetank.io.ITTSink)
+     */
+    public void serialize(ITTSink paramSink) {
+        mDelegate.serialize(paramSink);
+        mNameDelegate.serialize(paramSink);
+    }
+
+    /**
+     * Delegate method for setParentKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     */
+    public void setParentKey(long paramKey) {
+        mDelegate.setParentKey(paramKey);
+    }
+
+    /**
+     * Delegate method for setType.
+     * 
+     * @param paramType
+     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     */
+    public void setTypeKey(int paramType) {
+        mDelegate.setTypeKey(paramType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + ((mNameDelegate == null) ? 0 : mNameDelegate.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        NamespaceNode other = (NamespaceNode)obj;
+        if (mDelegate == null) {
+            if (other.mDelegate != null)
+                return false;
+        } else if (!mDelegate.equals(other.mDelegate))
+            return false;
+        if (mNameDelegate == null) {
+            if (other.mNameDelegate != null)
+                return false;
+        } else if (!mNameDelegate.equals(other.mNameDelegate))
+            return false;
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(mDelegate.toString());
+        builder.append("\n");
+        builder.append(mNameDelegate.toString());
+        return builder.toString();
     }
 }

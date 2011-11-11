@@ -1,20 +1,28 @@
+/**
+ * 
+ */
 package org.treetank.node.delegates;
-
-import java.util.Arrays;
 
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
-import org.treetank.node.interfaces.IValNode;
+import org.treetank.node.interfaces.INameNode;
+import org.treetank.node.interfaces.INode;
 
-public class ValNodeDelegate implements IValNode {
+/**
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
+public class NameNodeDelegate implements INameNode {
 
-    private NodeDelegate mDelegate;
-    private byte[] mVal;
+    private final NodeDelegate mDelegate;
+    private int mNameKey;
+    private int mUriKey;
 
-    public ValNodeDelegate(final NodeDelegate paramNodeDelegate, final byte[] paramVal) {
-        this.mDelegate = paramNodeDelegate;
-        mVal = paramVal;
+    public NameNodeDelegate(final NodeDelegate paramDelegate, final int paramNameKey, final int paramUriKey) {
+        mDelegate = paramDelegate;
+        mNameKey = paramNameKey;
+        mUriKey = paramUriKey;
     }
 
     /**
@@ -78,16 +86,6 @@ public class ValNodeDelegate implements IValNode {
     }
 
     /**
-     * Delegate method for getKind.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getKind()
-     */
-    public ENodes getKind() {
-        return mDelegate.getKind();
-    }
-
-    /**
      * Delegate method for getTypeKey.
      * 
      * @return
@@ -98,39 +96,14 @@ public class ValNodeDelegate implements IValNode {
     }
 
     /**
-     * Delegate method for acceptVisitor.
-     * 
-     * @param paramVisitor
-     * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
-     */
-    public void acceptVisitor(IVisitor paramVisitor) {
-        mDelegate.acceptVisitor(paramVisitor);
-    }
-
-    /**
      * Delegate method for serialize.
      * 
      * @param paramSink
      * @see org.treetank.node.delegates.NodeDelegate#serialize(org.treetank.io.ITTSink)
      */
     public void serialize(ITTSink paramSink) {
-        paramSink.writeInt(mVal.length);
-        for (byte value : mVal) {
-            paramSink.writeByte(value);
-        }
-
-    }
-
-    /**
-     * Delegate method for clone.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#clone()
-     */
-    public ValNodeDelegate clone() {
-        final byte[] newVal = new byte[mVal.length];
-        System.arraycopy(mVal, 0, newVal, 0, newVal.length);
-        return new ValNodeDelegate(mDelegate.clone(), newVal);
+        paramSink.writeInt(mNameKey);
+        paramSink.writeInt(mUriKey);
     }
 
     /**
@@ -157,17 +130,55 @@ public class ValNodeDelegate implements IValNode {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getRawValue() {
-        return mVal;
+    public ENodes getKind() {
+        return ENodes.NAMESPACE_KIND;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public NameNodeDelegate clone() {
+        final NodeDelegate clone = mDelegate.clone();
+        return new NameNodeDelegate(clone, mNameKey, mUriKey);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setValue(byte[] paramVal) {
-        mVal = paramVal;
+    public void acceptVisitor(IVisitor paramVisitor) {
+        mDelegate.acceptVisitor(paramVisitor);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getNameKey() {
+        return mNameKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getURIKey() {
+        return mUriKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setNameKey(int paramNameKey) {
+        mNameKey = paramNameKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setURIKey(int paramUriKey) {
+        mUriKey = paramUriKey;
     }
 
     /**
@@ -178,7 +189,8 @@ public class ValNodeDelegate implements IValNode {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
-        result = prime * result + Arrays.hashCode(mVal);
+        result = prime * result + mNameKey;
+        result = prime * result + mUriKey;
         return result;
     }
 
@@ -193,13 +205,15 @@ public class ValNodeDelegate implements IValNode {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ValNodeDelegate other = (ValNodeDelegate)obj;
+        NameNodeDelegate other = (NameNodeDelegate)obj;
         if (mDelegate == null) {
             if (other.mDelegate != null)
                 return false;
         } else if (!mDelegate.equals(other.mDelegate))
             return false;
-        if (!Arrays.equals(mVal, other.mVal))
+        if (mNameKey != other.mNameKey)
+            return false;
+        if (mUriKey != other.mUriKey)
             return false;
         return true;
     }
@@ -212,8 +226,10 @@ public class ValNodeDelegate implements IValNode {
      */
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("value: ");
-        builder.append(new String(mVal));
+        builder.append("uri key: ");
+        builder.append(mUriKey);
+        builder.append("\nname key: ");
+        builder.append(mNameKey);
         return builder.toString();
     }
 }

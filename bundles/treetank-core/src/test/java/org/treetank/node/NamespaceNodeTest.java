@@ -27,21 +27,23 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.treetank.io.file.ByteBufferSinkAndSource;
+import org.treetank.node.delegates.NameNodeDelegate;
+import org.treetank.node.delegates.NodeDelegate;
 
 import org.junit.Test;
-import org.treetank.io.file.ByteBufferSinkAndSource;
+
+import static org.junit.Assert.assertEquals;
 
 public class NamespaceNodeTest {
 
     @Test
     public void testNamespaceNode() {
 
-        final NamespaceNode node1 = (NamespaceNode)NamespaceNode.createData(99, 13, 14, 15);
+        final NodeDelegate nodeDel = new NodeDelegate(99l, 13l, 0);
+        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, 15, 14);
         // Create empty node.
+        final NamespaceNode node1 = new NamespaceNode(nodeDel, nameDel);
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
@@ -65,19 +67,6 @@ public class NamespaceNodeTest {
         assertEquals(15, node.getNameKey());
         assertEquals(ENodes.NAMESPACE_KIND, node.getKind());
         assertEquals(true, node.hasParent());
-    }
-
-    @Test
-    public void testHashCode() {
-        final NamespaceNode node = (NamespaceNode)NamespaceNode.createData(0, 0, 14, 15);
-        final NamespaceNode node2 = (NamespaceNode)NamespaceNode.createData(1, 1, 14, 15);
-        final NamespaceNode node3 = (NamespaceNode)NamespaceNode.createData(2, 2, 12, 16);
-
-        assertEquals(node2.hashCode(), node.hashCode());
-        assertTrue(node2.equals(node));
-        assertFalse(node3.equals(node));
-        assertFalse(node3.equals(node2));
-
     }
 
 }

@@ -41,6 +41,7 @@ import org.treetank.node.DeletedNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
+import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
@@ -224,10 +225,13 @@ public final class WriteTransactionState extends ReadTransactionState {
             nameKey, namespaceKey, typeKey, mValue));
     }
 
-    protected NamespaceNode createNamespaceNode(final long parentKey, final int mUriKey, final int prefixKey)
-        throws TTIOException {
-        return (NamespaceNode)createNode(NamespaceNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey,
-            mUriKey, prefixKey));
+    protected NamespaceNode
+        createNamespaceNode(final long mParentKey, final int mUriKey, final int prefixKey)
+            throws TTIOException {
+        final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, mParentKey, 0);
+        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, mUriKey);
+
+        return (NamespaceNode)createNode(new NamespaceNode(nodeDel, nameDel));
     }
 
     /**

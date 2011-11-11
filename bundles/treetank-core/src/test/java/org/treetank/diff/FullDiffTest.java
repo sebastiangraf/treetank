@@ -73,7 +73,6 @@ public class FullDiffTest {
     }
 
     @Test
-    @Ignore
     public void testOptimizedFirst() throws InterruptedException, AbsTTException {
         DiffTestHelper.setUpFirst(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
