@@ -7,32 +7,50 @@ import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.INode;
 
 /**
+ * Delegate method for all nodes containing \"naming\"-data. That means that
+ * different fixed defined names are represented by the nodes delegating the
+ * calls of the interface {@link INameNode} to this class. Mainly, keys are
+ * stored referencing later on to the string stored in dedicated pages.
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 public class NameNodeDelegate implements INameNode {
 
+    /** Node delegate, containing basic node information. */
     private final NodeDelegate mDelegate;
+    /** Key of the name. The name contains the prefix as well. */
     private int mNameKey;
+    /** URI of the related namespace. */
     private int mUriKey;
 
-    public NameNodeDelegate(final NodeDelegate paramDelegate, final int paramNameKey, final int paramUriKey) {
-        mDelegate = paramDelegate;
-        mNameKey = paramNameKey;
-        mUriKey = paramUriKey;
+    /**
+     * Constructor.
+     * 
+     * @param pDel
+     *            page delegator
+     * @param pNameKey
+     *            namekey to be stored
+     * @param pUriKey
+     *            urikey to be stored
+     */
+    public NameNodeDelegate(final NodeDelegate pDel, final int pNameKey,
+            final int pUriKey) {
+        mDelegate = pDel;
+        mNameKey = pNameKey;
+        mUriKey = pUriKey;
     }
 
     /**
      * Delegate method for setHash.
      * 
-     * @param paramHash
+     * @param pHash
      * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
      */
-    public void setHash(long paramHash) {
-        mDelegate.setHash(paramHash);
+    public void setHash(final long pHash) {
+        mDelegate.setHash(pHash);
     }
 
     /**
@@ -48,11 +66,11 @@ public class NameNodeDelegate implements INameNode {
     /**
      * Delegate method for setNodeKey.
      * 
-     * @param paramKey
+     * @param pNodeKey
      * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
-    public void setNodeKey(long paramKey) {
-        mDelegate.setNodeKey(paramKey);
+    public void setNodeKey(final long pNodeKey) {
+        mDelegate.setNodeKey(pNodeKey);
     }
 
     /**
@@ -98,32 +116,32 @@ public class NameNodeDelegate implements INameNode {
     /**
      * Delegate method for serialize.
      * 
-     * @param paramSink
+     * @param pSink
      * @see org.treetank.node.delegates.NodeDelegate#serialize(org.treetank.io.ITTSink)
      */
-    public void serialize(ITTSink paramSink) {
-        paramSink.writeInt(mNameKey);
-        paramSink.writeInt(mUriKey);
+    public void serialize(final ITTSink pSink) {
+        pSink.writeInt(mNameKey);
+        pSink.writeInt(mUriKey);
     }
 
     /**
      * Delegate method for setParentKey.
      * 
-     * @param paramKey
+     * @param pNodeKey
      * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
-    public void setParentKey(long paramKey) {
-        mDelegate.setParentKey(paramKey);
+    public void setParentKey(final long pNodeKey) {
+        mDelegate.setParentKey(pNodeKey);
     }
 
     /**
      * Delegate method for setType.
      * 
-     * @param paramType
+     * @param pTypeKey
      * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
-    public void setTypeKey(int paramType) {
-        mDelegate.setTypeKey(paramType);
+    public void setTypeKey(final int pTypeKey) {
+        mDelegate.setTypeKey(pTypeKey);
     }
 
     /**
@@ -145,8 +163,8 @@ public class NameNodeDelegate implements INameNode {
      * {@inheritDoc}
      */
     @Override
-    public void acceptVisitor(IVisitor paramVisitor) {
-        mDelegate.acceptVisitor(paramVisitor);
+    public void acceptVisitor(final IVisitor pVisitor) {
+        mDelegate.acceptVisitor(pVisitor);
     }
 
     /**
@@ -169,16 +187,16 @@ public class NameNodeDelegate implements INameNode {
      * {@inheritDoc}
      */
     @Override
-    public void setNameKey(int paramNameKey) {
-        mNameKey = paramNameKey;
+    public void setNameKey(final int pNameKey) {
+        mNameKey = pNameKey;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setURIKey(int paramUriKey) {
-        mUriKey = paramUriKey;
+    public void setURIKey(final int pUriKey) {
+        mUriKey = pUriKey;
     }
 
     /**
@@ -188,7 +206,8 @@ public class NameNodeDelegate implements INameNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result
+                + ((mDelegate == null) ? 0 : mDelegate.hashCode());
         result = prime * result + mNameKey;
         result = prime * result + mUriKey;
         return result;
@@ -198,14 +217,14 @@ public class NameNodeDelegate implements INameNode {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object pObj) {
+        if (this == pObj)
             return true;
-        if (obj == null)
+        if (pObj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != pObj.getClass())
             return false;
-        NameNodeDelegate other = (NameNodeDelegate)obj;
+        NameNodeDelegate other = (NameNodeDelegate) pObj;
         if (mDelegate == null) {
             if (other.mDelegate != null)
                 return false;
