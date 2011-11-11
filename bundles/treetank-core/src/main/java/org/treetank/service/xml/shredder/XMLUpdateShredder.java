@@ -55,9 +55,10 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
+import org.treetank.node.interfaces.INameNode;
+import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.TypedValue;
 
@@ -1025,7 +1026,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
         do {
             if (mWtx.getNode().getNodeKey() != mKeyMatches) {
-                final AbsStructNode node = (AbsStructNode)mWtx.getNode();
+                final IStructNode node = (IStructNode)mWtx.getNode();
                 if (!node.hasRightSibling() && !node.hasLeftSibling()) {
                     if (mDelete == EDelete.ATSTARTMIDDLE) {
                         // If the delete occurs right before an end tag the
@@ -1220,7 +1221,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
         // Move write transaction to next node.
         boolean moved = false;
-        final AbsStructNode node = (AbsStructNode)mWtx.getNode();
+        final IStructNode node = (IStructNode)mWtx.getNode();
 
         if (mMoved == EMoved.TOPARENT) {
             mMoved = EMoved.NOTTOPARENT;
@@ -1354,8 +1355,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 final Namespace namespace = (Namespace)namespIt.next();
                 for (int i = 0, namespCount = ((ElementNode)mWtx.getNode()).getNamespaceCount(); i < namespCount; i++) {
                     mWtx.moveToNamespace(i);
-                    if (namespace.getNamespaceURI().equals(mWtx.nameForKey(mWtx.getNode().getURIKey()))
-                        && namespace.getPrefix().equals(mWtx.nameForKey(mWtx.getNode().getNameKey()))) {
+                    final INameNode namenode = (INameNode)mWtx.getNode();
+                    if (namespace.getNamespaceURI().equals(mWtx.nameForKey(namenode.getURIKey()))
+                        && namespace.getPrefix().equals(mWtx.nameForKey(namenode.getNameKey()))) {
                         foundNamesps = true;
                         mWtx.moveTo(nodeKey);
                         break;

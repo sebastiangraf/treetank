@@ -239,7 +239,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws TTIOException
      *             If can't set Name in node.
      */
-    void setQName(final QName paramName) throws TTIOException;
+    void setQName(final QName paramName) throws AbsTTException;
 
     /**
      * Set URI of node.
@@ -249,7 +249,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @throws TTIOException
      *             if URI of node couldn't be set
      */
-    void setURI(final String paramUri) throws TTIOException;
+    void setURI(final String paramUri) throws AbsTTException;
 
     /**
      * Set value of node.

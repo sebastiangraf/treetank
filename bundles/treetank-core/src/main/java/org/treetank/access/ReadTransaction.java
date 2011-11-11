@@ -36,6 +36,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
+import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
@@ -230,9 +231,13 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public final QName getQNameOfCurrentNode() {
         assertNotClosed();
-        final String name = mTransactionState.getName(mCurrentNode.getNameKey());
-        final String uri = mTransactionState.getName(mCurrentNode.getURIKey());
-        return name == null ? null : buildQName(uri, name);
+        String name = "";
+        String uri = "";
+        if (mCurrentNode instanceof INameNode) {
+            name = mTransactionState.getName(((INameNode)mCurrentNode).getNameKey());
+            uri = mTransactionState.getName(((INameNode)mCurrentNode).getURIKey());
+        }
+        return buildQName(uri, name);
     }
 
     /**

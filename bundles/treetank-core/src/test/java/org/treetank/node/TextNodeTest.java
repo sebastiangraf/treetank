@@ -27,13 +27,18 @@
 
 package org.treetank.node;
 
+import org.treetank.io.file.ByteBufferSinkAndSource;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.node.delegates.ValNodeDelegate;
+import org.treetank.settings.EFixed;
+import org.treetank.utils.NamePageHash;
+
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.treetank.io.file.ByteBufferSinkAndSource;
-import org.treetank.settings.EFixed;
 
 public class TextNodeTest {
 
@@ -44,7 +49,11 @@ public class TextNodeTest {
         final byte[] value = {
             (byte)17, (byte)18
         };
-        final TextNode node1 = (TextNode)TextNode.createData(13, 14, 15, 16, 19, value);
+        final NodeDelegate del = new NodeDelegate(13, 14, 0);
+        final ValNodeDelegate valDel = new ValNodeDelegate(del, value);
+        final StructNodeDelegate strucDel =
+            new StructNodeDelegate(del, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), 16l, 15l, 0l);
+        final TextNode node1 = new TextNode(del, valDel, strucDel);
         check(node1);
 
         // Serialize and deserialize node.
@@ -67,36 +76,13 @@ public class TextNodeTest {
         assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node.getFirstChildKey());
         assertEquals(15L, node.getLeftSiblingKey());
         assertEquals(16L, node.getRightSiblingKey());
-        assertEquals(19, node.getTypeKey());
-        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getNameKey());
-        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getURIKey());
-        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getNameKey());
+        assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
         assertEquals(2, node.getRawValue().length);
         assertEquals(ENodes.TEXT_KIND, node.getKind());
         assertEquals(false, node.hasFirstChild());
         assertEquals(true, node.hasParent());
         assertEquals(true, node.hasLeftSibling());
         assertEquals(true, node.hasRightSibling());
-    }
-
-    @Test
-    public void testHashCode() {
-        final byte[] value = {
-            (byte)17, (byte)18
-        };
-        final byte[] value2 = {
-            (byte)19, (byte)20
-        };
-        final TextNode node = (TextNode)TextNode.createData(2, 2, 2, 2, 19, value);
-        final TextNode node2 = (TextNode)TextNode.createData(3, 3, 3, 3, 19, value);
-        final TextNode node3 = (TextNode)TextNode.createData(4, 4, 4, 4, 19, value2);
-        final TextNode node4 = (TextNode)TextNode.createData(5, 5, 5, 5, 123, value);
-
-        assertEquals(node2.hashCode(), node.hashCode());
-        assertTrue(node2.equals(node));
-        assertFalse(node3.equals(node));
-        assertFalse(node4.equals(node));
-
     }
 
 }

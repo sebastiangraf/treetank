@@ -239,11 +239,11 @@ public final class TreeTankCommandoLineExplorer {
                 switch (mCurrentRtx.getNode().getKind()) {
                 case ELEMENT_KIND:
                     builder.append("Element\n");
-                    builder.append(mCurrentRtx.nameForKey(mCurrentRtx.getNode().getNameKey()));
+                    builder.append(mCurrentRtx.getQNameOfCurrentNode());
                     break;
                 case ATTRIBUTE_KIND:
                     builder.append("Attribute\n");
-                    builder.append(mCurrentRtx.nameForKey(mCurrentRtx.getNode().getNameKey()));
+                    builder.append(mCurrentRtx.getQNameOfCurrentNode());
                     builder.append("=");
                     builder.append(mCurrentRtx.getValueOfCurrentNode());
                     break;
@@ -253,11 +253,7 @@ public final class TreeTankCommandoLineExplorer {
                     break;
                 case NAMESPACE_KIND:
                     builder.append("Namespace\n");
-                    if (mCurrentRtx.nameForKey(mCurrentRtx.getNode().getNameKey()).length() > 0) {
-                        builder.append(mCurrentRtx.nameForKey(mCurrentRtx.getNode().getNameKey()));
-                        builder.append("=");
-                    }
-                    builder.append(mCurrentRtx.nameForKey(mCurrentRtx.getNode().getURIKey()));
+                    builder.append(mCurrentRtx.getQNameOfCurrentNode());
                     break;
                 case PROCESSING_KIND:
                     builder.append("Processing instruction\n");

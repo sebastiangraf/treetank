@@ -116,7 +116,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setQName(final QName paramName) throws TTIOException {
+    public synchronized void setQName(final QName paramName) throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setQName(paramName);
     }
@@ -125,7 +125,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setURI(final String mUri) throws TTIOException {
+    public synchronized void setURI(final String mUri) throws AbsTTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setURI(mUri);
     }

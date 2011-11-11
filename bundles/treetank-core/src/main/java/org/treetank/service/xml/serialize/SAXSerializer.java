@@ -104,8 +104,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     /** {@inheritDoc} */
     @Override
     protected void emitEndElement(final IReadTransaction rtx) {
-        final String mURI = rtx.nameForKey(rtx.getNode().getURIKey());
         final QName qName = rtx.getQNameOfCurrentNode();
+        final String mURI = qName.getNamespaceURI();
         try {
             mContHandler.endElement(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName));
         } catch (final SAXException exc) {
@@ -152,10 +152,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
                 paramRtx.moveToNamespace(i);
                 final QName qName = paramRtx.getQNameOfCurrentNode();
                 mContHandler.startPrefixMapping(qName.getPrefix(), qName.getNamespaceURI());
-                final String mURI = paramRtx.nameForKey(paramRtx.getNode().getURIKey());
-                if (paramRtx.nameForKey(paramRtx.getNode().getNameKey()).length() == 0) {
-                    // if (qName.getPrefix() == null || qName.getPrefix() == "")
-                    // {
+                final String mURI = qName.getNamespaceURI();
+                if (qName.getLocalPart().length() == 0) {
                     atts.addAttribute(mURI, "xmlns", "xmlns", "CDATA", mURI);
                 } else {
                     atts.addAttribute(mURI, "xmlns", "xmlns:"
@@ -167,8 +165,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
             // Process attributes.
             for (int i = 0, attCount = ((ElementNode)paramRtx.getNode()).getAttributeCount(); i < attCount; i++) {
                 paramRtx.moveToAttribute(i);
-                final String mURI = paramRtx.nameForKey(paramRtx.getNode().getURIKey());
                 final QName qName = paramRtx.getQNameOfCurrentNode();
+                final String mURI = qName.getNamespaceURI();
                 atts.addAttribute(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName),
                     paramRtx.getTypeOfCurrentNode(), paramRtx.getValueOfCurrentNode());
                 paramRtx.moveTo(key);
@@ -176,13 +174,13 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
             // Create SAX events.
             final QName qName = paramRtx.getQNameOfCurrentNode();
-            mContHandler.startElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()), qName
-                .getLocalPart(), WriteTransactionState.buildName(qName), atts);
+            mContHandler.startElement(qName.getNamespaceURI(), qName.getLocalPart(), WriteTransactionState
+                .buildName(qName), atts);
 
             // Empty elements.
             if (!((ElementNode)paramRtx.getNode()).hasFirstChild()) {
-                mContHandler.endElement(paramRtx.nameForKey(paramRtx.getNode().getURIKey()), qName
-                    .getLocalPart(), WriteTransactionState.buildName(qName));
+                mContHandler.endElement(qName.getNamespaceURI(), qName.getLocalPart(), WriteTransactionState
+                    .buildName(qName));
             }
         } catch (final SAXException exc) {
             exc.printStackTrace();

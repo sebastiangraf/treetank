@@ -43,6 +43,7 @@ import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
+import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
@@ -519,34 +520,47 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setQName(final QName paramName) throws TTIOException {
-        assertNotClosed();
-        mModificationCount++;
-        final long oldHash = getCurrentNode().hashCode();
+    public synchronized void setQName(final QName paramName) throws AbsTTException {
+        if (getCurrentNode() instanceof INameNode) {
+            assertNotClosed();
+            mModificationCount++;
+            final long oldHash = getCurrentNode().hashCode();
 
-        final INode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-        node.setNameKey(getTransactionState().createNameKey(WriteTransactionState.buildName(paramName)));
-        getTransactionState().finishNodeModification(node);
+            final INameNode node =
+                (INameNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            node.setNameKey(getTransactionState().createNameKey(WriteTransactionState.buildName(paramName)));
+            getTransactionState().finishNodeModification(node);
 
-        setCurrentNode(node);
-        adaptHashedWithUpdate(oldHash);
+            setCurrentNode(node);
+            adaptHashedWithUpdate(oldHash);
+        } else {
+            throw new TTUsageException(
+                "setQName is not allowed if current node is not an INameNode implementation!");
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setURI(final String paramUri) throws TTIOException {
-        assertNotClosed();
-        mModificationCount++;
-        final long oldHash = getCurrentNode().hashCode();
+    public synchronized void setURI(final String paramUri) throws AbsTTException {
+        if (getCurrentNode() instanceof INameNode) {
+            assertNotClosed();
+            mModificationCount++;
+            final long oldHash = getCurrentNode().hashCode();
 
-        final INode node = getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-        node.setURIKey(getTransactionState().createNameKey(paramUri));
-        getTransactionState().finishNodeModification(node);
+            final INameNode node =
+                (INameNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            node.setURIKey(getTransactionState().createNameKey(paramUri));
+            getTransactionState().finishNodeModification(node);
 
-        setCurrentNode(node);
-        adaptHashedWithUpdate(oldHash);
+            setCurrentNode(node);
+            adaptHashedWithUpdate(oldHash);
+        } else {
+            throw new TTUsageException(
+                "setURI is not allowed if current node is not an INameNode implementation!");
+        }
+
     }
 
     /**

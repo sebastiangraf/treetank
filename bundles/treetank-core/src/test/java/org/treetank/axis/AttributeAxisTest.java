@@ -97,17 +97,17 @@ public class AttributeAxisTest {
 
         Assert.assertEquals(true, wtx.moveToAttribute(0));
         Assert.assertEquals("0", wtx.getValueOfCurrentNode());
-        Assert.assertEquals("foo0", wtx.nameForKey(wtx.getNode().getNameKey()));
+        Assert.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
 
         Assert.assertEquals(true, wtx.moveToParent());
         Assert.assertEquals(true, wtx.moveToAttribute(1));
         Assert.assertEquals("1", wtx.getValueOfCurrentNode());
-        Assert.assertEquals("foo1", wtx.nameForKey(wtx.getNode().getNameKey()));
+        Assert.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
 
         Assert.assertEquals(true, wtx.moveToParent());
         Assert.assertEquals(true, wtx.moveToAttribute(2));
         Assert.assertEquals("2", wtx.getValueOfCurrentNode());
-        Assert.assertEquals("foo2", wtx.nameForKey(wtx.getNode().getNameKey()));
+        Assert.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());
 
         Assert.assertEquals(true, wtx.moveTo(nodeKey));
         final AbsAxis axis = new AttributeAxis(wtx);
@@ -115,19 +115,19 @@ public class AttributeAxisTest {
         Assert.assertEquals(true, axis.hasNext());
         axis.next();
         Assert.assertEquals(nodeKey + 1, wtx.getNode().getNodeKey());
-        Assert.assertEquals("foo0", wtx.nameForKey(wtx.getNode().getNameKey()));
+        Assert.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
         Assert.assertEquals("0", wtx.getValueOfCurrentNode());
 
         Assert.assertEquals(true, axis.hasNext());
         axis.next();
         Assert.assertEquals(nodeKey + 2, wtx.getNode().getNodeKey());
-        Assert.assertEquals("foo1", wtx.nameForKey(wtx.getNode().getNameKey()));
+        Assert.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
         Assert.assertEquals("1", wtx.getValueOfCurrentNode());
 
         Assert.assertEquals(true, axis.hasNext());
         axis.next();
         Assert.assertEquals(nodeKey + 3, wtx.getNode().getNodeKey());
-        Assert.assertEquals("foo2", wtx.nameForKey(wtx.getNode().getNameKey()));
+        Assert.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());
         Assert.assertEquals("2", wtx.getValueOfCurrentNode());
 
         wtx.abort();

@@ -44,6 +44,7 @@ import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.IStructNode;
 
 public class ReadTransactionTest {
 
@@ -99,7 +100,7 @@ public class ReadTransactionTest {
         assertEquals(holder.getRtx().getNode().hasParent(), holder.getRtx().moveToParent());
         assertEquals(key, holder.getRtx().getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)holder.getRtx().getNode()).hasFirstChild(), holder.getRtx()
+        assertEquals(((IStructNode)holder.getRtx().getNode()).hasFirstChild(), holder.getRtx()
             .moveToFirstChild());
         assertEquals(1L, holder.getRtx().getNode().getNodeKey());
 
@@ -107,19 +108,19 @@ public class ReadTransactionTest {
         assertEquals(false, holder.getRtx().moveTo(Integer.MIN_VALUE));
         assertEquals(1L, holder.getRtx().getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)holder.getRtx().getNode()).hasRightSibling(), holder.getRtx()
+        assertEquals(((IStructNode)holder.getRtx().getNode()).hasRightSibling(), holder.getRtx()
             .moveToRightSibling());
         assertEquals(1L, holder.getRtx().getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)holder.getRtx().getNode()).hasFirstChild(), holder.getRtx()
+        assertEquals(((IStructNode)holder.getRtx().getNode()).hasFirstChild(), holder.getRtx()
             .moveToFirstChild());
         assertEquals(4L, holder.getRtx().getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)holder.getRtx().getNode()).hasRightSibling(), holder.getRtx()
+        assertEquals(((IStructNode)holder.getRtx().getNode()).hasRightSibling(), holder.getRtx()
             .moveToRightSibling());
         assertEquals(5L, holder.getRtx().getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode)holder.getRtx().getNode()).hasLeftSibling(), holder.getRtx()
+        assertEquals(((IStructNode)holder.getRtx().getNode()).hasLeftSibling(), holder.getRtx()
             .moveToLeftSibling());
         assertEquals(4L, holder.getRtx().getNode().getNodeKey());
 

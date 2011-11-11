@@ -50,7 +50,10 @@ import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
+import org.treetank.node.TextNodeTest;
 import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.page.NodePage;
 import org.treetank.settings.ECharsForSerializing;
 import org.treetank.utils.DocumentCreater;
@@ -204,10 +207,15 @@ public final class TestHelper {
                 DocumentRootNode.createData());
                 break;
             case 5:
-                page.setNode(i, TextNode.createData(random.nextLong(), random.nextLong(), random.nextLong(),
-                    random.nextLong(), random.nextInt(), new byte[] {
-                        0, 1
-                    }));
+                final NodeDelegate nodeDel =
+                    new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, new byte[] {
+                    0, 1
+                });
+                final StructNodeDelegate strucDel =
+                    new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
+                        random.nextLong());
+                page.setNode(i, new TextNode(nodeDel, valDel, strucDel));
                 break;
             }
 

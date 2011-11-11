@@ -86,26 +86,6 @@ public class ValNodeDelegate implements IValNode {
     }
 
     /**
-     * Delegate method for getNameKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getNameKey()
-     */
-    public int getNameKey() {
-        return mDelegate.getNameKey();
-    }
-
-    /**
-     * Delegate method for getURIKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getURIKey()
-     */
-    public int getURIKey() {
-        return mDelegate.getURIKey();
-    }
-
-    /**
      * Delegate method for getTypeKey.
      * 
      * @return
@@ -132,27 +112,11 @@ public class ValNodeDelegate implements IValNode {
      * @see org.treetank.node.delegates.NodeDelegate#serialize(org.treetank.io.ITTSink)
      */
     public void serialize(ITTSink paramSink) {
-        mDelegate.serialize(paramSink);
-    }
+        paramSink.writeInt(mVal.length);
+        for (byte value : mVal) {
+            paramSink.writeByte(value);
+        }
 
-    /**
-     * Delegate method for setNameKey.
-     * 
-     * @param paramNameKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNameKey(int)
-     */
-    public void setNameKey(int paramNameKey) {
-        mDelegate.setNameKey(paramNameKey);
-    }
-
-    /**
-     * Delegate method for setURIKey.
-     * 
-     * @param paramUriKey
-     * @see org.treetank.node.delegates.NodeDelegate#setURIKey(int)
-     */
-    public void setURIKey(int paramUriKey) {
-        mDelegate.setURIKey(paramUriKey);
     }
 
     /**
@@ -161,8 +125,10 @@ public class ValNodeDelegate implements IValNode {
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#clone()
      */
-    public NodeDelegate clone() {
-        return mDelegate.clone();
+    public ValNodeDelegate clone() {
+        final byte[] newVal = new byte[mVal.length];
+        System.arraycopy(mVal, 0, newVal, 0, newVal.length);
+        return new ValNodeDelegate(mDelegate.clone(), newVal);
     }
 
     /**
@@ -192,7 +158,10 @@ public class ValNodeDelegate implements IValNode {
      * @see org.treetank.node.delegates.NodeDelegate#toString()
      */
     public String toString() {
-        return mDelegate.toString();
+        final StringBuilder builder = new StringBuilder(mDelegate.toString());
+        builder.append("\nValue: ");
+        builder.append(new String(mVal));
+        return builder.toString();
     }
 
     /**

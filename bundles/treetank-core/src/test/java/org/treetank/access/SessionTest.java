@@ -113,7 +113,8 @@ public class SessionTest {
 
         assertNotNull(wtx.moveToFirstChild());
         assertEquals(ENodes.ELEMENT_KIND, wtx.getNode().getKind());
-        assertEquals("p:a", wtx.nameForKey(wtx.getNode().getNameKey()));
+        assertEquals("p:a", new StringBuilder(wtx.getQNameOfCurrentNode().getPrefix()).append(":").append(
+            wtx.getQNameOfCurrentNode().getLocalPart()).toString());
 
         wtx.abort();
         wtx.close();

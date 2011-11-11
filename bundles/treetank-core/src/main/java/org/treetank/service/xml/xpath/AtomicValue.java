@@ -157,22 +157,6 @@ public class AtomicValue implements INode, IValNode {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getNameKey() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getURIKey() {
-        return -1;
-    }
-
-    /**
      * Check if is fulltext.
      * 
      * @return true if fulltext, false otherwise
@@ -299,18 +283,6 @@ public class AtomicValue implements INode, IValNode {
 
     public AtomicValue clone() {
         return this;
-    }
-
-    @Override
-    public void setNameKey(int paramNameKey) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setURIKey(int paramUriKey) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

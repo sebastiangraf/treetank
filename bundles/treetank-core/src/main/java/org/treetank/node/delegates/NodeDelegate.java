@@ -5,19 +5,20 @@ import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 import org.treetank.node.interfaces.INode;
 import org.treetank.settings.EFixed;
+import org.treetank.utils.NamePageHash;
 
 public class NodeDelegate implements INode {
-
-    private final static int NULL_VAL = 0;
 
     private long mNodeKey;
     private long mParentKey;
     private long mHash;
+    private int mType;
 
     public NodeDelegate(final long paramNodeKey, final long paramParentKey, final long paramHash) {
         mNodeKey = paramNodeKey;
         mParentKey = paramParentKey;
         mHash = paramHash;
+        mType = NamePageHash.generateHashForString("xs:untyped");
     }
 
     @Override
@@ -57,20 +58,8 @@ public class NodeDelegate implements INode {
     }
 
     @Override
-    public int getNameKey() {
-        return (Integer)EFixed.NULL_INT_KEY.getStandardProperty();
-    }
-
-    @Override
-    public int getURIKey() {
-        return (Integer)EFixed.NULL_INT_KEY.getStandardProperty();
-
-    }
-
-    @Override
     public int getTypeKey() {
-        // Do nothing, only stub
-        return NULL_VAL;
+        return mType;
     }
 
     @Override
@@ -85,16 +74,6 @@ public class NodeDelegate implements INode {
         paramSink.writeLong(mHash);
     }
 
-    @Override
-    public void setNameKey(int paramNameKey) {
-        // Do nothing, only stub
-    }
-
-    @Override
-    public void setURIKey(int paramUriKey) {
-        // Do nothing, only stub
-    }
-
     public NodeDelegate clone() {
         return new NodeDelegate(mNodeKey, mParentKey, mHash);
     }
@@ -106,7 +85,7 @@ public class NodeDelegate implements INode {
 
     @Override
     public void setType(int paramType) {
-        // Do nothing, only stub
+        mType = paramType;
     }
 
     @Override
