@@ -292,7 +292,7 @@ public class AtomicValue implements INode, IValNode {
     }
 
     @Override
-    public void setType(int paramType) {
+    public void setTypeKey(int paramType) {
         // TODO Auto-generated method stub
 
     }

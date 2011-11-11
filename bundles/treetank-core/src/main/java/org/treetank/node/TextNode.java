@@ -114,17 +114,6 @@ public final class TextNode implements IStructNode, IValNode {
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder(mDelegate.toString());
-        builder.append("\n");
-        builder.append(mValDelegate.toString());
-        builder.append("\n");
-        builder.append(mStructDelegate.toString());
-        return builder.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
         paramVisitor.visit(this);
     }
@@ -219,12 +208,12 @@ public final class TextNode implements IStructNode, IValNode {
      * Delegate method for setType.
      * 
      * @param paramType
-     * @see org.treetank.node.delegates.NodeDelegate#setType(int)
+     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
-    public void setType(int paramType) {
-        mDelegate.setType(paramType);
-        mValDelegate.setType(paramType);
-        mStructDelegate.setType(paramType);
+    public void setTypeKey(int paramType) {
+        mDelegate.setTypeKey(paramType);
+        mValDelegate.setTypeKey(paramType);
+        mStructDelegate.setTypeKey(paramType);
     }
 
     /**
@@ -333,6 +322,60 @@ public final class TextNode implements IStructNode, IValNode {
      */
     public void incrementChildCount() {
         mStructDelegate.incrementChildCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + ((mStructDelegate == null) ? 0 : mStructDelegate.hashCode());
+        result = prime * result + ((mValDelegate == null) ? 0 : mValDelegate.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TextNode other = (TextNode)obj;
+        if (mDelegate == null) {
+            if (other.mDelegate != null)
+                return false;
+        } else if (!mDelegate.equals(other.mDelegate))
+            return false;
+        if (mStructDelegate == null) {
+            if (other.mStructDelegate != null)
+                return false;
+        } else if (!mStructDelegate.equals(other.mStructDelegate))
+            return false;
+        if (mValDelegate == null) {
+            if (other.mValDelegate != null)
+                return false;
+        } else if (!mValDelegate.equals(other.mValDelegate))
+            return false;
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder(mDelegate.toString());
+        builder.append("\n");
+        builder.append(mValDelegate.toString());
+        builder.append("\n");
+        builder.append(mStructDelegate.toString());
+        return builder.toString();
     }
 
 }

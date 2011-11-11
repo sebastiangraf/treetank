@@ -169,10 +169,41 @@ public final class DeletedNode implements INode {
      * Delegate method for setType.
      * 
      * @param paramType
-     * @see org.treetank.node.delegates.NodeDelegate#setType(int)
+     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
-    public void setType(int paramType) {
-        mDelegate.setType(paramType);
+    public void setTypeKey(int paramType) {
+        mDelegate.setTypeKey(paramType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DeletedNode other = (DeletedNode)obj;
+        if (mDelegate == null) {
+            if (other.mDelegate != null)
+                return false;
+        } else if (!mDelegate.equals(other.mDelegate))
+            return false;
+        return true;
     }
 
     /**

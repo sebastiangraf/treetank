@@ -84,15 +84,59 @@ public class NodeDelegate implements INode {
     }
 
     @Override
-    public void setType(int paramType) {
+    public void setTypeKey(int paramType) {
         mType = paramType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mHash ^ (mHash >>> 32));
+        result = prime * result + (int)(mNodeKey ^ (mNodeKey >>> 32));
+        result = prime * result + (int)(mParentKey ^ (mParentKey >>> 32));
+        result = prime * result + mType;
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        NodeDelegate other = (NodeDelegate)obj;
+        if (mHash != other.mHash)
+            return false;
+        if (mNodeKey != other.mNodeKey)
+            return false;
+        if (mParentKey != other.mParentKey)
+            return false;
+        if (mType != other.mType)
+            return false;
+        return true;
     }
 
     @Override
     public String toString() {
-        return new StringBuilder("node key: ").append(getNodeKey()).append("\nparentKey: ").append(
-            getParentKey()).append("\ntypeKey: ").append(getTypeKey()).append("\nhash: ").append(getHash())
-            .toString();
+        final StringBuilder builder = new StringBuilder();
+        builder.append("node key: ");
+        builder.append(mNodeKey);
+        builder.append("\nparent key: ");
+        builder.append(mParentKey);
+        builder.append("\ntype key: ");
+        builder.append(mType);
+        builder.append("\nhash: ");
+        builder.append(mHash);
+        return builder.toString();
     }
 
 }

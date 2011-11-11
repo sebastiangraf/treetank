@@ -148,8 +148,51 @@ public class StructNodeDelegate implements IStructNode {
     }
 
     @Override
-    public void setType(int paramType) {
-        mDelegate.setType(paramType);
+    public void setTypeKey(int paramType) {
+        mDelegate.setTypeKey(paramType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mChildCount ^ (mChildCount >>> 32));
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + (int)(mFirstChild ^ (mFirstChild >>> 32));
+        result = prime * result + (int)(mLeftSibling ^ (mLeftSibling >>> 32));
+        result = prime * result + (int)(mRightSibling ^ (mRightSibling >>> 32));
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        StructNodeDelegate other = (StructNodeDelegate)obj;
+        if (mChildCount != other.mChildCount)
+            return false;
+        if (mDelegate == null) {
+            if (other.mDelegate != null)
+                return false;
+        } else if (!mDelegate.equals(other.mDelegate))
+            return false;
+        if (mFirstChild != other.mFirstChild)
+            return false;
+        if (mLeftSibling != other.mLeftSibling)
+            return false;
+        if (mRightSibling != other.mRightSibling)
+            return false;
+        return true;
     }
 
     @Override

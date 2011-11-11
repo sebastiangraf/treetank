@@ -51,6 +51,7 @@ import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.TextNodeTest;
+import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
@@ -180,6 +181,10 @@ public final class TestHelper {
     public static NodePage getNodePage(final long revision, final int offset, final int length,
         final long nodePageKey) {
         final NodePage page = new NodePage(nodePageKey, revision);
+        NodeDelegate nodeDel;
+        NameNodeDelegate nameDel;
+        StructNodeDelegate strucDel;
+        ValNodeDelegate valDel;
         for (int i = offset; i < length; i++) {
             switch (random.nextInt(6)) {
             case 0:
@@ -198,21 +203,19 @@ public final class TestHelper {
                     random.nextInt(), random.nextInt(), random.nextLong()));
                 break;
             case 3:
-                page.setNode(i, NamespaceNode.createData(random.nextLong(), random.nextLong(), random
-                    .nextInt(), random.nextInt()));
+                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
+                page.setNode(i, new NamespaceNode(nodeDel, nameDel));
                 break;
             case 4:
-                page.setNode(i,
-
-                DocumentRootNode.createData());
+                page.setNode(i, DocumentRootNode.createData());
                 break;
             case 5:
-                final NodeDelegate nodeDel =
-                    new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
-                final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, new byte[] {
+                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                valDel = new ValNodeDelegate(nodeDel, new byte[] {
                     0, 1
                 });
-                final StructNodeDelegate strucDel =
+                strucDel =
                     new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
                         random.nextLong());
                 page.setNode(i, new TextNode(nodeDel, valDel, strucDel));

@@ -138,6 +138,6 @@ public interface INode extends Cloneable {
      * @param paramType
      *            the type to be set.
      */
-    void setType(int paramType);
+    void setTypeKey(int paramType);
 
 }

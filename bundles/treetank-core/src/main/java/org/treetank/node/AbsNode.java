@@ -370,7 +370,7 @@ public abstract class AbsNode implements INode, Comparable<AbsNode> {
     }
 
     @Override
-    public void setType(int paramType) {
+    public void setTypeKey(int paramType) {
         writeIntPointer(TYPE_KEY, paramType);
     }
 }

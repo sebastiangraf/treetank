@@ -120,7 +120,6 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    @Ignore
     public void testStructuralDiffOptimizedFourth() throws Exception {
         DiffTestHelper.setUpFourth(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
