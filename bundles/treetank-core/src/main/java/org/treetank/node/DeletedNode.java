@@ -73,51 +73,8 @@ public final class DeletedNode implements INode {
         return ENodes.DELETE_KIND;
     }
 
-    @Override
-    public INode clone() {
-        final INode toClone = new DeletedNode(mDel.clone());
-        return toClone;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void acceptVisitor(final IVisitor paramVisitor) {
-        // Do nothing.
-    }
-
-    /**
-     * Delegate method for setHash.
-     * 
-     * @param paramHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
-     */
-    public void setHash(long paramHash) {
-        mDel.setHash(paramHash);
-    }
-
-    /**
-     * Delegate method for getHash.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
-     */
-    public long getHash() {
-        return mDel.getHash();
-    }
-
-    /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param paramKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-     */
-    public void setNodeKey(long paramKey) {
-        mDel.setNodeKey(paramKey);
-    }
-
     /**
      * Delegate method for getNodeKey.
-     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
@@ -126,8 +83,16 @@ public final class DeletedNode implements INode {
     }
 
     /**
+     * Delegate method for setNodeKey.
+     * @param pNodeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
+     */
+    public void setNodeKey(long pNodeKey) {
+        mDel.setNodeKey(pNodeKey);
+    }
+
+    /**
      * Delegate method for getParentKey.
-     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
@@ -136,18 +101,43 @@ public final class DeletedNode implements INode {
     }
 
     /**
-     * Delegate method for hasParent.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     * Delegate method for setParentKey.
+     * @param pParentKey
+     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
-    public boolean hasParent() {
-        return mDel.hasParent();
+    public void setParentKey(long pParentKey) {
+        mDel.setParentKey(pParentKey);
+    }
+
+    /**
+     * Delegate method for getHash.
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDel.getHash();
+    }
+
+    /**
+     * Delegate method for setHash.
+     * @param pHash
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     */
+    public void setHash(long pHash) {
+        mDel.setHash(pHash);
+    }
+
+    /**
+     * Delegate method for acceptVisitor.
+     * @param pVisitor
+     * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
+     */
+    public void acceptVisitor(IVisitor pVisitor) {
+        mDel.acceptVisitor(pVisitor);
     }
 
     /**
      * Delegate method for getTypeKey.
-     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
@@ -156,24 +146,34 @@ public final class DeletedNode implements INode {
     }
 
     /**
-     * Delegate method for setParentKey.
-     * 
-     * @param paramKey
-     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     * Delegate method for setTypeKey.
+     * @param pTypeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
-    public void setParentKey(long paramKey) {
-        mDel.setParentKey(paramKey);
+    public void setTypeKey(int pTypeKey) {
+        mDel.setTypeKey(pTypeKey);
     }
 
     /**
-     * Delegate method for setTypeKey.
-     * 
-     * @param paramType
-     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     * Delegate method for hasParent.
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
-    public void setTypeKey(int paramType) {
-        mDel.setTypeKey(paramType);
+    public boolean hasParent() {
+        return mDel.hasParent();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public INode clone() {
+        final INode toClone = new DeletedNode(mDel.clone());
+        return toClone;
+    }
+
+
+
 
     /**
      * {@inheritDoc}
@@ -197,7 +197,7 @@ public final class DeletedNode implements INode {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DeletedNode other = (DeletedNode)obj;
+        DeletedNode other = (DeletedNode) obj;
         if (mDel == null) {
             if (other.mDel != null)
                 return false;

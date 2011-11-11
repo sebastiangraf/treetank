@@ -6,104 +6,121 @@ import org.treetank.node.ENodes;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 
+/**
+ * Delegate method for all nodes building up the structure. That means that all
+ * nodes representing trees in Treetank are represented by an instance of the
+ * interface {@link IStructNode} namely containing the position of all related
+ * siblings, the first-child and all nodes defined by the {@link NodeDelegate}
+ * as well.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 public class StructNodeDelegate implements IStructNode {
 
+    /** Pointer to the first child of the current node. */
     private long mFirstChild;
+    /** Pointer to the right sibling of the current node. */
     private long mRightSibling;
+    /** Pointer to the left sibling of the current node. */
     private long mLeftSibling;
+    /** Pointer to the number of children. */
     private long mChildCount;
-
+    /** Delegate for common node information. */
     private final NodeDelegate mDelegate;
 
-    public StructNodeDelegate(final NodeDelegate paramDel, final long paramFirstChild,
-        final long paramRightSibling, final long paramLeftSibling, final long paramChildCount) {
-        mDelegate = paramDel;
-        mFirstChild = paramFirstChild;
-        mRightSibling = paramRightSibling;
-        mLeftSibling = paramLeftSibling;
-        mChildCount = paramChildCount;
+    /**
+     * Constructor.
+     * 
+     * @param pDel
+     *            to be set
+     * @param pFirstChild
+     *            to be set
+     * @param pRightSib
+     *            to be set
+     * @param pLeftSib
+     *            to be set
+     * @param pChildCount
+     *            to be set
+     */
+    public StructNodeDelegate(final NodeDelegate pDel, final long pFirstChild,
+            final long pRightSib, final long pLeftSib, final long pChildCount) {
+        mDelegate = pDel;
+        mFirstChild = pFirstChild;
+        mRightSibling = pRightSib;
+        mLeftSibling = pLeftSib;
+        mChildCount = pChildCount;
     }
 
-    @Override
-    public void setHash(long paramHash) {
-        mDelegate.setHash(paramHash);
-    }
-
-    @Override
-    public long getHash() {
-        return mDelegate.getHash();
-    }
-
-    @Override
-    public void setNodeKey(long paramKey) {
-        mDelegate.setNodeKey(paramKey);
-    }
-
-    @Override
-    public long getNodeKey() {
-        return mDelegate.getNodeKey();
-    }
-
-    @Override
-    public long getParentKey() {
-        return mDelegate.getParentKey();
-    }
-
-    @Override
-    public boolean hasParent() {
-        return mDelegate.hasParent();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ENodes getKind() {
         return mDelegate.getKind();
     }
 
-    @Override
-    public int getTypeKey() {
-        return mDelegate.getTypeKey();
-    }
-
-    @Override
-    public void acceptVisitor(IVisitor paramVisitor) {
-        mDelegate.acceptVisitor(paramVisitor);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasFirstChild() {
-        return mFirstChild != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mFirstChild != (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasLeftSibling() {
-        return mLeftSibling != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mLeftSibling != (Long) EFixed.NULL_NODE_KEY
+                .getStandardProperty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRightSibling() {
-        return mRightSibling != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mRightSibling != (Long) EFixed.NULL_NODE_KEY
+                .getStandardProperty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getChildCount() {
         return mChildCount;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getFirstChildKey() {
         return mFirstChild;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getLeftSiblingKey() {
         return mLeftSibling;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getRightSiblingKey() {
         return mRightSibling;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void serialize(ITTSink paramSink) {
         paramSink.writeLong(mFirstChild);
@@ -112,44 +129,152 @@ public class StructNodeDelegate implements IStructNode {
         paramSink.writeLong(mChildCount);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public StructNodeDelegate clone() {
-        return new StructNodeDelegate(mDelegate.clone(), mFirstChild, mRightSibling, mLeftSibling,
-            mChildCount);
+        return new StructNodeDelegate(mDelegate.clone(), mFirstChild,
+                mRightSibling, mLeftSibling, mChildCount);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRightSiblingKey(long paramKey) {
         mRightSibling = paramKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setLeftSiblingKey(long paramKey) {
         mLeftSibling = paramKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setFirstChildKey(long paramKey) {
         mFirstChild = paramKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void decrementChildCount() {
         mChildCount--;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void incrementChildCount() {
         mChildCount++;
     }
 
-    @Override
-    public void setParentKey(long paramKey) {
-        mDelegate.setParentKey(paramKey);
+    /**
+     * Delegate method for getNodeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     */
+    public long getNodeKey() {
+        return mDelegate.getNodeKey();
     }
 
-    @Override
-    public void setTypeKey(int paramType) {
-        mDelegate.setTypeKey(paramType);
+    /**
+     * Delegate method for setNodeKey.
+     * 
+     * @param pNodeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
+     */
+    public void setNodeKey(long pNodeKey) {
+        mDelegate.setNodeKey(pNodeKey);
+    }
+
+    /**
+     * Delegate method for getParentKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     */
+    public long getParentKey() {
+        return mDelegate.getParentKey();
+    }
+
+    /**
+     * Delegate method for setParentKey.
+     * 
+     * @param pParentKey
+     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     */
+    public void setParentKey(long pParentKey) {
+        mDelegate.setParentKey(pParentKey);
+    }
+
+    /**
+     * Delegate method for getHash.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDelegate.getHash();
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param pHash
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     */
+    public void setHash(long pHash) {
+        mDelegate.setHash(pHash);
+    }
+
+    /**
+     * Delegate method for acceptVisitor.
+     * 
+     * @param pVisitor
+     * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
+     */
+    public void acceptVisitor(IVisitor pVisitor) {
+        mDelegate.acceptVisitor(pVisitor);
+    }
+
+    /**
+     * Delegate method for getTypeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     */
+    public int getTypeKey() {
+        return mDelegate.getTypeKey();
+    }
+
+    /**
+     * Delegate method for setTypeKey.
+     * 
+     * @param pTypeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     */
+    public void setTypeKey(int pTypeKey) {
+        mDelegate.setTypeKey(pTypeKey);
+    }
+
+    /**
+     * Delegate method for hasParent.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     */
+    public boolean hasParent() {
+        return mDelegate.hasParent();
     }
 
     /**
@@ -159,11 +284,13 @@ public class StructNodeDelegate implements IStructNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int)(mChildCount ^ (mChildCount >>> 32));
-        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
-        result = prime * result + (int)(mFirstChild ^ (mFirstChild >>> 32));
-        result = prime * result + (int)(mLeftSibling ^ (mLeftSibling >>> 32));
-        result = prime * result + (int)(mRightSibling ^ (mRightSibling >>> 32));
+        result = prime * result + (int) (mChildCount ^ (mChildCount >>> 32));
+        result = prime * result
+                + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + (int) (mFirstChild ^ (mFirstChild >>> 32));
+        result = prime * result + (int) (mLeftSibling ^ (mLeftSibling >>> 32));
+        result = prime * result
+                + (int) (mRightSibling ^ (mRightSibling >>> 32));
         return result;
     }
 
@@ -171,14 +298,14 @@ public class StructNodeDelegate implements IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object pObj) {
+        if (this == pObj)
             return true;
-        if (obj == null)
+        if (pObj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != pObj.getClass())
             return false;
-        StructNodeDelegate other = (StructNodeDelegate)obj;
+        StructNodeDelegate other = (StructNodeDelegate) pObj;
         if (mChildCount != other.mChildCount)
             return false;
         if (mDelegate == null) {
@@ -195,6 +322,9 @@ public class StructNodeDelegate implements IStructNode {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
