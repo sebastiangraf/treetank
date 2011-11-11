@@ -30,6 +30,7 @@ package org.treetank.node;
 import java.util.Arrays;
 
 import org.treetank.api.IVisitor;
+import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
 /**
@@ -39,7 +40,7 @@ import org.treetank.node.interfaces.INode;
  * Node representing a namespace.
  * </p>
  */
-public final class NamespaceNode extends AbsNode implements INode {
+public final class NamespaceNode extends AbsNode implements INode, INameNode {
 
     protected static final int NAME_KEY = 4;
     protected static final int URI_KEY = 8;

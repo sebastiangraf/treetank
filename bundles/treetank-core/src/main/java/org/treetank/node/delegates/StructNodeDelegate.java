@@ -15,10 +15,9 @@ public class StructNodeDelegate implements IStructNode {
 
     private final NodeDelegate mDelegate;
 
-    public StructNodeDelegate(final long paramNodeKey, final long paramParentKey, final long paramHash,
-        final long paramFirstChild, final long paramRightSibling, final long paramLeftSibling,
-        final long paramChildCount) {
-        mDelegate = new NodeDelegate(paramNodeKey, paramParentKey, paramHash);
+    public StructNodeDelegate(final NodeDelegate paramDel, final long paramFirstChild,
+        final long paramRightSibling, final long paramLeftSibling, final long paramChildCount) {
+        mDelegate = paramDel;
         mFirstChild = paramFirstChild;
         mRightSibling = paramRightSibling;
         mLeftSibling = paramLeftSibling;
@@ -58,16 +57,6 @@ public class StructNodeDelegate implements IStructNode {
     @Override
     public ENodes getKind() {
         return mDelegate.getKind();
-    }
-
-    @Override
-    public int getNameKey() {
-        return mDelegate.getNameKey();
-    }
-
-    @Override
-    public int getURIKey() {
-        return mDelegate.getURIKey();
     }
 
     @Override
@@ -117,7 +106,6 @@ public class StructNodeDelegate implements IStructNode {
 
     @Override
     public void serialize(ITTSink paramSink) {
-        mDelegate.serialize(paramSink);
         paramSink.writeLong(mFirstChild);
         paramSink.writeLong(mRightSibling);
         paramSink.writeLong(mLeftSibling);
@@ -125,18 +113,8 @@ public class StructNodeDelegate implements IStructNode {
     }
 
     public StructNodeDelegate clone() {
-        return this;
-    }
-
-    @Override
-    public void setNameKey(int paramNameKey) {
-        mDelegate.setNameKey(paramNameKey);
-    }
-
-    @Override
-    public void setURIKey(int paramUriKey) {
-        mDelegate.setURIKey(paramUriKey);
-
+        return new StructNodeDelegate(mDelegate.clone(), mFirstChild, mRightSibling, mLeftSibling,
+            mChildCount);
     }
 
     @Override
@@ -172,5 +150,22 @@ public class StructNodeDelegate implements IStructNode {
     @Override
     public void setType(int paramType) {
         mDelegate.setType(paramType);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("first child: ");
+        builder.append(getFirstChildKey());
+        builder.append("\nleft sib: ");
+        builder.append(getLeftSiblingKey());
+        builder.append(getLeftSiblingKey());
+        builder.append("\nright sib: ");
+        builder.append(getRightSiblingKey());
+        builder.append("\nfirst child: ");
+        builder.append(getFirstChildKey());
+        builder.append("\nchild count: ");
+        builder.append(getChildCount());
+        return builder.toString();
     }
 }

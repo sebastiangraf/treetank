@@ -24,6 +24,8 @@ import java.util.Map;
 
 import org.treetank.io.ITTSource;
 import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.INode;
 
 /**
@@ -106,15 +108,21 @@ public enum ENodes {
     TEXT_KIND(3, 7, 2) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
-
-            final byte[] pointerData = readPointerData(paramSource);
-
-            final byte[] byteData = readByteData(paramSource);
-            final byte[] value = new byte[readIntBytes(TextNode.VALUE_LENGTH, byteData)];
-            for (int i = 0; i < value.length; i++) {
-                value[i] = paramSource.readByte();
+            // node delegate
+            final NodeDelegate nodeDel =
+                new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
+            // val delegate
+            final byte[] vals = new byte[paramSource.readInt()];
+            for (int i = 0; i < vals.length; i++) {
+                vals[i] = paramSource.readByte();
             }
-            return new TextNode(byteData, pointerData, value);
+            final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, vals);
+            // struct delegate
+            final StructNodeDelegate structDel =
+                new StructNodeDelegate(nodeDel, paramSource.readLong(), paramSource.readLong(), paramSource
+                    .readLong(), paramSource.readLong());
+            // returning the data
+            return new TextNode(nodeDel, valDel, structDel);
         }
 
     },

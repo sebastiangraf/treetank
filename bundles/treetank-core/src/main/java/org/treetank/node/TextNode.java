@@ -27,10 +27,11 @@
 
 package org.treetank.node;
 
-import java.util.Arrays;
-
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.settings.EFixed;
@@ -42,12 +43,11 @@ import org.treetank.settings.EFixed;
  * Node representing a text node.
  * </p>
  */
-public final class TextNode extends AbsStructNode implements IStructNode, IValNode {
+public final class TextNode implements IStructNode, IValNode {
 
-    protected static final int VALUE_LENGTH = 4;
-
-    /** Typed value of node. */
-    private byte[] mValue;
+    private final NodeDelegate mDelegate;
+    private final ValNodeDelegate mValDelegate;
+    private final StructNodeDelegate mStructDelegate;
 
     /**
      * Constructor for TextNode.
@@ -59,10 +59,11 @@ public final class TextNode extends AbsStructNode implements IStructNode, IValNo
      * @param paramValue
      *            val to set
      */
-    TextNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder, final byte[] paramValue) {
-        super(paramByteBuilder, paramPointerBuilder);
-        mValue = paramValue;
-        writeIntBytes(VALUE_LENGTH, paramValue.length);
+    public TextNode(final NodeDelegate paramDelegate, final ValNodeDelegate paramValDelegate,
+        final StructNodeDelegate paramStructDelegate) {
+        mDelegate = paramDelegate;
+        mValDelegate = paramValDelegate;
+        mStructDelegate = paramStructDelegate;
     }
 
     /**
@@ -78,7 +79,7 @@ public final class TextNode extends AbsStructNode implements IStructNode, IValNo
      */
     @Override
     public byte[] getRawValue() {
-        return mValue;
+        return mValDelegate.getRawValue();
     }
 
     /**
@@ -86,8 +87,7 @@ public final class TextNode extends AbsStructNode implements IStructNode, IValNo
      */
     @Override
     public void setValue(final byte[] paramValue) {
-        writeIntBytes(VALUE_LENGTH, paramValue.length);
-        mValue = paramValue;
+        mValDelegate.setValue(paramValue);
     }
 
     /**
@@ -95,10 +95,9 @@ public final class TextNode extends AbsStructNode implements IStructNode, IValNo
      */
     @Override
     public void serialize(final ITTSink paramNodeOut) {
-        super.serialize(paramNodeOut);
-        for (final byte byteVal : mValue) {
-            paramNodeOut.writeByte(byteVal);
-        }
+        mDelegate.serialize(paramNodeOut);
+        mValDelegate.serialize(paramNodeOut);
+        mStructDelegate.serialize(paramNodeOut);
     }
 
     /** {@inheritDoc} */
@@ -109,100 +108,231 @@ public final class TextNode extends AbsStructNode implements IStructNode, IValNo
 
     /** {@inheritDoc} */
     @Override
-    public void setFirstChildKey(final long mFirstChildKey) {
-        throw new UnsupportedOperationException();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void decrementChildCount() {
-        throw new UnsupportedOperationException();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void incrementChildCount() {
-        throw new UnsupportedOperationException();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setChildCount(final long paramChildCount) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 17;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(mByteData);
-        result = prime * result + Arrays.hashCode(mValue);
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public AbsNode clone() {
-        final AbsNode toClone =
-            new TextNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData), ENodes
-                .cloneData(mValue));
-        return toClone;
-    }
-
-    public static AbsNode createData(final long mNodeKey, final long mParentKey, final long mLeftSibKey,
-        final long mRightSibKey, final int mType, final byte[] mValue) {
-
-        final byte[] byteData = new byte[ENodes.TEXT_KIND.getIntSize()];
-
-        final byte[] pointerData = new byte[ENodes.TEXT_KIND.getLongSize()];
-
-        int mCount = AbsNode.NODE_KEY;
-        for (byte aByte : longToByteArray(mNodeKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsNode.PARENT_KEY;
-        for (byte aByte : longToByteArray(mParentKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsStructNode.LEFT_SIBLING_KEY;
-        for (byte aByte : longToByteArray(mLeftSibKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsStructNode.RIGHT_SIBLING_KEY;
-        for (byte aByte : longToByteArray(mRightSibKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsStructNode.FIRST_CHILD_KEY;
-        for (byte aByte : longToByteArray((Long)EFixed.NULL_NODE_KEY.getStandardProperty())) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = TextNode.TYPE_KEY;
-        for (byte aByte : intToByteArray(mType)) {
-            byteData[mCount++] = aByte;
-        }
-
-        return new TextNode(byteData, pointerData, mValue);
+    public TextNode clone() {
+        return new TextNode(mDelegate.clone(), mValDelegate.clone(), mStructDelegate.clone());
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final int valLength = readIntBytes(VALUE_LENGTH);
-        final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tvalueLength: ").append(valLength)
-            .append("\n\tvalue:").append(new String(mValue)).toString();
-        return returnVal.toString();
+        final StringBuilder builder = new StringBuilder(mDelegate.toString());
+        builder.append("\n");
+        builder.append(mValDelegate.toString());
+        builder.append("\n");
+        builder.append(mStructDelegate.toString());
+        return builder.toString();
     }
 
     /** {@inheritDoc} */
     @Override
     public void acceptVisitor(final IVisitor paramVisitor) {
         paramVisitor.visit(this);
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param paramHash
+     * @see org.treetank.node.delegates.ValNodeDelegate#setHash(long)
+     */
+    public void setHash(long paramHash) {
+        mDelegate.setHash(paramHash);
+        mValDelegate.setHash(paramHash);
+        mStructDelegate.setHash(paramHash);
+    }
+
+    /**
+     * Delegate method for getHash.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDelegate.getHash();
+    }
+
+    /**
+     * Delegate method for setNodeKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
+     */
+    public void setNodeKey(long paramKey) {
+        mDelegate.setNodeKey(paramKey);
+        mValDelegate.setNodeKey(paramKey);
+        mStructDelegate.setNodeKey(paramKey);
+    }
+
+    /**
+     * Delegate method for getNodeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     */
+    public long getNodeKey() {
+        return mDelegate.getNodeKey();
+    }
+
+    /**
+     * Delegate method for getParentKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     */
+    public long getParentKey() {
+        return mDelegate.getParentKey();
+    }
+
+    /**
+     * Delegate method for hasParent.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     */
+    public boolean hasParent() {
+        return mDelegate.hasParent();
+    }
+
+    /**
+     * Delegate method for getTypeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     */
+    public int getTypeKey() {
+        return mDelegate.getTypeKey();
+    }
+
+    /**
+     * Delegate method for setParentKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     */
+    public void setParentKey(long paramKey) {
+        mDelegate.setParentKey(paramKey);
+        mValDelegate.setParentKey(paramKey);
+        mStructDelegate.setParentKey(paramKey);
+    }
+
+    /**
+     * Delegate method for setType.
+     * 
+     * @param paramType
+     * @see org.treetank.node.delegates.NodeDelegate#setType(int)
+     */
+    public void setType(int paramType) {
+        mDelegate.setType(paramType);
+        mValDelegate.setType(paramType);
+        mStructDelegate.setType(paramType);
+    }
+
+    /**
+     * Delegate method for hasFirstChild.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#hasFirstChild()
+     */
+    public boolean hasFirstChild() {
+        return mStructDelegate.hasFirstChild();
+    }
+
+    /**
+     * Delegate method for hasLeftSibling.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#hasLeftSibling()
+     */
+    public boolean hasLeftSibling() {
+        return mStructDelegate.hasLeftSibling();
+    }
+
+    /**
+     * Delegate method for hasRightSibling.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#hasRightSibling()
+     */
+    public boolean hasRightSibling() {
+        return mStructDelegate.hasRightSibling();
+    }
+
+    /**
+     * Delegate method for getChildCount.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#getChildCount()
+     */
+    public long getChildCount() {
+        return mStructDelegate.getChildCount();
+    }
+
+    /**
+     * Delegate method for getLeftSiblingKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#getLeftSiblingKey()
+     */
+    public long getLeftSiblingKey() {
+        return mStructDelegate.getLeftSiblingKey();
+    }
+
+    /**
+     * Delegate method for getRightSiblingKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#getRightSiblingKey()
+     */
+    public long getRightSiblingKey() {
+        return mStructDelegate.getRightSiblingKey();
+    }
+
+    /**
+     * Delegate method for setRightSiblingKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.delegates.StructNodeDelegate#setRightSiblingKey(long)
+     */
+    public void setRightSiblingKey(long paramKey) {
+        mStructDelegate.setRightSiblingKey(paramKey);
+    }
+
+    /**
+     * Delegate method for setLeftSiblingKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.delegates.StructNodeDelegate#setLeftSiblingKey(long)
+     */
+    public void setLeftSiblingKey(long paramKey) {
+        mStructDelegate.setLeftSiblingKey(paramKey);
+    }
+
+    /**
+     * Delegate method for setFirstChildKey.
+     * 
+     * @param paramKey
+     * @see org.treetank.node.delegates.StructNodeDelegate#setFirstChildKey(long)
+     */
+    public void setFirstChildKey(long paramKey) {
+        mStructDelegate.setFirstChildKey(paramKey);
+    }
+
+    /**
+     * Delegate method for decrementChildCount.
+     * 
+     * @see org.treetank.node.delegates.StructNodeDelegate#decrementChildCount()
+     */
+    public void decrementChildCount() {
+        mStructDelegate.decrementChildCount();
+    }
+
+    /**
+     * Delegate method for incrementChildCount.
+     * 
+     * @see org.treetank.node.delegates.StructNodeDelegate#incrementChildCount()
+     */
+    public void incrementChildCount() {
+        mStructDelegate.incrementChildCount();
     }
 
 }

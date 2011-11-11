@@ -35,8 +35,8 @@ import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Class implements main serialization algorithm. Other classes can extend it.
@@ -66,8 +66,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * @param paramVersions
      *            versions which should be serialized: -
      */
-    public AbsSerializer(final ISession paramSession,
-            final long... paramVersions) {
+    public AbsSerializer(final ISession paramSession, final long... paramVersions) {
         this(paramSession, 0, paramVersions);
     }
 
@@ -81,8 +80,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * @param paramVersions
      *            versions which should be serialized: -
      */
-    public AbsSerializer(final ISession paramSession, final long paramKey,
-            final long... paramVersions) {
+    public AbsSerializer(final ISession paramSession, final long paramKey, final long... paramVersions) {
         mStack = new Stack<Long>();
         mVersions = paramVersions;
         mSession = paramSession;
@@ -107,7 +105,9 @@ abstract class AbsSerializer implements Callable<Void> {
 
         // if there is one negative number in there, serialize all versions
         if (mVersions.length == 0) {
-            versionsToUse = new long[] { lastRevisionNumber };
+            versionsToUse = new long[] {
+                lastRevisionNumber
+            };
         } else {
             if (mVersions.length == 1 && mVersions[0] < 0) {
                 versionsToUse = null;
@@ -116,11 +116,9 @@ abstract class AbsSerializer implements Callable<Void> {
             }
         }
 
-        for (long i = 0; versionsToUse == null ? i < lastRevisionNumber
-                : i < versionsToUse.length; i++) {
+        for (long i = 0; versionsToUse == null ? i < lastRevisionNumber : i < versionsToUse.length; i++) {
 
-            rtx = mSession.beginReadTransaction(versionsToUse == null ? i
-                    : versionsToUse[(int) i]);
+            rtx = mSession.beginReadTransaction(versionsToUse == null ? i : versionsToUse[(int)i]);
             if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);
             }
@@ -136,12 +134,11 @@ abstract class AbsSerializer implements Callable<Void> {
             // Iterate over all nodes of the subtree including self.
             while (descAxis.hasNext()) {
                 key = descAxis.next();
+                IStructNode currentStruc = (IStructNode)rtx.getNode();
 
                 // Emit all pending end elements.
                 if (closeElements) {
-                    while (!mStack.empty()
-                            && mStack.peek() != ((AbsStructNode) rtx.getNode())
-                                    .getLeftSiblingKey()) {
+                    while (!mStack.empty() && mStack.peek() != currentStruc.getLeftSiblingKey()) {
                         rtx.moveTo(mStack.pop());
                         emitEndElement(rtx);
                         rtx.moveTo(key);
@@ -159,15 +156,13 @@ abstract class AbsSerializer implements Callable<Void> {
 
                 // Push end element to stack if we are a start element with
                 // children.
-                if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                        && ((AbsStructNode) rtx.getNode()).hasFirstChild()) {
+                if (currentStruc.getKind() == ENodes.ELEMENT_KIND && currentStruc.hasFirstChild()) {
                     mStack.push(rtx.getNode().getNodeKey());
                 }
 
                 // Remember to emit all pending end elements from stack if
                 // required.
-                if (!((AbsStructNode) rtx.getNode()).hasFirstChild()
-                        && !((AbsStructNode) rtx.getNode()).hasRightSibling()) {
+                if (!currentStruc.hasFirstChild() && !currentStruc.hasRightSibling()) {
                     closeElements = true;
                 }
 

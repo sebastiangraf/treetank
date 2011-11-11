@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
+import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 
@@ -43,7 +44,7 @@ import org.treetank.settings.EFixed;
  * Node representing an XML element.
  * </p>
  */
-public final class ElementNode extends AbsStructNode implements IStructNode{
+public final class ElementNode extends AbsStructNode implements IStructNode, INameNode {
 
     protected static final int NAME_KEY = 4;
 

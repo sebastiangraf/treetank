@@ -94,7 +94,7 @@ public final class DiffTestHelper {
         final InOrder inOrder = inOrder(paramListener);
         inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.INSERTED), isA(IStructNode.class),
             isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(10)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
+        inOrder.verify(paramListener, times(5)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
             isA(IStructNode.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
@@ -114,7 +114,7 @@ public final class DiffTestHelper {
             isA(IStructNode.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.UPDATED), isA(IStructNode.class),
             isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(4)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
+        inOrder.verify(paramListener, times(3)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
             isA(IStructNode.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }

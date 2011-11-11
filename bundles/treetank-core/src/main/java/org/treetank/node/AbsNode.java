@@ -28,7 +28,9 @@
 package org.treetank.node;
 
 import org.treetank.io.ITTSink;
+import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.settings.EFixed;
 
 /**
@@ -93,14 +95,6 @@ public abstract class AbsNode implements INode, Comparable<AbsNode> {
      * {@inheritDoc}
      */
     @Override
-    public int getNameKey() {
-        return (Integer)EFixed.NULL_INT_KEY.getStandardProperty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long getParentKey() {
         return readLongPointer(PARENT_KEY);
     }
@@ -111,14 +105,6 @@ public abstract class AbsNode implements INode, Comparable<AbsNode> {
     @Override
     public ENodes getKind() {
         return ENodes.UNKOWN_KIND;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getURIKey() {
-        return (Integer)EFixed.NULL_INT_KEY.getStandardProperty();
     }
 
     /**

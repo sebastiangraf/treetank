@@ -30,6 +30,7 @@ package org.treetank.axis.filter;
 import org.treetank.api.IReadTransaction;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
+import org.treetank.node.interfaces.INameNode;
 
 /**
  * <h1>WildcardFilter</h1>
@@ -73,8 +74,8 @@ public class WildcardFilter extends AbsFilter {
 
             if (mIsName) { // local name is given
                 final String localname =
-                    getTransaction().nameForKey(getTransaction().getNode().getNameKey()).replaceFirst(".*:",
-                        "");
+                    getTransaction().nameForKey(((INameNode)getTransaction().getNode()).getNameKey())
+                        .replaceFirst(".*:", "");
                 final int localnameKey = getTransaction().keyForName(localname);
 
                 return localnameKey == mKnownPartKey;
@@ -83,7 +84,7 @@ public class WildcardFilter extends AbsFilter {
                 for (int i = 0; i < nsCount; i++) {
                     getTransaction().moveToNamespace(i);
                     final int prefixKey = mKnownPartKey;
-                    if (getTransaction().getNode().getNameKey() == prefixKey) {
+                    if (((INameNode)getTransaction().getNode()).getNameKey() == prefixKey) {
                         getTransaction().moveToParent();
                         return true;
                     }

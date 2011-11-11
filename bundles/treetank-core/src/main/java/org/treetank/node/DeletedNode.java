@@ -146,26 +146,6 @@ public final class DeletedNode implements INode {
     }
 
     /**
-     * Delegate method for getNameKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getNameKey()
-     */
-    public int getNameKey() {
-        return mDelegate.getNameKey();
-    }
-
-    /**
-     * Delegate method for getURIKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getURIKey()
-     */
-    public int getURIKey() {
-        return mDelegate.getURIKey();
-    }
-
-    /**
      * Delegate method for getTypeKey.
      * 
      * @return
@@ -173,26 +153,6 @@ public final class DeletedNode implements INode {
      */
     public int getTypeKey() {
         return mDelegate.getTypeKey();
-    }
-
-    /**
-     * Delegate method for setNameKey.
-     * 
-     * @param paramNameKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNameKey(int)
-     */
-    public void setNameKey(int paramNameKey) {
-        mDelegate.setNameKey(paramNameKey);
-    }
-
-    /**
-     * Delegate method for setURIKey.
-     * 
-     * @param paramUriKey
-     * @see org.treetank.node.delegates.NodeDelegate#setURIKey(int)
-     */
-    public void setURIKey(int paramUriKey) {
-        mDelegate.setURIKey(paramUriKey);
     }
 
     /**

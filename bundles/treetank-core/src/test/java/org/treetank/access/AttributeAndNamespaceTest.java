@@ -29,6 +29,8 @@ package org.treetank.access;
 
 import static junit.framework.Assert.assertEquals;
 
+import javax.xml.namespace.QName;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,13 +61,14 @@ public class AttributeAndNamespaceTest {
         holder.getRtx().moveTo(1L);
         assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getAttributeCount());
         holder.getRtx().moveToAttribute(0);
-        assertEquals("i", holder.getRtx().nameForKey(holder.getRtx().getNode().getNameKey()));
+        assertEquals("i", holder.getRtx().getQNameOfCurrentNode().getLocalPart());
 
         holder.getRtx().moveTo(9L);
         assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getAttributeCount());
         holder.getRtx().moveToAttribute(0);
-        assertEquals("p:x", holder.getRtx().nameForKey(holder.getRtx().getNode().getNameKey()));
-        assertEquals("ns", holder.getRtx().nameForKey(holder.getRtx().getNode().getURIKey()));
+        assertEquals("p:x", new StringBuilder(holder.getRtx().getQNameOfCurrentNode().getPrefix())
+            .append(":").append(holder.getRtx().getQNameOfCurrentNode().getLocalPart()).toString());
+        assertEquals("ns", holder.getRtx().getQNameOfCurrentNode().getNamespaceURI());
     }
 
     @Test
@@ -73,8 +76,7 @@ public class AttributeAndNamespaceTest {
         holder.getRtx().moveTo(1L);
         assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getNamespaceCount());
         holder.getRtx().moveToNamespace(0);
-        assertEquals("p", holder.getRtx().nameForKey(holder.getRtx().getNode().getNameKey()));
-        assertEquals("ns", holder.getRtx().nameForKey(holder.getRtx().getNode().getURIKey()));
+        assertEquals("p", holder.getRtx().getQNameOfCurrentNode().getLocalPart());
+        assertEquals("ns", holder.getRtx().getQNameOfCurrentNode().getNamespaceURI());
     }
-
 }

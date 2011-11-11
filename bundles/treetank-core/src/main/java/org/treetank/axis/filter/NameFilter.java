@@ -29,6 +29,7 @@ package org.treetank.axis.filter;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.node.ENodes;
+import org.treetank.node.interfaces.INameNode;
 
 /**
  * <h1>NameAxisTest</h1>
@@ -60,7 +61,12 @@ public class NameFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return ((getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction().getNode()
-            .getKind() == ENodes.ATTRIBUTE_KIND) && (getTransaction().getNode().getNameKey() == mLocalPartKey));
+
+        boolean returnVal = false;
+        if (getTransaction().getNode() instanceof INameNode) {
+            final INameNode node = (INameNode)getTransaction().getNode();
+            returnVal = (node.getNameKey() == mLocalPartKey);
+        }
+        return returnVal;
     }
 }
