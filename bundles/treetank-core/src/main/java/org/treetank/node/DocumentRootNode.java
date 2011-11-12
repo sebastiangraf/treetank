@@ -37,13 +37,16 @@ import org.treetank.node.interfaces.IStructNode;
  * <h1>DocumentNode</h1>
  * 
  * <p>
- * Node representing the root of a document. This node is guaranteed to exist in revision 0 and can not be
- * removed.
+ * Node representing the root of a document. This node is guaranteed to exist in
+ * revision 0 and can not be removed.
  * </p>
  */
 public final class DocumentRootNode implements IStructNode {
 
+    /** Delegate for common node information. */
     private final NodeDelegate mDel;
+
+    /** Delegate for struct node information. */
     private final StructNodeDelegate mStrucDel;
 
     /**
@@ -54,7 +57,8 @@ public final class DocumentRootNode implements IStructNode {
      * @param mIntBuilder
      *            int array to set
      */
-    public DocumentRootNode(final NodeDelegate pNodeDel, final StructNodeDelegate pStrucDel) {
+    public DocumentRootNode(final NodeDelegate pNodeDel,
+            final StructNodeDelegate pStrucDel) {
         mDel = pNodeDel;
         mStrucDel = pStrucDel;
     }
@@ -67,25 +71,30 @@ public final class DocumentRootNode implements IStructNode {
         return ENodes.ROOT_KIND;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DocumentRootNode clone() {
         return new DocumentRootNode(mDel.clone(), mStrucDel.clone());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void acceptVisitor(final IVisitor paramVisitor) {
-        paramVisitor.visit(this);
+    public void acceptVisitor(final IVisitor pVisitor) {
+        pVisitor.visit(this);
     }
 
     /**
      * Delegate method for setHash.
      * 
-     * @param paramHash
+     * @param pHash
      * @see org.treetank.node.delegates.StructNodeDelegate#setHash(long)
      */
-    public void setHash(long paramHash) {
-        mStrucDel.setHash(paramHash);
+    public void setHash(final long pHash) {
+        mStrucDel.setHash(pHash);
     }
 
     /**
@@ -101,11 +110,11 @@ public final class DocumentRootNode implements IStructNode {
     /**
      * Delegate method for setNodeKey.
      * 
-     * @param paramKey
+     * @param pKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setNodeKey(long)
      */
-    public void setNodeKey(long paramKey) {
-        mStrucDel.setNodeKey(paramKey);
+    public void setNodeKey(final long pKey) {
+        mStrucDel.setNodeKey(pKey);
     }
 
     /**
@@ -221,42 +230,42 @@ public final class DocumentRootNode implements IStructNode {
     /**
      * Delegate method for serialize.
      * 
-     * @param paramSink
+     * @param pSink
      * @see org.treetank.node.delegates.StructNodeDelegate#serialize(org.treetank.io.ITTSink)
      */
-    public void serialize(ITTSink paramSink) {
-        mDel.serialize(paramSink);
-        mStrucDel.serialize(paramSink);
+    public void serialize(final ITTSink pSink) {
+        mDel.serialize(pSink);
+        mStrucDel.serialize(pSink);
     }
 
     /**
      * Delegate method for setRightSiblingKey.
      * 
-     * @param paramKey
+     * @param pKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setRightSiblingKey(long)
      */
-    public void setRightSiblingKey(long paramKey) {
-        mStrucDel.setRightSiblingKey(paramKey);
+    public void setRightSiblingKey(final long pKey) {
+        mStrucDel.setRightSiblingKey(pKey);
     }
 
     /**
      * Delegate method for setLeftSiblingKey.
      * 
-     * @param paramKey
+     * @param pKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setLeftSiblingKey(long)
      */
-    public void setLeftSiblingKey(long paramKey) {
-        mStrucDel.setLeftSiblingKey(paramKey);
+    public void setLeftSiblingKey(final long pKey) {
+        mStrucDel.setLeftSiblingKey(pKey);
     }
 
     /**
      * Delegate method for setFirstChildKey.
      * 
-     * @param paramKey
+     * @param pKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setFirstChildKey(long)
      */
-    public void setFirstChildKey(long paramKey) {
-        mStrucDel.setFirstChildKey(paramKey);
+    public void setFirstChildKey(final long pKey) {
+        mStrucDel.setFirstChildKey(pKey);
     }
 
     /**
@@ -280,21 +289,21 @@ public final class DocumentRootNode implements IStructNode {
     /**
      * Delegate method for setParentKey.
      * 
-     * @param paramKey
+     * @param pKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setParentKey(long)
      */
-    public void setParentKey(long paramKey) {
-        mStrucDel.setParentKey(paramKey);
+    public void setParentKey(final long pKey) {
+        mStrucDel.setParentKey(pKey);
     }
 
     /**
      * Delegate method for setTypeKey.
      * 
-     * @param paramType
+     * @param pTypeKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setTypeKey(int)
      */
-    public void setTypeKey(int paramType) {
-        mStrucDel.setTypeKey(paramType);
+    public void setTypeKey(final int pTypeKey) {
+        mStrucDel.setTypeKey(pTypeKey);
     }
 
     /**
