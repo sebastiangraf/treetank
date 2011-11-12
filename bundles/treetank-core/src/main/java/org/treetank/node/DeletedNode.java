@@ -87,7 +87,7 @@ public final class DeletedNode implements INode {
      * @param pNodeKey
      * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
-    public void setNodeKey(long pNodeKey) {
+    public void setNodeKey(final long pNodeKey) {
         mDel.setNodeKey(pNodeKey);
     }
 
@@ -105,7 +105,7 @@ public final class DeletedNode implements INode {
      * @param pParentKey
      * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
-    public void setParentKey(long pParentKey) {
+    public void setParentKey(final long pParentKey) {
         mDel.setParentKey(pParentKey);
     }
 
@@ -123,7 +123,7 @@ public final class DeletedNode implements INode {
      * @param pHash
      * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
      */
-    public void setHash(long pHash) {
+    public void setHash(final long pHash) {
         mDel.setHash(pHash);
     }
 
@@ -132,7 +132,7 @@ public final class DeletedNode implements INode {
      * @param pVisitor
      * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
      */
-    public void acceptVisitor(IVisitor pVisitor) {
+    public void acceptVisitor(final IVisitor pVisitor) {
         mDel.acceptVisitor(pVisitor);
     }
 
@@ -150,7 +150,7 @@ public final class DeletedNode implements INode {
      * @param pTypeKey
      * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
-    public void setTypeKey(int pTypeKey) {
+    public void setTypeKey(final int pTypeKey) {
         mDel.setTypeKey(pTypeKey);
     }
 
@@ -190,14 +190,14 @@ public final class DeletedNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object pObj) {
+        if (this == pObj)
             return true;
-        if (obj == null)
+        if (pObj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != pObj.getClass())
             return false;
-        DeletedNode other = (DeletedNode) obj;
+        DeletedNode other = (DeletedNode) pObj;
         if (mDel == null) {
             if (other.mDel != null)
                 return false;

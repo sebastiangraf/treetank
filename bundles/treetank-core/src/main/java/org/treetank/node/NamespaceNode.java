@@ -42,21 +42,23 @@ import org.treetank.node.interfaces.INode;
  * </p>
  */
 public final class NamespaceNode implements INode, INameNode {
+    /** Delegate for common node information. */
+    private final NodeDelegate mDel;
 
-    private final NodeDelegate mDelegate;
-    private final NameNodeDelegate mNameDelegate;
+    /** Delegate for name node information. */
+    private final NameNodeDelegate mNameDel;
 
     /**
      * Constructor.
      * 
-     * @param mLongBuilder
-     *            building long data
+     * @param pDel
      * @param mIntBuilder
      *            building int data
      */
-    public NamespaceNode(final NodeDelegate paramDelegate, final NameNodeDelegate paramNameDelegate) {
-        mDelegate = paramDelegate;
-        mNameDelegate = paramNameDelegate;
+    public NamespaceNode(final NodeDelegate pDel,
+            final NameNodeDelegate pNameDel) {
+        mDel = pDel;
+        mNameDel = pNameDel;
     }
 
     /**
@@ -72,15 +74,15 @@ public final class NamespaceNode implements INode, INameNode {
      */
     @Override
     public int getNameKey() {
-        return mNameDelegate.getNameKey();
+        return mNameDel.getNameKey();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setNameKey(final int mNameKey) {
-        mNameDelegate.setNameKey(mNameKey);
+    public void setNameKey(final int pNameKey) {
+        mNameDel.setNameKey(pNameKey);
     }
 
     /**
@@ -88,37 +90,41 @@ public final class NamespaceNode implements INode, INameNode {
      */
     @Override
     public int getURIKey() {
-        return mNameDelegate.getURIKey();
+        return mNameDel.getURIKey();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setURIKey(final int paramUriKey) {
-        mNameDelegate.setURIKey(paramUriKey);
+    public void setURIKey(final int pUriKey) {
+        mNameDel.setURIKey(pUriKey);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NamespaceNode clone() {
-        return new NamespaceNode(mDelegate.clone(), mNameDelegate.clone());
+        return new NamespaceNode(mDel.clone(), mNameDel.clone());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void acceptVisitor(final IVisitor paramVisitor) {
-        paramVisitor.visit(this);
+    public void acceptVisitor(final IVisitor pVisitor) {
+        pVisitor.visit(this);
     }
 
     /**
      * Delegate method for setHash.
      * 
-     * @param paramHash
+     * @param pHash
      * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
      */
-    public void setHash(long paramHash) {
-        mDelegate.setHash(paramHash);
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
     }
 
     /**
@@ -128,17 +134,17 @@ public final class NamespaceNode implements INode, INameNode {
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
-        return mDelegate.getHash();
+        return mDel.getHash();
     }
 
     /**
      * Delegate method for setNodeKey.
      * 
-     * @param paramKey
+     * @param pNodeKey
      * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
-    public void setNodeKey(long paramKey) {
-        mDelegate.setNodeKey(paramKey);
+    public void setNodeKey(final long pNodeKey) {
+        mDel.setNodeKey(pNodeKey);
     }
 
     /**
@@ -148,7 +154,7 @@ public final class NamespaceNode implements INode, INameNode {
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
     public long getNodeKey() {
-        return mDelegate.getNodeKey();
+        return mDel.getNodeKey();
     }
 
     /**
@@ -158,7 +164,7 @@ public final class NamespaceNode implements INode, INameNode {
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
-        return mDelegate.getParentKey();
+        return mDel.getParentKey();
     }
 
     /**
@@ -168,7 +174,7 @@ public final class NamespaceNode implements INode, INameNode {
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
-        return mDelegate.hasParent();
+        return mDel.hasParent();
     }
 
     /**
@@ -178,38 +184,38 @@ public final class NamespaceNode implements INode, INameNode {
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
-        return mDelegate.getTypeKey();
+        return mDel.getTypeKey();
     }
 
     /**
      * Delegate method for serialize.
      * 
-     * @param paramSink
+     * @param pSink
      * @see org.treetank.node.delegates.NodeDelegate#serialize(org.treetank.io.ITTSink)
      */
-    public void serialize(ITTSink paramSink) {
-        mDelegate.serialize(paramSink);
-        mNameDelegate.serialize(paramSink);
+    public void serialize(final ITTSink pSink) {
+        mDel.serialize(pSink);
+        mNameDel.serialize(pSink);
     }
 
     /**
      * Delegate method for setParentKey.
      * 
-     * @param paramKey
+     * @param pKey
      * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
-    public void setParentKey(long paramKey) {
-        mDelegate.setParentKey(paramKey);
+    public void setParentKey(final long pKey) {
+        mDel.setParentKey(pKey);
     }
 
     /**
      * Delegate method for setType.
      * 
-     * @param paramType
+     * @param pTypeKey
      * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
-    public void setTypeKey(int paramType) {
-        mDelegate.setTypeKey(paramType);
+    public void setTypeKey(final int pTypeKey) {
+        mDel.setTypeKey(pTypeKey);
     }
 
     /**
@@ -219,8 +225,9 @@ public final class NamespaceNode implements INode, INameNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
-        result = prime * result + ((mNameDelegate == null) ? 0 : mNameDelegate.hashCode());
+        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
+        result = prime * result
+                + ((mNameDel == null) ? 0 : mNameDel.hashCode());
         return result;
     }
 
@@ -228,23 +235,23 @@ public final class NamespaceNode implements INode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object pObj) {
+        if (this == pObj)
             return true;
-        if (obj == null)
+        if (pObj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != pObj.getClass())
             return false;
-        NamespaceNode other = (NamespaceNode)obj;
-        if (mDelegate == null) {
-            if (other.mDelegate != null)
+        NamespaceNode other = (NamespaceNode) pObj;
+        if (mDel == null) {
+            if (other.mDel != null)
                 return false;
-        } else if (!mDelegate.equals(other.mDelegate))
+        } else if (!mDel.equals(other.mDel))
             return false;
-        if (mNameDelegate == null) {
-            if (other.mNameDelegate != null)
+        if (mNameDel == null) {
+            if (other.mNameDel != null)
                 return false;
-        } else if (!mNameDelegate.equals(other.mNameDelegate))
+        } else if (!mNameDel.equals(other.mNameDel))
             return false;
         return true;
     }
@@ -253,9 +260,9 @@ public final class NamespaceNode implements INode, INameNode {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(mDelegate.toString());
+        builder.append(mDel.toString());
         builder.append("\n");
-        builder.append(mNameDelegate.toString());
+        builder.append(mNameDel.toString());
         return builder.toString();
     }
 }

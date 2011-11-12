@@ -32,6 +32,7 @@ import org.treetank.io.ITTSink;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
+import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.settings.EFixed;
@@ -43,27 +44,32 @@ import org.treetank.settings.EFixed;
  * Node representing a text node.
  * </p>
  */
-public final class TextNode implements IStructNode, IValNode {
+public final class TextNode implements IStructNode, IValNode, INode {
 
-    private final NodeDelegate mDelegate;
-    private final ValNodeDelegate mValDelegate;
-    private final StructNodeDelegate mStructDelegate;
+    /** Delegate for common node information. */
+    private final NodeDelegate mDel;
+
+    /** Delegate for common value node information. */
+    private final ValNodeDelegate mValDel;
+
+    /** Delegate for common struct node information. */
+    private final StructNodeDelegate mStrucDel;
 
     /**
      * Constructor for TextNode.
      * 
-     * @param paramByteBuilder
-     *            vals of bytes to set
-     * @param paramPointerBuilder
-     *            vals of bytes to set
-     * @param paramValue
-     *            val to set
+     * @param pDel
+     *            Delegate for <code>INode</code> implementation.
+     * @param pValDel
+     *            Delegate for {@link IValNode} implementation.
+     * @param pStrucDel
+     *            Delegate for {@link IStructNode} implementation.
      */
-    public TextNode(final NodeDelegate paramDelegate, final ValNodeDelegate paramValDelegate,
-        final StructNodeDelegate paramStructDelegate) {
-        mDelegate = paramDelegate;
-        mValDelegate = paramValDelegate;
-        mStructDelegate = paramStructDelegate;
+    public TextNode(final NodeDelegate pDel, final ValNodeDelegate pValDel,
+            final StructNodeDelegate pStrucDel) {
+        mDel = pDel;
+        mValDel = pValDel;
+        mStrucDel = pStrucDel;
     }
 
     /**
@@ -79,55 +85,55 @@ public final class TextNode implements IStructNode, IValNode {
      */
     @Override
     public byte[] getRawValue() {
-        return mValDelegate.getRawValue();
+        return mValDel.getRawValue();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setValue(final byte[] paramValue) {
-        mValDelegate.setValue(paramValue);
+    public void setValue(final byte[] pVal) {
+        mValDel.setValue(pVal);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink paramNodeOut) {
-        mDelegate.serialize(paramNodeOut);
-        mValDelegate.serialize(paramNodeOut);
-        mStructDelegate.serialize(paramNodeOut);
+    public void serialize(final ITTSink pSink) {
+        mDel.serialize(pSink);
+        mValDel.serialize(pSink);
+        mStrucDel.serialize(pSink);
     }
 
     /** {@inheritDoc} */
     @Override
     public long getFirstChildKey() {
-        return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /** {@inheritDoc} */
     @Override
     public TextNode clone() {
-        return new TextNode(mDelegate.clone(), mValDelegate.clone(), mStructDelegate.clone());
+        return new TextNode(mDel.clone(), mValDel.clone(), mStrucDel.clone());
     }
 
     /** {@inheritDoc} */
     @Override
-    public void acceptVisitor(final IVisitor paramVisitor) {
-        paramVisitor.visit(this);
+    public void acceptVisitor(final IVisitor pVisitor) {
+        pVisitor.visit(this);
     }
 
     /**
      * Delegate method for setHash.
      * 
-     * @param paramHash
+     * @param pHash
      * @see org.treetank.node.delegates.ValNodeDelegate#setHash(long)
      */
-    public void setHash(long paramHash) {
-        mDelegate.setHash(paramHash);
-        mValDelegate.setHash(paramHash);
-        mStructDelegate.setHash(paramHash);
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
+        mValDel.setHash(pHash);
+        mStrucDel.setHash(pHash);
     }
 
     /**
@@ -137,19 +143,19 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
-        return mDelegate.getHash();
+        return mDel.getHash();
     }
 
     /**
      * Delegate method for setNodeKey.
      * 
-     * @param paramKey
+     * @param pNodeKey
      * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
-    public void setNodeKey(long paramKey) {
-        mDelegate.setNodeKey(paramKey);
-        mValDelegate.setNodeKey(paramKey);
-        mStructDelegate.setNodeKey(paramKey);
+    public void setNodeKey(final long pNodeKey) {
+        mDel.setNodeKey(pNodeKey);
+        mValDel.setNodeKey(pNodeKey);
+        mStrucDel.setNodeKey(pNodeKey);
     }
 
     /**
@@ -159,7 +165,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
     public long getNodeKey() {
-        return mDelegate.getNodeKey();
+        return mDel.getNodeKey();
     }
 
     /**
@@ -169,7 +175,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
-        return mDelegate.getParentKey();
+        return mDel.getParentKey();
     }
 
     /**
@@ -179,7 +185,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
-        return mDelegate.hasParent();
+        return mDel.hasParent();
     }
 
     /**
@@ -189,31 +195,31 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
-        return mDelegate.getTypeKey();
+        return mDel.getTypeKey();
     }
 
     /**
      * Delegate method for setParentKey.
      * 
-     * @param paramKey
+     * @param pParentKey
      * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
-    public void setParentKey(long paramKey) {
-        mDelegate.setParentKey(paramKey);
-        mValDelegate.setParentKey(paramKey);
-        mStructDelegate.setParentKey(paramKey);
+    public void setParentKey(final long pParentKey) {
+        mDel.setParentKey(pParentKey);
+        mValDel.setParentKey(pParentKey);
+        mStrucDel.setParentKey(pParentKey);
     }
 
     /**
      * Delegate method for setType.
      * 
-     * @param paramType
+     * @param pTypeKey
      * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
-    public void setTypeKey(int paramType) {
-        mDelegate.setTypeKey(paramType);
-        mValDelegate.setTypeKey(paramType);
-        mStructDelegate.setTypeKey(paramType);
+    public void setTypeKey(final int pTypeKey) {
+        mDel.setTypeKey(pTypeKey);
+        mValDel.setTypeKey(pTypeKey);
+        mStrucDel.setTypeKey(pTypeKey);
     }
 
     /**
@@ -223,7 +229,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.StructNodeDelegate#hasFirstChild()
      */
     public boolean hasFirstChild() {
-        return mStructDelegate.hasFirstChild();
+        return mStrucDel.hasFirstChild();
     }
 
     /**
@@ -233,7 +239,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.StructNodeDelegate#hasLeftSibling()
      */
     public boolean hasLeftSibling() {
-        return mStructDelegate.hasLeftSibling();
+        return mStrucDel.hasLeftSibling();
     }
 
     /**
@@ -243,7 +249,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.StructNodeDelegate#hasRightSibling()
      */
     public boolean hasRightSibling() {
-        return mStructDelegate.hasRightSibling();
+        return mStrucDel.hasRightSibling();
     }
 
     /**
@@ -253,7 +259,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.StructNodeDelegate#getChildCount()
      */
     public long getChildCount() {
-        return mStructDelegate.getChildCount();
+        return mStrucDel.getChildCount();
     }
 
     /**
@@ -263,7 +269,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.StructNodeDelegate#getLeftSiblingKey()
      */
     public long getLeftSiblingKey() {
-        return mStructDelegate.getLeftSiblingKey();
+        return mStrucDel.getLeftSiblingKey();
     }
 
     /**
@@ -273,37 +279,37 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.StructNodeDelegate#getRightSiblingKey()
      */
     public long getRightSiblingKey() {
-        return mStructDelegate.getRightSiblingKey();
+        return mStrucDel.getRightSiblingKey();
     }
 
     /**
      * Delegate method for setRightSiblingKey.
      * 
-     * @param paramKey
+     * @param pRightSiblingKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setRightSiblingKey(long)
      */
-    public void setRightSiblingKey(long paramKey) {
-        mStructDelegate.setRightSiblingKey(paramKey);
+    public void setRightSiblingKey(final long pRightSiblingKey) {
+        mStrucDel.setRightSiblingKey(pRightSiblingKey);
     }
 
     /**
      * Delegate method for setLeftSiblingKey.
      * 
-     * @param paramKey
+     * @param pLeftSiblingKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setLeftSiblingKey(long)
      */
-    public void setLeftSiblingKey(long paramKey) {
-        mStructDelegate.setLeftSiblingKey(paramKey);
+    public void setLeftSiblingKey(final long pLeftSiblingKey) {
+        mStrucDel.setLeftSiblingKey(pLeftSiblingKey);
     }
 
     /**
      * Delegate method for setFirstChildKey.
      * 
-     * @param paramKey
+     * @param pFirstChildKey
      * @see org.treetank.node.delegates.StructNodeDelegate#setFirstChildKey(long)
      */
-    public void setFirstChildKey(long paramKey) {
-        mStructDelegate.setFirstChildKey(paramKey);
+    public void setFirstChildKey(final long pFirstChildKey) {
+        mStrucDel.setFirstChildKey(pFirstChildKey);
     }
 
     /**
@@ -312,7 +318,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.StructNodeDelegate#decrementChildCount()
      */
     public void decrementChildCount() {
-        mStructDelegate.decrementChildCount();
+        mStrucDel.decrementChildCount();
     }
 
     /**
@@ -321,7 +327,7 @@ public final class TextNode implements IStructNode, IValNode {
      * @see org.treetank.node.delegates.StructNodeDelegate#incrementChildCount()
      */
     public void incrementChildCount() {
-        mStructDelegate.incrementChildCount();
+        mStrucDel.incrementChildCount();
     }
 
     /**
@@ -331,9 +337,10 @@ public final class TextNode implements IStructNode, IValNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
-        result = prime * result + ((mStructDelegate == null) ? 0 : mStructDelegate.hashCode());
-        result = prime * result + ((mValDelegate == null) ? 0 : mValDelegate.hashCode());
+        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
+        result = prime * result
+                + ((mStrucDel == null) ? 0 : mStrucDel.hashCode());
+        result = prime * result + ((mValDel == null) ? 0 : mValDel.hashCode());
         return result;
     }
 
@@ -341,28 +348,28 @@ public final class TextNode implements IStructNode, IValNode {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object pObj) {
+        if (this == pObj)
             return true;
-        if (obj == null)
+        if (pObj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != pObj.getClass())
             return false;
-        TextNode other = (TextNode)obj;
-        if (mDelegate == null) {
-            if (other.mDelegate != null)
+        TextNode other = (TextNode) pObj;
+        if (mDel == null) {
+            if (other.mDel != null)
                 return false;
-        } else if (!mDelegate.equals(other.mDelegate))
+        } else if (!mDel.equals(other.mDel))
             return false;
-        if (mStructDelegate == null) {
-            if (other.mStructDelegate != null)
+        if (mStrucDel == null) {
+            if (other.mStrucDel != null)
                 return false;
-        } else if (!mStructDelegate.equals(other.mStructDelegate))
+        } else if (!mStrucDel.equals(other.mStrucDel))
             return false;
-        if (mValDelegate == null) {
-            if (other.mValDelegate != null)
+        if (mValDel == null) {
+            if (other.mValDel != null)
                 return false;
-        } else if (!mValDelegate.equals(other.mValDelegate))
+        } else if (!mValDel.equals(other.mValDel))
             return false;
         return true;
     }
@@ -370,11 +377,11 @@ public final class TextNode implements IStructNode, IValNode {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder(mDelegate.toString());
+        final StringBuilder builder = new StringBuilder(mDel.toString());
         builder.append("\n");
-        builder.append(mValDelegate.toString());
+        builder.append(mValDel.toString());
         builder.append("\n");
-        builder.append(mStructDelegate.toString());
+        builder.append(mStrucDel.toString());
         return builder.toString();
     }
 
