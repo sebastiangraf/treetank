@@ -476,14 +476,7 @@ public final class ElementNode implements IStructNode, INameNode {
         final int prime = 31;
         int result = 1;
         result = prime * result
-                + ((mAttributeKeys == null) ? 0 : mAttributeKeys.hashCode());
-        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
-        result = prime * result
                 + ((mNameDel == null) ? 0 : mNameDel.hashCode());
-        result = prime * result
-                + ((mNamespaceKeys == null) ? 0 : mNamespaceKeys.hashCode());
-        result = prime * result
-                + ((mStrucDel == null) ? 0 : mStrucDel.hashCode());
         return result;
     }
 
@@ -499,30 +492,10 @@ public final class ElementNode implements IStructNode, INameNode {
         if (getClass() != obj.getClass())
             return false;
         ElementNode other = (ElementNode) obj;
-        if (mAttributeKeys == null) {
-            if (other.mAttributeKeys != null)
-                return false;
-        } else if (!mAttributeKeys.equals(other.mAttributeKeys))
-            return false;
-        if (mDel == null) {
-            if (other.mDel != null)
-                return false;
-        } else if (!mDel.equals(other.mDel))
-            return false;
         if (mNameDel == null) {
             if (other.mNameDel != null)
                 return false;
         } else if (!mNameDel.equals(other.mNameDel))
-            return false;
-        if (mNamespaceKeys == null) {
-            if (other.mNamespaceKeys != null)
-                return false;
-        } else if (!mNamespaceKeys.equals(other.mNamespaceKeys))
-            return false;
-        if (mStrucDel == null) {
-            if (other.mStrucDel != null)
-                return false;
-        } else if (!mStrucDel.equals(other.mStrucDel))
             return false;
         return true;
     }

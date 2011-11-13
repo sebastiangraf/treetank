@@ -328,10 +328,9 @@ public class StructNodeDelegate implements IStructNode {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("first child: ");
+        builder.append("\nfirst child: ");
         builder.append(getFirstChildKey());
         builder.append("\nleft sib: ");
-        builder.append(getLeftSiblingKey());
         builder.append(getLeftSiblingKey());
         builder.append("\nright sib: ");
         builder.append(getRightSiblingKey());
