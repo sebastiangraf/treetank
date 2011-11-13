@@ -47,6 +47,7 @@ import org.treetank.exception.AbsTTException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Ignore
 public class FullDiffTest {
 
     private Holder mHolder;
@@ -73,23 +74,24 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testOptimizedFirst() throws InterruptedException, AbsTTException {
+    public void testOptimizedFirst() throws InterruptedException,
+            AbsTTException {
         DiffTestHelper.setUpFirst(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFirst(mObserver);
     }
 
     @Test
-    public void testFullDiffSecond() throws AbsTTException, InterruptedException, IOException,
-        XMLStreamException {
+    public void testFullDiffSecond() throws AbsTTException,
+            InterruptedException, IOException, XMLStreamException {
         DiffTestHelper.setUpSecond(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffSecond(mObserver);
     }
 
     @Test
-    public void testFullDiffThird() throws AbsTTException, IOException, XMLStreamException,
-        InterruptedException {
+    public void testFullDiffThird() throws AbsTTException, IOException,
+            XMLStreamException, InterruptedException {
         DiffTestHelper.setUpThird(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffThird(mObserver);

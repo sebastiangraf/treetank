@@ -47,6 +47,7 @@ import org.treetank.exception.AbsTTException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Ignore
 public final class StructuralDiffTest {
 
     private Holder mHolder;
@@ -80,8 +81,8 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    public void testStructuralDiffSecond() throws AbsTTException, InterruptedException, IOException,
-        XMLStreamException {
+    public void testStructuralDiffSecond() throws AbsTTException,
+            InterruptedException, IOException, XMLStreamException {
         DiffTestHelper.setUpSecond(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffSecond(mObserver);
@@ -89,24 +90,24 @@ public final class StructuralDiffTest {
 
     @Test
     @Ignore
-    public void testStructuralDiffOptimizedSecond() throws AbsTTException, IOException, XMLStreamException,
-        InterruptedException {
+    public void testStructuralDiffOptimizedSecond() throws AbsTTException,
+            IOException, XMLStreamException, InterruptedException {
         DiffTestHelper.setUpSecond(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
         DiffTestHelper.verifyDiffSecond(mObserver);
     }
 
     @Test
-    public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
-        InterruptedException {
+    public void testStructuralDiffThird() throws AbsTTException, IOException,
+            XMLStreamException, InterruptedException {
         DiffTestHelper.setUpThird(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffThird(mObserver);
     }
 
     @Test
-    public void testStructuralDiffOptimizedThird() throws AbsTTException, IOException, XMLStreamException,
-        InterruptedException {
+    public void testStructuralDiffOptimizedThird() throws AbsTTException,
+            IOException, XMLStreamException, InterruptedException {
         DiffTestHelper.setUpThird(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
         DiffTestHelper.verifyOptimizedThird(mObserver);

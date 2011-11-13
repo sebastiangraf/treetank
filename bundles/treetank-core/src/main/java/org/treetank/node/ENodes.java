@@ -50,41 +50,37 @@ public enum ENodes {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
 
-            final byte[] pointerData = readPointerData(paramSource);
-
-            final byte[] byteData = readByteData(paramSource);
-
             final List<Long> attrKeys = new ArrayList<Long>();
             final List<Long> namespKeys = new ArrayList<Long>();
 
-            int attrCount = readIntBytes(ElementNode.ATTRIBUTE_COUNT, byteData);
+            // node delegate
+            final NodeDelegate nodeDel = new NodeDelegate(
+                    paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong());
 
-            if (attrCount > 0) {
-                for (int i = 0; i < attrCount; i++) {
-                    byte[] mBuffer = new byte[8];
-                    for (int j = 0; j < mBuffer.length; j++) {
-                        mBuffer[j] = paramSource.readByte();
-                    }
-                    long l = byteArrayToLong(mBuffer);
-                    attrKeys.add(l);
-                }
+            // struct delegate
+            final StructNodeDelegate structDel = new StructNodeDelegate(
+                    nodeDel, paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong(), paramSource.readLong());
+
+            // name delegate
+            final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel,
+                    paramSource.readInt(), paramSource.readInt());
+
+            // Attributes getting
+            int attrCount = paramSource.readInt();
+            for (int i = 0; i < attrCount; i++) {
+                attrKeys.add(paramSource.readLong());
             }
 
-            int nsCount = readIntBytes(ElementNode.NAMESPACE_COUNT, byteData);
-
-            if (nsCount > 0) {
-                for (int i = 0; i < nsCount; i++) {
-
-                    byte[] mBuffer = new byte[8];
-                    for (int j = 0; j < mBuffer.length; j++) {
-                        mBuffer[j] = paramSource.readByte();
-                    }
-                    long l = byteArrayToLong(mBuffer);
-                    namespKeys.add(l);
-                }
+            // Namespace getting
+            int nsCount = paramSource.readInt();
+            for (int i = 0; i < nsCount; i++) {
+                namespKeys.add(paramSource.readLong());
             }
 
-            return new ElementNode(byteData, pointerData, attrKeys, namespKeys);
+            return new ElementNode(nodeDel, structDel, nameDel, attrKeys,
+                    namespKeys);
         }
 
     },
@@ -97,7 +93,8 @@ public enum ENodes {
 
             final byte[] byteData = readByteData(paramSource);
 
-            final byte[] value = new byte[readIntBytes(AttributeNode.VALUE_LENGTH, byteData)];
+            final byte[] value = new byte[readIntBytes(
+                    AttributeNode.VALUE_LENGTH, byteData)];
             for (int i = 0; i < value.length; i++) {
                 value[i] = paramSource.readByte();
             }
@@ -110,8 +107,9 @@ public enum ENodes {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             // node delegate
-            final NodeDelegate nodeDel =
-                new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
+            final NodeDelegate nodeDel = new NodeDelegate(
+                    paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong());
             // val delegate
             final byte[] vals = new byte[paramSource.readInt()];
             for (int i = 0; i < vals.length; i++) {
@@ -119,9 +117,9 @@ public enum ENodes {
             }
             final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, vals);
             // struct delegate
-            final StructNodeDelegate structDel =
-                new StructNodeDelegate(nodeDel, paramSource.readLong(), paramSource.readLong(), paramSource
-                    .readLong(), paramSource.readLong());
+            final StructNodeDelegate structDel = new StructNodeDelegate(
+                    nodeDel, paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong(), paramSource.readLong());
             // returning the data
             return new TextNode(nodeDel, valDel, structDel);
         }
@@ -132,10 +130,11 @@ public enum ENodes {
 
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
-            final NodeDelegate nodeDel =
-                new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
-            final NameNodeDelegate nameDel =
-                new NameNodeDelegate(nodeDel, paramSource.readInt(), paramSource.readInt());
+            final NodeDelegate nodeDel = new NodeDelegate(
+                    paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong());
+            final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel,
+                    paramSource.readInt(), paramSource.readInt());
             return new NamespaceNode(nodeDel, nameDel);
         }
 
@@ -160,11 +159,12 @@ public enum ENodes {
     ROOT_KIND(9, 7, 1) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
-            final NodeDelegate nodeDel =
-                new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
-            final StructNodeDelegate structDel =
-                new StructNodeDelegate(nodeDel, paramSource.readLong(), paramSource.readLong(), paramSource
-                    .readLong(), paramSource.readLong());
+            final NodeDelegate nodeDel = new NodeDelegate(
+                    paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong());
+            final StructNodeDelegate structDel = new StructNodeDelegate(
+                    nodeDel, paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong(), paramSource.readLong());
             return new DocumentRootNode(nodeDel, structDel);
         }
 
@@ -181,8 +181,9 @@ public enum ENodes {
     DELETE_KIND(5, 3, 1) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
-            final NodeDelegate delegate =
-                new NodeDelegate(paramSource.readLong(), paramSource.readLong(), paramSource.readLong());
+            final NodeDelegate delegate = new NodeDelegate(
+                    paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong());
             final DeletedNode node = new DeletedNode(delegate);
             return node;
         }
@@ -215,7 +216,8 @@ public enum ENodes {
      * @param paramIntSize
      *            the identifier
      */
-    private ENodes(final int paramKind, final int paramLongSize, final int paramIntSize) {
+    private ENodes(final int paramKind, final int paramLongSize,
+            final int paramIntSize) {
         mKind = paramKind;
         mIntSize = paramIntSize * 4;
         mLongSize = paramLongSize * 8;
@@ -317,9 +319,9 @@ public enum ENodes {
      * @return converted integer value.
      */
     protected static int byteArrayToInt(final byte[] mByteArray) {
-        final int mConvInt =
-            ((mByteArray[0] & 0xff) << 24) | ((mByteArray[1] & 0xff) << 16) | ((mByteArray[2] & 0xff) << 8)
-                | (mByteArray[3] & 0xff);
+        final int mConvInt = ((mByteArray[0] & 0xff) << 24)
+                | ((mByteArray[1] & 0xff) << 16)
+                | ((mByteArray[2] & 0xff) << 8) | (mByteArray[3] & 0xff);
 
         return mConvInt;
     }
@@ -332,11 +334,14 @@ public enum ENodes {
      * @return converted long value.
      */
     protected static long byteArrayToLong(final byte[] mByteArray) {
-        final long mConvLong =
-            ((long)(mByteArray[0] & 0xff) << 56) | ((long)(mByteArray[1] & 0xff) << 48)
-                | ((long)(mByteArray[2] & 0xff) << 40) | ((long)(mByteArray[3] & 0xff) << 32)
-                | ((long)(mByteArray[4] & 0xff) << 24) | ((long)(mByteArray[5] & 0xff) << 16)
-                | ((long)(mByteArray[6] & 0xff) << 8) | ((long)(mByteArray[7] & 0xff));
+        final long mConvLong = ((long) (mByteArray[0] & 0xff) << 56)
+                | ((long) (mByteArray[1] & 0xff) << 48)
+                | ((long) (mByteArray[2] & 0xff) << 40)
+                | ((long) (mByteArray[3] & 0xff) << 32)
+                | ((long) (mByteArray[4] & 0xff) << 24)
+                | ((long) (mByteArray[5] & 0xff) << 16)
+                | ((long) (mByteArray[6] & 0xff) << 8)
+                | ((long) (mByteArray[7] & 0xff));
 
         return mConvLong;
     }

@@ -88,73 +88,83 @@ public final class DocumentRootNode implements IStructNode {
     }
 
     /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.StructNodeDelegate#setHash(long)
-     */
-    public void setHash(final long pHash) {
-        mStrucDel.setHash(pHash);
-    }
-
-    /**
-     * Delegate method for getHash.
+     * Delegate method for getNodeKey.
      * 
      * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#getHash()
+     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
-    public long getHash() {
-        return mStrucDel.getHash();
+    public long getNodeKey() {
+        return mDel.getNodeKey();
     }
 
     /**
      * Delegate method for setNodeKey.
      * 
-     * @param pKey
-     * @see org.treetank.node.delegates.StructNodeDelegate#setNodeKey(long)
+     * @param pNodeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
-    public void setNodeKey(final long pKey) {
-        mStrucDel.setNodeKey(pKey);
-    }
-
-    /**
-     * Delegate method for getNodeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#getNodeKey()
-     */
-    public long getNodeKey() {
-        return mStrucDel.getNodeKey();
+    public void setNodeKey(final long pNodeKey) {
+        mDel.setNodeKey(pNodeKey);
     }
 
     /**
      * Delegate method for getParentKey.
      * 
      * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#getParentKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
-        return mStrucDel.getParentKey();
+        return mDel.getParentKey();
     }
 
     /**
-     * Delegate method for hasParent.
+     * Delegate method for getHash.
      * 
      * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#hasParent()
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
-    public boolean hasParent() {
-        return mStrucDel.hasParent();
+    public long getHash() {
+        return mDel.getHash();
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param pHash
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     */
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
+    }
+
+    /**
+     * Delegate method for hashCode.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#hashCode()
+     */
+    public int hashCode() {
+        return mDel.hashCode();
     }
 
     /**
      * Delegate method for getTypeKey.
      * 
      * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#getTypeKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
-        return mStrucDel.getTypeKey();
+        return mDel.getTypeKey();
+    }
+
+    /**
+     * Delegate method for hasParent.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     */
+    public boolean hasParent() {
+        return mDel.hasParent();
     }
 
     /**

@@ -132,8 +132,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
      */
     public void setHash(final long pHash) {
         mDel.setHash(pHash);
-        mValDel.setHash(pHash);
-        mStrucDel.setHash(pHash);
     }
 
     /**
@@ -154,8 +152,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
      */
     public void setNodeKey(final long pNodeKey) {
         mDel.setNodeKey(pNodeKey);
-        mValDel.setNodeKey(pNodeKey);
-        mStrucDel.setNodeKey(pNodeKey);
     }
 
     /**
@@ -206,8 +202,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
      */
     public void setParentKey(final long pParentKey) {
         mDel.setParentKey(pParentKey);
-        mValDel.setParentKey(pParentKey);
-        mStrucDel.setParentKey(pParentKey);
     }
 
     /**
@@ -218,8 +212,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
      */
     public void setTypeKey(final int pTypeKey) {
         mDel.setTypeKey(pTypeKey);
-        mValDel.setTypeKey(pTypeKey);
-        mStrucDel.setTypeKey(pTypeKey);
     }
 
     /**

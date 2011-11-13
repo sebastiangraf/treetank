@@ -28,11 +28,13 @@
 package org.treetank.node;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
+import org.treetank.node.delegates.NameNodeDelegate;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
@@ -44,15 +46,11 @@ import org.treetank.settings.EFixed;
  * Node representing an XML element.
  * </p>
  */
-public final class ElementNode extends AbsStructNode implements IStructNode, INameNode {
+public final class ElementNode implements IStructNode, INameNode {
 
-    protected static final int NAME_KEY = 4;
-
-    protected static final int URI_KEY = 8;
-
-    protected static final int ATTRIBUTE_COUNT = 12;
-
-    protected static final int NAMESPACE_COUNT = 16;
+    private final NodeDelegate mDel;
+    private final StructNodeDelegate mStrucDel;
+    private final NameNodeDelegate mNameDel;
 
     /** Keys of attributes. */
     private final List<Long> mAttributeKeys;
@@ -60,23 +58,15 @@ public final class ElementNode extends AbsStructNode implements IStructNode, INa
     /** Keys of namespace declarations. */
     private final List<Long> mNamespaceKeys;
 
-    /**
-     * Creating new element.
-     * 
-     * @param paramByteBuilder
-     *            array with bytes
-     * @param paramPointerBuilder
-     *            array with pointers
-     * @param paramAttributeKeys
-     *            attr keys
-     * @param paramNamespaceKeys
-     *            namespace keys
-     */
-    ElementNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder,
-        final List<Long> paramAttributeKeys, final List<Long> paramNamespaceKeys) {
-        super(paramByteBuilder, paramPointerBuilder);
-        mAttributeKeys = paramAttributeKeys;
-        mNamespaceKeys = paramNamespaceKeys;
+    public ElementNode(final NodeDelegate pDel,
+            final StructNodeDelegate pStrucDel,
+            final NameNodeDelegate pNameDel, final List<Long> pAttributeKeys,
+            final List<Long> pNamespaceKeys) {
+        mDel = pDel;
+        mStrucDel = pStrucDel;
+        mNameDel = pNameDel;
+        mAttributeKeys = pAttributeKeys;
+        mNamespaceKeys = pNamespaceKeys;
     }
 
     /**
@@ -85,47 +75,41 @@ public final class ElementNode extends AbsStructNode implements IStructNode, INa
      * @return the count of attributes
      */
     public int getAttributeCount() {
-        return readIntBytes(ATTRIBUTE_COUNT);
+        return mAttributeKeys.size();
     }
 
     /**
      * Getting the attribute key for an given index.
      * 
-     * @param paramIndex
+     * @param pIndex
      *            index of the attribute
      * @return the attribute key
      */
-    public long getAttributeKey(final int paramIndex) {
-        if (mAttributeKeys.size() <= paramIndex) {
-            return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+    public long getAttributeKey(final int pIndex) {
+        if (mAttributeKeys.size() <= pIndex) {
+            return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
         }
-        return mAttributeKeys.get(paramIndex);
+        return mAttributeKeys.get(pIndex);
     }
 
     /**
      * Inserting an attribute.
      * 
-     * @param paramAttributeKey
+     * @param pAttrKey
      *            the new attribute key
      */
-    public void insertAttribute(final long paramAttributeKey) {
-        mAttributeKeys.add(paramAttributeKey);
-
-        final int curAttrCount = readIntBytes(ATTRIBUTE_COUNT);
-        writeIntBytes(ATTRIBUTE_COUNT, curAttrCount + 1);
+    public void insertAttribute(final long pAttrKey) {
+        mAttributeKeys.add(pAttrKey);
     }
 
     /**
      * Removing an attribute.
      * 
-     * @param paramAttributeKey
+     * @param pAttrKey
      *            the key of the attribute to be removed
      */
-    public void removeAttribute(final long paramAttributeKey) {
-        mAttributeKeys.remove(paramAttributeKey);
-
-        final int curAttrCount = readIntBytes(ATTRIBUTE_COUNT);
-        writeIntBytes(ATTRIBUTE_COUNT, curAttrCount - 1);
+    public void removeAttribute(final long pAttrKey) {
+        mAttributeKeys.remove(pAttrKey);
     }
 
     /**
@@ -134,47 +118,289 @@ public final class ElementNode extends AbsStructNode implements IStructNode, INa
      * @return the count of namespaces
      */
     public int getNamespaceCount() {
-        return readIntBytes(NAMESPACE_COUNT);
+        return mNamespaceKeys.size();
     }
 
     /**
      * Getting the namespace key for an given index.
      * 
-     * @param paramIndex
+     * @param pNamespaceKey
      *            index of the namespace
      * @return the namespace key
      */
-    public long getNamespaceKey(final int paramIndex) {
-        if (mNamespaceKeys.size() <= paramIndex) {
-            return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+    public long getNamespaceKey(final int pNamespaceKey) {
+        if (mNamespaceKeys.size() <= pNamespaceKey) {
+            return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
         }
-        return mNamespaceKeys.get(paramIndex);
+        return mNamespaceKeys.get(pNamespaceKey);
     }
 
     /**
      * Inserting a namespace.
      * 
-     * @param paramNamespaceKey
+     * @param pNamespaceKey
      *            new namespace key
      */
-    public void insertNamespace(final long paramNamespaceKey) {
-        mNamespaceKeys.add(paramNamespaceKey);
-
-        final int curNSCount = readIntBytes(NAMESPACE_COUNT);
-        writeIntBytes(NAMESPACE_COUNT, curNSCount + 1);
+    public void insertNamespace(final long pNamespaceKey) {
+        mNamespaceKeys.add(pNamespaceKey);
     }
 
     /**
      * Removing a namepsace.
      * 
-     * @param paramNamespaceKey
+     * @param pNamespaceKey
      *            the key of the namespace to be removed
      */
-    public void removeNamespace(final long paramNamespaceKey) {
-        mAttributeKeys.remove(paramNamespaceKey);
+    public void removeNamespace(final long pNamespaceKey) {
+        mAttributeKeys.remove(pNamespaceKey);
+    }
 
-        final int curNSCount = readIntBytes(NAMESPACE_COUNT);
-        writeIntBytes(NAMESPACE_COUNT, curNSCount - 1);
+    /**
+     * Delegate method for getNodeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     */
+    public long getNodeKey() {
+        return mDel.getNodeKey();
+    }
+
+    /**
+     * Delegate method for setNodeKey.
+     * 
+     * @param pNodeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
+     */
+    public void setNodeKey(final long pNodeKey) {
+        mDel.setNodeKey(pNodeKey);
+    }
+
+    /**
+     * Delegate method for getParentKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     */
+    public long getParentKey() {
+        return mDel.getParentKey();
+    }
+
+    /**
+     * Delegate method for setParentKey.
+     * 
+     * @param pParentKey
+     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     */
+    public void setParentKey(final long pParentKey) {
+        mDel.setParentKey(pParentKey);
+    }
+
+    /**
+     * Delegate method for getHash.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDel.getHash();
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param pHash
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     */
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
+    }
+
+    /**
+     * Delegate method for getTypeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     */
+    public int getTypeKey() {
+        return mDel.getTypeKey();
+    }
+
+    /**
+     * Delegate method for setTypeKey.
+     * 
+     * @param pTypeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     */
+    public void setTypeKey(int pTypeKey) {
+        mDel.setTypeKey(pTypeKey);
+    }
+
+    /**
+     * Delegate method for hasParent.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     */
+    public boolean hasParent() {
+        return mDel.hasParent();
+    }
+
+    /**
+     * Delegate method for getNameKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NameNodeDelegate#getNameKey()
+     */
+    public int getNameKey() {
+        return mNameDel.getNameKey();
+    }
+
+    /**
+     * Delegate method for getURIKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NameNodeDelegate#getURIKey()
+     */
+    public int getURIKey() {
+        return mNameDel.getURIKey();
+    }
+
+    /**
+     * Delegate method for setNameKey.
+     * 
+     * @param pNameKey
+     * @see org.treetank.node.delegates.NameNodeDelegate#setNameKey(int)
+     */
+    public void setNameKey(int pNameKey) {
+        mNameDel.setNameKey(pNameKey);
+    }
+
+    /**
+     * Delegate method for setURIKey.
+     * 
+     * @param pUriKey
+     * @see org.treetank.node.delegates.NameNodeDelegate#setURIKey(int)
+     */
+    public void setURIKey(int pUriKey) {
+        mNameDel.setURIKey(pUriKey);
+    }
+
+    /**
+     * Delegate method for hasFirstChild.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#hasFirstChild()
+     */
+    public boolean hasFirstChild() {
+        return mStrucDel.hasFirstChild();
+    }
+
+    /**
+     * Delegate method for hasLeftSibling.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#hasLeftSibling()
+     */
+    public boolean hasLeftSibling() {
+        return mStrucDel.hasLeftSibling();
+    }
+
+    /**
+     * Delegate method for hasRightSibling.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#hasRightSibling()
+     */
+    public boolean hasRightSibling() {
+        return mStrucDel.hasRightSibling();
+    }
+
+    /**
+     * Delegate method for getChildCount.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#getChildCount()
+     */
+    public long getChildCount() {
+        return mStrucDel.getChildCount();
+    }
+
+    /**
+     * Delegate method for getFirstChildKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#getFirstChildKey()
+     */
+    public long getFirstChildKey() {
+        return mStrucDel.getFirstChildKey();
+    }
+
+    /**
+     * Delegate method for getLeftSiblingKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#getLeftSiblingKey()
+     */
+    public long getLeftSiblingKey() {
+        return mStrucDel.getLeftSiblingKey();
+    }
+
+    /**
+     * Delegate method for getRightSiblingKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.StructNodeDelegate#getRightSiblingKey()
+     */
+    public long getRightSiblingKey() {
+        return mStrucDel.getRightSiblingKey();
+    }
+
+    /**
+     * Delegate method for setRightSiblingKey.
+     * 
+     * @param pKey
+     * @see org.treetank.node.delegates.StructNodeDelegate#setRightSiblingKey(long)
+     */
+    public void setRightSiblingKey(long pKey) {
+        mStrucDel.setRightSiblingKey(pKey);
+    }
+
+    /**
+     * Delegate method for setLeftSiblingKey.
+     * 
+     * @param pKey
+     * @see org.treetank.node.delegates.StructNodeDelegate#setLeftSiblingKey(long)
+     */
+    public void setLeftSiblingKey(long pKey) {
+        mStrucDel.setLeftSiblingKey(pKey);
+    }
+
+    /**
+     * Delegate method for setFirstChildKey.
+     * 
+     * @param pKey
+     * @see org.treetank.node.delegates.StructNodeDelegate#setFirstChildKey(long)
+     */
+    public void setFirstChildKey(long pKey) {
+        mStrucDel.setFirstChildKey(pKey);
+    }
+
+    /**
+     * Delegate method for decrementChildCount.
+     * 
+     * @see org.treetank.node.delegates.StructNodeDelegate#decrementChildCount()
+     */
+    public void decrementChildCount() {
+        mStrucDel.decrementChildCount();
+    }
+
+    /**
+     * Delegate method for incrementChildCount.
+     * 
+     * @see org.treetank.node.delegates.StructNodeDelegate#incrementChildCount()
+     */
+    public void incrementChildCount() {
+        mStrucDel.incrementChildCount();
     }
 
     /**
@@ -189,63 +415,25 @@ public final class ElementNode extends AbsStructNode implements IStructNode, INa
      * {@inheritDoc}
      */
     @Override
-    public int getNameKey() {
-        return readIntBytes(NAME_KEY);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setNameKey(final int mLocalPartKey) {
-        writeIntBytes(NAME_KEY, mLocalPartKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getURIKey() {
-        return readIntBytes(URI_KEY);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setURIKey(final int mUriKey) {
-        writeIntBytes(URI_KEY, mUriKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink mNodeOut) {
-        super.serialize(mNodeOut);
-        if (mAttributeKeys != null) {
-            for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
-                byte[] mBuffer = longToByteArray(mAttributeKeys.get(i));
-                for (byte aByte : mBuffer) {
-                    mNodeOut.writeByte(aByte);
-                }
-            }
+    public void serialize(final ITTSink pSink) {
+        mDel.serialize(pSink);
+        mStrucDel.serialize(pSink);
+        mNameDel.serialize(pSink);
+        pSink.writeInt(mAttributeKeys.size());
+        for (final long key : mAttributeKeys) {
+            pSink.writeLong(key);
         }
-        if (mNamespaceKeys != null) {
-            for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
-                byte[] mBuffer = longToByteArray(mNamespaceKeys.get(i));
-                for (byte aByte : mBuffer) {
-                    mNodeOut.writeByte(aByte);
-                }
-            }
+        pSink.writeInt(mNamespaceKeys.size());
+        for (final long key : mNamespaceKeys) {
+            pSink.writeLong(key);
         }
-
     }
 
     @Override
-    public AbsNode clone() {
+    public ElementNode clone() {
         final List<Long> attList = new ArrayList<Long>(mAttributeKeys.size());
-        final List<Long> namespaceList = new ArrayList<Long>(mNamespaceKeys.size());
+        final List<Long> namespaceList = new ArrayList<Long>(
+                mNamespaceKeys.size());
         for (final Long i : mAttributeKeys) {
             attList.add(i);
         }
@@ -253,106 +441,90 @@ public final class ElementNode extends AbsStructNode implements IStructNode, INa
             namespaceList.add(i);
         }
 
-        final AbsNode toClone =
-            new ElementNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData), attList,
+        final NodeDelegate del = mDel.clone();
+        final StructNodeDelegate struc = mStrucDel.clone();
+        final NameNodeDelegate name = mNameDel.clone();
+
+        final ElementNode toClone = new ElementNode(del, struc, name, attList,
                 namespaceList);
         return toClone;
     }
 
-    public static AbsNode createData(final long mNodeKey, final long mParentKey, final long mLeftSibKey,
-        final long mRightSibKey, final long mFirstChild, final long mChildCount, final int mNameKey,
-        final int mUriKey, final int mType, final long oldHash) {
-
-        final byte[] byteData = new byte[ENodes.ELEMENT_KIND.getIntSize()];
-
-        final byte[] pointerData = new byte[ENodes.ELEMENT_KIND.getLongSize()];
-
-        int mCount = AbsNode.NODE_KEY;
-        for (byte aByte : longToByteArray(mNodeKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsNode.PARENT_KEY;
-        for (byte aByte : longToByteArray(mParentKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsStructNode.LEFT_SIBLING_KEY;
-        for (byte aByte : longToByteArray(mLeftSibKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsStructNode.RIGHT_SIBLING_KEY;
-        for (byte aByte : longToByteArray(mRightSibKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsStructNode.FIRST_CHILD_KEY;
-        for (byte aByte : longToByteArray(mFirstChild)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsStructNode.CHILD_COUNT;
-        for (byte aByte : longToByteArray(mChildCount)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsNode.HASHCODE;
-        for (byte aByte : longToByteArray(oldHash)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = ElementNode.NAME_KEY;
-        for (byte aByte : intToByteArray(mNameKey)) {
-            byteData[mCount++] = aByte;
-        }
-
-        mCount = ElementNode.URI_KEY;
-        for (byte aByte : intToByteArray(mUriKey)) {
-            byteData[mCount++] = aByte;
-        }
-
-        mCount = AbsNode.TYPE_KEY;
-        for (byte aByte : intToByteArray(mType)) {
-            byteData[mCount++] = aByte;
-        }
-
-        mCount = ElementNode.ATTRIBUTE_COUNT;
-        for (byte aByte : intToByteArray(0)) {
-            byteData[mCount++] = aByte;
-        }
-
-        mCount = ElementNode.NAMESPACE_COUNT;
-        for (byte aByte : intToByteArray(0)) {
-            byteData[mCount++] = aByte;
-        }
-
-        return new ElementNode(byteData, pointerData, new ArrayList<Long>(), new ArrayList<Long>());
-    }
-
     @Override
     public String toString() {
-        final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\tname key: ").append(getNameKey()).append("\n\turi key: ").append(getURIKey())
-            .append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append("\n\tattributes: ").append(
-                mAttributeKeys.toString()).toString();
-        return returnVal.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 67819;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(mByteData);
-        // result = prime * result + mAttributeKeys.hashCode();
-        // result = prime * result + mNamespaceKeys.hashCode();
-        return result;
+        final StringBuilder builder = new StringBuilder(mDel.toString());
+        builder.append(mStrucDel.toString());
+        builder.append(mNameDel.toString());
+        builder.append("\n\tnamespaces: ");
+        builder.append(mNamespaceKeys.toString());
+        builder.append("\n\tattributes: ");
+        builder.append(mAttributeKeys.toString());
+        return builder.toString();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void acceptVisitor(final IVisitor paramVisitor) {
-        paramVisitor.visit(this);
+    public void acceptVisitor(final IVisitor pVisitor) {
+        pVisitor.visit(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((mAttributeKeys == null) ? 0 : mAttributeKeys.hashCode());
+        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
+        result = prime * result
+                + ((mNameDel == null) ? 0 : mNameDel.hashCode());
+        result = prime * result
+                + ((mNamespaceKeys == null) ? 0 : mNamespaceKeys.hashCode());
+        result = prime * result
+                + ((mStrucDel == null) ? 0 : mStrucDel.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ElementNode other = (ElementNode) obj;
+        if (mAttributeKeys == null) {
+            if (other.mAttributeKeys != null)
+                return false;
+        } else if (!mAttributeKeys.equals(other.mAttributeKeys))
+            return false;
+        if (mDel == null) {
+            if (other.mDel != null)
+                return false;
+        } else if (!mDel.equals(other.mDel))
+            return false;
+        if (mNameDel == null) {
+            if (other.mNameDel != null)
+                return false;
+        } else if (!mNameDel.equals(other.mNameDel))
+            return false;
+        if (mNamespaceKeys == null) {
+            if (other.mNamespaceKeys != null)
+                return false;
+        } else if (!mNamespaceKeys.equals(other.mNamespaceKeys))
+            return false;
+        if (mStrucDel == null) {
+            if (other.mStrucDel != null)
+                return false;
+        } else if (!mStrucDel.equals(other.mStrucDel))
+            return false;
+        return true;
     }
 
 }
