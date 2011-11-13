@@ -52,7 +52,6 @@ import org.treetank.axis.PostOrderAxis;
 import org.treetank.diff.DiffFactory;
 import org.treetank.diff.algorithm.IImportDiff;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.AbsStructNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INode;
