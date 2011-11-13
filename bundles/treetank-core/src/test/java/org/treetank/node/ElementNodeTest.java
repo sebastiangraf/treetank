@@ -28,19 +28,28 @@
 package org.treetank.node;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
 
 import org.junit.Test;
 import org.treetank.io.file.ByteBufferSinkAndSource;
+import org.treetank.node.delegates.NameNodeDelegate;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.utils.NamePageHash;
 
 public class ElementNodeTest {
 
     @Test
     public void testElementNode() {
 
-        final ElementNode node1 = (ElementNode)ElementNode.createData(13, 14, 16, 17, 12, 1, 18, 19, 20, 21);
+        final NodeDelegate del = new NodeDelegate(13, 14, 0);
+        final StructNodeDelegate strucDel = new StructNodeDelegate(del, 12l,
+                17l, 16l, 1l);
+        final NameNodeDelegate nameDel = new NameNodeDelegate(del, 18, 19);
+
+        final ElementNode node1 = new ElementNode(del, strucDel, nameDel,
+                new ArrayList<Long>(), new ArrayList<Long>());
 
         // Create empty node.
         node1.insertAttribute(97);
@@ -53,11 +62,12 @@ public class ElementNodeTest {
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
         node1.serialize(out);
         out.position(0);
-        final ElementNode node2 = (ElementNode)ENodes.ELEMENT_KIND.createNodeFromPersistence(out);
+        final ElementNode node2 = (ElementNode) ENodes.ELEMENT_KIND
+                .createNodeFromPersistence(out);
         check(node2);
 
         // Clone node.
-        final ElementNode node3 = (ElementNode)node2.clone();
+        final ElementNode node3 = (ElementNode) node2.clone();
         check(node3);
     }
 
@@ -73,7 +83,8 @@ public class ElementNodeTest {
         assertEquals(2, node.getNamespaceCount());
         assertEquals(18, node.getNameKey());
         assertEquals(19, node.getURIKey());
-        assertEquals(20, node.getTypeKey());
+        assertEquals(NamePageHash.generateHashForString("xs:untyped"),
+                node.getTypeKey());
         assertEquals(ENodes.ELEMENT_KIND, node.getKind());
         assertEquals(true, node.hasFirstChild());
         assertEquals(true, node.hasParent());
@@ -83,18 +94,6 @@ public class ElementNodeTest {
         assertEquals(98L, node.getAttributeKey(1));
         assertEquals(99L, node.getNamespaceKey(0));
         assertEquals(100L, node.getNamespaceKey(1));
-    }
-
-    @Test
-    public void testHashCode() {
-        final ElementNode node = (ElementNode)ElementNode.createData(0, 0, 0, 0, 0, 0, 18, 19, 20, 21);
-        final ElementNode node2 = (ElementNode)ElementNode.createData(1, 1, 1, 1, 1, 1, 19, 20, 21, 22);
-
-        final ElementNode node3 = (ElementNode)ElementNode.createData(2, 2, 2, 2, 2, 2, 18, 19, 20, 21);
-
-        assertEquals(node3.hashCode(), node.hashCode());
-        assertTrue(node3.equals(node));
-        assertFalse(node2.equals(node3));
     }
 
 }

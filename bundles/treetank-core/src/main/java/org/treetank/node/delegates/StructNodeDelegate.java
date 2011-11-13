@@ -122,11 +122,11 @@ public class StructNodeDelegate implements IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(ITTSink paramSink) {
-        paramSink.writeLong(mFirstChild);
-        paramSink.writeLong(mRightSibling);
-        paramSink.writeLong(mLeftSibling);
-        paramSink.writeLong(mChildCount);
+    public void serialize(final ITTSink pSink) {
+        pSink.writeLong(mFirstChild);
+        pSink.writeLong(mRightSibling);
+        pSink.writeLong(mLeftSibling);
+        pSink.writeLong(mChildCount);
     }
 
     /**
@@ -141,24 +141,24 @@ public class StructNodeDelegate implements IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public void setRightSiblingKey(long paramKey) {
-        mRightSibling = paramKey;
+    public void setRightSiblingKey(final long pKey) {
+        mRightSibling = pKey;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setLeftSiblingKey(long paramKey) {
-        mLeftSibling = paramKey;
+    public void setLeftSiblingKey(final long pKey) {
+        mLeftSibling = pKey;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setFirstChildKey(long paramKey) {
-        mFirstChild = paramKey;
+    public void setFirstChildKey(final long pKey) {
+        mFirstChild = pKey;
     }
 
     /**
@@ -243,7 +243,7 @@ public class StructNodeDelegate implements IStructNode {
      * @param pVisitor
      * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
      */
-    public void acceptVisitor(IVisitor pVisitor) {
+    public void acceptVisitor(final IVisitor pVisitor) {
         mDelegate.acceptVisitor(pVisitor);
     }
 

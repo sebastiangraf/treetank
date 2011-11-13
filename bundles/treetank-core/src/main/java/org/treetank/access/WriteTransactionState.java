@@ -27,6 +27,8 @@
 
 package org.treetank.access;
 
+import java.util.ArrayList;
+
 import javax.xml.namespace.QName;
 
 import org.treetank.access.conf.SessionConfiguration;
@@ -102,12 +104,16 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected WriteTransactionState(final Session paramSessionState, final UberPage paramUberPage,
-        final IWriter paramWriter, final long paramParamId, final long paramRepresentRev,
-        final long paramStoreRev) throws TTIOException {
-        super(paramSessionState, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
-        mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
-        mLog = new TransactionLogCache(paramSessionState.mResourceConfig.mPath, paramStoreRev);
+    protected WriteTransactionState(final Session paramSessionState,
+            final UberPage paramUberPage, final IWriter paramWriter,
+            final long paramParamId, final long paramRepresentRev,
+            final long paramStoreRev) throws TTIOException {
+        super(paramSessionState, paramUberPage, paramRepresentRev,
+                new ItemList(), paramWriter);
+        mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev,
+                paramStoreRev);
+        mLog = new TransactionLogCache(paramSessionState.mResourceConfig.mPath,
+                paramStoreRev);
         mPageWriter = paramWriter;
         mTransactionID = paramParamId;
 
@@ -116,7 +122,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Prepare a node for modification. This is getting the node from the
      * (persistence) layer, storing the page in the cache and setting up the
-     * node for upcoming modification. Note that this only occurs for {@link INode}s.
+     * node for upcoming modification. Note that this only occurs for
+     * {@link INode}s.
      * 
      * @param paramNodeKey
      *            key of the node to be modified
@@ -124,13 +131,14 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected INode prepareNodeForModification(final long paramNodeKey) throws TTIOException {
+    protected INode prepareNodeForModification(final long paramNodeKey)
+            throws TTIOException {
         if (paramNodeKey < 0) {
             throw new IllegalArgumentException("paramNodeKey must be >= 0!");
         }
         if (mNodePageCon != null) {
             throw new IllegalStateException(
-                "Another node page container is currently in the cache for updates!");
+                    "Another node page container is currently in the cache for updates!");
         }
 
         final long nodePageKey = nodePageKey(paramNodeKey);
@@ -139,7 +147,8 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         INode node = mNodePageCon.getModified().getNode(nodePageOffset);
         if (node == null) {
-            final INode oldNode = mNodePageCon.getComplete().getNode(nodePageOffset);
+            final INode oldNode = mNodePageCon.getComplete().getNode(
+                    nodePageOffset);
             if (oldNode == null) {
                 throw new TTIOException("Cannot retrieve node from cache");
             }
@@ -158,7 +167,8 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected void finishNodeModification(final INode paramNode) {
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
-        if (mNodePageCon == null || paramNode == null || mLog.get(nodePageKey) == null) {
+        if (mNodePageCon == null || paramNode == null
+                || mLog.get(nodePageKey) == null) {
             throw new IllegalStateException();
         }
 
@@ -192,46 +202,57 @@ public final class WriteTransactionState extends ReadTransactionState {
         return paramNode;
     }
 
-    protected ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
-        final long rightSibKey, final long hash, final QName mName) throws TTIOException {
+    protected ElementNode createElementNode(final long parentKey,
+            final long mLeftSibKey, final long rightSibKey, final long hash,
+            final QName mName) throws TTIOException {
 
         final int nameKey = createNameKey(buildName(mName));
         final int namespaceKey = createNameKey(mName.getNamespaceURI());
-        final int typeKey = createNameKey("xs:untyped");
 
-        return (ElementNode)createNode(ElementNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey,
-            mLeftSibKey, rightSibKey, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), 0, nameKey,
-            namespaceKey, typeKey, hash));
+        final NodeDelegate nodeDel = new NodeDelegate(
+                mNewRoot.getMaxNodeKey() + 1, parentKey, 0);
+        final StructNodeDelegate structDel = new StructNodeDelegate(nodeDel,
+                (Long) EFixed.NULL_NODE_KEY.getStandardProperty(), rightSibKey,
+                mLeftSibKey, 0);
+        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey,
+                namespaceKey);
+
+        return (ElementNode) createNode(new ElementNode(nodeDel, structDel,
+                nameDel, new ArrayList<Long>(), new ArrayList<Long>()));
     }
 
-    protected TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
-        final byte[] mValue) throws TTIOException {
-        final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, mParentKey, 0);
+    protected TextNode createTextNode(final long mParentKey,
+            final long mLeftSibKey, final long rightSibKey, final byte[] mValue)
+            throws TTIOException {
+        final NodeDelegate nodeDel = new NodeDelegate(
+                mNewRoot.getMaxNodeKey() + 1, mParentKey, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
-        final StructNodeDelegate structDel =
-            new StructNodeDelegate(nodeDel, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), rightSibKey,
+        final StructNodeDelegate structDel = new StructNodeDelegate(nodeDel,
+                (Long) EFixed.NULL_NODE_KEY.getStandardProperty(), rightSibKey,
                 mLeftSibKey, 0);
 
-        return (TextNode)createNode(new TextNode(nodeDel, valDel, structDel));
+        return (TextNode) createNode(new TextNode(nodeDel, valDel, structDel));
     }
 
-    protected AttributeNode createAttributeNode(final long parentKey, final QName mName, final byte[] mValue)
-        throws TTIOException {
+    protected AttributeNode createAttributeNode(final long parentKey,
+            final QName mName, final byte[] mValue) throws TTIOException {
 
         final int nameKey = createNameKey(buildName(mName));
         final int namespaceKey = createNameKey(mName.getNamespaceURI());
         final int typeKey = createNameKey("xs:untypedAtomic");
-        return (AttributeNode)createNode(AttributeNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey,
-            nameKey, namespaceKey, typeKey, mValue));
+        return (AttributeNode) createNode(AttributeNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, parentKey, nameKey, namespaceKey,
+                typeKey, mValue));
     }
 
-    protected NamespaceNode
-        createNamespaceNode(final long mParentKey, final int mUriKey, final int prefixKey)
-            throws TTIOException {
-        final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, mParentKey, 0);
-        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, mUriKey);
+    protected NamespaceNode createNamespaceNode(final long mParentKey,
+            final int mUriKey, final int prefixKey) throws TTIOException {
+        final NodeDelegate nodeDel = new NodeDelegate(
+                mNewRoot.getMaxNodeKey() + 1, mParentKey, 0);
+        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel,
+                prefixKey, mUriKey);
 
-        return (NamespaceNode)createNode(new NamespaceNode(nodeDel, nameDel));
+        return (NamespaceNode) createNode(new NamespaceNode(nodeDel, nameDel));
     }
 
     /**
@@ -246,11 +267,13 @@ public final class WriteTransactionState extends ReadTransactionState {
         assert paramNode != null;
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         prepareNodePage(nodePageKey);
-        final INode delNode =
-            new DeletedNode(new NodeDelegate(paramNode.getNodeKey(), paramNode.getParentKey(), paramNode
-                .getHash()));
-        mNodePageCon.getModified().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
-        mNodePageCon.getComplete().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
+        final INode delNode = new DeletedNode(new NodeDelegate(
+                paramNode.getNodeKey(), paramNode.getParentKey(),
+                paramNode.getHash()));
+        mNodePageCon.getModified().setNode(
+                nodePageOffset(paramNode.getNodeKey()), delNode);
+        mNodePageCon.getComplete().setNode(
+                nodePageOffset(paramNode.getNodeKey()), delNode);
         finishNodeModification(paramNode);
     }
 
@@ -287,11 +310,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     @Override
     protected String getName(final int mNameKey) {
-        final NamePage currentNamePage = (NamePage)mNewRoot.getNamePageReference().getPage();
+        final NamePage currentNamePage = (NamePage) mNewRoot
+                .getNamePageReference().getPage();
         String returnVal;
         // if currentNamePage == null -> state was commited and no
         // prepareNodepage was invoked yet
-        if (currentNamePage == null || currentNamePage.getName(mNameKey) == null) {
+        if (currentNamePage == null
+                || currentNamePage.getName(mNameKey) == null) {
             returnVal = super.getName(mNameKey);
         } else {
             returnVal = currentNamePage.getName(mNameKey);
@@ -313,7 +338,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         final String string = (mName == null ? "" : mName);
         final int nameKey = NamePageHash.generateHashForString(string);
 
-        final NamePage namePage = (NamePage)mNewRoot.getNamePageReference().getPage();
+        final NamePage namePage = (NamePage) mNewRoot.getNamePageReference()
+                .getPage();
 
         if (namePage.getName(nameKey) == null) {
             namePage.setName(nameKey, string);
@@ -322,7 +348,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     /**
-     * Committing a a writetransaction. This method is recursivly invoked by all {@link PageReference}s.
+     * Committing a a writetransaction. This method is recursivly invoked by all
+     * {@link PageReference}s.
      * 
      * @param reference
      *            to be commited
@@ -456,16 +483,17 @@ public final class WriteTransactionState extends ReadTransactionState {
         mPageWriter.close();
     }
 
-    protected IndirectPage prepareIndirectPage(final PageReference paramReference) throws TTIOException {
+    protected IndirectPage prepareIndirectPage(
+            final PageReference paramReference) throws TTIOException {
 
-        IndirectPage page = (IndirectPage)paramReference.getPage();
+        IndirectPage page = (IndirectPage) paramReference.getPage();
         if (page == null) {
             if (paramReference.getKey() == null) {
                 page = new IndirectPage(getUberPage().getRevision());
             } else {
-                page =
-                    new IndirectPage((IndirectPage)dereferenceIndirectPage(paramReference), mNewRoot
-                        .getRevision() + 1);
+                page = new IndirectPage(
+                        (IndirectPage) dereferenceIndirectPage(paramReference),
+                        mNewRoot.getRevision() + 1);
 
             }
             paramReference.setPage(page);
@@ -473,21 +501,21 @@ public final class WriteTransactionState extends ReadTransactionState {
         return page;
     }
 
-    protected NodePageContainer prepareNodePage(final long paramNodePageKey) throws TTIOException {
+    protected NodePageContainer prepareNodePage(final long paramNodePageKey)
+            throws TTIOException {
 
         // Last level points to node nodePageReference.
         NodePageContainer cont = mLog.get(paramNodePageKey);
         if (cont == null) {
 
             // Indirect reference.
-            final PageReference reference =
-                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), paramNodePageKey);
-            NodePage page = (NodePage)reference.getPage();
+            final PageReference reference = prepareLeafOfTree(
+                    mNewRoot.getIndirectPageReference(), paramNodePageKey);
+            NodePage page = (NodePage) reference.getPage();
 
             if (page == null) {
                 if (reference.getKey() == null) {
-                    cont =
-                        new NodePageContainer(new NodePage(paramNodePageKey,
+                    cont = new NodePageContainer(new NodePage(paramNodePageKey,
                             IConstants.UBP_ROOT_REVISION_NUMBER));
                 } else {
                     cont = dereferenceNodePageForModification(paramNodePageKey);
@@ -503,36 +531,40 @@ public final class WriteTransactionState extends ReadTransactionState {
         return cont;
     }
 
-    private RevisionRootPage preparePreviousRevisionRootPage(final long mBaseRevision,
-        final long representRevision) throws TTIOException {
+    private RevisionRootPage preparePreviousRevisionRootPage(
+            final long mBaseRevision, final long representRevision)
+            throws TTIOException {
 
         if (getUberPage().isBootstrap()) {
             return super.loadRevRoot(mBaseRevision);
         } else {
 
             // Prepare revision root nodePageReference.
-            final RevisionRootPage revisionRootPage =
-                new RevisionRootPage(super.loadRevRoot(mBaseRevision), representRevision + 1);
+            final RevisionRootPage revisionRootPage = new RevisionRootPage(
+                    super.loadRevRoot(mBaseRevision), representRevision + 1);
 
             // Prepare indirect tree to hold reference to prepared revision root
             // nodePageReference.
-            final PageReference revisionRootPageReference =
-                prepareLeafOfTree(getUberPage().getIndirectPageReference(), getUberPage().getRevisionNumber());
+            final PageReference revisionRootPageReference = prepareLeafOfTree(
+                    getUberPage().getIndirectPageReference(), getUberPage()
+                            .getRevisionNumber());
 
             // Link the prepared revision root nodePageReference with the
             // prepared indirect tree.
             revisionRootPageReference.setPage(revisionRootPage);
 
             revisionRootPage.getNamePageReference().setPage(
-                (NamePage)super.getActualRevisionRootPage().getNamePageReference().getPage());
+                    (NamePage) super.getActualRevisionRootPage()
+                            .getNamePageReference().getPage());
 
             // Return prepared revision root nodePageReference.
             return revisionRootPage;
         }
     }
 
-    protected PageReference prepareLeafOfTree(final PageReference mStartReference, final long mKey)
-        throws TTIOException {
+    protected PageReference prepareLeafOfTree(
+            final PageReference mStartReference, final long mKey)
+            throws TTIOException {
 
         // Initial state pointing to the indirect nodePageReference of level 0.
 
@@ -542,7 +574,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         // Iterate through all levels.
         for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-            offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+            offset = (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final IndirectPage page = prepareIndirectPage(reference);
             reference = page.getReferences()[offset];
@@ -562,8 +594,8 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if something happened in the node
      */
-    private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
-        throws TTIOException {
+    private NodePageContainer dereferenceNodePageForModification(
+            final long paramNodePageKey) throws TTIOException {
         final NodePage[] revs = getSnapshotPages(paramNodePageKey);
         final ERevisioning revision = mSession.mResourceConfig.mRevision;
         final int mileStoneRevision = mSession.mResourceConfig.mRevisionsToRestore;
@@ -610,9 +642,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (paramQname.getPrefix().isEmpty()) {
             name = paramQname.getLocalPart();
         } else {
-            name =
-                new StringBuilder(paramQname.getPrefix()).append(":").append(paramQname.getLocalPart())
-                    .toString();
+            name = new StringBuilder(paramQname.getPrefix()).append(":")
+                    .append(paramQname.getLocalPart()).toString();
         }
         return name;
     }
