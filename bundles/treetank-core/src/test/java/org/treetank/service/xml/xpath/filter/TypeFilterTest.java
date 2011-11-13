@@ -72,7 +72,7 @@ public class TypeFilterTest {
 
         xtx.moveTo(1L);
         xtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untypedAtomic"), true);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
 
         IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"), false);
 

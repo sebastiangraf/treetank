@@ -239,10 +239,14 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         final int nameKey = createNameKey(buildName(mName));
         final int namespaceKey = createNameKey(mName.getNamespaceURI());
-        final int typeKey = createNameKey("xs:untypedAtomic");
-        return (AttributeNode) createNode(AttributeNode.createData(
-                mNewRoot.getMaxNodeKey() + 1, parentKey, nameKey, namespaceKey,
-                typeKey, mValue));
+        final NodeDelegate nodeDel = new NodeDelegate(
+                mNewRoot.getMaxNodeKey() + 1, parentKey, 0);
+        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey,
+                namespaceKey);
+        final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
+
+        return (AttributeNode) createNode(new AttributeNode(nodeDel, nameDel,
+                valDel));
     }
 
     protected NamespaceNode createNamespaceNode(final long mParentKey,
