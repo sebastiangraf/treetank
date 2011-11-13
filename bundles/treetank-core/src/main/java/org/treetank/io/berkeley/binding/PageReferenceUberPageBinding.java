@@ -51,7 +51,7 @@ public final class PageReferenceUberPageBinding extends TupleBinding<PageReferen
     public PageReference entryToObject(final TupleInput arg0) {
         final PageReference ref = new PageReference();
         final int storageId = arg0.readInt();
-        ref.setKey(EStorage.getInstance(storageId).deserializeKey(new TupleInputSource(arg0)));
+        ref.setKey(EStorage.getInstance(storageId).deserialize(new TupleInputSource(arg0)));
         return ref;
     }
 
@@ -62,7 +62,7 @@ public final class PageReferenceUberPageBinding extends TupleBinding<PageReferen
     public void objectToEntry(final PageReference arg0, final TupleOutput arg1) {
         EStorage storage = EStorage.getInstance(arg0.getKey().getClass());
         if (storage != null) {
-            storage.serializeKey(new TupleOutputSink(arg1), arg0.getKey());
+            storage.serialize(new TupleOutputSink(arg1), arg0.getKey());
         }
     }
 

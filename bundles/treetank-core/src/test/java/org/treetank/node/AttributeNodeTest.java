@@ -53,10 +53,10 @@ public class AttributeNodeTest {
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        node1.serialize(out);
+        ENodes.getKind(node1.getClass()).serialize(out, node1);
         out.position(0);
         final AttributeNode node2 = (AttributeNode) ENodes.ATTRIBUTE_KIND
-                .createNodeFromPersistence(out);
+                .deserialize(out);
         check(node2);
 
         // Clone node.

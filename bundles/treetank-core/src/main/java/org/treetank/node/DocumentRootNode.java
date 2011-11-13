@@ -28,7 +28,6 @@
 package org.treetank.node;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.IStructNode;
@@ -238,17 +237,6 @@ public final class DocumentRootNode implements IStructNode {
     }
 
     /**
-     * Delegate method for serialize.
-     * 
-     * @param pSink
-     * @see org.treetank.node.delegates.StructNodeDelegate#serialize(org.treetank.io.ITTSink)
-     */
-    public void serialize(final ITTSink pSink) {
-        mDel.serialize(pSink);
-        mStrucDel.serialize(pSink);
-    }
-
-    /**
      * Delegate method for setRightSiblingKey.
      * 
      * @param pKey
@@ -325,4 +313,23 @@ public final class DocumentRootNode implements IStructNode {
     public String toString() {
         return mStrucDel.toString();
     }
+
+    /**
+     * Getting the inlying {@link NodeDelegate}.
+     * 
+     * @return
+     */
+    NodeDelegate getNodeDelegate() {
+        return mDel;
+    }
+
+    /**
+     * Getting the inlying {@link StructNodeDelegate}.
+     * 
+     * @return
+     */
+    StructNodeDelegate getStrucNodeDelegate() {
+        return mStrucDel;
+    }
+
 }

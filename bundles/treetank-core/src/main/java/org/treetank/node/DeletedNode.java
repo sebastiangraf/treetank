@@ -28,7 +28,6 @@
 package org.treetank.node;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INode;
 
@@ -61,20 +60,13 @@ public final class DeletedNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink pSink) {
-        mDel.serialize(pSink);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ENodes getKind() {
         return ENodes.DELETE_KIND;
     }
 
     /**
      * Delegate method for getNodeKey.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
@@ -84,6 +76,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for setNodeKey.
+     * 
      * @param pNodeKey
      * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
@@ -93,6 +86,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for getParentKey.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
@@ -102,6 +96,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for setParentKey.
+     * 
      * @param pParentKey
      * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
@@ -111,6 +106,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for getHash.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
@@ -120,6 +116,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for setHash.
+     * 
      * @param pHash
      * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
      */
@@ -129,6 +126,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for acceptVisitor.
+     * 
      * @param pVisitor
      * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
      */
@@ -138,6 +136,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for getTypeKey.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
@@ -147,6 +146,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for setTypeKey.
+     * 
      * @param pTypeKey
      * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
@@ -156,6 +156,7 @@ public final class DeletedNode implements INode {
 
     /**
      * Delegate method for hasParent.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
@@ -171,9 +172,6 @@ public final class DeletedNode implements INode {
         final INode toClone = new DeletedNode(mDel.clone());
         return toClone;
     }
-
-
-
 
     /**
      * {@inheritDoc}
@@ -214,6 +212,15 @@ public final class DeletedNode implements INode {
      */
     public String toString() {
         return mDel.toString();
+    }
+
+    /**
+     * Getting the inlying {@link NodeDelegate}.
+     * 
+     * @return
+     */
+    NodeDelegate getNodeDelegate() {
+        return mDel;
     }
 
 }

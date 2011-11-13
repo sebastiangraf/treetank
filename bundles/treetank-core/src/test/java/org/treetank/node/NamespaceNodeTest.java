@@ -47,9 +47,9 @@ public class NamespaceNodeTest {
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        node1.serialize(out);
+        ENodes.getKind(node1.getClass()).serialize(out, node1);
         out.position(0);
-        final NamespaceNode node2 = (NamespaceNode)ENodes.NAMESPACE_KIND.createNodeFromPersistence(out);
+        final NamespaceNode node2 = (NamespaceNode)ENodes.NAMESPACE_KIND.deserialize(out);
         check(node2);
 
         // Clone node.

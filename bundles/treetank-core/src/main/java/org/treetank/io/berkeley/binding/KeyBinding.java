@@ -51,7 +51,7 @@ public final class KeyBinding extends TupleBinding<IKey> {
     @Override
     public IKey entryToObject(final TupleInput arg0) {
         final int kind = arg0.readInt();
-        return EStorage.getInstance(kind).deserializeKey(new TupleInputSource(arg0));
+        return EStorage.getInstance(kind).deserialize(new TupleInputSource(arg0));
     }
 
     /**
@@ -59,6 +59,6 @@ public final class KeyBinding extends TupleBinding<IKey> {
      */
     @Override
     public void objectToEntry(final IKey arg0, final TupleOutput arg1) {
-        EStorage.getInstance(arg0.getClass()).serializeKey(new TupleOutputSink(arg1), arg0);
+        EStorage.getInstance(arg0.getClass()).serialize(new TupleOutputSink(arg1), arg0);
     }
 }

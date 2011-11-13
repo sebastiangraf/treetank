@@ -4,7 +4,6 @@
 package org.treetank.node.delegates;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 import org.treetank.node.interfaces.INameNode;
 
@@ -111,17 +110,6 @@ public class NameNodeDelegate implements INameNode {
      */
     public int getTypeKey() {
         return mDelegate.getTypeKey();
-    }
-
-    /**
-     * Delegate method for serialize.
-     * 
-     * @param pSink
-     * @see org.treetank.node.delegates.NodeDelegate#serialize(org.treetank.io.ITTSink)
-     */
-    public void serialize(final ITTSink pSink) {
-        pSink.writeInt(mNameKey);
-        pSink.writeInt(mUriKey);
     }
 
     /**

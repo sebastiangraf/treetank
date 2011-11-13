@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -428,24 +427,6 @@ public final class ElementNode implements IStructNode, INameNode {
         return ENodes.ELEMENT_KIND;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink pSink) {
-        mDel.serialize(pSink);
-        mStrucDel.serialize(pSink);
-        mNameDel.serialize(pSink);
-        pSink.writeInt(mAttributeKeys.size());
-        for (final long key : mAttributeKeys) {
-            pSink.writeLong(key);
-        }
-        pSink.writeInt(mNamespaceKeys.size());
-        for (final long key : mNamespaceKeys) {
-            pSink.writeLong(key);
-        }
-    }
-
     @Override
     public ElementNode clone() {
         final List<Long> attList = new ArrayList<Long>(mAttributeKeys.size());
@@ -515,6 +496,33 @@ public final class ElementNode implements IStructNode, INameNode {
         } else if (!mNameDel.equals(other.mNameDel))
             return false;
         return true;
+    }
+
+    /**
+     * Getting the inlying {@link NodeDelegate}.
+     * 
+     * @return
+     */
+    NodeDelegate getNodeDelegate() {
+        return mDel;
+    }
+
+    /**
+     * Getting the inlying {@link StructNodeDelegate}.
+     * 
+     * @return
+     */
+    StructNodeDelegate getStrucNodeDelegate() {
+        return mStrucDel;
+    }
+
+    /**
+     * Getting the inlying {@link NameNodeDelegate}.
+     * 
+     * @return
+     */
+    NameNodeDelegate getNameNodeDelegate() {
+        return mNameDel;
     }
 
 }

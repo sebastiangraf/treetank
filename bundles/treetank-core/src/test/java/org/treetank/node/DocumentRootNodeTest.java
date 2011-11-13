@@ -53,9 +53,9 @@ public class DocumentRootNodeTest {
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        node1.serialize(out);
+        ENodes.getKind(node1.getClass()).serialize(out, node1);
         out.position(0);
-        final DocumentRootNode node2 = (DocumentRootNode)ENodes.ROOT_KIND.createNodeFromPersistence(out);
+        final DocumentRootNode node2 = (DocumentRootNode)ENodes.ROOT_KIND.deserialize(out);
         check(node2);
 
         // Clone node.

@@ -1,7 +1,6 @@
 package org.treetank.node.delegates;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 import org.treetank.node.interfaces.INode;
 import org.treetank.settings.EFixed;
@@ -17,6 +16,9 @@ import org.treetank.utils.NamePageHash;
  * 
  */
 public class NodeDelegate implements INode {
+
+    private static final int TYPE_KEY = NamePageHash
+            .generateHashForString("xs:untyped");
 
     /** Key of the current node. Must be unique for all nodes. */
     private long mNodeKey;
@@ -42,10 +44,10 @@ public class NodeDelegate implements INode {
      */
     public NodeDelegate(final long pNodeKey, final long pParentKey,
             final long pHash) {
-        setNodeKey(pNodeKey);
-        setParentKey(pParentKey);
-        setHash(pHash);
-        setTypeKey(NamePageHash.generateHashForString("xs:untyped"));
+        mNodeKey = pNodeKey;
+        mParentKey = pParentKey;
+        mHash = pHash;
+        mTypeKey = TYPE_KEY;
     }
 
     /**
@@ -110,16 +112,6 @@ public class NodeDelegate implements INode {
     @Override
     public void acceptVisitor(final IVisitor pVisitor) {
         // Do nothing, only stub
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink pSink) {
-        pSink.writeLong(getNodeKey());
-        pSink.writeLong(getParentKey());
-        pSink.writeLong(getHash());
     }
 
     /**

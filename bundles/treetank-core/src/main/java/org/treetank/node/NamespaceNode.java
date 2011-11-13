@@ -28,7 +28,6 @@
 package org.treetank.node;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INameNode;
@@ -188,17 +187,6 @@ public final class NamespaceNode implements INode, INameNode {
     }
 
     /**
-     * Delegate method for serialize.
-     * 
-     * @param pSink
-     * @see org.treetank.node.delegates.NodeDelegate#serialize(org.treetank.io.ITTSink)
-     */
-    public void serialize(final ITTSink pSink) {
-        mDel.serialize(pSink);
-        mNameDel.serialize(pSink);
-    }
-
-    /**
      * Delegate method for setParentKey.
      * 
      * @param pKey
@@ -264,5 +252,23 @@ public final class NamespaceNode implements INode, INameNode {
         builder.append("\n");
         builder.append(mNameDel.toString());
         return builder.toString();
+    }
+
+    /**
+     * Getting the inlying {@link NodeDelegate}.
+     * 
+     * @return
+     */
+    NodeDelegate getNodeDelegate() {
+        return mDel;
+    }
+
+    /**
+     * Getting the inlying {@link NameNodeDelegate}.
+     * 
+     * @return
+     */
+    NameNodeDelegate getNameNodeDelegate() {
+        return mNameDel;
     }
 }

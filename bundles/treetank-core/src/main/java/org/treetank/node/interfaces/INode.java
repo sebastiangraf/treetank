@@ -28,13 +28,13 @@
 package org.treetank.node.interfaces;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 
 /**
  * <h1>IItem</h1>
  * <p>
- * Common interface for all item kinds. An item can be a node or an atomic value.
+ * Common interface for all item kinds. An item can be a node or an atomic
+ * value.
  * </p>
  */
 public interface INode extends Cloneable {
@@ -61,7 +61,8 @@ public interface INode extends Cloneable {
      * 
      * 
      * @param pNodeKey
-     *            Unique key of item, maybe negative when atomics from the XPath-engine.
+     *            Unique key of item, maybe negative when atomics from the
+     *            XPath-engine.
      */
     void setNodeKey(final long pNodeKey);
 
@@ -115,14 +116,6 @@ public interface INode extends Cloneable {
      * @return the cloned node.
      */
     INode clone();
-
-    /**
-     * Serializing the node.
-     * 
-     * @param pSink
-     *            sink to be serialized to.
-     */
-    void serialize(ITTSink pSink);
 
     /**
      * Setting the parent key.
