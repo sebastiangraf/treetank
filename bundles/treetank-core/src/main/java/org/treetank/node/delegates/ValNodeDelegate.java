@@ -184,8 +184,6 @@ public class ValNodeDelegate implements IValNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((mDelegate == null) ? 0 : mDelegate.hashCode());
         result = prime * result + Arrays.hashCode(mVal);
         return result;
     }
@@ -194,19 +192,14 @@ public class ValNodeDelegate implements IValNode {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object pObj) {
-        if (this == pObj)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (pObj == null)
+        if (obj == null)
             return false;
-        if (getClass() != pObj.getClass())
+        if (getClass() != obj.getClass())
             return false;
-        ValNodeDelegate other = (ValNodeDelegate) pObj;
-        if (mDelegate == null) {
-            if (other.mDelegate != null)
-                return false;
-        } else if (!mDelegate.equals(other.mDelegate))
-            return false;
+        ValNodeDelegate other = (ValNodeDelegate) obj;
         if (!Arrays.equals(mVal, other.mVal))
             return false;
         return true;

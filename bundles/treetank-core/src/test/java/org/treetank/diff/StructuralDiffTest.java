@@ -47,7 +47,6 @@ import org.treetank.exception.AbsTTException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-@Ignore
 public final class StructuralDiffTest {
 
     private Holder mHolder;

@@ -206,8 +206,6 @@ public class NameNodeDelegate implements INameNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((mDelegate == null) ? 0 : mDelegate.hashCode());
         result = prime * result + mNameKey;
         result = prime * result + mUriKey;
         return result;
@@ -217,19 +215,14 @@ public class NameNodeDelegate implements INameNode {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object pObj) {
-        if (this == pObj)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (pObj == null)
+        if (obj == null)
             return false;
-        if (getClass() != pObj.getClass())
+        if (getClass() != obj.getClass())
             return false;
-        NameNodeDelegate other = (NameNodeDelegate) pObj;
-        if (mDelegate == null) {
-            if (other.mDelegate != null)
-                return false;
-        } else if (!mDelegate.equals(other.mDelegate))
-            return false;
+        NameNodeDelegate other = (NameNodeDelegate) obj;
         if (mNameKey != other.mNameKey)
             return false;
         if (mUriKey != other.mUriKey)
@@ -245,7 +238,7 @@ public class NameNodeDelegate implements INameNode {
      */
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("uri key: ");
+        builder.append("\nuri key: ");
         builder.append(mUriKey);
         builder.append("\nname key: ");
         builder.append(mNameKey);
