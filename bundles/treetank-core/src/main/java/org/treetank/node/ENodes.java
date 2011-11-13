@@ -32,13 +32,13 @@ import org.treetank.node.interfaces.INode;
 /**
  * Enumeration for different nodes. All nodes are determined by a unique id.
  * 
- * @author Sebastian Graf, University of Konstanzs
+ * @author Sebastian Graf, University of Konstanz
  * 
  */
 public enum ENodes {
 
     /** Unknown kind. */
-    UNKOWN_KIND(0, 0, 0) {
+    UNKOWN_KIND(0) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
@@ -46,7 +46,7 @@ public enum ENodes {
 
     },
     /** Node kind is element. */
-    ELEMENT_KIND(1, 7, 5) {
+    ELEMENT_KIND(1) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
 
@@ -85,7 +85,7 @@ public enum ENodes {
 
     },
     /** Node kind is attribute. */
-    ATTRIBUTE_KIND(2, 3, 4) {
+    ATTRIBUTE_KIND(2) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             // node delegate
@@ -107,7 +107,7 @@ public enum ENodes {
 
     },
     /** Node kind is text. */
-    TEXT_KIND(3, 7, 2) {
+    TEXT_KIND(3) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             // node delegate
@@ -130,7 +130,7 @@ public enum ENodes {
 
     },
     /** Node kind is namespace. */
-    NAMESPACE_KIND(13, 3, 3) {
+    NAMESPACE_KIND(13) {
 
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
@@ -146,7 +146,7 @@ public enum ENodes {
 
     },
     /** Node kind is processing instruction. */
-    PROCESSING_KIND(7, 0, 0) {
+    PROCESSING_KIND(7) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
@@ -154,7 +154,7 @@ public enum ENodes {
 
     },
     /** Node kind is comment. */
-    COMMENT_KIND(8, 0, 0) {
+    COMMENT_KIND(8) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
@@ -162,7 +162,7 @@ public enum ENodes {
 
     },
     /** Node kind is document root. */
-    ROOT_KIND(9, 7, 1) {
+    ROOT_KIND(9) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             final NodeDelegate nodeDel = new NodeDelegate(
@@ -176,7 +176,7 @@ public enum ENodes {
 
     },
     /** Whitespace text. */
-    WHITESPACE_KIND(4, 0, 0) {
+    WHITESPACE_KIND(4) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             throw new UnsupportedOperationException();
@@ -184,7 +184,7 @@ public enum ENodes {
 
     },
     /** Node kind is deleted node. */
-    DELETE_KIND(5, 3, 1) {
+    DELETE_KIND(5) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
             final NodeDelegate delegate = new NodeDelegate(
@@ -198,11 +198,6 @@ public enum ENodes {
 
     /** Identifier. */
     private final int mKind;
-
-    /** Size in the long data array. */
-    private final int mIntSize;
-
-    private final int mLongSize;
 
     /** Mapping of keys -> Nodes */
     private final static Map<Integer, ENodes> MAPPING = new HashMap<Integer, ENodes>();
@@ -222,11 +217,8 @@ public enum ENodes {
      * @param paramIntSize
      *            the identifier
      */
-    private ENodes(final int paramKind, final int paramLongSize,
-            final int paramIntSize) {
+    private ENodes(final int paramKind) {
         mKind = paramKind;
-        mIntSize = paramIntSize * 4;
-        mLongSize = paramLongSize * 8;
     }
 
     /**
@@ -241,36 +233,6 @@ public enum ENodes {
     public abstract INode createNodeFromPersistence(final ITTSource paramSource);
 
     /**
-     * @return the byte size
-     */
-    int getIntSize() {
-        return mIntSize;
-    }
-
-    /**
-     * @return the pointer size
-     */
-    int getLongSize() {
-        return mLongSize;
-    }
-
-    byte[] readByteData(final ITTSource mSource) {
-        final byte[] mData = new byte[getIntSize()];
-        for (int i = 0; i < mData.length; i++) {
-            mData[i] = mSource.readByte();
-        }
-        return mData;
-    }
-
-    byte[] readPointerData(final ITTSource mSource) {
-        final byte[] mData = new byte[getLongSize()];
-        for (int i = 0; i < mData.length; i++) {
-            mData[i] = mSource.readByte();
-        }
-        return mData;
-    }
-
-    /**
      * Public method to get the related node based on the identifier.
      * 
      * @param paramKind
@@ -279,93 +241,6 @@ public enum ENodes {
      */
     public static ENodes getEnumKind(final int paramKind) {
         return MAPPING.get(paramKind);
-    }
-
-    /**
-     * Cloning long-array
-     * 
-     * @param paramInput
-     * @return the cloned array
-     */
-    public static long[] cloneData(final long[] paramInput) {
-        final long[] data = new long[paramInput.length];
-        System.arraycopy(paramInput, 0, data, 0, data.length);
-        return data;
-    }
-
-    /**
-     * Cloning int-array
-     * 
-     * @param paramInput
-     * @return the cloned array
-     */
-    public static int[] cloneData(final int[] paramInput) {
-        final int[] data = new int[paramInput.length];
-        System.arraycopy(paramInput, 0, data, 0, data.length);
-        return data;
-    }
-
-    /**
-     * Cloning byte-array
-     * 
-     * @param paramInput
-     * @return the cloned array
-     */
-    public static byte[] cloneData(final byte[] paramInput) {
-        final byte[] value = new byte[paramInput.length];
-        System.arraycopy(paramInput, 0, value, 0, value.length);
-        return value;
-    }
-
-    /**
-     * Converting a byte array to integer.
-     * 
-     * @param mByteArray
-     *            Byte array to convert.
-     * @return converted integer value.
-     */
-    protected static int byteArrayToInt(final byte[] mByteArray) {
-        final int mConvInt = ((mByteArray[0] & 0xff) << 24)
-                | ((mByteArray[1] & 0xff) << 16)
-                | ((mByteArray[2] & 0xff) << 8) | (mByteArray[3] & 0xff);
-
-        return mConvInt;
-    }
-
-    /**
-     * Converting a byte array to long.
-     * 
-     * @param mByteArray
-     *            Byte array to convert.
-     * @return converted long value.
-     */
-    protected static long byteArrayToLong(final byte[] mByteArray) {
-        final long mConvLong = ((long) (mByteArray[0] & 0xff) << 56)
-                | ((long) (mByteArray[1] & 0xff) << 48)
-                | ((long) (mByteArray[2] & 0xff) << 40)
-                | ((long) (mByteArray[3] & 0xff) << 32)
-                | ((long) (mByteArray[4] & 0xff) << 24)
-                | ((long) (mByteArray[5] & 0xff) << 16)
-                | ((long) (mByteArray[6] & 0xff) << 8)
-                | ((long) (mByteArray[7] & 0xff));
-
-        return mConvLong;
-    }
-
-    public long readLongBytes(final int mOffset, final byte[] mByteData) {
-        byte[] mBuffer = new byte[8];
-        for (int i = 0; i < 8; i++) {
-            mBuffer[i] = mByteData[mOffset + i];
-        }
-        return byteArrayToLong(mBuffer);
-    }
-
-    public int readIntBytes(final int mOffset, final byte[] mByteData) {
-        byte[] mBuffer = new byte[4];
-        for (int i = 0; i < 4; i++) {
-            mBuffer[i] = mByteData[mOffset + i];
-        }
-        return byteArrayToInt(mBuffer);
     }
 
 }
