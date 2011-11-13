@@ -28,7 +28,6 @@
 package org.treetank.node;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
@@ -94,16 +93,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
     @Override
     public void setValue(final byte[] pVal) {
         mValDel.setValue(pVal);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink pSink) {
-        mDel.serialize(pSink);
-        mValDel.serialize(pSink);
-        mStrucDel.serialize(pSink);
     }
 
     /** {@inheritDoc} */
@@ -375,6 +364,33 @@ public final class TextNode implements IStructNode, IValNode, INode {
         builder.append("\n");
         builder.append(mStrucDel.toString());
         return builder.toString();
+    }
+
+    /**
+     * Getting the inlying {@link NodeDelegate}.
+     * 
+     * @return
+     */
+    NodeDelegate getNodeDelegate() {
+        return mDel;
+    }
+
+    /**
+     * Getting the inlying {@link ValNodeDelegate}.
+     * 
+     * @return
+     */
+    ValNodeDelegate getValNodeDelegate() {
+        return mValDel;
+    }
+
+    /**
+     * Getting the inlying {@link StructNodeDelegate}.
+     * 
+     * @return
+     */
+    StructNodeDelegate getStrucNodeDelegate() {
+        return mStrucDel;
     }
 
 }

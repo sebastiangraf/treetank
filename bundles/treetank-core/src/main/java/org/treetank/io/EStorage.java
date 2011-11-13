@@ -12,8 +12,9 @@ import org.treetank.io.file.FileFactory;
 import org.treetank.io.file.FileKey;
 
 /**
- * Utility methods for the storage. Those methods included common deletion procedures as well as common
- * checks. Furthermore, specific serialization are summarized upon this enum.
+ * Utility methods for the storage. Those methods included common deletion
+ * procedures as well as common checks. Furthermore, specific serialization are
+ * summarized upon this enum.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -23,40 +24,33 @@ public enum EStorage {
     File(1, FileKey.class) {
 
         @Override
-        public IKey deserializeKey(final ITTSource paramSource) {
-            return new FileKey(paramSource.readLong(), paramSource.readLong());
+        public IKey deserialize(final ITTSource pSource) {
+            return new FileKey(pSource.readLong(), pSource.readLong());
         }
 
         @Override
-        public void serializeKey(ITTSink paramSink, final IKey paramKey) {
-            paramSink.writeInt(mIdent);
-            for (final long val : paramKey.getKeys()) {
-                paramSink.writeLong(val);
-            }
+        public void serialize(final ITTSink pSink, final IKey pKey) {
+            serializeKey(pKey, mIdent, pSink);
         }
     },
 
     Berkeley(2, BerkeleyKey.class) {
 
         @Override
-        public IKey deserializeKey(final ITTSource paramSource) {
-            return new BerkeleyKey(paramSource.readLong());
+        public IKey deserialize(final ITTSource pSource) {
+            return new BerkeleyKey(pSource.readLong());
         }
 
         @Override
-        public void serializeKey(ITTSink paramSink, final IKey paramKey) {
-            paramSink.writeInt(mIdent);
-            for (final long val : paramKey.getKeys()) {
-                paramSink.writeLong(val);
-            }
+        public void serialize(final ITTSink pSink, final IKey pKey) {
+            serializeKey(pKey, mIdent, pSink);
         }
 
     };
 
     /** Getting identifier mapping. */
     private static final Map<Integer, EStorage> INSTANCEFORID = new HashMap<Integer, EStorage>();
-    private static final Map<Class<? extends IKey>, EStorage> INSTANCEFORCLASS =
-        new HashMap<Class<? extends IKey>, EStorage>();
+    private static final Map<Class<? extends IKey>, EStorage> INSTANCEFORCLASS = new HashMap<Class<? extends IKey>, EStorage>();
     static {
         for (EStorage storage : values()) {
             INSTANCEFORID.put(storage.mIdent, storage);
@@ -88,7 +82,7 @@ public enum EStorage {
      *            where the key should be serialized from.
      * @return the {@link IKey} retrieved from the storage.
      */
-    public abstract IKey deserializeKey(final ITTSource paramSource);
+    public abstract IKey deserialize(final ITTSource paramSource);
 
     /**
      * Serialization of a key
@@ -98,7 +92,7 @@ public enum EStorage {
      * @param paramKey
      *            which should be serialized.
      */
-    public abstract void serializeKey(final ITTSink paramSink, final IKey paramKey);
+    public abstract void serialize(final ITTSink paramSink, final IKey paramKey);
 
     /**
      * Deleting a storage recursive. Used for deleting a databases
@@ -119,8 +113,8 @@ public enum EStorage {
     }
 
     /**
-     * Factory method to retrieve suitable {@link IStorage} instances based upon the suitable
-     * {@link ResourceConfiguration}.
+     * Factory method to retrieve suitable {@link IStorage} instances based upon
+     * the suitable {@link ResourceConfiguration}.
      * 
      * @param paramResourceConf
      *            determining the storage.
@@ -128,8 +122,8 @@ public enum EStorage {
      * @throws TTIOException
      *             if anything happens.
      */
-    public static final IStorage getStorage(final ResourceConfiguration paramResourceConf)
-        throws TTIOException {
+    public static final IStorage getStorage(
+            final ResourceConfiguration paramResourceConf) throws TTIOException {
         IStorage fac = null;
         final EStorage storageType = paramResourceConf.mType;
         switch (storageType) {
@@ -140,7 +134,8 @@ public enum EStorage {
             fac = new BerkeleyFactory(paramResourceConf.mPath);
             break;
         default:
-            throw new TTIOException("Type", storageType.toString(), "not valid!");
+            throw new TTIOException("Type", storageType.toString(),
+                    "not valid!");
         }
         return fac;
     }
@@ -163,7 +158,26 @@ public enum EStorage {
      *            the identifier of the enum.
      * @return a concrete enum
      */
-    public static final EStorage getInstance(final Class<? extends IKey> paramKey) {
+    public static final EStorage getInstance(
+            final Class<? extends IKey> paramKey) {
         return INSTANCEFORCLASS.get(paramKey);
+    }
+
+    /**
+     * Serializing the keys.
+     * 
+     * @param pKey
+     *            to serialize
+     * @param pId
+     *            to serialize
+     * @param pSink
+     *            to be serialized to
+     */
+    private static void serializeKey(final IKey pKey, final int pId,
+            final ITTSink pSink) {
+        pSink.writeInt(pId);
+        for (final long val : pKey.getKeys()) {
+            pSink.writeLong(val);
+        }
     }
 }

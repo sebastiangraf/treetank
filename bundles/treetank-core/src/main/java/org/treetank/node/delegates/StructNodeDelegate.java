@@ -1,7 +1,6 @@
 package org.treetank.node.delegates;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
@@ -116,17 +115,6 @@ public class StructNodeDelegate implements IStructNode {
     @Override
     public long getRightSiblingKey() {
         return mRightSibling;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink pSink) {
-        pSink.writeLong(mFirstChild);
-        pSink.writeLong(mRightSibling);
-        pSink.writeLong(mLeftSibling);
-        pSink.writeLong(mChildCount);
     }
 
     /**

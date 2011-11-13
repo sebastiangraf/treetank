@@ -3,7 +3,6 @@ package org.treetank.node.delegates;
 import java.util.Arrays;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.ENodes;
 import org.treetank.node.interfaces.IValNode;
 
@@ -47,6 +46,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for getNodeKey.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
@@ -56,6 +56,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for setNodeKey.
+     * 
      * @param pNodeKey
      * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
      */
@@ -65,6 +66,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for getParentKey.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
@@ -74,6 +76,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for setParentKey.
+     * 
      * @param pParentKey
      * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
      */
@@ -83,6 +86,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for getHash.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
@@ -92,6 +96,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for setHash.
+     * 
      * @param pHash
      * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
      */
@@ -101,6 +106,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for acceptVisitor.
+     * 
      * @param pVisitor
      * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
      */
@@ -110,6 +116,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for getTypeKey.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
@@ -119,6 +126,7 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for setTypeKey.
+     * 
      * @param pTypeKey
      * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
      */
@@ -128,24 +136,12 @@ public class ValNodeDelegate implements IValNode {
 
     /**
      * Delegate method for hasParent.
+     * 
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
         return mDelegate.hasParent();
-    }
-
-    /**
-     * Delegate method for serialize.
-     * 
-     * @param pSink
-     * @see org.treetank.node.delegates.NodeDelegate#serialize(org.treetank.io.ITTSink)
-     */
-    public void serialize(final ITTSink pSink) {
-        pSink.writeInt(mVal.length);
-        for (byte value : mVal) {
-            pSink.writeByte(value);
-        }
     }
 
     /**

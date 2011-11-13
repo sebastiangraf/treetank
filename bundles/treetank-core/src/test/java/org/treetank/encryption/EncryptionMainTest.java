@@ -18,8 +18,8 @@ import org.treetank.service.xml.xpath.XPathStringChecker;
 
 public class EncryptionMainTest {
 
-    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "auction.xml";
+    private static final String XML = "src" + File.separator + "test"
+            + File.separator + "resources" + File.separator + "auction.xml";
 
     private static Holder holder;
 
@@ -45,45 +45,37 @@ public class EncryptionMainTest {
     }
 
     @Test
-    public void executeEncryption() throws AbsTTException, TTEncryptionException {
+    @Ignore
+    public void executeEncryption() throws AbsTTException,
+            TTEncryptionException {
 
-        String[] nodes = new String[] {
-            "Inf", "Disy", "TT", "Group1"
-        };
+        String[] nodes = new String[] { "Inf", "Disy", "TT", "Group1" };
         EncryptionOperator op = new EncryptionOperator();
         op.join("ROOT", nodes);
 
-        String[] nodes2 = new String[] {
-            "BaseX", "Group2"
-        };
+        String[] nodes2 = new String[] { "BaseX", "Group2" };
         EncryptionOperator op2 = new EncryptionOperator();
         op2.join("Inf", nodes2);
 
-        String[] nodes3 = new String[] {
-            "RZ", "Waldvogel"
-        };
+        String[] nodes3 = new String[] { "RZ", "Waldvogel" };
         EncryptionOperator op3 = new EncryptionOperator();
         op3.join("ROOT", nodes3);
 
-        String[] nodes4 = new String[] {
-            "Waldvogel"
-        };
+        String[] nodes4 = new String[] { "Waldvogel" };
         EncryptionOperator op4 = new EncryptionOperator();
         op4.join("TT", nodes4);
 
         EncryptionOperator op10 = new EncryptionOperator();
-        op10.leave("Group2", new String[] {
-            "BaseX"
-        });
+        op10.leave("Group2", new String[] { "BaseX" });
 
         EncryptionOperator op9 = new EncryptionOperator();
         op9.leave("Waldvogel", new String[] {});
 
-        AbsAxis axis = new XPathAxis(holder.getRtx(), "/site/people/person[@id=\"person0\"]/name/text()");
+        AbsAxis axis = new XPathAxis(holder.getRtx(),
+                "/site/people/person[@id=\"person0\"]/name/text()");
 
-        XPathStringChecker.testIAxisConventions(axis, new String[] {
-            "Sinisa Farrel"
-        });
+        XPathStringChecker.testIAxisConventions(axis,
+                new String[] { "Sinisa Farrel" });
 
     }
 

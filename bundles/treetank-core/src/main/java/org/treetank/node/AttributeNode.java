@@ -28,7 +28,6 @@
 package org.treetank.node;
 
 import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -77,14 +76,6 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     @Override
     public ENodes getKind() {
         return ENodes.ATTRIBUTE_KIND;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void serialize(final ITTSink pSink) {
-        mDel.serialize(pSink);
-        mNameDel.serialize(pSink);
-        mValDel.serialize(pSink);
     }
 
     /** {@inheritDoc} */
@@ -300,4 +291,32 @@ public final class AttributeNode implements INode, IValNode, INameNode {
             return false;
         return true;
     }
+
+    /**
+     * Getting the inlying {@link NodeDelegate}.
+     * 
+     * @return
+     */
+    NodeDelegate getNodeDelegate() {
+        return mDel;
+    }
+
+    /**
+     * Getting the inlying {@link NameNodeDelegate}.
+     * 
+     * @return
+     */
+    NameNodeDelegate getNameNodeDelegate() {
+        return mNameDel;
+    }
+
+    /**
+     * Getting the inlying {@link ValNodeDelegate}.
+     * 
+     * @return
+     */
+    ValNodeDelegate getValNodeDelegate() {
+        return mValDel;
+    }
+
 }

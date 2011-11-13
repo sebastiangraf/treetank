@@ -27,6 +27,9 @@
 
 package org.treetank.node;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -34,37 +37,29 @@ import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.NamePageHash;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class TextNodeTest {
 
     @Test
     public void testTextRootNode() {
 
         // Create empty node.
-        final byte[] value = {
-            (byte)17, (byte)18
-        };
+        final byte[] value = { (byte) 17, (byte) 18 };
         final NodeDelegate del = new NodeDelegate(13, 14, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(del, value);
-        final StructNodeDelegate strucDel =
-            new StructNodeDelegate(del, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), 16l, 15l, 0l);
+        final StructNodeDelegate strucDel = new StructNodeDelegate(del,
+                (Long) EFixed.NULL_NODE_KEY.getStandardProperty(), 16l, 15l, 0l);
         final TextNode node1 = new TextNode(del, valDel, strucDel);
         check(node1);
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        node1.serialize(out);
+        ENodes.getKind(node1.getClass()).serialize(out, node1);
         out.position(0);
-        final TextNode node2 = (TextNode)ENodes.TEXT_KIND.createNodeFromPersistence(out);
+        final TextNode node2 = (TextNode) ENodes.TEXT_KIND.deserialize(out);
         check(node2);
 
         // Clone node.
-        final TextNode node3 = (TextNode)node2.clone();
+        final TextNode node3 = (TextNode) node2.clone();
         check(node3);
     }
 
@@ -73,10 +68,12 @@ public class TextNodeTest {
         // Now compare.
         assertEquals(13L, node.getNodeKey());
         assertEquals(14L, node.getParentKey());
-        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node.getFirstChildKey());
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
+                node.getFirstChildKey());
         assertEquals(15L, node.getLeftSiblingKey());
         assertEquals(16L, node.getRightSiblingKey());
-        assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
+        assertEquals(NamePageHash.generateHashForString("xs:untyped"),
+                node.getTypeKey());
         assertEquals(2, node.getRawValue().length);
         assertEquals(ENodes.TEXT_KIND, node.getKind());
         assertEquals(false, node.hasFirstChild());

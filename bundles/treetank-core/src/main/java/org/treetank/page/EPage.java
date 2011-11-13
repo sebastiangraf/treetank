@@ -78,7 +78,7 @@ public enum EPage {
             refs[offset] = new PageReference();
             final EStorage storage = EStorage.getInstance(paramIn.readInt());
             if (storage != null) {
-                refs[offset].setKey(storage.deserializeKey(paramIn));
+                refs[offset].setKey(storage.deserialize(paramIn));
             }
         }
         return refs;

@@ -69,7 +69,7 @@ class PageDelegate implements IPage {
             getReferences()[offset] = new PageReference();
             final EStorage storage = EStorage.getInstance(paramIn.readInt());
             if (storage != null) {
-                getReferences()[offset].setKey(storage.deserializeKey(paramIn));
+                getReferences()[offset].setKey(storage.deserialize(paramIn));
             }
 
         }
@@ -122,7 +122,7 @@ class PageDelegate implements IPage {
                 paramOut.writeInt(0);
             } else {
                 EStorage.getInstance(reference.getKey().getClass())
-                    .serializeKey(paramOut, reference.getKey());
+                    .serialize(paramOut, reference.getKey());
             }
 
         }
