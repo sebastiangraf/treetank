@@ -28,7 +28,6 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
-import org.treetank.node.AbsNode;
 import org.treetank.node.ENodes;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.io.NodeInputSource;
