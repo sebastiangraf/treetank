@@ -88,17 +88,21 @@ public enum ENodes {
     ATTRIBUTE_KIND(2, 3, 4) {
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
-
-            final byte[] pointerData = readPointerData(paramSource);
-
-            final byte[] byteData = readByteData(paramSource);
-
-            final byte[] value = new byte[readIntBytes(
-                    AttributeNode.VALUE_LENGTH, byteData)];
-            for (int i = 0; i < value.length; i++) {
-                value[i] = paramSource.readByte();
+            // node delegate
+            final NodeDelegate nodeDel = new NodeDelegate(
+                    paramSource.readLong(), paramSource.readLong(),
+                    paramSource.readLong());
+            // name delegate
+            final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel,
+                    paramSource.readInt(), paramSource.readInt());
+            // val delegate
+            final byte[] vals = new byte[paramSource.readInt()];
+            for (int i = 0; i < vals.length; i++) {
+                vals[i] = paramSource.readByte();
             }
-            return new AttributeNode(byteData, pointerData, value);
+            final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, vals);
+
+            return new AttributeNode(nodeDel, nameDel, valDel);
         }
 
     },
@@ -130,9 +134,11 @@ public enum ENodes {
 
         @Override
         public INode createNodeFromPersistence(final ITTSource paramSource) {
+            // node delegate
             final NodeDelegate nodeDel = new NodeDelegate(
                     paramSource.readLong(), paramSource.readLong(),
                     paramSource.readLong());
+            // name delegate
             final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel,
                     paramSource.readInt(), paramSource.readInt());
             return new NamespaceNode(nodeDel, nameDel);

@@ -48,8 +48,11 @@ import org.treetank.settings.EFixed;
  */
 public final class ElementNode implements IStructNode, INameNode {
 
+    /** Delegate for common node information. */
     private final NodeDelegate mDel;
+    /** Delegate for struct node information. */
     private final StructNodeDelegate mStrucDel;
+    /** Delegate for name node information. */
     private final NameNodeDelegate mNameDel;
 
     /** Keys of attributes. */
@@ -58,6 +61,20 @@ public final class ElementNode implements IStructNode, INameNode {
     /** Keys of namespace declarations. */
     private final List<Long> mNamespaceKeys;
 
+    /**
+     * Constructor
+     * 
+     * @param pDel
+     *            {@link NodeDelegate} to be set
+     * @param pStrucDel
+     *            {@link StructNodeDelegate} to be set
+     * @param pNameDel
+     *            {@link NameNodeDelegate} to be set
+     * @param pAttributeKeys
+     *            keys of attributes to be set
+     * @param pNamespaceKeys
+     *            keys of namespaces to be set
+     */
     public ElementNode(final NodeDelegate pDel,
             final StructNodeDelegate pStrucDel,
             final NameNodeDelegate pNameDel, final List<Long> pAttributeKeys,

@@ -27,10 +27,12 @@
 
 package org.treetank.node;
 
-import java.util.Arrays;
-
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
+import org.treetank.node.delegates.NameNodeDelegate;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
@@ -42,75 +44,33 @@ import org.treetank.node.interfaces.IValNode;
  * Node representing an attribute.
  * </p>
  */
-public final class AttributeNode extends AbsNode implements INode, IValNode, INameNode {
+public final class AttributeNode implements INode, IValNode, INameNode {
 
-    protected static final int NAME_KEY = 4;
+    /** Delegate for common node information. */
+    private final NodeDelegate mDel;
 
-    protected static final int URI_KEY = 8;
+    /** Delegate for name node information. */
+    private final NameNodeDelegate mNameDel;
 
-    protected static final int VALUE_LENGTH = 12;
-
-    /** Value of attribute. */
-    private byte[] mValue;
+    /** Delegate for val node information. */
+    private final ValNodeDelegate mValDel;
 
     /**
      * Creating an attribute.
      * 
-     * @param paramByteBuilder
-     *            byte array with data
-     * @param paramPointerBuilder
-     *            byte array with data
-     * @param paramValue
-     *            value for the node
+     * @param pDel
+     *            {@link NodeDelegate} to be set
+     * @param pDel
+     *            {@link StructNodeDelegate} to be set
+     * @param pValDel
+     *            {@link ValNodeDelegate} to be set
+     * 
      */
-    AttributeNode(final byte[] paramByteBuilder, final byte[] paramPointerBuilder, final byte[] paramValue) {
-        super(paramByteBuilder, paramPointerBuilder);
-        mValue = paramValue;
-        writeIntBytes(VALUE_LENGTH, mValue.length);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int getNameKey() {
-        return readIntBytes(NAME_KEY);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setNameKey(final int paramNameKey) {
-        writeIntBytes(NAME_KEY, paramNameKey);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasParent() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int getURIKey() {
-        return readIntBytes(URI_KEY);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setURIKey(final int paramUriKey) {
-        writeIntBytes(URI_KEY, paramUriKey);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public byte[] getRawValue() {
-        return mValue;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setValue(final byte[] paramValue) {
-        writeIntBytes(VALUE_LENGTH, paramValue.length);
-
-        mValue = paramValue;
+    public AttributeNode(final NodeDelegate pDel,
+            final NameNodeDelegate pNameDel, final ValNodeDelegate pValDel) {
+        mDel = pDel;
+        mNameDel = pNameDel;
+        mValDel = pValDel;
     }
 
     /** {@inheritDoc} */
@@ -121,80 +81,223 @@ public final class AttributeNode extends AbsNode implements INode, IValNode, INa
 
     /** {@inheritDoc} */
     @Override
-    public void serialize(final ITTSink paramNodeOut) {
-        super.serialize(paramNodeOut);
-        for (final byte byteVal : mValue) {
-            paramNodeOut.writeByte(byteVal);
-        }
+    public void serialize(final ITTSink pSink) {
+        mDel.serialize(pSink);
+        mNameDel.serialize(pSink);
+        mValDel.serialize(pSink);
     }
 
     /** {@inheritDoc} */
     @Override
-    public AbsNode clone() {
-        final AbsNode toClone =
-            new AttributeNode(ENodes.cloneData(mByteData), ENodes.cloneData(mPointerData), ENodes
-                .cloneData(mValue));
+    public AttributeNode clone() {
+        final AttributeNode toClone = new AttributeNode(mDel.clone(),
+                mNameDel.clone(), mValDel.clone());
         return toClone;
     }
 
-    public static AbsNode createData(final long mNodeKey, final long mParentKey, final int mNameKey,
-        final int mUriKey, final int mType, final byte[] mValue) {
-
-        final byte[] byteData = new byte[ENodes.ATTRIBUTE_KIND.getIntSize()];
-
-        final byte[] pointerData = new byte[ENodes.ATTRIBUTE_KIND.getLongSize()];
-
-        int mCount = AbsNode.NODE_KEY;
-        for (byte aByte : longToByteArray(mNodeKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AbsNode.PARENT_KEY;
-        for (byte aByte : longToByteArray(mParentKey)) {
-            pointerData[mCount++] = aByte;
-        }
-
-        mCount = AttributeNode.NAME_KEY;
-        for (byte aByte : intToByteArray(mNameKey)) {
-            byteData[mCount++] = aByte;
-        }
-
-        mCount = AttributeNode.URI_KEY;
-        for (byte aByte : intToByteArray(mUriKey)) {
-            byteData[mCount++] = aByte;
-        }
-
-        mCount = AbsNode.TYPE_KEY;
-        for (byte aByte : intToByteArray(mType)) {
-            byteData[mCount++] = aByte;
-        }
-
-        return new AttributeNode(byteData, pointerData, mValue);
-    }
-
     /** {@inheritDoc} */
     @Override
-    public String toString() {
-        final int valLength = readIntBytes(VALUE_LENGTH);
-        return new StringBuilder(super.toString()).append("\n\tname key: ").append(getNameKey()).append(
-            "\n\turi key: ").append(getURIKey()).append("\n\ttype: ").append(getTypeKey()).append(
-            "\n\tvalue length: ").append(valLength).append("\n\tvalue: ").append(new String(mValue))
-            .toString();
+    public void acceptVisitor(final IVisitor pVisitor) {
+        pVisitor.visit(this);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Delegate method for getNodeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     */
+    public long getNodeKey() {
+        return mDel.getNodeKey();
+    }
+
+    /**
+     * Delegate method for setNodeKey.
+     * 
+     * @param pNodeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
+     */
+    public void setNodeKey(final long pNodeKey) {
+        mDel.setNodeKey(pNodeKey);
+    }
+
+    /**
+     * Delegate method for getParentKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     */
+    public long getParentKey() {
+        return mDel.getParentKey();
+    }
+
+    /**
+     * Delegate method for setParentKey.
+     * 
+     * @param pParentKey
+     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     */
+    public void setParentKey(final long pParentKey) {
+        mDel.setParentKey(pParentKey);
+    }
+
+    /**
+     * Delegate method for getHash.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDel.getHash();
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param pHash
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     */
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        final StringBuilder builder = new StringBuilder(mDel.toString());
+        builder.append("\n");
+        builder.append(mNameDel.toString());
+        builder.append("\n");
+        builder.append(mValDel.toString());
+        return builder.toString();
+    }
+
+    /**
+     * Delegate method for getTypeKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     */
+    public int getTypeKey() {
+        return mDel.getTypeKey();
+    }
+
+    /**
+     * Delegate method for setTypeKey.
+     * 
+     * @param pTypeKey
+     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     */
+    public void setTypeKey(final int pTypeKey) {
+        mDel.setTypeKey(pTypeKey);
+    }
+
+    /**
+     * Delegate method for hasParent.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     */
+    public boolean hasParent() {
+        return mDel.hasParent();
+    }
+
+    /**
+     * Delegate method for getNameKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NameNodeDelegate#getNameKey()
+     */
+    public int getNameKey() {
+        return mNameDel.getNameKey();
+    }
+
+    /**
+     * Delegate method for getURIKey.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.NameNodeDelegate#getURIKey()
+     */
+    public int getURIKey() {
+        return mNameDel.getURIKey();
+    }
+
+    /**
+     * Delegate method for setNameKey.
+     * 
+     * @param pNameKey
+     * @see org.treetank.node.delegates.NameNodeDelegate#setNameKey(int)
+     */
+    public void setNameKey(final int pNameKey) {
+        mNameDel.setNameKey(pNameKey);
+    }
+
+    /**
+     * Delegate method for setURIKey.
+     * 
+     * @param pUriKey
+     * @see org.treetank.node.delegates.NameNodeDelegate#setURIKey(int)
+     */
+    public void setURIKey(final int pUriKey) {
+        mNameDel.setURIKey(pUriKey);
+    }
+
+    /**
+     * Delegate method for getRawValue.
+     * 
+     * @return
+     * @see org.treetank.node.delegates.ValNodeDelegate#getRawValue()
+     */
+    public byte[] getRawValue() {
+        return mValDel.getRawValue();
+    }
+
+    /**
+     * Delegate method for setValue.
+     * 
+     * @param pVal
+     * @see org.treetank.node.delegates.ValNodeDelegate#setValue(byte[])
+     */
+    public void setValue(final byte[] pVal) {
+        mValDel.setValue(pVal);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
-        final int prime = 44819;
+        final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(mByteData);
-        result = prime * result + Arrays.hashCode(mValue);
+        result = prime * result
+                + ((mNameDel == null) ? 0 : mNameDel.hashCode());
+        result = prime * result + ((mValDel == null) ? 0 : mValDel.hashCode());
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void acceptVisitor(final IVisitor paramVisitor) {
-        paramVisitor.visit(this);
+    public boolean equals(final Object pObj) {
+        if (this == pObj)
+            return true;
+        if (pObj == null)
+            return false;
+        if (getClass() != pObj.getClass())
+            return false;
+        AttributeNode other = (AttributeNode) pObj;
+        if (mNameDel == null) {
+            if (other.mNameDel != null)
+                return false;
+        } else if (!mNameDel.equals(other.mNameDel))
+            return false;
+        if (mValDel == null) {
+            if (other.mValDel != null)
+                return false;
+        } else if (!mValDel.equals(other.mValDel))
+            return false;
+        return true;
     }
 }
