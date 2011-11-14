@@ -29,7 +29,6 @@ package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
@@ -60,6 +59,45 @@ public class UpdateTest {
     @After
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
+    }
+
+    @Test
+    public void testNodeTransactionIsolation() throws AbsTTException {
+        IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        wtx.insertElementAsFirstChild(new QName(""));
+        testNodeTransactionIsolation(wtx);
+        wtx.commit();
+        testNodeTransactionIsolation(wtx);
+        IReadTransaction rtx = holder.getSession().beginReadTransaction();
+        testNodeTransactionIsolation(rtx);
+        wtx.moveToFirstChild();
+        wtx.insertElementAsFirstChild(new QName(""));
+        testNodeTransactionIsolation(rtx);
+        wtx.commit();
+        testNodeTransactionIsolation(rtx);
+        rtx.close();
+        wtx.close();
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testNodeTransactionIsolation()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testNodeTransactionIsolation(final IReadTransaction pRtx) throws AbsTTException {
+        assertTrue(pRtx.moveToDocumentRoot());
+        assertEquals(0, pRtx.getNode().getNodeKey());
+        assertTrue(pRtx.moveToFirstChild());
+        assertEquals(1, pRtx.getNode().getNodeKey());
+        assertEquals(0, ((IStructNode)pRtx.getNode()).getChildCount());
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
+            .getStructuralNode().getRightSiblingKey());
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
+            .getStructuralNode().getFirstChildKey());
     }
 
     @Test
@@ -100,30 +138,23 @@ public class UpdateTest {
 
     @Test
     public void testInsertPath() throws AbsTTException {
-
         IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
-
         wtx.commit();
         wtx.close();
 
         wtx = holder.getSession().beginWriteTransaction();
-        assertNotNull(wtx.moveToDocumentRoot());
+        assertTrue(wtx.moveToDocumentRoot());
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
-
         assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(3L, wtx.insertElementAsFirstChild(new QName("")));
-
-        assertNotNull(wtx.moveToParent());
+        assertTrue(wtx.moveToParent());
         assertEquals(4L, wtx.insertElementAsRightSibling(new QName("")));
-
         wtx.commit();
         wtx.close();
 
         final IWriteTransaction wtx2 = holder.getSession().beginWriteTransaction();
-
-        assertNotNull(wtx2.moveToDocumentRoot());
+        assertTrue(wtx2.moveToDocumentRoot());
         assertEquals(5L, wtx2.insertElementAsFirstChild(new QName("")));
-
         wtx2.commit();
         wtx2.close();
 
@@ -140,20 +171,33 @@ public class UpdateTest {
             wtx.insertElementAsRightSibling(new QName(""));
         }
 
-        assertTrue(wtx.moveTo(2L));
-        assertEquals(2L, wtx.getNode().getNodeKey());
-
-        wtx.abort();
+        testPageBoundary(wtx);
+        wtx.commit();
+        testPageBoundary(wtx);
         wtx.close();
+        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
+        testPageBoundary(rtx);
+        rtx.close();
+
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testPageBoundary()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testPageBoundary(final IReadTransaction pRtx) throws AbsTTException {
+        assertTrue(pRtx.moveTo(2L));
+        assertEquals(2L, pRtx.getNode().getNodeKey());
     }
 
     @Test(expected = TTUsageException.class)
     public void testRemoveDocument() throws AbsTTException {
         final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
-
         wtx.moveToDocumentRoot();
-
         try {
             wtx.remove();
         } finally {
@@ -170,22 +214,36 @@ public class UpdateTest {
         wtx.commit();
         wtx.moveTo(5L);
         wtx.remove();
+        testRemoveDescendant(wtx);
         wtx.commit();
+        testRemoveDescendant(wtx);
         wtx.close();
         final IReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertEquals(0, rtx.getNode().getNodeKey());
-        assertTrue(rtx.moveToFirstChild());
-        assertEquals(1, rtx.getNode().getNodeKey());
-        assertEquals(4, ((IStructNode)rtx.getNode()).getChildCount());
-        assertTrue(rtx.moveToFirstChild());
-        assertEquals(4, rtx.getNode().getNodeKey());
-        assertTrue(rtx.moveToRightSibling());
-        assertEquals(8, rtx.getNode().getNodeKey());
-        assertTrue(rtx.moveToRightSibling());
-        assertEquals(9, rtx.getNode().getNodeKey());
-        assertTrue(rtx.moveToRightSibling());
-        assertEquals(13, rtx.getNode().getNodeKey());
+        testRemoveDescendant(rtx);
         rtx.close();
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testRemoveDescendant()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testRemoveDescendant(final IReadTransaction pRtx) throws AbsTTException {
+        assertTrue(pRtx.moveToDocumentRoot());
+        assertEquals(0, pRtx.getNode().getNodeKey());
+        assertTrue(pRtx.moveToFirstChild());
+        assertEquals(1, pRtx.getNode().getNodeKey());
+        assertEquals(4, ((IStructNode)pRtx.getNode()).getChildCount());
+        assertTrue(pRtx.moveToFirstChild());
+        assertEquals(4, pRtx.getNode().getNodeKey());
+        assertTrue(pRtx.moveToRightSibling());
+        assertEquals(8, pRtx.getNode().getNodeKey());
+        assertTrue(pRtx.moveToRightSibling());
+        assertEquals(9, pRtx.getNode().getNodeKey());
+        assertTrue(pRtx.moveToRightSibling());
+        assertEquals(13, pRtx.getNode().getNodeKey());
     }
 
     @Test
@@ -194,20 +252,33 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(7);
         wtx.moveSubtreeToFirstChild(6);
+        testFirstMoveToFirstChild(wtx);
         wtx.commit();
+        testFirstMoveToFirstChild(wtx);
         wtx.close();
         final IReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertTrue(rtx.moveTo(4));
-        assertEquals(rtx.getValueOfCurrentNode(), "oops1");
-        assertTrue(rtx.moveTo(7));
-        assertFalse(rtx.getStructuralNode().hasLeftSibling());
-        assertTrue(rtx.getStructuralNode().hasFirstChild());
-        assertTrue(rtx.moveToFirstChild());
-        assertFalse(rtx.getStructuralNode().hasFirstChild());
-        assertFalse(rtx.getStructuralNode().hasLeftSibling());
-        assertFalse(rtx.getStructuralNode().hasRightSibling());
-        assertEquals("foo", rtx.getValueOfCurrentNode());
+        testFirstMoveToFirstChild(rtx);
         rtx.close();
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testFirstMoveToFirstChild()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testFirstMoveToFirstChild(final IReadTransaction pRtx) throws AbsTTException {
+        assertTrue(pRtx.moveTo(4));
+        assertEquals(pRtx.getValueOfCurrentNode(), "oops1");
+        assertTrue(pRtx.moveTo(7));
+        assertFalse(pRtx.getStructuralNode().hasLeftSibling());
+        assertTrue(pRtx.getStructuralNode().hasFirstChild());
+        assertTrue(pRtx.moveToFirstChild());
+        assertFalse(pRtx.getStructuralNode().hasFirstChild());
+        assertFalse(pRtx.getStructuralNode().hasLeftSibling());
+        assertFalse(pRtx.getStructuralNode().hasRightSibling());
+        assertEquals("foo", pRtx.getValueOfCurrentNode());
     }
 
     @Test
@@ -216,23 +287,36 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(5);
         wtx.moveSubtreeToFirstChild(4);
+        testSecondMoveToFirstChild(wtx);
         wtx.commit();
+        testSecondMoveToFirstChild(wtx);
         wtx.close();
         final IReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertTrue(rtx.moveTo(5));
-        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
-            .getStructuralNode().getLeftSiblingKey());
-        assertEquals(4L, rtx.getStructuralNode().getFirstChildKey());
-        assertFalse(rtx.moveTo(6));
-        assertTrue(rtx.moveTo(4));
-        assertEquals("oops1foo", rtx.getValueOfCurrentNode());
-        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
-            .getStructuralNode().getLeftSiblingKey());
-        assertEquals(5L, rtx.getStructuralNode().getParentKey());
-        assertEquals(7L, rtx.getStructuralNode().getRightSiblingKey());
-        assertTrue(rtx.moveTo(7));
-        assertEquals(4L, rtx.getStructuralNode().getLeftSiblingKey());
+        testSecondMoveToFirstChild(rtx);
         rtx.close();
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testThirdMoveToFirstChild()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testSecondMoveToFirstChild(final IReadTransaction pRtx) throws AbsTTException {
+        assertTrue(pRtx.moveTo(5));
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertEquals(4L, pRtx.getStructuralNode().getFirstChildKey());
+        assertFalse(pRtx.moveTo(6));
+        assertTrue(pRtx.moveTo(4));
+        assertEquals("oops1foo", pRtx.getValueOfCurrentNode());
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertEquals(5L, pRtx.getStructuralNode().getParentKey());
+        assertEquals(7L, pRtx.getStructuralNode().getRightSiblingKey());
+        assertTrue(pRtx.moveTo(7));
+        assertEquals(4L, pRtx.getStructuralNode().getLeftSiblingKey());
     }
 
     @Test
@@ -241,20 +325,33 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(5);
         wtx.moveSubtreeToFirstChild(11);
+        testThirdMoveToFirstChild(wtx);
         wtx.commit();
+        testThirdMoveToFirstChild(wtx);
         wtx.close();
         final IReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertTrue(rtx.moveTo(5));
-        assertEquals(11L, rtx.getStructuralNode().getFirstChildKey());
-        assertTrue(rtx.moveTo(11));
-        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
-            .getStructuralNode().getLeftSiblingKey());
-        assertEquals(5L, rtx.getStructuralNode().getParentKey());
-        assertEquals(6L, rtx.getStructuralNode().getRightSiblingKey());
-        assertTrue(rtx.moveTo(6L));
-        assertEquals(11L, rtx.getStructuralNode().getLeftSiblingKey());
-        assertEquals(7L, rtx.getStructuralNode().getRightSiblingKey());
+        testThirdMoveToFirstChild(rtx);
         rtx.close();
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testThirdMoveToFirstChild()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testThirdMoveToFirstChild(final IReadTransaction pRtx) throws AbsTTException {
+        assertTrue(pRtx.moveTo(5));
+        assertEquals(11L, pRtx.getStructuralNode().getFirstChildKey());
+        assertTrue(pRtx.moveTo(11));
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertEquals(5L, pRtx.getStructuralNode().getParentKey());
+        assertEquals(6L, pRtx.getStructuralNode().getRightSiblingKey());
+        assertTrue(pRtx.moveTo(6L));
+        assertEquals(11L, pRtx.getStructuralNode().getLeftSiblingKey());
+        assertEquals(7L, pRtx.getStructuralNode().getRightSiblingKey());
     }
 
     @Test(expected = TTUsageException.class)
@@ -273,18 +370,32 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(7);
         wtx.moveSubtreeToRightSibling(6);
+        testFirstMoveSubtreeToRightSibling(wtx);
         wtx.commit();
+        testFirstMoveSubtreeToRightSibling(wtx);
         wtx.close();
         final IReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertTrue(rtx.moveTo(7));
-        assertFalse(rtx.getStructuralNode().hasLeftSibling());
-        assertTrue(rtx.getStructuralNode().hasRightSibling());
-        assertTrue(rtx.moveToRightSibling());
-        assertEquals(6L, rtx.getNode().getNodeKey());
-        assertEquals("foo", rtx.getValueOfCurrentNode());
-        assertTrue(rtx.getStructuralNode().hasLeftSibling());
-        assertEquals(7L, rtx.getStructuralNode().getLeftSiblingKey());
+        testFirstMoveSubtreeToRightSibling(rtx);
         rtx.close();
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testFirstMoveSubtreeToRightSibling()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testFirstMoveSubtreeToRightSibling(final IReadTransaction pRtx)
+        throws AbsTTException {
+        assertTrue(pRtx.moveTo(7));
+        assertFalse(pRtx.getStructuralNode().hasLeftSibling());
+        assertTrue(pRtx.getStructuralNode().hasRightSibling());
+        assertTrue(pRtx.moveToRightSibling());
+        assertEquals(6L, pRtx.getNode().getNodeKey());
+        assertEquals("foo", pRtx.getValueOfCurrentNode());
+        assertTrue(pRtx.getStructuralNode().hasLeftSibling());
+        assertEquals(7L, pRtx.getStructuralNode().getLeftSiblingKey());
     }
 
     @Test
@@ -293,19 +404,35 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(9);
         wtx.moveSubtreeToRightSibling(5);
+        // TODO FIX IT!
+        // testFourthMoveSubtreeToRightSibling(wtx);
         wtx.commit();
+        testSecondMoveSubtreeToRightSibling(wtx);
         wtx.close();
         final IReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertTrue(rtx.moveTo(4));
-        // Assert that oops1 and oops2 text nodes merged.
-        assertEquals("oops1oops2", rtx.getValueOfCurrentNode());
-        assertFalse(rtx.moveTo(8));
-        assertTrue(rtx.moveTo(9));
-        assertEquals(5L, rtx.getStructuralNode().getRightSiblingKey());
-        assertTrue(rtx.moveTo(5));
-        assertEquals(9L, rtx.getStructuralNode().getLeftSiblingKey());
-        assertEquals(13L, rtx.getStructuralNode().getRightSiblingKey());
+        testSecondMoveSubtreeToRightSibling(rtx);
         rtx.close();
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testSecondMoveSubtreeToRightSibling()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testSecondMoveSubtreeToRightSibling(final IReadTransaction pRtx)
+        throws AbsTTException {
+        assertTrue(pRtx.moveToDocumentRoot());
+        assertTrue(pRtx.moveTo(4));
+        // Assert that oops1 and oops2 text nodes merged.
+        assertEquals("oops1oops2", pRtx.getValueOfCurrentNode());
+        assertFalse(pRtx.moveTo(8));
+        assertTrue(pRtx.moveTo(9));
+        assertEquals(5L, pRtx.getStructuralNode().getRightSiblingKey());
+        assertTrue(pRtx.moveTo(5));
+        assertEquals(9L, pRtx.getStructuralNode().getLeftSiblingKey());
+        assertEquals(13L, pRtx.getStructuralNode().getRightSiblingKey());
     }
 
     @Test
@@ -314,19 +441,35 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(9);
         wtx.moveSubtreeToRightSibling(4);
+        // TODO FIX IT!
+        // testFourthMoveSubtreeToRightSibling(wtx);
         wtx.commit();
+        testThirdMoveSubtreeToRightSibling(wtx);
         wtx.close();
         final IReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertTrue(rtx.moveTo(4));
-        // Assert that oops1 and oops3 text nodes merged.
-        assertEquals("oops1oops3", rtx.getValueOfCurrentNode());
-        assertFalse(rtx.moveTo(13));
-        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
-            .getStructuralNode().getRightSiblingKey());
-        assertEquals(9L, rtx.getStructuralNode().getLeftSiblingKey());
-        assertTrue(rtx.moveTo(9));
-        assertEquals(4L, rtx.getStructuralNode().getRightSiblingKey());
+        testThirdMoveSubtreeToRightSibling(rtx);
         rtx.close();
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testThirdMoveSubtreeToRightSibling()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testThirdMoveSubtreeToRightSibling(final IReadTransaction pRtx)
+        throws AbsTTException {
+        assertTrue(pRtx.moveToDocumentRoot());
+        assertTrue(pRtx.moveTo(4));
+        // Assert that oops1 and oops3 text nodes merged.
+        assertEquals("oops1oops3", pRtx.getValueOfCurrentNode());
+        assertFalse(pRtx.moveTo(13));
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
+            .getStructuralNode().getRightSiblingKey());
+        assertEquals(9L, pRtx.getStructuralNode().getLeftSiblingKey());
+        assertTrue(pRtx.moveTo(9));
+        assertEquals(4L, pRtx.getStructuralNode().getRightSiblingKey());
     }
 
     @Test
@@ -335,22 +478,37 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(8);
         wtx.moveSubtreeToRightSibling(4);
+        testFourthMoveSubtreeToRightSibling(wtx);
         wtx.commit();
+        testFourthMoveSubtreeToRightSibling(wtx);
         wtx.close();
         final IReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertTrue(rtx.moveTo(4));
-        // Assert that oops2 and oops1 text nodes merged.
-        assertEquals("oops2oops1", rtx.getValueOfCurrentNode());
-        assertFalse(rtx.moveTo(8));
-        assertEquals(9L, rtx.getStructuralNode().getRightSiblingKey());
-        assertEquals(5L, rtx.getStructuralNode().getLeftSiblingKey());
-        assertTrue(rtx.moveTo(5L));
-        assertEquals(4L, rtx.getStructuralNode().getRightSiblingKey());
-        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), rtx
-            .getStructuralNode().getLeftSiblingKey());
-        assertTrue(rtx.moveTo(9));
-        assertEquals(4L, rtx.getStructuralNode().getLeftSiblingKey());
+        testFourthMoveSubtreeToRightSibling(rtx);
         rtx.close();
+
+    }
+
+    /**
+     * Testmethod for {@link UpdateTest#testFourthMoveSubtreeToRightSibling()} for having different rtx.
+     * 
+     * @param pRtx
+     *            to test with
+     * @throws AbsTTException
+     */
+    private final static void testFourthMoveSubtreeToRightSibling(final IReadTransaction pRtx)
+        throws AbsTTException {
+        assertTrue(pRtx.moveTo(4));
+        // Assert that oops2 and oops1 text nodes merged.
+        assertEquals("oops2oops1", pRtx.getValueOfCurrentNode());
+        assertFalse(pRtx.moveTo(8));
+        assertEquals(9L, pRtx.getStructuralNode().getRightSiblingKey());
+        assertEquals(5L, pRtx.getStructuralNode().getLeftSiblingKey());
+        assertTrue(pRtx.moveTo(5L));
+        assertEquals(4L, pRtx.getStructuralNode().getRightSiblingKey());
+        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
+            .getStructuralNode().getLeftSiblingKey());
+        assertTrue(pRtx.moveTo(9));
+        assertEquals(4L, pRtx.getStructuralNode().getLeftSiblingKey());
     }
 
 }

@@ -168,15 +168,6 @@ public final class DeletedNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public INode clone() {
-        final INode toClone = new DeletedNode(mDel.clone());
-        return toClone;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -195,7 +186,7 @@ public final class DeletedNode implements INode {
             return false;
         if (getClass() != pObj.getClass())
             return false;
-        DeletedNode other = (DeletedNode) pObj;
+        DeletedNode other = (DeletedNode)pObj;
         if (mDel == null) {
             if (other.mDel != null)
                 return false;

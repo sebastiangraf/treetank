@@ -65,8 +65,8 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      *            {@link ValNodeDelegate} to be set
      * 
      */
-    public AttributeNode(final NodeDelegate pDel,
-            final NameNodeDelegate pNameDel, final ValNodeDelegate pValDel) {
+    public AttributeNode(final NodeDelegate pDel, final NameNodeDelegate pNameDel,
+        final ValNodeDelegate pValDel) {
         mDel = pDel;
         mNameDel = pNameDel;
         mValDel = pValDel;
@@ -76,14 +76,6 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     @Override
     public ENodes getKind() {
         return ENodes.ATTRIBUTE_KIND;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public AttributeNode clone() {
-        final AttributeNode toClone = new AttributeNode(mDel.clone(),
-                mNameDel.clone(), mValDel.clone());
-        return toClone;
     }
 
     /** {@inheritDoc} */
@@ -261,8 +253,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((mNameDel == null) ? 0 : mNameDel.hashCode());
+        result = prime * result + ((mNameDel == null) ? 0 : mNameDel.hashCode());
         result = prime * result + ((mValDel == null) ? 0 : mValDel.hashCode());
         return result;
     }
@@ -278,7 +269,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
             return false;
         if (getClass() != pObj.getClass())
             return false;
-        AttributeNode other = (AttributeNode) pObj;
+        AttributeNode other = (AttributeNode)pObj;
         if (mNameDel == null) {
             if (other.mNameDel != null)
                 return false;

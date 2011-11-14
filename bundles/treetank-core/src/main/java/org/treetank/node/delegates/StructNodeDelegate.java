@@ -117,13 +117,6 @@ public class StructNodeDelegate implements IStructNode {
         return mRightSibling;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public StructNodeDelegate clone() {
-        return new StructNodeDelegate(mDelegate.clone(), mFirstChild,
-                mRightSibling, mLeftSibling, mChildCount);
-    }
 
     /**
      * {@inheritDoc}

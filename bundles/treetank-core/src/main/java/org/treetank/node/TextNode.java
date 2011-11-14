@@ -64,8 +64,7 @@ public final class TextNode implements IStructNode, IValNode, INode {
      * @param pStrucDel
      *            Delegate for {@link IStructNode} implementation.
      */
-    public TextNode(final NodeDelegate pDel, final ValNodeDelegate pValDel,
-            final StructNodeDelegate pStrucDel) {
+    public TextNode(final NodeDelegate pDel, final ValNodeDelegate pValDel, final StructNodeDelegate pStrucDel) {
         mDel = pDel;
         mValDel = pValDel;
         mStrucDel = pStrucDel;
@@ -98,13 +97,7 @@ public final class TextNode implements IStructNode, IValNode, INode {
     /** {@inheritDoc} */
     @Override
     public long getFirstChildKey() {
-        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public TextNode clone() {
-        return new TextNode(mDel.clone(), mValDel.clone(), mStrucDel.clone());
+        return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /** {@inheritDoc} */
@@ -319,8 +312,7 @@ public final class TextNode implements IStructNode, IValNode, INode {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
-        result = prime * result
-                + ((mStrucDel == null) ? 0 : mStrucDel.hashCode());
+        result = prime * result + ((mStrucDel == null) ? 0 : mStrucDel.hashCode());
         result = prime * result + ((mValDel == null) ? 0 : mValDel.hashCode());
         return result;
     }
@@ -336,7 +328,7 @@ public final class TextNode implements IStructNode, IValNode, INode {
             return false;
         if (getClass() != pObj.getClass())
             return false;
-        TextNode other = (TextNode) pObj;
+        TextNode other = (TextNode)pObj;
         if (mDel == null) {
             if (other.mDel != null)
                 return false;

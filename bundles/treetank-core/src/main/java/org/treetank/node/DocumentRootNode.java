@@ -36,8 +36,8 @@ import org.treetank.node.interfaces.IStructNode;
  * <h1>DocumentNode</h1>
  * 
  * <p>
- * Node representing the root of a document. This node is guaranteed to exist in
- * revision 0 and can not be removed.
+ * Node representing the root of a document. This node is guaranteed to exist in revision 0 and can not be
+ * removed.
  * </p>
  */
 public final class DocumentRootNode implements IStructNode {
@@ -56,8 +56,7 @@ public final class DocumentRootNode implements IStructNode {
      * @param mIntBuilder
      *            int array to set
      */
-    public DocumentRootNode(final NodeDelegate pNodeDel,
-            final StructNodeDelegate pStrucDel) {
+    public DocumentRootNode(final NodeDelegate pNodeDel, final StructNodeDelegate pStrucDel) {
         mDel = pNodeDel;
         mStrucDel = pStrucDel;
     }
@@ -68,14 +67,6 @@ public final class DocumentRootNode implements IStructNode {
     @Override
     public ENodes getKind() {
         return ENodes.ROOT_KIND;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DocumentRootNode clone() {
-        return new DocumentRootNode(mDel.clone(), mStrucDel.clone());
     }
 
     /**

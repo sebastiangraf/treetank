@@ -58,9 +58,6 @@ public class TextNodeTest {
         final TextNode node2 = (TextNode) ENodes.TEXT_KIND.deserialize(out);
         check(node2);
 
-        // Clone node.
-        final TextNode node3 = (TextNode) node2.clone();
-        check(node3);
     }
 
     private final static void check(final TextNode node) {

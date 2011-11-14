@@ -17,8 +17,7 @@ import org.treetank.utils.NamePageHash;
  */
 public class NodeDelegate implements INode {
 
-    private static final int TYPE_KEY = NamePageHash
-            .generateHashForString("xs:untyped");
+    private static final int TYPE_KEY = NamePageHash.generateHashForString("xs:untyped");
 
     /** Key of the current node. Must be unique for all nodes. */
     private long mNodeKey;
@@ -42,8 +41,7 @@ public class NodeDelegate implements INode {
      * @param pHash
      *            to be represented by this delegate
      */
-    public NodeDelegate(final long pNodeKey, final long pParentKey,
-            final long pHash) {
+    public NodeDelegate(final long pNodeKey, final long pParentKey, final long pHash) {
         mNodeKey = pNodeKey;
         mParentKey = pParentKey;
         mHash = pHash;
@@ -118,21 +116,12 @@ public class NodeDelegate implements INode {
      * {@inheritDoc}
      */
     @Override
-    public NodeDelegate clone() {
-        return new NodeDelegate(getNodeKey(), getParentKey(), getHash());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (getHash() ^ (getHash() >>> 32));
-        result = prime * result + (int) (getNodeKey() ^ (getNodeKey() >>> 32));
-        result = prime * result
-                + (int) (getParentKey() ^ (getParentKey() >>> 32));
+        result = prime * result + (int)(getHash() ^ (getHash() >>> 32));
+        result = prime * result + (int)(getNodeKey() ^ (getNodeKey() >>> 32));
+        result = prime * result + (int)(getParentKey() ^ (getParentKey() >>> 32));
         result = prime * result + getTypeKey();
         return result;
     }
@@ -148,7 +137,7 @@ public class NodeDelegate implements INode {
             return false;
         if (getClass() != pObj.getClass())
             return false;
-        NodeDelegate other = (NodeDelegate) pObj;
+        NodeDelegate other = (NodeDelegate)pObj;
         if (getHash() != other.getHash())
             return false;
         if (getNodeKey() != other.getNodeKey())
@@ -198,7 +187,7 @@ public class NodeDelegate implements INode {
      */
     @Override
     public boolean hasParent() {
-        return mParentKey != (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mParentKey != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
 }

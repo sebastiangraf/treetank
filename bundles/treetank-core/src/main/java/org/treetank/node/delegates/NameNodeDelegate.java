@@ -140,13 +140,6 @@ public class NameNodeDelegate implements INameNode {
         return ENodes.NAMESPACE_KIND;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public NameNodeDelegate clone() {
-        final NodeDelegate clone = mDelegate.clone();
-        return new NameNodeDelegate(clone, mNameKey, mUriKey);
-    }
-
     /**
      * {@inheritDoc}
      */
