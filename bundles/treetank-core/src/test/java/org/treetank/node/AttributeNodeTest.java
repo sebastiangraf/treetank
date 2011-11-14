@@ -40,7 +40,9 @@ public class AttributeNodeTest {
 
     @Test
     public void testAttributeNode() {
-        final byte[] value = { (byte) 17, (byte) 18 };
+        final byte[] value = {
+            (byte)17, (byte)18
+        };
 
         final NodeDelegate del = new NodeDelegate(99, 13, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(del, 14, 15);
@@ -55,13 +57,8 @@ public class AttributeNodeTest {
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
         ENodes.getKind(node1.getClass()).serialize(out, node1);
         out.position(0);
-        final AttributeNode node2 = (AttributeNode) ENodes.ATTRIBUTE_KIND
-                .deserialize(out);
+        final AttributeNode node2 = (AttributeNode)ENodes.ATTRIBUTE_KIND.deserialize(out);
         check(node2);
-
-        // Clone node.
-        final AttributeNode node3 = (AttributeNode) node2.clone();
-        check(node3);
 
     }
 
@@ -72,8 +69,7 @@ public class AttributeNodeTest {
 
         assertEquals(14, node.getNameKey());
         assertEquals(15, node.getURIKey());
-        assertEquals(NamePageHash.generateHashForString("xs:untyped"),
-                node.getTypeKey());
+        assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
         assertEquals(2, node.getRawValue().length);
         assertEquals(ENodes.ATTRIBUTE_KIND, node.getKind());
         assertEquals(true, node.hasParent());

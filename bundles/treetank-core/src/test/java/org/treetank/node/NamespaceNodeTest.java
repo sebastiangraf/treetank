@@ -52,9 +52,6 @@ public class NamespaceNodeTest {
         final NamespaceNode node2 = (NamespaceNode)ENodes.NAMESPACE_KIND.deserialize(out);
         check(node2);
 
-        // Clone node.
-        final NamespaceNode node3 = (NamespaceNode)node2.clone();
-        check(node3);
 
     }
 

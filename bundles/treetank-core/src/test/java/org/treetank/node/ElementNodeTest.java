@@ -65,10 +65,6 @@ public class ElementNodeTest {
         final ElementNode node2 = (ElementNode) ENodes.ELEMENT_KIND
                 .deserialize(out);
         check(node2);
-
-        // Clone node.
-        final ElementNode node3 = (ElementNode) node2.clone();
-        check(node3);
     }
 
     private final static void check(final ElementNode node) {

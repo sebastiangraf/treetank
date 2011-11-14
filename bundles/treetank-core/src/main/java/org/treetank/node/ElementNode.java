@@ -27,7 +27,6 @@
 
 package org.treetank.node;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.treetank.api.IVisitor;
@@ -74,10 +73,8 @@ public final class ElementNode implements IStructNode, INameNode {
      * @param pNamespaceKeys
      *            keys of namespaces to be set
      */
-    public ElementNode(final NodeDelegate pDel,
-            final StructNodeDelegate pStrucDel,
-            final NameNodeDelegate pNameDel, final List<Long> pAttributeKeys,
-            final List<Long> pNamespaceKeys) {
+    public ElementNode(final NodeDelegate pDel, final StructNodeDelegate pStrucDel,
+        final NameNodeDelegate pNameDel, final List<Long> pAttributeKeys, final List<Long> pNamespaceKeys) {
         mDel = pDel;
         mStrucDel = pStrucDel;
         mNameDel = pNameDel;
@@ -103,7 +100,7 @@ public final class ElementNode implements IStructNode, INameNode {
      */
     public long getAttributeKey(final int pIndex) {
         if (mAttributeKeys.size() <= pIndex) {
-            return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+            return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         }
         return mAttributeKeys.get(pIndex);
     }
@@ -146,7 +143,7 @@ public final class ElementNode implements IStructNode, INameNode {
      */
     public long getNamespaceKey(final int pNamespaceKey) {
         if (mNamespaceKeys.size() <= pNamespaceKey) {
-            return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+            return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         }
         return mNamespaceKeys.get(pNamespaceKey);
     }
@@ -428,27 +425,6 @@ public final class ElementNode implements IStructNode, INameNode {
     }
 
     @Override
-    public ElementNode clone() {
-        final List<Long> attList = new ArrayList<Long>(mAttributeKeys.size());
-        final List<Long> namespaceList = new ArrayList<Long>(
-                mNamespaceKeys.size());
-        for (final Long i : mAttributeKeys) {
-            attList.add(i);
-        }
-        for (final Long i : mNamespaceKeys) {
-            namespaceList.add(i);
-        }
-
-        final NodeDelegate del = mDel.clone();
-        final StructNodeDelegate struc = mStrucDel.clone();
-        final NameNodeDelegate name = mNameDel.clone();
-
-        final ElementNode toClone = new ElementNode(del, struc, name, attList,
-                namespaceList);
-        return toClone;
-    }
-
-    @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder(mDel.toString());
         builder.append(mStrucDel.toString());
@@ -473,8 +449,7 @@ public final class ElementNode implements IStructNode, INameNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((mNameDel == null) ? 0 : mNameDel.hashCode());
+        result = prime * result + ((mNameDel == null) ? 0 : mNameDel.hashCode());
         return result;
     }
 
@@ -489,7 +464,7 @@ public final class ElementNode implements IStructNode, INameNode {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ElementNode other = (ElementNode) obj;
+        ElementNode other = (ElementNode)obj;
         if (mNameDel == null) {
             if (other.mNameDel != null)
                 return false;

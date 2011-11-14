@@ -58,10 +58,6 @@ public class DocumentRootNodeTest {
         final DocumentRootNode node2 = (DocumentRootNode)ENodes.ROOT_KIND.deserialize(out);
         check(node2);
 
-        // Clone node.
-        final DocumentRootNode node3 = (DocumentRootNode)node2.clone();
-        check(node3);
-
     }
 
     private final static void check(final DocumentRootNode node) {

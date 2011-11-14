@@ -100,13 +100,6 @@ public final class NamespaceNode implements INode, INameNode {
         mNameDel.setURIKey(pUriKey);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NamespaceNode clone() {
-        return new NamespaceNode(mDel.clone(), mNameDel.clone());
-    }
 
     /**
      * {@inheritDoc}

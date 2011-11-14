@@ -144,17 +144,6 @@ public class ValNodeDelegate implements IValNode {
         return mDelegate.hasParent();
     }
 
-    /**
-     * Delegate method for clone.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#clone()
-     */
-    public ValNodeDelegate clone() {
-        final byte[] newVal = new byte[mVal.length];
-        System.arraycopy(mVal, 0, newVal, 0, newVal.length);
-        return new ValNodeDelegate(mDelegate.clone(), newVal);
-    }
 
     /**
      * {@inheritDoc}

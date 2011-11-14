@@ -75,7 +75,7 @@ public enum ERevisioning {
             for (int i = 0; i < pages[0].getNodes().length; i++) {
                 returnVal[0].setNode(i, pages[0].getNode(i));
                 if (pages[0].getNode(i) != null) {
-                    returnVal[1].setNode(i, pages[0].getNode(i).clone());
+                    returnVal[1].setNode(i, pages[0].getNode(i));
                 }
             }
 
@@ -145,12 +145,12 @@ public enum ERevisioning {
             for (int j = 0; j < returnVal[0].getNodes().length; j++) {
                 if (latest.getNode(j) != null) {
                     returnVal[0].setNode(j, latest.getNode(j));
-                    returnVal[1].setNode(j, latest.getNode(j).clone());
+                    returnVal[1].setNode(j, latest.getNode(j));
                 } else {
                     if (fullDump.getNode(j) != null) {
                         returnVal[0].setNode(j, fullDump.getNode(j));
                         if ((latest.getRevision() + 1) % revToRestore == 0) {
-                            returnVal[1].setNode(j, fullDump.getNode(j).clone());
+                            returnVal[1].setNode(j, fullDump.getNode(j));
                         }
                     }
                 }
@@ -211,7 +211,7 @@ public enum ERevisioning {
                         returnVal[0].setNode(i, pages[j].getNode(i));
 
                         if (returnVal[0].getRevision() % revToRestore == 0) {
-                            returnVal[1].setNode(i, pages[j].getNode(i).clone());
+                            returnVal[1].setNode(i, pages[j].getNode(i));
                         }
                     }
                 }

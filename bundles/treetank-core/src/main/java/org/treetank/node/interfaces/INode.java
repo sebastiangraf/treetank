@@ -33,11 +33,10 @@ import org.treetank.node.ENodes;
 /**
  * <h1>IItem</h1>
  * <p>
- * Common interface for all item kinds. An item can be a node or an atomic
- * value.
+ * Common interface for all item kinds. An item can be a node or an atomic value.
  * </p>
  */
-public interface INode extends Cloneable {
+public interface INode {
 
     /**
      * Setting the actual hash of the structure. The hash of one node should
@@ -109,13 +108,6 @@ public interface INode extends Cloneable {
      *            implementation of the {@link IVisitor} interface
      */
     void acceptVisitor(final IVisitor pVisitor);
-
-    /**
-     * Cloning a node.
-     * 
-     * @return the cloned node.
-     */
-    INode clone();
 
     /**
      * Setting the parent key.
