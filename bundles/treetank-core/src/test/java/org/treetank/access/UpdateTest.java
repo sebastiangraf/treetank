@@ -404,8 +404,7 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(9);
         wtx.moveSubtreeToRightSibling(5);
-        // TODO FIX IT!
-        // testFourthMoveSubtreeToRightSibling(wtx);
+        testSecondMoveSubtreeToRightSibling(wtx);
         wtx.commit();
         testSecondMoveSubtreeToRightSibling(wtx);
         wtx.close();
@@ -441,8 +440,7 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
         wtx.moveTo(9);
         wtx.moveSubtreeToRightSibling(4);
-        // TODO FIX IT!
-        // testFourthMoveSubtreeToRightSibling(wtx);
+        testThirdMoveSubtreeToRightSibling(wtx);
         wtx.commit();
         testThirdMoveSubtreeToRightSibling(wtx);
         wtx.close();
