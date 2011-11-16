@@ -64,8 +64,8 @@ public final class NamespaceNode implements INode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public ENodes getKind() {
-        return ENodes.NAMESPACE_KIND;
+    public ENode getKind() {
+        return ENode.NAMESPACE_KIND;
     }
 
     /**

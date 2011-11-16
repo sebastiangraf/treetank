@@ -420,8 +420,8 @@ public final class ElementNode implements IStructNode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public ENodes getKind() {
-        return ENodes.ELEMENT_KIND;
+    public ENode getKind() {
+        return ENode.ELEMENT_KIND;
     }
 
     @Override

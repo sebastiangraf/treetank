@@ -35,7 +35,7 @@ import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.diff.DiffFactory.EDiff;
 import org.treetank.diff.DiffFactory.EDiffOptimized;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
@@ -136,7 +136,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         assert mDiffKind != null;
 
         // Check first nodes.
-        if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND) {
+        if (mNewRtx.getNode().getKind() != ENode.ROOT_KIND) {
             if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                 mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
             } else {
@@ -145,14 +145,14 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         // Iterate over new revision.
-        while ((mOldRtx.getNode().getKind() != ENodes.ROOT_KIND && mDiff == EDiff.DELETED)
+        while ((mOldRtx.getNode().getKind() != ENode.ROOT_KIND && mDiff == EDiff.DELETED)
             || moveCursor(mNewRtx, ERevision.NEW)) {
             if (mDiff != EDiff.INSERTED) {
                 moveCursor(mOldRtx, ERevision.OLD);
             }
 
-            if (mNewRtx.getNode().getKind() != ENodes.ROOT_KIND
-                || mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
+            if (mNewRtx.getNode().getKind() != ENode.ROOT_KIND
+                || mOldRtx.getNode().getKind() != ENode.ROOT_KIND) {
                 if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                     mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
                 } else {
@@ -162,7 +162,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         // Nodes deleted in old rev at the end of the tree.
-        if (mOldRtx.getNode().getKind() != ENodes.ROOT_KIND) {
+        if (mOldRtx.getNode().getKind() != ENode.ROOT_KIND) {
             // First time it might be EDiff.INSERTED where the cursor doesn't
             // move.
             while (mDiff == EDiff.INSERTED || moveCursor(mOldRtx, ERevision.OLD)) {
@@ -193,7 +193,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         final IStructNode node = paramRtx.getStructuralNode();
         if (node.hasFirstChild()) {
-            if (node.getKind() != ENodes.ROOT_KIND && mDiffKind == EDiffOptimized.HASHED
+            if (node.getKind() != ENode.ROOT_KIND && mDiffKind == EDiffOptimized.HASHED
                 && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
                 moved = paramRtx.moveToRightSibling();
 

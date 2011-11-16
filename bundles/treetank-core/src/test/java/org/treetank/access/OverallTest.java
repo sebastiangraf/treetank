@@ -37,7 +37,7 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 
 public final class OverallTest {
@@ -110,7 +110,7 @@ public final class OverallTest {
                     holder.getWtx().moveTo(newKey);
                 } while (holder.getWtx().getNode() == null);
                 // TODO Check if reference check can occur on "=="
-                if (holder.getWtx().getNode().getKind() != ENodes.ELEMENT_KIND) {
+                if (holder.getWtx().getNode().getKind() != ENode.ELEMENT_KIND) {
                     holder.getWtx().moveToParent();
                 }
             }

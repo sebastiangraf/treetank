@@ -30,7 +30,7 @@ package org.treetank.diff;
 import org.treetank.api.IReadTransaction;
 import org.treetank.diff.DiffFactory.Builder;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 
 /**
@@ -66,7 +66,7 @@ final class FullDiff extends AbsDiff {
             && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
             final long nodeKey = paramFirstRtx.getNode().getNodeKey();
 
-            if (paramFirstRtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+            if (paramFirstRtx.getNode().getKind() == ENode.ELEMENT_KIND) {
                 if (((ElementNode)paramFirstRtx.getNode()).getNamespaceCount() == 0
                     && ((ElementNode)paramFirstRtx.getNode()).getAttributeCount() == 0
                     && ((ElementNode)paramSecondRtx.getNode()).getAttributeCount() == 0

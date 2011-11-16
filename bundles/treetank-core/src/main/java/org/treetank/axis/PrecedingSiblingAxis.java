@@ -28,7 +28,7 @@
 package org.treetank.axis;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
@@ -75,7 +75,7 @@ public class PrecedingSiblingAxis extends AbsAxis {
             mIsFirst = false;
             // if the context node is an attribute or namespace node,
             // the following-sibling axis is empty
-            if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
+            if (getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND
             // || getTransaction().isNamespaceKind()
             ) {
                 resetToStartKey();

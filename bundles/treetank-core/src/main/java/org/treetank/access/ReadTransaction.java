@@ -34,7 +34,7 @@ import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
@@ -190,7 +190,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final boolean moveToAttribute(final int mIndex) {
-        if (mCurrentNode.getKind() == ENodes.ELEMENT_KIND) {
+        if (mCurrentNode.getKind() == ENode.ELEMENT_KIND) {
             return moveTo(((ElementNode)mCurrentNode).getAttributeKey(mIndex));
         } else {
             return false;
@@ -202,7 +202,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     @Override
     public final boolean moveToNamespace(final int mIndex) {
-        if (mCurrentNode.getKind() == ENodes.ELEMENT_KIND) {
+        if (mCurrentNode.getKind() == ENode.ELEMENT_KIND) {
             return moveTo(((ElementNode)mCurrentNode).getNamespaceKey(mIndex));
         } else {
             return false;
@@ -311,17 +311,17 @@ public class ReadTransaction implements IReadTransaction {
     public final String toString() {
         assertNotClosed();
         final StringBuilder builder = new StringBuilder();
-        if (getNode().getKind() == ENodes.ATTRIBUTE_KIND || getNode().getKind() == ENodes.ELEMENT_KIND) {
+        if (getNode().getKind() == ENode.ATTRIBUTE_KIND || getNode().getKind() == ENode.ELEMENT_KIND) {
             builder.append("Name of Node: ");
             builder.append(getQNameOfCurrentNode().toString());
             builder.append("\n");
         }
-        if (getNode().getKind() == ENodes.ATTRIBUTE_KIND || getNode().getKind() == ENodes.TEXT_KIND) {
+        if (getNode().getKind() == ENode.ATTRIBUTE_KIND || getNode().getKind() == ENode.TEXT_KIND) {
             builder.append("Value of Node: ");
             builder.append(getValueOfCurrentNode());
             builder.append("\n");
         }
-        if (getNode().getKind() == ENodes.ROOT_KIND) {
+        if (getNode().getKind() == ENode.ROOT_KIND) {
             builder.append("Node is DocumentRoot");
             builder.append("\n");
         }

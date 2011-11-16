@@ -1,7 +1,7 @@
 package org.treetank.node.delegates;
 
 import org.treetank.api.IVisitor;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.NamePageHash;
@@ -52,8 +52,8 @@ public class NodeDelegate implements INode {
      * {@inheritDoc}
      */
     @Override
-    public ENodes getKind() {
-        return ENodes.UNKOWN_KIND;
+    public ENode getKind() {
+        return ENode.UNKOWN_KIND;
     }
 
     /**

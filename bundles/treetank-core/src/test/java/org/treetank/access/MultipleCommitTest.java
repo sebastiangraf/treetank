@@ -43,7 +43,7 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.PostOrderAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.utils.DocumentCreater;
 
@@ -109,7 +109,7 @@ public class MultipleCommitTest {
         final AbsAxis postorderAxis = new PostOrderAxis(holder.getWtx());
         while (postorderAxis.hasNext()) {
             postorderAxis.next();
-            if (holder.getWtx().getNode().getKind() == ENodes.ELEMENT_KIND
+            if (holder.getWtx().getNode().getKind() == ENode.ELEMENT_KIND
                 && ((ElementNode)holder.getWtx().getNode()).getAttributeCount() > 0) {
                 for (int i = 0, attrCount = ((ElementNode)holder.getWtx().getNode()).getAttributeCount(); i < attrCount; i++) {
                     holder.getWtx().moveToAttribute(i);
@@ -124,7 +124,7 @@ public class MultipleCommitTest {
         final AbsAxis descAxis = new DescendantAxis(holder.getWtx());
         while (descAxis.hasNext()) {
             descAxis.next();
-            if (holder.getWtx().getNode().getKind() == ENodes.ELEMENT_KIND) {
+            if (holder.getWtx().getNode().getKind() == ENode.ELEMENT_KIND) {
                 for (int i = 0, attrCount = ((ElementNode)holder.getWtx().getNode()).getAttributeCount(); i < attrCount; i++) {
                     if (holder.getWtx().moveToAttribute(i)) {
                         attrTouch++;

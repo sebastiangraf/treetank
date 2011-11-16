@@ -28,7 +28,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.io.NodeInputSource;
 import org.treetank.node.io.NodeOutputSink;
@@ -150,9 +150,9 @@ public class NodePage implements IPage {
                         final NodeInputSource mNodeInput = new NodeInputSource(
                                 mDecryptedNode);
 
-                        final ENodes mEnumKind = ENodes.getKind(mElementKind);
+                        final ENode mEnumKind = ENode.getKind(mElementKind);
 
-                        if (mEnumKind != ENodes.UNKOWN_KIND) {
+                        if (mEnumKind != ENode.UNKOWN_KIND) {
                             getNodes()[i] = mEnumKind.deserialize(mNodeInput);
                         }
                     }
@@ -175,8 +175,8 @@ public class NodePage implements IPage {
 
             for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
                 final int kind = kinds[offset];
-                final ENodes enumKind = ENodes.getKind(kind);
-                if (enumKind != ENodes.UNKOWN_KIND) {
+                final ENode enumKind = ENode.getKind(kind);
+                if (enumKind != ENode.UNKOWN_KIND) {
                     getNodes()[offset] = enumKind.deserialize(mIn);
                 }
             }
@@ -251,7 +251,7 @@ public class NodePage implements IPage {
                     mOut.writeInt(mKeySel.getVersion());
                     final int kind = node.getKind().getId();
                     mOut.writeInt(kind);
-                    ENodes.getKind(kind).serialize(mOut, node);
+                    ENode.getKind(kind).serialize(mOut, node);
 
                     final byte[] mStream = mNodeOut.getOutputStream()
                             .toByteArray();
@@ -309,7 +309,7 @@ public class NodePage implements IPage {
                     mOut.writeLong(-1);
                     mOut.writeInt(-1);
                     mOut.writeInt(-1);
-                    mOut.writeInt(ENodes.UNKOWN_KIND.getId());
+                    mOut.writeInt(ENode.UNKOWN_KIND.getId());
                 }
             }
         } else {
@@ -318,13 +318,13 @@ public class NodePage implements IPage {
                     final int kind = getNodes()[i].getKind().getId();
                     mOut.writeInt(kind);
                 } else {
-                    mOut.writeInt(ENodes.UNKOWN_KIND.getId());
+                    mOut.writeInt(ENode.UNKOWN_KIND.getId());
                 }
             }
 
             for (final INode node : getNodes()) {
                 if (node != null) {
-                    ENodes.getKind(node.getClass()).serialize(mOut, node);
+                    ENode.getKind(node.getClass()).serialize(mOut, node);
                 }
             }
         }

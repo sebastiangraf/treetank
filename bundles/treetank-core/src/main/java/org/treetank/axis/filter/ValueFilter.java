@@ -28,7 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -97,8 +97,8 @@ public class ValueFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return (getTransaction().getNode().getKind() == ENodes.TEXT_KIND || getTransaction().getNode()
-            .getKind() == ENodes.ATTRIBUTE_KIND)
+        return (getTransaction().getNode().getKind() == ENode.TEXT_KIND || getTransaction().getNode()
+            .getKind() == ENode.ATTRIBUTE_KIND)
             && (TypedValue.equals(getTransaction().getValueOfCurrentNode(), mValue));
     }
 

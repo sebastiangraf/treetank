@@ -1,7 +1,7 @@
 package org.treetank.node.delegates;
 
 import org.treetank.api.IVisitor;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 
@@ -55,7 +55,7 @@ public class StructNodeDelegate implements IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public ENodes getKind() {
+    public ENode getKind() {
         return mDelegate.getKind();
     }
 

@@ -74,8 +74,8 @@ public final class AttributeNode implements INode, IValNode, INameNode {
 
     /** {@inheritDoc} */
     @Override
-    public ENodes getKind() {
-        return ENodes.ATTRIBUTE_KIND;
+    public ENode getKind() {
+        return ENode.ATTRIBUTE_KIND;
     }
 
     /** {@inheritDoc} */

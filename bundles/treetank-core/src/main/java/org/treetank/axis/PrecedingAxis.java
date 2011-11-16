@@ -30,7 +30,7 @@ package org.treetank.axis;
 import java.util.Stack;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
@@ -82,7 +82,7 @@ public class PrecedingAxis extends AbsAxis {
         // namespace
         if (mIsFirst) {
             mIsFirst = false;
-            if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
+            if (getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND
             // || getTransaction().isNamespaceKind()
             ) {
                 resetToStartKey();

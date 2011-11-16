@@ -60,8 +60,8 @@ public final class DeletedNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public ENodes getKind() {
-        return ENodes.DELETE_KIND;
+    public ENode getKind() {
+        return ENode.DELETE_KIND;
     }
 
     /**

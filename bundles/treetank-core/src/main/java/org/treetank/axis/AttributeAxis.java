@@ -28,7 +28,7 @@
 package org.treetank.axis;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 
 /**
@@ -72,10 +72,10 @@ public class AttributeAxis extends AbsAxis {
         // this
         // case the current node was set to an attribute by resetToLastKey()
         if (mNextIndex > 0) {
-            assert getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND;
+            assert getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND;
             getTransaction().moveToParent();
         }
-        if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND
+        if (getTransaction().getNode().getKind() == ENode.ELEMENT_KIND
             && mNextIndex < ((ElementNode)getTransaction().getNode()).getAttributeCount()) {
             getTransaction().moveToAttribute(mNextIndex);
             mNextIndex += 1;

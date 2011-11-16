@@ -56,7 +56,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.DocumentRootNode;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 
@@ -447,12 +447,12 @@ public final class WikipediaImport implements IImport<StartElement> {
         mWTX.moveToFirstChild();
         mWTX.moveToFirstChild();
 
-        assert mWTX.getNode().getKind() == ENodes.ELEMENT_KIND;
+        assert mWTX.getNode().getKind() == ENode.ELEMENT_KIND;
         assert mWTX.getQNameOfCurrentNode().equals(paramPage.getName());
         while (((ElementNode)mWTX.getNode()).hasRightSibling()) {
             mWTX.moveToRightSibling();
         }
-        assert mWTX.getNode().getKind() == ENodes.ELEMENT_KIND;
+        assert mWTX.getNode().getKind() == ENode.ELEMENT_KIND;
         assert mWTX.getQNameOfCurrentNode().equals(paramPage.getName());
     }
 
