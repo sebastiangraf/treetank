@@ -42,7 +42,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
 public class ReadTransactionTest {
@@ -80,7 +80,7 @@ public class ReadTransactionTest {
     @Test
     public void testDocumentRoot() throws AbsTTException {
         assertEquals(true, holder.getRtx().moveToDocumentRoot());
-        assertEquals(ENodes.ROOT_KIND, holder.getRtx().getNode().getKind());
+        assertEquals(ENode.ROOT_KIND, holder.getRtx().getNode().getKind());
         assertEquals(false, holder.getRtx().getNode().hasParent());
         assertEquals(false, ((IStructNode)holder.getRtx().getNode()).hasLeftSibling());
         assertEquals(false, ((IStructNode)holder.getRtx().getNode()).hasRightSibling());

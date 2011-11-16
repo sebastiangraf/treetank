@@ -35,7 +35,7 @@ import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
@@ -156,7 +156,7 @@ abstract class AbsSerializer implements Callable<Void> {
 
                 // Push end element to stack if we are a start element with
                 // children.
-                if (currentStruc.getKind() == ENodes.ELEMENT_KIND && currentStruc.hasFirstChild()) {
+                if (currentStruc.getKind() == ENode.ELEMENT_KIND && currentStruc.hasFirstChild()) {
                     mStack.push(rtx.getNode().getNodeKey());
                 }
 

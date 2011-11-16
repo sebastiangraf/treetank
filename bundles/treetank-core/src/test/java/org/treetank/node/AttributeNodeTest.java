@@ -27,14 +27,15 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
 import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.utils.NamePageHash;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class AttributeNodeTest {
 
@@ -55,9 +56,9 @@ public class AttributeNodeTest {
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        ENodes.getKind(node1.getClass()).serialize(out, node1);
+        ENode.getKind(node1.getClass()).serialize(out, node1);
         out.position(0);
-        final AttributeNode node2 = (AttributeNode)ENodes.ATTRIBUTE_KIND.deserialize(out);
+        final AttributeNode node2 = (AttributeNode)ENode.ATTRIBUTE_KIND.deserialize(out);
         check(node2);
 
     }
@@ -71,9 +72,9 @@ public class AttributeNodeTest {
         assertEquals(15, node.getURIKey());
         assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
         assertEquals(2, node.getRawValue().length);
-        assertEquals(ENodes.ATTRIBUTE_KIND, node.getKind());
+        assertEquals(ENode.ATTRIBUTE_KIND, node.getKind());
         assertEquals(true, node.hasParent());
-        assertEquals(ENodes.ATTRIBUTE_KIND, node.getKind());
+        assertEquals(ENode.ATTRIBUTE_KIND, node.getKind());
     }
 
 }

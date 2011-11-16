@@ -39,7 +39,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DocumentRootNode;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
@@ -173,7 +173,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
         final INode nodeToMove = getTransactionState().getNode(paramFromKey);
 
-        if (nodeToMove instanceof IStructNode && getCurrentNode().getKind() == ENodes.ELEMENT_KIND) {
+        if (nodeToMove instanceof IStructNode && getCurrentNode().getKind() == ENode.ELEMENT_KIND) {
             checkAccessAndCommit();
 
             final ElementNode nodeAnchor = (ElementNode)getCurrentNode();
@@ -299,10 +299,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         // Merge text nodes.
         if (paramFromNode.hasLeftSibling() && paramFromNode.hasRightSibling()) {
             moveTo(paramFromNode.getLeftSiblingKey());
-            if (getCurrentNode() != null && getCurrentNode().getKind() == ENodes.TEXT_KIND) {
+            if (getCurrentNode() != null && getCurrentNode().getKind() == ENode.TEXT_KIND) {
                 final StringBuilder builder = new StringBuilder(getValueOfCurrentNode());
                 moveTo(paramFromNode.getRightSiblingKey());
-                if (getCurrentNode() != null && getCurrentNode().getKind() == ENodes.TEXT_KIND) {
+                if (getCurrentNode() != null && getCurrentNode().getKind() == ENode.TEXT_KIND) {
                     builder.append(getValueOfCurrentNode());
                     remove();
                     moveTo(paramFromNode.getLeftSiblingKey());
@@ -383,7 +383,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             throw new NullPointerException("paramValueAsString may not be null!");
         }
 
-        if (getCurrentNode().getKind() == ENodes.ELEMENT_KIND) {
+        if (getCurrentNode().getKind() == ENode.ELEMENT_KIND) {
             checkAccessAndCommit();
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
@@ -475,7 +475,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     @Override
     public synchronized void remove() throws AbsTTException {
         checkAccessAndCommit();
-        if (getCurrentNode().getKind() == ENodes.ROOT_KIND) {
+        if (getCurrentNode().getKind() == ENode.ROOT_KIND) {
             throw new TTUsageException("Document root can not be removed.");
         } else if (getCurrentNode() instanceof IStructNode) {
             final IStructNode node = (IStructNode)getCurrentNode();
@@ -495,7 +495,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             } else {
                 moveTo(node.getParentKey());
             }
-        } else if (getCurrentNode().getKind() == ENodes.ATTRIBUTE_KIND) {
+        } else if (getCurrentNode().getKind() == ENode.ATTRIBUTE_KIND) {
             final INode node = getCurrentNode();
 
             final ElementNode parent =
@@ -504,7 +504,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             getTransactionState().finishNodeModification(parent);
             adaptHashesWithRemove();
             moveToParent();
-        } else if (getCurrentNode().getKind() == ENodes.NAMESPACE_KIND) {
+        } else if (getCurrentNode().getKind() == ENode.NAMESPACE_KIND) {
             final INode node = getCurrentNode();
 
             final ElementNode parent =
@@ -782,7 +782,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         parent.decrementChildCount();
         getTransactionState().finishNodeModification(parent);
 
-        if (paramOldNode.getKind() == ENodes.ELEMENT_KIND) {
+        if (paramOldNode.getKind() == ENode.ELEMENT_KIND) {
             // removing attributes
             for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
                 moveTo(((ElementNode)paramOldNode).getAttributeKey(i));
@@ -923,7 +923,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                         getCurrentNode().getNodeKey());
                 hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
-                if (cursorToRoot.getKind() == ENodes.ELEMENT_KIND) {
+                if (cursorToRoot.getKind() == ENode.ELEMENT_KIND) {
                     final ElementNode currentElement = (ElementNode)cursorToRoot;
                     // setting the attributes and namespaces
                     for (int i = 0; i < ((ElementNode)cursorToRoot).getAttributeCount(); i++) {
@@ -1103,7 +1103,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         checkParams(paramNodeKey, paramRevision);
         final IReadTransaction rtx = mSession.beginReadTransaction(paramRevision, new ItemList());
         rtx.moveTo(paramNodeKey);
-        if (rtx.getNode().getKind() != ENodes.TEXT_KIND || rtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
+        if (rtx.getNode().getKind() != ENode.TEXT_KIND || rtx.getNode().getKind() != ENode.ELEMENT_KIND) {
             throw new IllegalStateException("Node to insert must be a structural node (Text or Element)!");
         }
         return rtx;

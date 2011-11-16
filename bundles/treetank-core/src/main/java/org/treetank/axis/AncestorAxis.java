@@ -28,7 +28,7 @@
 package org.treetank.axis;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.settings.EFixed;
 
 /**
@@ -89,7 +89,7 @@ public class AncestorAxis extends AbsAxis {
             return true;
         }
 
-        if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND
+        if (getTransaction().getNode().getKind() != ENode.ROOT_KIND
             && getTransaction().getNode().hasParent()
             && getTransaction().getNode().getParentKey() != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
             getTransaction().moveToParent();

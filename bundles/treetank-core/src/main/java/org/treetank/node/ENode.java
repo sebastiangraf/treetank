@@ -36,7 +36,7 @@ import org.treetank.node.interfaces.INode;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public enum ENodes {
+public enum ENode {
 
     /** Unknown kind. */
     UNKOWN_KIND(0, null) {
@@ -268,10 +268,10 @@ public enum ENodes {
     private final Class<? extends INode> mClass;
 
     /** Mapping of keys -> Nodes */
-    private final static Map<Integer, ENodes> INSTANCEFORID = new HashMap<Integer, ENodes>();
-    private final static Map<Class<? extends INode>, ENodes> INSTANCEFORCLASS = new HashMap<Class<? extends INode>, ENodes>();
+    private final static Map<Integer, ENode> INSTANCEFORID = new HashMap<Integer, ENode>();
+    private final static Map<Class<? extends INode>, ENode> INSTANCEFORCLASS = new HashMap<Class<? extends INode>, ENode>();
     static {
-        for (final ENodes node : values()) {
+        for (final ENode node : values()) {
             INSTANCEFORID.put(node.mKind, node);
             INSTANCEFORCLASS.put(node.mClass, node);
         }
@@ -287,7 +287,7 @@ public enum ENodes {
      * @param paramIntSize
      *            the identifier
      */
-    private ENodes(final int pUd, final Class<? extends INode> pClass) {
+    private ENode(final int pUd, final Class<? extends INode> pClass) {
         mKind = pUd;
         mClass = pClass;
     }
@@ -327,7 +327,7 @@ public enum ENodes {
      *            the identifier for the node
      * @return the related node
      */
-    public static ENodes getKind(final int pId) {
+    public static ENode getKind(final int pId) {
         return INSTANCEFORID.get(pId);
     }
 
@@ -338,7 +338,7 @@ public enum ENodes {
      *            the class for the node
      * @return the related node
      */
-    public static ENodes getKind(final Class<? extends INode> pClass) {
+    public static ENode getKind(final Class<? extends INode> pClass) {
         return INSTANCEFORCLASS.get(pClass);
     }
 

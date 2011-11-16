@@ -35,7 +35,7 @@ import org.treetank.access.AbsVisitorSupport;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.interfaces.INode;
@@ -52,10 +52,10 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
     private final IReadTransaction mRtx;
 
     /** For each node type: list of inner nodes. */
-    private final Map<ENodes, List<INode>> mLabels;
+    private final Map<ENode, List<INode>> mLabels;
 
     /** For each node type: list of leaf nodes. */
-    private final Map<ENodes, List<INode>> mLeafLabels;
+    private final Map<ENode, List<INode>> mLeafLabels;
 
     /**
      * Constructor.
@@ -67,8 +67,8 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
      */
     public LabelFMESVisitor(final ISession paramSession) throws AbsTTException {
         mRtx = paramSession.beginReadTransaction();
-        mLabels = new HashMap<ENodes, List<INode>>();
-        mLeafLabels = new HashMap<ENodes, List<INode>>();
+        mLabels = new HashMap<ENode, List<INode>>();
+        mLeafLabels = new HashMap<ENode, List<INode>>();
     }
 
     /** {@inheritDoc} */
@@ -106,7 +106,7 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
      * Add leaf node label.
      */
     private void addLeafLabel() {
-        final ENodes nodeKind = mRtx.getNode().getKind();
+        final ENode nodeKind = mRtx.getNode().getKind();
         if (!mLeafLabels.containsKey(nodeKind)) {
             mLeafLabels.put(nodeKind, new ArrayList<INode>());
         }
@@ -118,7 +118,7 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
      * 
      * @return the Labels
      */
-    public Map<ENodes, List<INode>> getLabels() {
+    public Map<ENode, List<INode>> getLabels() {
         return mLabels;
     }
 
@@ -127,7 +127,7 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
      * 
      * @return the leaf labels
      */
-    public Map<ENodes, List<INode>> getLeafLabels() {
+    public Map<ENode, List<INode>> getLeafLabels() {
         return mLeafLabels;
     }
 }

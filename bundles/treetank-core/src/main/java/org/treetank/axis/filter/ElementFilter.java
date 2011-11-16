@@ -28,7 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 
 /**
  * <h1>NodeAxisTest</h1>
@@ -54,7 +54,7 @@ public class ElementFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND;
+        return getTransaction().getNode().getKind() == ENode.ELEMENT_KIND;
     }
 
 }

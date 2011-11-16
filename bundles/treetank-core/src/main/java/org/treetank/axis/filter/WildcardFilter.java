@@ -28,7 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
 
@@ -70,7 +70,7 @@ public class WildcardFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
+        if (getTransaction().getNode().getKind() == ENode.ELEMENT_KIND) {
 
             if (mIsName) { // local name is given
                 final String localname =
@@ -92,7 +92,7 @@ public class WildcardFilter extends AbsFilter {
                 }
             }
 
-        } else if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND) {
+        } else if (getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND) {
             // supporting attributes here is difficult, because treetank
             // does not provide a way to acces the name and namespace of
             // the current attribute (attribute index is not known here)

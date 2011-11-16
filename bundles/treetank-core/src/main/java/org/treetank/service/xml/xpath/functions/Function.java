@@ -33,7 +33,7 @@ import java.util.List;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.AtomicValue;
@@ -189,7 +189,7 @@ public class Function {
      */
     public static boolean fnNilled(final IReadTransaction rtx, final AbsAxis axis) {
 
-        if (axis.hasNext() && rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+        if (axis.hasNext() && rtx.getNode().getKind() == ENode.ELEMENT_KIND) {
             final boolean nilled = false; // TODO how is the nilled property
                                           // defined?
             final int itemKey = rtx.getItemList().addItem(new AtomicValue(nilled));

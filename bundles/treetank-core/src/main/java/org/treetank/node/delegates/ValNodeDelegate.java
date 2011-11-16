@@ -3,7 +3,7 @@ package org.treetank.node.delegates;
 import java.util.Arrays;
 
 import org.treetank.api.IVisitor;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IValNode;
 
 /**
@@ -40,7 +40,7 @@ public class ValNodeDelegate implements IValNode {
      * @return
      * @see org.treetank.node.delegates.NodeDelegate#getKind()
      */
-    public ENodes getKind() {
+    public ENode getKind() {
         return mDelegate.getKind();
     }
 

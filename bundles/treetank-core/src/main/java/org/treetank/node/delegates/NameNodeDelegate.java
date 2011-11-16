@@ -4,7 +4,7 @@
 package org.treetank.node.delegates;
 
 import org.treetank.api.IVisitor;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INameNode;
 
 /**
@@ -136,8 +136,8 @@ public class NameNodeDelegate implements INameNode {
      * {@inheritDoc}
      */
     @Override
-    public ENodes getKind() {
-        return ENodes.NAMESPACE_KIND;
+    public ENode getKind() {
+        return ENode.NAMESPACE_KIND;
     }
 
     /**

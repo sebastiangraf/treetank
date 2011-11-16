@@ -45,7 +45,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.IConstants;
@@ -109,10 +109,10 @@ public class SessionTest {
         final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
         assertNotNull(wtx.moveToDocumentRoot());
-        assertEquals(ENodes.ROOT_KIND, wtx.getNode().getKind());
+        assertEquals(ENode.ROOT_KIND, wtx.getNode().getKind());
 
         assertNotNull(wtx.moveToFirstChild());
-        assertEquals(ENodes.ELEMENT_KIND, wtx.getNode().getKind());
+        assertEquals(ENode.ELEMENT_KIND, wtx.getNode().getKind());
         assertEquals("p:a", new StringBuilder(wtx.getQNameOfCurrentNode().getPrefix()).append(":").append(
             wtx.getQNameOfCurrentNode().getLocalPart()).toString());
 

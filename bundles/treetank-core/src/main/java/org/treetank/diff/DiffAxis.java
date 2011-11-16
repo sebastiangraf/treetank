@@ -52,7 +52,7 @@ public class DiffAxis extends AbsAxis {
     @Override
     public boolean hasNext() {
         return false;
-        // if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND) {
+        // if (getTransaction().getNode().getKind() != ENode.ROOT_KIND) {
         // if (mHashKind == HashKind.None || mDiffKind == EDiffKind.NORMAL) {
         // mDiff = diff(getTransaction(), mOldRtx, mDepth, EFireDiff.TRUE);
         // } else {

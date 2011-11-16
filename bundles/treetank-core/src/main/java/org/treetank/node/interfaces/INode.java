@@ -28,7 +28,7 @@
 package org.treetank.node.interfaces;
 
 import org.treetank.api.IVisitor;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 
 /**
  * <h1>IItem</h1>
@@ -92,7 +92,7 @@ public interface INode {
      * 
      * @return kind of item
      */
-    ENodes getKind();
+    ENode getKind();
 
     /**
      * Gets value type of the item.

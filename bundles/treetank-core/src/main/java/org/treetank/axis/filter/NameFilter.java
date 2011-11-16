@@ -28,7 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INameNode;
 
 /**

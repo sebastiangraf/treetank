@@ -65,8 +65,8 @@ public final class DocumentRootNode implements IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public ENodes getKind() {
-        return ENodes.ROOT_KIND;
+    public ENode getKind() {
+        return ENode.ROOT_KIND;
     }
 
     /**

@@ -56,11 +56,11 @@ import org.treetank.service.xml.shredder.XMLShredder;
  * described as follows:
  * 
  * <ul>
- * <li><code>ENodes.ROOT_KIND     : doc()</code></li>
- * <li><code>ENodes.ELEMENT_KIND  : &lt;prefix:localPart&gt;</code></li>
- * <li><code>ENodes.NAMESPACE_KIND: §prefix:namespaceURI</code></li>
- * <li><code>ENodes.ATTRIBUTE_KIND: &#64;prefix:localPart='value'</code></li>
- * <li><code>ENodes.TEXT_KIND     : #value</code></li>
+ * <li><code>ENode.ROOT_KIND     : doc()</code></li>
+ * <li><code>ENode.ELEMENT_KIND  : &lt;prefix:localPart&gt;</code></li>
+ * <li><code>ENode.NAMESPACE_KIND: §prefix:namespaceURI</code></li>
+ * <li><code>ENode.ATTRIBUTE_KIND: &#64;prefix:localPart='value'</code></li>
+ * <li><code>ENode.TEXT_KIND     : #value</code></li>
  * </ul>
  * 
  * <pre>

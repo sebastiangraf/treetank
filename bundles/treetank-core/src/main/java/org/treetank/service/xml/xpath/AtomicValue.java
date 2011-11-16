@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath;
 
 import org.treetank.api.IVisitor;
 import org.treetank.io.ITTSink;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.types.Type;
@@ -153,8 +153,8 @@ public class AtomicValue implements INode, IValNode {
      * {@inheritDoc}
      */
     @Override
-    public ENodes getKind() {
-        return ENodes.UNKOWN_KIND;
+    public ENode getKind() {
+        return ENode.UNKOWN_KIND;
     }
 
     /**

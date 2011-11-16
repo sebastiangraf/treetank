@@ -30,7 +30,7 @@ package org.treetank.axis;
 import java.util.Stack;
 
 import org.treetank.api.IReadTransaction;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
@@ -80,7 +80,7 @@ public class FollowingAxis extends AbsAxis {
 
         // assure, that preceding is not evaluated on an attribute or a
         // namespace
-        if (mIsFirst && getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND) {
+        if (mIsFirst && getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND) {
             // || getTransaction().isNamespaceKind() {
             resetToStartKey();
             return false;

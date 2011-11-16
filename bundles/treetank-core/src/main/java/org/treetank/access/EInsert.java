@@ -29,7 +29,7 @@ package org.treetank.access;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.TextNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
@@ -53,8 +53,8 @@ public enum EInsert {
             if (pToNode.hasFirstChild()) {
                 paramWtx.moveTo(pToNode.getFirstChildKey());
 
-                if (paramWtx.getCurrentNode().getKind() == ENodes.TEXT_KIND
-                    && pFromNode.getKind() == ENodes.TEXT_KIND) {
+                if (paramWtx.getCurrentNode().getKind() == ENode.TEXT_KIND
+                    && pFromNode.getKind() == ENode.TEXT_KIND) {
                     final StringBuilder builder = new StringBuilder(paramWtx.getValueOfCurrentNode());
 
                     // Adapt right sibling key of moved node.
@@ -130,7 +130,7 @@ public enum EInsert {
             throws AbsTTException {
             assert paramWtx != null;
             assert paramRtx != null;
-            assert paramWtx.getNode().getKind() == ENodes.ELEMENT_KIND;
+            assert paramWtx.getNode().getKind() == ENode.ELEMENT_KIND;
             switch (paramRtx.getNode().getKind()) {
             case ELEMENT_KIND:
                 paramWtx.insertElementAsFirstChild(paramRtx.getQNameOfCurrentNode());
@@ -155,7 +155,7 @@ public enum EInsert {
             assert paramWtx != null;
             final boolean hasMoved = paramWtx.moveTo(pToNode.getRightSiblingKey());
 
-            if (pFromNode.getKind() == ENodes.TEXT_KIND && pToNode.getKind() == ENodes.TEXT_KIND) {
+            if (pFromNode.getKind() == ENode.TEXT_KIND && pToNode.getKind() == ENode.TEXT_KIND) {
                 paramWtx.moveTo(pToNode.getNodeKey());
                 final StringBuilder builder = new StringBuilder(paramWtx.getValueOfCurrentNode());
 
@@ -192,8 +192,8 @@ public enum EInsert {
                 // Remove first child.
                 paramWtx.moveTo(pToNode.getNodeKey());
                 paramWtx.remove();
-            } else if (hasMoved && pFromNode.getKind() == ENodes.TEXT_KIND
-                && paramWtx.getCurrentNode().getKind() == ENodes.TEXT_KIND) {
+            } else if (hasMoved && pFromNode.getKind() == ENode.TEXT_KIND
+                && paramWtx.getCurrentNode().getKind() == ENode.TEXT_KIND) {
                 final StringBuilder builder = new StringBuilder(paramWtx.getValueOfCurrentNode());
 
                 // Adapt left sibling key of former right sibling of first
@@ -269,8 +269,8 @@ public enum EInsert {
             throws AbsTTException {
             assert paramWtx != null;
             assert paramRtx != null;
-            assert paramWtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                || paramWtx.getNode().getKind() == ENodes.TEXT_KIND;
+            assert paramWtx.getNode().getKind() == ENode.ELEMENT_KIND
+                || paramWtx.getNode().getKind() == ENode.TEXT_KIND;
             switch (paramRtx.getNode().getKind()) {
             case ELEMENT_KIND:
                 paramWtx.insertElementAsRightSibling(paramRtx.getQNameOfCurrentNode());
@@ -299,7 +299,7 @@ public enum EInsert {
             throws AbsTTException {
             assert paramWtx != null;
             assert paramRtx != null;
-            assert paramWtx.getNode().getKind() == ENodes.ELEMENT_KIND;
+            assert paramWtx.getNode().getKind() == ENode.ELEMENT_KIND;
             switch (paramRtx.getNode().getKind()) {
             case NAMESPACE_KIND:
                 paramWtx.insertNamespace(paramRtx.getQNameOfCurrentNode());

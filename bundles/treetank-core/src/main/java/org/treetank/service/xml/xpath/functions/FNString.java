@@ -35,7 +35,7 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -119,11 +119,11 @@ public class FNString extends AbsFunction {
         final StringBuilder value = new StringBuilder();
 
         if (getTransaction().getNode().getNodeKey() >= 0) { // is node
-            if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
-                || getTransaction().getNode().getKind() == ENodes.TEXT_KIND) {
+            if (getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND
+                || getTransaction().getNode().getKind() == ENode.TEXT_KIND) {
                 value.append(getTransaction().getValueOfCurrentNode());
-            } else if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND
-                || getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
+            } else if (getTransaction().getNode().getKind() == ENode.ROOT_KIND
+                || getTransaction().getNode().getKind() == ENode.ELEMENT_KIND) {
                 final AbsAxis axis =
                     new FilterAxis(new DescendantAxis(getTransaction()), new TextFilter(getTransaction()));
                 while (axis.hasNext()) {

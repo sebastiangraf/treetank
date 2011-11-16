@@ -52,7 +52,7 @@ import org.treetank.axis.PostOrderAxis;
 import org.treetank.diff.DiffFactory;
 import org.treetank.diff.algorithm.IImportDiff;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
@@ -227,7 +227,7 @@ public final class FMES implements IImportDiff {
         for (final AbsAxis axis = new LevelOrderAxis(paramRtx, true); axis.hasNext(); axis.next()) {
             final IStructNode node = axis.getTransaction().getStructuralNode();
             final long nodeKey = node.getNodeKey();
-            if (node.getKind() == ENodes.ELEMENT_KIND) {
+            if (node.getKind() == ENode.ELEMENT_KIND) {
                 final ElementNode element = (ElementNode)node;
                 if (element.getAttributeCount() > 0) {
                     for (int i = 0; i < element.getAttributeCount(); i++) {
@@ -316,7 +316,7 @@ public final class FMES implements IImportDiff {
                     paramWtx.remove();
                 }
 
-                if (node.getKind() == ENodes.ELEMENT_KIND) {
+                if (node.getKind() == ENode.ELEMENT_KIND) {
                     final long nodeKey = node.getNodeKey();
                     final ElementNode element = (ElementNode)node;
                     paramWtx.moveTo(nodeKey);
@@ -482,8 +482,8 @@ public final class FMES implements IImportDiff {
         paramRtx.moveTo(paramChild.getNodeKey());
         paramWtx.moveTo(paramParent.getNodeKey());
 
-        if (paramRtx.getNode().getKind() == ENodes.ATTRIBUTE_KIND
-            || paramRtx.getNode().getKind() == ENodes.NAMESPACE_KIND) {
+        if (paramRtx.getNode().getKind() == ENode.ATTRIBUTE_KIND
+            || paramRtx.getNode().getKind() == ENode.NAMESPACE_KIND) {
             // Attribute- and namespace-nodes can't be moved.
             return;
         }
@@ -537,16 +537,16 @@ public final class FMES implements IImportDiff {
             switch (paramToNode.getKind()) {
             case ELEMENT_KIND:
             case ATTRIBUTE_KIND:
-                assert paramFromNode.getKind() == ENodes.ELEMENT_KIND
-                    || paramFromNode.getKind() == ENodes.ATTRIBUTE_KIND;
+                assert paramFromNode.getKind() == ENode.ELEMENT_KIND
+                    || paramFromNode.getKind() == ENode.ATTRIBUTE_KIND;
                 paramWtx.setQName(paramRtx.getQNameOfCurrentNode());
 
-                if (paramFromNode.getKind() == ENodes.ATTRIBUTE_KIND) {
+                if (paramFromNode.getKind() == ENode.ATTRIBUTE_KIND) {
                     paramWtx.setValue(paramRtx.getValueOfCurrentNode());
                 }
                 break;
             case TEXT_KIND:
-                assert paramFromNode.getKind() == ENodes.TEXT_KIND;
+                assert paramFromNode.getKind() == ENode.TEXT_KIND;
                 paramWtx.setValue(paramRtx.getValueOfCurrentNode());
                 break;
             default:
@@ -640,7 +640,7 @@ public final class FMES implements IImportDiff {
             mAlreadyInserted.put(node, true);
             mInOrder.put(node, true);
             final long nodeKey = node.getNodeKey();
-            if (node.getKind() == ENodes.ELEMENT_KIND) {
+            if (node.getKind() == ENode.ELEMENT_KIND) {
                 final ElementNode element = (ElementNode)node;
                 if (element.getAttributeCount() > 0) {
                     for (int i = 0; i < element.getAttributeCount(); i++) {
@@ -682,8 +682,8 @@ public final class FMES implements IImportDiff {
         throws AbsTTException {
         assert paramRtx != null;
         assert paramWtx != null;
-        assert paramRtx.getStructuralNode().getKind() == ENodes.ELEMENT_KIND;
-        assert paramWtx.getStructuralNode().getKind() == ENodes.ELEMENT_KIND;
+        assert paramRtx.getStructuralNode().getKind() == ENode.ELEMENT_KIND;
+        assert paramWtx.getStructuralNode().getKind() == ENode.ELEMENT_KIND;
         final ElementNode element = (ElementNode)paramRtx.getStructuralNode();
         if (element.getAttributeCount() > 0) {
             for (int i = 0; i < element.getAttributeCount(); i++) {
@@ -718,7 +718,7 @@ public final class FMES implements IImportDiff {
     private int
         findPos(final INode paramX, final IWriteTransaction paramWtx, final IReadTransaction paramRtx) {
         final long nodeKey = paramRtx.getStructuralNode().getNodeKey();
-        if (paramX.getKind() == ENodes.ATTRIBUTE_KIND) {
+        if (paramX.getKind() == ENode.ATTRIBUTE_KIND) {
             return -1;
         } else {
             // 1 - Let y = p(x) in T2.
@@ -810,10 +810,10 @@ public final class FMES implements IImportDiff {
             new LeafEqual(paramWtx, paramRtx));
 
         // Remove roots ('/') from labels and append them to mapping.
-        final Map<ENodes, List<INode>> oldLabels = mLabelOldRevVisitor.getLabels();
-        final Map<ENodes, List<INode>> newLabels = mLabelNewRevVisitor.getLabels();
-        oldLabels.remove(ENodes.ROOT_KIND);
-        newLabels.remove(ENodes.ROOT_KIND);
+        final Map<ENode, List<INode>> oldLabels = mLabelOldRevVisitor.getLabels();
+        final Map<ENode, List<INode>> newLabels = mLabelNewRevVisitor.getLabels();
+        oldLabels.remove(ENode.ROOT_KIND);
+        newLabels.remove(ENode.ROOT_KIND);
 
         paramWtx.moveToDocumentRoot();
         paramRtx.moveToDocumentRoot();
@@ -838,14 +838,14 @@ public final class FMES implements IImportDiff {
      * @param paramCmp
      *            functional class
      */
-    private void match(final Map<ENodes, List<INode>> paramOldLabels,
-        final Map<ENodes, List<INode>> paramNewLabels, final Matching paramMatching,
+    private void match(final Map<ENode, List<INode>> paramOldLabels,
+        final Map<ENode, List<INode>> paramNewLabels, final Matching paramMatching,
         final IComparator<INode> paramCmp) {
-        final Set<ENodes> labels = paramOldLabels.keySet();
+        final Set<ENode> labels = paramOldLabels.keySet();
         labels.retainAll(paramNewLabels.keySet()); // intersection
 
         // 2 - for each label do
-        for (final ENodes label : labels) {
+        for (final ENode label : labels) {
             final List<INode> first = paramOldLabels.get(label); // 2(a)
             final List<INode> second = paramNewLabels.get(label); // 2(b)
 
@@ -1067,7 +1067,7 @@ public final class FMES implements IImportDiff {
             assert paramSecondNode != null;
             long common = 0;
 
-            if (paramFirstNode.getKind() == ENodes.ATTRIBUTE_KIND
+            if (paramFirstNode.getKind() == ENode.ATTRIBUTE_KIND
                 && nodeValuesEqual(paramFirstNode, paramSecondNode, mWtx, mRtx)) {
                 // This allows us to detect the update of values for attributes
                 // because when a value is changed, 100% of the children have
