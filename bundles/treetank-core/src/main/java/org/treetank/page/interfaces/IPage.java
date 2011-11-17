@@ -7,12 +7,12 @@ import org.treetank.page.PageReference;
 
 public interface IPage {
 
-    void commit(final WriteTransactionState paramState) throws AbsTTException;
-
     void serialize(final ITTSink paramOut);
+
+    long getRevision();
 
     PageReference[] getReferences();
 
-    long getRevision();
+    void commit(final WriteTransactionState paramState) throws AbsTTException;
 
 }
