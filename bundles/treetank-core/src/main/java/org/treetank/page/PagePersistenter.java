@@ -40,14 +40,6 @@ public final class PagePersistenter {
     public final static int REVISIONROOTPAGE = 5;
 
     /**
-     * Empty constructor, not needed since access occures with static methods.
-     */
-    private PagePersistenter() {
-        // Not needed over here
-        throw new AssertionError("May not be instantiated!");
-    }
-
-    /**
      * Create page.
      * 
      * @param paramSource
