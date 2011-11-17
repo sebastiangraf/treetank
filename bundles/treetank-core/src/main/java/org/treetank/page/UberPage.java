@@ -34,6 +34,8 @@ import org.treetank.io.ITTSource;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.page.delegates.PageDelegate;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.settings.EFixed;
 import org.treetank.utils.IConstants;
 

@@ -29,6 +29,7 @@ package org.treetank.page;
 
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
+import org.treetank.page.interfaces.IPage;
 
 public final class PagePersistenter {
 

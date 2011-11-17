@@ -40,13 +40,13 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.node.DeletedNode;
 import org.treetank.node.interfaces.INode;
-import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
 

@@ -34,9 +34,9 @@ import java.io.RandomAccessFile;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
-import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.utils.IConstants;
 
 /**
