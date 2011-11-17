@@ -25,13 +25,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.page;
+package org.treetank.page.delegates;
 
 import org.treetank.access.WriteTransactionState;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
+import org.treetank.page.PageReference;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * <h1>Page</h1>
@@ -40,7 +42,7 @@ import org.treetank.io.ITTSource;
  * Class to provide basic reference handling functionality.
  * </p>
  */
-class PageDelegate implements IPage {
+public class PageDelegate implements IPage {
 
     /** Page references. */
     private PageReference[] mReferences;
@@ -56,7 +58,7 @@ class PageDelegate implements IPage {
      * @param paramRevision
      *            Revision Number.
      */
-    protected PageDelegate(final int paramReferenceCount, final long paramRevision) {
+    public PageDelegate(final int paramReferenceCount, final long paramRevision) {
         mReferences = new PageReference[paramReferenceCount];
         mRevision = paramRevision;
         for (int i = 0; i < paramReferenceCount; i++) {
@@ -64,7 +66,7 @@ class PageDelegate implements IPage {
         }
     }
 
-    protected void initialize(final ITTSource paramIn) {
+    public void initialize(final ITTSource paramIn) {
         for (int offset = 0; offset < mReferences.length; offset++) {
             getReferences()[offset] = new PageReference();
             final EStorage storage = EStorage.getInstance(paramIn.readInt());
@@ -75,7 +77,7 @@ class PageDelegate implements IPage {
         }
     }
 
-    protected void initialize(final IPage paramCommittedPage) {
+    public void initialize(final IPage paramCommittedPage) {
         mReferences = paramCommittedPage.getReferences();
     }
 
@@ -121,8 +123,7 @@ class PageDelegate implements IPage {
             if (reference.getKey() == null) {
                 paramOut.writeInt(0);
             } else {
-                EStorage.getInstance(reference.getKey().getClass())
-                    .serialize(paramOut, reference.getKey());
+                EStorage.getInstance(reference.getKey().getClass()).serialize(paramOut, reference.getKey());
             }
 
         }

@@ -32,6 +32,8 @@ import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.io.NodeInputSource;
 import org.treetank.node.io.NodeOutputSink;
+import org.treetank.page.delegates.PageDelegate;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.utils.IConstants;
 
 /**

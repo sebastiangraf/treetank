@@ -40,8 +40,8 @@ import org.treetank.io.KeyDelegate;
 import org.treetank.io.berkeley.binding.AbstractPageBinding;
 import org.treetank.io.berkeley.binding.KeyBinding;
 import org.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
-import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
+import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;

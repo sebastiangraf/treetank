@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.treetank.io.EStorage;
 import org.treetank.io.ITTSource;
+import org.treetank.page.interfaces.IPage;
 
 public enum EPage {
 
