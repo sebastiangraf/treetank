@@ -33,7 +33,7 @@ set +e
 #switching back to master
 git checkout master
 #merging the data
-git merge trunk
+git merge refs/remotes/git-svn
 #submitting to github
 git push origin
 exit 0
