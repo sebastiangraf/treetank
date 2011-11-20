@@ -30,8 +30,10 @@
 ###SCRIPT FOR CI###
 #setting error to false, not beautiful but efficient because of updating/merging
 set +e
-#submitting to github
+#switching back to master
 git checkout master
+#merging the data
 git merge trunk
+#submitting to github
 git push origin
 exit 0
