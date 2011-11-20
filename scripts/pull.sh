@@ -34,5 +34,5 @@ set +e
 git fetch origin
 #getting disy data
 git svn fetch
-git checkout trunk
+git checkout refs/remotes/git-svn
 exit 0
