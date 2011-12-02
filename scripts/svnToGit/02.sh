@@ -28,12 +28,9 @@
 
 
 ###SCRIPT FOR CI###
-#setting error to false, not beautiful but efficient because of updating/merging
+###(SVN->GITHUB SYNCING)###
+###FOURTH STEP, MERGING SVN TO GITHUB
 set +e
-#switching back to master
-git checkout master
-#merging the data
+#merging the svn data
 git merge refs/remotes/git-svn
-#submitting to github
-git push origin
 exit 0
