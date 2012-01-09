@@ -44,11 +44,11 @@
 	</scm>
 	<modules>
 		<module>parent</module>
-		<module>bundles/treetank-core</module>
-		<module>bundles/treetank-saxon</module>
-		<module>bundles/treetank-eclipse</module>
-		<!-- <module>bundles/treetank-encryption</module> <module>bundles/treetank-jax-rx</module> -->
-		<module>bundles/treetank-commons</module>
+		<module>bundles/core</module>
+		<module>bundles/eclipse</module>
+		<module>bundles/commons</module>
+		<module>xmlbundles/saxon</module>
+<!--		<module>xmlbundles/jax-rx</module>-->
 	</modules>
 	<repositories>
 		<repository>
