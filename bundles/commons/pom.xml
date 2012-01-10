@@ -32,7 +32,7 @@
 
 	<artifactId>commons</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>treetank-commons</name>
+	<name>Commons bundle for containing utility stuff</name>
 	<packaging>jar</packaging>
 
 	<repositories>

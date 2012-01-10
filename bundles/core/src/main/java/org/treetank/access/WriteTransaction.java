@@ -48,8 +48,8 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.page.UberPage;
-import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.settings.EFixed;
+import org.treetank.utils.ItemList;
 import org.treetank.utils.TypedValue;
 
 /**

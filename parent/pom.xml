@@ -25,7 +25,7 @@
 	<groupId>treetank</groupId>
 	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
-	<name>treetank-pom</name>
+	<name>Parent pom for all projects</name>
 	<version>1.0.5-SNAPSHOT</version>
 	<url>http://www.treetank.org</url>
 	<scm>

@@ -32,7 +32,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>eclipse</artifactId>
     <version>1.0.2-SNAPSHOT</version>
-    <name>treetank-eclipse</name>
+    <name>Creating eclipse workspace</name>
     <packaging>pom</packaging>
 	<parent>
 		<artifactId>pom</artifactId>

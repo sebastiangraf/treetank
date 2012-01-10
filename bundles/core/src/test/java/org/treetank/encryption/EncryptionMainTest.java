@@ -35,12 +35,9 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTEncryptionException;
 import org.treetank.service.xml.shredder.XMLShredder;
-import org.treetank.service.xml.xpath.XPathAxis;
-import org.treetank.service.xml.xpath.XPathStringChecker;
 
 public class EncryptionMainTest {
 
@@ -106,11 +103,11 @@ public class EncryptionMainTest {
         EncryptionOperator op9 = new EncryptionOperator();
         op9.leave("Waldvogel", new String[] {});
 
-        AbsAxis axis = new XPathAxis(holder.getRtx(), "/site/people/person[@id=\"person0\"]/name/text()");
-
-        XPathStringChecker.testIAxisConventions(axis, new String[] {
-            "Sinisa Farrel"
-        });
+//        AbsAxis axis = new XPathAxis(holder.getRtx(), "/site/people/person[@id=\"person0\"]/name/text()");
+//
+//        XPathStringChecker.testIAxisConventions(axis, new String[] {
+//            "Sinisa Farrel"
+//        });
 
     }
 
