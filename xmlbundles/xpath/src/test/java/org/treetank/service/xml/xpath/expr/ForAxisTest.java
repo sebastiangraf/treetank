@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.axis;
+package org.treetank.service.xml.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,6 +35,8 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
+import org.treetank.axis.AbsAxis;
+import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
 
