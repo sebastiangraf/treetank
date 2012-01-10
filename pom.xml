@@ -48,6 +48,7 @@
 		<module>bundles/eclipse</module>
 		<module>bundles/commons</module>
 		<module>xmlbundles/saxon</module>
+<!--		<module>xmlbundles/xpath</module>-->
 <!--		<module>xmlbundles/jax-rx</module>-->
 	</modules>
 	<repositories>
