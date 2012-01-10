@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,20 +27,13 @@
 package org.treetank.page;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.treetank.access.WriteTransactionState;
-import org.treetank.encryption.EncryptionController;
-import org.treetank.encryption.database.model.KeySelector;
-import org.treetank.encryption.utils.NodeEncryption;
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
-import org.treetank.node.io.NodeInputSource;
-import org.treetank.node.io.NodeOutputSink;
 import org.treetank.page.delegates.PageDelegate;
 import org.treetank.page.interfaces.IPage;
 import org.treetank.utils.IConstants;
@@ -88,111 +81,111 @@ public class NodePage implements IPage {
         mNodePageKey = mIn.readLong();
         mNodes = new INode[IConstants.NDP_NODE_COUNT];
 
-        final EncryptionController enController = EncryptionController
-                .getInstance();
-
-        if (enController.checkEncryption()) {
-            for (int i = 0; i < mNodes.length; i++) {
-                final long mRightKey = getRightKey(mIn);
-
-                final List<Long> mUserKeys = enController.getKeyCache().get(
-                        enController.getUser());
-                byte[] mSecretKey = null;
-
-                if (mUserKeys.contains(mRightKey) || mRightKey == -1) {
-                    final int mElementKind = mIn.readInt();
-
-                    if (mRightKey != -1) {
-
-                        // get secret key
-                        mSecretKey = enController.getSelDb()
-                                .getEntry(mRightKey).getSecretKey();
-
-                        final int mNodeBytes = mIn.readInt();
-                        final int mPointerBytes = mIn.readInt();
-
-                        final byte[] mDecryptedNode;
-
-                        if (mPointerBytes == 0) {
-
-                            final byte[] mEncryptedNode = new byte[mNodeBytes];
-
-                            for (int j = 0; j < mNodeBytes; j++) {
-                                mEncryptedNode[j] = mIn.readByte();
-                            }
-
-                            mDecryptedNode = NodeEncryption.decrypt(
-                                    mEncryptedNode, mSecretKey);
-
-                        } else {
-
-                            final byte[] mEncryptedPointer = new byte[mPointerBytes];
-                            for (int j = 0; j < mPointerBytes; j++) {
-                                mEncryptedPointer[j] = mIn.readByte();
-                            }
-
-                            final int mDataBytes = mNodeBytes - mPointerBytes;
-                            final byte[] mEncryptedData = new byte[mDataBytes];
-                            for (int j = 0; j < mDataBytes; j++) {
-                                mEncryptedData[j] = mIn.readByte();
-                            }
-
-                            final byte[] mDecryptedPointer = NodeEncryption
-                                    .decrypt(mEncryptedPointer, mSecretKey);
-
-                            final byte[] mDecryptedData = NodeEncryption
-                                    .decrypt(mEncryptedData, mSecretKey);
-
-                            mDecryptedNode = new byte[mDecryptedPointer.length
-                                    + mDecryptedData.length];
-
-                            int mCounter = 0;
-                            for (int j = 0; j < mDecryptedPointer.length; j++) {
-                                mDecryptedNode[mCounter] = mDecryptedPointer[j];
-                                mCounter++;
-                            }
-                            for (int j = 0; j < mDecryptedData.length; j++) {
-                                mDecryptedNode[mCounter] = mDecryptedData[j];
-                                mCounter++;
-                            }
-
-                        }
-
-                        final NodeInputSource mNodeInput = new NodeInputSource(
-                                mDecryptedNode);
-
-                        final ENode mEnumKind = ENode.getKind(mElementKind);
-
-                        if (mEnumKind != ENode.UNKOWN_KIND) {
-                            getNodes()[i] = mEnumKind.deserialize(mNodeInput);
-                        }
-                    }
-
-                } else {
-                    try {
-                        throw new TTUsageException(
-                                "User has no permission to access the node");
-
-                    } catch (final TTUsageException mExp) {
-                        mExp.printStackTrace();
-                    }
-                }
-            }
-        } else {
-            final int[] kinds = new int[IConstants.NDP_NODE_COUNT];
-            for (int i = 0; i < kinds.length; i++) {
-                kinds[i] = mIn.readInt();
-            }
-
-            for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-                final int kind = kinds[offset];
-                final ENode enumKind = ENode.getKind(kind);
-                if (enumKind != ENode.UNKOWN_KIND) {
-                    getNodes()[offset] = enumKind.deserialize(mIn);
-                }
-            }
-
+        // final EncryptionController enController = EncryptionController
+        // .getInstance();
+        //
+        // if (enController.checkEncryption()) {
+        // for (int i = 0; i < mNodes.length; i++) {
+        // final long mRightKey = getRightKey(mIn);
+        //
+        // final List<Long> mUserKeys = enController.getKeyCache().get(
+        // enController.getUser());
+        // byte[] mSecretKey = null;
+        //
+        // if (mUserKeys.contains(mRightKey) || mRightKey == -1) {
+        // final int mElementKind = mIn.readInt();
+        //
+        // if (mRightKey != -1) {
+        //
+        // // get secret key
+        // mSecretKey = enController.getSelDb()
+        // .getEntry(mRightKey).getSecretKey();
+        //
+        // final int mNodeBytes = mIn.readInt();
+        // final int mPointerBytes = mIn.readInt();
+        //
+        // final byte[] mDecryptedNode;
+        //
+        // if (mPointerBytes == 0) {
+        //
+        // final byte[] mEncryptedNode = new byte[mNodeBytes];
+        //
+        // for (int j = 0; j < mNodeBytes; j++) {
+        // mEncryptedNode[j] = mIn.readByte();
+        // }
+        //
+        // mDecryptedNode = NodeEncryption.decrypt(
+        // mEncryptedNode, mSecretKey);
+        //
+        // } else {
+        //
+        // final byte[] mEncryptedPointer = new byte[mPointerBytes];
+        // for (int j = 0; j < mPointerBytes; j++) {
+        // mEncryptedPointer[j] = mIn.readByte();
+        // }
+        //
+        // final int mDataBytes = mNodeBytes - mPointerBytes;
+        // final byte[] mEncryptedData = new byte[mDataBytes];
+        // for (int j = 0; j < mDataBytes; j++) {
+        // mEncryptedData[j] = mIn.readByte();
+        // }
+        //
+        // final byte[] mDecryptedPointer = NodeEncryption
+        // .decrypt(mEncryptedPointer, mSecretKey);
+        //
+        // final byte[] mDecryptedData = NodeEncryption
+        // .decrypt(mEncryptedData, mSecretKey);
+        //
+        // mDecryptedNode = new byte[mDecryptedPointer.length
+        // + mDecryptedData.length];
+        //
+        // int mCounter = 0;
+        // for (int j = 0; j < mDecryptedPointer.length; j++) {
+        // mDecryptedNode[mCounter] = mDecryptedPointer[j];
+        // mCounter++;
+        // }
+        // for (int j = 0; j < mDecryptedData.length; j++) {
+        // mDecryptedNode[mCounter] = mDecryptedData[j];
+        // mCounter++;
+        // }
+        //
+        // }
+        //
+        // final NodeInputSource mNodeInput = new NodeInputSource(
+        // mDecryptedNode);
+        //
+        // final ENode mEnumKind = ENode.getKind(mElementKind);
+        //
+        // if (mEnumKind != ENode.UNKOWN_KIND) {
+        // getNodes()[i] = mEnumKind.deserialize(mNodeInput);
+        // }
+        // }
+        //
+        // } else {
+        // try {
+        // throw new TTUsageException(
+        // "User has no permission to access the node");
+        //
+        // } catch (final TTUsageException mExp) {
+        // mExp.printStackTrace();
+        // }
+        // }
+        // }
+        // } else {
+        final int[] kinds = new int[IConstants.NDP_NODE_COUNT];
+        for (int i = 0; i < kinds.length; i++) {
+            kinds[i] = mIn.readInt();
         }
+
+        for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
+            final int kind = kinds[offset];
+            final ENode enumKind = ENode.getKind(kind);
+            if (enumKind != ENode.UNKOWN_KIND) {
+                getNodes()[offset] = enumKind.deserialize(mIn);
+            }
+        }
+
+        // }
     }
 
     /**
@@ -242,103 +235,103 @@ public class NodePage implements IPage {
         mDelegate.serialize(mOut);
         mOut.writeLong(mNodePageKey);
 
-        final EncryptionController enController = EncryptionController
-                .getInstance();
-
-        if (enController.checkEncryption()) {
-            NodeOutputSink mNodeOut = null;
-            for (final INode node : getNodes()) {
-                if (node != null) {
-                    mNodeOut = new NodeOutputSink();
-
-                    final long mDek = enController.getDataEncryptionKey();
-
-                    final KeySelector mKeySel = enController.getSelDb()
-                            .getEntry(mDek);
-                    final byte[] mSecretKey = mKeySel.getSecretKey();
-
-                    mOut.writeLong(mKeySel.getPrimaryKey());
-                    mOut.writeInt(mKeySel.getRevision());
-                    mOut.writeInt(mKeySel.getVersion());
-                    final int kind = node.getKind().getId();
-                    mOut.writeInt(kind);
-                    ENode.getKind(kind).serialize(mOut, node);
-
-                    final byte[] mStream = mNodeOut.getOutputStream()
-                            .toByteArray();
-
-                    byte[] mEncrypted = null;
-                    final int pointerEnSize;
-
-                    if (mStream.length > 0) {
-
-                        final byte[] mPointer = new byte[mStream.length];
-
-                        for (int i = 0; i < mPointer.length; i++) {
-                            mPointer[i] = mStream[i];
-                        }
-
-                        final byte[] mData = new byte[mStream.length
-                                - mPointer.length];
-                        for (int i = 0; i < mData.length; i++) {
-                            mData[i] = mStream[mPointer.length + i];
-                        }
-
-                        final byte[] mEnPointer = NodeEncryption.encrypt(
-                                mPointer, mSecretKey);
-                        pointerEnSize = mEnPointer.length;
-                        final byte[] mEnData = NodeEncryption.encrypt(mData,
-                                mSecretKey);
-
-                        mEncrypted = new byte[mEnPointer.length
-                                + mEnData.length];
-
-                        int mCounter = 0;
-                        for (int i = 0; i < mEnPointer.length; i++) {
-                            mEncrypted[mCounter] = mEnPointer[i];
-                            mCounter++;
-                        }
-                        for (int i = 0; i < mEnData.length; i++) {
-                            mEncrypted[mCounter] = mEnData[i];
-                            mCounter++;
-                        }
-
-                    } else {
-                        pointerEnSize = 0;
-                        mEncrypted = NodeEncryption
-                                .encrypt(mStream, mSecretKey);
-                    }
-
-                    mOut.writeInt(mEncrypted.length);
-                    mOut.writeInt(pointerEnSize);
-
-                    for (byte aByte : mEncrypted) {
-                        mOut.writeByte(aByte);
-                    }
-
-                } else {
-                    mOut.writeLong(-1);
-                    mOut.writeInt(-1);
-                    mOut.writeInt(-1);
-                    mOut.writeInt(ENode.UNKOWN_KIND.getId());
-                }
-            }
-        } else {
-            for (int i = 0; i < getNodes().length; i++) {
-                if (getNodes()[i] != null) {
-                    final int kind = getNodes()[i].getKind().getId();
-                    mOut.writeInt(kind);
-                } else {
-                    mOut.writeInt(ENode.UNKOWN_KIND.getId());
-                }
-            }
-
-            for (final INode node : getNodes()) {
-                if (node != null) {
-                    ENode.getKind(node.getClass()).serialize(mOut, node);
-                }
+        // final EncryptionController enController = EncryptionController
+        // .getInstance();
+        //
+        // if (enController.checkEncryption()) {
+        // NodeOutputSink mNodeOut = null;
+        // for (final INode node : getNodes()) {
+        // if (node != null) {
+        // mNodeOut = new NodeOutputSink();
+        //
+        // final long mDek = enController.getDataEncryptionKey();
+        //
+        // final KeySelector mKeySel = enController.getSelDb()
+        // .getEntry(mDek);
+        // final byte[] mSecretKey = mKeySel.getSecretKey();
+        //
+        // mOut.writeLong(mKeySel.getPrimaryKey());
+        // mOut.writeInt(mKeySel.getRevision());
+        // mOut.writeInt(mKeySel.getVersion());
+        // final int kind = node.getKind().getId();
+        // mOut.writeInt(kind);
+        // ENode.getKind(kind).serialize(mOut, node);
+        //
+        // final byte[] mStream = mNodeOut.getOutputStream()
+        // .toByteArray();
+        //
+        // byte[] mEncrypted = null;
+        // final int pointerEnSize;
+        //
+        // if (mStream.length > 0) {
+        //
+        // final byte[] mPointer = new byte[mStream.length];
+        //
+        // for (int i = 0; i < mPointer.length; i++) {
+        // mPointer[i] = mStream[i];
+        // }
+        //
+        // final byte[] mData = new byte[mStream.length
+        // - mPointer.length];
+        // for (int i = 0; i < mData.length; i++) {
+        // mData[i] = mStream[mPointer.length + i];
+        // }
+        //
+        // final byte[] mEnPointer = NodeEncryption.encrypt(
+        // mPointer, mSecretKey);
+        // pointerEnSize = mEnPointer.length;
+        // final byte[] mEnData = NodeEncryption.encrypt(mData,
+        // mSecretKey);
+        //
+        // mEncrypted = new byte[mEnPointer.length
+        // + mEnData.length];
+        //
+        // int mCounter = 0;
+        // for (int i = 0; i < mEnPointer.length; i++) {
+        // mEncrypted[mCounter] = mEnPointer[i];
+        // mCounter++;
+        // }
+        // for (int i = 0; i < mEnData.length; i++) {
+        // mEncrypted[mCounter] = mEnData[i];
+        // mCounter++;
+        // }
+        //
+        // } else {
+        // pointerEnSize = 0;
+        // mEncrypted = NodeEncryption
+        // .encrypt(mStream, mSecretKey);
+        // }
+        //
+        // mOut.writeInt(mEncrypted.length);
+        // mOut.writeInt(pointerEnSize);
+        //
+        // for (byte aByte : mEncrypted) {
+        // mOut.writeByte(aByte);
+        // }
+        //
+        // } else {
+        // mOut.writeLong(-1);
+        // mOut.writeInt(-1);
+        // mOut.writeInt(-1);
+        // mOut.writeInt(ENode.UNKOWN_KIND.getId());
+        // }
+        // }
+        // } else {
+        for (int i = 0; i < getNodes().length; i++) {
+            if (getNodes()[i] != null) {
+                final int kind = getNodes()[i].getKind().getId();
+                mOut.writeInt(kind);
+            } else {
+                mOut.writeInt(ENode.UNKOWN_KIND.getId());
             }
         }
+
+        for (final INode node : getNodes()) {
+            if (node != null) {
+                ENode.getKind(node.getClass()).serialize(mOut, node);
+            }
+        }
+        // }
     }
 
     /**
@@ -370,7 +363,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -389,7 +382,7 @@ public class NodePage implements IPage {
             return false;
         }
 
-        final NodePage mOther = (NodePage) mObj;
+        final NodePage mOther = (NodePage)mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
             return false;
         }

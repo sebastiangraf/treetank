@@ -25,7 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.axis;
+package org.treetank.service.xml.xpath.expr;
+
+import org.treetank.axis.AbsAxis;
 
 /**
  * <h1>ForAxis</h1>

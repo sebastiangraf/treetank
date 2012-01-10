@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath;
+package org.treetank.utils;
 
 import java.util.ArrayList;
 import java.util.List;

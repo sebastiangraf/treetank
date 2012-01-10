@@ -37,7 +37,7 @@
 
 	<artifactId>saxon</artifactId>
 	<packaging>jar</packaging>
-	<name>treetank-saxon</name>
+	<name>Bundle to implement saxon interfaces</name>
 	<version>1.0.3-SNAPSHOT</version>
 	<description>Saxon binding.</description>
 	<repositories>
