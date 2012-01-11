@@ -1,0 +1,77 @@
+====
+    Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above copyright
+          notice, this list of conditions and the following disclaimer in the
+          documentation and/or other materials provided with the distribution.
+        * Neither the name of the University of Konstanz nor the
+          names of its contributors may be used to endorse or promote products
+          derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+====
+
+User_0;jd5nqbsvpo;obd9brapbu
+User_1;jd5nqbsvpo
+User_2;ycba1009tc;t1kyihiqal;0pq92cve2j
+User_3;obd9brapbu
+User_4;obd9brapbu;bnlvexgxdh;wcjkmfgues
+User_5;u8yfuxcvqt;aj5efn21ae;jctrjihhba
+User_6;juts67cpb9
+User_7;94vyrl43ny;jd5nqbsvpo
+User_8;juts67cpb9
+User_9;6k04b8jfgc;juts67cpb9
+User_10;f896501qz2;6k04b8jfgc
+User_11;6k04b8jfgc;jctrjihhba;3m2h37c9t7
+User_12;3yi0j0hlgf;nxz0qngj1i;jctrjihhba
+User_13;t1kyihiqal;3yi0j0hlgf;nxz0qngj1i
+User_14;d1j4lzb35z;u8yfuxcvqt
+User_15;aj5efn21ae
+User_16;axbnyk1jzn;jctrjihhba
+User_17;0pq92cve2j;u8yfuxcvqt;axbnyk1jzn
+User_18;6k04b8jfgc;wcjkmfgues;2g9fyducwb
+User_19;f896501qz2;aj5efn21ae;d1j4lzb35z
+User_20;qj0iyhsaqu;74l2zn2y3k
+User_21;bnlvexgxdh;9ahxqubspr
+User_22;o0xoplnyzj
+User_23;nxz0qngj1i;jctrjihhba
+User_24;2g9fyducwb;axbnyk1jzn;6k04b8jfgc
+User_25;t1kyihiqal;f896501qz2
+User_26;u8yfuxcvqt;3yi0j0hlgf
+User_27;t1kyihiqal;bnlvexgxdh;atasjeyv6j
+User_28;axbnyk1jzn
+User_29;ycba1009tc;jctrjihhba
+User_30;obd9brapbu
+User_31;94vyrl43ny;o0xoplnyzj;yny200leyc
+User_32;bnlvexgxdh;juts67cpb9;atasjeyv6j
+User_33;ycba1009tc;bnlvexgxdh
+User_34;nxz0qngj1i;hf6pihbf5z;uthy9xcb70
+User_35;9ahxqubspr;ycba1009tc
+User_36;hf6pihbf5z;u8yfuxcvqt
+User_37;wcjkmfgues;nxz0qngj1i
+User_38;3m2h37c9t7;d1j4lzb35z;94vyrl43ny
+User_39;t1kyihiqal;3m2h37c9t7;hf6pihbf5z
+User_40;d1j4lzb35z
+User_41;o0xoplnyzj;f896501qz2
+User_42;3m2h37c9t7;ycba1009tc;98zyetdq9v
+User_43;94vyrl43ny;74l2zn2y3k
+User_44;d1j4lzb35z;94vyrl43ny
+User_45;axbnyk1jzn
+User_46;uthy9xcb70
+User_47;0pq92cve2j;2g9fyducwb;3yi0j0hlgf
+User_48;74l2zn2y3k
+User_49;jd5nqbsvpo;aj5efn21ae;ycba1009tc
