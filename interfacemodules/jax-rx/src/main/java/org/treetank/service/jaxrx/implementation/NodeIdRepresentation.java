@@ -65,15 +65,6 @@ import org.treetank.service.xml.shredder.EShredderInsert;
 public class NodeIdRepresentation {
 
     /**
-     * The folder where the tnk files will be saved.
-     */
-    private static final transient String RESPATH = RESTProps.STOREDBPATH;
-    /**
-     * The tnk file ending.
-     */
-    private static final transient String TNKEND = ".tnk";
-
-    /**
      * This field specifies the begin result element of the request.
      */
     private static final transient byte[] BEGINRESULT = "<jaxrx:result xmlns:jaxrx=\"http://jaxrx.org/\">"
@@ -114,9 +105,8 @@ public class NodeIdRepresentation {
             public void write(final OutputStream output) throws IOException,
                     JaxRxException {
 
-                final String tnkFile = RESPATH + File.separatorChar
-                        + resourceName + TNKEND;
-                final File dbFile = new File(tnkFile);
+                final File dbFile = new File(RESTProps.STOREDBPATH,
+                        resourceName);
 
                 // final String xPath = queryParams.get(QueryParameter.QUERY);
                 final String revision = queryParams
@@ -161,9 +151,8 @@ public class NodeIdRepresentation {
             public void write(final OutputStream output) throws IOException,
                     JaxRxException {
 
-                final String tnkFile = RESPATH + File.separatorChar
-                        + resourceName + TNKEND;
-                final File dbFile = new File(tnkFile);
+                final File dbFile = new File(RESTProps.STOREDBPATH,
+                        resourceName);
 
                 // final String xPath = queryParams.get(QueryParameter.QUERY);
                 final String revision = queryParams
@@ -207,9 +196,8 @@ public class NodeIdRepresentation {
             public void write(final OutputStream output) throws IOException,
                     JaxRxException {
 
-                final String tnkFile = RESPATH + File.separatorChar
-                        + resourceName + TNKEND;
-                final File dbFile = new File(tnkFile);
+                final File dbFile = new File(RESTProps.STOREDBPATH,
+                        resourceName);
                 final String revision = queryParams
                         .get(QueryParameter.REVISION);
                 final String wrap = queryParams.get(QueryParameter.WRAP);
@@ -250,9 +238,7 @@ public class NodeIdRepresentation {
             ISession session = null;
             IDatabase database = null;
             IWriteTransaction wtx = null;
-            final String tnkFile = RESPATH + File.separatorChar + resourceName
-                    + TNKEND;
-            final File dbFile = new File(tnkFile);
+            final File dbFile = new File(RESTProps.STOREDBPATH, resourceName);
             boolean abort = false;
             if (WorkerHelper.checkExistingResource(dbFile)) {
                 try {
@@ -306,9 +292,7 @@ public class NodeIdRepresentation {
             ISession session = null;
             IDatabase database = null;
             IWriteTransaction wtx = null;
-            final String tnkFile = RESPATH + File.separatorChar + resourceName
-                    + TNKEND;
-            final File dbFile = new File(tnkFile);
+            final File dbFile = new File(RESTProps.STOREDBPATH, resourceName);
             boolean abort = false;
             if (WorkerHelper.checkExistingResource(dbFile)) {
                 try {
@@ -371,9 +355,7 @@ public class NodeIdRepresentation {
         ISession session = null;
         IDatabase database = null;
         IWriteTransaction wtx = null;
-        final String tnkFile = RESPATH + File.separatorChar + resourceName
-                + TNKEND;
-        final File dbFile = new File(tnkFile);
+        final File dbFile = new File(RESTProps.STOREDBPATH, resourceName);
         synchronized (resourceName) {
             boolean abort;
             if (WorkerHelper.checkExistingResource(dbFile)) {

@@ -48,10 +48,10 @@ public final class RESTProps {
     /**
      * The path where the databases will be stored.
      */
-    // public final static transient String STOREDBPATH = System
-    // .getProperty("user.home")
-    // + File.separatorChar + "xml-databases";
-    public final static transient String STOREDBPATH = File.separatorChar + "tmp" + File.separatorChar + "tt";
+    public final static transient File STOREDBPATH = new File(
+            new StringBuilder(File.separator).append("tmp")
+                    .append(File.separator).append("tnk")
+                    .append(File.separator).append("path1").toString());
 
     /**
      * The tnk ending.

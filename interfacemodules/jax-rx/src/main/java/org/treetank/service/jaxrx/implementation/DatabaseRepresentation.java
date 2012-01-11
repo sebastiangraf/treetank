@@ -229,8 +229,7 @@ public class DatabaseRepresentation {
      */
     public StreamingOutput getResourcesNames() throws JaxRxException {
         final Map<String, String> availResources = new HashMap<String, String>();
-        final File resourcesDir = new File(RESTProps.STOREDBPATH);
-        final File[] files = resourcesDir.listFiles();
+        final File[] files = RESTProps.STOREDBPATH.listFiles();
         if (files != null) {
             for (final File file : files) {
                 if (file.isDirectory()) {
@@ -266,12 +265,13 @@ public class DatabaseRepresentation {
                             + (new Date().getTime());
                     shred(input, saveName);
                 } else {
-                    final File tnkFile = new File(RESTProps.STOREDBPATH
-                            + File.separatorChar + resource + RESTProps.TNKEND);
+                    final String resourceName = resource + RESTProps.TNKEND;
+                    final File tnkFile = new File(RESTProps.STOREDBPATH,
+                            resourceName);
+
                     if (tnkFile.exists()) {
-                        final File newCol = new File(RESTProps.STOREDBPATH
-                                + File.separatorChar + resource
-                                + RESTProps.COLEND);
+                        final File newCol = new File(RESTProps.STOREDBPATH,
+                                resource + RESTProps.COLEND);
                         newCol.mkdir();
                         tnkFile.renameTo(new File(newCol, tnkFile.getName()));
                         final String saveName = newCol.getName()
@@ -299,7 +299,7 @@ public class DatabaseRepresentation {
         synchronized (resourceName) {
             try {
                 final DatabaseConfiguration dbConfig = new DatabaseConfiguration(
-                        new File(RESTProps.STOREDBPATH));
+                        new File(RESTProps.STOREDBPATH, resourceName));
                 final IDatabase database = Database
                         .openDatabase(dbConfig.mFile);
                 database.truncateResource(new ResourceConfiguration.Builder(
@@ -332,7 +332,7 @@ public class DatabaseRepresentation {
         try {
 
             final DatabaseConfiguration dbConf = new DatabaseConfiguration(
-                    new File(RESTProps.STOREDBPATH));
+                    new File(RESTProps.STOREDBPATH, resource));
 
             // Shredding the database to the file as XML
             final ResourceConfiguration resConf = new ResourceConfiguration.Builder(
@@ -402,9 +402,8 @@ public class DatabaseRepresentation {
             }
 
         } else {
-            final String tnkFile = RESTProps.STOREDBPATH + File.separatorChar
-                    + resource + RESTProps.TNKEND;
-            final File dbFile = new File(tnkFile);
+            final String resourceName = resource + RESTProps.TNKEND;
+            final File dbFile = new File(RESTProps.STOREDBPATH, resourceName);
             if (WorkerHelper.checkExistingResource(dbFile)) {
                 try {
                     if (wrapResult) {
@@ -438,9 +437,8 @@ public class DatabaseRepresentation {
      */
     public long getLastRevision(final String resourceName)
             throws JaxRxException, AbsTTException {
-        final String tnkFile = RESTProps.STOREDBPATH + File.separatorChar
-                + resourceName + RESTProps.TNKEND;
-        final File dbFile = new File(new File(tnkFile), resourceName);
+        final File dbFile = new File(RESTProps.STOREDBPATH, resourceName
+                + RESTProps.TNKEND);
         long lastRevision;
         if (WorkerHelper.checkExistingResource(dbFile)) {
 
@@ -502,9 +500,8 @@ public class DatabaseRepresentation {
         final long revision2 = Long.valueOf(tokenizer.nextToken());
 
         if (revision1 < revision2 && revision2 <= getLastRevision(resourceName)) {
-            final String tnkFile = RESTProps.STOREDBPATH + File.separatorChar
-                    + resourceName + RESTProps.TNKEND;
-            final File dbFile = new File(tnkFile);
+            final File dbFile = new File(RESTProps.STOREDBPATH, resourceName
+                    + RESTProps.TNKEND);
 
             // variables for highest rest-id in respectively revision
             long maxRestidRev1 = 0;
@@ -640,8 +637,8 @@ public class DatabaseRepresentation {
      */
     private List<File> checkColForTnks(final String resource) {
         final List<File> tnks = new ArrayList<File>();
-        final File colFile = new File(RESTProps.STOREDBPATH
-                + File.separatorChar + resource);
+        final File colFile = new File(RESTProps.STOREDBPATH, resource
+                + RESTProps.COLEND);
         if (colFile.exists()) {
             final File[] files = colFile.listFiles();
             for (final File file : files) {
@@ -681,8 +678,8 @@ public class DatabaseRepresentation {
         // IReadTransaction rtx = null;
         try {
             database = Database.openDatabase(aTNK);
-            session = database.getSession(new SessionConfiguration.Builder(
-                    aTNK.getName()).build());
+            session = database.getSession(new SessionConfiguration.Builder(aTNK
+                    .getName()).build());
             // and creating a transaction
             // if (revision == null) {
             // rtx = session.beginReadTransaction();
@@ -719,16 +716,14 @@ public class DatabaseRepresentation {
      */
     public void revertToRevision(final String resourceName,
             final long backToRevision) throws JaxRxException, AbsTTException {
-        final StringBuilder tnkFileName = new StringBuilder(
-                RESTProps.STOREDBPATH + File.separatorChar + resourceName);
-        tnkFileName.append(RESTProps.TNKEND);
-        final File tnk = new File(tnkFileName.toString());
+        final File tnkFile = new File(RESTProps.STOREDBPATH, resourceName
+                + RESTProps.TNKEND);
         IDatabase database = null;
         ISession session = null;
         IWriteTransaction wtx = null;
         boolean abort = false;
         try {
-            database = Database.openDatabase(tnk);
+            database = Database.openDatabase(tnkFile);
             session = database.getSession(new SessionConfiguration.Builder(
                     resourceName).build());
             wtx = session.beginWriteTransaction();

@@ -73,8 +73,8 @@ public class WorkerHelperTest {
     /**
      * The test file that has to be saved on the server.
      */
-    private final static File DBFILE = new File(RESTProps.STOREDBPATH
-            + File.separatorChar + RESOURCENAME + ".tnk");
+    private final static File DBFILE = new File(RESTProps.STOREDBPATH,
+            RESOURCENAME + RESTProps.TNKEND);
 
     /**
      * The test file that has to be saved on the server.

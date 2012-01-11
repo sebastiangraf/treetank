@@ -88,19 +88,23 @@ public class RestXPathProcessorTest {
 
     @BeforeClass
     public static void setUpGlobal() throws AbsTTException {
-        final File dir = new File(RESTProps.STOREDBPATH);
-        deleteDirectory(dir);
-        final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
+        deleteDirectory(RESTProps.STOREDBPATH);
+        final InputStream xmlInput = RestXPathProcessorTest.class
+                .getResourceAsStream("/books.xml");
         new DatabaseRepresentation().shred(xmlInput, RESOURCENAME);
     }
 
     /**
-     * Test method for {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor()} .
+     * Test method for
+     * {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor()}
+     * .
      */
     @Test
     public final void testRestXPathProcessor() {
         final RestXPathProcessor reference = new RestXPathProcessor();
-        assertNotNull("checks if the reference is not null and constructor works", reference);
+        assertNotNull(
+                "checks if the reference is not null and constructor works",
+                reference);
     }
 
     /**
@@ -114,34 +118,43 @@ public class RestXPathProcessorTest {
      * @throws TreetankException
      */
     @Test
-    public final void testGetXpathResourceStringStringBooleanLongOutputStreamBoolean() throws IOException,
-        SAXException, ParserConfigurationException, AbsTTException {
+    public final void testGetXpathResourceStringStringBooleanLongOutputStreamBoolean()
+            throws IOException, SAXException, ParserConfigurationException,
+            AbsTTException {
         String xPath = "//book";
         boolean withNodeIds = true;
         OutputStream output = new ByteArrayOutputStream();
-        rxProcessor.getXpathResource(RESOURCENAME, xPath, withNodeIds, 0L, output, true);
-        InputStream xmlInput = new ByteArrayInputStream(((ByteArrayOutputStream)output).toByteArray());
+        rxProcessor.getXpathResource(RESOURCENAME, xPath, withNodeIds, 0L,
+                output, true);
+        InputStream xmlInput = new ByteArrayInputStream(
+                ((ByteArrayOutputStream) output).toByteArray());
         Document resultDoc = xmlDocument(xmlInput);
         final NodeList bNodes = resultDoc.getElementsByTagName(PARAMBOOKS);
         assertEquals("test for items size of books is 6", 6, bNodes.getLength());
         final NodeList aNodes = resultDoc.getElementsByTagName(PARAMAUTHOR);
-        assertEquals("test for items size of authors is 12", 12, aNodes.getLength());
+        assertEquals("test for items size of authors is 12", 12,
+                aNodes.getLength());
         final NodeList rNodes = resultDoc.getElementsByTagName(PARAMJAXRES);
-        assertEquals("test for existence of result element is 1", 1, rNodes.getLength());
+        assertEquals("test for existence of result element is 1", 1,
+                rNodes.getLength());
         final NodeList iNodes = resultDoc.getElementsByTagName(PARAMJRESTSEQ);
         assertEquals("test for existence of node ids", 6, iNodes.getLength());
         xPath = "//author";
         withNodeIds = false;
         output = new ByteArrayOutputStream();
-        rxProcessor.getXpathResource(RESOURCENAME, xPath, withNodeIds, null, output, true);
-        xmlInput = new ByteArrayInputStream(((ByteArrayOutputStream)output).toByteArray());
+        rxProcessor.getXpathResource(RESOURCENAME, xPath, withNodeIds, null,
+                output, true);
+        xmlInput = new ByteArrayInputStream(
+                ((ByteArrayOutputStream) output).toByteArray());
         resultDoc = xmlDocument(xmlInput);
         final NodeList b2Nodes = resultDoc.getElementsByTagName(PARAMBOOKS);
-        assertEquals("test for items size of books is 0", 0, b2Nodes.getLength());
+        assertEquals("test for items size of books is 0", 0,
+                b2Nodes.getLength());
         final NodeList a2Nodes = resultDoc.getElementsByTagName(PARAMAUTHOR);
         assertEquals("test for items size of authors", 12, a2Nodes.getLength());
         final NodeList r2Nodes = resultDoc.getElementsByTagName(PARAMJAXRES);
-        assertEquals("test for existence of result element", 1, r2Nodes.getLength());
+        assertEquals("test for existence of result element", 1,
+                r2Nodes.getLength());
         final NodeList i2Nodes = resultDoc.getElementsByTagName(PARAMJRESTSEQ);
         assertEquals("test for existence of node ids", 0, i2Nodes.getLength());
 
@@ -158,28 +171,36 @@ public class RestXPathProcessorTest {
      * @throws TreetankException
      */
     @Test
-    public final void testGetXpathResourceFileLongStringBooleanLongOutputStreamBoolean() throws SAXException,
-        IOException, ParserConfigurationException, AbsTTException {
+    public final void testGetXpathResourceFileLongStringBooleanLongOutputStreamBoolean()
+            throws SAXException, IOException, ParserConfigurationException,
+            AbsTTException {
         String xPath = "//author";
         boolean withNodeIds = true;
         OutputStream output = new ByteArrayOutputStream();
-        final File tnkFile = new File(RESTProps.STOREDBPATH + File.separatorChar + RESOURCENAME + ".tnk");
-        rxProcessor.getXpathResource(tnkFile, 10L, xPath, withNodeIds, 0L, output, true);
-        InputStream xmlInput = new ByteArrayInputStream(((ByteArrayOutputStream)output).toByteArray());
+        final File tnkFile = new File(RESTProps.STOREDBPATH, RESOURCENAME
+                + ".tnk");
+        rxProcessor.getXpathResource(tnkFile, 10L, xPath, withNodeIds, 0L,
+                output, true);
+        InputStream xmlInput = new ByteArrayInputStream(
+                ((ByteArrayOutputStream) output).toByteArray());
         Document resultDoc = xmlDocument(xmlInput);
         final NodeList bNodes = resultDoc.getElementsByTagName(PARAMBOOKS);
         assertEquals("test for items size of books", 0, bNodes.getLength());
         final NodeList aNodes = resultDoc.getElementsByTagName(PARAMAUTHOR);
-        assertEquals("test for items size of authors is 2", 2, aNodes.getLength());
+        assertEquals("test for items size of authors is 2", 2,
+                aNodes.getLength());
         final NodeList rNodes = resultDoc.getElementsByTagName(PARAMJAXRES);
-        assertEquals("test for item of result element is 1", 1, rNodes.getLength());
+        assertEquals("test for item of result element is 1", 1,
+                rNodes.getLength());
         final NodeList iNodes = resultDoc.getElementsByTagName(PARAMJRESTSEQ);
         assertEquals("test for existence of node ids", 2, iNodes.getLength());
         xPath = "//author";
         withNodeIds = false;
         output = new ByteArrayOutputStream();
-        rxProcessor.getXpathResource(tnkFile, 10L, xPath, withNodeIds, null, output, true);
-        xmlInput = new ByteArrayInputStream(((ByteArrayOutputStream)output).toByteArray());
+        rxProcessor.getXpathResource(tnkFile, 10L, xPath, withNodeIds, null,
+                output, true);
+        xmlInput = new ByteArrayInputStream(
+                ((ByteArrayOutputStream) output).toByteArray());
         resultDoc = xmlDocument(xmlInput);
         final NodeList b2Nodes = resultDoc.getElementsByTagName(PARAMBOOKS);
         assertEquals("test for item size of books", 0, b2Nodes.getLength());
@@ -196,7 +217,8 @@ public class RestXPathProcessorTest {
      * 
      * @param path
      *            The director that has to be deleted.
-     * @return <code>true</code> if the deletion process has been successful. <code>false</code> otherwise.
+     * @return <code>true</code> if the deletion process has been successful.
+     *         <code>false</code> otherwise.
      */
     private static boolean deleteDirectory(final File path) {
         if (path.exists()) {
@@ -225,9 +247,10 @@ public class RestXPathProcessorTest {
      * @throws ParserConfigurationException
      *             Exception occurred.
      */
-    private Document xmlDocument(final InputStream input) throws SAXException, IOException,
-        ParserConfigurationException {
-        return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
+    private Document xmlDocument(final InputStream input) throws SAXException,
+            IOException, ParserConfigurationException {
+        return DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                .parse(input);
     }
 
 }

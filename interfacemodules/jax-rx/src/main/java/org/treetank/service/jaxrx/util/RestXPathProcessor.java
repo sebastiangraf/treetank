@@ -114,9 +114,7 @@ public class RestXPathProcessor {
             }
 
         } else {
-            final String tnkFile = RESTProps.STOREDBPATH + File.separatorChar
-                    + resourceName + RESTProps.TNKEND;
-            final File dbFile = new File(tnkFile);
+            final File dbFile = RESTProps.STOREDBPATH;
             if (WorkerHelper.checkExistingResource(dbFile)) {
 
                 if (wrapResult) {
@@ -279,8 +277,7 @@ public class RestXPathProcessor {
      */
     private List<File> checkColForTnks(final String resource) {
         List<File> tnks;
-        final File colFile = new File(RESTProps.STOREDBPATH
-                + File.separatorChar + resource);
+        final File colFile = new File(RESTProps.STOREDBPATH, resource);
         if (colFile.exists()) {
             tnks = new ArrayList<File>();
             final File[] files = colFile.listFiles();
