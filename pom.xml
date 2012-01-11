@@ -44,12 +44,12 @@
 	</scm>
 	<modules>
 		<module>parent</module>
-		<module>bundles/core</module>
-		<module>bundles/eclipse</module>
-		<module>bundles/commons</module>
-		<module>xmlbundles/saxon</module>
-		<module>xmlbundles/xpath</module>
-<!--		<module>xmlbundles/jax-rx</module>-->
+		<module>coremodules/core</module>
+		<module>coremodules/eclipse</module>
+		<module>coremodules/commons</module>
+		<module>interfacemodules/saxon</module>
+<!--		<module>interfacemodules/jax-rx</module>-->
+		<module>studentmodules/xpath</module>
 	</modules>
 	<repositories>
 		<repository>

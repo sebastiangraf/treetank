@@ -11,8 +11,9 @@ Content
 
 README					this readme file
 LICENSE	 				license file
-bundles					Bundles containing main treetank functionality
-xmlbundles				Bundles to support native XML storage
+coremodules				Bundles containing main treetank functionality
+interfacemodules		Bundles implementing third-party interfaces
+studentmodules			Bundles containing student projects
 scripts					bash scripts for syncing against disy-internal repo.
 pom.xml					Simple pom (yes we do use Maven)
 parent					Location of parent pom
@@ -30,7 +31,6 @@ The framework was presented at various conferences and acted as base for multipl
 * Hecate, Managing Authorization with RESTful XML; WS-REST'11: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-126237 
 * Integrity Assurance for RESTful XML; WISM'10: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-123507
 * JAX-RX - Unified REST Access to XML Resources; TechReport'10: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-120511
-* Treetank, a native XML storage; TechReport'09: http://kops.ub.uni-konstanz.de/handle/ urn:nbn:de:bsz:352-opus-100664
 * Distributing XML with focus on parallel evaluation; DBISP2P'08: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-84487
 
 Any questions, just contact sebastian.graf AT uni-konstanz.de
