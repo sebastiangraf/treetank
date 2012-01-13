@@ -1,4 +1,4 @@
-Native XPath 2.0 Engine
+Native XPath 2.0 Engine for Treetank
 =============
 
 Based on the inlying tree-encoding of Treetank, XPath 2.0 as query engine was chosen in 2007.
@@ -41,20 +41,10 @@ Optimization ideas:
 * use fulltext indices
 * convert queries with backward axis in queries only using forward axes				 
 
-
-Further information
--------
-
-The documentation so far is accessible as master thesis of Tina (German only):
-
-
-Any questions, just contact sebastian.graf AT uni-konstanz.de
-
 License
 -------
 
 This work is released in the public domain under the BSD 3-clause license
-
 
 Involved People
 -------
