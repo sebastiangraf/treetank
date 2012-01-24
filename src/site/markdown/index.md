@@ -6,7 +6,7 @@ Treetank stores data securely by applying different layers on the stored data. F
 Secure in this context includes integrity-checks, confidentiality with tree-aware key handling, versioning to provide accountability.
 Furthermore, different backends are provided while a binding to different cloud-infrastructures is in progress.
 
-What components does Treetank consists out of?
+What components does Treetank consists of?
 ------------
 
 Treetank consists out of three main components:
@@ -22,7 +22,7 @@ Treetank is:
 
 * a complete Java-based library entirely mavenized
 * acting as base for various thesis and papers
-* offering flexible interfaces for storing various data (ranging from blocks to REST-reosurces)
+* offering flexible interfaces for storing various data (ranging from blocks to REST-resources)
 * for a university project well-document and tested
 
 Publications:
