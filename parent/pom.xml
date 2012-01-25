@@ -303,8 +303,8 @@
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 		<site>
-			<id> treetank</id>
-			<url> http://blubb.de</url>
+			<id>treetank</id>
+			<url>http://blubb.de</url>
 		</site>
 	</distributionManagement>
 	<properties>
