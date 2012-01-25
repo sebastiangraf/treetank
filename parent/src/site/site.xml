@@ -34,7 +34,7 @@
     <href></href>
   </bannerLeft>
   <body>
-    <menu name="Information" inherited="top">
+    <menu name="Information" inherit="top">
       <item name="About Treetank" href="index.html"/>
       <item name="Bundles" href="bundles.html"/>
     </menu>
