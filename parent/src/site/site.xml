@@ -30,14 +30,14 @@
 <project name="Treetank">
   <bannerLeft>
     <name>Treetank</name>
-    <src>images/logo.png</src>
-    <href>http://www.treetank.org</href>
+    <src>images/</src>
+    <href></href>
   </bannerLeft>
   <body>
-    <!-- <menu name="Information" inherited="top">
+    <menu name="Information" inherited="top">
       <item name="About Treetank" href="index.html"/>
       <item name="Bundles" href="bundles.html"/>
-    </menu>-->
+    </menu>
     <menu ref="reports"/>
   </body>
   <skin>
@@ -49,9 +49,9 @@
 	<fluidoSkin>
       <topBarEnabled>false</topBarEnabled>
       <topBarIcon>
-        <name>Perfidix </name>
-        <alt>Perfidix Logo</alt>
-        <src>images/logo.png</src>
+        <name>Treetank </name>
+        <alt>Treetank Logo</alt>
+        <src></src>
       </topBarIcon>
     </fluidoSkin>
   </custom>
