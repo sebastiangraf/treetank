@@ -33,6 +33,7 @@
 		<groupId>treetank</groupId>
 		<artifactId>pom</artifactId>
 		<version>1.0.5-SNAPSHOT</version>
+		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>xpath</artifactId>

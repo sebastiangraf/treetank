@@ -28,6 +28,7 @@
 		<artifactId>pom</artifactId>
 		<groupId>treetank</groupId>
 		<version>1.0.5-SNAPSHOT</version>
+		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>commons</artifactId>
