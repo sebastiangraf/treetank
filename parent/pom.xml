@@ -304,7 +304,7 @@
 		</snapshotRepository>
 		<site>
 			<id>treetank</id>
-			<url>http://blubb.de</url>
+			<url>file//users/nuray/documents/workspace/treetank/target/site/</url>
 		</site>
 	</distributionManagement>
 	<properties>

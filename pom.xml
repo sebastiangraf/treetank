@@ -23,14 +23,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>treetank</groupId>
-		<artifactId>pom</artifactId>
-		<version>1.0.5-SNAPSHOT</version>
-		<relativePath>parent/pom.xml</relativePath>
-	</parent>
 
-	<artifactId>complete</artifactId>
+<groupId>treetank</groupId>
+		<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
 	<name>Complete Build</name>
 	<version>1.0.2-SNAPSHOT</version>
@@ -76,4 +71,20 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	<distributionManagement>
+		<repository>
+			<id>disyInternal</id>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal</url>
+			<uniqueVersion>false</uniqueVersion>
+		</repository>
+		<snapshotRepository>
+			<id>disyInternalSnapshot</id>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+		<site>
+			<id>treetank</id>
+			<url>file//users/nuray/documents/workspace/treetank/target/site/</url>
+		</site>
+	</distributionManagement>
 </project>
