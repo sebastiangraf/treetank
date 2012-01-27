@@ -24,9 +24,9 @@
     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+    SOFTWARE, EVEN If ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
+
 <project name="Treetank">
   <bannerLeft>
     <name>Treetank</name>
@@ -34,11 +34,21 @@
     <href>http://www.treetank.org</href>
   </bannerLeft>
   <body>
-    <!-- <menu name="Information">
-      <item name="About Treetank" href="index.html"/>
-      <item name="Bundles" href="bundles.html"/>
-    </menu>-->
+     <menu name="Information">
+    </menu>
     <menu ref="reports"/>
+     <menu name="Treetank">
+      <item name="About Treetank" href="index.html"/>
+    </menu>
+    <menu ref="modules"/>
+
+     <menu name="Modules">
+<!--      <item name="Core Modules" href="coremodules.html"/>
+      <item name="Interface Modules" href="interfacemodules.html"/>
+      <item name="Student Modules" href="studentmodules.html"/>
+-->    </menu>
+    <menu ref="modules"/>
+
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>

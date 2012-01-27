@@ -24,7 +24,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-<groupId>treetank</groupId>
+	<parent>
+		<groupId>treetank</groupId>
+		<artifactId>pom</artifactId>
+		<version>1.0.5-SNAPSHOT</version>
+		<relativePath>parent/pom.xml</relativePath>
+	</parent>
 		<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
 	<name>Complete Build</name>
@@ -84,7 +89,7 @@
 		</snapshotRepository>
 		<site>
 			<id>treetank</id>
-			<url>file//users/nuray/documents/workspace/treetank/target/site/</url>
+			<url>/users/nuray/documents/workspace/treetank/target/site/</url>
 		</site>
 	</distributionManagement>
 </project>
