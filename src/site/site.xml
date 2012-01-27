@@ -42,11 +42,11 @@
     </menu>
     <menu ref="modules"/>
 
-     <menu name="Modules">
-<!--      <item name="Core Modules" href="coremodules.html"/>
+<!--     <menu name="Modules">
+      <item name="Core Modules" href="coremodules.html"/>
       <item name="Interface Modules" href="interfacemodules.html"/>
       <item name="Student Modules" href="studentmodules.html"/>
--->    </menu>
+   </menu>--> 
     <menu ref="modules"/>
 
   </body>

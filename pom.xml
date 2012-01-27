@@ -89,7 +89,7 @@
 		</snapshotRepository>
 		<site>
 			<id>treetank</id>
-			<url>/users/nuray/documents/workspace/treetank/target/site/</url>
+			<url>/tmp/site/</url>
 		</site>
 	</distributionManagement>
 </project>
