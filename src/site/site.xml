@@ -36,11 +36,11 @@
   <body>
      <menu name="Information">
     </menu>
-    <menu ref="reports"/>
+    <menu ref="modules"/>
      <menu name="Treetank">
       <item name="About Treetank" href="index.html"/>
     </menu>
-    <menu ref="modules"/>
+    <menu ref="reports"/>
 
 <!--     <menu name="Modules">
       <item name="Core Modules" href="coremodules.html"/>
