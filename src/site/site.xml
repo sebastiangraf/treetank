@@ -34,21 +34,16 @@
     <href>http://www.treetank.org</href>
   </bannerLeft>
   <body>
-     <menu name="Information">
-    </menu>
+    <breadcrumbs>
+	  <item name="Treetank" href="http://www.treetank.org"/>
+	</breadcrumbs>
+    <menu name="Information"/>
     <menu ref="modules"/>
-     <menu name="Treetank">
+    <menu name="Treetank">
       <item name="About Treetank" href="index.html"/>
     </menu>
     <menu ref="reports"/>
-
-<!--     <menu name="Modules">
-      <item name="Core Modules" href="coremodules.html"/>
-      <item name="Interface Modules" href="interfacemodules.html"/>
-      <item name="Student Modules" href="studentmodules.html"/>
-   </menu>--> 
-    <menu ref="modules"/>
-
+<!--    <menu ref="modules"/>-->
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
@@ -59,8 +54,8 @@
 	<fluidoSkin>
       <topBarEnabled>false</topBarEnabled>
       <topBarIcon>
-        <name>Perfidix </name>
-        <alt>Perfidix Logo</alt>
+        <name>Treetank</name>
+        <alt>Treetank Logo</alt>
         <src>images/logo.png</src>
       </topBarIcon>
     </fluidoSkin>

@@ -30,7 +30,7 @@
 		<version>1.0.5-SNAPSHOT</version>
 		<relativePath>parent/pom.xml</relativePath>
 	</parent>
-		<artifactId>complete</artifactId>
+	<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
 	<name>Complete Build</name>
 	<version>1.0.2-SNAPSHOT</version>
@@ -87,9 +87,5 @@
 			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
-		<site>
-			<id>treetank</id>
-			<url>/tmp/site/</url>
-		</site>
 	</distributionManagement>
 </project>
