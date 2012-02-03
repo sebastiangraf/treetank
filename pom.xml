@@ -24,12 +24,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-<!--	<parent>
-		<groupId>treetank</groupId>
-		<artifactId>pom</artifactId>
-		<version>1.0.5-SNAPSHOT</version>
-		<relativePath>parent/pom.xml</relativePath>
-	</parent>-->
 	<groupId>treetank</groupId>
 	<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
@@ -44,15 +38,15 @@
 		<connection>scm:git:git://github.com/disy/treetank.git</connection>
 		<developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
 	</scm>
-	<modules>
+<!--	<modules>
 		<module>parent</module>
 		<module>coremodules/core</module>
-<!--		<module>coremodules/eclipse</module>-->
+		<module>coremodules/eclipse</module>
 		<module>coremodules/commons</module>
 		<module>interfacemodules/saxon</module>
 		<module>interfacemodules/jax-rx</module>
 		<module>studentmodules/xpath</module>
-	</modules>
+	</modules>-->
 	<build>
 		<plugins>
 			<plugin>
