@@ -27,7 +27,7 @@
 	<packaging>pom</packaging>
 	<name>Parent pom for all projects</name>
 	<version>1.0.5-SNAPSHOT</version>
-	<url>http://www.treetank.org</url>
+	<url>https://github.com/disy/treetank</url>
 	<issueManagement>
 		<system>Redmine</system>
 		<url>https://projects.uni-konstanz.de/projects/treetank/</url>
@@ -300,8 +300,10 @@
 			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
-		<!-- <site> <id>github</id> <url>gitsite:git@github.com/disy/treetank.git</url> 
-			</site> -->
+		<site>
+			<id>github</id>
+			<url>gitsite:git@github.com/disy/treetank.git</url> 
+		</site>
 	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
