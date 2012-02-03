@@ -34,7 +34,7 @@
     <href></href>
   </bannerLeft>
   <body>
-    <menu name=jax-rx">
+    <menu name="jax-rx">
       <item name="About Jax-RX" href="jax-rx.html"/>
     </menu>
     <menu ref="reports"/>
