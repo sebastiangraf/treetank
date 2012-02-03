@@ -38,15 +38,15 @@
 		<connection>scm:git:git://github.com/disy/treetank.git</connection>
 		<developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
 	</scm>
-<!--	<modules>
+	<modules>
 		<module>parent</module>
 		<module>coremodules/core</module>
 		<module>coremodules/eclipse</module>
 		<module>coremodules/commons</module>
 		<module>interfacemodules/saxon</module>
-		<module>interfacemodules/jax-rx</module>
+	<!--	<module>interfacemodules/jax-rx</module>-->
 		<module>studentmodules/xpath</module>
-	</modules>-->
+	</modules>
 	<build>
 		<plugins>
 			<plugin>
@@ -120,7 +120,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<extensions>
+	<!--	<extensions>
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>
 				<artifactId>maven-scm-provider-gitexe</artifactId>
@@ -136,7 +136,7 @@
 				<artifactId>wagon-gitsite</artifactId>
 				<version>0.4-SNAPSHOT</version>
 			</extension> 
-		</extensions>
+		</extensions>-->
 	</build>
 
 	<repositories>
