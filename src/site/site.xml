@@ -38,9 +38,6 @@
 	  <item name="Treetank" href="http://www.treetank.org"/>
 	</breadcrumbs>
 
-    <menu name="Treetank">
-      <item name="Blubb" href="blubb.html"/>
-    </menu>
     <menu ref="modules"/>
     <menu ref="reports"/>
   </body>
