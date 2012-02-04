@@ -37,13 +37,12 @@
     <breadcrumbs>
 	  <item name="Treetank" href="http://www.treetank.org"/>
 	</breadcrumbs>
-    <menu name="Information"/>
-    <menu ref="modules"/>
+
     <menu name="Treetank">
-      <item name="About Treetank" href="index.html"/>
+      <item name="Blubb" href="blubb.html"/>
     </menu>
+    <menu ref="modules"/>
     <menu ref="reports"/>
-<!--    <menu ref="modules"/>-->
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
