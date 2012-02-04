@@ -30,23 +30,22 @@
 	<name>Complete Build</name>
 	<version>1.0.2-SNAPSHOT</version>
 	<description>Treetank is a fully java-implemented native XML-Database. 
-	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
-	These versions can be easily retrieved within the database itself.</description>
+	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. These versions can be easily retrieved within the database itself.</description>
 	<url>https://github.com/disy/treetank</url>
 	<scm>
 		<url>https://github.com/disy/treetank</url>
 		<connection>scm:git:git://github.com/disy/treetank.git</connection>
 		<developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
 	</scm>
-	<!--	<modules>
-	<module>parent</module>
+	<modules>
+		<module>parent</module>
 		<module>coremodules/core</module>
 		<module>coremodules/eclipse</module>
 		<module>coremodules/commons</module>
 		<module>interfacemodules/saxon</module>
-		<module>interfacemodules/jax-rx</module>
+<!--		<module>interfacemodules/jax-rx</module>-->
 		<module>studentmodules/xpath</module>
-	</modules>-->
+	</modules>
 	<build>
 		<plugins>
 			<plugin>
