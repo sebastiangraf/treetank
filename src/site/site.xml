@@ -34,12 +34,16 @@
     <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
+     <menu name="Information" inherit="top">
+    </menu>
+    <menu ref="reports"/>
+     <menu name="Treetank">
+      <item name="About Treetank" href="index.html"/>
+    </menu>
     <breadcrumbs>
 	  <item name="Treetank" href="http://www.treetank.org"/>
 	</breadcrumbs>
-
     <menu ref="modules"/>
-    <menu ref="reports"/>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
