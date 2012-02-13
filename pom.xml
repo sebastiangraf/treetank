@@ -37,15 +37,15 @@
 		<connection>scm:git:git://github.com/disy/treetank.git</connection>
 		<developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
 	</scm>
-	<modules>
+<!--	<modules>
 		<module>parent</module>
 		<module>coremodules/core</module>
 		<module>coremodules/eclipse</module>
 		<module>coremodules/commons</module>
 		<module>interfacemodules/saxon</module>
-<!--		<module>interfacemodules/jax-rx</module>-->
+		<module>interfacemodules/jax-rx</module>
 		<module>studentmodules/xpath</module>
-	</modules>
+	</modules>-->
 	<build>
 		<plugins>
 			<plugin>
