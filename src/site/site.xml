@@ -34,7 +34,7 @@
     <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
-     <menu name="Information" inherit="top">
+     <menu name="Information">
     </menu>
     <menu ref="reports"/>
      <menu name="Treetank">
