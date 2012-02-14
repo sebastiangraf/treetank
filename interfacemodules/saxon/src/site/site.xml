@@ -35,7 +35,7 @@
   </bannerLeft>
   <body>
     <menu name="saxon">
-      <item name="About Saxon" href="saxon.html"/>
+      <item name="About Saxon" href="index.html"/>
     </menu>
     <menu ref="reports"/>
   </body>

@@ -70,4 +70,21 @@
 		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-commons</developerConnection>
 		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-commons</url>
 	</scm>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<outputEncoding>${project.build.sourceEncoding}</outputEncoding>
+					<inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+					<plugin>
+						<groupId>com.mycila.maven-license-plugin</groupId>
+						<artifactId>maven-license-plugin</artifactId>
+						<version>1.9.0</version>
+					</plugin>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
