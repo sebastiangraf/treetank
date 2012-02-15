@@ -48,8 +48,8 @@
 	<fluidoSkin>
       <topBarEnabled>false</topBarEnabled>
       <topBarIcon>
-        <name>Perfidix </name>
-        <alt>Perfidix Logo</alt>
+        <name>Treetank</name>
+        <alt>Treetank Logo</alt>
         <src>images/logo.png</src>
       </topBarIcon>
     </fluidoSkin>
