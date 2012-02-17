@@ -34,6 +34,9 @@
     <href>http://www.treetank.org</href>
   </bannerLeft>
   <body>
+     <menu name="Information">
+    </menu>
+    <menu ref="reports"/>
      <menu name="Commons">
       <item name="About Commons" href="index.html"/>
     </menu>
