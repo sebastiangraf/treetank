@@ -37,7 +37,10 @@
     <menu name="xml">
       <item name="About XML" href="xml.html"/>
     </menu>
-    <menu ref="reports"/>
+    <breadcrumbs>
+	  <item name="Treetank" href="http://www.treetank.org"/>
+	</breadcrumbs>
+    <menu ref="modules"/>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>

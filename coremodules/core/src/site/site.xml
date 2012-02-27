@@ -37,7 +37,10 @@
     <menu name="core">
       <item name="About Core" href="core.html"/>
     </menu>
-    <menu ref="reports"/>
+    <breadcrumbs>
+	  <item name="Treetank" href="http://www.treetank.org"/>
+	</breadcrumbs>
+    <menu ref="modules"/>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>

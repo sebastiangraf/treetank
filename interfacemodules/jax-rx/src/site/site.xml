@@ -37,7 +37,10 @@
     <menu name="jax-rx">
       <item name="About Jax-RX" href="jax-rx.html"/>
     </menu>
-    <menu ref="reports"/>
+    <breadcrumbs>
+	  <item name="Treetank" href="http://www.treetank.org"/>
+	</breadcrumbs>
+    <menu ref="modules"/>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
