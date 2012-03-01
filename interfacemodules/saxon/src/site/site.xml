@@ -34,7 +34,10 @@
     <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
-    <menu name="saxon">
+    <menu name="Information">
+    </menu>
+    <menu ref="reports"/>
+    <menu name="Xaxon">
       <item name="About Saxon" href="index.html"/>
     </menu>
     <breadcrumbs>

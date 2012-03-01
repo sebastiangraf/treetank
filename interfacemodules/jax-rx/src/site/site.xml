@@ -34,6 +34,9 @@
     <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
+    <menu name="Information">
+    </menu>
+    <menu ref="reports"/>
     <menu name="jax-rx">
       <item name="About Jax-RX" href="jax-rx.html"/>
     </menu>

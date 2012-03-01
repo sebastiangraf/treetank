@@ -34,8 +34,11 @@
     <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
+    <menu name="Information">
+    </menu>
+    <menu ref="reports"/>
     <menu name="xpath">
-      <item name="About XPath" href="xpath.html"/>
+      <item name="About XPath" href="index.html"/>
     </menu>
     <breadcrumbs>
 	  <item name="Treetank" href="http://www.treetank.org"/>
