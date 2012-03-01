@@ -34,6 +34,9 @@
     <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
+    <menu name="Information">
+    </menu>
+    <menu ref="reports"/>
     <menu name="xml">
       <item name="About XML" href="xml.html"/>
     </menu>
