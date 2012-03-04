@@ -27,91 +27,89 @@
 
 package org.treetank.saxon.wrapper;
 
+import static org.junit.Assert.assertEquals;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
-
-import org.treetank.Holder;
-import org.treetank.TestHelper;
-import org.treetank.access.Database;
-import org.treetank.exception.AbsTTException;
-import org.treetank.saxon.evaluator.XQueryEvaluator;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.exception.AbsTTException;
+import org.treetank.saxon.evaluator.XQueryEvaluator;
 
 /**
  * Test XQuery S9Api.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
+ * @author Sebastian Graf, University of Konstanz
  * 
  */
 public final class TestNodeWrapperS9ApiXQuery {
-    /** Treetank database on books document. */
-    private transient Holder mHolder;
+	/** Treetank database on books document. */
+	private transient Holder mHolder;
 
-    @Before
-    public void setUp() throws Exception {
-        BookShredding.createBookDB();
-        mHolder = Holder.generate();
-    }
+	@Before
+	public void setUp() throws Exception {
+		SaxonHelper.createBookDB();
+		mHolder = Holder.generateSession();
+	}
 
-    @After
-    public void tearDown() throws AbsTTException {
-        mHolder.close();
-        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-    }
+	@After
+	public void tearDown() throws AbsTTException {
+		TestHelper.closeEverything();
+		TestHelper.deleteEverything();
+	}
 
-    @Test
-    public void testWhereBooks() throws Exception {
-        final XdmValue value =
-            new XQueryEvaluator("for $x in /bookstore/book where $x/price>30 return $x/title",
-                mHolder.session).call();
+	@Test
+	public void testWhereBooks() throws Exception {
+		final XdmValue value = new XQueryEvaluator(
+				"for $x in /bookstore/book where $x/price>30 return $x/title",
+				mHolder.getSession()).call();
 
-        final StringBuilder strBuilder = new StringBuilder();
+		final StringBuilder strBuilder = new StringBuilder();
 
-        for (final XdmItem item : value) {
-            strBuilder.append(item.toString());
-        }
+		for (final XdmItem item : value) {
+			strBuilder.append(item.toString());
+		}
 
-        assertEquals("<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
-            strBuilder.toString());
-    }
+		assertEquals(
+				"<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
+				strBuilder.toString());
+	}
 
-    @Test
-    public void testOrderByBooks() throws Exception {
-        final XdmValue value =
-            new XQueryEvaluator(
-                "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
-                mHolder.session).call();
+	@Test
+	public void testOrderByBooks() throws Exception {
+		final XdmValue value = new XQueryEvaluator(
+				"for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
+				mHolder.getSession()).call();
 
-        final StringBuilder strBuilder = new StringBuilder();
+		final StringBuilder strBuilder = new StringBuilder();
 
-        for (final XdmItem item : value) {
-            strBuilder.append(item.toString());
-        }
+		for (final XdmItem item : value) {
+			strBuilder.append(item.toString());
+		}
 
-        assertEquals("<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
-            strBuilder.toString());
-    }
+		assertEquals(
+				"<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
+				strBuilder.toString());
+	}
 
-    @Test
-    public void testFLOWR() throws Exception {
-        final XdmValue value =
-            new XQueryEvaluator(
-                "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
-                mHolder.session).call();
-        final StringBuilder strBuilder = new StringBuilder();
+	@Test
+	public void testFLOWR() throws Exception {
+		final XdmValue value = new XQueryEvaluator(
+				"for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
+				mHolder.getSession()).call();
+		final StringBuilder strBuilder = new StringBuilder();
 
-        for (final XdmItem item : value) {
-            strBuilder.append(item.toString());
-        }
+		for (final XdmItem item : value) {
+			strBuilder.append(item.toString());
+		}
 
-        assertEquals("<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
-            strBuilder.toString());
-    }
+		assertEquals(
+				"<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
+				strBuilder.toString());
+	}
 
 }
