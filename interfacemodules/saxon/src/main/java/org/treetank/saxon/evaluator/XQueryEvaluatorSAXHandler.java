@@ -29,8 +29,6 @@ package org.treetank.saxon.evaluator;
 
 import java.util.concurrent.Callable;
 
-import org.xml.sax.ContentHandler;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.s9api.Processor;
@@ -41,10 +39,9 @@ import net.sf.saxon.s9api.XQueryExecutable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.saxon.wrapper.DocumentWrapper;
-import org.treetank.saxon.wrapper.NodeWrapper;
+import org.xml.sax.ContentHandler;
 
 /**
  * <h1>XQuery evaluator</h1>
