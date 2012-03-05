@@ -32,19 +32,21 @@ package org.treetank.service.jaxrx.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.jaxrx.implementation.NodeIdRepresentationTest;
@@ -61,129 +63,138 @@ import org.xml.sax.SAXException;
  * 
  */
 public class RESTResponseHelperTest {
-    /**
-     * name constant.
-     */
-    private static final String NAME = "name";
+	/**
+	 * name constant.
+	 */
+	private static final String NAME = "name";
 
-    /**
-     * last revision constant.
-     */
-    private static final String LREV = "lastRevision";
+	/**
+	 * last revision constant.
+	 */
+	private static final String LREV = "lastRevision";
 
-    /**
-     * shake constant.
-     */
-    private static final String SHAKE = "shakespeare";
-    /**
-     * book constant.
-     */
-    private static final String BOOK = "books";
-    /**
-     * fact constant.
-     */
-    private static final String FACT = "factbook";
-    /**
-     * ebay constant.
-     */
-    private static final String EBAY = "ebay";
-    /**
-     * resource path constant.
-     */
-    private static final String RESPATH = "/factbook.xml";
-    /**
-     * collection ending constant.
-     */
-    private static final String COLEND = ".col";
-    /**
-     * tnk ending constant.
-     */
-    private static final String TNKEND = ".tnk";
-    /**
-     * slash constant.
-     */
-    private static final String SLASH = "/";
+	/**
+	 * shake constant.
+	 */
+	private static final String SHAKE = "shakespeare";
+	/**
+	 * book constant.
+	 */
+	private static final String BOOK = "books";
+	/**
+	 * fact constant.
+	 */
+	private static final String FACT = "factbook";
+	/**
+	 * ebay constant.
+	 */
+	private static final String EBAY = "ebay";
+	/**
+	 * resource path constant.
+	 */
+	private static final String RESPATH = "/factbook.xml";
 
-    /**
-     * Test method for
-     * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(java.util.Map)} .
-     * 
-     * @throws IOException
-     * @throws WebApplicationException
-     * @throws SAXException
-     * @throws ParserConfigurationException
-     * @throws AbsTTException
-     * @throws InterruptedException
-     */
-    @Test
-    public final void testBuildResponseOfDomLR() throws WebApplicationException, IOException,
-        ParserConfigurationException, SAXException, AbsTTException, InterruptedException {
+	@Before
+	public void before() throws AbsTTException {
+		TestHelper.closeEverything();
+		TestHelper.deleteEverything();
+	}
 
-        final Map<String, String> availResources = new HashMap<String, String>();
-        availResources.put(FACT + TNKEND, "resource");
-        availResources.put(BOOK + COLEND, "collection");
-        availResources.put(EBAY + TNKEND, "resource");
-        availResources.put(SHAKE + COLEND, "collection");
-        final DatabaseRepresentation treeTank = new DatabaseRepresentation();
-        InputStream input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.shred(input, FACT);
-        input.close();
-        input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.shred(input, EBAY);
-        input.close();
-        input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.shred(input, BOOK);
-        input.close();
-        input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.add(input, BOOK);
-        input.close();
-        input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.shred(input, SHAKE);
-        input.close();
-        input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.add(input, SHAKE);
-        input.close();
+	@After
+	public void after() throws AbsTTException {
+		TestHelper.closeEverything();
+		TestHelper.deleteEverything();
+	}
 
-        Node node;
-        Attr attribute;
+	/**
+	 * Test method for
+	 * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(java.util.Map)}
+	 * .
+	 * 
+	 * @throws IOException
+	 * @throws WebApplicationException
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
+	 * @throws AbsTTException
+	 * @throws InterruptedException
+	 */
+	@Test
+	public final void testBuildResponseOfDomLR()
+			throws WebApplicationException, IOException,
+			ParserConfigurationException, SAXException, AbsTTException,
+			InterruptedException {
 
-        final StreamingOutput result = RESTResponseHelper.buildResponseOfDomLR(availResources);
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        result.write(outputStream);
-        final Document doc = DOMHelper.buildDocument(outputStream);
-        final NodeList listRes = doc.getElementsByTagName("resource");
-        assertEquals("Test for the length of resource", 2, listRes.getLength());
-        final NodeList listCol = doc.getElementsByTagName("collection");
-        assertEquals("Test for the length of collection", 2, listCol.getLength());
+		final List<String> availResources = new ArrayList<String>();
+		availResources.add(FACT);
+		availResources.add(EBAY);
+		availResources.add(BOOK);
+		availResources.add(SHAKE);
 
-        node = listRes.item(0);
-        attribute = (Attr)node.getAttributes().getNamedItem(NAME);
-        assertEquals("test for name factbook", SLASH + FACT, attribute.getTextContent());
-        attribute = (Attr)node.getAttributes().getNamedItem(LREV);
-        assertNotNull("test for existence of revision attribute", attribute);
-        node = listRes.item(1);
-        attribute = (Attr)node.getAttributes().getNamedItem(NAME);
-        assertEquals("test for name ebay", SLASH + EBAY, attribute.getTextContent());
-        attribute = (Attr)node.getAttributes().getNamedItem(LREV);
-        assertNotNull("test for existence of revision attribute", attribute);
+		final DatabaseRepresentation treeTank = new DatabaseRepresentation();
+		InputStream input = NodeIdRepresentationTest.class.getClass()
+				.getResourceAsStream(RESPATH);
+		treeTank.shred(input, FACT);
+		input.close();
 
-        node = listCol.item(0);
-        attribute = (Attr)node.getAttributes().getNamedItem(NAME);
-        assertEquals("test for name books", SLASH + SHAKE + COLEND, attribute.getTextContent());
-        attribute = (Attr)node.getAttributes().getNamedItem(LREV);
-        assertNull("test for existence of revision attribute in collection", attribute);
-        node = listCol.item(1);
-        attribute = (Attr)node.getAttributes().getNamedItem(NAME);
-        assertEquals("test for name shakespeare", SLASH + BOOK + COLEND, attribute.getTextContent());
-        attribute = (Attr)node.getAttributes().getNamedItem(LREV);
-        assertNull("test for existence of revision attribute in collection", attribute);
+		input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(
+				RESPATH);
+		treeTank.shred(input, EBAY);
+		input.close();
 
-        outputStream.close();
+		input.close();
+		input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(
+				RESPATH);
+		treeTank.add(input, BOOK);
 
-        treeTank.deleteResource(EBAY);
-        treeTank.deleteResource(FACT);
-        treeTank.deleteResource(BOOK + COLEND);
-        treeTank.deleteResource(SHAKE + COLEND);
+		input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(
+				RESPATH);
+		treeTank.shred(input, SHAKE);
+		input.close();
 
-    }
+		Node node;
+		Attr attribute;
+
+		final StreamingOutput result = RESTResponseHelper
+				.buildResponseOfDomLR(availResources);
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		result.write(outputStream);
+		final Document doc = DOMHelper.buildDocument(outputStream);
+		final NodeList listRes = doc.getElementsByTagName("resource");
+		assertEquals("Test for the length of resource", 4, listRes.getLength());
+
+		node = listRes.item(0);
+		attribute = (Attr) node.getAttributes().getNamedItem(NAME);
+		assertEquals("test for name factbook", FACT, attribute.getTextContent());
+		attribute = (Attr) node.getAttributes().getNamedItem(LREV);
+		assertNotNull("test for existence of revision attribute", attribute);
+
+		node = listRes.item(1);
+		attribute = (Attr) node.getAttributes().getNamedItem(NAME);
+		assertEquals("test for name ebay", EBAY, attribute.getTextContent());
+		attribute = (Attr) node.getAttributes().getNamedItem(LREV);
+		assertNotNull("test for existence of revision attribute", attribute);
+
+		node = listRes.item(2);
+		attribute = (Attr) node.getAttributes().getNamedItem(NAME);
+		assertEquals("test for name shakespeare", BOOK,
+				attribute.getTextContent());
+		attribute = (Attr) node.getAttributes().getNamedItem(LREV);
+		assertNotNull("test for existence of revision attribute in collection",
+				attribute);
+
+		node = listRes.item(3);
+		attribute = (Attr) node.getAttributes().getNamedItem(NAME);
+		assertEquals("test for name books", SHAKE, attribute.getTextContent());
+		attribute = (Attr) node.getAttributes().getNamedItem(LREV);
+		assertNotNull("test for existence of revision attribute in collection",
+				attribute);
+
+		outputStream.close();
+
+		treeTank.deleteResource(EBAY);
+		treeTank.deleteResource(FACT);
+		treeTank.deleteResource(BOOK);
+		treeTank.deleteResource(SHAKE);
+
+	}
 }

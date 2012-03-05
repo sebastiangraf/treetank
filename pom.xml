@@ -38,13 +38,13 @@
 		<developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
 	</scm>
 	<modules>
-<!--		<module>parent</module>
+		<module>parent</module>
 		<module>coremodules/core</module>
 		<module>coremodules/eclipse</module>
 		<module>coremodules/commons</module>
-		<module>interfacemodules/saxon</module>-->
-		<!--<module>interfacemodules/jax-rx</module>
--->		<module>studentmodules/xpath</module>
+		<module>interfacemodules/saxon</module>
+		<module>interfacemodules/jax-rx</module>
+		<module>studentmodules/xpath</module>
 	</modules>
 	<build>
 		<plugins>

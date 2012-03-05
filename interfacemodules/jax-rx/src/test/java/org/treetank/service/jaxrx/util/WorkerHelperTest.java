@@ -29,6 +29,7 @@ package org.treetank.service.jaxrx.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.treetank.service.jaxrx.implementation.DatabaseRepresentation.STOREDBPATH;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,6 +42,7 @@ import java.io.OutputStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -58,151 +60,150 @@ import org.treetank.service.xml.shredder.EShredderInsert;
  * 
  */
 public class WorkerHelperTest {
-    /**
-     * The WorkerHelper reference.
-     */
-    private transient static WorkerHelper workerHelper;
-    /**
-     * The Treetank reference.
-     */
-    private transient static DatabaseRepresentation treeTank;
-    /**
-     * The resource name.
-     */
-    private static final transient String RESOURCENAME = "factyTest";
-    /**
-     * The test file that has to be saved on the server.
-     */
-    private final static File DBFILE = new File(RESTProps.STOREDBPATH,
-            RESOURCENAME + RESTProps.TNKEND);
+	/**
+	 * The WorkerHelper reference.
+	 */
+	private transient static WorkerHelper workerHelper;
+	/**
+	 * The Treetank reference.
+	 */
+	private transient static DatabaseRepresentation treeTank;
+	/**
+	 * The resource name.
+	 */
+	private static final transient String RESOURCENAME = "factyTest";
+	/**
+	 * The test file that has to be saved on the server.
+	 */
+	private final static File DBFILE = new File(STOREDBPATH, RESOURCENAME);
 
-    /**
-     * The test file that has to be saved on the server.
-     */
-    private final transient InputStream INPUTFILE = WorkerHelperTest.class
-            .getClass().getResourceAsStream("/factbook.xml");
+	/**
+	 * The test file that has to be saved on the server.
+	 */
+	private final transient InputStream INPUTFILE = WorkerHelperTest.class
+			.getClass().getResourceAsStream("/factbook.xml");
 
-    /**
-     * A simple set up.
-     * 
-     * @throws FileNotFoundException
-     */
-    @Before
-    public void setUp() throws FileNotFoundException, AbsTTException {
-        workerHelper = WorkerHelper.getInstance();
-        treeTank = new DatabaseRepresentation();
-        treeTank.shred(INPUTFILE, RESOURCENAME);
-    }
+	/**
+	 * A simple set up.
+	 * 
+	 * @throws FileNotFoundException
+	 */
+	@Before
+	public void setUp() throws FileNotFoundException, AbsTTException {
+		TestHelper.closeEverything();
+		TestHelper.deleteEverything();
+		workerHelper = WorkerHelper.getInstance();
+		treeTank = new DatabaseRepresentation();
+		treeTank.shred(INPUTFILE, RESOURCENAME);
+	}
 
-    /**
-     * A simple tear down.
-     */
-    @After
-    public void tearDown() {
-        treeTank.deleteResource(RESOURCENAME);
-    }
+	@After
+	public void after() throws AbsTTException {
+		TestHelper.closeEverything();
+		TestHelper.deleteEverything();
+	}
 
-    /**
-     * This method tests {@link WorkerHelper#checkExistingResource(File)}
-     */
-    @Test
-    public void testCheckExistingResource() {
-        assertEquals("test check existing resource", true,
-                WorkerHelper.checkExistingResource(DBFILE));
-    }
+	/**
+	 * This method tests {@link WorkerHelper#checkExistingResource(File)}
+	 */
+	@Test
+	public void testCheckExistingResource() {
+		assertEquals("test check existing resource", true,
+				WorkerHelper.checkExistingResource(RESOURCENAME));
+	}
 
-    /**
-     * This method tests {@link WorkerHelper#createTreeTrankObject()}
-     */
-    @Test
-    public void testCreateTreeTankObject() {
-        assertNotNull("test create treetank object",
-                workerHelper.createTreeTrankObject());
-    }
+	/**
+	 * This method tests {@link WorkerHelper#createTreeTrankObject()}
+	 */
+	@Test
+	public void testCreateTreeTankObject() {
+		assertNotNull("test create treetank object",
+				workerHelper.createTreeTrankObject());
+	}
 
-    /**
-     * This method tests {@link WorkerHelper#createStringBuilderObject()}
-     */
-    @Test
-    public void testCreateStringBuilderObject() {
-        assertNotNull("test create string builder object",
-                workerHelper.createStringBuilderObject());
-    }
+	/**
+	 * This method tests {@link WorkerHelper#createStringBuilderObject()}
+	 */
+	@Test
+	public void testCreateStringBuilderObject() {
+		assertNotNull("test create string builder object",
+				workerHelper.createStringBuilderObject());
+	}
 
-    /**
-     * This method tests
-     * {@link WorkerHelper#serializeXML(ISession, OutputStream, boolean, boolean,Long)}
-     */
-    @Test
-    public void testSerializeXML() throws AbsTTException, IOException {
-        final IDatabase database = Database
-                .openDatabase(DBFILE.getParentFile());
-        final ISession session = database
-                .getSession(new SessionConfiguration.Builder(DBFILE.getName())
-                        .build());
-        final OutputStream out = new ByteArrayOutputStream();
+	/**
+	 * This method tests
+	 * {@link WorkerHelper#serializeXML(ISession, OutputStream, boolean, boolean,Long)}
+	 */
+	@Test
+	public void testSerializeXML() throws AbsTTException, IOException {
+		final IDatabase database = Database
+				.openDatabase(DBFILE.getParentFile());
+		final ISession session = database
+				.getSession(new SessionConfiguration.Builder(DBFILE.getName())
+						.build());
+		final OutputStream out = new ByteArrayOutputStream();
 
-        assertNotNull("test serialize xml",
-                WorkerHelper.serializeXML(session, out, true, true, null));
-        session.close();
-        database.close();
-        out.close();
-    }
+		assertNotNull("test serialize xml",
+				WorkerHelper.serializeXML(session, out, true, true, null));
+		session.close();
+		database.close();
+		out.close();
+	}
 
-    /**
-     * This method tests
-     * {@link WorkerHelper#shredInputStream(IWriteTransaction, InputStream, EShredderInsert)}
-     */
-    @Test
-    public void testShredInputStream() throws AbsTTException, IOException {
+	/**
+	 * This method tests
+	 * {@link WorkerHelper#shredInputStream(IWriteTransaction, InputStream, EShredderInsert)}
+	 */
+	@Test
+	public void testShredInputStream() throws AbsTTException, IOException {
 
-        long lastRevision = treeTank.getLastRevision(RESOURCENAME);
+		long lastRevision = treeTank.getLastRevision(RESOURCENAME);
 
-        final IDatabase database = Database
-                .openDatabase(DBFILE.getParentFile());
-        final ISession session = database
-                .getSession(new SessionConfiguration.Builder(DBFILE.getName())
-                        .build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+		final IDatabase database = Database
+				.openDatabase(DBFILE.getParentFile());
+		final ISession session = database
+				.getSession(new SessionConfiguration.Builder(DBFILE.getName())
+						.build());
+		final IWriteTransaction wtx = session.beginWriteTransaction();
 
-        final InputStream inputStream = new ByteArrayInputStream(
-                "<testNode/>".getBytes());
+		final InputStream inputStream = new ByteArrayInputStream(
+				"<testNode/>".getBytes());
 
-        WorkerHelper.shredInputStream(wtx, inputStream,
-                EShredderInsert.ADDASFIRSTCHILD);
+		WorkerHelper.shredInputStream(wtx, inputStream,
+				EShredderInsert.ADDASFIRSTCHILD);
 
-        assertEquals("test shred input stream",
-                treeTank.getLastRevision(RESOURCENAME), ++lastRevision);
-        wtx.close();
-        session.close();
-        database.close();
-        inputStream.close();
-    }
+		assertEquals("test shred input stream",
+				treeTank.getLastRevision(RESOURCENAME), ++lastRevision);
+		wtx.close();
+		session.close();
+		database.close();
+		inputStream.close();
+	}
 
-    /**
-     * This method tests
-     * {@link WorkerHelper#closeWTX(boolean, IWriteTransaction, ISession, IDatabase)}
-     */
-    @Test(expected = IllegalStateException.class)
-    public void testClose() throws AbsTTException {
-        IDatabase database = Database.openDatabase(DBFILE.getParentFile());
-        ISession session = database
-                .getSession(new SessionConfiguration.Builder(DBFILE.getName())
-                        .build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+	/**
+	 * This method tests
+	 * {@link WorkerHelper#closeWTX(boolean, IWriteTransaction, ISession, IDatabase)}
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void testClose() throws AbsTTException {
+		IDatabase database = Database.openDatabase(DBFILE.getParentFile());
+		ISession session = database
+				.getSession(new SessionConfiguration.Builder(DBFILE.getName())
+						.build());
+		final IWriteTransaction wtx = session.beginWriteTransaction();
 
-        WorkerHelper.closeWTX(false, wtx, session, database);
+		WorkerHelper.closeWTX(false, wtx, session, database);
 
-        wtx.commit();
+		wtx.commit();
 
-        database = Database.openDatabase(DBFILE.getParentFile());
-        session = database.getSession(new SessionConfiguration.Builder(DBFILE
-                .getName()).build());
-        final IReadTransaction rtx = session.beginReadTransaction();
-        WorkerHelper.closeRTX(rtx, session, database);
+		database = Database.openDatabase(DBFILE.getParentFile());
+		session = database.getSession(new SessionConfiguration.Builder(DBFILE
+				.getName()).build());
+		final IReadTransaction rtx = session.beginReadTransaction();
+		WorkerHelper.closeRTX(rtx, session, database);
 
-        rtx.moveTo(11);
+		rtx.moveTo(11);
 
-    }
+	}
 
 }
