@@ -20,22 +20,21 @@
 	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>treetank</groupId>
 	<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
 	<name>Complete Build</name>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2</version>
 	<description>Treetank is a fully java-implemented native XML-Database. 
 	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. These versions can be easily retrieved within the database itself.</description>
 	<url>https://github.com/disy/treetank</url>
 	<scm>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</url>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/complete-1.0.2/treetank</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/complete-1.0.2/treetank</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/complete-1.0.2/treetank</developerConnection>
 	</scm>
 	<modules>
 		<module>parent</module>
