@@ -39,11 +39,6 @@
 		<groupId>treetank</groupId>
 		<version>1.0.5-SNAPSHOT</version>
 	</parent>
-	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-eclipse</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-eclipse</developerConnection>
-		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-eclipse</url>
-	</scm>
 	<repositories>
 		<repository>
 			<id>disyInternal</id>

@@ -70,12 +70,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	
-	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-saxon</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-saxon</developerConnection>
-		<url>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank/bundles/treetank-saxon</url>
-	</scm>
 	<build>
 		<plugins>
 			<plugin>

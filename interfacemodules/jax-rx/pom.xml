@@ -69,11 +69,6 @@
 			<url>http://files.basex.org/maven</url>
 		</repository>
 	</repositories>
-	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
-	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>treetank</groupId>
