@@ -223,11 +223,6 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>treetank</groupId>
-			<artifactId>commons</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-primitives</groupId>
 			<artifactId>commons-primitives</artifactId>
 			<version>1.0</version>
