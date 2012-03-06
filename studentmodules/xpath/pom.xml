@@ -32,14 +32,14 @@
 	<parent>
 		<groupId>treetank</groupId>
 		<artifactId>pom</artifactId>
-		<version>1.0.5</version>
+		<version>1.0.6-SNAPSHOT</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>xpath</artifactId>
 	<packaging>jar</packaging>
 	<name>Native XPath2 Engine</name>
-	<version>1.0.1</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<repositories>
 		<repository>
 			<id>javamaven2</id>
@@ -111,12 +111,12 @@
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.4.0</version>
+			<version>5.4.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.4.0</version>
+			<version>5.4.1-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency> 

@@ -24,14 +24,14 @@
 	<parent>
 		<artifactId>pom</artifactId>
 		<groupId>treetank</groupId>
-		<version>1.0.5</version>
+		<version>1.0.6-SNAPSHOT</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>jax-rx</artifactId>
 	<packaging>jar</packaging>
 	<name>Jax-RX interface implementation</name>
-	<version>1.0.2</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<description>This project give the jax-rx interface to jax-rx.
 	</description>
 	<repositories>
@@ -72,24 +72,24 @@
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.4.0</version>
+			<version>5.4.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.4.0</version>
+			<version>5.4.1-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>xpath</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>commons</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jaxrx</groupId>
