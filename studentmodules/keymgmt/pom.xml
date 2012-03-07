@@ -142,9 +142,4 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
-	</scm>
 </project>

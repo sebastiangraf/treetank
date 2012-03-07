@@ -20,27 +20,25 @@
 	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>treetank</groupId>
 	<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
 	<name>Complete Build</name>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<description>Treetank is a fully java-implemented native XML-Database. 
 	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. These versions can be easily retrieved within the database itself.</description>
 	<url>https://github.com/disy/treetank</url>
 	<scm>
-		<url>https://github.com/disy/treetank</url>
-		<connection>scm:git:git://github.com/disy/treetank.git</connection>
-		<developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</developerConnection>
 	</scm>
 	<modules>
 		<module>parent</module>
 		<module>coremodules/core</module>
-		<module>coremodules/eclipse</module>
 		<module>coremodules/commons</module>
 		<module>interfacemodules/saxon</module>
 		<module>interfacemodules/jax-rx</module>
@@ -75,36 +73,9 @@
 				                <report>summary</report>
 				              </reports>
 				            </plugin>
-				            <plugin>
-				              <groupId>org.apache.maven.plugins</groupId>
-				              <artifactId>maven-javadoc-plugin</artifactId>
-				              <version>2.7</version>
-				            </plugin>
-				            <plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>cobertura-maven-plugin</artifactId>
-						<version>2.4</version>
-					</plugin>
-					<plugin>
-						<artifactId>maven-pmd-plugin</artifactId>
-						<version>2.5</version>
-						<configuration>
-							<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-							<minimumTokens>100</minimumTokens>
-							<targetJdk>${compileSource}</targetJdk>
-						</configuration>
-					</plugin>
-					<plugin>
-						<artifactId>maven-jxr-plugin</artifactId>
-						<version>2.2</version>
-					</plugin>
 					<plugin>
 						<artifactId>maven-dependency-plugin</artifactId>
 						<version>2.2</version>
-					</plugin>
-					<plugin>
-						<artifactId>maven-checkstyle-plugin</artifactId>
-						<version>2.6</version>
 					</plugin>
 					<plugin>
 						<groupId>com.mycila.maven-license-plugin</groupId>
@@ -122,7 +93,7 @@
                 </dependencies>
 			</plugin>
 		</plugins>
-	<!--	<extensions>
+<!--		<extensions>
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>
 				<artifactId>maven-scm-provider-gitexe</artifactId>
@@ -176,9 +147,9 @@
 			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
-		<site>
+<!--		<site>
 			<id>github</id>
 			<url>gitsite:git@github.com/disy/treetank.git</url> 
-		</site>
+		</site>-->
 	</distributionManagement>
 </project>

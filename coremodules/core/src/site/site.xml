@@ -43,7 +43,8 @@
     <breadcrumbs>
 	  <item name="Treetank" href="http://www.treetank.org"/>
 	</breadcrumbs>
-    <menu ref="modules"/>
+    <menu ref="parent"/>
+    <menu ref="reports"/>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
