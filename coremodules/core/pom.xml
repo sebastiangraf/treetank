@@ -19,7 +19,8 @@
 	OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
 	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>pom</artifactId>
@@ -76,34 +77,25 @@
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
+					<outputEncoding>${project.build.sourceEncoding}</outputEncoding>
+					<inputEncoding>${project.build.sourceEncoding}</inputEncoding>
 					<reportPlugins>
 						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-project-info-reports-plugin</artifactId>
-							<version>2.2</version>
-							<configuration>
-								<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-								<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-							</configuration>
-							<reports>
-								<report>index</report>
-								<report>project-team</report>
-								<report>modules</report>
-								<report>cim</report>
-								<report>issue-tracking</report>
-								<report>license</report>
-								<report>scm</report>
-								<report>summary</report>
-							</reports>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>cobertura-maven-plugin</artifactId>
+							<version>2.4</version>
+						</plugin>
+						<plugin>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.7</version>
+						</plugin>
+						<plugin>
+							<artifactId>maven-surefire-report-plugin</artifactId>
+							<version>2.6</version>
 						</plugin>
 						<plugin>
 							<artifactId>maven-jxr-plugin</artifactId>
 							<version>2.2</version>
-						</plugin>
-						<plugin>
-							<groupId>com.mycila.maven-license-plugin</groupId>
-							<artifactId>maven-license-plugin</artifactId>
-							<version>1.9.0</version>
 						</plugin>
 					</reportPlugins>
 				</configuration>
