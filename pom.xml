@@ -76,8 +76,8 @@
 		<module>coremodules/core</module>
 		<module>coremodules/commons</module>
 		<module>interfacemodules/saxon</module>
-			<module>interfacemodules/jax-rx</module>
-<!--			<module>studentmodules/xpath</module>-->
+		<module>interfacemodules/jax-rx</module>
+		<module>studentmodules/xpath</module>
 	</modules>
 	<build>
 		<plugins>

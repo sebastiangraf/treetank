@@ -70,8 +70,7 @@
 		</repository>
 	</repositories>
 	<build>
-		<pluginManagement>
-			<plugins>
+		<plugins>
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.0</version>
@@ -110,8 +109,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			</plugins>
-		</pluginManagement>
+		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
