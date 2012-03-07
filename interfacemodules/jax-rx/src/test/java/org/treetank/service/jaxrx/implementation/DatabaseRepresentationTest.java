@@ -241,13 +241,17 @@ public class DatabaseRepresentationTest {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         sOutput.write(output);
         final Document doc = DOMHelper.buildDocument(output);
-        final Node node = doc.getElementsByTagName("resource").item(0);
-        assertNotNull("Check if a resource exists", node);
-        Attr attribute = (Attr)node.getAttributes().getNamedItem("lastRevision");
-        assertNotNull("Check if lastRevision exists", attribute);
-        attribute = (Attr)node.getAttributes().getNamedItem("name");
-        assertNotNull("Check if name attribute exists", attribute);
-        assertEquals("Check if name is the expected one", RESOURCENAME, attribute.getTextContent());
+        final NodeList nodes = doc.getElementsByTagName("resource");
+        assertTrue("Check if a resource exists", nodes.getLength() > 0);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            Attr attribute = (Attr)node.getAttributes().getNamedItem("lastRevision");
+            assertNotNull("Check if lastRevision exists", attribute);
+            attribute = (Attr)node.getAttributes().getNamedItem("name");
+            assertNotNull("Check if name attribute exists", attribute);
+            assertTrue("Check if name is the expected one", attribute.getTextContent().equals(RESOURCENAME)
+                || attribute.getTextContent().equals(TestHelper.RESOURCE));
+        }
         output.close();
     }
 
