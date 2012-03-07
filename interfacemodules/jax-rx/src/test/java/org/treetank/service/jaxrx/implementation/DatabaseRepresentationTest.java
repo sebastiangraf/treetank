@@ -121,6 +121,7 @@ public class DatabaseRepresentationTest {
     public void setUp() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
+        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         treetank = new DatabaseRepresentation();
         treetank.shred(input, RESOURCENAME);
@@ -320,7 +321,6 @@ public class DatabaseRepresentationTest {
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         assertTrue(ASSTRUE, treetank.shred(input, RESOURCENAME + "88"));
         treetank.deleteResource(RESOURCENAME + "88");
-
     }
 
     /**
@@ -356,10 +356,10 @@ public class DatabaseRepresentationTest {
      */
     @Test
     public void getLastRevision() throws AbsTTException {
-        assertEquals(ASSEQUALS, 1, treetank.getLastRevision(RESOURCENAME));
+        assertEquals(ASSEQUALS, 0, treetank.getLastRevision(RESOURCENAME));
         final NodeIdRepresentation rid = new NodeIdRepresentation();
         rid.deleteResource(RESOURCENAME, 8);
-        assertEquals(ASSEQUALS, 2, treetank.getLastRevision(RESOURCENAME));
+        assertEquals(ASSEQUALS, 1, treetank.getLastRevision(RESOURCENAME));
     }
 
     /**
