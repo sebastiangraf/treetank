@@ -34,16 +34,13 @@
     <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
-    <menu name="Information">
-    </menu>
-    <menu ref="reports"/>
     <menu name="jax-rx">
       <item name="About Jax-RX" href="jax-rx.html"/>
     </menu>
     <breadcrumbs>
 	  <item name="Treetank" href="http://www.treetank.org"/>
 	</breadcrumbs>
-    <menu ref="modules"/>
+    <menu ref="reports"/>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
