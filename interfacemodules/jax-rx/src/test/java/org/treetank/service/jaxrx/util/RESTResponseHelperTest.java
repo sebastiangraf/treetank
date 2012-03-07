@@ -98,6 +98,7 @@ public class RESTResponseHelperTest {
 	public void before() throws AbsTTException {
 		TestHelper.closeEverything();
 		TestHelper.deleteEverything();
+		TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
 	}
 
 	@After
