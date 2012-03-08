@@ -64,7 +64,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<build>
+<!--	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
@@ -106,4 +106,4 @@
 			</plugin>
 		</plugins>
 	</build>
-</project>
+--></project>

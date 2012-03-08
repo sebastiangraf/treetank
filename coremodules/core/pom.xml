@@ -73,7 +73,7 @@
 					</archive>
 				</configuration>
 			</plugin>
-			<plugin>
+<!--			<plugin>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
@@ -101,10 +101,6 @@
 							<artifactId>maven-dependency-plugin</artifactId>
 							<version>2.4</version>
 						</plugin>
-						<plugin>
-							<artifactId>maven-dependency-plugin</artifactId>
-							<version>2.4</version>
-						</plugin>
 					</reportPlugins>
 				</configuration>
 				<dependencies>
@@ -115,7 +111,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-		</plugins>
+-->		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
