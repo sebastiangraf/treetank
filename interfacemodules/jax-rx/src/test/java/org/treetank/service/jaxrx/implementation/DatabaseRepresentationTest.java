@@ -50,6 +50,7 @@ import org.jaxrx.core.QueryParameter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.util.DOMHelper;
 import org.w3c.dom.Attr;
@@ -118,7 +119,9 @@ public class DatabaseRepresentationTest {
      */
     @Before
     public void setUp() throws AbsTTException {
-
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         treetank = new DatabaseRepresentation();
         treetank.shred(input, RESOURCENAME);
@@ -131,7 +134,8 @@ public class DatabaseRepresentationTest {
      */
     @After
     public void tearDown() throws AbsTTException {
-        treetank.deleteResource(RESOURCENAME);
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     /**
@@ -237,13 +241,17 @@ public class DatabaseRepresentationTest {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         sOutput.write(output);
         final Document doc = DOMHelper.buildDocument(output);
-        final Node node = doc.getElementsByTagName("resource").item(0);
-        assertNotNull("Check if a resource exists", node);
-        Attr attribute = (Attr)node.getAttributes().getNamedItem("lastRevision");
-        assertNotNull("Check if lastRevision exists", attribute);
-        attribute = (Attr)node.getAttributes().getNamedItem("name");
-        assertNotNull("Check if name attribute exists", attribute);
-        assertEquals("Check if name is the expected one", "/" + RESOURCENAME, attribute.getTextContent());
+        final NodeList nodes = doc.getElementsByTagName("resource");
+        assertTrue("Check if a resource exists", nodes.getLength() > 0);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            Attr attribute = (Attr)node.getAttributes().getNamedItem("lastRevision");
+            assertNotNull("Check if lastRevision exists", attribute);
+            attribute = (Attr)node.getAttributes().getNamedItem("name");
+            assertNotNull("Check if name attribute exists", attribute);
+            assertTrue("Check if name is the expected one", attribute.getTextContent().equals(RESOURCENAME)
+                || attribute.getTextContent().equals(TestHelper.RESOURCE));
+        }
         output.close();
     }
 
@@ -264,7 +272,7 @@ public class DatabaseRepresentationTest {
         treetank.add(input, RESOURCENAME);
         final Map<QueryParameter, String> params = new HashMap<QueryParameter, String>();
         params.put(QueryParameter.WRAP, LITERALTRUE);
-        final StreamingOutput sOutput = treetank.performQueryOnResource(RESOURCENAME + ".col", ".", params);
+        final StreamingOutput sOutput = treetank.performQueryOnResource(RESOURCENAME, ".", params);
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         sOutput.write(output);
         final Document doc = DOMHelper.buildDocument(output);
@@ -273,9 +281,6 @@ public class DatabaseRepresentationTest {
         node = doc.getElementsByTagName("mondial").item(0);
         assertNotNull("check if mondial still exists", node);
         output.close();
-        treetank.deleteResource(RESOURCENAME + ".col");
-        setUp();
-
     }
 
     /**
@@ -320,7 +325,6 @@ public class DatabaseRepresentationTest {
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         assertTrue(ASSTRUE, treetank.shred(input, RESOURCENAME + "88"));
         treetank.deleteResource(RESOURCENAME + "88");
-
     }
 
     /**

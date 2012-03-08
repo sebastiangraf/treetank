@@ -24,20 +24,23 @@
     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+    SOFTWARE, EVEN If ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
+
 <project name="Treetank">
   <bannerLeft>
     <name>Treetank</name>
-    <src>images/</src>
-    <href></href>
+    <src>images/logo.png</src>
+    <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
-    <menu name="commons">
-      <item name="About Commons" href="commons.html"/>
+     <menu name="Commons">
+      <item name="About Commons" href="index.html"/>
     </menu>
-    <menu ref="reports"/>
+    <breadcrumbs>
+	  <item name="Treetank" href="http://www.treetank.org"/>
+	</breadcrumbs>
+	    <menu ref="reports"/>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
@@ -48,9 +51,9 @@
 	<fluidoSkin>
       <topBarEnabled>false</topBarEnabled>
       <topBarIcon>
-        <name>Treetank </name>
+        <name>Treetank</name>
         <alt>Treetank Logo</alt>
-        <src></src>
+        <src>images/logo.png</src>
       </topBarIcon>
     </fluidoSkin>
   </custom>

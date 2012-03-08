@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.ISession;
 import org.treetank.saxon.wrapper.DocumentWrapper;
-import org.treetank.saxon.wrapper.NodeWrapper;
 
 /**
  * <h1>XQuery evaluator</h1>

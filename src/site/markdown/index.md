@@ -3,8 +3,10 @@ Treetank - Secure Treebased Storage
 
 Treetank stores data securely by applying different layers on the stored data. Flexible handling of flat as well as tree-based data is supported by a native encoding of the tree-structures ongoing with suitable paging supporting integrity and confidentiality to provide throughout security.
 
-Secure in this context includes integrity-checks, confidentiality with tree-aware key handling, versioning to provide accountability.
+Secure in this context includes integrity-checks, encryption to guard the confidentiality with tree-aware key handling and adaptive versioning approaches providing accountability.
 Furthermore, different backends are provided while a binding to different cloud-infrastructures is in progress.
+
+![Architectural Overview](images/csg.png)
 
 What components does Treetank consists of?
 ------------
@@ -55,11 +57,11 @@ Current subprojects are:
 
 * Johannes Lichtenberger (Visualization of temporal trees)
 * Wolfgang Miller (Binding of Treetank to cloud backends)
+* Nuray Gürler (Maven Websites)
 
 Concluded and adopted subprojects were:
 
 * Patrick Lang (Encryption layer)
-* Nuray Gürler (Maven Websites)
 * Johannes Lichtenberger (Evaluation of several versioning approaches)
 * Patrick Lang (Encryption layer)
 * Lukas Lewandowski (Jax-RX binding)

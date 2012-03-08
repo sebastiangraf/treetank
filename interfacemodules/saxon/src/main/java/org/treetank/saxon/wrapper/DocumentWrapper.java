@@ -27,7 +27,6 @@
 
 package org.treetank.saxon.wrapper;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -50,7 +49,7 @@ import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENodes;
+import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 
 /**
@@ -134,7 +133,7 @@ public final class DocumentWrapper implements DocumentInfo {
             final IReadTransaction rtx = mSession.beginReadTransaction();
             final AbsAxis axis = new DescendantAxis(rtx, true);
             while (axis.hasNext()) {
-                if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                if (rtx.getNode().getKind() == ENode.ELEMENT_KIND) {
                     final int attCount = ((ElementNode)rtx.getNode()).getAttributeCount();
 
                     if (attCount > 0) {

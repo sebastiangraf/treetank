@@ -30,13 +30,16 @@
 <project name="Treetank">
   <bannerLeft>
     <name>Treetank</name>
-    <src>images/</src>
-    <href></href>
+    <src>images/logo.png</src>
+    <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
     <menu name="core">
-      <item name="About Core" href="core.html"/>
+      <item name="About Core" href="index.html"/>
     </menu>
+    <breadcrumbs>
+	  <item name="Treetank" href="http://www.treetank.org"/>
+	</breadcrumbs>
     <menu ref="reports"/>
   </body>
   <skin>
@@ -50,7 +53,7 @@
       <topBarIcon>
         <name>Treetank </name>
         <alt>Treetank Logo</alt>
-        <src></src>
+        <src>images/logo.png</src>
       </topBarIcon>
     </fluidoSkin>
   </custom>

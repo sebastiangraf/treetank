@@ -32,11 +32,15 @@ import net.sf.saxon.s9api.XdmItem;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
-import org.treetank.access.DatabaseConfiguration;
-import org.treetank.access.SessionConfiguration;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -44,130 +48,142 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
 import org.treetank.utils.DocumentCreater;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 /**
  * Test XPath S9Api.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
+ * @author Sebastian Graf, University of Konstanz
  * 
  */
 public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
-    /**
-     * Treetank database on Treetank test document {@link IDatabase}.
-     */
-    private transient Holder mHolder;
+	/**
+	 * Treetank database on Treetank test document {@link IDatabase}.
+	 */
+	private transient Holder mHolder;
 
-    @Override
-    @Before
-    public void setUp() throws AbsTTException {
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database
-            .createDatabase(TestHelper.PATHS.PATH1.getFile(), new DatabaseConfiguration.Builder());
-        final IDatabase databaseTest = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        final ISession session = databaseTest.getSession(new SessionConfiguration.Builder());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
-        session.close();
-        XMLUnit.setIgnoreWhitespace(true);
-        mHolder = Holder.generate();
-    }
+	@Override
+	@Before
+	public void setUp() throws AbsTTException {
+		TestHelper.closeEverything();
+		TestHelper.deleteEverything();
+		final DatabaseConfiguration db = new DatabaseConfiguration(
+				TestHelper.PATHS.PATH1.getFile());
+		Database.createDatabase(db);
+		final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1
+				.getFile());
+		database.createResource(new ResourceConfiguration.Builder(
+				TestHelper.RESOURCE, db).build());
+		final ISession session = database
+				.getSession(new SessionConfiguration.Builder(
+						TestHelper.RESOURCE).build());
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
+		wtx.commit();
+		wtx.close();
+		session.close();
+		XMLUnit.setIgnoreWhitespace(true);
+		mHolder = Holder.generateRtx();
+	}
 
-    @After
-    public void tearDown() throws AbsTTException {
-        mHolder.rtx.close();
-        mHolder.session.close();
-        Database.closeDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-    }
+	@After
+	public void tearDown() throws AbsTTException {
+		TestHelper.closeEverything();
+		TestHelper.deleteEverything();
+	}
 
-    @Test
-    public void testB1() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[1]", mHolder.session).call();
+	@Test
+	public void testB1() throws Exception {
+		final XPathSelector selector = new XPathEvaluator("//b[1]",
+				mHolder.getSession()).call();
 
-        final StringBuilder strBuilder = new StringBuilder();
+		final StringBuilder strBuilder = new StringBuilder();
 
-        for (final XdmItem item : selector) {
-            strBuilder.append(item.toString());
-        }
+		for (final XdmItem item : selector) {
+			strBuilder.append(item.toString());
+		}
 
-        assertXMLEqual("expected pieces to be similar", "<b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/></b>",
-            strBuilder.toString());
-    }
+		assertXMLEqual("expected pieces to be similar",
+				"<b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/></b>",
+				strBuilder.toString());
+	}
 
-    @Test
-    public void testB1String() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[1]/text()", mHolder.session).call();
+	@Test
+	public void testB1String() throws Exception {
+		final XPathSelector selector = new XPathEvaluator("//b[1]/text()",
+				mHolder.getSession()).call();
 
-        final StringBuilder strBuilder = new StringBuilder();
+		final StringBuilder strBuilder = new StringBuilder();
 
-        for (final XdmItem item : selector) {
-            strBuilder.append(item.toString());
-        }
+		for (final XdmItem item : selector) {
+			strBuilder.append(item.toString());
+		}
 
-        assertEquals("foo", strBuilder.toString());
-    }
+		assertEquals("foo", strBuilder.toString());
+	}
 
-    @Test
-    public void testB2() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[2]", mHolder.session).call();
+	@Test
+	public void testB2() throws Exception {
+		final XPathSelector selector = new XPathEvaluator("//b[2]",
+				mHolder.getSession()).call();
 
-        final StringBuilder strBuilder = new StringBuilder();
+		final StringBuilder strBuilder = new StringBuilder();
 
-        for (final XdmItem item : selector) {
-            strBuilder.append(item.toString());
-        }
+		for (final XdmItem item : selector) {
+			strBuilder.append(item.toString());
+		}
 
-        assertXMLEqual("expected pieces to be similar",
-            "<b xmlns:p=\"ns\" p:x=\"y\"><c xmlns:p=\"ns\"/>bar</b>", strBuilder.toString());
-    }
+		assertXMLEqual("expected pieces to be similar",
+				"<b xmlns:p=\"ns\" p:x=\"y\"><c xmlns:p=\"ns\"/>bar</b>",
+				strBuilder.toString());
+	}
 
-    @Test
-    public void testB2Text() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[2]/text()", mHolder.session).call();
+	@Test
+	public void testB2Text() throws Exception {
+		final XPathSelector selector = new XPathEvaluator("//b[2]/text()",
+				mHolder.getSession()).call();
 
-        final StringBuilder strBuilder = new StringBuilder();
+		final StringBuilder strBuilder = new StringBuilder();
 
-        for (final XdmItem item : selector) {
-            strBuilder.append(item.toString());
-        }
+		for (final XdmItem item : selector) {
+			strBuilder.append(item.toString());
+		}
 
-        assertEquals("bar", strBuilder.toString());
-    }
+		assertEquals("bar", strBuilder.toString());
+	}
 
-    @Test
-    public void testB() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b", mHolder.session).call();
+	@Test
+	public void testB() throws Exception {
+		final XPathSelector selector = new XPathEvaluator("//b",
+				mHolder.getSession()).call();
 
-        final StringBuilder strBuilder = new StringBuilder();
+		final StringBuilder strBuilder = new StringBuilder();
 
-        strBuilder.append("<result>");
-        for (final XdmItem item : selector) {
-            strBuilder.append(item.toString());
-        }
-        strBuilder.append("</result>");
+		strBuilder.append("<result>");
+		for (final XdmItem item : selector) {
+			strBuilder.append(item.toString());
+		}
+		strBuilder.append("</result>");
 
-        assertXMLEqual("expected pieces to be similar",
-            "<result><b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/></b><b xmlns:p=\"ns\" p:x=\"y\">"
-                + "<c xmlns:p=\"ns\"/>bar</b></result>", strBuilder.toString());
-    }
+		assertXMLEqual(
+				"expected pieces to be similar",
+				"<result><b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/></b><b xmlns:p=\"ns\" p:x=\"y\">"
+						+ "<c xmlns:p=\"ns\"/>bar</b></result>",
+				strBuilder.toString());
+	}
 
-    @Test
-    public void testCountB() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("count(//b)", mHolder.session).call();
+	@Test
+	public void testCountB() throws Exception {
+		final XPathSelector selector = new XPathEvaluator("count(//b)",
+				mHolder.getSession()).call();
 
-        final StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 
-        for (final XdmItem item : selector) {
-            sb.append(item.getStringValue());
-        }
+		for (final XdmItem item : selector) {
+			sb.append(item.getStringValue());
+		}
 
-        assertEquals("2", sb.toString());
-    }
+		assertEquals("2", sb.toString());
+	}
 
 }

@@ -30,14 +30,17 @@
 <project name="Treetank">
   <bannerLeft>
     <name>Treetank</name>
-    <src>images/</src>
-    <href></href>
+    <src>images/logo.png</src>
+    <href>https://github.com/disy/treetank</href>
   </bannerLeft>
   <body>
-    <menu name="saxon">
-      <item name="About Saxon" href="saxon.html"/>
+    <menu name="Saxon">
+      <item name="About Saxon" href="index.html"/>
     </menu>
-    <menu ref="reports"/>
+    <breadcrumbs>
+	  <item name="Treetank" href="http://www.treetank.org"/>
+	</breadcrumbs>
+    <menu ref="modules"/>
   </body>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
@@ -50,7 +53,7 @@
       <topBarIcon>
         <name>Treetank </name>
         <alt>Treetank Logo</alt>
-        <src></src>
+        <src>images/logo.png</src>
       </topBarIcon>
     </fluidoSkin>
   </custom>

@@ -50,6 +50,7 @@ import org.jaxrx.core.QueryParameter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.DOMHelper;
@@ -134,6 +135,9 @@ public class NodeIdRepresentationTest {
      */
     @Before
     public void setUp() throws Exception {
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         ridWorker = new NodeIdRepresentation();
         treeTank = new DatabaseRepresentation();
         final InputStream input =
@@ -148,8 +152,8 @@ public class NodeIdRepresentationTest {
      */
     @After
     public void tearDown() throws Exception {
-        treeTank.deleteResource(RESOURCENAME);
-        // Thread.sleep(1000);
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     /**
