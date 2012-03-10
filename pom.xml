@@ -86,6 +86,7 @@
 		<module>interfacemodules/saxon</module>
 		<module>interfacemodules/jax-rx</module>
 		<module>studentmodules/xpath</module>
+		<module>studentmodules/xmldiff</module>
 	</modules>
 	<build>
 		<plugins>
