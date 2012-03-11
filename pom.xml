@@ -47,6 +47,14 @@
 		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</connection>
 		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</developerConnection>
 	</scm>
+	<mailingLists>
+		<mailingList>
+			<name>Treetank Mailing List</name>
+			<subscribe></subscribe>
+			<unsubscribe></unsubscribe>
+			<post>idefix@mailman.uni-konstanz.de</post>
+		</mailingList>
+	</mailingLists>
 	<licenses>
 		<license>
 			<name>New BSD</name>
@@ -78,6 +86,7 @@
 		<module>interfacemodules/saxon</module>
 		<module>interfacemodules/jax-rx</module>
 		<module>studentmodules/xpath</module>
+		<module>studentmodules/xmldiff</module>
 	</modules>
 	<build>
 		<plugins>
@@ -103,6 +112,7 @@
 								<report>issue-tracking</report>
 								<report>license</report>
 								<report>scm</report>
+<!--								<report>mailing-list></report>-->
 								<report>summary</report>
 							</reports>
 						</plugin>
