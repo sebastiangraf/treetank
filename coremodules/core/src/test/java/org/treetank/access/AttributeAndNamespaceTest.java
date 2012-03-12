@@ -29,8 +29,6 @@ package org.treetank.access;
 
 import static junit.framework.Assert.assertEquals;
 
-import javax.xml.namespace.QName;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

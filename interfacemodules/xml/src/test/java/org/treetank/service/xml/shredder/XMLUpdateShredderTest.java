@@ -219,6 +219,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 list.add(file);
             }
         }
+        
 
         // Sort files array according to file names.
         Collections.sort(list, new Comparator<Object>() {

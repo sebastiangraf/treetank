@@ -30,11 +30,7 @@ package org.treetank.access;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.io.File;
-import java.io.IOException;
-
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,17 +41,10 @@ import org.treetank.access.WriteTransaction.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.shredder.EShredderInsert;
-import org.treetank.service.xml.shredder.XMLShredder;
 
 public class HashTest {
-
-    private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
-    private static final String XML = RESOURCES + File.separator + "revXMLsSame" + File.separator + "1.xml";
 
     private final static String NAME1 = "a";
     private final static String NAME2 = "b";
@@ -63,15 +52,6 @@ public class HashTest {
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
-
-    }
-
-    @Test
-    public void testPostorderNamespace() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(HashKind.Postorder).build());
-        testNamespace(database);
 
     }
 
@@ -106,15 +86,6 @@ public class HashTest {
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testSetter(wtx);
-    }
-
-    @Test
-    public void testRollingNamespace() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(HashKind.Rolling).build());
-        testNamespace(database);
-
     }
 
     @Test
@@ -217,26 +188,6 @@ public class HashTest {
 
         wtx.moveTo(rootKey);
         assertEquals(firstRootHash, wtx.getNode().getHash());
-    }
-
-    private void testNamespace(final IDatabase database) throws AbsTTException, IOException,
-        XMLStreamException {
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLShredder shredder =
-            new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
-        shredder.call();
-        wtx.close();
-        final IReadTransaction rtx = session.beginReadTransaction();
-        rtx.moveToFirstChild();
-        final long nodeKey = rtx.getNode().getNodeKey();
-        rtx.moveToNamespace(0);
-        final long firstHash = rtx.getNode().getHash();
-        rtx.moveTo(nodeKey);
-        rtx.moveToNamespace(1);
-        final long secondHash = rtx.getNode().getHash();
-        assertFalse(firstHash == secondHash);
     }
 
     private void testDeepTree(final IWriteTransaction wtx) throws AbsTTException {
