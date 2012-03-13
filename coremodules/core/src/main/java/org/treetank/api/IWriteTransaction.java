@@ -297,36 +297,4 @@ public interface IWriteTransaction extends IReadTransaction {
      */
     @Override
     void close() throws AbsTTException;
-
-    /**
-     * Copy subtree from another database/resource/revision and insert as right
-     * sibling of the current node.
-     * 
-     * @param pNode
-     *            node key of the root node of the subtree to copy
-     * @param pRev
-     *            revision from which to copy a subtree
-     * @param paramDatabase
-     *            database reference which implements the {@link IDatabase} interface
-     * @return key of copied subtree root node
-     * @throws AbsTTException
-     *             if anything went wrong
-     */
-    long copySubtreeAsFirstChild(final long pNode, final long pRev) throws AbsTTException;
-
-    /**
-     * Copy subtree from another database/resource/revision and insert as right
-     * sibling of the current node.
-     * 
-     * @param pNode
-     *            node key of the root node of the subtree to copy
-     * @param pRev
-     *            revision from which to copy a subtree
-     * @param paramDatabase
-     *            database reference which implements the {@link IDatabase} interface
-     * @return key of copied subtree root node
-     * @throws AbsTTException
-     *             if anything went wrong
-     */
-    long copySubtreeAsRightSibling(final long pNode, final long pRev) throws AbsTTException;
 }
