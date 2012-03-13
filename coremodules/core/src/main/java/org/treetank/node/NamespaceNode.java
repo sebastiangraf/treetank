@@ -27,7 +27,6 @@
 
 package org.treetank.node;
 
-import org.treetank.api.IVisitor;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INameNode;
@@ -54,8 +53,7 @@ public final class NamespaceNode implements INode, INameNode {
      * @param mIntBuilder
      *            building int data
      */
-    public NamespaceNode(final NodeDelegate pDel,
-            final NameNodeDelegate pNameDel) {
+    public NamespaceNode(final NodeDelegate pDel, final NameNodeDelegate pNameDel) {
         mDel = pDel;
         mNameDel = pNameDel;
     }
@@ -98,15 +96,6 @@ public final class NamespaceNode implements INode, INameNode {
     @Override
     public void setURIKey(final int pUriKey) {
         mNameDel.setURIKey(pUriKey);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void acceptVisitor(final IVisitor pVisitor) {
-        pVisitor.visit(this);
     }
 
     /**
@@ -207,8 +196,7 @@ public final class NamespaceNode implements INode, INameNode {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
-        result = prime * result
-                + ((mNameDel == null) ? 0 : mNameDel.hashCode());
+        result = prime * result + ((mNameDel == null) ? 0 : mNameDel.hashCode());
         return result;
     }
 
@@ -223,7 +211,7 @@ public final class NamespaceNode implements INode, INameNode {
             return false;
         if (getClass() != pObj.getClass())
             return false;
-        NamespaceNode other = (NamespaceNode) pObj;
+        NamespaceNode other = (NamespaceNode)pObj;
         if (mDel == null) {
             if (other.mDel != null)
                 return false;

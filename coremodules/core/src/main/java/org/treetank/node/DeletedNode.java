@@ -27,7 +27,6 @@
 
 package org.treetank.node;
 
-import org.treetank.api.IVisitor;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INode;
 
@@ -122,16 +121,6 @@ public final class DeletedNode implements INode {
      */
     public void setHash(final long pHash) {
         mDel.setHash(pHash);
-    }
-
-    /**
-     * Delegate method for acceptVisitor.
-     * 
-     * @param pVisitor
-     * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
-     */
-    public void acceptVisitor(final IVisitor pVisitor) {
-        mDel.acceptVisitor(pVisitor);
     }
 
     /**

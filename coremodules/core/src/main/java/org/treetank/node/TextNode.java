@@ -27,7 +27,6 @@
 
 package org.treetank.node;
 
-import org.treetank.api.IVisitor;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
@@ -98,12 +97,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
     @Override
     public long getFirstChildKey() {
         return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void acceptVisitor(final IVisitor pVisitor) {
-        pVisitor.visit(this);
     }
 
     /**

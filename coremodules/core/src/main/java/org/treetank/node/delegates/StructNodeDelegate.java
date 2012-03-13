@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,7 +26,6 @@
  */
 package org.treetank.node.delegates;
 
-import org.treetank.api.IVisitor;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
@@ -35,8 +34,7 @@ import org.treetank.settings.EFixed;
  * Delegate method for all nodes building up the structure. That means that all
  * nodes representing trees in Treetank are represented by an instance of the
  * interface {@link IStructNode} namely containing the position of all related
- * siblings, the first-child and all nodes defined by the {@link NodeDelegate}
- * as well.
+ * siblings, the first-child and all nodes defined by the {@link NodeDelegate} as well.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -68,8 +66,8 @@ public class StructNodeDelegate implements IStructNode {
      * @param pChildCount
      *            to be set
      */
-    public StructNodeDelegate(final NodeDelegate pDel, final long pFirstChild,
-            final long pRightSib, final long pLeftSib, final long pChildCount) {
+    public StructNodeDelegate(final NodeDelegate pDel, final long pFirstChild, final long pRightSib,
+        final long pLeftSib, final long pChildCount) {
         mDelegate = pDel;
         mFirstChild = pFirstChild;
         mRightSibling = pRightSib;
@@ -90,7 +88,7 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public boolean hasFirstChild() {
-        return mFirstChild != (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mFirstChild != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -98,8 +96,7 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public boolean hasLeftSibling() {
-        return mLeftSibling != (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        return mLeftSibling != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -107,8 +104,7 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public boolean hasRightSibling() {
-        return mRightSibling != (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        return mRightSibling != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -142,7 +138,6 @@ public class StructNodeDelegate implements IStructNode {
     public long getRightSiblingKey() {
         return mRightSibling;
     }
-
 
     /**
      * {@inheritDoc}
@@ -245,16 +240,6 @@ public class StructNodeDelegate implements IStructNode {
     }
 
     /**
-     * Delegate method for acceptVisitor.
-     * 
-     * @param pVisitor
-     * @see org.treetank.node.delegates.NodeDelegate#acceptVisitor(org.treetank.api.IVisitor)
-     */
-    public void acceptVisitor(final IVisitor pVisitor) {
-        mDelegate.acceptVisitor(pVisitor);
-    }
-
-    /**
      * Delegate method for getTypeKey.
      * 
      * @return
@@ -291,13 +276,11 @@ public class StructNodeDelegate implements IStructNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (mChildCount ^ (mChildCount >>> 32));
-        result = prime * result
-                + ((mDelegate == null) ? 0 : mDelegate.hashCode());
-        result = prime * result + (int) (mFirstChild ^ (mFirstChild >>> 32));
-        result = prime * result + (int) (mLeftSibling ^ (mLeftSibling >>> 32));
-        result = prime * result
-                + (int) (mRightSibling ^ (mRightSibling >>> 32));
+        result = prime * result + (int)(mChildCount ^ (mChildCount >>> 32));
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + (int)(mFirstChild ^ (mFirstChild >>> 32));
+        result = prime * result + (int)(mLeftSibling ^ (mLeftSibling >>> 32));
+        result = prime * result + (int)(mRightSibling ^ (mRightSibling >>> 32));
         return result;
     }
 
@@ -312,7 +295,7 @@ public class StructNodeDelegate implements IStructNode {
             return false;
         if (getClass() != pObj.getClass())
             return false;
-        StructNodeDelegate other = (StructNodeDelegate) pObj;
+        StructNodeDelegate other = (StructNodeDelegate)pObj;
         if (mChildCount != other.mChildCount)
             return false;
         if (mDelegate == null) {
