@@ -85,6 +85,7 @@
 		<module>coremodules/commons</module>
 		<module>interfacemodules/saxon</module>
 		<module>interfacemodules/jax-rx</module>
+		<module>interfacemodules/xml</module>
 		<module>studentmodules/xpath</module>
 		<module>studentmodules/xmldiff</module>
 	</modules>
