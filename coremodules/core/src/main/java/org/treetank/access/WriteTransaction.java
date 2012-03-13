@@ -1066,24 +1066,6 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
         setCurrentNode(startNode);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public long copySubtreeAsFirstChild(final long paramNodeKey, final long paramRevision)
-        throws AbsTTException {
-        final IReadTransaction rtx = getTransaction(paramRevision, paramNodeKey);
-        rtx.getNode().acceptVisitor(new InsertSubtreeVisitor(rtx, this, EInsert.ASFIRSTCHILD));
-        return paramNodeKey;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public long copySubtreeAsRightSibling(final long paramNodeKey, final long paramRevision)
-        throws AbsTTException {
-        final IReadTransaction rtx = getTransaction(paramRevision, paramNodeKey);
-        rtx.getNode().acceptVisitor(new InsertSubtreeVisitor(rtx, this, EInsert.ASRIGHTSIBLING));
-        return paramNodeKey;
-    }
-
     /**
      * Get an instance from a {@link IReadTransaction} transaction
      * implementation.

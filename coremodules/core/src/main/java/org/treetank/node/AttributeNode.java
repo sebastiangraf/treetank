@@ -27,7 +27,6 @@
 
 package org.treetank.node;
 
-import org.treetank.api.IVisitor;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -76,12 +75,6 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     @Override
     public ENode getKind() {
         return ENode.ATTRIBUTE_KIND;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void acceptVisitor(final IVisitor pVisitor) {
-        pVisitor.visit(this);
     }
 
     /**

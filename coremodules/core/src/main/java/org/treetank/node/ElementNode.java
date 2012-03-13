@@ -29,7 +29,6 @@ package org.treetank.node;
 
 import java.util.List;
 
-import org.treetank.api.IVisitor;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -434,12 +433,6 @@ public final class ElementNode implements IStructNode, INameNode {
         builder.append("\n\tattributes: ");
         builder.append(mAttributeKeys.toString());
         return builder.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void acceptVisitor(final IVisitor pVisitor) {
-        pVisitor.visit(this);
     }
 
     /**

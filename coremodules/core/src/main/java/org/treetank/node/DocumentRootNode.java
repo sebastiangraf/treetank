@@ -27,7 +27,6 @@
 
 package org.treetank.node;
 
-import org.treetank.api.IVisitor;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.IStructNode;
@@ -67,14 +66,6 @@ public final class DocumentRootNode implements IStructNode {
     @Override
     public ENode getKind() {
         return ENode.ROOT_KIND;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void acceptVisitor(final IVisitor pVisitor) {
-        pVisitor.visit(this);
     }
 
     /**

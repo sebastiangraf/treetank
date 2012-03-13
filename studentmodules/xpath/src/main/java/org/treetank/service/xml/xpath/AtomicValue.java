@@ -27,8 +27,6 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.treetank.api.IVisitor;
-import org.treetank.io.ITTSink;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
@@ -40,9 +38,8 @@ import org.treetank.utils.TypedValue;
 /**
  * <h1>AtomicValue</h1>
  * <p>
- * An item represents either an atomic value or a node. An atomic value is a
- * value in the value space of an atomic type, as defined in <a
- * href="http://www.w3.org/TR/xmlschema11-2/">XMLSchema 1.1</a>. (Definition:
+ * An item represents either an atomic value or a node. An atomic value is a value in the value space of an
+ * atomic type, as defined in <a href="http://www.w3.org/TR/xmlschema11-2/">XMLSchema 1.1</a>. (Definition:
  * Atomic types are anyAtomicType and all types derived from it.)
  * </p>
  */
@@ -130,7 +127,7 @@ public class AtomicValue implements INode, IValNode {
     @Override
     public long getParentKey() {
 
-        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
+        return (Integer)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -211,7 +208,7 @@ public class AtomicValue implements INode, IValNode {
      */
     public int getInt() {
 
-        return (int) getDBL();
+        return (int)getDBL();
     }
 
     /**
@@ -269,12 +266,6 @@ public class AtomicValue implements INode, IValNode {
     public long getHash() {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void acceptVisitor(final IVisitor paramVisitor) {
-        // Do nothing.
     }
 
     public AtomicValue clone() {

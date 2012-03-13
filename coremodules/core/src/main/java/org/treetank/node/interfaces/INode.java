@@ -27,7 +27,6 @@
 
 package org.treetank.node.interfaces;
 
-import org.treetank.api.IVisitor;
 import org.treetank.node.ENode;
 
 /**
@@ -100,14 +99,6 @@ public interface INode {
      * @return value type
      */
     int getTypeKey();
-
-    /**
-     * Accept a visitor and use double dispatching to invoke the visitor method.
-     * 
-     * @param pVisitor
-     *            implementation of the {@link IVisitor} interface
-     */
-    void acceptVisitor(final IVisitor pVisitor);
 
     /**
      * Setting the parent key.
