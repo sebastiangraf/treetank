@@ -149,81 +149,12 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQName);
 
             setCurrentNode(node);
-            adaptForInsert(node, EInsert.ASFIRSTCHILD);
+            adaptForInsert(node, true);
             adaptHashesWithAdd();
 
             return node.getNodeKey();
         } else {
             throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws IllegalArgumentException
-     *             if paramFromKey < 0
-     */
-    @Override
-    public synchronized long moveSubtreeToFirstChild(final long paramFromKey) throws AbsTTException,
-        IllegalArgumentException {
-        if (paramFromKey < 0) {
-            throw new IllegalArgumentException("Argument must be a valid node key!");
-        }
-
-        final INode nodeToMove = getTransactionState().getNode(paramFromKey);
-
-        if (nodeToMove instanceof IStructNode && getCurrentNode().getKind() == ENode.ELEMENT_KIND) {
-            checkAccessAndCommit();
-
-            final ElementNode nodeAnchor = (ElementNode)getCurrentNode();
-
-            // Adapt hashes.
-            adaptHashesForMove((IStructNode)nodeToMove);
-
-            // Adapt pointers and merge sibling text nodes.
-            adaptForMove((IStructNode)nodeToMove, nodeAnchor, EInsert.ASFIRSTCHILD);
-            setCurrentNode(nodeAnchor);
-            adaptHashesWithAdd();
-
-            return nodeToMove.getNodeKey();
-        } else {
-            throw new TTUsageException(
-                "Move is not allowed if moved node is not an ElementNode and the node isn't inserted at an element node!");
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws IllegalArgumentException
-     *             if paramFromKey < 0
-     */
-    @Override
-    public synchronized long moveSubtreeToRightSibling(final long paramFromKey) throws AbsTTException {
-        if (paramFromKey < 0) {
-            throw new IllegalArgumentException("Argument must be a valid node key!");
-        }
-
-        final INode nodeToMove = getTransactionState().getNode(paramFromKey);
-
-        if (nodeToMove instanceof IStructNode && getCurrentNode() instanceof IStructNode) {
-            checkAccessAndCommit();
-
-            final IStructNode nodeAnchor = (IStructNode)getCurrentNode();
-
-            // Adapt hashes.
-            adaptHashesForMove((IStructNode)nodeToMove);
-
-            // Adapt pointers and merge sibling text nodes.
-            adaptForMove((IStructNode)nodeToMove, nodeAnchor, EInsert.ASRIGHTSIBLING);
-            setCurrentNode(nodeAnchor);
-            adaptHashesWithAdd();
-
-            return nodeToMove.getNodeKey();
-        } else {
-            throw new TTUsageException(
-                "Move is not allowed if moved node is not an ElementNode and the node isn't inserted at an element node!");
         }
     }
 
@@ -248,75 +179,6 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
     }
 
     /**
-     * Adapting everything for move operations.
-     * 
-     * @param paramFromNode
-     *            root {@link IStructNode} of the subtree to be moved
-     * @param paramToNode
-     *            the {@link IStructNode} which is the anchor of the new
-     *            subtree
-     * @param paramInsert
-     *            determines if it has to be inserted as a first child or a
-     *            right sibling
-     * @throws AbsTTException
-     *             if removing a node fails after merging text nodes
-     */
-    private void adaptForMove(final IStructNode paramFromNode, final IStructNode paramToNode,
-        final EInsert paramInsert) throws AbsTTException {
-        assert paramFromNode != null;
-        assert paramToNode != null;
-        assert paramInsert != null;
-
-        // Modify nodes where the subtree has been moved from.
-        // ==============================================================================
-        final IStructNode parent =
-            (IStructNode)getTransactionState().prepareNodeForModification(paramFromNode.getParentKey());
-        parent.decrementChildCount();
-        // Adapt first child key of former parent.
-        if (parent.getFirstChildKey() == paramFromNode.getNodeKey()) {
-            parent.setFirstChildKey(paramFromNode.getRightSiblingKey());
-        }
-        getTransactionState().finishNodeModification(parent);
-
-        // Adapt right sibling key of former left sibling.
-        if (paramFromNode.hasLeftSibling()) {
-            final IStructNode leftSibling =
-                (IStructNode)getTransactionState().prepareNodeForModification(
-                    paramFromNode.getLeftSiblingKey());
-            leftSibling.setRightSiblingKey(paramFromNode.getRightSiblingKey());
-            getTransactionState().finishNodeModification(leftSibling);
-        }
-
-        // Adapt left sibling key of former right sibling.
-        if (paramFromNode.hasRightSibling()) {
-            final IStructNode rightSibling =
-                (IStructNode)getTransactionState().prepareNodeForModification(
-                    paramFromNode.getRightSiblingKey());
-            rightSibling.setLeftSiblingKey(paramFromNode.getLeftSiblingKey());
-            getTransactionState().finishNodeModification(rightSibling);
-        }
-
-        // Merge text nodes.
-        if (paramFromNode.hasLeftSibling() && paramFromNode.hasRightSibling()) {
-            moveTo(paramFromNode.getLeftSiblingKey());
-            if (getCurrentNode() != null && getCurrentNode().getKind() == ENode.TEXT_KIND) {
-                final StringBuilder builder = new StringBuilder(getValueOfCurrentNode());
-                moveTo(paramFromNode.getRightSiblingKey());
-                if (getCurrentNode() != null && getCurrentNode().getKind() == ENode.TEXT_KIND) {
-                    builder.append(getValueOfCurrentNode());
-                    remove();
-                    moveTo(paramFromNode.getLeftSiblingKey());
-                    setValue(builder.toString());
-                }
-            }
-        }
-
-        // Modify nodes where the subtree has been moved to.
-        // ==============================================================================
-        paramInsert.processMove(paramFromNode, paramToNode, this);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -335,7 +197,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, paramQName);
 
             setCurrentNode(node);
-            adaptForInsert(node, EInsert.ASRIGHTSIBLING);
+            adaptForInsert(node, false);
             adaptHashesWithAdd();
 
             return node.getNodeKey();
@@ -365,7 +227,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
             setCurrentNode(node);
-            adaptForInsert(node, EInsert.ASFIRSTCHILD);
+            adaptForInsert(node, true);
             adaptHashesWithAdd();
 
             return node.getNodeKey();
@@ -394,7 +256,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
             setCurrentNode(node);
-            adaptForInsert(node, EInsert.ASRIGHTSIBLING);
+            adaptForInsert(node, false);
             adaptHashesWithAdd();
 
             return node.getNodeKey();
@@ -424,7 +286,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
             getTransactionState().finishNodeModification(parentNode);
 
             setCurrentNode(node);
-            adaptForInsert(node, EInsert.ASNONSTRUCTURAL);
+            adaptForInsert(node, false);
 
             adaptHashesWithAdd();
             return node.getNodeKey();
@@ -461,7 +323,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
             getTransactionState().finishNodeModification(parentNode);
 
             setCurrentNode(node);
-            adaptForInsert(node, EInsert.ASNONSTRUCTURAL);
+            adaptForInsert(node, false);
             adaptHashesWithAdd();
             return node.getNodeKey();
         } else {
@@ -699,21 +561,20 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
      * 
      * @param paramNewNode
      *            pointer of the new node to be inserted
-     * @param paramInsert
+     * @param addAsFirstChild
      *            determines the position where to insert
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForInsert(final INode paramNewNode, final EInsert paramInsert) throws TTIOException {
+    private void adaptForInsert(final INode paramNewNode, final boolean addAsFirstChild) throws TTIOException {
         assert paramNewNode != null;
-        assert paramInsert != null;
 
         if (paramNewNode instanceof IStructNode) {
             final IStructNode strucNode = (IStructNode)paramNewNode;
             final IStructNode parent =
                 (IStructNode)getTransactionState().prepareNodeForModification(paramNewNode.getParentKey());
             parent.incrementChildCount();
-            if (paramInsert == EInsert.ASFIRSTCHILD) {
+            if (addAsFirstChild) {
                 parent.setFirstChildKey(paramNewNode.getNodeKey());
             }
             getTransactionState().finishNodeModification(parent);
