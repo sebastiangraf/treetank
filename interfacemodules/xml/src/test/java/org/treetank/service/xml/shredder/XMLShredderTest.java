@@ -36,6 +36,9 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -51,10 +54,6 @@ import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.DocumentCreater;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 public class XMLShredderTest extends XMLTestCase {
 

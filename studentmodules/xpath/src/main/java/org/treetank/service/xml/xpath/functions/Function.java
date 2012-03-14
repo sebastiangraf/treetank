@@ -40,7 +40,6 @@ import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.functions.sequences.FNBoolean;
 import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.utils.TypedValue;
 
 public class Function {
 
