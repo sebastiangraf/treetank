@@ -33,18 +33,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.TestHelper;
-import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
 
-public class IFilterTest {
+public class AbsFilterTest {
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
-    public static void testIFilterConventions(final IFilter filter, final boolean expected) {
+    public static void testIFilterConventions(final AbsFilter filter, final boolean expected) {
 
         final IReadTransaction rtx = ((AbsFilter)filter).getTransaction();
 

@@ -27,7 +27,6 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -37,7 +36,7 @@ import org.treetank.api.IReadTransaction;
  * Filter node of transaction this filter is bound to.
  * </p>
  */
-public abstract class AbsFilter implements IFilter {
+public abstract class AbsFilter {
 
     /** Iterate over transaction exclusive to this step. */
     private IReadTransaction mRTX;
@@ -64,13 +63,11 @@ public abstract class AbsFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public abstract boolean filter();
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public synchronized void setTransaction(final IReadTransaction rtx) {
         mRTX = rtx;
     }

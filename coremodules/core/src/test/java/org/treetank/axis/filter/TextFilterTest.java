@@ -56,16 +56,16 @@ public class TextFilterTest {
     public void testIFilterConvetions() throws AbsTTException {
         final IReadTransaction rtx = holder.getRtx();
         rtx.moveTo(8L);
-        IFilterTest.testIFilterConventions(new TextFilter(rtx), true);
+        AbsFilterTest.testIFilterConventions(new TextFilter(rtx), true);
 
         rtx.moveTo(3L);
-        IFilterTest.testIFilterConventions(new TextFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new TextFilter(rtx), false);
 
         rtx.moveTo(5L);
-        IFilterTest.testIFilterConventions(new TextFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new TextFilter(rtx), false);
 
         rtx.moveTo(1L);
         rtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new TextFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new TextFilter(rtx), false);
     }
 }

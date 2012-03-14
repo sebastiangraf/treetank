@@ -57,18 +57,18 @@ public class CommentFilterTest {
         final IReadTransaction wtx = holder.getRtx();
 
         wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        AbsFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
         wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        AbsFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
         wtx.moveTo(1L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        AbsFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
         wtx.moveTo(9L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        AbsFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
     }
 }
