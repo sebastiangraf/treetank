@@ -33,6 +33,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
+import org.treetank.utils.ItemList;
 
 /**
  * <h1>IReadTransaction</h1>
@@ -279,7 +280,7 @@ public interface IReadTransaction {
      * 
      * @return Item list.
      */
-    IItemList getItemList();
+    ItemList getItemList();
 
     /**
      * Getting the current node.

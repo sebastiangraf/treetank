@@ -57,13 +57,13 @@ public class NameFilterTest {
         final IReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new NameFilter(rtx, "b"), true);
+        AbsFilterTest.testIFilterConventions(new NameFilter(rtx, "b"), true);
 
         rtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new NameFilter(rtx, "b"), false);
+        AbsFilterTest.testIFilterConventions(new NameFilter(rtx, "b"), false);
 
         rtx.moveTo(7L);
-        IFilterTest.testIFilterConventions(new NameFilter(rtx, "b"), false);
+        AbsFilterTest.testIFilterConventions(new NameFilter(rtx, "b"), false);
     }
 
 }

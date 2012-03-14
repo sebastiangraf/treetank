@@ -30,14 +30,8 @@ package org.treetank.utils;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
-import org.treetank.TestHelper;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 

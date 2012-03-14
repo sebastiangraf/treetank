@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.treetank.api.IItemList;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.RAMCache;
@@ -49,9 +48,10 @@ import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
+import org.treetank.utils.ItemList;
 
 /**
- * <h1>ReadTransactionState</h1>
+ * <h1>PageReadTransaction</h1>
  * 
  * <p>
  * State of a reading transaction. The only thing shared amongst transactions is the page cache. Everything
@@ -63,7 +63,7 @@ import org.treetank.utils.IConstants;
  * A path-like cache boosts sequential operations.
  * </p>
  */
-public class ReadTransactionState {
+public class PageReadTransaction {
 
     /** Page reader exclusively assigned to this transaction. */
     private final IReader mPageReader;
@@ -75,7 +75,7 @@ public class ReadTransactionState {
     private final RevisionRootPage mRootPage;
 
     /** Read-transaction-exclusive item list. */
-    private final IItemList mItemList;
+    private final ItemList mItemList;
 
     /** Internal reference to cache. */
     private final ICache mCache;
@@ -99,8 +99,8 @@ public class ReadTransactionState {
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected ReadTransactionState(final Session paramSessionState, final UberPage paramUberPage,
-        final long paramRevision, final IItemList paramItemList, final IReader paramReader)
+    protected PageReadTransaction(final Session paramSessionState, final UberPage paramUberPage,
+        final long paramRevision, final ItemList paramItemList, final IReader paramReader)
         throws TTIOException {
         mCache = new RAMCache();
         mSession = paramSessionState;
@@ -251,7 +251,7 @@ public class ReadTransactionState {
      * 
      * @return The item list.
      */
-    protected final IItemList getItemList() {
+    protected final ItemList getItemList() {
         return mItemList;
     }
 

@@ -117,30 +117,6 @@ public interface IWriteTransaction extends IReadTransaction {
     // --------------------------------------------------------
 
     /**
-     * Move a subtree rooted at paramToKey to the first child rooted at
-     * paramToKey.
-     * 
-     * @param pFromKey
-     *            root node key of the subtree to move
-     * @return key of rooted subtree
-     * @throws AbsTTException
-     *             if move adaption fails
-     */
-    long moveSubtreeToFirstChild(final long pFromKey) throws AbsTTException;
-
-    /**
-     * Move a subtree rooted at paramToKey to the right sibling of the node at
-     * paramToKey.
-     * 
-     * @param pFromKey
-     *            root node key of the subtree to move
-     * @return key of rooted subtree
-     * @throws AbsTTException
-     *             if move adaption fails
-     */
-    long moveSubtreeToRightSibling(final long pFromKey) throws AbsTTException;
-
-    /**
      * Insert new element node as first child of currently selected node. The
      * cursor is moved to the inserted node.
      * 
@@ -290,7 +266,7 @@ public interface IWriteTransaction extends IReadTransaction {
     void revertTo(final long pRev) throws AbsTTException;
 
     /**
-     * Closing current WriteTransaction.
+     * Closing current NodeWriteTransaction.
      * 
      * @throws AbsTTException
      *             if write transaction couldn't be closed

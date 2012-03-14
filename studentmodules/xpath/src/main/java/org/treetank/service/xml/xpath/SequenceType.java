@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.treetank.api.IFilter;
+import org.treetank.axis.filter.AbsFilter;
 
 /**
  * <h1>SequenceType</h1>
@@ -40,7 +40,7 @@ public class SequenceType {
 
     private final boolean mIsEmptySequence;
 
-    private final IFilter mFilter;
+    private final AbsFilter mFilter;
 
     private final boolean mHasWildcard;
 
@@ -64,7 +64,7 @@ public class SequenceType {
      * @param mFilter
      *            item type filter
      */
-    public SequenceType(final IFilter mFilter) {
+    public SequenceType(final AbsFilter mFilter) {
 
         mIsEmptySequence = false;
         this.mFilter = mFilter;
@@ -83,7 +83,7 @@ public class SequenceType {
      * @param mWildcard
      *            either '*', '?' or '+'
      */
-    public SequenceType(final IFilter filter, final char mWildcard) {
+    public SequenceType(final AbsFilter filter, final char mWildcard) {
 
         mIsEmptySequence = false;
         this.mFilter = filter;
@@ -103,7 +103,7 @@ public class SequenceType {
     /**
      * @return the ItemType test
      */
-    public IFilter getFilter() {
+    public AbsFilter getFilter() {
 
         return mFilter;
     }

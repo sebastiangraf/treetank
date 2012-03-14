@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.axis.filter.IFilterTest;
+import org.treetank.axis.filter.AbsFilterTest;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.AbsTTException;
 
@@ -60,10 +60,10 @@ public class WildcardFilterTest {
     @Test
     public void testIFilterConvetions() throws AbsTTException {
         holder.getRtx().moveTo(9L);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b", true), true);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b", true), true);
         holder.getRtx().moveToAttribute(0);
         try {
-            IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);
+            AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);
             fail("Expected an Exception, because attributes are not supported.");
         } catch (IllegalStateException e) {
             assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
@@ -78,10 +78,10 @@ public class WildcardFilterTest {
         // true);
 
         holder.getRtx().moveTo(1L);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "a", true), true);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "c", true), false);
-        IFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b", false), false);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "a", true), true);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "c", true), false);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b", false), false);
 
     }
 }

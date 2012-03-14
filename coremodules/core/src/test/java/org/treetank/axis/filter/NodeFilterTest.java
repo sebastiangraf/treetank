@@ -56,14 +56,14 @@ public class NodeFilterTest {
     public void testIFilterConvetions() throws AbsTTException {
         final IReadTransaction rtx = holder.getRtx();
         rtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new NodeFilter(rtx), true);
+        AbsFilterTest.testIFilterConventions(new NodeFilter(rtx), true);
 
         rtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new NodeFilter(rtx), true);
+        AbsFilterTest.testIFilterConventions(new NodeFilter(rtx), true);
 
         rtx.moveTo(1L);
         rtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new NodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new NodeFilter(rtx), false);
     }
 
 }

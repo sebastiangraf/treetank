@@ -40,7 +40,7 @@ import org.treetank.page.interfaces.IPage;
 import org.treetank.utils.IConstants;
 
 /**
- * File Reader. Used for ReadTransaction to provide read only access on a
+ * File Reader. Used for NodeReadTransaction to provide read only access on a
  * RandomAccessFile.
  * 
  * @author Marc Kramis, Seabix

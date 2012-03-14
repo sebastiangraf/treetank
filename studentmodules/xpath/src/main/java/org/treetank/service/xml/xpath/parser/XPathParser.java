@@ -30,7 +30,6 @@ package org.treetank.service.xml.xpath.parser;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AncestorAxis;
@@ -44,6 +43,7 @@ import org.treetank.axis.ParentAxis;
 import org.treetank.axis.PrecedingAxis;
 import org.treetank.axis.PrecedingSiblingAxis;
 import org.treetank.axis.SelfAxis;
+import org.treetank.axis.filter.AbsFilter;
 import org.treetank.axis.filter.AttributeFilter;
 import org.treetank.axis.filter.CommentFilter;
 import org.treetank.axis.filter.DocumentRootNodeFilter;
@@ -833,7 +833,7 @@ public final class XPathParser {
     private void parseForwardStep() throws TTXPathException {
 
         AbsAxis axis;
-        IFilter filter;
+        AbsFilter filter;
         if (isForwardAxis()) {
             axis = parseForwardAxis();
             filter = parseNodeTest(axis.getClass() == AttributeAxis.class);
@@ -944,7 +944,7 @@ public final class XPathParser {
             isAttribute = false;
         }
 
-        final IFilter filter = parseNodeTest(isAttribute);
+        final AbsFilter filter = parseNodeTest(isAttribute);
 
         return new FilterAxis(axis, filter);
     }
@@ -965,7 +965,7 @@ public final class XPathParser {
             mPipeBuilder.addStep(axis);
         } else {
             axis = parseReverceAxis();
-            final IFilter filter = parseNodeTest(axis.getClass() == AttributeAxis.class);
+            final AbsFilter filter = parseNodeTest(axis.getClass() == AttributeAxis.class);
             mPipeBuilder.addStep(axis, filter);
         }
     }
@@ -1045,9 +1045,9 @@ public final class XPathParser {
      * 
      * @return filter
      */
-    private IFilter parseNodeTest(final boolean mIsAtt) {
+    private AbsFilter parseNodeTest(final boolean mIsAtt) {
 
-        IFilter filter;
+        AbsFilter filter;
         if (isKindTest()) {
             filter = parseKindTest();
         } else {
@@ -1066,9 +1066,9 @@ public final class XPathParser {
      *            Attribute
      * @return filter
      */
-    private IFilter parseNameTest(final boolean mIsAtt) {
+    private AbsFilter parseNameTest(final boolean mIsAtt) {
 
-        IFilter filter;
+        AbsFilter filter;
         if (isWildcardNameTest()) {
 
             filter = parseWildcard(mIsAtt);
@@ -1099,9 +1099,9 @@ public final class XPathParser {
      *            Attribute
      * @return filter
      */
-    private IFilter parseWildcard(final boolean mIsAtt) {
+    private AbsFilter parseWildcard(final boolean mIsAtt) {
 
-        IFilter filter;
+        AbsFilter filter;
         boolean isName = false;
 
         if (is(TokenType.STAR, true)) {
@@ -1365,7 +1365,7 @@ public final class XPathParser {
             return new SequenceType();
 
         } else {
-            final IFilter filter = parseItemType();
+            final AbsFilter filter = parseItemType();
             if (isWildcard()) {
                 final char wildcard = parseOccuranceIndicator();
                 return new SequenceType(filter, wildcard);
@@ -1417,9 +1417,9 @@ public final class XPathParser {
      * 
      * @return filter
      */
-    private IFilter parseItemType() {
+    private AbsFilter parseItemType() {
 
-        IFilter filter;
+        AbsFilter filter;
         if (isKindTest()) {
             filter = parseKindTest();
         } else if (is("item", true)) {
@@ -1457,9 +1457,9 @@ public final class XPathParser {
      * 
      * @return filter
      */
-    private IFilter parseKindTest() {
+    private AbsFilter parseKindTest() {
 
-        IFilter filter;
+        AbsFilter filter;
         final String test = mToken.getContent();
 
         if ("document-node".equals(test)) {
@@ -1493,7 +1493,7 @@ public final class XPathParser {
      * 
      * @return NodeFilter
      */
-    private IFilter parseAnyKindTest() {
+    private AbsFilter parseAnyKindTest() {
 
         consume("node", true);
         consume(TokenType.OPEN_BR, true);
@@ -1529,13 +1529,13 @@ public final class XPathParser {
      * 
      * @return filter
      */
-    private IFilter parseDocumentTest() {
+    private AbsFilter parseDocumentTest() {
 
         consume("document-node", true);
         consume(TokenType.OPEN_BR, true);
-        IFilter filter = new DocumentRootNodeFilter(getTransaction());
+        AbsFilter filter = new DocumentRootNodeFilter(getTransaction());
 
-        IFilter innerFilter;
+        AbsFilter innerFilter;
         if (mToken.getContent().equals("element")) {
             innerFilter = parseElementTest();
             filter = new NestedFilter(getTransaction(), filter, innerFilter);
@@ -1557,7 +1557,7 @@ public final class XPathParser {
      * 
      * @return TextFilter
      */
-    private IFilter parseTextTest() {
+    private AbsFilter parseTextTest() {
 
         consume("text", true);
         consume(TokenType.OPEN_BR, true);
@@ -1575,7 +1575,7 @@ public final class XPathParser {
      * 
      * @return CommonFilter
      */
-    private IFilter parseCommentTest() {
+    private AbsFilter parseCommentTest() {
 
         consume("comment", true);
         consume(TokenType.OPEN_BR, true);
@@ -1592,12 +1592,12 @@ public final class XPathParser {
      * 
      * @return filter
      */
-    private IFilter parsePITest() {
+    private AbsFilter parsePITest() {
 
         consume("processing-instruction", true);
         consume(TokenType.OPEN_BR, true);
 
-        IFilter filter = new PIFilter(getTransaction());
+        AbsFilter filter = new PIFilter(getTransaction());
 
         if (!is(TokenType.CLOSE_BR, true)) {
             String stringLiteral;
@@ -1612,7 +1612,7 @@ public final class XPathParser {
             consume(TokenType.CLOSE_BR, true);
 
             filter =
-                new NestedFilter(getTransaction(), filter, (IFilter)new NameFilter(getTransaction(),
+                new NestedFilter(getTransaction(), filter, (AbsFilter)new NameFilter(getTransaction(),
                     stringLiteral));
         }
 
@@ -1637,12 +1637,12 @@ public final class XPathParser {
      * 
      * @return filter
      */
-    private IFilter parseAttributeTest() {
+    private AbsFilter parseAttributeTest() {
 
         consume("attribute", true);
         consume(TokenType.OPEN_BR, true);
 
-        IFilter filter = new AttributeFilter(getTransaction());
+        AbsFilter filter = new AttributeFilter(getTransaction());
 
         if (!(mToken.getType() == TokenType.CLOSE_BR)) {
             // add name filter
@@ -1697,16 +1697,16 @@ public final class XPathParser {
      * 
      * @return filter
      */
-    private IFilter parseSchemaAttributeTest() {
+    private AbsFilter parseSchemaAttributeTest() {
 
         consume("schema-attribute", true);
         consume(TokenType.OPEN_BR, true);
 
-        final IFilter filter = new SchemaAttributeFilter(getTransaction()/*
-                                                                          * ,
-                                                                          * parseAttributeDeclaration
-                                                                          * ()
-                                                                          */);
+        final AbsFilter filter = new SchemaAttributeFilter(getTransaction()/*
+                                                                            * ,
+                                                                            * parseAttributeDeclaration
+                                                                            * ()
+                                                                            */);
 
         consume(TokenType.CLOSE_BR, true);
 
@@ -1734,12 +1734,12 @@ public final class XPathParser {
      * 
      * @return filter
      */
-    private IFilter parseElementTest() {
+    private AbsFilter parseElementTest() {
 
         consume("element", true);
         consume(TokenType.OPEN_BR, true);
 
-        IFilter filter = new ElementFilter(getTransaction());
+        AbsFilter filter = new ElementFilter(getTransaction());
 
         if (!(mToken.getType() == TokenType.CLOSE_BR)) {
 
@@ -1752,7 +1752,7 @@ public final class XPathParser {
             if (is(TokenType.COMMA, true)) {
 
                 filter =
-                    new NestedFilter(getTransaction(), filter, (IFilter)new TypeFilter(getTransaction(),
+                    new NestedFilter(getTransaction(), filter, (AbsFilter)new TypeFilter(getTransaction(),
                         parseTypeName()));
 
                 if (is(TokenType.INTERROGATION, true)) {
@@ -1800,7 +1800,7 @@ public final class XPathParser {
      * 
      * @return SchemaElementFilter
      */
-    private IFilter parseSchemaElementTest() {
+    private AbsFilter parseSchemaElementTest() {
 
         consume("schema-element", true);
         consume(TokenType.OPEN_BR, true);

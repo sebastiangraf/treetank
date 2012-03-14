@@ -30,7 +30,6 @@ package org.treetank.access;
 import javax.xml.namespace.QName;
 
 import org.treetank.annotations.NotNull;
-import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
@@ -41,17 +40,18 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.settings.EFixed;
+import org.treetank.utils.ItemList;
 import org.treetank.utils.NamePageHash;
 
 /**
- * <h1>ReadTransaction</h1>
+ * <h1>NodeReadTransaction</h1>
  * 
  * <p>
  * Read-only transaction wiht single-threaded cursor semantics. Each read-only transaction works on a given
  * revision key.
  * </p>
  */
-public class ReadTransaction implements IReadTransaction {
+public class NodeReadTransaction implements IReadTransaction {
 
     /** ID of transaction. */
     private final long mId;
@@ -60,7 +60,7 @@ public class ReadTransaction implements IReadTransaction {
     protected final Session mSession;
 
     /** State of transaction including all cached stuff. */
-    private ReadTransactionState mState;
+    private PageReadTransaction mState;
 
     /** Strong reference to currently selected node. */
     private INode mCurrentNode;
@@ -81,8 +81,8 @@ public class ReadTransaction implements IReadTransaction {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected ReadTransaction(final Session paramSession, final long paramTransactionID,
-        final ReadTransactionState paramTransactionState) throws TTIOException {
+    protected NodeReadTransaction(final Session paramSession, final long paramTransactionID,
+        final PageReadTransaction paramTransactionState) throws TTIOException {
         mSession = paramSession;
         mId = paramTransactionID;
         mState = paramTransactionState;
@@ -280,7 +280,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public final IItemList getItemList() {
+    public final ItemList getItemList() {
         return mState.getItemList();
     }
 
@@ -360,7 +360,7 @@ public class ReadTransaction implements IReadTransaction {
      * 
      * @return The state of this transaction.
      */
-    public ReadTransactionState getTransactionState() {
+    public PageReadTransaction getTransactionState() {
         return mState;
     }
 
@@ -370,7 +370,7 @@ public class ReadTransaction implements IReadTransaction {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setTransactionState(final ReadTransactionState paramTransactionState) {
+    protected final void setTransactionState(final PageReadTransaction paramTransactionState) {
         mState = paramTransactionState;
     }
 

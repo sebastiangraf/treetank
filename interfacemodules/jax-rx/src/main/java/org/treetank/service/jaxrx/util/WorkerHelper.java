@@ -221,7 +221,7 @@ public final class WorkerHelper {
 
 	/**
 	 * This method closes all open treetank connections concerning a
-	 * WriteTransaction.
+	 * NodeWriteTransaction.
 	 * 
 	 * @param abortTransaction
 	 *            <code>true</code> if the transaction has to be aborted,
@@ -247,7 +247,7 @@ public final class WorkerHelper {
 
 	/**
 	 * This method closes all open treetank connections concerning a
-	 * ReadTransaction.
+	 * NodeReadTransaction.
 	 * 
 	 * @param rtx
 	 *            IReadTransaction to be closed

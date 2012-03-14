@@ -27,15 +27,14 @@
 
 package org.treetank.node;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.utils.NamePageHash;
-
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class AttributeNodeTest {
 

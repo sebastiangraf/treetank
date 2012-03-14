@@ -62,13 +62,13 @@ import org.treetank.utils.ItemList;
 import org.treetank.utils.NamePageHash;
 
 /**
- * <h1>WriteTransactionState</h1>
+ * <h1>PageWriteTransaction</h1>
  * 
  * <p>
- * See {@link ReadTransactionState}.
+ * See {@link PageReadTransaction}.
  * </p>
  */
-public final class WriteTransactionState extends ReadTransactionState {
+public final class PageWriteTransaction extends PageReadTransaction {
 
     /** Page writer to serialize. */
     private final IWriter mPageWriter;
@@ -104,7 +104,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TTIOException
      *             if IO Error
      */
-    protected WriteTransactionState(final Session paramSessionState,
+    protected PageWriteTransaction(final Session paramSessionState,
             final UberPage paramUberPage, final IWriter paramWriter,
             final long paramParamId, final long paramRepresentRev,
             final long paramStoreRev) throws TTIOException {

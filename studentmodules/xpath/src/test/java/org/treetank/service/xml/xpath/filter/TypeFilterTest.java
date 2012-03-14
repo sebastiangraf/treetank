@@ -34,7 +34,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.filter.IFilterTest;
+import org.treetank.axis.filter.AbsFilterTest;
 import org.treetank.axis.filter.TypeFilter;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
@@ -63,18 +63,18 @@ public class TypeFilterTest {
         final IReadTransaction xtx = axis.getTransaction();
 
         xtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"), false);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"), false);
 
         xtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"), false);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"), false);
 
         xtx.moveTo(1L);
         xtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
 
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"), false);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"), false);
 
     }
 }

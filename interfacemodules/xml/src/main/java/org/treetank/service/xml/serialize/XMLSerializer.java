@@ -27,6 +27,12 @@
 
 package org.treetank.service.xml.serialize;
 
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
+import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,12 +53,6 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.ECharsForSerializing;
 import org.treetank.utils.IConstants;
-
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
-import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
 
 /**
  * <h1>XMLSerializer</h1>

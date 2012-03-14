@@ -27,15 +27,13 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.IExpression;
-
 /**
  * <h1>IObserver</h1>
  * <p>
  * Interface for all axis that observe another axis' state.
  * </p>
  */
-public interface IObserver extends IExpression {
+public interface IObserver {
 
     /**
      * This method is called whenever the observed axis is changed.

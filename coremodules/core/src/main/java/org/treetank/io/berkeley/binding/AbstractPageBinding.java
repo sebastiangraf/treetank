@@ -30,6 +30,7 @@ package org.treetank.io.berkeley.binding;
 import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;
 import org.treetank.page.PagePersistenter;
+import org.treetank.page.delegates.PageDelegate;
 import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;

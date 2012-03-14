@@ -27,7 +27,7 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.IFilter;
+import org.treetank.axis.filter.AbsFilter;
 
 /**
  * <h1>TestAxis</h1>
@@ -42,7 +42,7 @@ public class FilterAxis extends AbsAxis {
     private final AbsAxis mAxis;
 
     /** Test to apply to axis. */
-    private final IFilter[] mAxisFilter;
+    private final AbsFilter[] mAxisFilter;
 
     /**
      * Constructor initializing internal state.
@@ -52,7 +52,7 @@ public class FilterAxis extends AbsAxis {
      * @param axisTest
      *            Test to perform for each node found with axis.
      */
-    public FilterAxis(final AbsAxis axis, final IFilter... axisTest) {
+    public FilterAxis(final AbsAxis axis, final AbsFilter... axisTest) {
         super(axis.getTransaction());
         mAxis = axis;
         mAxisFilter = axisTest;
@@ -78,7 +78,7 @@ public class FilterAxis extends AbsAxis {
         while (mAxis.hasNext()) {
             mAxis.next();
             boolean filterResult = true;
-            for (final IFilter filter : mAxisFilter) {
+            for (final AbsFilter filter : mAxisFilter) {
                 filterResult = filterResult && filter.filter();
             }
             if (filterResult) {
