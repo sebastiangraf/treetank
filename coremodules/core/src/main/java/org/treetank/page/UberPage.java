@@ -27,7 +27,7 @@
 
 package org.treetank.page;
 
-import org.treetank.access.WriteTransactionState;
+import org.treetank.access.PageWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
@@ -215,7 +215,7 @@ public final class UberPage implements IPage {
     }
 
     @Override
-    public void commit(WriteTransactionState paramState) throws AbsTTException {
+    public void commit(PageWriteTransaction paramState) throws AbsTTException {
         mDelegate.commit(paramState);
     }
 

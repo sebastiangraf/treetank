@@ -93,7 +93,7 @@ public final class Session implements ISession {
     protected final Lock mCommitLock;
 
     /** Remember the write seperatly because of the concurrent writes. */
-    private final Map<Long, WriteTransactionState> mWriteTransactionStateMap;
+    private final Map<Long, PageWriteTransaction> mWriteTransactionStateMap;
 
     /** Storing all return futures from the sync process. */
     private final Map<Long, Map<Long, Collection<Future<Void>>>> mSyncTransactionsReturns;
@@ -125,7 +125,7 @@ public final class Session implements ISession {
         mResourceConfig = paramResourceConf;
         mSessionConfig = paramSessionConf;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
-        mWriteTransactionStateMap = new ConcurrentHashMap<Long, WriteTransactionState>();
+        mWriteTransactionStateMap = new ConcurrentHashMap<Long, PageWriteTransaction>();
         mSyncTransactionsReturns = new ConcurrentHashMap<Long, Map<Long, Collection<Future<Void>>>>();
 
         mTransactionIDCounter = new AtomicLong();
@@ -182,7 +182,7 @@ public final class Session implements ISession {
         IReadTransaction rtx = null;
         // Create new read transaction.
         rtx =
-            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new ReadTransactionState(this,
+            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTransaction(this,
                 mLastCommittedUberPage, paramRevisionKey, mItemList, mFac.getReader()));
 
         // Remember transaction for debugging and safe close.
@@ -220,7 +220,7 @@ public final class Session implements ISession {
         }
 
         final long currentID = mTransactionIDCounter.incrementAndGet();
-        final WriteTransactionState wtxState =
+        final PageWriteTransaction wtxState =
             createWriteTransactionState(currentID, mLastCommittedUberPage.getRevisionNumber(),
                 mLastCommittedUberPage.getRevisionNumber());
 
@@ -238,11 +238,11 @@ public final class Session implements ISession {
 
     }
 
-    protected WriteTransactionState createWriteTransactionState(final long mId,
+    protected PageWriteTransaction createWriteTransactionState(final long mId,
         final long mRepresentRevision, final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
-        return new WriteTransactionState(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
+        return new PageWriteTransaction(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
             writer, mId, mRepresentRevision, mStoreRevision);
     }
 
@@ -371,10 +371,10 @@ public final class Session implements ISession {
 
     class LogSyncer implements Callable<Void> {
 
-        final WriteTransactionState mState;
+        final PageWriteTransaction mState;
         final NodePageContainer mCont;
 
-        LogSyncer(final WriteTransactionState paramState, final NodePageContainer paramCont) {
+        LogSyncer(final PageWriteTransaction paramState, final NodePageContainer paramCont) {
             mState = paramState;
             mCont = paramCont;
         }

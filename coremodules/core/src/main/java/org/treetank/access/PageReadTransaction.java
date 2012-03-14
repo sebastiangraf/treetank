@@ -51,7 +51,7 @@ import org.treetank.utils.IConstants;
 import org.treetank.utils.ItemList;
 
 /**
- * <h1>ReadTransactionState</h1>
+ * <h1>PageReadTransaction</h1>
  * 
  * <p>
  * State of a reading transaction. The only thing shared amongst transactions is the page cache. Everything
@@ -63,7 +63,7 @@ import org.treetank.utils.ItemList;
  * A path-like cache boosts sequential operations.
  * </p>
  */
-public class ReadTransactionState {
+public class PageReadTransaction {
 
     /** Page reader exclusively assigned to this transaction. */
     private final IReader mPageReader;
@@ -99,7 +99,7 @@ public class ReadTransactionState {
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected ReadTransactionState(final Session paramSessionState, final UberPage paramUberPage,
+    protected PageReadTransaction(final Session paramSessionState, final UberPage paramUberPage,
         final long paramRevision, final ItemList paramItemList, final IReader paramReader)
         throws TTIOException {
         mCache = new RAMCache();

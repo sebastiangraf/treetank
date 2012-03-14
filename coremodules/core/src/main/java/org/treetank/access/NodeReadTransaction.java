@@ -60,7 +60,7 @@ public class NodeReadTransaction implements IReadTransaction {
     protected final Session mSession;
 
     /** State of transaction including all cached stuff. */
-    private ReadTransactionState mState;
+    private PageReadTransaction mState;
 
     /** Strong reference to currently selected node. */
     private INode mCurrentNode;
@@ -82,7 +82,7 @@ public class NodeReadTransaction implements IReadTransaction {
      *             if something odd happens within the creation process.
      */
     protected NodeReadTransaction(final Session paramSession, final long paramTransactionID,
-        final ReadTransactionState paramTransactionState) throws TTIOException {
+        final PageReadTransaction paramTransactionState) throws TTIOException {
         mSession = paramSession;
         mId = paramTransactionID;
         mState = paramTransactionState;
@@ -360,7 +360,7 @@ public class NodeReadTransaction implements IReadTransaction {
      * 
      * @return The state of this transaction.
      */
-    public ReadTransactionState getTransactionState() {
+    public PageReadTransaction getTransactionState() {
         return mState;
     }
 
@@ -370,7 +370,7 @@ public class NodeReadTransaction implements IReadTransaction {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setTransactionState(final ReadTransactionState paramTransactionState) {
+    protected final void setTransactionState(final PageReadTransaction paramTransactionState) {
         mState = paramTransactionState;
     }
 

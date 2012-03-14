@@ -29,7 +29,7 @@
  */
 package org.treetank.page.delegates;
 
-import org.treetank.access.WriteTransactionState;
+import org.treetank.access.PageWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.page.PageReference;
@@ -72,7 +72,7 @@ public class PageReferenceDelegate implements IReferencePage {
      * {@inheritDoc}
      */
     @Override
-    public void commit(WriteTransactionState paramState) throws AbsTTException {
+    public void commit(PageWriteTransaction paramState) throws AbsTTException {
         // TODO Auto-generated method stub
 
     }

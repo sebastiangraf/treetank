@@ -26,7 +26,7 @@
  */
 package org.treetank.page.interfaces;
 
-import org.treetank.access.WriteTransactionState;
+import org.treetank.access.PageWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.page.PageReference;
@@ -39,6 +39,6 @@ public interface IPage {
 
     PageReference[] getReferences();
 
-    void commit(final WriteTransactionState paramState) throws AbsTTException;
+    void commit(final PageWriteTransaction paramState) throws AbsTTException;
 
 }

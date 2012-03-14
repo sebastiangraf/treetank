@@ -113,7 +113,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
     protected NodeWriteTransaction(final long paramTransactionID, final Session paramSessionState,
-        final WriteTransactionState paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
+        final PageWriteTransaction paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
         super(paramSessionState, paramTransactionID, paramTransactionState);
 
@@ -390,7 +390,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
 
             final INameNode node =
                 (INameNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            node.setNameKey(getTransactionState().createNameKey(WriteTransactionState.buildName(paramName)));
+            node.setNameKey(getTransactionState().createNameKey(PageWriteTransaction.buildName(paramName)));
             getTransactionState().finishNodeModification(node);
 
             setCurrentNode(node);
@@ -684,8 +684,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
      * @return The state of this transaction.
      */
     @Override
-    public WriteTransactionState getTransactionState() {
-        return (WriteTransactionState)super.getTransactionState();
+    public PageWriteTransaction getTransactionState() {
+        return (PageWriteTransaction)super.getTransactionState();
     }
 
     /**
