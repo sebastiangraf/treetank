@@ -30,7 +30,6 @@ package org.treetank.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.api.IItemList;
 import org.treetank.node.interfaces.INode;
 
 /**
@@ -49,7 +48,7 @@ import org.treetank.node.interfaces.INode;
  * structure.
  * </p>
  */
-public final class ItemList implements IItemList {
+public final class ItemList {
 
     /**
      * Internal storage of items.
@@ -66,7 +65,6 @@ public final class ItemList implements IItemList {
     /**
      * {@inheritDoc}
      */
-    @Override
     public int addItem(final INode mItem) {
         final int key = mList.size();
         mItem.setNodeKey(key);
@@ -81,7 +79,6 @@ public final class ItemList implements IItemList {
     /**
      * {@inheritDoc}
      */
-    @Override
     public INode getItem(final long mKey) {
         assert mKey <= Integer.MAX_VALUE;
 

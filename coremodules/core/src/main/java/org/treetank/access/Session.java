@@ -43,7 +43,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -171,7 +170,7 @@ public final class Session implements ISession {
      */
     @Override
     public synchronized IReadTransaction beginReadTransaction(final long paramRevisionKey,
-        final IItemList mItemList) throws AbsTTException {
+        final ItemList mItemList) throws AbsTTException {
         assertAccess(paramRevisionKey);
         // Make sure not to exceed available number of read transactions.
         try {

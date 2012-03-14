@@ -28,6 +28,7 @@
 package org.treetank.api;
 
 import org.treetank.exception.AbsTTException;
+import org.treetank.utils.ItemList;
 
 /**
  * <h1>ISession</h1>
@@ -75,7 +76,7 @@ public interface ISession {
      * @throws AbsTTException
      *             If can't begin Read Transaction.
      */
-    IReadTransaction beginReadTransaction(final long pRev, final IItemList pList) throws AbsTTException;
+    IReadTransaction beginReadTransaction(final long pRev, final ItemList pList) throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.

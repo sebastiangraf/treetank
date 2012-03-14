@@ -30,7 +30,6 @@ package org.treetank.access;
 import javax.xml.namespace.QName;
 
 import org.treetank.annotations.NotNull;
-import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
@@ -41,6 +40,7 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.settings.EFixed;
+import org.treetank.utils.ItemList;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -280,7 +280,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public final IItemList getItemList() {
+    public final ItemList getItemList() {
         return mState.getItemList();
     }
 
