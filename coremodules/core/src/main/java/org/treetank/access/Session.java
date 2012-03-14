@@ -182,7 +182,7 @@ public final class Session implements ISession {
         IReadTransaction rtx = null;
         // Create new read transaction.
         rtx =
-            new ReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new ReadTransactionState(this,
+            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new ReadTransactionState(this,
                 mLastCommittedUberPage, paramRevisionKey, mItemList, mFac.getReader()));
 
         // Remember transaction for debugging and safe close.
@@ -226,7 +226,7 @@ public final class Session implements ISession {
 
         // Create new write transaction.
         final IWriteTransaction wtx =
-            new WriteTransaction(currentID, this, wtxState, paramMaxNodeCount, paramMaxTime);
+            new NodeWriteTransaction(currentID, this, wtxState, paramMaxNodeCount, paramMaxTime);
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(currentID, wtx) != null

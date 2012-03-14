@@ -290,7 +290,7 @@ public interface IWriteTransaction extends IReadTransaction {
     void revertTo(final long pRev) throws AbsTTException;
 
     /**
-     * Closing current WriteTransaction.
+     * Closing current NodeWriteTransaction.
      * 
      * @throws AbsTTException
      *             if write transaction couldn't be closed

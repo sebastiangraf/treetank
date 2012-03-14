@@ -46,7 +46,7 @@ public enum EInsert {
         /** {@inheritDoc} */
         @Override
         void processMove(final IStructNode pFromNode, final IStructNode pToNode,
-            final WriteTransaction paramWtx) throws AbsTTException {
+            final NodeWriteTransaction paramWtx) throws AbsTTException {
             assert pFromNode != null;
             assert pToNode != null;
             assert paramWtx != null;
@@ -149,7 +149,7 @@ public enum EInsert {
         /** {@inheritDoc} */
         @Override
         void processMove(final IStructNode pFromNode, final IStructNode pToNode,
-            final WriteTransaction paramWtx) throws AbsTTException {
+            final NodeWriteTransaction paramWtx) throws AbsTTException {
             assert pFromNode != null;
             assert pToNode != null;
             assert paramWtx != null;
@@ -288,7 +288,7 @@ public enum EInsert {
         /** {@inheritDoc} */
         @Override
         void processMove(final IStructNode pFromNode, final IStructNode pToNode,
-            final WriteTransaction paramWtx) throws AbsTTException {
+            final NodeWriteTransaction paramWtx) throws AbsTTException {
             // Not allowed.
             throw new AssertionError("May never be invoked!");
         }
@@ -326,7 +326,7 @@ public enum EInsert {
      *             if an I/O error occurs
      */
     abstract void processMove(final IStructNode pFromNode, final IStructNode pToNode,
-        final WriteTransaction pWtx) throws AbsTTException;
+        final NodeWriteTransaction pWtx) throws AbsTTException;
 
     /**
      * Insert a node.

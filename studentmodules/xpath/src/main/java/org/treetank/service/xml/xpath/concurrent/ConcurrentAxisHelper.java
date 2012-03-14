@@ -72,7 +72,7 @@ public class ConcurrentAxisHelper implements Runnable {
     private final boolean callNext;
 
     /**
-     * Bind axis step to transaction. Make sure to create a new ReadTransaction
+     * Bind axis step to transaction. Make sure to create a new NodeReadTransaction
      * instead of using the parameter rtx. Because of concurrency every axis has
      * to have it's own transaction.
      * 

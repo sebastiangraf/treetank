@@ -44,14 +44,14 @@ import org.treetank.utils.ItemList;
 import org.treetank.utils.NamePageHash;
 
 /**
- * <h1>ReadTransaction</h1>
+ * <h1>NodeReadTransaction</h1>
  * 
  * <p>
  * Read-only transaction wiht single-threaded cursor semantics. Each read-only transaction works on a given
  * revision key.
  * </p>
  */
-public class ReadTransaction implements IReadTransaction {
+public class NodeReadTransaction implements IReadTransaction {
 
     /** ID of transaction. */
     private final long mId;
@@ -81,7 +81,7 @@ public class ReadTransaction implements IReadTransaction {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected ReadTransaction(final Session paramSession, final long paramTransactionID,
+    protected NodeReadTransaction(final Session paramSession, final long paramTransactionID,
         final ReadTransactionState paramTransactionState) throws TTIOException {
         mSession = paramSession;
         mId = paramTransactionID;

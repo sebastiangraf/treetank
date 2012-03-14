@@ -53,7 +53,7 @@ import org.treetank.utils.ItemList;
 import org.treetank.utils.TypedValue;
 
 /**
- * <h1>WriteTransaction</h1>
+ * <h1>NodeWriteTransaction</h1>
  * 
  * <p>
  * Single-threaded instance of only write transaction per session.
@@ -65,7 +65,7 @@ import org.treetank.utils.TypedValue;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public class WriteTransaction extends ReadTransaction implements IWriteTransaction {
+public class NodeWriteTransaction extends NodeReadTransaction implements IWriteTransaction {
 
     /**
      * How is the Hash for this storage computed?
@@ -112,7 +112,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * @throws TTUsageException
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
-    protected WriteTransaction(final long paramTransactionID, final Session paramSessionState,
+    protected NodeWriteTransaction(final long paramTransactionID, final Session paramSessionState,
         final WriteTransactionState paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
         super(paramSessionState, paramTransactionID, paramTransactionState);
