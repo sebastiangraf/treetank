@@ -27,7 +27,6 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.IExpression;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
@@ -43,8 +42,7 @@ import org.treetank.exception.TTXPathException;
  * evaluated once. Therefore the axis returns true only for the first call and false for all others.
  * </p>
  */
-@Deprecated
-public abstract class AbsExpression extends AbsAxis implements IExpression {
+public abstract class AbsExpression extends AbsAxis {
 
     /** Defines, whether hasNext() has already been called. */
     private boolean mIsFirst;

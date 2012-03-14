@@ -27,7 +27,6 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.treetank.api.IExpression;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AncestorAxis;
 import org.treetank.axis.ChildAxis;
@@ -146,9 +145,9 @@ public class ExpressionSingle {
      *            name of the current axis
      * @return true, if expression is still duplicate free
      */
-    public boolean isDupOrd(final IExpression ax) {
+    public boolean isDupOrd(final AbsAxis ax) {
 
-        IExpression axis = ax;
+        AbsAxis axis = ax;
 
         while (axis instanceof FilterAxis) {
             axis = ((FilterAxis)axis).getAxis();

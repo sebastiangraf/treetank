@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.axis.filter.IFilterTest;
+import org.treetank.axis.filter.AbsFilterTest;
 import org.treetank.axis.filter.ItemFilter;
 import org.treetank.exception.AbsTTException;
 
@@ -57,14 +57,14 @@ public class ItemFilterTest {
     public void testIFilterConvetions() throws AbsTTException {
 
         holder.getRtx().moveTo(9L);
-        IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
+        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
 
         holder.getRtx().moveTo(3L);
-        IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
+        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
 
         holder.getRtx().moveTo(2L);
         holder.getRtx().moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
+        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
 
     }
 }
