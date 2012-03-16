@@ -30,7 +30,7 @@ package org.treetank.service.xml.serialize;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
@@ -98,7 +98,7 @@ abstract class AbsSerializer implements Callable<Void> {
         emitStartDocument();
 
         long[] versionsToUse;
-        IReadTransaction rtx = mSession.beginReadTransaction();
+        INodeReadTransaction rtx = mSession.beginReadTransaction();
         rtx.moveTo(mNodeKey);
         final long lastRevisionNumber = rtx.getRevisionNumber();
         rtx.close();
@@ -192,7 +192,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * @param paramRTX
      *            Treetank reading transaction {@link IReadTransaction}.
      */
-    protected abstract void emitStartElement(final IReadTransaction paramRTX);
+    protected abstract void emitStartElement(final INodeReadTransaction paramRTX);
 
     /**
      * Emit end tag.
@@ -200,7 +200,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * @param paramRTX
      *            Treetank reading transaction {@link IReadTransaction}.
      */
-    protected abstract void emitEndElement(final IReadTransaction paramRTX);
+    protected abstract void emitEndElement(final INodeReadTransaction paramRTX);
 
     /**
      * Emit a start tag, which specifies a revision.

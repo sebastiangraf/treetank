@@ -30,7 +30,7 @@ package org.treetank.service.xml.xpath.expr;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
@@ -67,7 +67,7 @@ public class ExceptAxis extends AbsAxis {
      * @param mOperand2
      *            Second operand
      */
-    public ExceptAxis(final IReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
+    public ExceptAxis(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
         mOp1 = mOperand1;

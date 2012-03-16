@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 
 /**
  * <h1>ItemFilter</h1>
@@ -44,7 +44,7 @@ public class ItemFilter extends AbsFilter {
      * @param rtx
      *            Transaction this filter is bound to.
      */
-    public ItemFilter(final IReadTransaction rtx) {
+    public ItemFilter(final INodeReadTransaction rtx) {
         super(rtx);
     }
 

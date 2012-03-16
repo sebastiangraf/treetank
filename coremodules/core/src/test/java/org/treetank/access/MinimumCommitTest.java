@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
 
@@ -82,7 +82,7 @@ public class MinimumCommitTest {
         assertEquals(0L, holder.getWtx().getRevisionTimestamp());
         holder.getWtx().commit();
 
-        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
+        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
         assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
         rtx.close();
     }

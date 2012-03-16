@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.concurrent;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.EXPathError;
@@ -68,7 +68,7 @@ public class ConcurrentExceptAxis extends AbsAxis {
      * @param operand2
      *            Second operand
      */
-    public ConcurrentExceptAxis(final IReadTransaction rtx, final AbsAxis operand1, final AbsAxis operand2) {
+    public ConcurrentExceptAxis(final INodeReadTransaction rtx, final AbsAxis operand1, final AbsAxis operand2) {
 
         super(rtx);
         mOp1 = new ConcurrentAxis(rtx, operand1);

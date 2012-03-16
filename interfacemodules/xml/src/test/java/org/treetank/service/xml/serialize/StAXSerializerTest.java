@@ -49,7 +49,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
@@ -85,7 +85,7 @@ public class StAXSerializerTest {
             final XMLSerializer xmlSerializer = builder.build();
             xmlSerializer.call();
 
-            final IReadTransaction rtx = holder.getSession().beginReadTransaction();
+            final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
             StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx));
             final StringBuilder strBuilder = new StringBuilder();
             boolean isEmptyElement = false;

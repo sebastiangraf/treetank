@@ -29,7 +29,7 @@ package org.treetank.axis;
 
 import java.util.Stack;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.EFixed;
 
@@ -54,7 +54,7 @@ public final class DescendantAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public DescendantAxis(final IReadTransaction rtx) {
+    public DescendantAxis(final INodeReadTransaction rtx) {
         super(rtx);
     }
 
@@ -66,7 +66,7 @@ public final class DescendantAxis extends AbsAxis {
      * @param mIncludeSelf
      *            Is self included?
      */
-    public DescendantAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
+    public DescendantAxis(final INodeReadTransaction rtx, final boolean mIncludeSelf) {
         super(rtx, mIncludeSelf);
     }
 

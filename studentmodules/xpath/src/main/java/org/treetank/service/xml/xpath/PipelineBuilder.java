@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.filter.AbsFilter;
@@ -125,7 +125,7 @@ public final class PipelineBuilder {
      * @param mNum
      *            number of singleExpressions that will be added to the sequence
      */
-    public void finishExpr(final IReadTransaction mTransaction, final int mNum) {
+    public void finishExpr(final INodeReadTransaction mTransaction, final int mNum) {
 
         // all singleExpression that are on the stack will be combined in the
         // sequence, so the number of singleExpressions in the sequence and the
@@ -244,11 +244,11 @@ public final class PipelineBuilder {
      * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addIfExpression(final IReadTransaction mTransaction) {
+    public void addIfExpression(final INodeReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 3;
 
-        final IReadTransaction rtx = mTransaction;
+        final INodeReadTransaction rtx = mTransaction;
 
         final AbsAxis elseExpr = getPipeStack().pop().getExpr();
         final AbsAxis thenExpr = getPipeStack().pop().getExpr();
@@ -269,11 +269,11 @@ public final class PipelineBuilder {
      * @param mComp
      *            Comparator type.
      */
-    public void addCompExpression(final IReadTransaction mTransaction, final String mComp) {
+    public void addCompExpression(final INodeReadTransaction mTransaction, final String mComp) {
 
         assert getPipeStack().size() >= 2;
 
-        final IReadTransaction rtx = mTransaction;
+        final INodeReadTransaction rtx = mTransaction;
 
         final AbsAxis paramOperandTwo = getPipeStack().pop().getExpr();
         final AbsAxis paramOperandOne = getPipeStack().pop().getExpr();
@@ -350,11 +350,11 @@ public final class PipelineBuilder {
      * @param mOperator
      *            Operator type.
      */
-    public void addOperatorExpression(final IReadTransaction mTransaction, final String mOperator) {
+    public void addOperatorExpression(final INodeReadTransaction mTransaction, final String mOperator) {
 
         assert getPipeStack().size() >= 1;
 
-        final IReadTransaction rtx = mTransaction;
+        final INodeReadTransaction rtx = mTransaction;
 
         final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
 
@@ -395,7 +395,7 @@ public final class PipelineBuilder {
      * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addUnionExpression(final IReadTransaction mTransaction) {
+    public void addUnionExpression(final INodeReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 2;
 
@@ -414,7 +414,7 @@ public final class PipelineBuilder {
      * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addAndExpression(final IReadTransaction mTransaction) {
+    public void addAndExpression(final INodeReadTransaction mTransaction) {
         assert getPipeStack().size() >= 2;
 
         final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
@@ -431,7 +431,7 @@ public final class PipelineBuilder {
      * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addOrExpression(final IReadTransaction mTransaction) {
+    public void addOrExpression(final INodeReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 2;
 
@@ -452,11 +452,11 @@ public final class PipelineBuilder {
      * @param mIsIntersect
      *            true, if expression is an intersection
      */
-    public void addIntExcExpression(final IReadTransaction mTransaction, final boolean mIsIntersect) {
+    public void addIntExcExpression(final INodeReadTransaction mTransaction, final boolean mIsIntersect) {
 
         assert getPipeStack().size() >= 2;
 
-        final IReadTransaction rtx = mTransaction;
+        final INodeReadTransaction rtx = mTransaction;
 
         final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
         final AbsAxis mOperand1 = getPipeStack().pop().getExpr();
@@ -479,7 +479,7 @@ public final class PipelineBuilder {
      * @param mItemKey
      *            key of the literal expression.
      */
-    public void addLiteral(final IReadTransaction mTransaction, final int mItemKey) {
+    public void addLiteral(final INodeReadTransaction mTransaction, final int mItemKey) {
 
         // addExpressionSingle();
         getExpression().add(new LiteralExpr(mTransaction, mItemKey));
@@ -533,7 +533,7 @@ public final class PipelineBuilder {
      * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addPredicate(final IReadTransaction mTransaction) {
+    public void addPredicate(final INodeReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 2;
 
@@ -590,7 +590,7 @@ public final class PipelineBuilder {
      * @param mVarNum
      *            number of binding variables
      */
-    public void addQuantifierExpr(final IReadTransaction mTransaction, final boolean mIsSome,
+    public void addQuantifierExpr(final INodeReadTransaction mTransaction, final boolean mIsSome,
         final int mVarNum) {
 
         assert getPipeStack().size() >= (mVarNum + 1);
@@ -621,7 +621,7 @@ public final class PipelineBuilder {
      * @param mSingleType
      *            single type the context item will be casted to.
      */
-    public void addCastableExpr(final IReadTransaction mTransaction, final SingleType mSingleType) {
+    public void addCastableExpr(final INodeReadTransaction mTransaction, final SingleType mSingleType) {
 
         assert getPipeStack().size() >= 1;
 
@@ -641,7 +641,7 @@ public final class PipelineBuilder {
      * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addRangeExpr(final IReadTransaction mTransaction) {
+    public void addRangeExpr(final INodeReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 2;
 
@@ -664,7 +664,7 @@ public final class PipelineBuilder {
      * @param mSingleType
      *            single type the context item will be casted to.
      */
-    public void addCastExpr(final IReadTransaction mTransaction, final SingleType mSingleType) {
+    public void addCastExpr(final INodeReadTransaction mTransaction, final SingleType mSingleType) {
 
         assert getPipeStack().size() >= 1;
 
@@ -686,7 +686,7 @@ public final class PipelineBuilder {
      * @param mSequenceType
      *            sequence type the context item should match.
      */
-    public void addInstanceOfExpr(final IReadTransaction mTransaction, final SequenceType mSequenceType) {
+    public void addInstanceOfExpr(final INodeReadTransaction mTransaction, final SequenceType mSequenceType) {
 
         assert getPipeStack().size() >= 1;
 
@@ -708,7 +708,7 @@ public final class PipelineBuilder {
      * @param mSequenceType
      *            sequence type the context item will be treated as.
      */
-    public void addTreatExpr(final IReadTransaction mTransaction, final SequenceType mSequenceType) {
+    public void addTreatExpr(final INodeReadTransaction mTransaction, final SequenceType mSequenceType) {
 
         throw new IllegalStateException("the Treat expression is not supported yet");
 
@@ -723,7 +723,7 @@ public final class PipelineBuilder {
      * @param mVarName
      *            name of the variable
      */
-    public void addVariableExpr(final IReadTransaction mTransaction, final String mVarName) {
+    public void addVariableExpr(final INodeReadTransaction mTransaction, final String mVarName) {
 
         assert getPipeStack().size() >= 1;
 
@@ -750,7 +750,7 @@ public final class PipelineBuilder {
      * @throws TTXPathException
      *             if function can't be added
      */
-    public void addFunction(final IReadTransaction mTransaction, final String mFuncName, final int mNum)
+    public void addFunction(final INodeReadTransaction mTransaction, final String mFuncName, final int mNum)
         throws TTXPathException {
 
         assert getPipeStack().size() >= mNum;
@@ -778,7 +778,7 @@ public final class PipelineBuilder {
 
         // parameter types of the function's constructor
         final Class<?>[] paramTypes = {
-            IReadTransaction.class, List.class, Integer.TYPE, Integer.TYPE, Integer.TYPE
+            INodeReadTransaction.class, List.class, Integer.TYPE, Integer.TYPE, Integer.TYPE
         };
 
         try {
@@ -814,7 +814,7 @@ public final class PipelineBuilder {
      * @param mVarName
      *            the name of the variable
      */
-    public void addVarRefExpr(final IReadTransaction mTransaction, final String mVarName) {
+    public void addVarRefExpr(final INodeReadTransaction mTransaction, final String mVarName) {
 
         final VariableAxis axis = (VariableAxis)mVarRefMap.get(mVarName);
         if (axis != null) {

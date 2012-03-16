@@ -29,7 +29,7 @@ package org.treetank.axis;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.settings.EFixed;
 
 /**
@@ -52,7 +52,7 @@ public final class LevelOrderAxis extends AbsAxis {
      * @param paramRtx
      *            exclusive (immutable) trx to iterate with
      */
-    public LevelOrderAxis(final IReadTransaction paramRtx) {
+    public LevelOrderAxis(final INodeReadTransaction paramRtx) {
         super(paramRtx);
     }
 
@@ -64,7 +64,7 @@ public final class LevelOrderAxis extends AbsAxis {
      * @param paramIncludeSelf
      *            determines if self included
      */
-    public LevelOrderAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf) {
+    public LevelOrderAxis(final INodeReadTransaction paramRtx, final boolean paramIncludeSelf) {
         super(paramRtx, paramIncludeSelf);
     }
 

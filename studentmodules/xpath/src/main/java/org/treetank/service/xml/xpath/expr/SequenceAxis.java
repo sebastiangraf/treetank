@@ -30,7 +30,7 @@ package org.treetank.service.xml.xpath.expr;
 import java.util.Arrays;
 import java.util.List;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 
 /**
@@ -58,7 +58,7 @@ public class SequenceAxis extends AbsAxis {
      * @param axis
      *            The singleExpressions contained by the sequence
      */
-    public SequenceAxis(final IReadTransaction rtx, final AbsAxis... axis) {
+    public SequenceAxis(final INodeReadTransaction rtx, final AbsAxis... axis) {
 
         super(rtx);
         mSeq = Arrays.asList(axis);

@@ -30,7 +30,7 @@ package org.treetank.service.xml.xpath.parser;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AncestorAxis;
 import org.treetank.axis.AttributeAxis;
@@ -80,8 +80,8 @@ import org.treetank.utils.TypedValue;
  */
 public final class XPathParser {
 
-    /** IReadTransaction to access the nodes. Is needed for filters and axes. */
-    private final IReadTransaction mRTX;
+    /** INodeReadTransaction to access the nodes. Is needed for filters and axes. */
+    private final INodeReadTransaction mRTX;
 
     /** Scanner that scans the symbols of the query and returns them as tokens. */
     private final XPathScanner mScanner;
@@ -103,7 +103,7 @@ public final class XPathParser {
      * @param mQuery
      *            The query to process.
      */
-    public XPathParser(final IReadTransaction rtx, final String mQuery) {
+    public XPathParser(final INodeReadTransaction rtx, final String mQuery) {
 
         mRTX = rtx;
         mScanner = new XPathScanner(mQuery);
@@ -2219,7 +2219,7 @@ public final class XPathParser {
      * 
      * @return the current transaction.
      */
-    private IReadTransaction getTransaction() {
+    private INodeReadTransaction getTransaction() {
 
         return mRTX;
     }

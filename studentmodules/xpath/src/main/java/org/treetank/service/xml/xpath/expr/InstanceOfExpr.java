@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.SequenceType;
@@ -58,7 +58,7 @@ public class InstanceOfExpr extends AbsExpression {
      * @param mSequenceType
      *            sequence type to test whether the input sequence matches to.
      */
-    public InstanceOfExpr(final IReadTransaction mRtx, final AbsAxis mInputExpr,
+    public InstanceOfExpr(final INodeReadTransaction mRtx, final AbsAxis mInputExpr,
         final SequenceType mSequenceType) {
 
         super(mRtx);

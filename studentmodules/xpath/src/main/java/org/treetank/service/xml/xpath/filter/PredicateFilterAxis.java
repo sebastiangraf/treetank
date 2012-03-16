@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 
 /**
@@ -53,7 +53,7 @@ public class PredicateFilterAxis extends AbsAxis {
      * @param predicate
      *            predicate expression
      */
-    public PredicateFilterAxis(final IReadTransaction rtx, final AbsAxis predicate) {
+    public PredicateFilterAxis(final INodeReadTransaction rtx, final AbsAxis predicate) {
 
         super(rtx);
         mIsFirst = true;

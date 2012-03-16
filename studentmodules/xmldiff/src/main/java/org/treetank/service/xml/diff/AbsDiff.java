@@ -29,8 +29,8 @@ package org.treetank.service.xml.diff;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.access.WriteTransaction.HashKind;
-import org.treetank.api.IReadTransaction;
+import org.treetank.access.NodeWriteTransaction.HashKind;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
@@ -186,7 +186,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
      */
-    boolean moveCursor(final IReadTransaction paramRtx, final ERevision paramRevision) {
+    boolean moveCursor(final INodeReadTransaction paramRtx, final ERevision paramRevision) {
         assert paramRtx != null;
 
         boolean moved = false;
@@ -235,7 +235,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
      */
-    private boolean moveToFollowingNode(final IReadTransaction paramRtx, final ERevision paramRevision) {
+    private boolean moveToFollowingNode(final INodeReadTransaction paramRtx, final ERevision paramRevision) {
         boolean moved = false;
         while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getStructuralNode().hasParent()
             && paramRtx.getNode().getNodeKey() != mRootKey) {
@@ -274,7 +274,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            determines if a diff should be fired
      * @return kind of difference
      */
-    EDiff diff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+    EDiff diff(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx,
         final DepthCounter paramDepth, final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
@@ -316,7 +316,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            determines if a diff should be fired
      * @return kind of difference
      */
-    EDiff optimizedDiff(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
+    EDiff optimizedDiff(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx,
         final DepthCounter paramDepth, final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
@@ -380,8 +380,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            transaction cursors
      * @return kind of diff
      */
-    private EDiff diffAlgorithm(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx,
-        final DepthCounter paramDepth) {
+    private EDiff diffAlgorithm(final INodeReadTransaction paramNewRtx,
+        final INodeReadTransaction paramOldRtx, final DepthCounter paramDepth) {
         EDiff diff = null;
 
         // Check if node has been deleted.
@@ -395,8 +395,8 @@ abstract class AbsDiff extends AbsDiffObservable {
             EFoundEqualNode found = EFoundEqualNode.FALSE;
             final long key = paramOldRtx.getNode().getNodeKey();
 
-            while (((IStructNode)paramOldRtx.getNode()).hasRightSibling()
-                && paramOldRtx.moveToRightSibling() && found == EFoundEqualNode.FALSE) {
+            while (((IStructNode)paramOldRtx.getNode()).hasRightSibling() && paramOldRtx.moveToRightSibling()
+                && found == EFoundEqualNode.FALSE) {
                 if (checkNodes(paramNewRtx, paramOldRtx)) {
                     found = EFoundEqualNode.TRUE;
                 }
@@ -420,7 +420,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @return true if nodes are "equal" according to their {@link QName}s,
      *         otherwise false
      */
-    boolean checkName(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+    boolean checkName(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         boolean found = false;
@@ -451,7 +451,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            {@link IReadTransaction} on old revision
      * @return true if nodes are "equal", otherwise false
      */
-    abstract boolean checkNodes(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx);
+    abstract boolean
+        checkNodes(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx);
 
     /**
      * Check for an update of a node.
@@ -462,7 +463,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            second {@link IReadTransaction} instance
      * @return kind of diff
      */
-    boolean checkUpdate(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+    boolean checkUpdate(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         boolean updated = false;

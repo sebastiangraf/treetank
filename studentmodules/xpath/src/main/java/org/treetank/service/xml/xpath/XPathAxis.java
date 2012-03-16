@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.parser.XPathParser;
@@ -52,7 +52,7 @@ import org.treetank.service.xml.xpath.parser.XPathParser;
  * 
  * <pre>
  *   ...
- *   IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+ *   INodeReadTransaction rtx = session.beginReadTransaction(new ItemList());
  *   
  *   final String query = 
  *   &quot;for $a in /articles/article[@name = \&quot;book\&quot;] return $a/price&quot;;
@@ -99,7 +99,7 @@ public final class XPathAxis extends AbsAxis {
      * @throws TTXPathException
      *             throw a treetank xpath exception.
      */
-    public XPathAxis(final IReadTransaction rtx, final String mQuery) throws TTXPathException {
+    public XPathAxis(final INodeReadTransaction rtx, final String mQuery) throws TTXPathException {
 
         super(rtx);
 

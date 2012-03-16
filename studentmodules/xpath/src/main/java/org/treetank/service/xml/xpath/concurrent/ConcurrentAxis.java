@@ -32,7 +32,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.settings.EFixed;
 
@@ -91,7 +91,7 @@ public class ConcurrentAxis extends AbsAxis {
      * @param paramChildAxis
      *            Producer axis.
      */
-    public ConcurrentAxis(final IReadTransaction paramRtx, final AbsAxis paramChildAxis) {
+    public ConcurrentAxis(final INodeReadTransaction paramRtx, final AbsAxis paramChildAxis) {
         super(paramRtx);
         mResults = new ArrayBlockingQueue<Long>(M_CAPACITY);
         mFirst = true;
@@ -141,7 +141,7 @@ public class ConcurrentAxis extends AbsAxis {
             return false;
         }
 
-        // long result = IReadTransaction.NULL_NODE_KEY;
+        // long result = INodeReadTransaction.NULL_NODE_KEY;
         long result = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
 
         try {

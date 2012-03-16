@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 
 public class ValueFilterTest {
@@ -54,7 +54,7 @@ public class ValueFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
         rtx.moveTo(4L);
         AbsFilterTest.testIFilterConventions(new ValueFilter(rtx, "oops1"), true);
         AbsFilterTest.testIFilterConventions(new ValueFilter(rtx, "foo"), false);

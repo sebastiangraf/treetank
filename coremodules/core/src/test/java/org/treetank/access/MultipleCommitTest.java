@@ -38,7 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.PostOrderAxis;
@@ -83,7 +83,7 @@ public class MultipleCommitTest {
         DocumentCreater.create(holder.getWtx());
         holder.getWtx().commit();
 
-        final IReadTransaction rtx = holder.getSession().beginReadTransaction();
+        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
         rtx.close();
     }
 

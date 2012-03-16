@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
@@ -73,7 +73,7 @@ public class CastableExpr extends AbsExpression {
      * @param mTarget
      *            Type to test, whether the input expression can be casted to.
      */
-    public CastableExpr(final IReadTransaction rtx, final AbsAxis inputExpr, final SingleType mTarget) {
+    public CastableExpr(final INodeReadTransaction rtx, final AbsAxis inputExpr, final SingleType mTarget) {
 
         super(rtx);
         mSourceExpr = inputExpr;

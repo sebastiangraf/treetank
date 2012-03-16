@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 
@@ -53,7 +53,7 @@ public abstract class AbsExpression extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public AbsExpression(final IReadTransaction rtx) {
+    public AbsExpression(final INodeReadTransaction rtx) {
 
         super(rtx);
         mIsFirst = true;

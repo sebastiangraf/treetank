@@ -34,7 +34,7 @@ import static org.junit.Assert.fail;
 import org.junit.After;
 import org.junit.Before;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 
@@ -52,7 +52,7 @@ public class XPathStringChecker {
 
     public static void testIAxisConventions(final AbsAxis axis, final String[] expectedValues) {
 
-        final IReadTransaction rtx = axis.getTransaction();
+        final INodeReadTransaction rtx = axis.getTransaction();
 
         // IAxis Convention 1.
         final long startKey = rtx.getNode().getNodeKey();

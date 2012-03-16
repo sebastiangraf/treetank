@@ -57,7 +57,7 @@ import net.sf.saxon.value.Value;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AncestorAxis;
 import org.treetank.axis.AttributeAxis;
@@ -137,7 +137,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
 		this.mDocWrapper = paramDocWrapper;
 
-		final IReadTransaction rtx = mDocWrapper.mSession
+		final INodeReadTransaction rtx = mDocWrapper.mSession
 				.beginReadTransaction();
 		rtx.moveTo(nodekeyToStart);
 		this.nodeKind = rtx.getNode().getKind();
@@ -296,7 +296,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 				final NamePool pool = getNamePool();
 				int n = 0;
 				try {
-					final IReadTransaction rtx = createRtxAndMove();
+					final INodeReadTransaction rtx = createRtxAndMove();
 					for (int i = 0; i < count; i++) {
 						rtx.moveTo(i);
 						final String prefix = getPrefix();
@@ -450,7 +450,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	public NodeInfo getParent() {
 		try {
 			NodeInfo parent = null;
-			final IReadTransaction rtx = createRtxAndMove();
+			final INodeReadTransaction rtx = createRtxAndMove();
 			if (rtx.getNode().hasParent()) {
 				// Parent transaction.
 				parent = new NodeWrapper(mDocWrapper, rtx.getNode()
@@ -511,7 +511,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	public final CharSequence getStringValueCS() {
 		String mValue = "";
 		try {
-			final IReadTransaction rtx = createRtxAndMove();
+			final INodeReadTransaction rtx = createRtxAndMove();
 
 			switch (nodeKind) {
 			case ROOT_KIND:
@@ -547,7 +547,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 		final FastStringBuffer fsb = new FastStringBuffer(
 				FastStringBuffer.SMALL);
 		try {
-			final IReadTransaction rtx = createRtxAndMove();
+			final INodeReadTransaction rtx = createRtxAndMove();
 			final FilterAxis axis = new FilterAxis(new DescendantAxis(rtx),
 					new TextFilter(rtx));
 
@@ -617,7 +617,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	public boolean hasChildNodes() {
 		boolean hasChildNodes = false;
 		try {
-			final IReadTransaction rtx = createRtxAndMove();
+			final INodeReadTransaction rtx = createRtxAndMove();
 			if (rtx.getStructuralNode().getChildCount() > 0) {
 				hasChildNodes = true;
 			}
@@ -688,7 +688,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 			final NodeTest nodeTest) {
 		AxisIterator returnVal = null;
 		try {
-			final IReadTransaction rtx = createRtxAndMove();
+			final INodeReadTransaction rtx = createRtxAndMove();
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("NODE TEST: " + nodeTest);
@@ -845,7 +845,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	public int getSiblingPosition() {
 		int index = 0;
 		try {
-			final IReadTransaction rtx = createRtxAndMove();
+			final INodeReadTransaction rtx = createRtxAndMove();
 			while (rtx.getStructuralNode().hasLeftSibling()) {
 				rtx.moveToLeftSibling();
 				index++;
@@ -857,8 +857,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 		return index;
 	}
 
-	private final IReadTransaction createRtxAndMove() throws AbsTTException {
-		final IReadTransaction rtx = mDocWrapper.mSession
+	private final INodeReadTransaction createRtxAndMove() throws AbsTTException {
+		final INodeReadTransaction rtx = mDocWrapper.mSession
 				.beginReadTransaction();
 		rtx.moveTo(mKey);
 		return rtx;

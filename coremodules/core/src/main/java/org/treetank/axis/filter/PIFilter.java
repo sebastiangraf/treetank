@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 
 /**
  * <h1>NodeAxisTest</h1>
@@ -44,7 +44,7 @@ public class PIFilter extends AbsFilter {
      * @param rtx
      *            Transaction this filter is bound to.
      */
-    public PIFilter(final IReadTransaction rtx) {
+    public PIFilter(final INodeReadTransaction rtx) {
         super(rtx);
     }
 

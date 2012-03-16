@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.concurrent;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.comparators.AbsComparator;
@@ -79,7 +79,7 @@ public class ConcurrentAxisHelper implements Runnable {
      * @param rtx
      *            Transaction to operate with.
      */
-    public ConcurrentAxisHelper(final IReadTransaction rtx, final AbsAxis axis,
+    public ConcurrentAxisHelper(final INodeReadTransaction rtx, final AbsAxis axis,
         final BlockingQueue<Long> results) {
         mAxis = axis;
         mResults = results;

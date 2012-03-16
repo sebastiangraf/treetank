@@ -27,7 +27,7 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -48,7 +48,7 @@ public class FollowingSiblingAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public FollowingSiblingAxis(final IReadTransaction rtx) {
+    public FollowingSiblingAxis(final INodeReadTransaction rtx) {
 
         super(rtx);
         mIsFirst = true;

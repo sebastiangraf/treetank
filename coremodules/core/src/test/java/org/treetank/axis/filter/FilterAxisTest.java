@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.AttributeAxis;
 import org.treetank.axis.DescendantAxis;
@@ -59,7 +59,7 @@ public class FilterAxisTest {
     @Test
     public void testNameAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
 
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), new NameFilter(rtx, "b")),
@@ -71,7 +71,7 @@ public class FilterAxisTest {
     @Test
     public void testValueAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
 
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(
@@ -83,7 +83,7 @@ public class FilterAxisTest {
     @Test
     public void testValueAndNameAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx), new NameFilter(rtx, "i"),

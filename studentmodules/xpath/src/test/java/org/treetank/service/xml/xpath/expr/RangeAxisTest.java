@@ -63,10 +63,10 @@ public class RangeAxisTest {
         // final IDatabase database =
         // TestHelper.getDatabase(PATHS.PATH1.getFile());
         // final ISession session = database.getSession();
-        // final IWriteTransaction wtx = session.beginWriteTransaction();
+        // final INodeWriteTransaction wtx = session.beginWriteTransaction();
         // DocumentCreater.create(wtx);
         // wtx.commit();
-        // IReadTransaction rtx = session.beginReadTransaction();
+        // INodeReadTransaction rtx = session.beginReadTransaction();
         //
         // // TODO: tests are false, because the integers are not converted
         // // correctly

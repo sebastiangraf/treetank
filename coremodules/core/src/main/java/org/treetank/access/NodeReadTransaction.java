@@ -30,7 +30,8 @@ package org.treetank.access;
 import javax.xml.namespace.QName;
 
 import org.treetank.annotations.NotNull;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.IPageReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ENode;
@@ -51,7 +52,7 @@ import org.treetank.utils.NamePageHash;
  * revision key.
  * </p>
  */
-public class NodeReadTransaction implements IReadTransaction {
+public class NodeReadTransaction implements INodeReadTransaction {
 
     /** ID of transaction. */
     private final long mId;
@@ -60,7 +61,7 @@ public class NodeReadTransaction implements IReadTransaction {
     protected final Session mSession;
 
     /** State of transaction including all cached stuff. */
-    protected PageReadTransaction mPageReadTransaction;
+    protected IPageReadTransaction mPageReadTransaction;
 
     /** Strong reference to currently selected node. */
     private INode mCurrentNode;
@@ -82,7 +83,7 @@ public class NodeReadTransaction implements IReadTransaction {
      *             if something odd happens within the creation process.
      */
     protected NodeReadTransaction(final Session paramSession, final long paramTransactionID,
-        final PageReadTransaction paramTransactionState) throws TTIOException {
+        final IPageReadTransaction paramTransactionState) throws TTIOException {
         mSession = paramSession;
         mId = paramTransactionID;
         mPageReadTransaction = paramTransactionState;
@@ -361,7 +362,7 @@ public class NodeReadTransaction implements IReadTransaction {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setTransactionState(final PageReadTransaction paramTransactionState) {
+    protected final void setTransactionState(final IPageReadTransaction paramTransactionState) {
         mPageReadTransaction = paramTransactionState;
     }
 

@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.diff;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
@@ -56,7 +56,7 @@ final class FullDiff extends AbsDiff {
 
     /** {@inheritDoc} */
     @Override
-    boolean checkNodes(final IReadTransaction paramFirstRtx, final IReadTransaction paramSecondRtx) {
+    boolean checkNodes(final INodeReadTransaction paramFirstRtx, final INodeReadTransaction paramSecondRtx) {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
 

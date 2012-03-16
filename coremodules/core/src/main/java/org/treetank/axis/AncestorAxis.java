@@ -27,7 +27,7 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
 import org.treetank.settings.EFixed;
 
@@ -51,7 +51,7 @@ public class AncestorAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public AncestorAxis(final IReadTransaction rtx) {
+    public AncestorAxis(final INodeReadTransaction rtx) {
         super(rtx);
     }
 
@@ -63,7 +63,7 @@ public class AncestorAxis extends AbsAxis {
      * @param mIncludeSelf
      *            Is self included?
      */
-    public AncestorAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
+    public AncestorAxis(final INodeReadTransaction rtx, final boolean mIncludeSelf) {
         super(rtx, mIncludeSelf);
     }
 

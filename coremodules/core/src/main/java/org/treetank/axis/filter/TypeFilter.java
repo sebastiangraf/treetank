@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 
 /**
  * <h1>TypeFilter</h1>
@@ -48,7 +48,7 @@ public class TypeFilter extends AbsFilter {
      * @param mType
      *            Type to match
      */
-    public TypeFilter(final IReadTransaction rtx, final int mType) {
+    public TypeFilter(final INodeReadTransaction rtx, final int mType) {
         super(rtx);
         this.mType = mType;
     }
@@ -61,7 +61,7 @@ public class TypeFilter extends AbsFilter {
      * @param mTypeName
      *            Name of the type to match
      */
-    public TypeFilter(final IReadTransaction rtx, final String mTypeName) {
+    public TypeFilter(final INodeReadTransaction rtx, final String mTypeName) {
         this(rtx, rtx.keyForName(mTypeName));
 
     }

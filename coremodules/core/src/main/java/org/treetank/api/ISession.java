@@ -37,7 +37,7 @@ import org.treetank.utils.ItemList;
  * 
  * <p>
  * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
- * can then be started from this instance. There can only be one <code>IWriteTransaction</code> at the time.
+ * can then be started from this instance. There can only be one <code>INodeWriteTransaction</code> at the time.
  * However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
  * 
@@ -49,9 +49,9 @@ public interface ISession {
      * 
      * @throws AbsTTException
      *             If can't begin Read Transaction.
-     * @return IReadTransaction instance.
+     * @return INodeReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction() throws AbsTTException;
+    INodeReadTransaction beginReadTransaction() throws AbsTTException;
 
     /**
      * Begin a read-only transaction on the given revision key.
@@ -60,9 +60,9 @@ public interface ISession {
      *            Revision key to read from.
      * @throws AbsTTException
      *             If can't begin Read Transaction.
-     * @return {@link IReadTransaction} instance
+     * @return {@link INodeReadTransaction} instance
      */
-    IReadTransaction beginReadTransaction(final long pRev) throws AbsTTException;
+    INodeReadTransaction beginReadTransaction(final long pRev) throws AbsTTException;
 
     /**
      * Begin a read-only transaction on the given revision and store any results in the fiven
@@ -72,20 +72,20 @@ public interface ISession {
      *            Revision key to read from.
      * @param pList
      *            A list to store the results in.
-     * @return {@link IReadTransaction} instance
+     * @return {@link INodeReadTransaction} instance
      * @throws AbsTTException
      *             If can't begin Read Transaction.
      */
-    IReadTransaction beginReadTransaction(final long pRev, final ItemList pList) throws AbsTTException;
+    INodeReadTransaction beginReadTransaction(final long pRev, final ItemList pList) throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
      * 
      * @throws AbsTTException
      *             If can't begin Write Transaction.
-     * @return IWriteTransaction instance.
+     * @return INodeWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction() throws AbsTTException;
+    INodeWriteTransaction beginWriteTransaction() throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction with auto commit.
@@ -96,9 +96,9 @@ public interface ISession {
      *            Time in seconds after which a commit is issued.
      * @throws AbsTTException
      *             If can't begin Write Transaction.
-     * @return IWriteTransaction instance.
+     * @return INodeWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction(final int pMaxNodes, final int pMaxTime) throws AbsTTException;
+    INodeWriteTransaction beginWriteTransaction(final int pMaxNodes, final int pMaxTime) throws AbsTTException;
 
     /**
      * Safely close session and immediately release all resources. If there are

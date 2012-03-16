@@ -29,7 +29,7 @@ package org.treetank.axis;
 
 import java.util.Iterator;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.TTXPathException;
 
 /**
@@ -50,7 +50,7 @@ import org.treetank.exception.TTXPathException;
 public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
 
     /** Iterate over transaction exclusive to this step. */
-    private final IReadTransaction mRTX;
+    private final INodeReadTransaction mRTX;
 
     /** Key of last found node. */
     private long mKey;
@@ -70,7 +70,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      * @param paramRtx
      *            transaction to operate with
      */
-    public AbsAxis(final IReadTransaction paramRtx) {
+    public AbsAxis(final INodeReadTransaction paramRtx) {
         if (paramRtx == null) {
             throw new IllegalArgumentException("Transaction may not be null!");
         }
@@ -87,7 +87,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      * @param paramIncludeSelf
      *            determines if self is included
      */
-    public AbsAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf) {
+    public AbsAxis(final INodeReadTransaction paramRtx, final boolean paramIncludeSelf) {
         if (paramRtx == null) {
             throw new IllegalArgumentException("Transaction may not be null!");
         }
@@ -139,11 +139,11 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
     }
 
     /**
-     * Get current {@link IReadTransaction}.
+     * Get current {@link INodeReadTransaction}.
      * 
-     * @return the {@link IReadTransaction} used
+     * @return the {@link INodeReadTransaction} used
      */
-    public final IReadTransaction getTransaction() {
+    public final INodeReadTransaction getTransaction() {
         return mRTX;
     }
 

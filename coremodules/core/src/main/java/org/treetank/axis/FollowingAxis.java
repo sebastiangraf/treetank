@@ -29,7 +29,7 @@ package org.treetank.axis;
 
 import java.util.Stack;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -52,7 +52,7 @@ public class FollowingAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public FollowingAxis(final IReadTransaction rtx) {
+    public FollowingAxis(final INodeReadTransaction rtx) {
 
         super(rtx);
         mIsFirst = true;

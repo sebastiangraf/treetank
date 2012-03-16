@@ -39,8 +39,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
@@ -70,7 +70,7 @@ public class ThreadTest {
         long newKey = 10L;
         for (int i = 0; i < WORKER_COUNT; i++) {
             taskExecutor.submit(new Task(holder.getSession().beginReadTransaction(i)));
-            final IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+            final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
             wtx.moveTo(newKey);
             wtx.setValue("value" + i);
             newKey = wtx.getNode().getNodeKey();
@@ -84,9 +84,9 @@ public class ThreadTest {
 
     private class Task implements Callable<Void> {
 
-        private IReadTransaction mRTX;
+        private INodeReadTransaction mRTX;
 
-        public Task(final IReadTransaction rtx) {
+        public Task(final INodeReadTransaction rtx) {
             mRTX = rtx;
         }
 

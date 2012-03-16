@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.settings.EFixed;
 
@@ -55,7 +55,7 @@ public class DescendantAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
 
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
@@ -78,7 +78,7 @@ public class DescendantAxisTest {
 
     @Test
     public void testIterateIncludingSelf() throws AbsTTException {
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
             (Long)EFixed.ROOT_NODE_KEY.getStandardProperty(), 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L

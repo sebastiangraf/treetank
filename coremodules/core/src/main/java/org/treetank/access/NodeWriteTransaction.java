@@ -29,7 +29,8 @@ package org.treetank.access;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.IPageWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
@@ -62,7 +63,7 @@ import org.treetank.utils.TypedValue;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public class NodeWriteTransaction extends NodeReadTransaction implements IWriteTransaction {
+public class NodeWriteTransaction extends NodeReadTransaction implements INodeWriteTransaction {
 
     /**
      * How is the Hash for this storage computed?
@@ -110,7 +111,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
     protected NodeWriteTransaction(final long paramTransactionID, final Session paramSessionState,
-        final PageWriteTransaction paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
+        final IPageWriteTransaction paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
         super(paramSessionState, paramTransactionID, paramTransactionState);
 

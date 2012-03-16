@@ -59,7 +59,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
@@ -183,7 +183,7 @@ public class TestNodeWrapper {
 		final ISession session = database
 				.getSession(new SessionConfiguration.Builder(
 						TestHelper.RESOURCE).build());
-		final IWriteTransaction wtx = session.beginWriteTransaction();
+		final INodeWriteTransaction wtx = session.beginWriteTransaction();
 		final XMLEventReader reader = XMLShredder.createFileReader(source);
 		final XMLShredder shredder = new XMLShredder(wtx, reader,
 				EShredderInsert.ADDASFIRSTCHILD);

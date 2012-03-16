@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 
 public class FollowingSiblingAxisTest {
@@ -54,7 +54,7 @@ public class FollowingSiblingAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
         rtx.moveTo(9L);
         AbsAxisTest.testIAxisConventions(new FollowingSiblingAxis(rtx), new long[] {
             13L
