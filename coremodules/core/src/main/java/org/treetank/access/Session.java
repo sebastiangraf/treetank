@@ -182,8 +182,8 @@ public final class Session implements ISession {
         IReadTransaction rtx = null;
         // Create new read transaction.
         rtx =
-            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTransaction(this,
-                mLastCommittedUberPage, paramRevisionKey, mItemList, mFac.getReader()));
+            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTransaction(
+                this, mLastCommittedUberPage, paramRevisionKey, mItemList, mFac.getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -238,8 +238,8 @@ public final class Session implements ISession {
 
     }
 
-    protected PageWriteTransaction createWriteTransactionState(final long mId,
-        final long mRepresentRevision, final long mStoreRevision) throws TTIOException {
+    protected PageWriteTransaction createWriteTransactionState(final long mId, final long mRepresentRevision,
+        final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
         return new PageWriteTransaction(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
@@ -328,29 +328,6 @@ public final class Session implements ISession {
         return mSessionConfig.mUser;
     }
 
-    protected synchronized void syncLogs(final NodePageContainer mContToSync, final long mTransactionId)
-        throws TTThreadedException {
-        final ExecutorService exec = Executors.newCachedThreadPool();
-        final Collection<Future<Void>> returnVals = new ArrayList<Future<Void>>();
-        for (final Long key : mWriteTransactionStateMap.keySet()) {
-            if (key != mTransactionId) {
-                returnVals.add(exec.submit(new LogSyncer(mWriteTransactionStateMap.get(key), mContToSync)));
-            }
-        }
-        exec.shutdown();
-        if (!mSyncTransactionsReturns.containsKey(mTransactionId)) {
-            mSyncTransactionsReturns.put(mTransactionId,
-                new ConcurrentHashMap<Long, Collection<Future<Void>>>());
-        }
-
-        if (mSyncTransactionsReturns.get(mTransactionId).put(mContToSync.getComplete().getNodePageKey(),
-            returnVals) != null) {
-            throw new TTThreadedException(
-                "only one commit and therefore sync per id and nodepage is allowed!");
-        }
-
-    }
-
     protected synchronized void waitForFinishedSync(final long mTransactionKey) throws TTThreadedException {
         final Map<Long, Collection<Future<Void>>> completeVals =
             mSyncTransactionsReturns.remove(mTransactionKey);
@@ -367,24 +344,6 @@ public final class Session implements ISession {
                 }
             }
         }
-    }
-
-    class LogSyncer implements Callable<Void> {
-
-        final PageWriteTransaction mState;
-        final NodePageContainer mCont;
-
-        LogSyncer(final PageWriteTransaction paramState, final NodePageContainer paramCont) {
-            mState = paramState;
-            mCont = paramCont;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            mState.updateDateContainer(mCont);
-            return null;
-        }
-
     }
 
     protected void setLastCommittedUberPage(final UberPage paramPage) {
