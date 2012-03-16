@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>ConcurrentAxis</h1>
@@ -142,7 +142,7 @@ public class ConcurrentAxis extends AbsAxis {
         }
 
         // long result = INodeReadTransaction.NULL_NODE_KEY;
-        long result = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        long result = NULL_NODE;
 
         try {
             // get result from producer as soon as it is available
@@ -153,7 +153,7 @@ public class ConcurrentAxis extends AbsAxis {
         }
 
         // NULL_NODE_KEY marks end of the sequence computed by the producer
-        if (result != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (result != NULL_NODE) {
             getTransaction().moveTo(result);
             return true;
         }

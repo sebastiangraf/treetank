@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.shredder;
 
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -59,7 +61,6 @@ import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.settings.EFixed;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -293,7 +294,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             } else {
                 if (mWtx.getNode().getKind() == ENode.ROOT_KIND) {
                     // Find the start key for the update operation.
-                    long startkey = (Long)EFixed.ROOT_NODE_KEY.getStandardProperty() + 1;
+                    long startkey = ROOT_NODE + 1;
                     while (!mWtx.moveTo(startkey)) {
                         startkey++;
                     }

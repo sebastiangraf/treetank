@@ -40,7 +40,6 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
-import org.treetank.settings.EFixed;
 import org.treetank.utils.ItemList;
 import org.treetank.utils.NamePageHash;
 
@@ -53,6 +52,10 @@ import org.treetank.utils.NamePageHash;
  * </p>
  */
 public class NodeReadTransaction implements INodeReadTransaction {
+
+    public static final long ROOT_NODE = 0;
+
+    public static final long NULL_NODE = -1;
 
     /** ID of transaction. */
     private final long mId;
@@ -87,7 +90,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
         mSession = paramSession;
         mId = paramTransactionID;
         mPageReadTransaction = paramTransactionState;
-        mCurrentNode = mPageReadTransaction.getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
+        mCurrentNode = mPageReadTransaction.getNode(ROOT_NODE);
         mClosed = false;
     }
 
@@ -123,7 +126,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final boolean moveTo(final long paramNodeKey) {
         assertNotClosed();
-        if (paramNodeKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (paramNodeKey == NULL_NODE) {
             return false;
         } else {
             // Remember old node and fetch new one.
@@ -148,7 +151,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
      */
     @Override
     public final boolean moveToDocumentRoot() {
-        return moveTo((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
+        return moveTo(ROOT_NODE);
     }
 
     /**

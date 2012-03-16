@@ -47,7 +47,6 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.page.UberPage;
-import org.treetank.settings.EFixed;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -141,7 +140,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             checkAccessAndCommit();
 
             final long parentKey = getCurrentNode().getNodeKey();
-            final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            final long leftSibKey = NULL_NODE;
             final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQName);
@@ -199,7 +198,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
             final long parentKey = getCurrentNode().getNodeKey();
-            final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            final long leftSibKey = NULL_NODE;
             final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);

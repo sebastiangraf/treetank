@@ -27,8 +27,10 @@
 
 package org.treetank.access;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 import static org.treetank.access.PageReadTransaction.nodePageKey;
 import static org.treetank.access.PageReadTransaction.nodePageOffset;
+
 import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
@@ -58,7 +60,6 @@ import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
-import org.treetank.settings.EFixed;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.ItemList;
@@ -205,8 +206,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
 
         final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, parentKey, 0);
         final StructNodeDelegate structDel =
-            new StructNodeDelegate(nodeDel, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), rightSibKey,
-                mLeftSibKey, 0);
+            new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
 
         return (ElementNode)createNode(new ElementNode(nodeDel, structDel, nameDel, new ArrayList<Long>(),
@@ -218,8 +218,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, mParentKey, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
         final StructNodeDelegate structDel =
-            new StructNodeDelegate(nodeDel, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), rightSibKey,
-                mLeftSibKey, 0);
+            new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
 
         return (TextNode)createNode(new TextNode(nodeDel, valDel, structDel));
     }

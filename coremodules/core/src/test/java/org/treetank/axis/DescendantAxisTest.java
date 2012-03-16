@@ -34,7 +34,8 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
-import org.treetank.settings.EFixed;
+
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 public class DescendantAxisTest {
 
@@ -81,7 +82,7 @@ public class DescendantAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
         rtx.moveToDocumentRoot();
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
-            (Long)EFixed.ROOT_NODE_KEY.getStandardProperty(), 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+            ROOT_NODE, 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
         });
 
         rtx.moveTo(1L);

@@ -42,8 +42,9 @@ import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.settings.EFixed;
 import org.treetank.utils.DocumentCreater;
+
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 public class UpdateTest {
 
@@ -85,18 +86,16 @@ public class UpdateTest {
      *            to test with
      * @throws AbsTTException
      */
-    private final static void testNodeTransactionIsolation(final INodeReadTransaction pRtx) throws AbsTTException {
+    private final static void testNodeTransactionIsolation(final INodeReadTransaction pRtx)
+        throws AbsTTException {
         assertTrue(pRtx.moveToDocumentRoot());
         assertEquals(0, pRtx.getNode().getNodeKey());
         assertTrue(pRtx.moveToFirstChild());
         assertEquals(1, pRtx.getNode().getNodeKey());
         assertEquals(0, ((IStructNode)pRtx.getNode()).getChildCount());
-        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
-            .getStructuralNode().getLeftSiblingKey());
-        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
-            .getStructuralNode().getRightSiblingKey());
-        assertEquals(Long.parseLong(EFixed.NULL_NODE_KEY.getStandardProperty().toString()), pRtx
-            .getStructuralNode().getFirstChildKey());
+        assertEquals(NULL_NODE, pRtx.getStructuralNode().getLeftSiblingKey());
+        assertEquals(NULL_NODE, pRtx.getStructuralNode().getRightSiblingKey());
+        assertEquals(NULL_NODE, pRtx.getStructuralNode().getFirstChildKey());
     }
 
     @Test

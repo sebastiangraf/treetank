@@ -31,7 +31,7 @@ import java.util.Stack;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>DescendantAxis</h1>
@@ -92,7 +92,7 @@ public final class DescendantAxis extends AbsAxis {
         resetToLastKey();
 
         // Fail if there is no node anymore.
-        if (mNextKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (mNextKey == NULL_NODE) {
             resetToStartKey();
             return false;
         }
@@ -109,8 +109,7 @@ public final class DescendantAxis extends AbsAxis {
         if (((IStructNode)getTransaction().getNode()).hasFirstChild()) {
             mNextKey = ((IStructNode)getTransaction().getNode()).getFirstChildKey();
             if (((IStructNode)getTransaction().getNode()).hasRightSibling()) {
-                mRightSiblingKeyStack
-                    .push(((IStructNode)getTransaction().getNode()).getRightSiblingKey());
+                mRightSiblingKeyStack.push(((IStructNode)getTransaction().getNode()).getRightSiblingKey());
             }
             return true;
         }
@@ -128,7 +127,7 @@ public final class DescendantAxis extends AbsAxis {
         }
 
         // Then end.
-        mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        mNextKey = NULL_NODE;
         return true;
     }
 

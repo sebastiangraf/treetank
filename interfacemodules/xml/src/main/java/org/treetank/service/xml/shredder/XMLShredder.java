@@ -62,8 +62,8 @@ import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
-import org.treetank.settings.EFixed;
 import org.treetank.utils.TypedValue;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
@@ -176,7 +176,7 @@ public class XMLShredder implements Callable<Long> {
         try {
             Stack<Long> leftSiblingKeyStack = new Stack<Long>();
 
-            leftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+            leftSiblingKeyStack.push(NULL_NODE);
             boolean firstElement = true;
             int level = 0;
             QName rootElement = null;
@@ -250,7 +250,7 @@ public class XMLShredder implements Callable<Long> {
             key = mWtx.insertElementAsRightSibling(name);
             mFirstChildAppend = EShredderInsert.ADDASFIRSTCHILD;
         } else {
-            if (paramLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+            if (paramLeftSiblingKeyStack.peek() == NULL_NODE) {
                 key = mWtx.insertElementAsFirstChild(name);
             } else {
                 key = mWtx.insertElementAsRightSibling(name);
@@ -259,7 +259,7 @@ public class XMLShredder implements Callable<Long> {
 
         paramLeftSiblingKeyStack.pop();
         paramLeftSiblingKeyStack.push(key);
-        paramLeftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        paramLeftSiblingKeyStack.push(NULL_NODE);
 
         // Parse namespaces.
         for (final Iterator<?> it = paramEvent.getNamespaces(); it.hasNext();) {
@@ -298,7 +298,7 @@ public class XMLShredder implements Callable<Long> {
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
         if (textByteBuffer.array().length > 0) {
 
-            if (paramLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+            if (paramLeftSiblingKeyStack.peek() == NULL_NODE) {
                 key = mWtx.insertTextAsFirstChild(new String(textByteBuffer.array()));
             } else {
                 key = mWtx.insertTextAsRightSibling(new String(textByteBuffer.array()));

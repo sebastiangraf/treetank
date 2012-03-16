@@ -29,7 +29,7 @@ package org.treetank.axis;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 /**
  * <h1>AncestorAxis</h1>
@@ -91,7 +91,7 @@ public class AncestorAxis extends AbsAxis {
 
         if (getTransaction().getNode().getKind() != ENode.ROOT_KIND
             && getTransaction().getNode().hasParent()
-            && getTransaction().getNode().getParentKey() != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
+            && getTransaction().getNode().getParentKey() != ROOT_NODE) {
             getTransaction().moveToParent();
             return true;
         }
