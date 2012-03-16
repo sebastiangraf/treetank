@@ -683,9 +683,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
      * 
      * @return The state of this transaction.
      */
-    @Override
     public PageWriteTransaction getTransactionState() {
-        return (PageWriteTransaction)super.getTransactionState();
+        return (PageWriteTransaction)super.mPageReadTransaction;
     }
 
     /**

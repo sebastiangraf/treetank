@@ -60,7 +60,7 @@ public class NodeReadTransaction implements IReadTransaction {
     protected final Session mSession;
 
     /** State of transaction including all cached stuff. */
-    private PageReadTransaction mState;
+    protected PageReadTransaction mPageReadTransaction;
 
     /** Strong reference to currently selected node. */
     private INode mCurrentNode;
@@ -85,8 +85,8 @@ public class NodeReadTransaction implements IReadTransaction {
         final PageReadTransaction paramTransactionState) throws TTIOException {
         mSession = paramSession;
         mId = paramTransactionID;
-        mState = paramTransactionState;
-        mCurrentNode = getTransactionState().getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
+        mPageReadTransaction = paramTransactionState;
+        mCurrentNode = mPageReadTransaction.getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
         mClosed = false;
     }
 
@@ -104,7 +104,7 @@ public class NodeReadTransaction implements IReadTransaction {
     @Override
     public final long getRevisionNumber() throws TTIOException {
         assertNotClosed();
-        return mState.getActualRevisionRootPage().getRevision();
+        return mPageReadTransaction.getActualRevisionRootPage().getRevision();
     }
 
     /**
@@ -113,7 +113,7 @@ public class NodeReadTransaction implements IReadTransaction {
     @Override
     public final long getRevisionTimestamp() throws TTIOException {
         assertNotClosed();
-        return mState.getActualRevisionRootPage().getRevisionTimestamp();
+        return mPageReadTransaction.getActualRevisionRootPage().getRevisionTimestamp();
     }
 
     /**
@@ -128,7 +128,7 @@ public class NodeReadTransaction implements IReadTransaction {
             // Remember old node and fetch new one.
             final INode oldNode = mCurrentNode;
             try {
-                mCurrentNode = mState.getNode(paramNodeKey);
+                mCurrentNode = mPageReadTransaction.getNode(paramNodeKey);
             } catch (final Exception e) {
                 mCurrentNode = null;
             }
@@ -234,8 +234,8 @@ public class NodeReadTransaction implements IReadTransaction {
         String name = "";
         String uri = "";
         if (mCurrentNode instanceof INameNode) {
-            name = mState.getName(((INameNode)mCurrentNode).getNameKey());
-            uri = mState.getName(((INameNode)mCurrentNode).getURIKey());
+            name = mPageReadTransaction.getName(((INameNode)mCurrentNode).getNameKey());
+            uri = mPageReadTransaction.getName(((INameNode)mCurrentNode).getURIKey());
         }
         return buildQName(uri, name);
     }
@@ -246,7 +246,7 @@ public class NodeReadTransaction implements IReadTransaction {
     @Override
     public final String getTypeOfCurrentNode() {
         assertNotClosed();
-        return mState.getName(mCurrentNode.getTypeKey());
+        return mPageReadTransaction.getName(mCurrentNode.getTypeKey());
     }
 
     /**
@@ -264,7 +264,7 @@ public class NodeReadTransaction implements IReadTransaction {
     @Override
     public final String nameForKey(final int mKey) {
         assertNotClosed();
-        return mState.getName(mKey);
+        return mPageReadTransaction.getName(mKey);
     }
 
     /**
@@ -273,7 +273,7 @@ public class NodeReadTransaction implements IReadTransaction {
     @Override
     public final byte[] rawNameForKey(final int paramKey) {
         assertNotClosed();
-        return mState.getRawName(paramKey);
+        return mPageReadTransaction.getRawName(paramKey);
     }
 
     /**
@@ -281,7 +281,7 @@ public class NodeReadTransaction implements IReadTransaction {
      */
     @Override
     public final ItemList getItemList() {
-        return mState.getItemList();
+        return mPageReadTransaction.getItemList();
     }
 
     /**
@@ -291,13 +291,13 @@ public class NodeReadTransaction implements IReadTransaction {
     public void close() throws AbsTTException {
         if (!mClosed) {
             // Close own state.
-            mState.close();
+            mPageReadTransaction.close();
 
             // Callback on session to make sure everything is cleaned up.
             mSession.closeReadTransaction(mId);
 
             // Immediately release all references.
-            mState = null;
+            mPageReadTransaction = null;
             mCurrentNode = null;
 
             mClosed = true;
@@ -356,22 +356,13 @@ public class NodeReadTransaction implements IReadTransaction {
     }
 
     /**
-     * Getter for superclasses.
-     * 
-     * @return The state of this transaction.
-     */
-    public PageReadTransaction getTransactionState() {
-        return mState;
-    }
-
-    /**
      * Replace the state of the transaction.
      * 
      * @param paramTransactionState
      *            State of transaction.
      */
     protected final void setTransactionState(final PageReadTransaction paramTransactionState) {
-        mState = paramTransactionState;
+        mPageReadTransaction = paramTransactionState;
     }
 
     /**
@@ -406,7 +397,7 @@ public class NodeReadTransaction implements IReadTransaction {
      */
     @Override
     public final long getMaxNodeKey() throws TTIOException {
-        return getTransactionState().getActualRevisionRootPage().getMaxNodeKey();
+        return mPageReadTransaction.getActualRevisionRootPage().getMaxNodeKey();
     }
 
     /**
