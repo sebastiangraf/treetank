@@ -27,7 +27,7 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 
 /**
  * <h1>ChildAxis</h1>
@@ -47,7 +47,7 @@ public class ChildAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public ChildAxis(final IReadTransaction rtx) {
+    public ChildAxis(final INodeReadTransaction rtx) {
         super(rtx);
     }
 

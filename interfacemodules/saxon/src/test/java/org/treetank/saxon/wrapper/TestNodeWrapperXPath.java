@@ -53,7 +53,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
@@ -387,7 +387,7 @@ public final class TestNodeWrapperXPath {
 				doc, XPathConstants.NODESET);
 		assertNotNull(result);
 
-		final IReadTransaction rtx = mHolder.getSession()
+		final INodeReadTransaction rtx = mHolder.getSession()
 				.beginReadTransaction();
 		rtx.moveTo(result.get(0).getNodeKey());
 		assertEquals("oops1", rtx.getValueOfCurrentNode());
@@ -441,7 +441,7 @@ public final class TestNodeWrapperXPath {
 		assertEquals(5, result.get(0).getNodeKey());
 		assertEquals(9, result.get(1).getNodeKey());
 
-		final IReadTransaction rtx = mHolder.getSession()
+		final INodeReadTransaction rtx = mHolder.getSession()
 				.beginReadTransaction();
 		rtx.moveTo(result.get(0).getNodeKey());
 		assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());

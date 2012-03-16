@@ -34,7 +34,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 public class DocumentNodeAxisTest {
 
@@ -58,28 +58,28 @@ public class DocumentNodeAxisTest {
 
         holder.getRtx().moveTo(1L);
         AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
-            (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
+            ROOT_NODE
         });
 
         holder.getRtx().moveTo(5L);
         AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
-            (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
+            ROOT_NODE
         });
 
         holder.getRtx().moveTo(9L);
         AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
-            (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
+            ROOT_NODE
         });
 
         holder.getRtx().moveTo(9L);
         holder.getRtx().moveToAttribute(0);
         AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
-            (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
+            ROOT_NODE
         });
 
         holder.getRtx().moveTo(13L);
         AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
-            (Long)EFixed.ROOT_PAGE_KEY.getStandardProperty()
+            ROOT_NODE
         });
 
     }

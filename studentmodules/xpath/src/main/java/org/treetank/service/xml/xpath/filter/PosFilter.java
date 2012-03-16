@@ -48,7 +48,7 @@ package org.treetank.service.xml.xpath.filter;
 // package org.treetank.xpath.filter;
 //
 // import org.treetank.api.IAxis;
-// import org.treetank.api.IReadTransaction;
+// import org.treetank.api.INodeReadTransaction;
 // import org.treetank.axislayer.AbstractAxis;
 //
 // /**
@@ -69,7 +69,7 @@ package org.treetank.service.xml.xpath.filter;
 // * @param expectedPos
 // * he expected position
 // */
-// public PosFilter(final IReadTransaction rtx, final int expectedPos) {
+// public PosFilter(final INodeReadTransaction rtx, final int expectedPos) {
 //
 // super(rtx);
 // mExpectedPos = expectedPos;

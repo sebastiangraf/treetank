@@ -27,11 +27,11 @@
 
 package org.treetank.service.xml.xpath.concurrent;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.EXPathError;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>ConcurrentExceptAxis</h1>
@@ -68,14 +68,14 @@ public class ConcurrentExceptAxis extends AbsAxis {
      * @param operand2
      *            Second operand
      */
-    public ConcurrentExceptAxis(final IReadTransaction rtx, final AbsAxis operand1, final AbsAxis operand2) {
+    public ConcurrentExceptAxis(final INodeReadTransaction rtx, final AbsAxis operand1, final AbsAxis operand2) {
 
         super(rtx);
         mOp1 = new ConcurrentAxis(rtx, operand1);
         mOp2 = new ConcurrentAxis(rtx, operand2);
         mFirst = true;
-        mCurrentResult1 = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        mCurrentResult2 = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        mCurrentResult1 = NULL_NODE;
+        mCurrentResult2 = NULL_NODE;
     }
 
     /**
@@ -94,8 +94,8 @@ public class ConcurrentExceptAxis extends AbsAxis {
         }
 
         mFirst = true;
-        mCurrentResult1 = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        mCurrentResult2 = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        mCurrentResult1 = NULL_NODE;
+        mCurrentResult2 = NULL_NODE;
     }
 
     /**
@@ -173,7 +173,7 @@ public class ConcurrentExceptAxis extends AbsAxis {
      *         null node key is returned.
      */
     private long getNext(final AbsAxis axis) {
-        return (axis.hasNext()) ? axis.next() : (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return (axis.hasNext()) ? axis.next() : NULL_NODE;
 
     }
 

@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.interfaces.INode;
@@ -55,7 +55,7 @@ public class IDivOpAxis extends AbsObAxis {
      * @param mOp2
      *            Second value of the operation
      */
-    public IDivOpAxis(final IReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
+    public IDivOpAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
 
         super(rtx, mOp1, mOp2);
     }

@@ -36,8 +36,10 @@ import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.page.delegates.PageDelegate;
 import org.treetank.page.interfaces.IPage;
-import org.treetank.settings.EFixed;
 import org.treetank.utils.IConstants;
+
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 /**
  * <h1>UberPage</h1>
@@ -100,18 +102,12 @@ public final class UberPage implements IPage {
             reference = page.getReferences()[0];
         }
 
-        final NodePage ndp =
-            new NodePage((Long)EFixed.ROOT_PAGE_KEY.getStandardProperty(),
-                IConstants.UBP_ROOT_REVISION_NUMBER);
+        final NodePage ndp = new NodePage(ROOT_NODE, IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
-        final NodeDelegate nodeDel =
-            new NodeDelegate((Long)EFixed.ROOT_NODE_KEY.getStandardProperty(), (Long)EFixed.NULL_NODE_KEY
-                .getStandardProperty(), (Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
         final StructNodeDelegate strucDel =
-            new StructNodeDelegate(nodeDel, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(),
-                (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), (Long)EFixed.NULL_NODE_KEY
-                    .getStandardProperty(), 0);
+            new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0);
         ndp.setNode(0, new DocumentRootNode(nodeDel, strucDel));
         rrp.incrementMaxNodeKey();
     }

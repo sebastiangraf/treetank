@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.treetank.api.IPageReadTransaction;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.RAMCache;
@@ -63,7 +64,7 @@ import org.treetank.utils.ItemList;
  * A path-like cache boosts sequential operations.
  * </p>
  */
-public class PageReadTransaction {
+public class PageReadTransaction implements IPageReadTransaction {
 
     /** Page reader exclusively assigned to this transaction. */
     private final IReader mPageReader;
@@ -120,7 +121,7 @@ public class PageReadTransaction {
      * @throws TTIOException
      *             if the read to the persistent storage fails
      */
-    protected INode getNode(final long paramNodeKey) throws TTIOException {
+    public INode getNode(final long paramNodeKey) throws TTIOException {
 
         // Immediately return node from item list if node key negative.
         if (paramNodeKey < 0) {
@@ -171,7 +172,7 @@ public class PageReadTransaction {
      *            for the term searched
      * @return the name
      */
-    protected String getName(final int mNameKey) {
+    public String getName(final int mNameKey) {
 
         return ((NamePage)mRootPage.getNamePageReference().getPage()).getName(mNameKey);
 
@@ -184,7 +185,7 @@ public class PageReadTransaction {
      *            for the raw name searched
      * @return a byte array containing the raw name
      */
-    protected final byte[] getRawName(final int mNameKey) {
+    public final byte[] getRawName(final int mNameKey) {
         return ((NamePage)mRootPage.getNamePageReference().getPage()).getRawName(mNameKey);
 
     }
@@ -195,7 +196,7 @@ public class PageReadTransaction {
      * @throws TTIOException
      *             if the closing to the persistent storage fails.
      */
-    protected void close() throws TTIOException {
+    public void close() throws TTIOException {
         mPageReader.close();
         mCache.clear();
     }
@@ -251,7 +252,7 @@ public class PageReadTransaction {
      * 
      * @return The item list.
      */
-    protected final ItemList getItemList() {
+    public final ItemList getItemList() {
         return mItemList;
     }
 
@@ -366,12 +367,12 @@ public class PageReadTransaction {
     /**
      * Calculate node page key from a given node key.
      * 
-     * @param mNodeKey
+     * @param pNodeKey
      *            Node key to find node page key for.
      * @return Node page key.
      */
-    protected static final long nodePageKey(final long mNodeKey) {
-        final long nodePageKey = mNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
+    protected static final long nodePageKey(final long pNodeKey) {
+        final long nodePageKey = pNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
         return nodePageKey;
     }
 
@@ -383,7 +384,7 @@ public class PageReadTransaction {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected RevisionRootPage getActualRevisionRootPage() throws TTIOException {
+    public RevisionRootPage getActualRevisionRootPage() throws TTIOException {
         return mRootPage;
     }
 

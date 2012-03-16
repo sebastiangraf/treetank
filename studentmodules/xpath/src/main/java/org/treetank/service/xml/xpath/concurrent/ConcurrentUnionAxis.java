@@ -27,11 +27,11 @@
 
 package org.treetank.service.xml.xpath.concurrent;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.EXPathError;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>ConcurrentUnionAxis</h1>
@@ -66,7 +66,7 @@ public class ConcurrentUnionAxis extends AbsAxis {
      * @param operand2
      *            Second operand
      */
-    public ConcurrentUnionAxis(final IReadTransaction rtx, final AbsAxis operand1, final AbsAxis operand2) {
+    public ConcurrentUnionAxis(final INodeReadTransaction rtx, final AbsAxis operand1, final AbsAxis operand2) {
 
         super(rtx);
         mOp1 = new ConcurrentAxis(rtx, operand1);
@@ -172,7 +172,7 @@ public class ConcurrentUnionAxis extends AbsAxis {
      *         null node key is returned.
      */
     private long getNext(final AbsAxis axis) {
-        return (axis.hasNext()) ? axis.next() : (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return (axis.hasNext()) ? axis.next() : NULL_NODE;
 
     }
 

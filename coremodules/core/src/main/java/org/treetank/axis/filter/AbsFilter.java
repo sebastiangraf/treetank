@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 
 /**
  * <h1>AbstractFilter</h1>
@@ -39,7 +39,7 @@ import org.treetank.api.IReadTransaction;
 public abstract class AbsFilter {
 
     /** Iterate over transaction exclusive to this step. */
-    private IReadTransaction mRTX;
+    private INodeReadTransaction mRTX;
 
     /**
      * Bind axis step to transaction.
@@ -47,7 +47,7 @@ public abstract class AbsFilter {
      * @param rtx
      *            Transaction to operate with.
      */
-    protected AbsFilter(final IReadTransaction rtx) {
+    protected AbsFilter(final INodeReadTransaction rtx) {
         mRTX = rtx;
     }
 
@@ -56,7 +56,7 @@ public abstract class AbsFilter {
      * 
      * @return the transaction of this filter
      */
-    protected final IReadTransaction getTransaction() {
+    protected final INodeReadTransaction getTransaction() {
         return mRTX;
     }
 
@@ -68,7 +68,7 @@ public abstract class AbsFilter {
     /**
      * {@inheritDoc}
      */
-    public synchronized void setTransaction(final IReadTransaction rtx) {
+    public synchronized void setTransaction(final INodeReadTransaction rtx) {
         mRTX = rtx;
     }
 

@@ -31,7 +31,7 @@ import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.types.Type;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
@@ -127,7 +127,7 @@ public class AtomicValue implements INode, IValNode {
     @Override
     public long getParentKey() {
 
-        return (Integer)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return NULL_NODE;
     }
 
     /**

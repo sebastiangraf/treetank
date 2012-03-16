@@ -36,9 +36,9 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
 /**
@@ -85,7 +85,7 @@ public final class TreeTankCommandoLineExplorer {
     public static void main(final String[] args) throws Exception {
         IDatabase database = null;
         ISession session = null;
-        IReadTransaction rtx = null;
+        INodeReadTransaction rtx = null;
         if (args.length > 0) {
 
             long revision = 0;
@@ -189,7 +189,7 @@ public final class TreeTankCommandoLineExplorer {
     private enum Command {
         HELP("help") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 final StringBuilder builder = new StringBuilder("Help for ");
                 if (mParameter.equals(INFO.mCommand)) {
                     builder.append("info:\n");
@@ -234,7 +234,7 @@ public final class TreeTankCommandoLineExplorer {
         },
         CONTENT("content") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 final StringBuilder builder = new StringBuilder("Kind: ");
                 switch (mCurrentRtx.getNode().getKind()) {
                 case ELEMENT_KIND:
@@ -272,7 +272,7 @@ public final class TreeTankCommandoLineExplorer {
         },
         INFO("info") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 final StringBuilder builder = new StringBuilder();
                 builder.append(mCurrentRtx.toString());
                 return builder.toString();
@@ -280,25 +280,25 @@ public final class TreeTankCommandoLineExplorer {
         },
         LOGIN("login") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 return new StringBuilder("Loggin into database ").append(mParameter).append("\n").toString();
             }
         },
         LOGOUT("logout") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 return new StringBuilder("Logout from database.").toString();
             }
         },
         EXIT("exit") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 return new StringBuilder("Exiting the program.").toString();
             }
         },
         MOVE("move") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 boolean succeed = false;
                 final StringBuilder builder = new StringBuilder("Move to ");
                 if (mParameter.equals("up")) {
@@ -337,11 +337,11 @@ public final class TreeTankCommandoLineExplorer {
         },
         MODIFICATION("modification") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 final StringBuilder builder = new StringBuilder("Insert ");
                 try {
-                    if (mCurrentRtx instanceof IWriteTransaction) {
-                        final IWriteTransaction wtx = (IWriteTransaction)mCurrentRtx;
+                    if (mCurrentRtx instanceof INodeWriteTransaction) {
+                        final INodeWriteTransaction wtx = (INodeWriteTransaction)mCurrentRtx;
 
                         if (mParameter.equals("commit")) {
                             wtx.commit();
@@ -365,7 +365,7 @@ public final class TreeTankCommandoLineExplorer {
         },
         NOVALUE("") {
             @Override
-            String executeCommand(final IReadTransaction mCurrentRtx, final String mParameter) {
+            String executeCommand(final INodeReadTransaction mCurrentRtx, final String mParameter) {
                 return new StringBuilder("Command not known. Try ").append(Command.HELP.getCommand()).append(
                     " for known commands!").toString();
             }
@@ -393,7 +393,7 @@ public final class TreeTankCommandoLineExplorer {
             }
         }
 
-        private String executeCommand(final IReadTransaction read) {
+        private String executeCommand(final INodeReadTransaction read) {
             return executeCommand(read, mParameter);
         }
 
@@ -406,7 +406,7 @@ public final class TreeTankCommandoLineExplorer {
          *            Parameter to executed
          * @return a String as a result
          */
-        abstract String executeCommand(final IReadTransaction mCurrentRtx, final String parameter);
+        abstract String executeCommand(final INodeReadTransaction mCurrentRtx, final String parameter);
 
         /**
          * Getter for field command.

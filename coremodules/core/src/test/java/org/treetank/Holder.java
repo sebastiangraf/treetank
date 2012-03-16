@@ -30,9 +30,9 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
 /**
@@ -48,9 +48,9 @@ public class Holder {
 
     private ISession mSession;
 
-    private IReadTransaction mRtx;
+    private INodeReadTransaction mRtx;
 
-    private IWriteTransaction mWtx;
+    private INodeWriteTransaction mWtx;
 
     public static Holder generateSession() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -66,14 +66,14 @@ public class Holder {
 
     public static Holder generateWtx() throws AbsTTException {
         final Holder holder = generateSession();
-        final IWriteTransaction wtx = holder.mSession.beginWriteTransaction();
+        final INodeWriteTransaction wtx = holder.mSession.beginWriteTransaction();
         holder.setWtx(wtx);
         return holder;
     }
 
     public static Holder generateRtx() throws AbsTTException {
         final Holder holder = generateSession();
-        final IReadTransaction rtx = holder.mSession.beginReadTransaction();
+        final INodeReadTransaction rtx = holder.mSession.beginReadTransaction();
         holder.setRtx(rtx);
         return holder;
     }
@@ -97,19 +97,19 @@ public class Holder {
         return mSession;
     }
 
-    public IReadTransaction getRtx() {
+    public INodeReadTransaction getRtx() {
         return mRtx;
     }
 
-    public IWriteTransaction getWtx() {
+    public INodeWriteTransaction getWtx() {
         return mWtx;
     }
 
-    private void setWtx(final IWriteTransaction paramWtx) {
+    private void setWtx(final INodeWriteTransaction paramWtx) {
         this.mWtx = paramWtx;
     }
 
-    private void setRtx(final IReadTransaction paramRtx) {
+    private void setRtx(final INodeReadTransaction paramRtx) {
         this.mRtx = paramRtx;
     }
 

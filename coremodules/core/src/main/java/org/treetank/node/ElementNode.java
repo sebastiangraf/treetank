@@ -34,7 +34,7 @@ import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>ElementNode</h1>
@@ -99,7 +99,7 @@ public final class ElementNode implements IStructNode, INameNode {
      */
     public long getAttributeKey(final int pIndex) {
         if (mAttributeKeys.size() <= pIndex) {
-            return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            return NULL_NODE;
         }
         return mAttributeKeys.get(pIndex);
     }
@@ -142,7 +142,7 @@ public final class ElementNode implements IStructNode, INameNode {
      */
     public long getNamespaceKey(final int pNamespaceKey) {
         if (mNamespaceKeys.size() <= pNamespaceKey) {
-            return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            return NULL_NODE;
         }
         return mNamespaceKeys.get(pNamespaceKey);
     }

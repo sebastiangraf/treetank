@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.types.Type;
@@ -75,7 +75,7 @@ public class RangeAxis extends AbsAxis {
      * @param mTo
      *            the end of the range
      */
-    public RangeAxis(final IReadTransaction rtx, final AbsAxis mFrom, final AbsAxis mTo) {
+    public RangeAxis(final INodeReadTransaction rtx, final AbsAxis mFrom, final AbsAxis mTo) {
 
         super(rtx);
         this.mFrom = mFrom;

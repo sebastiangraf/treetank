@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.interfaces.INameNode;
 
 /**
@@ -50,7 +50,7 @@ public class NameFilter extends AbsFilter {
      * @param mLocalPart
      *            Local part to check.
      */
-    public NameFilter(final IReadTransaction rtx, final String mLocalPart) {
+    public NameFilter(final INodeReadTransaction rtx, final String mLocalPart) {
         super(rtx);
         mLocalPartKey = rtx.keyForName(mLocalPart);
     }

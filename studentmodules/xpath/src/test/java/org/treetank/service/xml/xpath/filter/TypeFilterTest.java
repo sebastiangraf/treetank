@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.filter.AbsFilterTest;
 import org.treetank.axis.filter.TypeFilter;
@@ -60,7 +60,7 @@ public class TypeFilterTest {
     public void testIFilterConvetions() throws Exception {
 
         final AbsAxis axis = new XPathAxis(holder.getRtx(), "a");
-        final IReadTransaction xtx = axis.getTransaction();
+        final INodeReadTransaction xtx = axis.getTransaction();
 
         xtx.moveTo(9L);
         AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);

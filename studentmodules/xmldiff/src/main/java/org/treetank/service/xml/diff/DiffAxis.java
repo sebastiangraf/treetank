@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.diff;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 
 /**
@@ -44,7 +44,7 @@ public class DiffAxis extends AbsAxis {
      * @param paramOldRtx
      *            {@link IReadTransaction} on old revision
      */
-    public DiffAxis(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+    public DiffAxis(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx) {
         super(paramNewRtx);
     }
 

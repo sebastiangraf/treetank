@@ -33,9 +33,9 @@
  * <li>There can only be a single {@link org.treetank.api.IDatabase} instance per Database-Folder</li>
  * <li>There can only be multiple {@link org.treetank.api.ISession} instances per
  * {@link org.treetank.api.IDatabase} linked uniquely to resources representing concrete data-storages.</li>
- * <li>There can only be a single {@link org.treetank.api.IWriteTransaction} instance per
+ * <li>There can only be a single {@link org.treetank.api.INodeWriteTransaction} instance per
  * {@link org.treetank.api.ISession}</li>
- * <li>There can be multiple {@link org.treetank.api.IReadTransaction} instances per
+ * <li>There can be multiple {@link org.treetank.api.INodeReadTransaction} instances per
  * {@link org.treetank.api.ISession}.</li>
  * </ul>
  * </p>
@@ -56,9 +56,9 @@
  * final SessionConfiguration sessionConfig = new SessionConfiguration(&quot;coolResource&quot;);
  * final ISession someSession = Session.beginSession(sessionConfig);
  *  
- * final IWriteTransaction someWTX = someSession.beginWriteTransaction();
- * final IReadTransaction someRTX = someSession.beginReadTransaction();
- * final IReadTransaction someConcurrentRTX = someSession.beginReadTransaction();
+ * final INodeWriteTransaction someWTX = someSession.beginWriteTransaction();
+ * final INodeReadTransaction someRTX = someSession.beginReadTransaction();
+ * final INodeReadTransaction someConcurrentRTX = someSession.beginReadTransaction();
  * 
  * someWTX.abort();
  * someWTX.close();
@@ -75,7 +75,7 @@
  * <pre>
  *         final IDatabase database = Database.openDatabase(new File(&quot;/path/to/db/location&quot;);
  *         final ISession session = Session.beginSession(new SessionConfiguration(&quot;existingResource&quot;);
- *         final IWriteTransaction wtx = session.beginWriteTransaction();
+ *         final INodeWriteTransaction wtx = session.beginWriteTransaction();
  *         try {
  *           wtx.insertElementAsFirstChild("foo", "", "");
  *           ...

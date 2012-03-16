@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.operators;
 
 import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.interfaces.INode;
@@ -64,7 +64,7 @@ public abstract class AbsObAxis extends AbsAxis {
      * @param mOp2
      *            Second value of the operation
      */
-    public AbsObAxis(final IReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
+    public AbsObAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
 
         super(rtx);
         mOperand1 = mOp1;
@@ -145,7 +145,7 @@ public abstract class AbsObAxis extends AbsAxis {
      */
     private AtomicValue atomize(final AbsAxis mOperand) {
 
-        final IReadTransaction rtx = getTransaction();
+        final INodeReadTransaction rtx = getTransaction();
         int type = rtx.getNode().getTypeKey();
         AtomicValue atom;
 

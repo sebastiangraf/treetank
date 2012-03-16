@@ -33,7 +33,9 @@ import org.junit.Test;
 import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.settings.EFixed;
+
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 public class DocumentRootNodeTest {
 
@@ -41,13 +43,9 @@ public class DocumentRootNodeTest {
     public void testDocumentRootNode() {
 
         // Create empty node.
-        final NodeDelegate nodeDel =
-            new NodeDelegate((Long)EFixed.ROOT_NODE_KEY.getStandardProperty(), (Long)EFixed.NULL_NODE_KEY
-                .getStandardProperty(), (Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, NULL_NODE);
         final StructNodeDelegate strucDel =
-            new StructNodeDelegate(nodeDel, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(),
-                (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), (Long)EFixed.NULL_NODE_KEY
-                    .getStandardProperty(), 0);
+            new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0);
         final DocumentRootNode node1 = new DocumentRootNode(nodeDel, strucDel);
         check(node1);
 
@@ -62,11 +60,11 @@ public class DocumentRootNodeTest {
 
     private final static void check(final DocumentRootNode node) {
         // Now compare.
-        assertEquals(EFixed.ROOT_NODE_KEY.getStandardProperty(), node.getNodeKey());
-        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node.getParentKey());
-        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node.getFirstChildKey());
-        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node.getLeftSiblingKey());
-        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node.getRightSiblingKey());
+        assertEquals(ROOT_NODE, node.getNodeKey());
+        assertEquals(NULL_NODE, node.getParentKey());
+        assertEquals(NULL_NODE, node.getFirstChildKey());
+        assertEquals(NULL_NODE, node.getLeftSiblingKey());
+        assertEquals(NULL_NODE, node.getRightSiblingKey());
         assertEquals(0L, node.getChildCount());
         assertEquals(ENode.ROOT_KIND, node.getKind());
 

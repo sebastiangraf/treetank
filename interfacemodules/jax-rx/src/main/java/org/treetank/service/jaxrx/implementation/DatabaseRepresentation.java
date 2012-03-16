@@ -51,9 +51,9 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.util.RESTResponseHelper;
@@ -310,7 +310,7 @@ public class DatabaseRepresentation {
 	public final boolean shred(final InputStream xmlInput, final String resource)
 			throws AbsTTException {
 		boolean allOk;
-		IWriteTransaction wtx = null;
+		INodeWriteTransaction wtx = null;
 		IDatabase database = null;
 		ISession session = null;
 		boolean abort = false;
@@ -402,7 +402,7 @@ public class DatabaseRepresentation {
 		long lastRevision;
 		if (WorkerHelper.checkExistingResource(resourceName)) {
 			IDatabase database = Database.openDatabase(STOREDBPATH);
-			IReadTransaction rtx = null;
+			INodeReadTransaction rtx = null;
 			ISession session = null;
 			try {
 				session = database.getSession(new SessionConfiguration.Builder(
@@ -466,7 +466,7 @@ public class DatabaseRepresentation {
 			// Connection to treetank, creating a session
 			IDatabase database = null;
 			AbsAxis axis = null;
-			IReadTransaction rtx = null;
+			INodeReadTransaction rtx = null;
 			ISession session = null;
 			// List for all restIds of modifications
 			final List<Long> modificRestids = new LinkedList<Long>();
@@ -607,7 +607,7 @@ public class DatabaseRepresentation {
 		// Connection to treetank, creating a session
 		IDatabase database = null;
 		ISession session = null;
-		// IReadTransaction rtx = null;
+		// INodeReadTransaction rtx = null;
 		try {
 			database = Database.openDatabase(STOREDBPATH);
 			session = database.getSession(new SessionConfiguration.Builder(
@@ -650,7 +650,7 @@ public class DatabaseRepresentation {
 			final long backToRevision) throws JaxRxException, AbsTTException {
 		IDatabase database = null;
 		ISession session = null;
-		IWriteTransaction wtx = null;
+		INodeWriteTransaction wtx = null;
 		boolean abort = false;
 		try {
 			database = Database.openDatabase(STOREDBPATH);

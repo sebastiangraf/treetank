@@ -142,7 +142,7 @@ public class XPathAxisWideTest {
     //
     // // Verify.
     // final ISession session2 = Session.beginSession(PATH2);
-    // final IReadTransaction rtx2 = session2.beginReadTransaction();
+    // final INodeReadTransaction rtx2 = session2.beginReadTransaction();
     // rtx2.moveToDocumentRoot();
     //
     // XPathStringChecker.testIAxisConventions(

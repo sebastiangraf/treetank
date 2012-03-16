@@ -41,7 +41,7 @@ import org.treetank.access.NodeWriteTransaction.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
 public class HashTest {
@@ -60,7 +60,7 @@ public class HashTest {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
             .getConfig()).setHashKind(HashKind.Postorder).build());
-        final IWriteTransaction wtx =
+        final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
@@ -71,7 +71,7 @@ public class HashTest {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
             .getConfig()).setHashKind(HashKind.Postorder).build());
-        final IWriteTransaction wtx =
+        final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testDeepTree(wtx);
@@ -82,7 +82,7 @@ public class HashTest {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
             .getConfig()).setHashKind(HashKind.Postorder).build());
-        final IWriteTransaction wtx =
+        final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testSetter(wtx);
@@ -93,7 +93,7 @@ public class HashTest {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
             .getConfig()).setHashKind(HashKind.Rolling).build());
-        final IWriteTransaction wtx =
+        final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
@@ -104,7 +104,7 @@ public class HashTest {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
             .getConfig()).setHashKind(HashKind.Rolling).build());
-        final IWriteTransaction wtx =
+        final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testDeepTree(wtx);
@@ -115,7 +115,7 @@ public class HashTest {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
             .getConfig()).setHashKind(HashKind.Rolling).build());
-        final IWriteTransaction wtx =
+        final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testSetter(wtx);
@@ -139,7 +139,7 @@ public class HashTest {
      * @param wtx
      * @throws AbsTTException
      */
-    private void testHashTreeWithInsertAndRemove(final IWriteTransaction wtx) throws AbsTTException {
+    private void testHashTreeWithInsertAndRemove(final INodeWriteTransaction wtx) throws AbsTTException {
 
         // inserting a element as root
         wtx.insertElementAsFirstChild(new QName(NAME1));
@@ -190,7 +190,7 @@ public class HashTest {
         assertEquals(firstRootHash, wtx.getNode().getHash());
     }
 
-    private void testDeepTree(final IWriteTransaction wtx) throws AbsTTException {
+    private void testDeepTree(final INodeWriteTransaction wtx) throws AbsTTException {
 
         wtx.insertElementAsFirstChild(new QName(NAME1));
         final long oldHash = wtx.getNode().getHash();
@@ -211,7 +211,7 @@ public class HashTest {
         assertEquals(oldHash, wtx.getNode().getHash());
     }
 
-    private void testSetter(final IWriteTransaction wtx) throws AbsTTException {
+    private void testSetter(final INodeWriteTransaction wtx) throws AbsTTException {
 
         // Testing node inheritance
         wtx.insertElementAsFirstChild(new QName(NAME1));

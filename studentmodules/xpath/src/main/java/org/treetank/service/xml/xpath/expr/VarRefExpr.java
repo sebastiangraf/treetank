@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 
 /**
  * <h1>VarRefExpr</h1>
@@ -49,7 +49,7 @@ public class VarRefExpr extends AbsExpression implements IObserver {
      *            Reference the variable expression that computes the items the
      *            variable holds.
      */
-    public VarRefExpr(final IReadTransaction rtx, final VariableAxis mVariable) {
+    public VarRefExpr(final INodeReadTransaction rtx, final VariableAxis mVariable) {
 
         super(rtx);
         mVariable.addObserver(this);

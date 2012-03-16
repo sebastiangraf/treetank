@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.filter.NameFilter;
 import org.treetank.axis.filter.NodeFilter;
 import org.treetank.axis.filter.TextFilter;
@@ -57,7 +57,7 @@ public class NestedAxisTest {
 
     @Test
     public void testNestedAxisTest() throws AbsTTException {
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
@@ -79,7 +79,7 @@ public class NestedAxisTest {
 
     @Test
     public void testNestedAxisTest2() throws AbsTTException {
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
@@ -102,7 +102,7 @@ public class NestedAxisTest {
 
     @Test
     public void testNestedAxisTest3() throws AbsTTException {
-        final IReadTransaction rtx = holder.getRtx();
+        final INodeReadTransaction rtx = holder.getRtx();
 
         // Find desceFndants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();

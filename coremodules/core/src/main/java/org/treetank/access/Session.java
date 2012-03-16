@@ -27,14 +27,10 @@
 
 package org.treetank.access;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
@@ -43,10 +39,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.IPageWriteTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
-import org.treetank.cache.NodePageContainer;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTThreadedException;
@@ -87,13 +83,13 @@ public final class Session implements ISession {
     private UberPage mLastCommittedUberPage;
 
     /** Remember all running transactions (both read and write). */
-    private final Map<Long, IReadTransaction> mTransactionMap;
+    private final Map<Long, INodeReadTransaction> mTransactionMap;
 
     /** Lock for blocking the commit. */
     protected final Lock mCommitLock;
 
     /** Remember the write seperatly because of the concurrent writes. */
-    private final Map<Long, PageWriteTransaction> mWriteTransactionStateMap;
+    private final Map<Long, IPageWriteTransaction> mWriteTransactionStateMap;
 
     /** Storing all return futures from the sync process. */
     private final Map<Long, Map<Long, Collection<Future<Void>>>> mSyncTransactionsReturns;
@@ -124,8 +120,8 @@ public final class Session implements ISession {
         mDatabase = paramDatabase;
         mResourceConfig = paramResourceConf;
         mSessionConfig = paramSessionConf;
-        mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
-        mWriteTransactionStateMap = new ConcurrentHashMap<Long, PageWriteTransaction>();
+        mTransactionMap = new ConcurrentHashMap<Long, INodeReadTransaction>();
+        mWriteTransactionStateMap = new ConcurrentHashMap<Long, IPageWriteTransaction>();
         mSyncTransactionsReturns = new ConcurrentHashMap<Long, Map<Long, Collection<Future<Void>>>>();
 
         mTransactionIDCounter = new AtomicLong();
@@ -153,7 +149,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public IReadTransaction beginReadTransaction() throws AbsTTException {
+    public INodeReadTransaction beginReadTransaction() throws AbsTTException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), new ItemList());
     }
 
@@ -161,7 +157,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public IReadTransaction beginReadTransaction(final long paramRevisionKey) throws AbsTTException {
+    public INodeReadTransaction beginReadTransaction(final long paramRevisionKey) throws AbsTTException {
         return beginReadTransaction(paramRevisionKey, new ItemList());
     }
 
@@ -169,7 +165,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public synchronized IReadTransaction beginReadTransaction(final long paramRevisionKey,
+    public synchronized INodeReadTransaction beginReadTransaction(final long paramRevisionKey,
         final ItemList mItemList) throws AbsTTException {
         assertAccess(paramRevisionKey);
         // Make sure not to exceed available number of read transactions.
@@ -179,11 +175,11 @@ public final class Session implements ISession {
             throw new TTThreadedException(exc);
         }
 
-        IReadTransaction rtx = null;
+        INodeReadTransaction rtx = null;
         // Create new read transaction.
         rtx =
-            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTransaction(this,
-                mLastCommittedUberPage, paramRevisionKey, mItemList, mFac.getReader()));
+            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTransaction(
+                this, mLastCommittedUberPage, paramRevisionKey, mItemList, mFac.getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -196,7 +192,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public IWriteTransaction beginWriteTransaction() throws AbsTTException {
+    public INodeWriteTransaction beginWriteTransaction() throws AbsTTException {
         return beginWriteTransaction(0, 0);
     }
 
@@ -204,7 +200,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public synchronized IWriteTransaction beginWriteTransaction(final int paramMaxNodeCount,
+    public synchronized INodeWriteTransaction beginWriteTransaction(final int paramMaxNodeCount,
         final int paramMaxTime) throws AbsTTException {
         assertAccess(mLastCommittedUberPage.getRevision());
 
@@ -220,12 +216,12 @@ public final class Session implements ISession {
         }
 
         final long currentID = mTransactionIDCounter.incrementAndGet();
-        final PageWriteTransaction wtxState =
+        final IPageWriteTransaction wtxState =
             createWriteTransactionState(currentID, mLastCommittedUberPage.getRevisionNumber(),
                 mLastCommittedUberPage.getRevisionNumber());
 
         // Create new write transaction.
-        final IWriteTransaction wtx =
+        final INodeWriteTransaction wtx =
             new NodeWriteTransaction(currentID, this, wtxState, paramMaxNodeCount, paramMaxTime);
 
         // Remember transaction for debugging and safe close.
@@ -238,12 +234,12 @@ public final class Session implements ISession {
 
     }
 
-    protected PageWriteTransaction createWriteTransactionState(final long mId,
+    protected IPageWriteTransaction createWriteTransactionState(final long mId,
         final long mRepresentRevision, final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
         return new PageWriteTransaction(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
-            writer, mId, mRepresentRevision, mStoreRevision);
+            writer, mRepresentRevision, mStoreRevision);
     }
 
     /**
@@ -253,9 +249,9 @@ public final class Session implements ISession {
     public synchronized void close() throws AbsTTException {
         if (!mClosed) {
             // Forcibly close all open transactions.
-            for (final IReadTransaction rtx : mTransactionMap.values()) {
-                if (rtx instanceof IWriteTransaction) {
-                    ((IWriteTransaction)rtx).abort();
+            for (final INodeReadTransaction rtx : mTransactionMap.values()) {
+                if (rtx instanceof INodeWriteTransaction) {
+                    ((INodeWriteTransaction)rtx).abort();
                 }
                 rtx.close();
             }
@@ -328,29 +324,6 @@ public final class Session implements ISession {
         return mSessionConfig.mUser;
     }
 
-    protected synchronized void syncLogs(final NodePageContainer mContToSync, final long mTransactionId)
-        throws TTThreadedException {
-        final ExecutorService exec = Executors.newCachedThreadPool();
-        final Collection<Future<Void>> returnVals = new ArrayList<Future<Void>>();
-        for (final Long key : mWriteTransactionStateMap.keySet()) {
-            if (key != mTransactionId) {
-                returnVals.add(exec.submit(new LogSyncer(mWriteTransactionStateMap.get(key), mContToSync)));
-            }
-        }
-        exec.shutdown();
-        if (!mSyncTransactionsReturns.containsKey(mTransactionId)) {
-            mSyncTransactionsReturns.put(mTransactionId,
-                new ConcurrentHashMap<Long, Collection<Future<Void>>>());
-        }
-
-        if (mSyncTransactionsReturns.get(mTransactionId).put(mContToSync.getComplete().getNodePageKey(),
-            returnVals) != null) {
-            throw new TTThreadedException(
-                "only one commit and therefore sync per id and nodepage is allowed!");
-        }
-
-    }
-
     protected synchronized void waitForFinishedSync(final long mTransactionKey) throws TTThreadedException {
         final Map<Long, Collection<Future<Void>>> completeVals =
             mSyncTransactionsReturns.remove(mTransactionKey);
@@ -367,24 +340,6 @@ public final class Session implements ISession {
                 }
             }
         }
-    }
-
-    class LogSyncer implements Callable<Void> {
-
-        final PageWriteTransaction mState;
-        final NodePageContainer mCont;
-
-        LogSyncer(final PageWriteTransaction paramState, final NodePageContainer paramCont) {
-            mState = paramState;
-            mCont = paramCont;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            mState.updateDateContainer(mCont);
-            return null;
-        }
-
     }
 
     protected void setLastCommittedUberPage(final UberPage paramPage) {

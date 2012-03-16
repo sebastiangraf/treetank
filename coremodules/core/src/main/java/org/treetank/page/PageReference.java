@@ -41,7 +41,6 @@ import org.treetank.page.interfaces.IPage;
  * 
  * 
  */
-@Deprecated
 public final class PageReference {
 
     /** In-memory deserialized page instance. */

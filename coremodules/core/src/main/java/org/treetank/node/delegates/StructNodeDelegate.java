@@ -28,7 +28,7 @@ package org.treetank.node.delegates;
 
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * Delegate method for all nodes building up the structure. That means that all
@@ -88,7 +88,7 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public boolean hasFirstChild() {
-        return mFirstChild != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mFirstChild != NULL_NODE;
     }
 
     /**
@@ -96,7 +96,7 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public boolean hasLeftSibling() {
-        return mLeftSibling != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mLeftSibling != NULL_NODE;
     }
 
     /**
@@ -104,7 +104,7 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public boolean hasRightSibling() {
-        return mRightSibling != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mRightSibling != NULL_NODE;
     }
 
     /**

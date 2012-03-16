@@ -46,8 +46,8 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
@@ -219,7 +219,6 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 list.add(file);
             }
         }
-        
 
         // Sort files array according to file names.
         Collections.sort(list, new Comparator<Object>() {
@@ -246,10 +245,11 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
-                final IWriteTransaction wtx = session.beginWriteTransaction();
+                final INodeWriteTransaction wtx = session.beginWriteTransaction();
                 if (first) {
                     final XMLShredder shredder =
-                        new XMLShredder(wtx, XMLShredder.createFileReader(file), EShredderInsert.ADDASFIRSTCHILD);
+                        new XMLShredder(wtx, XMLShredder.createFileReader(file),
+                            EShredderInsert.ADDASFIRSTCHILD);
                     shredder.call();
                     first = false;
                 } else {

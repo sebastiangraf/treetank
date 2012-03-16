@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.concurrent;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.comparators.AbsComparator;
@@ -39,7 +39,7 @@ import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.expr.SequenceAxis;
 import org.treetank.service.xml.xpath.expr.UnionAxis;
 import org.treetank.service.xml.xpath.filter.DupFilterAxis;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>ConcurrentAxisHelper</h1>
@@ -79,7 +79,7 @@ public class ConcurrentAxisHelper implements Runnable {
      * @param rtx
      *            Transaction to operate with.
      */
-    public ConcurrentAxisHelper(final IReadTransaction rtx, final AbsAxis axis,
+    public ConcurrentAxisHelper(final INodeReadTransaction rtx, final AbsAxis axis,
         final BlockingQueue<Long> results) {
         mAxis = axis;
         mResults = results;
@@ -113,7 +113,7 @@ public class ConcurrentAxisHelper implements Runnable {
 
         try {
             // Mark end of result sequence by the NULL_NODE_KEY
-            mResults.put((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+            mResults.put(NULL_NODE);
         } catch (final InterruptedException mExp) {
             mExp.printStackTrace();
         }

@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 
 /**
  * <h1>NestedFilter</h1>
@@ -48,7 +48,7 @@ public class NestedFilter extends AbsFilter {
      * @param axisTest
      *            Test to perform for each node found with axis.
      */
-    public NestedFilter(final IReadTransaction rtx, final AbsFilter... axisTest) {
+    public NestedFilter(final INodeReadTransaction rtx, final AbsFilter... axisTest) {
 
         super(rtx);
         mFilter = axisTest;

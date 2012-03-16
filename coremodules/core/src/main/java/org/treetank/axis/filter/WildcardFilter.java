@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
@@ -59,7 +59,7 @@ public class WildcardFilter extends AbsFilter {
      *            defines, if the specified part is the prefix, or the local
      *            name (true, if it is the local name)
      */
-    public WildcardFilter(final IReadTransaction rtx, final String mKnownPart, final boolean mIsName) {
+    public WildcardFilter(final INodeReadTransaction rtx, final String mKnownPart, final boolean mIsName) {
         super(rtx);
         this.mIsName = mIsName;
         mKnownPartKey = getTransaction().keyForName(mKnownPart);

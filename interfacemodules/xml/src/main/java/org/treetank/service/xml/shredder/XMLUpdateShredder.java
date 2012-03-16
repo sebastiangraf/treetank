@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.shredder;
 
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -50,8 +52,8 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
@@ -59,7 +61,6 @@ import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.settings.EFixed;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -234,7 +235,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      */
     @SuppressWarnings("unchecked")
-    public XMLUpdateShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
+    public XMLUpdateShredder(final INodeWriteTransaction paramWtx, final XMLEventReader paramReader,
         final EShredderInsert paramAddAsFirstChild, final Object paramData, final EShredderCommit paramCommit)
         throws TTUsageException, TTIOException {
         super(paramWtx, paramReader, paramAddAsFirstChild);
@@ -293,7 +294,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             } else {
                 if (mWtx.getNode().getKind() == ENode.ROOT_KIND) {
                     // Find the start key for the update operation.
-                    long startkey = (Long)EFixed.ROOT_NODE_KEY.getStandardProperty() + 1;
+                    long startkey = ROOT_NODE + 1;
                     while (!mWtx.moveTo(startkey)) {
                         startkey++;
                     }
@@ -1406,7 +1407,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             final IDatabase db = Database.openDatabase(target);
             db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
             final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
-            final IWriteTransaction wtx = session.beginWriteTransaction();
+            final INodeWriteTransaction wtx = session.beginWriteTransaction();
             final XMLEventReader reader = createFileReader(new File(args[0]));
             final XMLUpdateShredder shredder =
                 new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD, new File(args[0]),

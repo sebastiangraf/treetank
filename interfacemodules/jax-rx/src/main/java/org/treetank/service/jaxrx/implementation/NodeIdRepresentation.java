@@ -42,9 +42,9 @@ import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.RestXPathProcessor;
@@ -231,7 +231,7 @@ public class NodeIdRepresentation {
 		synchronized (resourceName) {
 			ISession session = null;
 			IDatabase database = null;
-			IWriteTransaction wtx = null;
+			INodeWriteTransaction wtx = null;
 			boolean abort = false;
 			if (WorkerHelper.checkExistingResource(resourceName)) {
 				try {
@@ -284,7 +284,7 @@ public class NodeIdRepresentation {
 		synchronized (resourceName) {
 			ISession session = null;
 			IDatabase database = null;
-			IWriteTransaction wtx = null;
+			INodeWriteTransaction wtx = null;
 			boolean abort = false;
 			if (WorkerHelper.checkExistingResource(resourceName)) {
 				try {
@@ -346,7 +346,7 @@ public class NodeIdRepresentation {
 			throws JaxRxException {
 		ISession session = null;
 		IDatabase database = null;
-		IWriteTransaction wtx = null;
+		INodeWriteTransaction wtx = null;
 		synchronized (resourceName) {
 			boolean abort;
 			if (WorkerHelper.checkExistingResource(resourceName)) {
@@ -519,7 +519,7 @@ public class NodeIdRepresentation {
 		if (WorkerHelper.checkExistingResource(resource)) {
 			ISession session = null;
 			IDatabase database = null;
-			IReadTransaction rtx = null;
+			INodeReadTransaction rtx = null;
 			try {
 				database = Database.openDatabase(STOREDBPATH);
 				session = database.getSession(new SessionConfiguration.Builder(

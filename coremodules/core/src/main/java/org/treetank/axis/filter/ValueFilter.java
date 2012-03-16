@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
 import org.treetank.utils.TypedValue;
 
@@ -51,7 +51,7 @@ public class ValueFilter extends AbsFilter {
      * @param mValue
      *            Value to find.
      */
-    public ValueFilter(final IReadTransaction rtx, final byte[] mValue) {
+    public ValueFilter(final INodeReadTransaction rtx, final byte[] mValue) {
         super(rtx);
         this.mValue = mValue;
     }
@@ -64,7 +64,7 @@ public class ValueFilter extends AbsFilter {
      * @param mValue
      *            Value to find.
      */
-    public ValueFilter(final IReadTransaction rtx, final String mValue) {
+    public ValueFilter(final INodeReadTransaction rtx, final String mValue) {
         this(rtx, TypedValue.getBytes(mValue));
     }
 
@@ -76,7 +76,7 @@ public class ValueFilter extends AbsFilter {
      * @param mValue
      *            Value to find.
      */
-    public ValueFilter(final IReadTransaction rtx, final int mValue) {
+    public ValueFilter(final INodeReadTransaction rtx, final int mValue) {
         this(rtx, TypedValue.getBytes(mValue));
     }
 
@@ -88,7 +88,7 @@ public class ValueFilter extends AbsFilter {
      * @param mValue
      *            Value to find.
      */
-    public ValueFilter(final IReadTransaction rtx, final long mValue) {
+    public ValueFilter(final INodeReadTransaction rtx, final long mValue) {
         this(rtx, TypedValue.getBytes(mValue));
     }
 

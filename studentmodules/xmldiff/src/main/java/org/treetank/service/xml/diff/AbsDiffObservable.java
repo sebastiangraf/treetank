@@ -30,7 +30,7 @@ package org.treetank.service.xml.diff;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
@@ -45,10 +45,10 @@ import org.treetank.service.xml.diff.DiffFactory.EDiff;
 abstract class AbsDiffObservable implements IDiffObservable {
 
     /** {@link IReadTransaction} on new revision. */
-    transient IReadTransaction mNewRtx;
+    transient INodeReadTransaction mNewRtx;
 
     /** {@link IReadTransaction} on old revision. */
-    transient IReadTransaction mOldRtx;
+    transient INodeReadTransaction mOldRtx;
 
     /**
      * {@link Set} of observers, which want to be notified of the encountered

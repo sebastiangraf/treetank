@@ -27,9 +27,9 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 /**
  * <h1>AncestorAxis</h1>
@@ -51,7 +51,7 @@ public class AncestorAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public AncestorAxis(final IReadTransaction rtx) {
+    public AncestorAxis(final INodeReadTransaction rtx) {
         super(rtx);
     }
 
@@ -63,7 +63,7 @@ public class AncestorAxis extends AbsAxis {
      * @param mIncludeSelf
      *            Is self included?
      */
-    public AncestorAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
+    public AncestorAxis(final INodeReadTransaction rtx, final boolean mIncludeSelf) {
         super(rtx, mIncludeSelf);
     }
 
@@ -91,7 +91,7 @@ public class AncestorAxis extends AbsAxis {
 
         if (getTransaction().getNode().getKind() != ENode.ROOT_KIND
             && getTransaction().getNode().hasParent()
-            && getTransaction().getNode().getParentKey() != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
+            && getTransaction().getNode().getParentKey() != ROOT_NODE) {
             getTransaction().moveToParent();
             return true;
         }

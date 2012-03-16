@@ -31,8 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.treetank.access.AbsVisitorSupport;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
@@ -46,10 +45,10 @@ import org.treetank.node.interfaces.INode;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class LabelFMESVisitor extends AbsVisitorSupport {
+public final class LabelFMESVisitor {
 
     /** {@link IReadTransaction} implementation. */
-    private final IReadTransaction mRtx;
+    private final INodeReadTransaction mRtx;
 
     /** For each node type: list of inner nodes. */
     private final Map<ENode, List<INode>> mLabels;
@@ -72,7 +71,6 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
     }
 
     /** {@inheritDoc} */
-    @Override
     public void visit(final ElementNode paramNode) {
         final long nodeKey = paramNode.getNodeKey();
         mRtx.moveTo(nodeKey);
@@ -96,7 +94,6 @@ public final class LabelFMESVisitor extends AbsVisitorSupport {
     }
 
     /** {@inheritDoc} */
-    @Override
     public void visit(final TextNode paramNode) {
         mRtx.moveTo(paramNode.getNodeKey());
         addLeafLabel();

@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.expr;
 
 import java.util.List;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.utils.TypedValue;
@@ -62,7 +62,7 @@ public class EveryExpr extends AbsExpression {
      *            condition every item of the variable results must satisfy in
      *            order to evaluate expression to true
      */
-    public EveryExpr(final IReadTransaction rtx, final List<AbsAxis> mVars, final AbsAxis mSatisfy) {
+    public EveryExpr(final INodeReadTransaction rtx, final List<AbsAxis> mVars, final AbsAxis mSatisfy) {
 
         super(rtx);
         this.mVars = mVars;

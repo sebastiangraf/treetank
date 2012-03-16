@@ -28,7 +28,7 @@ package org.treetank.node.delegates;
 
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -204,7 +204,7 @@ public class NodeDelegate implements INode {
      */
     @Override
     public boolean hasParent() {
-        return mParentKey != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return mParentKey != NULL_NODE;
     }
 
 }

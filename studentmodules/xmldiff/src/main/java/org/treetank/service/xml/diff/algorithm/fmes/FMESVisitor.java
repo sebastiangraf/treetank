@@ -28,8 +28,7 @@ package org.treetank.service.xml.diff.algorithm.fmes;
 
 import java.util.Map;
 
-import org.treetank.access.AbsVisitorSupport;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ElementNode;
@@ -42,10 +41,10 @@ import org.treetank.node.interfaces.INode;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class FMESVisitor extends AbsVisitorSupport {
+public final class FMESVisitor {
 
     /** {@link IReadTransaction} reference. */
-    private final IReadTransaction mRtx;
+    private final INodeReadTransaction mRtx;
 
     /** Determines if nodes are in order. */
     private final Map<INode, Boolean> mInOrder;
@@ -76,7 +75,6 @@ public final class FMESVisitor extends AbsVisitorSupport {
     }
 
     /** {@inheritDoc} */
-    @Override
     public void visit(final ElementNode paramNode) {
         final long nodeKey = paramNode.getNodeKey();
         mRtx.moveTo(nodeKey);
@@ -119,7 +117,6 @@ public final class FMESVisitor extends AbsVisitorSupport {
     }
 
     /** {@inheritDoc} */
-    @Override
     public void visit(final TextNode paramNode) {
         final long nodeKey = paramNode.getNodeKey();
         mRtx.moveTo(nodeKey);

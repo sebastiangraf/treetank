@@ -33,12 +33,12 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.treetank.access.Database;
-import org.treetank.access.WriteTransactionState;
+import org.treetank.access.PageWriteTransaction;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.node.ElementNode;
 import org.xml.sax.ContentHandler;
@@ -86,7 +86,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /** {@inheritDoc} */
     @Override
-    protected void emitStartElement(final IReadTransaction rtx) {
+    protected void emitStartElement(final INodeReadTransaction rtx) {
         switch (rtx.getNode().getKind()) {
         case ROOT_KIND:
             break;
@@ -103,11 +103,11 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /** {@inheritDoc} */
     @Override
-    protected void emitEndElement(final IReadTransaction rtx) {
+    protected void emitEndElement(final INodeReadTransaction rtx) {
         final QName qName = rtx.getQNameOfCurrentNode();
         final String mURI = qName.getNamespaceURI();
         try {
-            mContHandler.endElement(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName));
+            mContHandler.endElement(mURI, qName.getLocalPart(), PageWriteTransaction.buildName(qName));
         } catch (final SAXException exc) {
             exc.printStackTrace();
         }
@@ -142,7 +142,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      * @param paramRtx
      *            Read Transaction
      */
-    private void generateElement(final IReadTransaction paramRtx) {
+    private void generateElement(final INodeReadTransaction paramRtx) {
         final AttributesImpl atts = new AttributesImpl();
         final long key = paramRtx.getNode().getNodeKey();
 
@@ -167,19 +167,19 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
                 paramRtx.moveToAttribute(i);
                 final QName qName = paramRtx.getQNameOfCurrentNode();
                 final String mURI = qName.getNamespaceURI();
-                atts.addAttribute(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName),
-                    paramRtx.getTypeOfCurrentNode(), paramRtx.getValueOfCurrentNode());
+                atts.addAttribute(mURI, qName.getLocalPart(), PageWriteTransaction.buildName(qName), paramRtx
+                    .getTypeOfCurrentNode(), paramRtx.getValueOfCurrentNode());
                 paramRtx.moveTo(key);
             }
 
             // Create SAX events.
             final QName qName = paramRtx.getQNameOfCurrentNode();
-            mContHandler.startElement(qName.getNamespaceURI(), qName.getLocalPart(), WriteTransactionState
+            mContHandler.startElement(qName.getNamespaceURI(), qName.getLocalPart(), PageWriteTransaction
                 .buildName(qName), atts);
 
             // Empty elements.
             if (!((ElementNode)paramRtx.getNode()).hasFirstChild()) {
-                mContHandler.endElement(qName.getNamespaceURI(), qName.getLocalPart(), WriteTransactionState
+                mContHandler.endElement(qName.getNamespaceURI(), qName.getLocalPart(), PageWriteTransaction
                     .buildName(qName));
             }
         } catch (final SAXException exc) {
@@ -193,7 +193,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      * @param mRtx
      *            Read Transaction.
      */
-    private void generateText(final IReadTransaction paramRtx) {
+    private void generateText(final INodeReadTransaction paramRtx) {
         try {
             mContHandler.characters(paramRtx.getValueOfCurrentNode().toCharArray(), 0, paramRtx
                 .getValueOfCurrentNode().length());

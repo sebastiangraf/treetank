@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
@@ -55,7 +55,7 @@ public class NodeComp extends AbsComparator {
      * @param mComp
      *            comparison kind
      */
-    public NodeComp(final IReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
+    public NodeComp(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
         final CompKind mComp) {
 
         super(rtx, mOperand1, mOperand2, mComp);
@@ -67,7 +67,7 @@ public class NodeComp extends AbsComparator {
     @Override
     protected AtomicValue[] atomize(final AbsAxis mOperand) throws TTXPathException {
 
-        final IReadTransaction rtx = getTransaction();
+        final INodeReadTransaction rtx = getTransaction();
         // store item key as atomic value
         final AtomicValue mAtomized =
             new AtomicValue(TypedValue.getBytes(((Long)rtx.getNode().getNodeKey()).toString()), rtx

@@ -28,9 +28,8 @@ package org.treetank.axis;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import org.treetank.api.IReadTransaction;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import org.treetank.api.INodeReadTransaction;
 
 /**
  * Iterates over {@link AbsStructuralNode}s in a breath first traversal.
@@ -52,7 +51,7 @@ public final class LevelOrderAxis extends AbsAxis {
      * @param paramRtx
      *            exclusive (immutable) trx to iterate with
      */
-    public LevelOrderAxis(final IReadTransaction paramRtx) {
+    public LevelOrderAxis(final INodeReadTransaction paramRtx) {
         super(paramRtx);
     }
 
@@ -64,7 +63,7 @@ public final class LevelOrderAxis extends AbsAxis {
      * @param paramIncludeSelf
      *            determines if self included
      */
-    public LevelOrderAxis(final IReadTransaction paramRtx, final boolean paramIncludeSelf) {
+    public LevelOrderAxis(final INodeReadTransaction paramRtx, final boolean paramIncludeSelf) {
         super(paramRtx, paramIncludeSelf);
     }
 
@@ -83,7 +82,7 @@ public final class LevelOrderAxis extends AbsAxis {
             } else if (getTransaction().getStructuralNode().hasFirstChild()) {
                 mNextKey = getTransaction().getStructuralNode().getFirstChildKey();
             } else {
-                mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+                mNextKey = NULL_NODE;
             }
         }
     }
@@ -94,7 +93,7 @@ public final class LevelOrderAxis extends AbsAxis {
         resetToLastKey();
 
         // Fail if there is no node anymore.
-        if (mNextKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (mNextKey == NULL_NODE) {
             resetToStartKey();
             return false;
         }
@@ -124,7 +123,7 @@ public final class LevelOrderAxis extends AbsAxis {
         }
 
         // Then end.
-        mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        mNextKey = NULL_NODE;
         return true;
     }
 

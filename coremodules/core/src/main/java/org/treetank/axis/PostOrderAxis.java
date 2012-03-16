@@ -29,9 +29,10 @@ package org.treetank.axis;
 
 import java.util.Stack;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.settings.EFixed;
+
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>PostOrder</h1>
@@ -54,7 +55,7 @@ public class PostOrderAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public PostOrderAxis(final IReadTransaction rtx) {
+    public PostOrderAxis(final INodeReadTransaction rtx) {
         super(rtx);
     }
 
@@ -65,7 +66,7 @@ public class PostOrderAxis extends AbsAxis {
     public final void reset(final long mNodeKey) {
         super.reset(mNodeKey);
         mLastParent = new Stack<Long>();
-        mLastParent.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        mLastParent.push(NULL_NODE);
         mNextKey = mNodeKey;
     }
 
@@ -76,7 +77,7 @@ public class PostOrderAxis extends AbsAxis {
     public boolean hasNext() {
         resetToLastKey();
         long key = mNextKey;
-        if (key != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (key != NULL_NODE) {
             getTransaction().moveTo(mNextKey);
             while (((IStructNode)getTransaction().getNode()).hasFirstChild() && key != mLastParent.peek()) {
                 mLastParent.push(key);

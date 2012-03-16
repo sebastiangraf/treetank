@@ -40,7 +40,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
@@ -60,7 +60,7 @@ public final class XPathWriteTransactionTest {
 
     private ISession session;
 
-    private IWriteTransaction wtx;
+    private INodeWriteTransaction wtx;
 
     private IDatabase database;
 

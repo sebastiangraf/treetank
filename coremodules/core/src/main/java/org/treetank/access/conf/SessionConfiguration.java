@@ -54,9 +54,9 @@ public final class SessionConfiguration {
     // END STATIC STANDARD FIELDS
 
     // MEMBERS FOR FLEXIBLE FIELDS
-    /** Numbers of allowed IWriteTransaction Instances. */
+    /** Numbers of allowed INodeWriteTransaction Instances. */
     public final int mWtxAllowed;
-    /** Numbers of allowed IWriteTransaction Instances. */
+    /** Numbers of allowed INodeWriteTransaction Instances. */
     public final int mRtxAllowed;
     /** Number of node modifications until an automatic commit occurs. */
     public final int mCommitThreshold;
@@ -128,10 +128,10 @@ public final class SessionConfiguration {
      */
     public static final class Builder {
 
-        /** Numbers of allowed IWriteTransaction Instances. */
+        /** Numbers of allowed INodeWriteTransaction Instances. */
         private int mWtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
 
-        /** Numbers of allowed IWriteTransaction Instances. */
+        /** Numbers of allowed INodeWriteTransaction Instances. */
         private int mRtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
 
         /** Number of node modifications until an automatic commit occurs. */

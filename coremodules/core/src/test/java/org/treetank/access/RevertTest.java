@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
 
@@ -58,7 +58,7 @@ public final class RevertTest {
 
     @Test
     public void test() throws AbsTTException {
-        IWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
         assertEquals(0L, wtx.getRevisionNumber());

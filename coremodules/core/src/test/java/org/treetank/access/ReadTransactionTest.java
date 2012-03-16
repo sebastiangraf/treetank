@@ -39,7 +39,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
@@ -70,7 +70,7 @@ public class ReadTransactionTest {
         db.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH2.getConfig())
             .build());
         final ISession session = db.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final INodeReadTransaction rtx = session.beginReadTransaction();
         rtx.getRevisionNumber();
         rtx.close();
         session.close();
@@ -91,11 +91,11 @@ public class ReadTransactionTest {
     @Test
     public void testConventions() throws AbsTTException {
 
-        // IReadTransaction Convention 1.
+        // INodeReadTransaction Convention 1.
         assertEquals(true, holder.getRtx().moveToDocumentRoot());
         long key = holder.getRtx().getNode().getNodeKey();
 
-        // IReadTransaction Convention 2.
+        // INodeReadTransaction Convention 2.
         assertEquals(holder.getRtx().getNode().hasParent(), holder.getRtx().moveToParent());
         assertEquals(key, holder.getRtx().getNode().getNodeKey());
 

@@ -29,9 +29,8 @@ package org.treetank.access;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.IDatabase;
-import org.treetank.api.IReadTransaction;
-import org.treetank.api.IWriteTransaction;
+import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.IPageWriteTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
@@ -48,8 +47,6 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.page.UberPage;
-import org.treetank.settings.EFixed;
-import org.treetank.utils.ItemList;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -65,7 +62,7 @@ import org.treetank.utils.TypedValue;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public class NodeWriteTransaction extends NodeReadTransaction implements IWriteTransaction {
+public class NodeWriteTransaction extends NodeReadTransaction implements INodeWriteTransaction {
 
     /**
      * How is the Hash for this storage computed?
@@ -113,7 +110,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
     protected NodeWriteTransaction(final long paramTransactionID, final Session paramSessionState,
-        final PageWriteTransaction paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
+        final IPageWriteTransaction paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
         super(paramSessionState, paramTransactionID, paramTransactionState);
 
@@ -143,7 +140,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
             checkAccessAndCommit();
 
             final long parentKey = getCurrentNode().getNodeKey();
-            final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            final long leftSibKey = NULL_NODE;
             final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQName);
@@ -155,26 +152,6 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
             return node.getNodeKey();
         } else {
             throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
-        }
-    }
-
-    /**
-     * Adapt hashes for move operation ("remove" phase).
-     * 
-     * @param paramNodeToMove
-     *            node which implements {@link IStructNode} and is moved
-     */
-    private void adaptHashesForMove(final IStructNode paramNodeToMove) {
-        assert paramNodeToMove != null;
-        setCurrentNode(paramNodeToMove);
-        // while (((AbsStructNode)getCurrentNode()).hasFirstChild()) {
-        // moveToFirstChild();
-        // }
-        try {
-            adaptHashesWithRemove();
-        } catch (final TTIOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
@@ -221,7 +198,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
             final long parentKey = getCurrentNode().getNodeKey();
-            final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+            final long leftSibKey = NULL_NODE;
             final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
@@ -683,9 +660,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
      * 
      * @return The state of this transaction.
      */
-    @Override
-    public PageWriteTransaction getTransactionState() {
-        return (PageWriteTransaction)super.getTransactionState();
+    private PageWriteTransaction getTransactionState() {
+        return (PageWriteTransaction)super.mPageReadTransaction;
     }
 
     /**
@@ -925,52 +901,5 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
             }
         } while (moveTo(getCurrentNode().getParentKey()));
         setCurrentNode(startNode);
-    }
-
-    /**
-     * Get an instance from a {@link IReadTransaction} transaction
-     * implementation.
-     * 
-     * @param paramNodeKey
-     *            node key of the root node of the subtree to copy
-     * @param paramRevision
-     *            revision from which to copy a subtree
-     * @param paramDatabase
-     *            database reference which implements the {@link IDatabase} interface
-     * @return reference on an implementation of the {@link IReadTransaction} interface
-     * @throws AbsTTException
-     *             if setup of Treetank fails
-     */
-    private IReadTransaction getTransaction(final long paramRevision, final long paramNodeKey)
-        throws AbsTTException {
-        checkParams(paramNodeKey, paramRevision);
-        final IReadTransaction rtx = mSession.beginReadTransaction(paramRevision, new ItemList());
-        rtx.moveTo(paramNodeKey);
-        if (rtx.getNode().getKind() != ENode.TEXT_KIND || rtx.getNode().getKind() != ENode.ELEMENT_KIND) {
-            throw new IllegalStateException("Node to insert must be a structural node (Text or Element)!");
-        }
-        return rtx;
-    }
-
-    /**
-     * Check parameters.
-     * 
-     * @param paramNodeKey
-     *            node key of the root node of the subtree to copy
-     * @param paramRevision
-     *            revision from which to copy a subtree
-     * @param paramDatabase
-     *            database reference which implements the {@link IDatabase} interface
-     * @throws IllegalArgumentException
-     *             if an invalid node key is specified
-     * @throws NullPointerException
-     *             if the database reference is null
-     */
-    private void checkParams(final long paramNodeKey, final long paramRevision) {
-        if (paramNodeKey < 1) {
-            throw new IllegalArgumentException("Node key parameter of copied subtree root must be > 1!");
-        }
-
-        mSession.assertAccess(paramRevision);
     }
 }

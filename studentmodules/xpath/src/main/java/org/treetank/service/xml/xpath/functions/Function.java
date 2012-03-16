@@ -30,7 +30,7 @@ package org.treetank.service.xml.xpath.functions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.ENode;
@@ -62,7 +62,7 @@ public class Function {
         throw new IllegalStateException("This should not happen!"); // TODO!!
     }
 
-    public static boolean empty(final IReadTransaction rtx, final AbsAxis axis) {
+    public static boolean empty(final INodeReadTransaction rtx, final AbsAxis axis) {
 
         final boolean result = !axis.hasNext();
 
@@ -71,7 +71,7 @@ public class Function {
         return true;
     }
 
-    public static boolean exactlyOne(final IReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
+    public static boolean exactlyOne(final INodeReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
 
         if (axis.hasNext()) {
             if (axis.hasNext()) {
@@ -89,7 +89,7 @@ public class Function {
         return true;
     }
 
-    public static boolean exists(final IReadTransaction rtx, final AbsAxis axis) {
+    public static boolean exists(final INodeReadTransaction rtx, final AbsAxis axis) {
 
         final boolean result = axis.hasNext();
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(result));
@@ -122,7 +122,7 @@ public class Function {
      * @return true if sucessfull, false otherwise
      * @throws TTXPathException
      */
-    public static boolean fnBoolean(final IReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
+    public static boolean fnBoolean(final INodeReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
 
         final boolean ebv = ebv(axis);
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(ebv));
@@ -144,7 +144,7 @@ public class Function {
      *            The sequence to atomize.
      * @return true, if an atomic value can be returned
      */
-    public static boolean fnData(final IReadTransaction rtx, final AbsAxis axis) {
+    public static boolean fnData(final INodeReadTransaction rtx, final AbsAxis axis) {
 
         if (axis.hasNext()) {
 
@@ -186,7 +186,7 @@ public class Function {
      * @return true, if current item is a node that has the nilled property
      *         (only elements)
      */
-    public static boolean fnNilled(final IReadTransaction rtx, final AbsAxis axis) {
+    public static boolean fnNilled(final INodeReadTransaction rtx, final AbsAxis axis) {
 
         if (axis.hasNext() && rtx.getNode().getKind() == ENode.ELEMENT_KIND) {
             final boolean nilled = false; // TODO how is the nilled property
@@ -213,7 +213,7 @@ public class Function {
      *            The sequence, containing the node, to return its QName
      * @return true, if node has a name
      */
-    public static boolean fnNodeName(final IReadTransaction rtx, final AbsAxis axis) {
+    public static boolean fnNodeName(final INodeReadTransaction rtx, final AbsAxis axis) {
 
         if (axis.hasNext()) {
 
@@ -230,7 +230,7 @@ public class Function {
 
     }
 
-    public static boolean fnnot(final IReadTransaction rtx, final AbsAxis axis) {
+    public static boolean fnnot(final INodeReadTransaction rtx, final AbsAxis axis) {
 
         if (axis.hasNext()) {
             final INode item = new AtomicValue(((IValNode)rtx.getNode()).getRawValue()[0] == 0);
@@ -251,7 +251,7 @@ public class Function {
      *            Read Transaction.
      * @return fnnumber boolean.
      */
-    public static boolean fnnumber(final IReadTransaction rtx) {
+    public static boolean fnnumber(final INodeReadTransaction rtx) {
 
         // TODO: add error handling
         final INode item =
@@ -267,7 +267,7 @@ public class Function {
         return new AtomicValue(!Boolean.parseBoolean(new String(mValue.getRawValue())));
     }
 
-    public static boolean oneOrMore(final IReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
+    public static boolean oneOrMore(final INodeReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
 
         if (!axis.hasNext()) {
             throw EXPathError.FORG0004.getEncapsulatedException();
@@ -280,7 +280,7 @@ public class Function {
         return true;
     }
 
-    public static boolean sum(final IReadTransaction rtx, final AbsAxis axis) {
+    public static boolean sum(final INodeReadTransaction rtx, final AbsAxis axis) {
 
         Double value = 0.0;
         while (axis.hasNext()) {
@@ -292,7 +292,7 @@ public class Function {
         return true;
     }
 
-    public static boolean sum(final IReadTransaction rtx, final AbsAxis axis, final AbsAxis mZero) {
+    public static boolean sum(final INodeReadTransaction rtx, final AbsAxis axis, final AbsAxis mZero) {
 
         Double value = 0.0;
         if (!axis.hasNext()) {
@@ -309,7 +309,7 @@ public class Function {
         return true;
     }
 
-    public static boolean zeroOrOne(final IReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
+    public static boolean zeroOrOne(final INodeReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
 
         final boolean result = true;
 

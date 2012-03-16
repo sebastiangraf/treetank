@@ -33,7 +33,7 @@ import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
-import org.treetank.settings.EFixed;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>TextNode</h1>
@@ -96,7 +96,7 @@ public final class TextNode implements IStructNode, IValNode, INode {
     /** {@inheritDoc} */
     @Override
     public long getFirstChildKey() {
-        return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        return NULL_NODE;
     }
 
     /**
