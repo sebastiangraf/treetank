@@ -159,26 +159,6 @@ public class NodeWriteTransaction extends NodeReadTransaction implements IWriteT
     }
 
     /**
-     * Adapt hashes for move operation ("remove" phase).
-     * 
-     * @param paramNodeToMove
-     *            node which implements {@link IStructNode} and is moved
-     */
-    private void adaptHashesForMove(final IStructNode paramNodeToMove) {
-        assert paramNodeToMove != null;
-        setCurrentNode(paramNodeToMove);
-        // while (((AbsStructNode)getCurrentNode()).hasFirstChild()) {
-        // moveToFirstChild();
-        // }
-        try {
-            adaptHashesWithRemove();
-        } catch (final TTIOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
