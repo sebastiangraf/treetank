@@ -660,7 +660,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * 
      * @return The state of this transaction.
      */
-    public PageWriteTransaction getTransactionState() {
+    private PageWriteTransaction getTransactionState() {
         return (PageWriteTransaction)super.mPageReadTransaction;
     }
 
