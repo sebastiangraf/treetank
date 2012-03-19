@@ -25,59 +25,76 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath.concurrent;
+package org.treetank.service.xml.xpath;
 
-import org.perfidix.AbstractConfig;
-import org.perfidix.element.KindOfArrangement;
-import org.perfidix.meter.AbstractMeter;
-import org.perfidix.meter.MemMeter;
-import org.perfidix.meter.Memory;
-import org.perfidix.meter.Time;
-import org.perfidix.meter.TimeMeter;
-import org.perfidix.ouput.AbstractOutput;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Config class for Perfidix test settings.
- * 
- * @author Patrick Lang, University of Konstanz
+ * <h1>ItemList</h1>
+ * <p>
+ * Data structure to store XPath items.
+ * </p>
+ * <p>
+ * This structure is used for atomic values that are needed for the evaluation of a query. They can be results
+ * of a query expression or be specified directly in the query e.g. as literals perform an arithmetic
+ * operation or a comparison.
+ * </p>
+ * <p>
+ * Since these items have to be distinguishable from nodes their key will be a negative long value (node key
+ * is always a positive long value). This value is retrieved by negate their index in the internal data
+ * structure.
+ * </p>
  */
-public class ConcurrentBenchConfig extends AbstractConfig {
+public final class ItemList {
 
     /**
-     * Number of runs.
+     * Internal storage of items.
      */
-    private final static int RUNS = 20;
+    private final List<AtomicValue> mList;
 
     /**
-     * Test units of time and memory.
+     * Constructor. Initializes the list.
      */
-    private final static AbstractMeter[] METERS = {
-        new TimeMeter(Time.Seconds), new MemMeter(Memory.Mebibyte)
-    };
+    public ItemList() {
+        mList = new ArrayList<AtomicValue>();
+    }
 
     /**
-     * Kind of output result viewer.
+     * {@inheritDoc}
      */
-    private static final AbstractOutput[] OUTPUT = {/*
-                                                     * new
-                                                     * TabularSummaryOutput()
-                                                     */};
-    /**
-     * Kind of arrangement.
-     */
-    private final static KindOfArrangement ARRAN = KindOfArrangement.SequentialMethodArrangement;
+    public int addItem(final AtomicValue mItem) {
+        final int key = mList.size();
+        mItem.setNodeKey(key);
+        // TODO: +2 is necessary, because key -1 is the NULL_NODE
+        final int itemKey = (key + 2) * (-1);
+        mItem.setNodeKey(itemKey);
+
+        mList.add(mItem);
+        return itemKey;
+    }
 
     /**
-     * Member gcProb.
+     * {@inheritDoc}
      */
-    private final static double GCPROB = 1.0d;
+    public AtomicValue getItem(int mKey) {
+
+        if (mKey < 0) {
+            mKey = mKey * (-1);
+        }
+
+        // TODO: This is necessary, because key -1 is the NULL_NODE
+        mKey = mKey - 2;
+
+        return mList.get(mKey);
+    }
 
     /**
-     * Constructor to set settings.
+     * {@inheritDoc}
      */
-    public ConcurrentBenchConfig() {
-        super(RUNS, METERS, OUTPUT, ARRAN, GCPROB);
-
+    @Override
+    public String toString() {
+        return new StringBuilder("ItemList: ").append(mList.toString()).toString();
     }
 
 }

@@ -61,6 +61,7 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
+import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.service.xml.xpath.PipelineBuilder;
 import org.treetank.service.xml.xpath.SequenceType;
 import org.treetank.service.xml.xpath.SingleType;
@@ -96,6 +97,11 @@ public final class XPathParser {
     private final PipelineBuilder mPipeBuilder;
 
     /**
+     * List to store intermediate atomics.
+     */
+    private final ItemList mToStore;
+
+    /**
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
@@ -105,9 +111,10 @@ public final class XPathParser {
      */
     public XPathParser(final INodeReadTransaction rtx, final String mQuery) {
 
+        mToStore = new ItemList();
         mRTX = rtx;
         mScanner = new XPathScanner(mQuery);
-        mPipeBuilder = new PipelineBuilder();
+        mPipeBuilder = new PipelineBuilder(mToStore);
 
     }
 

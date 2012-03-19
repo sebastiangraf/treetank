@@ -84,15 +84,18 @@ public final class PipelineBuilder {
     /** Maps a variable name to the item that the variable holds. */
     private final Map<String, AbsAxis> mVarRefMap;
 
+    /** Storing atomic results. */
+    private final ItemList mToStore;
+
     /**
      * Constructor.
      */
-    public PipelineBuilder() {
+    public PipelineBuilder(final ItemList pToStore) {
 
         mExprStack = new Stack<Stack<ExpressionSingle>>();
 
         mVarRefMap = new HashMap<String, AbsAxis>();
-
+        mToStore = pToStore;
     }
 
     /**
@@ -279,7 +282,8 @@ public final class PipelineBuilder {
         final AbsAxis paramOperandOne = getPipeStack().pop().getExpr();
 
         final CompKind kind = CompKind.fromString(mComp);
-        final AbsAxis axis = AbsComparator.getComparator(rtx, paramOperandOne, paramOperandTwo, kind, mComp);
+        final AbsAxis axis =
+            AbsComparator.getComparator(rtx, paramOperandOne, paramOperandTwo, kind, mComp, mToStore);
 
         // // TODO: use typeswitch of JAVA 7
         // if (mComp.equals("eq")) {

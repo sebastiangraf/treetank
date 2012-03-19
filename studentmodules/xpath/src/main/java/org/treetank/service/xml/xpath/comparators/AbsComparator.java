@@ -30,8 +30,8 @@ package org.treetank.service.xml.xpath.comparators;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
@@ -55,6 +55,9 @@ public abstract class AbsComparator extends AbsAxis {
     /** Is first evaluation? */
     private boolean mIsFirst;
 
+    /** Variable to store results. */
+    private final ItemList mToStore;
+
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -68,13 +71,14 @@ public abstract class AbsComparator extends AbsAxis {
      *            comparison kind
      */
     public AbsComparator(final INodeReadTransaction mRtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
-        final CompKind mComp) {
+        final CompKind mComp, final ItemList pToStore) {
 
         super(mRtx);
         this.mComp = mComp;
         this.mOperand1 = mOperand1;
         this.mOperand2 = mOperand2;
         mIsFirst = true;
+        mToStore = pToStore;
     }
 
     /**
@@ -131,9 +135,11 @@ public abstract class AbsComparator extends AbsAxis {
                         try {
                             // get comparison result
                             final boolean resultValue = compare(operandOne, operandTwo);
-                            final INode result = new AtomicValue(resultValue);
+                            final AtomicValue result = new AtomicValue(resultValue);
 
                             // add retrieved AtomicValue to item list
+
+                            mToStore.addItem(result);
                             final int itemKey = getTransaction().getItemList().addItem(result);
                             getTransaction().moveTo(itemKey);
                         } catch (TTXPathException e) {
@@ -228,15 +234,15 @@ public abstract class AbsComparator extends AbsAxis {
      */
     public static final AbsComparator getComparator(final INodeReadTransaction paramRtx,
         final AbsAxis paramOperandOne, final AbsAxis paramOperandTwo, final CompKind paramKind,
-        final String paramVal) {
+        final String paramVal, final ItemList pToStore) {
         if ("eq".equals(paramVal) || "lt".equals(paramVal) || "le".equals(paramVal) || "gt".equals(paramVal)
             || "ge".equals(paramVal)) {
-            return new ValueComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
+            return new ValueComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind, pToStore);
         } else if ("=".equals(paramVal) || "!=".equals(paramVal) || "<".equals(paramVal)
             || "<=".equals(paramVal) || ">".equals(paramVal) || ">=".equals(paramVal)) {
-            return new GeneralComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
+            return new GeneralComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind, pToStore);
         } else if ("is".equals(paramVal) || "<<".equals(paramVal) || ">>".equals(paramVal)) {
-            new NodeComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
+            new NodeComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind, pToStore);
         }
         throw new IllegalStateException(paramVal + " is not a valid comparison.");
     }

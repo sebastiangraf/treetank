@@ -32,6 +32,7 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
+import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -56,9 +57,9 @@ public class ValueComp extends AbsComparator {
      *            comparison kind
      */
     public ValueComp(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
-        final CompKind mComp) {
+        final CompKind mComp, final ItemList pToStore) {
 
-        super(rtx, mOperand1, mOperand2, mComp);
+        super(rtx, mOperand1, mOperand2, mComp, pToStore);
     }
 
     /**

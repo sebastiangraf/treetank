@@ -40,6 +40,7 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
@@ -48,14 +49,17 @@ public class NodeCompTest {
     private AbsComparator comparator;
     private Holder holder;
 
+    private ItemList list;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
+        list = new ItemList();
         comparator =
             new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
-                .getRtx(), -1), CompKind.IS);
+                .getRtx(), -1), CompKind.IS, list);
     }
 
     @After
@@ -83,7 +87,7 @@ public class NodeCompTest {
         try {
             comparator =
                 new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
-                    .getRtx(), -1), CompKind.PRE);
+                    .getRtx(), -1), CompKind.PRE, list);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
@@ -93,7 +97,7 @@ public class NodeCompTest {
         try {
             comparator =
                 new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
-                    .getRtx(), -1), CompKind.FO);
+                    .getRtx(), -1), CompKind.FO, list);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
