@@ -28,7 +28,6 @@
 package org.treetank.api;
 
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.ItemList;
 
 /**
  * <h1>ISession</h1>
@@ -37,8 +36,8 @@ import org.treetank.utils.ItemList;
  * 
  * <p>
  * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
- * can then be started from this instance. There can only be one <code>INodeWriteTransaction</code> at the time.
- * However, multiple <code>IReadTransactions</code> can coexist concurrently.
+ * can then be started from this instance. There can only be one <code>INodeWriteTransaction</code> at the
+ * time. However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
  * 
  */
@@ -65,20 +64,6 @@ public interface ISession {
     INodeReadTransaction beginReadTransaction(final long pRev) throws AbsTTException;
 
     /**
-     * Begin a read-only transaction on the given revision and store any results in the fiven
-     * {@link IItemList}.
-     * 
-     * @param pRev
-     *            Revision key to read from.
-     * @param pList
-     *            A list to store the results in.
-     * @return {@link INodeReadTransaction} instance
-     * @throws AbsTTException
-     *             If can't begin Read Transaction.
-     */
-    INodeReadTransaction beginReadTransaction(final long pRev, final ItemList pList) throws AbsTTException;
-
-    /**
      * Begin exclusive read/write transaction without auto commit.
      * 
      * @throws AbsTTException
@@ -98,7 +83,8 @@ public interface ISession {
      *             If can't begin Write Transaction.
      * @return INodeWriteTransaction instance.
      */
-    INodeWriteTransaction beginWriteTransaction(final int pMaxNodes, final int pMaxTime) throws AbsTTException;
+    INodeWriteTransaction beginWriteTransaction(final int pMaxNodes, final int pMaxTime)
+        throws AbsTTException;
 
     /**
      * Safely close session and immediately release all resources. If there are

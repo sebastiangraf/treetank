@@ -364,7 +364,7 @@ public class NodeIdRepresentationTest {
         attribute = (Attr)node.getAttributes().getNamedItem(IDNAME);
         resultNode = doc.getElementsByTagName(RESULTNAME).item(0);
         textContent = node.getTextContent();
-        System.out.println(textContent);
+
         assertEquals("Test expected city Tirane", "Tirane", textContent);
         assertNotNull("Test if wrapping is available", resultNode);
         assertNotNull("Test if node id is supported", attribute);

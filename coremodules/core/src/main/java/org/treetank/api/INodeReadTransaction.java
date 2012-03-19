@@ -36,79 +36,7 @@ import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.ItemList;
 
 /**
- * <h1>INodeReadTransaction</h1>
- * 
- * <h2>Description</h2>
- * 
- * <p>
- * Interface to access nodes based on the
- * Key/ParentKey/FirstChildKey/LeftSiblingKey/RightSiblingKey/ChildCount encoding. This encoding keeps the
- * children ordered but has no knowledge of the global node ordering. The underlying tree is accessed in a
- * cursor-like fashion.
- * </p>
- * 
- * <h2>Convention</h2>
- * 
- * <p>
- * <ol>
- * <li>Only a single thread accesses each INodeReadTransaction instance.</li>
- * <li><strong>Precondition</strong> before moving cursor:
- * <code>INodeReadTransaction.getRelatedNode().getNodeKey() == n</code>.</li>
- * <li><strong>Postcondition</strong> after moving cursor: <code>(INodeReadTransaction.moveX() == true &&
- *       INodeReadTransaction.getRelatedNode().getNodeKey() == m) ||
- *       (INodeReadTransaction.moveX() == false &&
- *       INodeReadTransaction.getRelatedNode().getNodeKey() == n)</code>.</li>
- * </ol>
- * </p>
- * 
- * <h2>User Example</h2>
- * 
- * <p>
- * 
- * <pre>
- *   final INodeReadTransaction rtx = session.beginReadTransaction();
- *   
- *   // Either test before moving...
- *   if (rtx.getRelatedNode().hasFirstChild()) {
- *     rtx.moveToFirstChild();
- *     ...
- *   }
- *   
- *   // or test after moving. Whatever, do the test!
- *   if (rtx.moveToFirstChild()) {
- *     ...
- *   }
- *   
- *   // Access local part of element.
- *   if (rtx.getRelatedNode().isElement() &amp;&amp; 
- *   rtx.getRelatedNode().getName().equalsIgnoreCase(&quot;foo&quot;) {
- *     ...
- *   }
- *   
- *   // Access value of first attribute of element.
- *   if (rtx.getRelatedNode().isElement() &amp;&amp; (rtx.getRelatedNode().getAttributeCount() &gt; 0)) {
- *     rtx.moveToAttribute(0);
- *     System.out.println(UTF.parseString(rtx.getValue()));
- *   }
- *   
- *   rtx.close();
- * </pre>
- * 
- * </p>
- * 
- * <h2>Developer Example</h2>
- * 
- * <p>
- * 
- * <pre>
- *   public final void someIReadTransactionMethod() {
- *     // This must be called to make sure the transaction is not closed.
- *     assertNotClosed();
- *     ...
- *   }
- * </pre>
- * 
- * </p>
+
  */
 public interface INodeReadTransaction {
 
@@ -263,13 +191,6 @@ public interface INodeReadTransaction {
     byte[] rawNameForKey(final int pKey);
 
     /**
-     * Get item list containing volatile items such as atoms or fragments.
-     * 
-     * @return Item list.
-     */
-    ItemList getItemList();
-
-    /**
      * Getting the current node.
      * 
      * @return the node
@@ -286,6 +207,13 @@ public interface INodeReadTransaction {
      *             If can't close Read Transaction.
      */
     void close() throws AbsTTException;
+
+    /**
+     * Get item list containing volatile items such as atoms or fragments.
+     * 
+     * @return Item list.
+     */
+    ItemList getItemList();
 
     /**
      * Is this transaction closed?

@@ -74,10 +74,8 @@ public class PageReadTransaction implements IPageReadTransaction {
 
     /** Cached name page of this revision. */
     private final RevisionRootPage mRootPage;
-
     /** Read-transaction-exclusive item list. */
     private final ItemList mItemList;
-
     /** Internal reference to cache. */
     private final ICache mCache;
 
@@ -101,15 +99,14 @@ public class PageReadTransaction implements IPageReadTransaction {
      *             if the read of the persistent storage fails
      */
     protected PageReadTransaction(final Session paramSessionState, final UberPage paramUberPage,
-        final long paramRevision, final ItemList paramItemList, final IReader paramReader)
-        throws TTIOException {
+        final long paramRevision, final IReader paramReader) throws TTIOException {
         mCache = new RAMCache();
         mSession = paramSessionState;
         mPageReader = paramReader;
         mUberPage = paramUberPage;
         mRootPage = loadRevRoot(paramRevision);
         initializeNamePage();
-        mItemList = paramItemList;
+        mItemList = new ItemList();
     }
 
     /**
@@ -136,7 +133,9 @@ public class PageReadTransaction implements IPageReadTransaction {
 
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
-
+            if (revs.length == 0) {
+                return null;
+            }
             final int mileStoneRevision = mSession.mResourceConfig.mRevisionsToRestore;
 
             // Build up the complete page.

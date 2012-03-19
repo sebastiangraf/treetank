@@ -40,9 +40,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeWriteTransaction;
 import org.treetank.api.IPageWriteTransaction;
 import org.treetank.api.ISession;
-import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTThreadedException;
@@ -53,7 +53,6 @@ import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.utils.ItemList;
 
 /**
  * <h1>Session</h1>
@@ -150,23 +149,15 @@ public final class Session implements ISession {
      */
     @Override
     public INodeReadTransaction beginReadTransaction() throws AbsTTException {
-        return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), new ItemList());
+        return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public INodeReadTransaction beginReadTransaction(final long paramRevisionKey) throws AbsTTException {
-        return beginReadTransaction(paramRevisionKey, new ItemList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized INodeReadTransaction beginReadTransaction(final long paramRevisionKey,
-        final ItemList mItemList) throws AbsTTException {
+    public synchronized INodeReadTransaction beginReadTransaction(final long paramRevisionKey)
+        throws AbsTTException {
         assertAccess(paramRevisionKey);
         // Make sure not to exceed available number of read transactions.
         try {
@@ -179,7 +170,7 @@ public final class Session implements ISession {
         // Create new read transaction.
         rtx =
             new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTransaction(
-                this, mLastCommittedUberPage, paramRevisionKey, mItemList, mFac.getReader()));
+                this, mLastCommittedUberPage, paramRevisionKey, mFac.getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {

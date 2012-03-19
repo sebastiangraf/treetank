@@ -115,6 +115,14 @@ public class NodeReadTransaction implements INodeReadTransaction {
      * {@inheritDoc}
      */
     @Override
+    public final ItemList getItemList() {
+        return mPageReadTransaction.getItemList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final long getRevisionTimestamp() throws TTIOException {
         assertNotClosed();
         return mPageReadTransaction.getActualRevisionRootPage().getRevisionTimestamp();
@@ -122,6 +130,8 @@ public class NodeReadTransaction implements INodeReadTransaction {
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws TTIOException
      */
     @Override
     public final boolean moveTo(final long paramNodeKey) {
@@ -133,7 +143,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
             final INode oldNode = mCurrentNode;
             try {
                 mCurrentNode = mPageReadTransaction.getNode(paramNodeKey);
-            } catch (final Exception e) {
+            } catch (final TTIOException exc) {
                 mCurrentNode = null;
             }
 
@@ -278,14 +288,6 @@ public class NodeReadTransaction implements INodeReadTransaction {
     public final byte[] rawNameForKey(final int paramKey) {
         assertNotClosed();
         return mPageReadTransaction.getRawName(paramKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final ItemList getItemList() {
-        return mPageReadTransaction.getItemList();
     }
 
     /**
