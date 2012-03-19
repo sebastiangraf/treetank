@@ -27,8 +27,12 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import java.util.List;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
+import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>PredicateFilterAxis</h1>
@@ -45,6 +49,8 @@ public class PredicateFilterAxis extends AbsAxis {
 
     private final AbsAxis mPredicate;
 
+    private final List<AtomicValue> mToStore;
+
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -53,11 +59,13 @@ public class PredicateFilterAxis extends AbsAxis {
      * @param predicate
      *            predicate expression
      */
-    public PredicateFilterAxis(final INodeReadTransaction rtx, final AbsAxis predicate) {
+    public PredicateFilterAxis(final INodeReadTransaction rtx, final AbsAxis predicate,
+        final List<AtomicValue> pToStore) {
 
         super(rtx);
         mIsFirst = true;
         mPredicate = predicate;
+        mToStore = pToStore;
     }
 
     /**
@@ -84,7 +92,6 @@ public class PredicateFilterAxis extends AbsAxis {
         // a predicate has to evaluate to true only once.
         if (mIsFirst) {
             mIsFirst = false;
-            mPredicate.reset(getTransaction().getNode().getNodeKey());
 
             if (mPredicate.hasNext()) {
 
@@ -115,13 +122,16 @@ public class PredicateFilterAxis extends AbsAxis {
      */
     private boolean isBooleanFalse() {
 
-        if (getTransaction().getNode().getNodeKey() >= 0) {
+         if (getTransaction().getNode().getNodeKey() >= 0) {
+//        if (mToStore.isEmpty()) {
             return false;
         } else { // is AtomicValue
-            if (getTransaction().getNode().getTypeKey() == getTransaction().keyForName("xs:boolean")) {
+             if (getTransaction().getNode().getTypeKey() == getTransaction().keyForName("xs:boolean")) {
+//            if (mToStore.get(0).getTypeKey() == NamePageHash.generateHashForString("xs:boolean")) {
                 // atomic value of type boolean
                 // return true, if atomic values's value is false
-                return !(Boolean.parseBoolean(getTransaction().getValueOfCurrentNode()));
+                 return !(Boolean.parseBoolean(getTransaction().getValueOfCurrentNode()));
+//                return !(Boolean.parseBoolean(new String(mToStore.get(0).getRawValue())));
 
             } else {
                 return false;

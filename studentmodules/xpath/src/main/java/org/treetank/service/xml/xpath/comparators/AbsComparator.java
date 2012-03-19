@@ -27,11 +27,12 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
+import java.util.List;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
@@ -56,7 +57,7 @@ public abstract class AbsComparator extends AbsAxis {
     private boolean mIsFirst;
 
     /** Variable to store results. */
-    private final ItemList mToStore;
+    private final List<AtomicValue> mToStore;
 
     /**
      * Constructor. Initializes the internal state.
@@ -71,7 +72,7 @@ public abstract class AbsComparator extends AbsAxis {
      *            comparison kind
      */
     public AbsComparator(final INodeReadTransaction mRtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
-        final CompKind mComp, final ItemList pToStore) {
+        final CompKind mComp, final List<AtomicValue> pToStore) {
 
         super(mRtx);
         this.mComp = mComp;
@@ -139,7 +140,7 @@ public abstract class AbsComparator extends AbsAxis {
 
                             // add retrieved AtomicValue to item list
 
-                            mToStore.addItem(result);
+                            mToStore.add(result);
                             final int itemKey = getTransaction().getItemList().addItem(result);
                             getTransaction().moveTo(itemKey);
                         } catch (TTXPathException e) {
@@ -234,7 +235,7 @@ public abstract class AbsComparator extends AbsAxis {
      */
     public static final AbsComparator getComparator(final INodeReadTransaction paramRtx,
         final AbsAxis paramOperandOne, final AbsAxis paramOperandTwo, final CompKind paramKind,
-        final String paramVal, final ItemList pToStore) {
+        final String paramVal, final List<AtomicValue> pToStore) {
         if ("eq".equals(paramVal) || "lt".equals(paramVal) || "le".equals(paramVal) || "gt".equals(paramVal)
             || "ge".equals(paramVal)) {
             return new ValueComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind, pToStore);

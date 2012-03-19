@@ -30,6 +30,9 @@ package org.treetank.service.xml.xpath.comparators;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +43,6 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.ItemList;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
@@ -49,14 +51,14 @@ public class NodeCompTest {
     private AbsComparator comparator;
     private Holder holder;
 
-    private ItemList list;
+    private List<AtomicValue> list;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
-        list = new ItemList();
+        list = new ArrayList<AtomicValue>();
         comparator =
             new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
                 .getRtx(), -1), CompKind.IS, list);

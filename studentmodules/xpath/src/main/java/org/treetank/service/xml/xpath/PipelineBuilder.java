@@ -85,12 +85,12 @@ public final class PipelineBuilder {
     private final Map<String, AbsAxis> mVarRefMap;
 
     /** Storing atomic results. */
-    private final ItemList mToStore;
+    private final List<AtomicValue> mToStore;
 
     /**
      * Constructor.
      */
-    public PipelineBuilder(final ItemList pToStore) {
+    public PipelineBuilder(final List<AtomicValue> pToStore) {
 
         mExprStack = new Stack<Stack<ExpressionSingle>>();
 
@@ -579,7 +579,7 @@ public final class PipelineBuilder {
             }
         }
 
-        getExpression().add(new PredicateFilterAxis(mTransaction, mPredicate));
+        getExpression().add(new PredicateFilterAxis(mTransaction, mPredicate, mToStore));
 
     }
 
