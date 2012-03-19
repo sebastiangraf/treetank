@@ -111,8 +111,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         final IWriter paramWriter, final long paramRepresentRev, final long paramStoreRev)
         throws TTIOException {
         mPageReadTransaction =
-            new PageReadTransaction(paramSessionState, paramUberPage, paramRepresentRev, new ItemList(),
-                paramWriter);
+            new PageReadTransaction(paramSessionState, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mLog = new TransactionLogCache(paramSessionState.mResourceConfig.mPath, paramStoreRev);
         mPageWriter = paramWriter;
@@ -612,16 +611,16 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public ItemList getItemList() {
-        return mPageReadTransaction.getItemList();
+    public UberPage getUberPage() {
+        return mPageReadTransaction.getUberPage();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UberPage getUberPage() {
-        return mPageReadTransaction.getUberPage();
+    public ItemList getItemList() {
+        return mPageReadTransaction.getItemList();
     }
 
 }

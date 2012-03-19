@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +36,6 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 public class DocumentNodeAxisTest {
 

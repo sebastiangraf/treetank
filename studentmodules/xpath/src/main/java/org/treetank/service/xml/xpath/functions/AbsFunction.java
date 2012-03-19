@@ -104,8 +104,8 @@ public abstract class AbsFunction extends AbsExpression {
      * @throws TTXPathException
      *             if the verify process is failing.
      */
-    public AbsFunction(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min, final int max,
-        final int returnType) throws TTXPathException {
+    public AbsFunction(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min,
+        final int max, final int returnType) throws TTXPathException {
 
         super(rtx);
         mArgs = args;

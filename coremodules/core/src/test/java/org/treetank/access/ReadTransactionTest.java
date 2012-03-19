@@ -104,7 +104,6 @@ public class ReadTransactionTest {
         assertEquals(1L, holder.getRtx().getNode().getNodeKey());
 
         assertEquals(false, holder.getRtx().moveTo(Integer.MAX_VALUE));
-        assertEquals(false, holder.getRtx().moveTo(Integer.MIN_VALUE));
         assertEquals(1L, holder.getRtx().getNode().getNodeKey());
 
         assertEquals(((IStructNode)holder.getRtx().getNode()).hasRightSibling(), holder.getRtx()

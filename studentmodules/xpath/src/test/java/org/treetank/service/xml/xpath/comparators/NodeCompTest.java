@@ -30,6 +30,9 @@ package org.treetank.service.xml.xpath.comparators;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,14 +51,17 @@ public class NodeCompTest {
     private AbsComparator comparator;
     private Holder holder;
 
+    private List<AtomicValue> list;
+
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
+        list = new ArrayList<AtomicValue>();
         comparator =
             new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
-                .getRtx(), -1), CompKind.IS);
+                .getRtx(), -1), CompKind.IS, list);
     }
 
     @After
@@ -83,7 +89,7 @@ public class NodeCompTest {
         try {
             comparator =
                 new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
-                    .getRtx(), -1), CompKind.PRE);
+                    .getRtx(), -1), CompKind.PRE, list);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
@@ -93,7 +99,7 @@ public class NodeCompTest {
         try {
             comparator =
                 new NodeComp(holder.getRtx(), new LiteralExpr(holder.getRtx(), -2), new LiteralExpr(holder
-                    .getRtx(), -1), CompKind.FO);
+                    .getRtx(), -1), CompKind.FO, list);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
@@ -105,7 +111,7 @@ public class NodeCompTest {
     @Test
     public void testAtomize() throws TTXPathException {
 
-        AbsAxis axis = new LiteralExpr(holder.getRtx(), -2);
+        AbsAxis axis = new LiteralExpr(holder.getRtx(), 0);
         axis.hasNext(); // this is needed, because hasNext() has already been
         // called
         AtomicValue[] value = comparator.atomize(axis);

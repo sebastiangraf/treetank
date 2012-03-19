@@ -61,9 +61,9 @@ public class GeneralComp extends AbsComparator {
      *            comparison kind
      */
     public GeneralComp(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
-        final CompKind mCom) {
+        final CompKind mCom, final List<AtomicValue> pToStore) {
 
-        super(rtx, mOperand1, mOperand2, mCom);
+        super(rtx, mOperand1, mOperand2, mCom, pToStore);
     }
 
     /**
