@@ -27,11 +27,12 @@
 
 package org.treetank.service.xml.xpath.concurrent;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.EXPathError;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>ConcurrentIntersectAxis</h1>
@@ -68,7 +69,8 @@ public class ConcurrentIntersectAxis extends AbsAxis {
      * @param operand2
      *            Second operand
      */
-    public ConcurrentIntersectAxis(final INodeReadTransaction rtx, final AbsAxis operand1, final AbsAxis operand2) {
+    public ConcurrentIntersectAxis(final INodeReadTransaction rtx, final AbsAxis operand1,
+        final AbsAxis operand2) {
 
         super(rtx);
         mOp1 = new ConcurrentAxis(rtx, operand1);

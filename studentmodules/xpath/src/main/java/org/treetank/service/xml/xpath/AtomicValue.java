@@ -27,11 +27,12 @@
 
 package org.treetank.service.xml.xpath;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.types.Type;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 

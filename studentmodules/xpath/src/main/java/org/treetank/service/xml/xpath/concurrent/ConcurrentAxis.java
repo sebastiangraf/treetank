@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.xpath.concurrent;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +36,6 @@ import java.util.concurrent.Executors;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>ConcurrentAxis</h1>

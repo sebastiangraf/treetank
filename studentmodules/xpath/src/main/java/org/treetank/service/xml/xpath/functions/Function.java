@@ -71,7 +71,8 @@ public class Function {
         return true;
     }
 
-    public static boolean exactlyOne(final INodeReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
+    public static boolean exactlyOne(final INodeReadTransaction rtx, final AbsAxis axis)
+        throws TTXPathException {
 
         if (axis.hasNext()) {
             if (axis.hasNext()) {
@@ -122,7 +123,8 @@ public class Function {
      * @return true if sucessfull, false otherwise
      * @throws TTXPathException
      */
-    public static boolean fnBoolean(final INodeReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
+    public static boolean fnBoolean(final INodeReadTransaction rtx, final AbsAxis axis)
+        throws TTXPathException {
 
         final boolean ebv = ebv(axis);
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(ebv));
@@ -267,7 +269,8 @@ public class Function {
         return new AtomicValue(!Boolean.parseBoolean(new String(mValue.getRawValue())));
     }
 
-    public static boolean oneOrMore(final INodeReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
+    public static boolean oneOrMore(final INodeReadTransaction rtx, final AbsAxis axis)
+        throws TTXPathException {
 
         if (!axis.hasNext()) {
             throw EXPathError.FORG0004.getEncapsulatedException();
@@ -309,7 +312,8 @@ public class Function {
         return true;
     }
 
-    public static boolean zeroOrOne(final INodeReadTransaction rtx, final AbsAxis axis) throws TTXPathException {
+    public static boolean zeroOrOne(final INodeReadTransaction rtx, final AbsAxis axis)
+        throws TTXPathException {
 
         final boolean result = true;
 
