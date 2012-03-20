@@ -37,6 +37,7 @@ import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
+import org.treetank.service.xml.xpath.axis.VariableAxis;
 
 /**
  * JUnit-test class to test the functionality of the VarRefExpr.

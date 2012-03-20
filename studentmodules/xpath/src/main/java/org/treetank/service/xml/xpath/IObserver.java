@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath.expr;
+package org.treetank.service.xml.xpath;
 
 /**
  * <h1>IObserver</h1>

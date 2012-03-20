@@ -25,55 +25,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath.expr;
+package org.treetank.service.xml.xpath.axis;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.service.xml.xpath.XPathError;
-import org.treetank.service.xml.xpath.XPathError.ErrorType;
 
 /**
- * <h1>ExceptAxis</h1>
+ * <h1>SequenceAxis</h1>
  * <p>
- * Returns the nodes of the first operand except those of the second operand. This axis takes two node
- * sequences as operands and returns a sequence containing all the nodes that occur in the first, but not in
- * the second operand.
+ * Axis that represents a sequence of singleExpressions, normally separated by a ','.
  * </p>
+ * <p>
+ * Calling hasNext() returns the results of the singleExpressions consecutively.
+ * </p>
+ * 
  */
-public class ExceptAxis extends AbsAxis {
+public class SequenceAxis extends AbsAxis {
 
-    /** First operand sequence. */
-    private final AbsAxis mOp1;
-
-    /** Second operand sequence. */
-    private final AbsAxis mOp2;
+    private final List<AbsAxis> mSeq;
+    private AbsAxis mCurrent;
+    private int mNum;
 
     /**
-     * Set that is used to determine, whether an item of the first operand is
-     * also contained in the result set of the second operand.
-     */
-    private final Set<Long> mDupSet;
-
-    /**
+     * 
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param mOperand1
-     *            First operand
-     * @param mOperand2
-     *            Second operand
+     * @param axis
+     *            The singleExpressions contained by the sequence
      */
-    public ExceptAxis(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
+    public SequenceAxis(final INodeReadTransaction rtx, final AbsAxis... axis) {
 
         super(rtx);
-        mOp1 = mOperand1;
-        mOp2 = mOperand2;
-        mDupSet = new HashSet<Long>();
-
+        mSeq = Arrays.asList(axis);
+        mNum = 0;
     }
 
     /**
@@ -81,18 +70,15 @@ public class ExceptAxis extends AbsAxis {
      */
     @Override
     public void reset(final long mNodeKey) {
-
         super.reset(mNodeKey);
-        if (mDupSet != null) {
-            mDupSet.clear();
+        if (mSeq != null) {
+            for (AbsAxis ax : mSeq) {
+                ax.reset(mNodeKey);
+            }
         }
+        mCurrent = null;
+        mNum = 0;
 
-        if (mOp1 != null) {
-            mOp1.reset(mNodeKey);
-        }
-        if (mOp2 != null) {
-            mOp2.reset(mNodeKey);
-        }
     }
 
     /**
@@ -101,31 +87,32 @@ public class ExceptAxis extends AbsAxis {
     @Override
     public boolean hasNext() {
 
-        // first all items of the second operand are stored in the set.
-        while (mOp2.hasNext()) {
-            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-                // allowed
-                throw new XPathError(ErrorType.XPTY0004);
+        resetToLastKey();
+
+        if (mCurrent != null) {
+
+            if (mCurrent.hasNext()) {
+                return true;
+            } else {
+                // necessary, because previous hasNext() changes state
+                resetToLastKey();
             }
-            mDupSet.add(getTransaction().getNode().getNodeKey());
         }
 
-        while (mOp1.hasNext()) {
-            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-                // allowed
-                throw new XPathError(ErrorType.XPTY0004);
-            }
+        while (mNum < mSeq.size()) {
 
-            // return true, if node is not already in the set, which means, that
-            // it is
-            // not also an item of the result set of the second operand
-            // sequence.
-            if (mDupSet.add(getTransaction().getNode().getNodeKey())) {
+            mCurrent = mSeq.get(mNum++);
+
+            // mCurrent.getTransaction().moveTo(getTransaction().getNodeKey());
+            mCurrent.reset(getTransaction().getNode().getNodeKey());
+            if (mCurrent.hasNext()) {
                 return true;
             }
         }
 
+        resetToStartKey();
         return false;
+
     }
 
 }

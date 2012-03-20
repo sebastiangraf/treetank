@@ -42,8 +42,8 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.XPathError;
+import org.treetank.service.xml.xpath.axis.SequenceAxis;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
-import org.treetank.service.xml.xpath.expr.SequenceAxis;
 import org.treetank.service.xml.xpath.types.Type;
 
 public class SubOpAxisTest {

@@ -38,7 +38,7 @@ import org.treetank.axis.NestedAxis;
 import org.treetank.axis.ParentAxis;
 import org.treetank.axis.PrecedingAxis;
 import org.treetank.axis.PrecedingSiblingAxis;
-import org.treetank.service.xml.xpath.expr.UnionAxis;
+import org.treetank.service.xml.xpath.axis.UnionAxis;
 import org.treetank.service.xml.xpath.filter.DupFilterAxis;
 
 /**

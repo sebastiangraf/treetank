@@ -96,7 +96,7 @@ public enum TokenType {
     /** Token type for the end of the string to parse. */
     END("");
 
-    private final String mContent;
+    public final String mContent;
 
     TokenType(final String paramContent) {
         this.mContent = paramContent;

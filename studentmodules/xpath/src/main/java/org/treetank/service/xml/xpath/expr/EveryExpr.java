@@ -40,78 +40,84 @@ import org.treetank.utils.TypedValue;
  * IAxis that represents the quantified expression "every".
  * </p>
  * <p>
- * The quantified expression is true if every evaluation of the test expression has the effective boolean
- * value true; otherwise the quantified expression is false. This rule implies that, if the in-clauses
- * generate zero binding tuples, the value of the quantified expression is true.
+ * The quantified expression is true if every evaluation of the test expression
+ * has the effective boolean value true; otherwise the quantified expression is
+ * false. This rule implies that, if the in-clauses generate zero binding
+ * tuples, the value of the quantified expression is true.
  * </p>
  */
 public class EveryExpr extends AbsExpression {
 
-    private final List<AbsAxis> mVars;
+	private final List<AbsAxis> mVars;
 
-    private final AbsAxis mSatisfy;
+	private final AbsAxis mSatisfy;
 
-    /**
-     * Constructor. Initializes the internal state.
-     * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
-     * @param mVars
-     *            Variables for which the condition must be satisfied
-     * @param mSatisfy
-     *            condition every item of the variable results must satisfy in
-     *            order to evaluate expression to true
-     */
-    public EveryExpr(final INodeReadTransaction rtx, final List<AbsAxis> mVars, final AbsAxis mSatisfy) {
+	private final List<AtomicValue> mToStore;
 
-        super(rtx);
-        this.mVars = mVars;
-        this.mSatisfy = mSatisfy;
-    }
+	/**
+	 * Constructor. Initializes the internal state.
+	 * 
+	 * @param rtx
+	 *            Exclusive (immutable) trx to iterate with.
+	 * @param mVars
+	 *            Variables for which the condition must be satisfied
+	 * @param mSatisfy
+	 *            condition every item of the variable results must satisfy in
+	 *            order to evaluate expression to true
+	 */
+	public EveryExpr(final INodeReadTransaction rtx, final List<AbsAxis> mVars,
+			final AbsAxis mSatisfy, final List<AtomicValue> pToStore) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset(final long mNodeKey) {
+		super(rtx);
+		mToStore = pToStore;
+		this.mVars = mVars;
+		this.mSatisfy = mSatisfy;
+	}
 
-        super.reset(mNodeKey);
-        if (mVars != null) {
-            for (AbsAxis axis : mVars) {
-                axis.reset(mNodeKey);
-            }
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void reset(final long mNodeKey) {
 
-        if (mSatisfy != null) {
-            mSatisfy.reset(mNodeKey);
-        }
-    }
+		super.reset(mNodeKey);
+		if (mVars != null) {
+			for (AbsAxis axis : mVars) {
+				axis.reset(mNodeKey);
+			}
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void evaluate() {
+		if (mSatisfy != null) {
+			mSatisfy.reset(mNodeKey);
+		}
+	}
 
-        boolean satisfiesCond = true;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void evaluate() {
 
-        for (AbsAxis axis : mVars) {
-            while (axis.hasNext()) {
-                axis.next();
-                if (!mSatisfy.hasNext()) {
-                    // condition is not satisfied for this item -> expression is
-                    // false
-                    satisfiesCond = false;
-                    break;
-                }
-            }
-        }
-        final int mItemKey =
-            getTransaction().getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes(Boolean.toString(satisfiesCond)), getTransaction()
-                    .keyForName("xs:boolean")));
-        getTransaction().moveTo(mItemKey);
+		boolean satisfiesCond = true;
 
-    }
+		for (AbsAxis axis : mVars) {
+			while (axis.hasNext()) {
+				axis.next();
+				if (!mSatisfy.hasNext()) {
+					// condition is not satisfied for this item -> expression is
+					// false
+					satisfiesCond = false;
+					break;
+				}
+			}
+		}
+		AtomicValue val = new AtomicValue(TypedValue.getBytes(Boolean
+				.toString(satisfiesCond)), getTransaction().keyForName(
+				"xs:boolean"));
+		mToStore.add(val);
+		final int mItemKey = getTransaction().getItemList().addItem(val);
+		getTransaction().moveTo(mItemKey);
+
+	}
 
 }

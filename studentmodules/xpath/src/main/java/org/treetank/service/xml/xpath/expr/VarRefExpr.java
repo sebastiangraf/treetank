@@ -28,6 +28,8 @@
 package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.service.xml.xpath.IObserver;
+import org.treetank.service.xml.xpath.axis.VariableAxis;
 
 /**
  * <h1>VarRefExpr</h1>

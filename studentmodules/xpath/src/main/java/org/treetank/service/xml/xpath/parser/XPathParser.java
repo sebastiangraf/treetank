@@ -59,8 +59,6 @@ import org.treetank.axis.filter.TextFilter;
 import org.treetank.axis.filter.TypeFilter;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.PipelineBuilder;
@@ -1232,33 +1230,18 @@ public final class XPathParser {
      */
     private void parseLiteral() {
 
-        int itemKey;
+        AtomicValue atomic;
 
         if (mToken.getType() == TokenType.VALUE || mToken.getType() == TokenType.POINT) {
             // is numeric literal
-            itemKey = parseNumericLiteral();
+            atomic = parseIntegerLiteral();
         } else {
             // is string literal
             assert (mToken.getType() == TokenType.DBL_QUOTE || mToken.getType() == TokenType.SINGLE_QUOTE);
-            itemKey = parseStringLiteral();
+            atomic = parseStringLiteral();
         }
 
-        mPipeBuilder.addLiteral(getTransaction(), itemKey);
-
-    }
-
-    /**
-     * Parses the the rule NumericLiteral according to the following production
-     * rule:
-     * <p>
-     * [43] NumericLiteral ::= IntegerLiteral | DecimalLiteral | DoubleLiteral .
-     * </p>
-     * 
-     * @return parseIntegerLiteral
-     */
-    private int parseNumericLiteral() {
-
-        return parseIntegerLiteral();
+        mPipeBuilder.addLiteral(mRTX, atomic);
 
     }
 
@@ -1610,8 +1593,7 @@ public final class XPathParser {
         if (!is(TokenType.CLOSE_BR, true)) {
             String stringLiteral;
             if (isQuote()) {
-                final byte[] param =
-                    ((IValNode)getTransaction().getItemList().getItem(parseStringLiteral())).getRawValue();
+                final byte[] param = parseStringLiteral().getRawValue();
                 stringLiteral = Arrays.toString(param);
             } else {
                 stringLiteral = parseNCName();
@@ -1882,7 +1864,7 @@ public final class XPathParser {
      * 
      * @return parseItem
      */
-    private int parseIntegerLiteral() {
+    private AtomicValue parseIntegerLiteral() {
 
         String value = mToken.getContent();
         String type = "xs:integer";
@@ -1912,9 +1894,9 @@ public final class XPathParser {
 
         is(TokenType.SPACE, true);
 
-        final INode mIntLiteral =
+        final AtomicValue mIntLiteral =
             new AtomicValue(TypedValue.getBytes(value), getTransaction().keyForName(type));
-        return getTransaction().getItemList().addItem(mIntLiteral);
+        return mIntLiteral;
     }
 
     /**
@@ -1987,7 +1969,7 @@ public final class XPathParser {
      * 
      * @return parseStringLiteral
      */
-    private int parseStringLiteral() {
+    private AtomicValue parseStringLiteral() {
 
         final StringBuilder mValue = new StringBuilder();
 
@@ -2023,9 +2005,9 @@ public final class XPathParser {
 
         }
 
-        final INode mStringLiteral =
+        final AtomicValue mStringLiteral =
             new AtomicValue(TypedValue.getBytes(mValue.toString()), getTransaction().keyForName("xs:string"));
-        return (getTransaction().getItemList().addItem(mStringLiteral));
+        return mStringLiteral;
     }
 
     /**
