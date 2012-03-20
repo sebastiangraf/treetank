@@ -1241,7 +1241,7 @@ public final class XPathParser {
             atomic = parseStringLiteral();
         }
 
-        mPipeBuilder.addLiteral(getTransaction(), getTransaction().getItemList().addItem(atomic));
+        mPipeBuilder.addLiteral(mRTX, atomic);
 
     }
 

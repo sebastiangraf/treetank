@@ -483,10 +483,9 @@ public final class PipelineBuilder {
      * @param mItemKey
      *            key of the literal expression.
      */
-    public void addLiteral(final INodeReadTransaction mTransaction, final int mItemKey) {
-
-        // addExpressionSingle();
-        getExpression().add(new LiteralExpr(mTransaction, mItemKey));
+    public void addLiteral(final INodeReadTransaction pTrans, final AtomicValue pVal) {
+        mToStore.add(pVal);
+        getExpression().add(new LiteralExpr(pTrans, pTrans.getItemList().addItem(pVal)));
     }
 
     /**
