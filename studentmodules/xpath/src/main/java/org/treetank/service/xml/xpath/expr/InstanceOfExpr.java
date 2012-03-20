@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.xpath.expr;
 
+import java.util.List;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.AtomicValue;
@@ -36,94 +38,101 @@ import org.treetank.utils.TypedValue;
 /**
  * <h1>InstanceOfExpr</h1>
  * <p>
- * The boolean instance of expression returns true if the value of its first operand matches the SequenceType
- * in its second operand, according to the rules for SequenceType matching; otherwise it returns false.
+ * The boolean instance of expression returns true if the value of its first
+ * operand matches the SequenceType in its second operand, according to the
+ * rules for SequenceType matching; otherwise it returns false.
  * </p>
  */
 public class InstanceOfExpr extends AbsExpression {
 
-    /** The sequence to test. */
-    private final AbsAxis mInputExpr;
+	/** The sequence to test. */
+	private final AbsAxis mInputExpr;
 
-    /** The sequence type that the sequence needs to have to be an instance of. */
-    private final SequenceType mSequenceType;
+	/** The sequence type that the sequence needs to have to be an instance of. */
+	private final SequenceType mSequenceType;
 
-    /**
-     * Constructor. Initializes the internal state.
-     * 
-     * @param mRtx
-     *            Exclusive (immutable) trx to iterate with.
-     * @param mInputExpr
-     *            input expression, to test
-     * @param mSequenceType
-     *            sequence type to test whether the input sequence matches to.
-     */
-    public InstanceOfExpr(final INodeReadTransaction mRtx, final AbsAxis mInputExpr,
-        final SequenceType mSequenceType) {
+	private final List<AtomicValue> mToStore;
 
-        super(mRtx);
-        this.mInputExpr = mInputExpr;
-        this.mSequenceType = mSequenceType;
-    }
+	/**
+	 * Constructor. Initializes the internal state.
+	 * 
+	 * @param mRtx
+	 *            Exclusive (immutable) trx to iterate with.
+	 * @param mInputExpr
+	 *            input expression, to test
+	 * @param mSequenceType
+	 *            sequence type to test whether the input sequence matches to.
+	 */
+	public InstanceOfExpr(final INodeReadTransaction mRtx,
+			final AbsAxis mInputExpr, final SequenceType mSequenceType,
+			final List<AtomicValue> pToStore) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset(final long mNodeKey) {
+		super(mRtx);
+		this.mInputExpr = mInputExpr;
+		this.mSequenceType = mSequenceType;
+		mToStore = pToStore;
+	}
 
-        super.reset(mNodeKey);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void reset(final long mNodeKey) {
 
-        if (mInputExpr != null) {
-            mInputExpr.reset(mNodeKey);
-        }
-    }
+		super.reset(mNodeKey);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void evaluate() {
+		if (mInputExpr != null) {
+			mInputExpr.reset(mNodeKey);
+		}
+	}
 
-        boolean isInstanceOf;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void evaluate() {
 
-        if (mInputExpr.hasNext()) {
-            if (mSequenceType.isEmptySequence()) {
-                isInstanceOf = false;
-            } else {
+		boolean isInstanceOf;
 
-                isInstanceOf = mSequenceType.getFilter().filter();
-                switch (mSequenceType.getWildcard()) {
+		if (mInputExpr.hasNext()) {
+			if (mSequenceType.isEmptySequence()) {
+				isInstanceOf = false;
+			} else {
 
-                case '*':
-                case '+':
-                    // This seams to break the pipeline, but because the
-                    // intermediate
-                    // result are no longer used, it might be not that bad
-                    while (mInputExpr.hasNext() && isInstanceOf) {
-                        isInstanceOf = isInstanceOf && mSequenceType.getFilter().filter();
-                    }
-                    break;
-                default: // no wildcard, or '?'
-                    // only one result item is allowed
-                    isInstanceOf = isInstanceOf && !mInputExpr.hasNext();
-                }
-            }
+				isInstanceOf = mSequenceType.getFilter().filter();
+				switch (mSequenceType.getWildcard()) {
 
-        } else { // empty sequence
-            isInstanceOf =
-                mSequenceType.isEmptySequence()
-                    || (mSequenceType.hasWildcard() && (mSequenceType.getWildcard() == '?' || mSequenceType
-                        .getWildcard() == '*'));
-        }
+				case '*':
+				case '+':
+					// This seams to break the pipeline, but because the
+					// intermediate
+					// result are no longer used, it might be not that bad
+					while (mInputExpr.hasNext() && isInstanceOf) {
+						isInstanceOf = isInstanceOf
+								&& mSequenceType.getFilter().filter();
+					}
+					break;
+				default: // no wildcard, or '?'
+					// only one result item is allowed
+					isInstanceOf = isInstanceOf && !mInputExpr.hasNext();
+				}
+			}
 
-        // create result item and move transaction to it.
-        final int itemKey =
-            getTransaction().getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes(Boolean.toString(isInstanceOf)), getTransaction()
-                    .keyForName("xs:boolean")));
-        getTransaction().moveTo(itemKey);
+		} else { // empty sequence
+			isInstanceOf = mSequenceType.isEmptySequence()
+					|| (mSequenceType.hasWildcard() && (mSequenceType
+							.getWildcard() == '?' || mSequenceType
+							.getWildcard() == '*'));
+		}
 
-    }
+		// create result item and move transaction to it.
+		AtomicValue val = new AtomicValue(TypedValue.getBytes(Boolean
+				.toString(isInstanceOf)), getTransaction().keyForName(
+				"xs:boolean"));
+		mToStore.add(val);
+		final int itemKey = getTransaction().getItemList().addItem(val);
+		getTransaction().moveTo(itemKey);
+
+	}
 
 }
