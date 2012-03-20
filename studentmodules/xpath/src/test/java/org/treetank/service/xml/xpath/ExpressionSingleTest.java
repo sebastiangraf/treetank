@@ -43,7 +43,7 @@ import org.treetank.axis.NestedAxis;
 import org.treetank.axis.ParentAxis;
 import org.treetank.axis.SelfAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.service.xml.xpath.expr.UnionAxis;
+import org.treetank.service.xml.xpath.axis.UnionAxis;
 import org.treetank.service.xml.xpath.filter.DupFilterAxis;
 
 public class ExpressionSingleTest {

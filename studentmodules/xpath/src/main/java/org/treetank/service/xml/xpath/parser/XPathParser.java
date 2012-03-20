@@ -1912,8 +1912,9 @@ public final class XPathParser {
 
         is(TokenType.SPACE, true);
 
-        final INode mIntLiteral =
+        final AtomicValue mIntLiteral =
             new AtomicValue(TypedValue.getBytes(value), getTransaction().keyForName(type));
+        mToStore.add(mIntLiteral);
         return getTransaction().getItemList().addItem(mIntLiteral);
     }
 

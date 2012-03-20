@@ -122,16 +122,16 @@ public class PredicateFilterAxis extends AbsAxis {
      */
     private boolean isBooleanFalse() {
 
-         if (getTransaction().getNode().getNodeKey() >= 0) {
-//        if (mToStore.isEmpty()) {
+        if (getTransaction().getNode().getNodeKey() >= 0) {
+            // if (mToStore.isEmpty()) {
             return false;
         } else { // is AtomicValue
-             if (getTransaction().getNode().getTypeKey() == getTransaction().keyForName("xs:boolean")) {
-//            if (mToStore.get(0).getTypeKey() == NamePageHash.generateHashForString("xs:boolean")) {
+            if (getTransaction().getNode().getTypeKey() == getTransaction().keyForName("xs:boolean")) {
+                // if (mToStore.get(0).getTypeKey() == NamePageHash.generateHashForString("xs:boolean")) {
                 // atomic value of type boolean
                 // return true, if atomic values's value is false
-                 return !(Boolean.parseBoolean(getTransaction().getValueOfCurrentNode()));
-//                return !(Boolean.parseBoolean(new String(mToStore.get(0).getRawValue())));
+                return !(Boolean.parseBoolean(getTransaction().getValueOfCurrentNode()));
+                // return !(Boolean.parseBoolean(new String(mToStore.get(0).getRawValue())));
 
             } else {
                 return false;

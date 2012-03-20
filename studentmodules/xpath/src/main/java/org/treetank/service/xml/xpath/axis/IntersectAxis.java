@@ -25,42 +25,51 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath.expr;
+package org.treetank.service.xml.xpath.axis;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
+import org.treetank.service.xml.xpath.XPathError;
+import org.treetank.service.xml.xpath.XPathError.ErrorType;
 
 /**
- * <h1>VariableAxis</h1>
+ * <h1>IntersectAxis</h1>
  * <p>
- * Evaluated the given binding sequence, the variable is bound to and stores in a list that can be accessed by
- * other sequences and notifies its observers, as soon as a new value of the binding sequence has been
- * evaluated.
+ * Returns an intersection of two operands. This axis takes two node sequences as operands and returns a
+ * sequence containing all the nodes that occur in both operands.
  * </p>
  */
-public class VariableAxis extends AbsAxis {
+public class IntersectAxis extends AbsAxis {
 
-    /** Sequence that defines the values, the variable is bound to. */
-    private final AbsAxis mBindingSeq;
+    /** First operand sequence. */
+    private final AbsAxis mOp1;
 
-    private final List<VarRefExpr> mVarRefs;
+    /** Second operand sequence. */
+    private final AbsAxis mOp2;
+
+    /** Set to decide, if an item is contained in both sequences. */
+    private final Set<Long> mDupSet;
 
     /**
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param mInSeq
-     *            sequence, the variable is bound to.
+     * @param mOperand1
+     *            First operand
+     * @param mOperand2
+     *            Second operand
      */
-    public VariableAxis(final INodeReadTransaction rtx, final AbsAxis mInSeq) {
+    public IntersectAxis(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
-        mBindingSeq = mInSeq;
-        mVarRefs = new ArrayList<VarRefExpr>();
+        mOp1 = mOperand1;
+        mOp2 = mOperand2;
+        mDupSet = new HashSet<Long>();
+
     }
 
     /**
@@ -68,11 +77,19 @@ public class VariableAxis extends AbsAxis {
      */
     @Override
     public void reset(final long mNodeKey) {
+
         super.reset(mNodeKey);
-        if (mBindingSeq != null) {
-            mBindingSeq.reset(mNodeKey);
+
+        if (mDupSet != null) {
+            mDupSet.clear();
         }
 
+        if (mOp1 != null) {
+            mOp1.reset(mNodeKey);
+        }
+        if (mOp2 != null) {
+            mOp2.reset(mNodeKey);
+        }
     }
 
     /**
@@ -81,38 +98,32 @@ public class VariableAxis extends AbsAxis {
     @Override
     public boolean hasNext() {
 
-        resetToLastKey();
+        // store all item keys of the first sequence to the set.
+        while (mOp1.hasNext()) {
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
+            }
 
-        if (mBindingSeq.hasNext()) {
-            notifyObs();
-            return true;
+            mDupSet.add(getTransaction().getNode().getNodeKey());
         }
 
-        resetToStartKey();
+        while (mOp2.hasNext()) {
+
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
+            }
+
+            // return true, if item key is already in the set -> item is
+            // contained in
+            // both input sequences.
+            if (!mDupSet.add(getTransaction().getNode().getNodeKey())) {
+                return true;
+            }
+        }
+
         return false;
-
-    }
-
-    /**
-     * Tell all observers that the a new item of the binding sequence has been
-     * evaluated.
-     */
-    private void notifyObs() {
-
-        for (VarRefExpr varRef : mVarRefs) {
-            varRef.update(getTransaction().getNode().getNodeKey());
-        }
-    }
-
-    /**
-     * Add an observer to the list.
-     * 
-     * @param mObserver
-     *            axis that wants to be notified of any change of this axis
-     */
-    public void addObserver(final VarRefExpr mObserver) {
-
-        mVarRefs.add(mObserver);
     }
 
 }

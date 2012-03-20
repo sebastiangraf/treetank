@@ -25,45 +25,43 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath.expr;
+package org.treetank.service.xml.xpath.axis;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.service.xml.xpath.XPathError;
-import org.treetank.service.xml.xpath.XPathError.ErrorType;
+import org.treetank.service.xml.xpath.expr.VarRefExpr;
 
 /**
- * <h1>UnionAxis</h1>
+ * <h1>VariableAxis</h1>
  * <p>
- * Returns an union of two operands. This axis takes two node sequences as operands and returns a sequence
- * containing all the items that occur in either of the operands. A union of two sequences may lead to a
- * sequence containing duplicates. These duplicates can be removed by wrapping the UnionAxis with a
- * DupFilterAxis. The resulting sequence may also be out of document order.
+ * Evaluated the given binding sequence, the variable is bound to and stores in a list that can be accessed by
+ * other sequences and notifies its observers, as soon as a new value of the binding sequence has been
+ * evaluated.
  * </p>
  */
-public class UnionAxis extends AbsAxis {
+public class VariableAxis extends AbsAxis {
 
-    /** First operand sequence. */
-    private final AbsAxis mOp1;
+    /** Sequence that defines the values, the variable is bound to. */
+    private final AbsAxis mBindingSeq;
 
-    /** Second operand sequence. */
-    private final AbsAxis mOp2;
+    private final List<VarRefExpr> mVarRefs;
 
     /**
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param mOperand1
-     *            First operand
-     * @param mOperand2
-     *            Second operand
+     * @param mInSeq
+     *            sequence, the variable is bound to.
      */
-    public UnionAxis(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
+    public VariableAxis(final INodeReadTransaction rtx, final AbsAxis mInSeq) {
 
         super(rtx);
-        mOp1 = mOperand1;
-        mOp2 = mOperand2;
+        mBindingSeq = mInSeq;
+        mVarRefs = new ArrayList<VarRefExpr>();
     }
 
     /**
@@ -71,15 +69,11 @@ public class UnionAxis extends AbsAxis {
      */
     @Override
     public void reset(final long mNodeKey) {
-
         super.reset(mNodeKey);
+        if (mBindingSeq != null) {
+            mBindingSeq.reset(mNodeKey);
+        }
 
-        if (mOp1 != null) {
-            mOp1.reset(mNodeKey);
-        }
-        if (mOp2 != null) {
-            mOp2.reset(mNodeKey);
-        }
     }
 
     /**
@@ -88,29 +82,38 @@ public class UnionAxis extends AbsAxis {
     @Override
     public boolean hasNext() {
 
-        // first return all values of the first operand
-        while (mOp1.hasNext()) {
-            mOp1.next();
+        resetToLastKey();
 
-            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-                // allowed
-                throw new XPathError(ErrorType.XPTY0004);
-            }
+        if (mBindingSeq.hasNext()) {
+            notifyObs();
             return true;
         }
 
-        // then all values of the second operand.
-        while (mOp2.hasNext()) {
-            mOp2.next();
-
-            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-                // allowed
-                throw new XPathError(ErrorType.XPTY0004);
-            }
-            return true;
-        }
-
+        resetToStartKey();
         return false;
+
+    }
+
+    /**
+     * Tell all observers that the a new item of the binding sequence has been
+     * evaluated.
+     */
+    private void notifyObs() {
+
+        for (VarRefExpr varRef : mVarRefs) {
+            varRef.update(getTransaction().getNode().getNodeKey());
+        }
+    }
+
+    /**
+     * Add an observer to the list.
+     * 
+     * @param mObserver
+     *            axis that wants to be notified of any change of this axis
+     */
+    public void addObserver(final VarRefExpr mObserver) {
+
+        mVarRefs.add(mObserver);
     }
 
 }

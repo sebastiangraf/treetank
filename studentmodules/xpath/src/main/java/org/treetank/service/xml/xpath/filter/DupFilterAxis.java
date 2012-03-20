@@ -34,7 +34,7 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.NestedAxis;
-import org.treetank.service.xml.xpath.expr.UnionAxis;
+import org.treetank.service.xml.xpath.axis.UnionAxis;
 
 /**
  * <h1>DupFilterAxis</h1>

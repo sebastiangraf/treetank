@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath.expr;
+package org.treetank.service.xml.xpath.axis;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,13 +36,14 @@ import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
 
 /**
- * <h1>IntersectAxis</h1>
+ * <h1>ExceptAxis</h1>
  * <p>
- * Returns an intersection of two operands. This axis takes two node sequences as operands and returns a
- * sequence containing all the nodes that occur in both operands.
+ * Returns the nodes of the first operand except those of the second operand. This axis takes two node
+ * sequences as operands and returns a sequence containing all the nodes that occur in the first, but not in
+ * the second operand.
  * </p>
  */
-public class IntersectAxis extends AbsAxis {
+public class ExceptAxis extends AbsAxis {
 
     /** First operand sequence. */
     private final AbsAxis mOp1;
@@ -50,7 +51,10 @@ public class IntersectAxis extends AbsAxis {
     /** Second operand sequence. */
     private final AbsAxis mOp2;
 
-    /** Set to decide, if an item is contained in both sequences. */
+    /**
+     * Set that is used to determine, whether an item of the first operand is
+     * also contained in the result set of the second operand.
+     */
     private final Set<Long> mDupSet;
 
     /**
@@ -63,7 +67,7 @@ public class IntersectAxis extends AbsAxis {
      * @param mOperand2
      *            Second operand
      */
-    public IntersectAxis(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
+    public ExceptAxis(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
         mOp1 = mOperand1;
@@ -79,7 +83,6 @@ public class IntersectAxis extends AbsAxis {
     public void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
-
         if (mDupSet != null) {
             mDupSet.clear();
         }
@@ -98,27 +101,26 @@ public class IntersectAxis extends AbsAxis {
     @Override
     public boolean hasNext() {
 
-        // store all item keys of the first sequence to the set.
+        // first all items of the second operand are stored in the set.
+        while (mOp2.hasNext()) {
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
+            }
+            mDupSet.add(getTransaction().getNode().getNodeKey());
+        }
+
         while (mOp1.hasNext()) {
             if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
                 // allowed
                 throw new XPathError(ErrorType.XPTY0004);
             }
 
-            mDupSet.add(getTransaction().getNode().getNodeKey());
-        }
-
-        while (mOp2.hasNext()) {
-
-            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-                // allowed
-                throw new XPathError(ErrorType.XPTY0004);
-            }
-
-            // return true, if item key is already in the set -> item is
-            // contained in
-            // both input sequences.
-            if (!mDupSet.add(getTransaction().getNode().getNodeKey())) {
+            // return true, if node is not already in the set, which means, that
+            // it is
+            // not also an item of the result set of the second operand
+            // sequence.
+            if (mDupSet.add(getTransaction().getNode().getNodeKey())) {
                 return true;
             }
         }

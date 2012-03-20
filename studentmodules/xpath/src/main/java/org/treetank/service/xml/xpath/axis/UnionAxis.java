@@ -25,44 +25,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath.expr;
-
-import java.util.Arrays;
-import java.util.List;
+package org.treetank.service.xml.xpath.axis;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
+import org.treetank.service.xml.xpath.XPathError;
+import org.treetank.service.xml.xpath.XPathError.ErrorType;
 
 /**
- * <h1>SequenceAxis</h1>
+ * <h1>UnionAxis</h1>
  * <p>
- * Axis that represents a sequence of singleExpressions, normally separated by a ','.
+ * Returns an union of two operands. This axis takes two node sequences as operands and returns a sequence
+ * containing all the items that occur in either of the operands. A union of two sequences may lead to a
+ * sequence containing duplicates. These duplicates can be removed by wrapping the UnionAxis with a
+ * DupFilterAxis. The resulting sequence may also be out of document order.
  * </p>
- * <p>
- * Calling hasNext() returns the results of the singleExpressions consecutively.
- * </p>
- * 
  */
-public class SequenceAxis extends AbsAxis {
+public class UnionAxis extends AbsAxis {
 
-    private final List<AbsAxis> mSeq;
-    private AbsAxis mCurrent;
-    private int mNum;
+    /** First operand sequence. */
+    private final AbsAxis mOp1;
+
+    /** Second operand sequence. */
+    private final AbsAxis mOp2;
 
     /**
-     * 
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param axis
-     *            The singleExpressions contained by the sequence
+     * @param mOperand1
+     *            First operand
+     * @param mOperand2
+     *            Second operand
      */
-    public SequenceAxis(final INodeReadTransaction rtx, final AbsAxis... axis) {
+    public UnionAxis(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
-        mSeq = Arrays.asList(axis);
-        mNum = 0;
+        mOp1 = mOperand1;
+        mOp2 = mOperand2;
     }
 
     /**
@@ -70,15 +71,15 @@ public class SequenceAxis extends AbsAxis {
      */
     @Override
     public void reset(final long mNodeKey) {
-        super.reset(mNodeKey);
-        if (mSeq != null) {
-            for (AbsAxis ax : mSeq) {
-                ax.reset(mNodeKey);
-            }
-        }
-        mCurrent = null;
-        mNum = 0;
 
+        super.reset(mNodeKey);
+
+        if (mOp1 != null) {
+            mOp1.reset(mNodeKey);
+        }
+        if (mOp2 != null) {
+            mOp2.reset(mNodeKey);
+        }
     }
 
     /**
@@ -87,32 +88,29 @@ public class SequenceAxis extends AbsAxis {
     @Override
     public boolean hasNext() {
 
-        resetToLastKey();
+        // first return all values of the first operand
+        while (mOp1.hasNext()) {
+            mOp1.next();
 
-        if (mCurrent != null) {
-
-            if (mCurrent.hasNext()) {
-                return true;
-            } else {
-                // necessary, because previous hasNext() changes state
-                resetToLastKey();
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
             }
+            return true;
         }
 
-        while (mNum < mSeq.size()) {
+        // then all values of the second operand.
+        while (mOp2.hasNext()) {
+            mOp2.next();
 
-            mCurrent = mSeq.get(mNum++);
-
-            // mCurrent.getTransaction().moveTo(getTransaction().getNodeKey());
-            mCurrent.reset(getTransaction().getNode().getNodeKey());
-            if (mCurrent.hasNext()) {
-                return true;
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
             }
+            return true;
         }
 
-        resetToStartKey();
         return false;
-
     }
 
 }
