@@ -35,6 +35,7 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -104,36 +105,40 @@ public abstract class AbsObAxis extends AbsAxis {
 
         if (mIsFirst) {
             mIsFirst = false;
+            try {
 
-            if (mOperand1.hasNext()) {
-                // atomize operand
-                final AtomicValue mItem1 = atomize(mOperand1);
-
-                if (mOperand2.hasNext()) {
+                AtomicValue mItem1 = null;
+                if (mOperand1 instanceof LiteralExpr) {
+                    mItem1 = ((LiteralExpr)mOperand1).evaluate();
+                } else if (mOperand1.hasNext()) {
                     // atomize operand
-                    final AtomicValue mItem2 = atomize(mOperand2);
-                    try {
+                    mItem1 = atomize(mOperand1);
+
+                }
+
+                if (mItem1 != null) {
+
+                    AtomicValue mItem2 = null;
+                    if (mOperand2 instanceof LiteralExpr) {
+                        mItem2 = ((LiteralExpr)mOperand2).evaluate();
+                    } else if (mOperand2.hasNext()) {
+                        // atomize operand
+                        mItem2 = atomize(mOperand2);
+                    }
+
+                    if (mItem2 != null) {
                         final AtomicValue result = operate(mItem1, mItem2);
                         // add retrieved AtomicValue to item list
                         mToStore.add(result);
                         final int itemKey = getTransaction().getItemList().addItem(result);
                         getTransaction().moveTo(itemKey);
-
                         return true;
-                    } catch (TTXPathException e) {
-                        throw new RuntimeException(e);
+
                     }
                 }
+            } catch (TTXPathException e) {
+                throw new RuntimeException(e);
             }
-
-            if (XPATH_10_COMP) { // and empty sequence, return NaN
-                final AtomicValue result = new AtomicValue(Double.NaN, Type.DOUBLE);
-                mToStore.add(result);
-                final int itemKey = getTransaction().getItemList().addItem(result);
-                getTransaction().moveTo(itemKey);
-                return true;
-            }
-
         }
         // either not the first call, or empty sequence
         resetToStartKey();
