@@ -33,6 +33,8 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.service.xml.xpath.expr.AbsExpression;
+import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -109,38 +111,38 @@ public abstract class AbsComparator extends AbsAxis {
         if (mIsFirst) {
             mIsFirst = false;
 
-            /*
-             * Evaluates the comparison. First atomizes both operands and then
-             * executes the comparison on them. At the end, the transaction is
-             * set to the retrieved result item.
-             */
-            if (mOperand1.hasNext()) {
-                try {
+            // AtomicValue[] operandOne;
+            // if (mOperand1 instanceof LiteralExpr) {
+            // AtomicValue
+            // }
+            try {
+                /*
+                 * Evaluates the comparison. First atomizes both operands and then
+                 * executes the comparison on them. At the end, the transaction is
+                 * set to the retrieved result item.
+                 */
+                if (mOperand1.hasNext()) {
                     // atomize operands
-                    final AtomicValue[] operandOne = atomize(mOperand1);
-                    if (mOperand2.hasNext()) {
-                        final AtomicValue[] operandTwo = atomize(mOperand2);
+                    AtomicValue[] operandOne = atomize(mOperand1);
+                    mOperand2.hasNext();
+                    final AtomicValue[] operandTwo = atomize(mOperand2);
 
-                        hook(operandOne, operandTwo);
-                        try {
-                            // get comparison result
-                            final boolean resultValue = compare(operandOne, operandTwo);
-                            final AtomicValue result = new AtomicValue(resultValue);
+                    hook(operandOne, operandTwo);
+                    // get comparison result
+                    final boolean resultValue = compare(operandOne, operandTwo);
+                    final AtomicValue result = new AtomicValue(resultValue);
 
-                            // add retrieved AtomicValue to item list
+                    // add retrieved AtomicValue to item list
 
-                            mToStore.add(result);
-                            final int itemKey = getTransaction().getItemList().addItem(result);
-                            getTransaction().moveTo(itemKey);
-                        } catch (TTXPathException e) {
-                            throw new RuntimeException(e);
-                        }
-                        return true;
+                    mToStore.add(result);
+                    final int itemKey = getTransaction().getItemList().addItem(result);
+                    getTransaction().moveTo(itemKey);
 
-                    }
-                } catch (final TTXPathException exc) {
-                    throw new RuntimeException(exc);
+                    return true;
+
                 }
+            } catch (TTXPathException exc) {
+                throw new RuntimeException(exc);
             }
         }
         // return empty sequence or function called more than once
