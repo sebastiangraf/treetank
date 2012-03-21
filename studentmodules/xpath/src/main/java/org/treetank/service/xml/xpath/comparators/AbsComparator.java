@@ -33,7 +33,6 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.expr.AbsExpression;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
@@ -111,36 +110,44 @@ public abstract class AbsComparator extends AbsAxis {
         if (mIsFirst) {
             mIsFirst = false;
 
-            // AtomicValue[] operandOne;
-            // if (mOperand1 instanceof LiteralExpr) {
-            // AtomicValue
-            // }
             try {
-                /*
-                 * Evaluates the comparison. First atomizes both operands and then
-                 * executes the comparison on them. At the end, the transaction is
-                 * set to the retrieved result item.
-                 */
-                if (mOperand1.hasNext()) {
+
+                AtomicValue[] operandOne = null;
+                if (mOperand1 instanceof LiteralExpr) {
+                    operandOne = new AtomicValue[1];
+                    operandOne[0] = ((LiteralExpr)mOperand1).evaluate();
+                } else if (mOperand1.hasNext()) {
                     // atomize operands
-                    AtomicValue[] operandOne = atomize(mOperand1);
-                    mOperand2.hasNext();
-                    final AtomicValue[] operandTwo = atomize(mOperand2);
-
-                    hook(operandOne, operandTwo);
-                    // get comparison result
-                    final boolean resultValue = compare(operandOne, operandTwo);
-                    final AtomicValue result = new AtomicValue(resultValue);
-
-                    // add retrieved AtomicValue to item list
-
-                    mToStore.add(result);
-                    final int itemKey = getTransaction().getItemList().addItem(result);
-                    getTransaction().moveTo(itemKey);
-
-                    return true;
-
+                    operandOne = atomize(mOperand1);
                 }
+
+                if (operandOne != null) {
+
+                    AtomicValue[] operandTwo = null;
+
+                    if (mOperand2 instanceof LiteralExpr) {
+                        operandTwo = new AtomicValue[1];
+                        operandTwo[0] = ((LiteralExpr)mOperand2).evaluate();
+                    } else if (mOperand2.hasNext()) {
+                        // atomize operands
+                        operandTwo = atomize(mOperand2);
+                    }
+
+                    if (operandTwo != null) {
+
+                        hook(operandOne, operandTwo);
+                        // get comparison result
+                        final boolean resultValue = compare(operandOne, operandTwo);
+                        final AtomicValue result = new AtomicValue(resultValue);
+
+                        // add retrieved AtomicValue to item list
+                        mToStore.add(result);
+                        final int itemKey = getTransaction().getItemList().addItem(result);
+                        getTransaction().moveTo(itemKey);
+                        return true;
+                    }
+                }
+
             } catch (TTXPathException exc) {
                 throw new RuntimeException(exc);
             }
