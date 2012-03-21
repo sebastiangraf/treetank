@@ -34,9 +34,7 @@ import java.util.List;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.functions.Function;
 import org.treetank.service.xml.xpath.types.Type;
 
 /**
