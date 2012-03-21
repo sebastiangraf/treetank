@@ -30,7 +30,6 @@ package org.treetank.axis;
 import java.util.Iterator;
 
 import org.treetank.api.INodeReadTransaction;
-import org.treetank.exception.TTXPathException;
 
 /**
  * <h1>AbstractAxis</h1>
@@ -198,14 +197,5 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      */
     @Override
     public abstract boolean hasNext();
-
-    /**
-     * {@inheritDoc}
-     */
-    public void evaluate() throws TTXPathException {
-        while (hasNext()) {
-            next();
-        }
-    }
 
 }

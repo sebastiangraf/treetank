@@ -87,6 +87,8 @@ public abstract class AbsFunction extends AbsExpression {
     /** The function's return type. */
     private final int mReturnType;
 
+    protected final List<AtomicValue> mToStore;
+
     /**
      * Constructor. Initializes internal state and do a statical analysis
      * concerning the function's arguments.
@@ -105,7 +107,7 @@ public abstract class AbsFunction extends AbsExpression {
      *             if the verify process is failing.
      */
     public AbsFunction(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min,
-        final int max, final int returnType) throws TTXPathException {
+        final int max, final int returnType, final List<AtomicValue> pToStore) throws TTXPathException {
 
         super(rtx);
         mArgs = args;
@@ -113,6 +115,7 @@ public abstract class AbsFunction extends AbsExpression {
         mMax = max;
         mReturnType = returnType;
         varifyParam(args.size());
+        mToStore = pToStore;
     }
 
     /**
@@ -152,14 +155,17 @@ public abstract class AbsFunction extends AbsExpression {
      * {@inheritDoc}
      */
     @Override
-    public void evaluate() throws TTXPathException {
+    public AtomicValue evaluate() throws TTXPathException {
 
         // compute the function's result
         final byte[] value = computeResult();
 
         // create an atomic value, add it to the list and move the cursor to it.
-        final int itemKey = getTransaction().getItemList().addItem(new AtomicValue(value, mReturnType));
+        AtomicValue val = new AtomicValue(value, mReturnType);
+        mToStore.add(val);
+        final int itemKey = getTransaction().getItemList().addItem(val);
         getTransaction().moveTo(itemKey);
+        return val;
 
     }
 

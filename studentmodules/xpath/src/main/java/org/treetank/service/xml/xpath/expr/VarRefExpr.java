@@ -28,6 +28,7 @@
 package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.IObserver;
 import org.treetank.service.xml.xpath.axis.VariableAxis;
 
@@ -73,12 +74,12 @@ public class VarRefExpr extends AbsExpression implements IObserver {
      * {@inheritDoc}
      */
     @Override
-    public void evaluate() {
+    public AtomicValue evaluate() {
 
         // assure that the transaction is set to the current context item of the
         // variable's binding sequence.
         getTransaction().moveTo(mVarKey);
-
+        return null;
     }
 
 }

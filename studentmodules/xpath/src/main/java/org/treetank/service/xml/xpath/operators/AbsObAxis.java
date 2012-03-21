@@ -29,12 +29,13 @@ package org.treetank.service.xml.xpath.operators;
 
 import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
+import java.util.List;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.functions.Function;
+import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -54,6 +55,8 @@ public abstract class AbsObAxis extends AbsAxis {
     /** True, if axis has not been evaluated yet. */
     private boolean mIsFirst;
 
+    private List<AtomicValue> mToStore;
+
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -64,12 +67,14 @@ public abstract class AbsObAxis extends AbsAxis {
      * @param mOp2
      *            Second value of the operation
      */
-    public AbsObAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
+    public AbsObAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2,
+        final List<AtomicValue> pToStore) {
 
         super(rtx);
         mOperand1 = mOp1;
         mOperand2 = mOp2;
         mIsFirst = true;
+        mToStore = pToStore;
 
     }
 
@@ -100,34 +105,40 @@ public abstract class AbsObAxis extends AbsAxis {
 
         if (mIsFirst) {
             mIsFirst = false;
+            try {
 
-            if (mOperand1.hasNext()) {
-                // atomize operand
-                final AtomicValue mItem1 = atomize(mOperand1);
-
-                if (mOperand2.hasNext()) {
+                AtomicValue mItem1 = null;
+                if (mOperand1 instanceof LiteralExpr) {
+                    mItem1 = ((LiteralExpr)mOperand1).evaluate();
+                } else if (mOperand1.hasNext()) {
                     // atomize operand
-                    final AtomicValue mItem2 = atomize(mOperand2);
-                    try {
-                        final INode result = operate(mItem1, mItem2);
+                    mItem1 = atomize(mOperand1);
+
+                }
+
+                if (mItem1 != null) {
+
+                    AtomicValue mItem2 = null;
+                    if (mOperand2 instanceof LiteralExpr) {
+                        mItem2 = ((LiteralExpr)mOperand2).evaluate();
+                    } else if (mOperand2.hasNext()) {
+                        // atomize operand
+                        mItem2 = atomize(mOperand2);
+                    }
+
+                    if (mItem2 != null) {
+                        final AtomicValue result = operate(mItem1, mItem2);
                         // add retrieved AtomicValue to item list
+                        mToStore.add(result);
                         final int itemKey = getTransaction().getItemList().addItem(result);
                         getTransaction().moveTo(itemKey);
-
                         return true;
-                    } catch (TTXPathException e) {
-                        throw new RuntimeException(e);
+
                     }
                 }
+            } catch (TTXPathException e) {
+                throw new RuntimeException(e);
             }
-
-            if (XPATH_10_COMP) { // and empty sequence, return NaN
-                final INode result = new AtomicValue(Double.NaN, Type.DOUBLE);
-                final int itemKey = getTransaction().getItemList().addItem(result);
-                getTransaction().moveTo(itemKey);
-                return true;
-            }
-
         }
         // either not the first call, or empty sequence
         resetToStartKey();
@@ -150,12 +161,6 @@ public abstract class AbsObAxis extends AbsAxis {
         AtomicValue atom;
 
         if (XPATH_10_COMP) {
-            if (type == rtx.keyForName("xs:double") || type == rtx.keyForName("xs:untypedAtomic")
-                || type == rtx.keyForName("xs:boolean") || type == rtx.keyForName("xs:string")
-                || type == rtx.keyForName("xs:integer") || type == rtx.keyForName("xs:float")
-                || type == rtx.keyForName("xs:decimal")) {
-                Function.fnnumber(mOperand.getTransaction());
-            }
 
             atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.getNode().getTypeKey());
         } else {
@@ -188,7 +193,7 @@ public abstract class AbsObAxis extends AbsAxis {
      * @throws TTXPathException
      *             if the operations fails
      */
-    protected abstract INode operate(final AtomicValue mOperand1, final AtomicValue mOperand2)
+    protected abstract AtomicValue operate(final AtomicValue mOperand1, final AtomicValue mOperand2)
         throws TTXPathException;
 
     /**

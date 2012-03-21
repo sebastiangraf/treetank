@@ -30,6 +30,7 @@ package org.treetank.service.xml.xpath.expr;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.service.xml.xpath.AtomicValue;
 
 /**
  * <h1>AbstractExpression</h1>
@@ -108,6 +109,6 @@ public abstract class AbsExpression extends AbsAxis {
      * @throws TTXPathException
      *             if evaluation fails.
      */
-    public abstract void evaluate() throws TTXPathException;
+    public abstract AtomicValue evaluate() throws TTXPathException;
 
 }

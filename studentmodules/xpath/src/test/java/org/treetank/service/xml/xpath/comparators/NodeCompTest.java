@@ -38,8 +38,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.axis.AbsAxis;
-import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
@@ -104,29 +102,6 @@ public class NodeCompTest {
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
             assertEquals("Evaluation of node comparisons not possible", e.getMessage());
-        }
-
-    }
-
-    @Test
-    public void testAtomize() throws TTXPathException {
-
-        AbsAxis axis = new LiteralExpr(holder.getRtx(), 0);
-        axis.hasNext(); // this is needed, because hasNext() has already been
-        // called
-        AtomicValue[] value = comparator.atomize(axis);
-        assertEquals(value.length, 1);
-        assertEquals(holder.getRtx().getNode().getNodeKey(), value[0].getNodeKey());
-        assertEquals("xs:integer", value[0].getType());
-
-        try {
-            axis = new DescendantAxis(holder.getRtx(), false);
-            axis.hasNext();
-            comparator.atomize(axis);
-        } catch (TTXPathException e) {
-            assertEquals("err:XPTY0004 The type is not appropriate the expression or"
-                + " the typedoes not match a required type as specified by the " + "matching rules. ", e
-                .getMessage());
         }
 
     }

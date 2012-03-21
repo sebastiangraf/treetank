@@ -57,7 +57,7 @@ public abstract class AbsComparator extends AbsAxis {
     private boolean mIsFirst;
 
     /** Variable to store results. */
-    private final List<AtomicValue> mToStore;
+    protected final List<AtomicValue> mToStore;
 
     /**
      * Constructor. Initializes the internal state.
@@ -110,48 +110,46 @@ public abstract class AbsComparator extends AbsAxis {
         if (mIsFirst) {
             mIsFirst = false;
 
-            // TODO: why?
-            if (!(mOperand1 instanceof LiteralExpr)) {
-                mOperand1.reset(getTransaction().getNode().getNodeKey());
-            }
+            try {
 
-            // TODO: why?
-            if (!(mOperand2 instanceof LiteralExpr)) {
-                mOperand2.reset(getTransaction().getNode().getNodeKey());
-            }
-
-            /*
-             * Evaluates the comparison. First atomizes both operands and then
-             * executes the comparison on them. At the end, the transaction is
-             * set to the retrieved result item.
-             */
-            if (mOperand1.hasNext()) {
-                try {
+                AtomicValue[] operandOne = null;
+                if (mOperand1 instanceof LiteralExpr) {
+                    operandOne = new AtomicValue[1];
+                    operandOne[0] = ((LiteralExpr)mOperand1).evaluate();
+                } else if (mOperand1.hasNext()) {
                     // atomize operands
-                    final AtomicValue[] operandOne = atomize(mOperand1);
-                    if (mOperand2.hasNext()) {
-                        final AtomicValue[] operandTwo = atomize(mOperand2);
+                    operandOne = atomize(mOperand1);
+                }
+
+                if (operandOne != null) {
+
+                    AtomicValue[] operandTwo = null;
+
+                    if (mOperand2 instanceof LiteralExpr) {
+                        operandTwo = new AtomicValue[1];
+                        operandTwo[0] = ((LiteralExpr)mOperand2).evaluate();
+                    } else if (mOperand2.hasNext()) {
+                        // atomize operands
+                        operandTwo = atomize(mOperand2);
+                    }
+
+                    if (operandTwo != null) {
 
                         hook(operandOne, operandTwo);
-                        try {
-                            // get comparison result
-                            final boolean resultValue = compare(operandOne, operandTwo);
-                            final AtomicValue result = new AtomicValue(resultValue);
+                        // get comparison result
+                        final boolean resultValue = compare(operandOne, operandTwo);
+                        final AtomicValue result = new AtomicValue(resultValue);
 
-                            // add retrieved AtomicValue to item list
-
-                            mToStore.add(result);
-                            final int itemKey = getTransaction().getItemList().addItem(result);
-                            getTransaction().moveTo(itemKey);
-                        } catch (TTXPathException e) {
-                            throw new RuntimeException(e);
-                        }
+                        // add retrieved AtomicValue to item list
+                        mToStore.add(result);
+                        final int itemKey = getTransaction().getItemList().addItem(result);
+                        getTransaction().moveTo(itemKey);
                         return true;
-
                     }
-                } catch (final TTXPathException exc) {
-                    throw new RuntimeException(exc);
                 }
+
+            } catch (TTXPathException exc) {
+                throw new RuntimeException(exc);
             }
         }
         // return empty sequence or function called more than once

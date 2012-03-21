@@ -36,7 +36,6 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.functions.Function;
 import org.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -97,14 +96,8 @@ public class GeneralComp extends AbsComparator {
         final INodeReadTransaction rtx = getTransaction();
         final List<AtomicValue> op = new ArrayList<AtomicValue>();
         AtomicValue atomized;
-        // cast to double, if compatible with XPath 1.0 and <, >, >=, <=
-        final boolean convert =
-            !(!XPATH_10_COMP || getCompKind() == CompKind.EQ || getCompKind() == CompKind.EQ);
 
         do {
-            if (convert) { // cast to double
-                Function.fnnumber(rtx);
-            }
             atomized = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.getNode().getTypeKey());
             op.add(atomized);
         } while (mOperand.hasNext());
