@@ -42,10 +42,9 @@ import org.treetank.service.xml.xpath.expr.AbsExpression;
  * Abstract super class for all function classes.
  * </p>
  * <p>
- * All functions that extend the abstract class only need take care of the
- * result computation. Everything else, like checking if arguments are valid and
- * adding the result with the corresponding type to the transaction list is done
- * by the abstract super class.
+ * All functions that extend the abstract class only need take care of the result computation. Everything
+ * else, like checking if arguments are valid and adding the result with the corresponding type to the
+ * transaction list is done by the abstract super class.
  * </p>
  * <h2>Developer Example</h2>
  * 
@@ -76,118 +75,117 @@ import org.treetank.service.xml.xpath.expr.AbsExpression;
  */
 public abstract class AbsFunction extends AbsExpression {
 
-	/** The function's arguments. */
-	private final List<AbsAxis> mArgs;
+    /** The function's arguments. */
+    private final List<AbsAxis> mArgs;
 
-	/** Minimum number of possible function arguments. */
-	private final int mMin;
+    /** Minimum number of possible function arguments. */
+    private final int mMin;
 
-	/** Maximum number of possible function arguments. */
-	private final int mMax;
+    /** Maximum number of possible function arguments. */
+    private final int mMax;
 
-	/** The function's return type. */
-	private final int mReturnType;
+    /** The function's return type. */
+    private final int mReturnType;
 
-	protected final List<AtomicValue> mToStore;
+    protected final List<AtomicValue> mToStore;
 
-	/**
-	 * Constructor. Initializes internal state and do a statical analysis
-	 * concerning the function's arguments.
-	 * 
-	 * @param rtx
-	 *            Transaction to operate on
-	 * @param args
-	 *            List of function arguments
-	 * @param min
-	 *            min number of allowed function arguments
-	 * @param max
-	 *            max number of allowed function arguments
-	 * @param returnType
-	 *            the type that the function's result will have
-	 * @throws TTXPathException
-	 *             if the verify process is failing.
-	 */
-	public AbsFunction(final INodeReadTransaction rtx,
-			final List<AbsAxis> args, final int min, final int max,
-			final int returnType, final List<AtomicValue> pToStore)
-			throws TTXPathException {
+    /**
+     * Constructor. Initializes internal state and do a statical analysis
+     * concerning the function's arguments.
+     * 
+     * @param rtx
+     *            Transaction to operate on
+     * @param args
+     *            List of function arguments
+     * @param min
+     *            min number of allowed function arguments
+     * @param max
+     *            max number of allowed function arguments
+     * @param returnType
+     *            the type that the function's result will have
+     * @throws TTXPathException
+     *             if the verify process is failing.
+     */
+    public AbsFunction(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min,
+        final int max, final int returnType, final List<AtomicValue> pToStore) throws TTXPathException {
 
-		super(rtx);
-		mArgs = args;
-		mMin = min;
-		mMax = max;
-		mReturnType = returnType;
-		varifyParam(args.size());
-		mToStore = pToStore;
-	}
+        super(rtx);
+        mArgs = args;
+        mMin = min;
+        mMax = max;
+        mReturnType = returnType;
+        varifyParam(args.size());
+        mToStore = pToStore;
+    }
 
-	/**
-	 * Checks if the number of input arguments of this function is a valid
-	 * according to the function specification in <a
-	 * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
-	 * Functions and Operators</a>. Throws an XPath error in case of a non-valid
-	 * number.
-	 * 
-	 * @param mNumber
-	 *            number of given function arguments
-	 * @throws TTXPathException
-	 *             if function call fails.
-	 */
-	public final void varifyParam(final int mNumber) throws TTXPathException {
+    /**
+     * Checks if the number of input arguments of this function is a valid
+     * according to the function specification in <a
+     * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
+     * Functions and Operators</a>. Throws an XPath error in case of a non-valid
+     * number.
+     * 
+     * @param mNumber
+     *            number of given function arguments
+     * @throws TTXPathException
+     *             if function call fails.
+     */
+    public final void varifyParam(final int mNumber) throws TTXPathException {
 
-		if (mNumber < mMin || mNumber > mMax) {
-			throw EXPathError.XPST0017.getEncapsulatedException();
-		}
-	}
+        if (mNumber < mMin || mNumber > mMax) {
+            throw EXPathError.XPST0017.getEncapsulatedException();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long mNodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long mNodeKey) {
 
-		super.reset(mNodeKey);
-		if (mArgs != null) {
-			for (AbsAxis ax : mArgs) {
-				ax.reset(mNodeKey);
-			}
-		}
-	}
+        super.reset(mNodeKey);
+        if (mArgs != null) {
+            for (AbsAxis ax : mArgs) {
+                ax.reset(mNodeKey);
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void evaluate() throws TTXPathException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AtomicValue evaluate() throws TTXPathException {
 
-		// compute the function's result
-		final byte[] value = computeResult();
+        // compute the function's result
+        final byte[] value = computeResult();
 
-		// create an atomic value, add it to the list and move the cursor to it.
-		AtomicValue val = new AtomicValue(value, mReturnType);
-		mToStore.add(val);
-		final int itemKey = getTransaction().getItemList().addItem(val);
-		getTransaction().moveTo(itemKey);
+        // create an atomic value, add it to the list and move the cursor to it.
+        AtomicValue val = new AtomicValue(value, mReturnType);
+        mToStore.add(val);
+        final int itemKey = getTransaction().getItemList().addItem(val);
+        getTransaction().moveTo(itemKey);
+        return val;
 
-	}
+    }
 
-	/**
-	 * Computes the result value of the function. This implementation is acts as
-	 * a hook operation and needs to be overridden by the concrete function
-	 * classes, otherwise an exception is thrown.
-	 * 
-	 * @return value of the result
-	 * @throws TTXPathException
-	 *             if anythin odd happens while execution
-	 */
-	protected abstract byte[] computeResult() throws TTXPathException;
+    /**
+     * Computes the result value of the function. This implementation is acts as
+     * a hook operation and needs to be overridden by the concrete function
+     * classes, otherwise an exception is thrown.
+     * 
+     * @return value of the result
+     * @throws TTXPathException
+     *             if anythin odd happens while execution
+     */
+    protected abstract byte[] computeResult() throws TTXPathException;
 
-	/**
-	 * @return the list of function arguments
-	 */
-	protected List<AbsAxis> getArgs() {
+    /**
+     * @return the list of function arguments
+     */
+    protected List<AbsAxis> getArgs() {
 
-		return mArgs;
-	}
+        return mArgs;
+    }
 
 }

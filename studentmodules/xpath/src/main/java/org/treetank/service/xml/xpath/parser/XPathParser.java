@@ -625,13 +625,7 @@ public final class XPathParser {
      * @throws TTXPathException
      */
     private void parseCastExpr() throws TTXPathException {
-
         parseUnaryExpr();
-        if (is("cast", true)) {
-
-            consume("as", true);
-            mPipeBuilder.addCastExpr(getTransaction(), parseSingleType());
-        }
     }
 
     /**

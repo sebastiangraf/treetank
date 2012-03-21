@@ -109,29 +109,6 @@ public class NodeCompTest {
     }
 
     @Test
-    public void testAtomize() throws TTXPathException {
-
-        AbsAxis axis = new LiteralExpr(holder.getRtx(), 0);
-        axis.hasNext(); // this is needed, because hasNext() has already been
-        // called
-        AtomicValue[] value = comparator.atomize(axis);
-        assertEquals(value.length, 1);
-        assertEquals(holder.getRtx().getNode().getNodeKey(), value[0].getNodeKey());
-        assertEquals("xs:integer", value[0].getType());
-
-        try {
-            axis = new DescendantAxis(holder.getRtx(), false);
-            axis.hasNext();
-            comparator.atomize(axis);
-        } catch (TTXPathException e) {
-            assertEquals("err:XPTY0004 The type is not appropriate the expression or"
-                + " the typedoes not match a required type as specified by the " + "matching rules. ", e
-                .getMessage());
-        }
-
-    }
-
-    @Test
     public void testGetType() throws TTXPathException {
 
         assertEquals(Type.INTEGER, comparator.getType(123, 2435));

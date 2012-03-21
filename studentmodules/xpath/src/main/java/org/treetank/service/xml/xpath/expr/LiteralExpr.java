@@ -28,6 +28,7 @@
 package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.service.xml.xpath.AtomicValue;
 
 /**
  * <h1>LiteralExpr</h1>
@@ -57,11 +58,11 @@ public class LiteralExpr extends AbsExpression {
      * {@inheritDoc}
      */
     @Override
-    public void evaluate() {
+    public AtomicValue evaluate() {
 
         // set transaction to literal
         getTransaction().moveTo(mLiteralKey);
+        return (AtomicValue)getTransaction().getItemList().getItem(mLiteralKey);
 
     }
-
 }
