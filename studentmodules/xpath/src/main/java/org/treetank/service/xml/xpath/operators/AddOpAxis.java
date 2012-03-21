@@ -32,7 +32,6 @@ import java.util.List;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.interfaces.INode;
 import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.types.Type;
@@ -66,7 +65,7 @@ public class AddOpAxis extends AbsObAxis {
      * 
      */
     @Override
-    public INode operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
+    public AtomicValue operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
 
         final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
         final int typeKey = getTransaction().keyForName(returnType.getStringRepr());

@@ -115,10 +115,11 @@ public abstract class AbsObAxis extends AbsAxis {
 					// atomize operand
 					final AtomicValue mItem2 = atomize(mOperand2);
 					try {
-						final INode result = operate(mItem1, mItem2);
+						final AtomicValue result = operate(mItem1, mItem2);
 						// add retrieved AtomicValue to item list
 						final int itemKey = getTransaction().getItemList()
 								.addItem(result);
+						mToStore.add(result);
 						getTransaction().moveTo(itemKey);
 
 						return true;
@@ -129,7 +130,9 @@ public abstract class AbsObAxis extends AbsAxis {
 			}
 
 			if (XPATH_10_COMP) { // and empty sequence, return NaN
-				final INode result = new AtomicValue(Double.NaN, Type.DOUBLE);
+				final AtomicValue result = new AtomicValue(Double.NaN,
+						Type.DOUBLE);
+				mToStore.add(result);
 				final int itemKey = getTransaction().getItemList().addItem(
 						result);
 				getTransaction().moveTo(itemKey);
@@ -200,7 +203,7 @@ public abstract class AbsObAxis extends AbsAxis {
 	 * @throws TTXPathException
 	 *             if the operations fails
 	 */
-	protected abstract INode operate(final AtomicValue mOperand1,
+	protected abstract AtomicValue operate(final AtomicValue mOperand1,
 			final AtomicValue mOperand2) throws TTXPathException;
 
 	/**

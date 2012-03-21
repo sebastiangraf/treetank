@@ -143,7 +143,7 @@ public class Function {
 		final boolean ebv = ebv(axis, pToStore);
 		AtomicValue val = new AtomicValue(ebv);
 		pToStore.add(val);
-		final int itemKey = rtx.getItemList().addItem(new AtomicValue(ebv));
+		final int itemKey = rtx.getItemList().addItem(val);
 		rtx.moveTo(itemKey);
 		return true;
 	}
