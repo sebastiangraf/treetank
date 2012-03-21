@@ -263,7 +263,8 @@ public final class PipelineBuilder {
 		if (getPipeStack().empty() || getExpression().getSize() != 0) {
 			addExpressionSingle();
 		}
-		getExpression().add(new IfAxis(rtx, ifExpr, thenExpr, elseExpr));
+		getExpression().add(
+				new IfAxis(rtx, ifExpr, thenExpr, elseExpr, mToStore));
 
 	}
 
@@ -377,18 +378,18 @@ public final class PipelineBuilder {
 
 		// TODO: use typeswitch of JAVA 7
 		if (mOperator.equals("+")) {
-			axis = new AddOpAxis(rtx, mOperand1, mOperand2);
+			axis = new AddOpAxis(rtx, mOperand1, mOperand2, mToStore);
 		} else if (mOperator.equals("-")) {
 
-			axis = new SubOpAxis(rtx, mOperand1, mOperand2);
+			axis = new SubOpAxis(rtx, mOperand1, mOperand2, mToStore);
 		} else if (mOperator.equals("*")) {
-			axis = new MulOpAxis(rtx, mOperand1, mOperand2);
+			axis = new MulOpAxis(rtx, mOperand1, mOperand2, mToStore);
 		} else if (mOperator.equals("div")) {
-			axis = new DivOpAxis(rtx, mOperand1, mOperand2);
+			axis = new DivOpAxis(rtx, mOperand1, mOperand2, mToStore);
 		} else if (mOperator.equals("idiv")) {
-			axis = new IDivOpAxis(rtx, mOperand1, mOperand2);
+			axis = new IDivOpAxis(rtx, mOperand1, mOperand2, mToStore);
 		} else if (mOperator.equals("mod")) {
-			axis = new ModOpAxis(rtx, mOperand1, mOperand2);
+			axis = new ModOpAxis(rtx, mOperand1, mOperand2, mToStore);
 		} else {
 			// TODO: unary operator
 			throw new IllegalStateException(mOperator
@@ -806,13 +807,13 @@ public final class PipelineBuilder {
 
 		// parameter types of the function's constructor
 		final Class<?>[] paramTypes = { INodeReadTransaction.class, List.class,
-				Integer.TYPE, Integer.TYPE, Integer.TYPE };
+				Integer.TYPE, Integer.TYPE, Integer.TYPE, List.class };
 
 		try {
 			// instantiate function class with right constructor
 			final Constructor<?> cons = function.getConstructor(paramTypes);
 			final AbsAxis axis = (AbsAxis) cons.newInstance(mTransaction, args,
-					min, max, returnType);
+					min, max, returnType, mToStore);
 
 			if (getPipeStack().empty() || getExpression().getSize() != 0) {
 				addExpressionSingle();

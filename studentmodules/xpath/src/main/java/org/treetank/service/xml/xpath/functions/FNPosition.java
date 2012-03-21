@@ -32,13 +32,15 @@ import java.util.List;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.utils.TypedValue;
 
 /**
  * <h1>FNPosition</h1>
  * <p>
  * IAxis that represents the function fn:position specified in <a
- * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0 Functions and Operators</a>.
+ * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
+ * Functions and Operators</a>.
  * </p>
  * <p>
  * The function returns position of the item in the expression result set.
@@ -46,46 +48,47 @@ import org.treetank.utils.TypedValue;
  */
 public class FNPosition extends AbsFunction {
 
-    /**
-     * Constructor.
-     * 
-     * Initializes internal state and do a statical analysis concerning the
-     * function's arguments.
-     * 
-     * @param rtx
-     *            Transaction to operate on
-     * @param args
-     *            List of function arguments
-     * @param min
-     *            min number of allowed function arguments
-     * @param max
-     *            max number of allowed function arguments
-     * @param returnType
-     *            the type that the function's result will have
-     * @throws TTXPathException
-     *             if function check fails
-     */
-    public FNPosition(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min, final int max,
-        final int returnType) throws TTXPathException {
+	/**
+	 * Constructor.
+	 * 
+	 * Initializes internal state and do a statical analysis concerning the
+	 * function's arguments.
+	 * 
+	 * @param rtx
+	 *            Transaction to operate on
+	 * @param args
+	 *            List of function arguments
+	 * @param min
+	 *            min number of allowed function arguments
+	 * @param max
+	 *            max number of allowed function arguments
+	 * @param returnType
+	 *            the type that the function's result will have
+	 * @throws TTXPathException
+	 *             if function check fails
+	 */
+	public FNPosition(final INodeReadTransaction rtx, final List<AbsAxis> args,
+			final int min, final int max, final int returnType,
+			final List<AtomicValue> pToStore) throws TTXPathException {
 
-        super(rtx, args, min, max, returnType);
-    }
+		super(rtx, args, min, max, returnType, pToStore);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected byte[] computeResult() {
-        Integer position = 0;
-        final long currentNode = getTransaction().getNode().getNodeKey();
-        getTransaction().moveToParent();
-        getTransaction().moveToFirstChild();
-        do {
-            position++;
-            getTransaction().moveToRightSibling();
-        } while (getTransaction().getNode().getNodeKey() != currentNode);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected byte[] computeResult() {
+		Integer position = 0;
+		final long currentNode = getTransaction().getNode().getNodeKey();
+		getTransaction().moveToParent();
+		getTransaction().moveToFirstChild();
+		do {
+			position++;
+			getTransaction().moveToRightSibling();
+		} while (getTransaction().getNode().getNodeKey() != currentNode);
 
-        return TypedValue.getBytes(position.toString());
-    }
+		return TypedValue.getBytes(position.toString());
+	}
 
 }

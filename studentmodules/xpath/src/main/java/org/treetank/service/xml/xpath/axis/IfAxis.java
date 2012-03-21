@@ -27,101 +27,109 @@
 
 package org.treetank.service.xml.xpath.axis;
 
+import java.util.List;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.functions.Function;
 
 /**
  * <h1>IfAxis</h1>
  * <p>
- * IAxis that represents the conditional expression based on the keywords if, then, and else.
+ * IAxis that represents the conditional expression based on the keywords if,
+ * then, and else.
  * </p>
  * <p>
- * The first step in processing a conditional expression is to find the effective boolean value of the test
- * expression. If the effective boolean value of the test expression is true, the value of the then-expression
- * is returned. If the effective boolean value of the test expression is false, the value of the
- * else-expression is returned.
+ * The first step in processing a conditional expression is to find the
+ * effective boolean value of the test expression. If the effective boolean
+ * value of the test expression is true, the value of the then-expression is
+ * returned. If the effective boolean value of the test expression is false, the
+ * value of the else-expression is returned.
  * </p>
  * 
  */
 public class IfAxis extends AbsAxis {
 
-    private final AbsAxis mIf;
-    private final AbsAxis mThen;
-    private final AbsAxis mElse;
-    private boolean mFirst;
-    private AbsAxis mResult;
+	private final AbsAxis mIf;
+	private final AbsAxis mThen;
+	private final AbsAxis mElse;
+	private boolean mFirst;
+	private AbsAxis mResult;
+	private List<AtomicValue> mToStore;
 
-    /**
-     * 
-     * Constructor. Initializes the internal state.
-     * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
-     * @param mIfAxis
-     *            Test expression
-     * @param mThenAxis
-     *            Will be evaluated if test expression evaluates to true.
-     * @param mElseAxis
-     *            Will be evaluated if test expression evaluates to false.
-     */
-    public IfAxis(final INodeReadTransaction rtx, final AbsAxis mIfAxis, final AbsAxis mThenAxis,
-        final AbsAxis mElseAxis) {
+	/**
+	 * 
+	 * Constructor. Initializes the internal state.
+	 * 
+	 * @param rtx
+	 *            Exclusive (immutable) trx to iterate with.
+	 * @param mIfAxis
+	 *            Test expression
+	 * @param mThenAxis
+	 *            Will be evaluated if test expression evaluates to true.
+	 * @param mElseAxis
+	 *            Will be evaluated if test expression evaluates to false.
+	 */
+	public IfAxis(final INodeReadTransaction rtx, final AbsAxis mIfAxis,
+			final AbsAxis mThenAxis, final AbsAxis mElseAxis,
+			final List<AtomicValue> pToStore) {
 
-        super(rtx);
-        mIf = mIfAxis;
-        mThen = mThenAxis;
-        mElse = mElseAxis;
-        mFirst = true;
-    }
+		super(rtx);
+		mIf = mIfAxis;
+		mThen = mThenAxis;
+		mElse = mElseAxis;
+		mFirst = true;
+		mToStore = pToStore;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset(final long mNodeKey) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void reset(final long mNodeKey) {
 
-        super.reset(mNodeKey);
-        mFirst = true;
+		super.reset(mNodeKey);
+		mFirst = true;
 
-        if (mIf != null) {
-            mIf.reset(mNodeKey);
-        }
+		if (mIf != null) {
+			mIf.reset(mNodeKey);
+		}
 
-        if (mThen != null) {
-            mThen.reset(mNodeKey);
-        }
+		if (mThen != null) {
+			mThen.reset(mNodeKey);
+		}
 
-        if (mElse != null) {
-            mElse.reset(mNodeKey);
-        }
+		if (mElse != null) {
+			mElse.reset(mNodeKey);
+		}
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasNext() {
 
-        resetToLastKey();
+		resetToLastKey();
 
-        if (mFirst) {
-            mFirst = false;
-            try {
-                mResult = (Function.ebv(mIf)) ? mThen : mElse;
-            } catch (TTXPathException e) {
-                throw new RuntimeException(e);
-            }
-        }
+		if (mFirst) {
+			mFirst = false;
+			try {
+				mResult = (Function.ebv(mIf, mToStore)) ? mThen : mElse;
+			} catch (TTXPathException e) {
+				throw new RuntimeException(e);
+			}
+		}
 
-        if (mResult.hasNext()) {
-            return true;
-        } else {
-            resetToStartKey();
-            return false;
-        }
-    }
+		if (mResult.hasNext()) {
+			return true;
+		} else {
+			resetToStartKey();
+			return false;
+		}
+	}
 
 }

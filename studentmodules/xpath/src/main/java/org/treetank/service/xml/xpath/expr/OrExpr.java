@@ -128,7 +128,8 @@ public class OrExpr extends AbsExpression {
 
 		// first find the effective boolean values of the two operands, then
 		// determine value of the and-expression and store it in am item
-		final boolean result = Function.ebv(mOp1) || Function.ebv(mOp2);
+		final boolean result = Function.ebv(mOp1, mToStore)
+				|| Function.ebv(mOp2, mToStore);
 		// note: the error handling is implicitly done by the fnBoolean()
 		// function.
 

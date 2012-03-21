@@ -29,6 +29,8 @@ package org.treetank.service.xml.xpath.operators;
 
 import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
+import java.util.List;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
@@ -45,167 +47,178 @@ import org.treetank.service.xml.xpath.types.Type;
  */
 public abstract class AbsObAxis extends AbsAxis {
 
-    /** First arithmetic operand. */
-    private final AbsAxis mOperand1;
+	/** First arithmetic operand. */
+	private final AbsAxis mOperand1;
 
-    /** Second arithmetic operand. */
-    private final AbsAxis mOperand2;
+	/** Second arithmetic operand. */
+	private final AbsAxis mOperand2;
 
-    /** True, if axis has not been evaluated yet. */
-    private boolean mIsFirst;
+	/** True, if axis has not been evaluated yet. */
+	private boolean mIsFirst;
 
-    /**
-     * Constructor. Initializes the internal state.
-     * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
-     * @param mOp1
-     *            First value of the operation
-     * @param mOp2
-     *            Second value of the operation
-     */
-    public AbsObAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
+	private List<AtomicValue> mToStore;
 
-        super(rtx);
-        mOperand1 = mOp1;
-        mOperand2 = mOp2;
-        mIsFirst = true;
+	/**
+	 * Constructor. Initializes the internal state.
+	 * 
+	 * @param rtx
+	 *            Exclusive (immutable) trx to iterate with.
+	 * @param mOp1
+	 *            First value of the operation
+	 * @param mOp2
+	 *            Second value of the operation
+	 */
+	public AbsObAxis(final INodeReadTransaction rtx, final AbsAxis mOp1,
+			final AbsAxis mOp2, final List<AtomicValue> pToStore) {
 
-    }
+		super(rtx);
+		mOperand1 = mOp1;
+		mOperand2 = mOp2;
+		mIsFirst = true;
+		mToStore = pToStore;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void reset(final long mNodeKey) {
+	}
 
-        super.reset(mNodeKey);
-        mIsFirst = true;
-        if (mOperand1 != null) {
-            mOperand1.reset(mNodeKey);
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final void reset(final long mNodeKey) {
 
-        if (mOperand2 != null) {
-            mOperand2.reset(mNodeKey);
-        }
-    }
+		super.reset(mNodeKey);
+		mIsFirst = true;
+		if (mOperand1 != null) {
+			mOperand1.reset(mNodeKey);
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
+		if (mOperand2 != null) {
+			mOperand2.reset(mNodeKey);
+		}
+	}
 
-        resetToLastKey();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasNext() {
 
-        if (mIsFirst) {
-            mIsFirst = false;
+		resetToLastKey();
 
-            if (mOperand1.hasNext()) {
-                // atomize operand
-                final AtomicValue mItem1 = atomize(mOperand1);
+		if (mIsFirst) {
+			mIsFirst = false;
 
-                if (mOperand2.hasNext()) {
-                    // atomize operand
-                    final AtomicValue mItem2 = atomize(mOperand2);
-                    try {
-                        final INode result = operate(mItem1, mItem2);
-                        // add retrieved AtomicValue to item list
-                        final int itemKey = getTransaction().getItemList().addItem(result);
-                        getTransaction().moveTo(itemKey);
+			if (mOperand1.hasNext()) {
+				// atomize operand
+				final AtomicValue mItem1 = atomize(mOperand1);
 
-                        return true;
-                    } catch (TTXPathException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
+				if (mOperand2.hasNext()) {
+					// atomize operand
+					final AtomicValue mItem2 = atomize(mOperand2);
+					try {
+						final INode result = operate(mItem1, mItem2);
+						// add retrieved AtomicValue to item list
+						final int itemKey = getTransaction().getItemList()
+								.addItem(result);
+						getTransaction().moveTo(itemKey);
 
-            if (XPATH_10_COMP) { // and empty sequence, return NaN
-                final INode result = new AtomicValue(Double.NaN, Type.DOUBLE);
-                final int itemKey = getTransaction().getItemList().addItem(result);
-                getTransaction().moveTo(itemKey);
-                return true;
-            }
+						return true;
+					} catch (TTXPathException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
 
-        }
-        // either not the first call, or empty sequence
-        resetToStartKey();
-        return false;
+			if (XPATH_10_COMP) { // and empty sequence, return NaN
+				final INode result = new AtomicValue(Double.NaN, Type.DOUBLE);
+				final int itemKey = getTransaction().getItemList().addItem(
+						result);
+				getTransaction().moveTo(itemKey);
+				return true;
+			}
 
-    }
+		}
+		// either not the first call, or empty sequence
+		resetToStartKey();
+		return false;
 
-    /**
-     * Atomizes an operand according to the rules specified in the XPath
-     * specification.
-     * 
-     * @param mOperand
-     *            the operand to atomize
-     * @return the atomized operand. (always an atomic value)
-     */
-    private AtomicValue atomize(final AbsAxis mOperand) {
+	}
 
-        final INodeReadTransaction rtx = getTransaction();
-        int type = rtx.getNode().getTypeKey();
-        AtomicValue atom;
+	/**
+	 * Atomizes an operand according to the rules specified in the XPath
+	 * specification.
+	 * 
+	 * @param mOperand
+	 *            the operand to atomize
+	 * @return the atomized operand. (always an atomic value)
+	 */
+	private AtomicValue atomize(final AbsAxis mOperand) {
 
-        if (XPATH_10_COMP) {
-            if (type == rtx.keyForName("xs:double") || type == rtx.keyForName("xs:untypedAtomic")
-                || type == rtx.keyForName("xs:boolean") || type == rtx.keyForName("xs:string")
-                || type == rtx.keyForName("xs:integer") || type == rtx.keyForName("xs:float")
-                || type == rtx.keyForName("xs:decimal")) {
-                Function.fnnumber(mOperand.getTransaction());
-            }
+		final INodeReadTransaction rtx = getTransaction();
+		int type = rtx.getNode().getTypeKey();
+		AtomicValue atom;
 
-            atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.getNode().getTypeKey());
-        } else {
-            // unatomicType is cast to double
-            if (type == rtx.keyForName("xs:untypedAtomic")) {
-                type = rtx.keyForName("xs:double");
-                // TODO: throw error, of cast fails
-            }
+		if (XPATH_10_COMP) {
+			if (type == rtx.keyForName("xs:double")
+					|| type == rtx.keyForName("xs:untypedAtomic")
+					|| type == rtx.keyForName("xs:boolean")
+					|| type == rtx.keyForName("xs:string")
+					|| type == rtx.keyForName("xs:integer")
+					|| type == rtx.keyForName("xs:float")
+					|| type == rtx.keyForName("xs:decimal")) {
+				Function.fnnumber(mOperand.getTransaction(), mToStore);
+			}
 
-            atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), type);
-        }
+			atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx
+					.getNode().getTypeKey());
+		} else {
+			// unatomicType is cast to double
+			if (type == rtx.keyForName("xs:untypedAtomic")) {
+				type = rtx.keyForName("xs:double");
+				// TODO: throw error, of cast fails
+			}
 
-        // if (!XPATH_10_COMP && operand.hasNext()) {
-        // throw new XPathError(ErrorType.XPTY0004);
-        // }
+			atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), type);
+		}
 
-        return atom;
-    }
+		// if (!XPATH_10_COMP && operand.hasNext()) {
+		// throw new XPathError(ErrorType.XPTY0004);
+		// }
 
-    /**
-     * Performs the operation on the two input operands. First checks if the
-     * types of the operands are a valid combination for the operation and if so
-     * computed the result. Otherwise an XPathError is thrown.
-     * 
-     * @param mOperand1
-     *            first input operand
-     * @param mOperand2
-     *            second input operand
-     * @return result of the operation
-     * @throws TTXPathException
-     *             if the operations fails
-     */
-    protected abstract INode operate(final AtomicValue mOperand1, final AtomicValue mOperand2)
-        throws TTXPathException;
+		return atom;
+	}
 
-    /**
-     * Checks if the types of the operands are a valid combination for the
-     * operation and if so returns the corresponding result type. Otherwise an
-     * XPathError is thrown. This typed check is done according to the <a
-     * href="http://www.w3.org/TR/xpath20/#mapping">Operator Mapping</a>.
-     * 
-     * @param mOp1
-     *            first operand's type key
-     * @param mOp2
-     *            second operand's type key
-     * @return return type of the arithmetic function according to the operand
-     *         type combination.
-     * @throws TTXPathException
-     *             if type is not specified
-     */
-    protected abstract Type getReturnType(final int mOp1, final int mOp2) throws TTXPathException;
+	/**
+	 * Performs the operation on the two input operands. First checks if the
+	 * types of the operands are a valid combination for the operation and if so
+	 * computed the result. Otherwise an XPathError is thrown.
+	 * 
+	 * @param mOperand1
+	 *            first input operand
+	 * @param mOperand2
+	 *            second input operand
+	 * @return result of the operation
+	 * @throws TTXPathException
+	 *             if the operations fails
+	 */
+	protected abstract INode operate(final AtomicValue mOperand1,
+			final AtomicValue mOperand2) throws TTXPathException;
+
+	/**
+	 * Checks if the types of the operands are a valid combination for the
+	 * operation and if so returns the corresponding result type. Otherwise an
+	 * XPathError is thrown. This typed check is done according to the <a
+	 * href="http://www.w3.org/TR/xpath20/#mapping">Operator Mapping</a>.
+	 * 
+	 * @param mOp1
+	 *            first operand's type key
+	 * @param mOp2
+	 *            second operand's type key
+	 * @return return type of the arithmetic function according to the operand
+	 *         type combination.
+	 * @throws TTXPathException
+	 *             if type is not specified
+	 */
+	protected abstract Type getReturnType(final int mOp1, final int mOp2)
+			throws TTXPathException;
 
 }
