@@ -110,16 +110,6 @@ public abstract class AbsComparator extends AbsAxis {
         if (mIsFirst) {
             mIsFirst = false;
 
-            // TODO: why?
-            if (!(mOperand1 instanceof LiteralExpr)) {
-                mOperand1.reset(getTransaction().getNode().getNodeKey());
-            }
-
-            // TODO: why?
-            if (!(mOperand2 instanceof LiteralExpr)) {
-                mOperand2.reset(getTransaction().getNode().getNodeKey());
-            }
-
             /*
              * Evaluates the comparison. First atomizes both operands and then
              * executes the comparison on them. At the end, the transaction is
