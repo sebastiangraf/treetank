@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.SequenceType;
 import org.treetank.utils.TypedValue;
 

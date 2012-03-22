@@ -35,8 +35,8 @@ import java.util.List;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.types.Type;
+import org.treetank.node.AtomicValue;
+import org.treetank.node.Type;
 
 /**
  * <h1>GeneralComp</h1>

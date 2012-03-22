@@ -32,9 +32,9 @@ import java.util.List;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.functions.AbsFunction;
-import org.treetank.service.xml.xpath.types.Type;
 import org.treetank.utils.TypedValue;
 
 /**

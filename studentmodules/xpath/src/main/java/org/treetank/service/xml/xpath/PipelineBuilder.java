@@ -40,6 +40,7 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.filter.AbsFilter;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.axis.ExceptAxis;
 import org.treetank.service.xml.xpath.axis.ForAxis;
 import org.treetank.service.xml.xpath.axis.IfAxis;

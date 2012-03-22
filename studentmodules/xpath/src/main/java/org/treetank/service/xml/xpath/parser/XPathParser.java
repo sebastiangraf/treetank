@@ -57,7 +57,7 @@ import org.treetank.axis.filter.TextFilter;
 import org.treetank.axis.filter.TypeFilter;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.PipelineBuilder;
 import org.treetank.service.xml.xpath.SequenceType;

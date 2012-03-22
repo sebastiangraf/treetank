@@ -36,9 +36,9 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.AtomicValue;
+import org.treetank.node.Type;
 import org.treetank.node.interfaces.INode;
-import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.types.Type;
 
 /**
  * JUnit-test class to test the functionality of the LiteralExpr.

@@ -30,7 +30,7 @@ package org.treetank.service.xml.xpath.expr;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
 
 /**
  * <h1>AbstractExpression</h1>

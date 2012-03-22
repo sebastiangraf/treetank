@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.EXPathError;
-import org.treetank.service.xml.xpath.types.Type;
 
 /**
  * <h1>CompKind</h1>

@@ -28,7 +28,7 @@
 package org.treetank.service.xml.xpath;
 
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.types.Type;
+import org.treetank.node.Type;
 
 /**
  * <h1>SingleType</h1>
