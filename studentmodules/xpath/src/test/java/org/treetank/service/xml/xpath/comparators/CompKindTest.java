@@ -34,7 +34,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.types.Type;
+import org.treetank.node.Type;
 
 public class CompKindTest {
 

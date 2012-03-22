@@ -28,8 +28,7 @@
 package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTransaction;
-import org.treetank.service.xml.xpath.AtomicValue;
-import org.treetank.service.xml.xpath.IObserver;
+import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.axis.VariableAxis;
 
 /**
@@ -38,7 +37,7 @@ import org.treetank.service.xml.xpath.axis.VariableAxis;
  * Reference to the current item of the variable expression.
  * </p>
  */
-public class VarRefExpr extends AbsExpression implements IObserver {
+public class VarRefExpr extends AbsExpression {
 
     /** Key of the item the variable is set to at the moment. */
     private long mVarKey;

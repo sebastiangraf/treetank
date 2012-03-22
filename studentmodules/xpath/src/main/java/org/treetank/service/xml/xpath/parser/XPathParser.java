@@ -27,9 +27,7 @@
 
 package org.treetank.service.xml.xpath.parser;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.treetank.api.INodeReadTransaction;
@@ -59,7 +57,7 @@ import org.treetank.axis.filter.TextFilter;
 import org.treetank.axis.filter.TypeFilter;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.PipelineBuilder;
 import org.treetank.service.xml.xpath.SequenceType;
@@ -96,11 +94,6 @@ public final class XPathParser {
     private final PipelineBuilder mPipeBuilder;
 
     /**
-     * List to store intermediate atomics.
-     */
-    private final List<AtomicValue> mToStore;
-
-    /**
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
@@ -110,10 +103,9 @@ public final class XPathParser {
      */
     public XPathParser(final INodeReadTransaction rtx, final String mQuery) {
 
-        mToStore = new ArrayList<AtomicValue>();
         mRTX = rtx;
         mScanner = new XPathScanner(mQuery);
-        mPipeBuilder = new PipelineBuilder(mToStore);
+        mPipeBuilder = new PipelineBuilder();
 
     }
 

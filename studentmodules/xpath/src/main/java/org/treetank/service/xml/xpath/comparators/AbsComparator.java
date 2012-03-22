@@ -27,14 +27,12 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
-import java.util.List;
-
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
+import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
-import org.treetank.service.xml.xpath.types.Type;
 
 /**
  * <h1>AbstractComparator</h1>
@@ -56,9 +54,6 @@ public abstract class AbsComparator extends AbsAxis {
     /** Is first evaluation? */
     private boolean mIsFirst;
 
-    /** Variable to store results. */
-    protected final List<AtomicValue> mToStore;
-
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -72,14 +67,13 @@ public abstract class AbsComparator extends AbsAxis {
      *            comparison kind
      */
     public AbsComparator(final INodeReadTransaction mRtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
-        final CompKind mComp, final List<AtomicValue> pToStore) {
+        final CompKind mComp) {
 
         super(mRtx);
         this.mComp = mComp;
         this.mOperand1 = mOperand1;
         this.mOperand2 = mOperand2;
         mIsFirst = true;
-        mToStore = pToStore;
     }
 
     /**
@@ -141,7 +135,6 @@ public abstract class AbsComparator extends AbsAxis {
                         final AtomicValue result = new AtomicValue(resultValue);
 
                         // add retrieved AtomicValue to item list
-                        mToStore.add(result);
                         final int itemKey = getTransaction().getItemList().addItem(result);
                         getTransaction().moveTo(itemKey);
                         return true;
@@ -233,15 +226,15 @@ public abstract class AbsComparator extends AbsAxis {
      */
     public static final AbsComparator getComparator(final INodeReadTransaction paramRtx,
         final AbsAxis paramOperandOne, final AbsAxis paramOperandTwo, final CompKind paramKind,
-        final String paramVal, final List<AtomicValue> pToStore) {
+        final String paramVal) {
         if ("eq".equals(paramVal) || "lt".equals(paramVal) || "le".equals(paramVal) || "gt".equals(paramVal)
             || "ge".equals(paramVal)) {
-            return new ValueComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind, pToStore);
+            return new ValueComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
         } else if ("=".equals(paramVal) || "!=".equals(paramVal) || "<".equals(paramVal)
             || "<=".equals(paramVal) || ">".equals(paramVal) || ">=".equals(paramVal)) {
-            return new GeneralComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind, pToStore);
+            return new GeneralComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
         } else if ("is".equals(paramVal) || "<<".equals(paramVal) || ">>".equals(paramVal)) {
-            new NodeComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind, pToStore);
+            new NodeComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
         }
         throw new IllegalStateException(paramVal + " is not a valid comparison.");
     }

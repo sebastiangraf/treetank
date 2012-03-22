@@ -103,8 +103,6 @@ public class SequenceAxis extends AbsAxis {
 
             mCurrent = mSeq.get(mNum++);
 
-            // mCurrent.getTransaction().moveTo(getTransaction().getNodeKey());
-            mCurrent.reset(getTransaction().getNode().getNodeKey());
             if (mCurrent.hasNext()) {
                 return true;
             }

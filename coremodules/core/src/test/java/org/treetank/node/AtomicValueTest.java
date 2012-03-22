@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath;
+package org.treetank.node;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -33,7 +33,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.service.xml.xpath.types.Type;
+import org.treetank.node.AtomicValue;
+import org.treetank.node.Type;
 
 public class AtomicValueTest {
 

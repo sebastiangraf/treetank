@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.service.xml.xpath.types;
+package org.treetank.node;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -1013,12 +1012,6 @@ public enum Type {
      */
     public boolean isCastableTo(final Type mTargetType, final String mValue) throws TTXPathException {
 
-        // casting to or from NOTATION or anySimpleType is not possible
-        if (mTargetType == NOTATION || this == NOTATION || mTargetType == ANY_SIMPLE_TYPE
-            || this == ANY_SIMPLE_TYPE) {
-            throw EXPathError.XPST0080.getEncapsulatedException();
-        }
-
         // (4.a) a type can always be casted to itself, or one of its super
         // types
         if (this == mTargetType || derivesFrom(mTargetType)) {
@@ -1031,8 +1024,6 @@ public enum Type {
             if (mTargetType == UNTYPED_ATOMIC || mTargetType == STRING || castsTo(mTargetType)
                 || mTargetType.facetIsSatisfiedBy(mValue)) {
                 return true;
-            } else {
-                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
         }
 

@@ -29,14 +29,12 @@ package org.treetank.service.xml.xpath.operators;
 
 import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
-import java.util.List;
-
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
+import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
-import org.treetank.service.xml.xpath.types.Type;
 
 /**
  * <h1>AbstractOpAxis</h1>
@@ -55,8 +53,6 @@ public abstract class AbsObAxis extends AbsAxis {
     /** True, if axis has not been evaluated yet. */
     private boolean mIsFirst;
 
-    private List<AtomicValue> mToStore;
-
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -67,14 +63,12 @@ public abstract class AbsObAxis extends AbsAxis {
      * @param mOp2
      *            Second value of the operation
      */
-    public AbsObAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2,
-        final List<AtomicValue> pToStore) {
+    public AbsObAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
 
         super(rtx);
         mOperand1 = mOp1;
         mOperand2 = mOp2;
         mIsFirst = true;
-        mToStore = pToStore;
 
     }
 
@@ -129,7 +123,6 @@ public abstract class AbsObAxis extends AbsAxis {
                     if (mItem2 != null) {
                         final AtomicValue result = operate(mItem1, mItem2);
                         // add retrieved AtomicValue to item list
-                        mToStore.add(result);
                         final int itemKey = getTransaction().getItemList().addItem(result);
                         getTransaction().moveTo(itemKey);
                         return true;

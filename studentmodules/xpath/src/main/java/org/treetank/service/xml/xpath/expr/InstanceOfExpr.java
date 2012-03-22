@@ -27,11 +27,9 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import java.util.List;
-
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.SequenceType;
 import org.treetank.utils.TypedValue;
 
@@ -50,8 +48,6 @@ public class InstanceOfExpr extends AbsExpression {
     /** The sequence type that the sequence needs to have to be an instance of. */
     private final SequenceType mSequenceType;
 
-    private final List<AtomicValue> mToStore;
-
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -63,12 +59,11 @@ public class InstanceOfExpr extends AbsExpression {
      *            sequence type to test whether the input sequence matches to.
      */
     public InstanceOfExpr(final INodeReadTransaction mRtx, final AbsAxis mInputExpr,
-        final SequenceType mSequenceType, final List<AtomicValue> pToStore) {
+        final SequenceType mSequenceType) {
 
         super(mRtx);
         this.mInputExpr = mInputExpr;
         this.mSequenceType = mSequenceType;
-        mToStore = pToStore;
     }
 
     /**
@@ -126,7 +121,6 @@ public class InstanceOfExpr extends AbsExpression {
         AtomicValue val =
             new AtomicValue(TypedValue.getBytes(Boolean.toString(isInstanceOf)), getTransaction().keyForName(
                 "xs:boolean"));
-        mToStore.add(val);
         final int mItemKey = getTransaction().getItemList().addItem(val);
         getTransaction().moveTo(mItemKey);
         return val;

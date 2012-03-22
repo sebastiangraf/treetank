@@ -28,7 +28,7 @@
 package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTransaction;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
 
 /**
  * <h1>LiteralExpr</h1>

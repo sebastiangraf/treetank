@@ -32,7 +32,7 @@ import java.util.List;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
+import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.expr.AbsExpression;
 
@@ -87,8 +87,6 @@ public abstract class AbsFunction extends AbsExpression {
     /** The function's return type. */
     private final int mReturnType;
 
-    protected final List<AtomicValue> mToStore;
-
     /**
      * Constructor. Initializes internal state and do a statical analysis
      * concerning the function's arguments.
@@ -107,7 +105,7 @@ public abstract class AbsFunction extends AbsExpression {
      *             if the verify process is failing.
      */
     public AbsFunction(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min,
-        final int max, final int returnType, final List<AtomicValue> pToStore) throws TTXPathException {
+        final int max, final int returnType) throws TTXPathException {
 
         super(rtx);
         mArgs = args;
@@ -115,7 +113,6 @@ public abstract class AbsFunction extends AbsExpression {
         mMax = max;
         mReturnType = returnType;
         varifyParam(args.size());
-        mToStore = pToStore;
     }
 
     /**
@@ -162,7 +159,6 @@ public abstract class AbsFunction extends AbsExpression {
 
         // create an atomic value, add it to the list and move the cursor to it.
         AtomicValue val = new AtomicValue(value, mReturnType);
-        mToStore.add(val);
         final int itemKey = getTransaction().getItemList().addItem(val);
         getTransaction().moveTo(itemKey);
         return val;
