@@ -58,9 +58,9 @@ public class NodeComp extends AbsComparator {
      *            comparison kind
      */
     public NodeComp(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
-        final CompKind mComp, final List<AtomicValue> pToStore) {
+        final CompKind mComp) {
 
-        super(rtx, mOperand1, mOperand2, mComp, pToStore);
+        super(rtx, mOperand1, mOperand2, mComp);
     }
 
     /**

@@ -83,18 +83,13 @@ public final class PipelineBuilder {
     /** Maps a variable name to the item that the variable holds. */
     private final Map<String, AbsAxis> mVarRefMap;
 
-    /** Storing atomic results. */
-    private final List<AtomicValue> mToStore;
-
     /**
      * Constructor.
      */
-    public PipelineBuilder(final List<AtomicValue> pToStore) {
+    public PipelineBuilder() {
 
         mExprStack = new Stack<Stack<ExpressionSingle>>();
-
         mVarRefMap = new HashMap<String, AbsAxis>();
-        mToStore = pToStore;
     }
 
     /**
@@ -259,7 +254,7 @@ public final class PipelineBuilder {
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(new IfAxis(rtx, ifExpr, thenExpr, elseExpr, mToStore));
+        getExpression().add(new IfAxis(rtx, ifExpr, thenExpr, elseExpr));
 
     }
 
@@ -281,8 +276,7 @@ public final class PipelineBuilder {
         final AbsAxis paramOperandOne = getPipeStack().pop().getExpr();
 
         final CompKind kind = CompKind.fromString(mComp);
-        final AbsAxis axis =
-            AbsComparator.getComparator(rtx, paramOperandOne, paramOperandTwo, kind, mComp, mToStore);
+        final AbsAxis axis = AbsComparator.getComparator(rtx, paramOperandOne, paramOperandTwo, kind, mComp);
 
         // // TODO: use typeswitch of JAVA 7
         // if (mComp.equals("eq")) {
@@ -371,18 +365,18 @@ public final class PipelineBuilder {
 
         // TODO: use typeswitch of JAVA 7
         if (mOperator.equals("+")) {
-            axis = new AddOpAxis(rtx, mOperand1, mOperand2, mToStore);
+            axis = new AddOpAxis(rtx, mOperand1, mOperand2);
         } else if (mOperator.equals("-")) {
 
-            axis = new SubOpAxis(rtx, mOperand1, mOperand2, mToStore);
+            axis = new SubOpAxis(rtx, mOperand1, mOperand2);
         } else if (mOperator.equals("*")) {
-            axis = new MulOpAxis(rtx, mOperand1, mOperand2, mToStore);
+            axis = new MulOpAxis(rtx, mOperand1, mOperand2);
         } else if (mOperator.equals("div")) {
-            axis = new DivOpAxis(rtx, mOperand1, mOperand2, mToStore);
+            axis = new DivOpAxis(rtx, mOperand1, mOperand2);
         } else if (mOperator.equals("idiv")) {
-            axis = new IDivOpAxis(rtx, mOperand1, mOperand2, mToStore);
+            axis = new IDivOpAxis(rtx, mOperand1, mOperand2);
         } else if (mOperator.equals("mod")) {
-            axis = new ModOpAxis(rtx, mOperand1, mOperand2, mToStore);
+            axis = new ModOpAxis(rtx, mOperand1, mOperand2);
         } else {
             // TODO: unary operator
             throw new IllegalStateException(mOperator + " is not a valid operator.");
@@ -425,7 +419,7 @@ public final class PipelineBuilder {
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(new AndExpr(mTransaction, operand1, mOperand2, mToStore));
+        getExpression().add(new AndExpr(mTransaction, operand1, mOperand2));
     }
 
     /**
@@ -444,7 +438,7 @@ public final class PipelineBuilder {
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(new OrExpr(mTransaction, mOperand1, mOperand2, mToStore));
+        getExpression().add(new OrExpr(mTransaction, mOperand1, mOperand2));
     }
 
     /**
@@ -483,7 +477,6 @@ public final class PipelineBuilder {
      *            key of the literal expression.
      */
     public void addLiteral(final INodeReadTransaction pTrans, final AtomicValue pVal) {
-        mToStore.add(pVal);
         getExpression().add(new LiteralExpr(pTrans, pTrans.getItemList().addItem(pVal)));
     }
 
@@ -577,7 +570,7 @@ public final class PipelineBuilder {
             }
         }
 
-        getExpression().add(new PredicateFilterAxis(mTransaction, mPredicate, mToStore));
+        getExpression().add(new PredicateFilterAxis(mTransaction, mPredicate));
 
     }
 
@@ -607,8 +600,7 @@ public final class PipelineBuilder {
         }
 
         final AbsAxis mAxis =
-            mIsSome ? new SomeExpr(mTransaction, vars, satisfy, mToStore) : new EveryExpr(mTransaction, vars,
-                satisfy, mToStore);
+            mIsSome ? new SomeExpr(mTransaction, vars, satisfy) : new EveryExpr(mTransaction, vars, satisfy);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
@@ -630,7 +622,7 @@ public final class PipelineBuilder {
 
         final AbsAxis candidate = getPipeStack().pop().getExpr();
 
-        final AbsAxis axis = new CastableExpr(mTransaction, candidate, mSingleType, mToStore);
+        final AbsAxis axis = new CastableExpr(mTransaction, candidate, mSingleType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -651,7 +643,7 @@ public final class PipelineBuilder {
         final AbsAxis mOperand2 = getPipeStack().pop().getExpr();
         final AbsAxis mOperand1 = getPipeStack().pop().getExpr();
 
-        final AbsAxis axis = new RangeAxis(mTransaction, mOperand1, mOperand2, mToStore);
+        final AbsAxis axis = new RangeAxis(mTransaction, mOperand1, mOperand2);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -673,7 +665,7 @@ public final class PipelineBuilder {
 
         final AbsAxis candidate = getPipeStack().pop().getExpr();
 
-        final AbsAxis axis = new InstanceOfExpr(mTransaction, candidate, mSequenceType, mToStore);
+        final AbsAxis axis = new InstanceOfExpr(mTransaction, candidate, mSequenceType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -759,14 +751,13 @@ public final class PipelineBuilder {
 
         // parameter types of the function's constructor
         final Class<?>[] paramTypes = {
-            INodeReadTransaction.class, List.class, Integer.TYPE, Integer.TYPE, Integer.TYPE, List.class
+            INodeReadTransaction.class, List.class, Integer.TYPE, Integer.TYPE, Integer.TYPE
         };
 
         try {
             // instantiate function class with right constructor
             final Constructor<?> cons = function.getConstructor(paramTypes);
-            final AbsAxis axis =
-                (AbsAxis)cons.newInstance(mTransaction, args, min, max, returnType, mToStore);
+            final AbsAxis axis = (AbsAxis)cons.newInstance(mTransaction, args, min, max, returnType);
 
             if (getPipeStack().empty() || getExpression().getSize() != 0) {
                 addExpressionSingle();

@@ -51,8 +51,6 @@ public class EveryExpr extends AbsExpression {
 
     private final AbsAxis mSatisfy;
 
-    private final List<AtomicValue> mToStore;
-
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -64,11 +62,9 @@ public class EveryExpr extends AbsExpression {
      *            condition every item of the variable results must satisfy in
      *            order to evaluate expression to true
      */
-    public EveryExpr(final INodeReadTransaction rtx, final List<AbsAxis> mVars, final AbsAxis mSatisfy,
-        final List<AtomicValue> pToStore) {
+    public EveryExpr(final INodeReadTransaction rtx, final List<AbsAxis> mVars, final AbsAxis mSatisfy) {
 
         super(rtx);
-        mToStore = pToStore;
         this.mVars = mVars;
         this.mSatisfy = mSatisfy;
     }
@@ -113,7 +109,6 @@ public class EveryExpr extends AbsExpression {
         AtomicValue val =
             new AtomicValue(TypedValue.getBytes(Boolean.toString(satisfiesCond)), getTransaction()
                 .keyForName("xs:boolean"));
-        mToStore.add(val);
         final int mItemKey = getTransaction().getItemList().addItem(val);
         getTransaction().moveTo(mItemKey);
         return val;

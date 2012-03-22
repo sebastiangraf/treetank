@@ -65,8 +65,6 @@ public class CastableExpr extends AbsExpression {
     /** Defines, whether an empty sequence can be casted to any target type. */
     private final boolean mPermitEmptySeq;
 
-    private final List<AtomicValue> mToStore;
-
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -77,14 +75,12 @@ public class CastableExpr extends AbsExpression {
      * @param mTarget
      *            Type to test, whether the input expression can be casted to.
      */
-    public CastableExpr(final INodeReadTransaction rtx, final AbsAxis inputExpr, final SingleType mTarget,
-        final List<AtomicValue> pToStore) {
+    public CastableExpr(final INodeReadTransaction rtx, final AbsAxis inputExpr, final SingleType mTarget) {
 
         super(rtx);
         mSourceExpr = inputExpr;
         mTargetType = mTarget.getAtomic();
         mPermitEmptySeq = mTarget.hasInterogation();
-        mToStore = pToStore;
 
     }
 
@@ -140,7 +136,6 @@ public class CastableExpr extends AbsExpression {
         AtomicValue val =
             new AtomicValue(TypedValue.getBytes(Boolean.toString(isCastable)), getTransaction().keyForName(
                 "xs:boolean"));
-        mToStore.add(val);
         final int mItemKey = getTransaction().getItemList().addItem(val);
         getTransaction().moveTo(mItemKey);
         return val;

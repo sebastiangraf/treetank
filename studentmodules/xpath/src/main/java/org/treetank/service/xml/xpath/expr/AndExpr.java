@@ -27,8 +27,6 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import java.util.List;
-
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
@@ -80,8 +78,6 @@ public class AndExpr extends AbsExpression {
     /** Second operand of the logical expression. */
     private final AbsAxis mOp2;
 
-    private final List<AtomicValue> mToStore;
-
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -92,13 +88,11 @@ public class AndExpr extends AbsExpression {
      * @param mOperand2
      *            Second operand
      */
-    public AndExpr(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
-        final List<AtomicValue> pToStore) {
+    public AndExpr(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
         mOp1 = mOperand1;
         mOp2 = mOperand2;
-        mToStore = pToStore;
 
     }
 
@@ -127,7 +121,7 @@ public class AndExpr extends AbsExpression {
 
         // first find the effective boolean values of the two operands, then
         // determine value of the and-expression and store it in an item
-        final boolean result = Function.ebv(mOp1, mToStore) && Function.ebv(mOp2, mToStore);
+        final boolean result = Function.ebv(mOp1) && Function.ebv(mOp2);
         // note: the error handling is implicitly done by the fnBoolean()
         // function.
 
@@ -136,7 +130,6 @@ public class AndExpr extends AbsExpression {
         AtomicValue val =
             new AtomicValue(TypedValue.getBytes(Boolean.toString(result)), getTransaction().keyForName(
                 "xs:boolean"));
-        mToStore.add(val);
         final int mItemKey = getTransaction().getItemList().addItem(val);
         getTransaction().moveTo(mItemKey);
         return val;

@@ -31,9 +31,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,14 +45,12 @@ import org.treetank.service.xml.xpath.types.Type;
 public class AbsOpAxisTest {
 
     private Holder holder;
-    private List<AtomicValue> list;
 
     @Before
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
-        list = new ArrayList<AtomicValue>();
     }
 
     @After
@@ -70,18 +65,14 @@ public class AbsOpAxisTest {
         AtomicValue item1 = new AtomicValue(1.0, Type.DOUBLE);
         AtomicValue item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-        list.add(item1);
-        list.add(item2);
-
         AbsAxis op1 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item1));
         AbsAxis op2 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item2));
-        AbsObAxis axis = new DivOpAxis(holder.getRtx(), op1, op2, list);
+        AbsObAxis axis = new DivOpAxis(holder.getRtx(), op1, op2);
 
         assertEquals(true, axis.hasNext());
         assertEquals(holder.getRtx().keyForName("xs:double"), holder.getRtx().getNode().getTypeKey());
         assertThat(Double.parseDouble(holder.getRtx().getValueOfCurrentNode()), is(0.5));
         assertEquals(false, axis.hasNext());
-
 
     }
 

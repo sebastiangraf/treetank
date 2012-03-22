@@ -27,8 +27,6 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import java.util.List;
-
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
@@ -46,75 +44,69 @@ import org.treetank.utils.TypedValue;
  */
 public class IDivOpAxis extends AbsObAxis {
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param mOp1
-	 *            First value of the operation
-	 * @param mOp2
-	 *            Second value of the operation
-	 */
-	public IDivOpAxis(final INodeReadTransaction rtx, final AbsAxis mOp1,
-			final AbsAxis mOp2, final List<AtomicValue> pToStore) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param mOp1
+     *            First value of the operation
+     * @param mOp2
+     *            Second value of the operation
+     */
+    public IDivOpAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
 
-		super(rtx, mOp1, mOp2, pToStore);
-	}
+        super(rtx, mOp1, mOp2);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public AtomicValue operate(final AtomicValue mOperand1,
-			final AtomicValue mOperand2) throws TTXPathException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AtomicValue operate(final AtomicValue mOperand1, final AtomicValue mOperand2)
+        throws TTXPathException {
 
-		final Type returnType = getReturnType(mOperand1.getTypeKey(),
-				mOperand2.getTypeKey());
-		final int typeKey = getTransaction().keyForName(
-				returnType.getStringRepr());
+        final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
+        final int typeKey = getTransaction().keyForName(returnType.getStringRepr());
 
-		final byte[] value;
+        final byte[] value;
 
-		try {
-			final int op1 = (int) Double.parseDouble(new String(mOperand1
-					.getRawValue()));
-			final int op2 = (int) Double.parseDouble(new String(mOperand2
-					.getRawValue()));
-			final int iValue = op1 / op2;
-			value = TypedValue.getBytes(iValue);
-			return new AtomicValue(value, typeKey);
-		} catch (final ArithmeticException e) {
-			// LOGWRAPPER.error(e);
-			throw new XPathError(ErrorType.FOAR0001);
-		}
+        try {
+            final int op1 = (int)Double.parseDouble(new String(mOperand1.getRawValue()));
+            final int op2 = (int)Double.parseDouble(new String(mOperand2.getRawValue()));
+            final int iValue = op1 / op2;
+            value = TypedValue.getBytes(iValue);
+            return new AtomicValue(value, typeKey);
+        } catch (final ArithmeticException e) {
+            // LOGWRAPPER.error(e);
+            throw new XPathError(ErrorType.FOAR0001);
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Type getReturnType(final int mOp1, final int mOp2)
-			throws TTXPathException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Type getReturnType(final int mOp1, final int mOp2) throws TTXPathException {
 
-		Type type1;
-		Type type2;
-		try {
-			type1 = Type.getType(mOp1).getPrimitiveBaseType();
-			type2 = Type.getType(mOp2).getPrimitiveBaseType();
-		} catch (final IllegalStateException e) {
-			throw new XPathError(ErrorType.XPTY0004);
-		}
+        Type type1;
+        Type type2;
+        try {
+            type1 = Type.getType(mOp1).getPrimitiveBaseType();
+            type2 = Type.getType(mOp2).getPrimitiveBaseType();
+        } catch (final IllegalStateException e) {
+            throw new XPathError(ErrorType.XPTY0004);
+        }
 
-		if (type1.isNumericType() && type2.isNumericType()) {
+        if (type1.isNumericType() && type2.isNumericType()) {
 
-			return Type.INTEGER;
-		} else {
+            return Type.INTEGER;
+        } else {
 
-			throw new XPathError(ErrorType.XPTY0004);
+            throw new XPathError(ErrorType.XPTY0004);
 
-		}
-	}
+        }
+    }
 
 }

@@ -32,15 +32,13 @@ import java.util.List;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.utils.TypedValue;
 
 /**
  * <h1>FNNot</h1>
  * <p>
- * IAxis that represents the function fn:not specified in <a
- * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
- * Functions and Operators</a>.
+ * IAxis that represents the function fn:not specified in <a href="http://www.w3.org/TR/xquery-operators/">
+ * XQuery 1.0 and XPath 2.0 Functions and Operators</a>.
  * </p>
  * <p>
  * The function inverted boolean value of the argument.
@@ -48,44 +46,43 @@ import org.treetank.utils.TypedValue;
  */
 public class FNNot extends AbsFunction {
 
-	/**
-	 * Constructor.
-	 * 
-	 * Initializes internal state and do a statical analysis concerning the
-	 * function's arguments.
-	 * 
-	 * @param rtx
-	 *            Transaction to operate on
-	 * @param args
-	 *            List of function arguments
-	 * @param min
-	 *            min number of allowed function arguments
-	 * @param max
-	 *            max number of allowed function arguments
-	 * @param returnType
-	 *            the type that the function's result will have
-	 * @throws TTXPathException
-	 *             if function check fails
-	 */
-	public FNNot(final INodeReadTransaction rtx, final List<AbsAxis> args,
-			final int min, final int max, final int returnType,
-			final List<AtomicValue> pToStore) throws TTXPathException {
+    /**
+     * Constructor.
+     * 
+     * Initializes internal state and do a statical analysis concerning the
+     * function's arguments.
+     * 
+     * @param rtx
+     *            Transaction to operate on
+     * @param args
+     *            List of function arguments
+     * @param min
+     *            min number of allowed function arguments
+     * @param max
+     *            max number of allowed function arguments
+     * @param returnType
+     *            the type that the function's result will have
+     * @throws TTXPathException
+     *             if function check fails
+     */
+    public FNNot(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min, final int max,
+        final int returnType) throws TTXPathException {
 
-		super(rtx, args, min, max, returnType, pToStore);
-	}
+        super(rtx, args, min, max, returnType);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws TTXPathException
-	 */
-	@Override
-	protected byte[] computeResult() throws TTXPathException {
-		final AbsAxis axis = getArgs().get(0);
-		final boolean value = !Function.ebv(axis, mToStore);
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws TTXPathException
+     */
+    @Override
+    protected byte[] computeResult() throws TTXPathException {
+        final AbsAxis axis = getArgs().get(0);
+        final boolean value = !Function.ebv(axis);
 
-		return TypedValue.getBytes(Boolean.toString(value));
+        return TypedValue.getBytes(Boolean.toString(value));
 
-	}
+    }
 
 }

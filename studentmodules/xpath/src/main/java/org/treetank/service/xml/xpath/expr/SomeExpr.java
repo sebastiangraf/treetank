@@ -51,8 +51,6 @@ public class SomeExpr extends AbsExpression {
 
     private final AbsAxis mSatisfy;
 
-    private final List<AtomicValue> mToStore;
-
     /**
      * Constructor. Initializes the internal state.
      * 
@@ -64,13 +62,11 @@ public class SomeExpr extends AbsExpression {
      *            condition that must be satisfied by at least one item of the
      *            variable results in order to evaluate expression to true
      */
-    public SomeExpr(final INodeReadTransaction rtx, final List<AbsAxis> mVars, final AbsAxis mSatisfy,
-        final List<AtomicValue> pToStore) {
+    public SomeExpr(final INodeReadTransaction rtx, final List<AbsAxis> mVars, final AbsAxis mSatisfy) {
 
         super(rtx);
         this.mVars = mVars;
         this.mSatisfy = mSatisfy;
-        mToStore = pToStore;
     }
 
     /**
@@ -115,7 +111,6 @@ public class SomeExpr extends AbsExpression {
         AtomicValue val =
             new AtomicValue(TypedValue.getBytes(Boolean.toString(satisfiesCond)), getTransaction()
                 .keyForName("xs:boolean"));
-        mToStore.add(val);
         final int mItemKey = getTransaction().getItemList().addItem(val);
         getTransaction().moveTo(mItemKey);
         return val;

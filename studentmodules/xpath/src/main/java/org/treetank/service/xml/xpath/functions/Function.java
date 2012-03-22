@@ -32,18 +32,17 @@ import java.util.List;
 
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
-import org.treetank.service.xml.xpath.AtomicValue;
 import org.treetank.service.xml.xpath.functions.sequences.FNBoolean;
 
 public class Function {
 
-    public static boolean ebv(final AbsAxis axis, final List<AtomicValue> pToStore) throws TTXPathException {
+    public static boolean ebv(final AbsAxis axis) throws TTXPathException {
         final FuncDef ebv = FuncDef.BOOLEAN;
         final List<AbsAxis> param = new ArrayList<AbsAxis>();
         param.add(axis);
         final AbsAxis bAxis =
             new FNBoolean(axis.getTransaction(), param, ebv.getMin(), ebv.getMax(), axis.getTransaction()
-                .keyForName(ebv.getReturnType()), pToStore);
+                .keyForName(ebv.getReturnType()));
         if (bAxis.hasNext()) {
             bAxis.next();
             final boolean result = Boolean.parseBoolean(bAxis.getTransaction().getValueOfCurrentNode());
