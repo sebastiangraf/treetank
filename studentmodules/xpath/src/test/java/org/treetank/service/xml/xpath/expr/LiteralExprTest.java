@@ -38,7 +38,8 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
-import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IValNode;
+import org.treetank.utils.NamePageHash;
 
 /**
  * JUnit-test class to test the functionality of the LiteralExpr.
@@ -66,24 +67,25 @@ public class LiteralExprTest {
     public void testLiteralExpr() throws AbsTTException {
         // Build simple test tree.
 
-        final INode item1 = new AtomicValue(false);
-        final INode item2 = new AtomicValue(14, Type.INTEGER);
+        final AtomicValue item1 = new AtomicValue(false);
+        final AtomicValue item2 = new AtomicValue(14, Type.INTEGER);
 
-        final int key1 = holder.getRtx().getItemList().addItem(item1);
-        final int key2 = holder.getRtx().getItemList().addItem(item2);
+        final int key1 = AbsAxis.addAtomicToItemList(holder.getRtx(), item1);
+        final int key2 = AbsAxis.addAtomicToItemList(holder.getRtx(), item2);
 
         final AbsAxis axis1 = new LiteralExpr(holder.getRtx(), key1);
+
         assertEquals(true, axis1.hasNext());
-        assertEquals(key1, holder.getRtx().getNode().getNodeKey());
-        assertEquals(holder.getRtx().keyForName("xs:boolean"), holder.getRtx().getNode().getTypeKey());
-        assertEquals(false, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
+        assertEquals(key1, axis1.getNode().getNodeKey());
+        assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis1.getNode().getTypeKey());
+        assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
         final AbsAxis axis2 = new LiteralExpr(holder.getRtx(), key2);
         assertEquals(true, axis2.hasNext());
-        assertEquals(key2, holder.getRtx().getNode().getNodeKey());
-        assertEquals(holder.getRtx().keyForName("xs:integer"), holder.getRtx().getNode().getTypeKey());
-        assertEquals(14, Integer.parseInt(holder.getRtx().getValueOfCurrentNode()));
+        assertEquals(key2, axis2.getNode().getNodeKey());
+        assertEquals(NamePageHash.generateHashForString("xs:integer"), axis2.getNode().getTypeKey());
+        assertEquals(14, Integer.parseInt(new String(((IValNode)axis2.getNode()).getRawValue())));
         assertEquals(false, axis2.hasNext());
 
     }

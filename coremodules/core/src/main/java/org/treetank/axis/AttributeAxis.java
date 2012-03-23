@@ -72,12 +72,11 @@ public class AttributeAxis extends AbsAxis {
         // this
         // case the current node was set to an attribute by resetToLastKey()
         if (mNextIndex > 0) {
-            assert getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND;
-            getTransaction().moveToParent();
+            moveTo(getNode().getParentKey());
         }
-        if (getTransaction().getNode().getKind() == ENode.ELEMENT_KIND
-            && mNextIndex < ((ElementNode)getTransaction().getNode()).getAttributeCount()) {
-            getTransaction().moveToAttribute(mNextIndex);
+        if (getNode().getKind() == ENode.ELEMENT_KIND
+            && mNextIndex < ((ElementNode)getNode()).getAttributeCount()) {
+            moveTo(((ElementNode)getNode()).getAttributeKey(mNextIndex));
             mNextIndex += 1;
             return true;
         }

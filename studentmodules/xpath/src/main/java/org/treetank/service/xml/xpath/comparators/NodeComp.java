@@ -27,14 +27,13 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
-import java.util.List;
-
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.EXPathError;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -69,11 +68,10 @@ public class NodeComp extends AbsComparator {
     @Override
     protected AtomicValue[] atomize(final AbsAxis mOperand) throws TTXPathException {
 
-        final INodeReadTransaction rtx = getTransaction();
         // store item key as atomic value
         final AtomicValue mAtomized =
-            new AtomicValue(TypedValue.getBytes(((Long)rtx.getNode().getNodeKey()).toString()), rtx
-                .keyForName("xs:integer"));
+            new AtomicValue(TypedValue.getBytes(((Long)getNode().getNodeKey()).toString()), NamePageHash
+                .generateHashForString("xs:integer"));
         final AtomicValue[] op = {
             mAtomized
         };

@@ -66,7 +66,7 @@ public class ExpressionSingleTest {
     @Test
     public void testAdd() throws AbsTTException {
         // Verify.
-        final ExpressionSingle builder = new ExpressionSingle();
+        final ExpressionSingle builder = new ExpressionSingle(holder.getRtx());
 
         // test one axis
         AbsAxis self = new SelfAxis(holder.getRtx());
@@ -84,38 +84,38 @@ public class ExpressionSingleTest {
 
     @Test
     public void testDup() throws AbsTTException {
-        ExpressionSingle builder = new ExpressionSingle();
+        ExpressionSingle builder = new ExpressionSingle(holder.getRtx());
         builder.add(new ChildAxis(holder.getRtx()));
         builder.add(new DescendantAxis(holder.getRtx()));
         assertTrue(builder.getExpr() instanceof NestedAxis);
 
-        builder = new ExpressionSingle();
+        builder = new ExpressionSingle(holder.getRtx());
         builder.add(new ChildAxis(holder.getRtx()));
         builder.add(new DescendantAxis(holder.getRtx()));
         assertEquals(true, builder.isOrdered());
         assertTrue(builder.getExpr() instanceof NestedAxis);
 
-        builder = new ExpressionSingle();
+        builder = new ExpressionSingle(holder.getRtx());
         builder.add(new ChildAxis(holder.getRtx()));
         builder.add(new DescendantAxis(holder.getRtx()));
         builder.add(new ChildAxis(holder.getRtx()));
         assertEquals(false, builder.isOrdered());
 
-        builder = new ExpressionSingle();
-        builder = new ExpressionSingle();
+        builder = new ExpressionSingle(holder.getRtx());
+        builder = new ExpressionSingle(holder.getRtx());
         builder.add(new ChildAxis(holder.getRtx()));
         builder.add(new DescendantAxis(holder.getRtx()));
         builder.add(new ChildAxis(holder.getRtx()));
         builder.add(new ParentAxis(holder.getRtx()));
         assertEquals(true, builder.isOrdered());
 
-        builder = new ExpressionSingle();
+        builder = new ExpressionSingle(holder.getRtx());
         builder.add(new ChildAxis(holder.getRtx()));
         builder.add(new DescendantAxis(holder.getRtx()));
         builder.add(new FollowingSiblingAxis(holder.getRtx()));
         assertEquals(false, builder.isOrdered());
 
-        builder = new ExpressionSingle();
+        builder = new ExpressionSingle(holder.getRtx());
         builder.add(new UnionAxis(holder.getRtx(), new DescendantAxis(holder.getRtx()), new ParentAxis(holder
             .getRtx())));
         assertEquals(false, builder.isOrdered());

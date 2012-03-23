@@ -28,6 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.axis.AbsAxis;
 
 /**
  * <h1>AbstractFilter</h1>
@@ -36,10 +37,10 @@ import org.treetank.api.INodeReadTransaction;
  * Filter node of transaction this filter is bound to.
  * </p>
  */
-public abstract class AbsFilter {
+public abstract class AbsFilter extends AbsAxis {
 
-    /** Iterate over transaction exclusive to this step. */
-    private INodeReadTransaction mRTX;
+    /** Defines, whether hasNext() has already been called. */
+    private boolean mIsFirst;
 
     /**
      * Bind axis step to transaction.
@@ -48,16 +49,8 @@ public abstract class AbsFilter {
      *            Transaction to operate with.
      */
     protected AbsFilter(final INodeReadTransaction rtx) {
-        mRTX = rtx;
-    }
-
-    /**
-     * Getting the Transaction of this filter
-     * 
-     * @return the transaction of this filter
-     */
-    protected final INodeReadTransaction getTransaction() {
-        return mRTX;
+        super(rtx);
+        mIsFirst = true;
     }
 
     /**
@@ -68,8 +61,28 @@ public abstract class AbsFilter {
     /**
      * {@inheritDoc}
      */
-    public synchronized void setTransaction(final INodeReadTransaction rtx) {
-        mRTX = rtx;
+    @Override
+    public synchronized boolean hasNext() {
+
+        resetToLastKey();
+
+        if (mIsFirst) {
+            mIsFirst = false;
+
+            // evaluate expression
+            filter();
+
+            return true;
+        } else {
+
+            // only the first call yields to true, all further calls will yield
+            // to
+            // false. Calling hasNext() makes no sense, since evaluating the
+            // expression on the same input would always return the same result.
+            resetToStartKey();
+            return false;
+        }
+
     }
 
 }

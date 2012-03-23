@@ -22,8 +22,6 @@ public interface IPageReadTransaction {
 
     byte[] getRawName(final int pKey);
 
-    ItemList getItemList();
-
     void close() throws TTIOException;
 
 }

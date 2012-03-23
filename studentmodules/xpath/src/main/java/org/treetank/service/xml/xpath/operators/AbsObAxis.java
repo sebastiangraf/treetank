@@ -34,7 +34,9 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
+import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>AbstractOpAxis</h1>
@@ -123,8 +125,8 @@ public abstract class AbsObAxis extends AbsAxis {
                     if (mItem2 != null) {
                         final AtomicValue result = operate(mItem1, mItem2);
                         // add retrieved AtomicValue to item list
-                        final int itemKey = getTransaction().getItemList().addItem(result);
-                        getTransaction().moveTo(itemKey);
+                        final int itemKey = getItemList().addItem(result);
+                        moveTo(itemKey);
                         return true;
 
                     }
@@ -149,21 +151,20 @@ public abstract class AbsObAxis extends AbsAxis {
      */
     private AtomicValue atomize(final AbsAxis mOperand) {
 
-        final INodeReadTransaction rtx = getTransaction();
-        int type = rtx.getNode().getTypeKey();
+        int type = getNode().getTypeKey();
         AtomicValue atom;
 
         if (XPATH_10_COMP) {
 
-            atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.getNode().getTypeKey());
+            atom = new AtomicValue(((IValNode)getNode()).getRawValue(), getNode().getTypeKey());
         } else {
             // unatomicType is cast to double
-            if (type == rtx.keyForName("xs:untypedAtomic")) {
-                type = rtx.keyForName("xs:double");
+            if (type == NamePageHash.generateHashForString("xs:untypedAtomic")) {
+                type = NamePageHash.generateHashForString("xs:double");
                 // TODO: throw error, of cast fails
             }
 
-            atom = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), type);
+            atom = new AtomicValue(((IValNode)getNode()).getRawValue(), getNode().getTypeKey());
         }
 
         // if (!XPATH_10_COMP && operand.hasNext()) {

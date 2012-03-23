@@ -86,7 +86,7 @@ public class StAXSerializerTest {
             xmlSerializer.call();
 
             final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
-            StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx));
+            StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
             final StringBuilder strBuilder = new StringBuilder();
             boolean isEmptyElement = false;
 
@@ -126,7 +126,7 @@ public class StAXSerializerTest {
             // Check getElementText().
             // ========================================================
             holder.getRtx().moveToDocumentRoot();
-            serializer = new StAXSerializer(new DescendantAxis(rtx));
+            serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
             String elemText = null;
 
             // <p:a>

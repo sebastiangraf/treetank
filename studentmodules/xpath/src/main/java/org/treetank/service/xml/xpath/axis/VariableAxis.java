@@ -101,7 +101,7 @@ public class VariableAxis extends AbsAxis {
     private void notifyObs() {
 
         for (VarRefExpr varRef : mVarRefs) {
-            varRef.update(getTransaction().getNode().getNodeKey());
+            varRef.update(getNode().getNodeKey());
         }
     }
 

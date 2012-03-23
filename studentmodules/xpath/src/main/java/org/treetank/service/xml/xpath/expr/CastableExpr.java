@@ -27,16 +27,16 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import java.util.List;
-
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.SingleType;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -113,8 +113,8 @@ public class CastableExpr extends AbsExpression {
 
         if (mSourceExpr.hasNext()) { // result sequence > 0
 
-            final Type sourceType = Type.getType(getTransaction().getNode().getTypeKey());
-            final String sourceValue = getTransaction().getValueOfCurrentNode();
+            final Type sourceType = Type.getType(getNode().getTypeKey());
+            final String sourceValue = new String(((IValNode)getNode()).getRawValue());
 
             // determine castability
             isCastable = sourceType.isCastableTo(mTargetType, sourceValue);
@@ -134,10 +134,10 @@ public class CastableExpr extends AbsExpression {
 
         // create result item and move transaction to it.
         AtomicValue val =
-            new AtomicValue(TypedValue.getBytes(Boolean.toString(isCastable)), getTransaction().keyForName(
-                "xs:boolean"));
-        final int mItemKey = getTransaction().getItemList().addItem(val);
-        getTransaction().moveTo(mItemKey);
+            new AtomicValue(TypedValue.getBytes(Boolean.toString(isCastable)), NamePageHash
+                .generateHashForString("xs:boolean"));
+        final int mItemKey = getItemList().addItem(val);
+        moveTo(mItemKey);
         return val;
 
     }

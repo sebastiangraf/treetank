@@ -107,7 +107,7 @@ public final class XPathAxis extends AbsAxis {
         // EXECUTOR = Executors.newFixedThreadPool(THREADPOOLSIZE);
 
         // start parsing and get execution plans
-        final XPathParser parser = new XPathParser(getTransaction(), mQuery);
+        final XPathParser parser = new XPathParser(rtx, mQuery);
         parser.parseQuery();
         mPipeline = parser.getQueryPipeline();
 

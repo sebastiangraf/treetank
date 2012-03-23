@@ -28,6 +28,7 @@
 package org.treetank.axis;
 
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>ChildAxis</h1>
@@ -66,12 +67,12 @@ public class ChildAxis extends AbsAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (!mFirst && getTransaction().getStructuralNode().hasRightSibling()) {
-            getTransaction().moveToRightSibling();
+        if (!mFirst && ((IStructNode)getNode()).hasRightSibling()) {
+            moveTo(((IStructNode)getNode()).getRightSiblingKey());
             return true;
-        } else if (mFirst && getTransaction().getStructuralNode().hasFirstChild()) {
+        } else if (mFirst && (((IStructNode)getNode()).hasFirstChild())) {
             mFirst = false;
-            getTransaction().moveToFirstChild();
+            moveTo(((IStructNode)getNode()).getFirstChildKey());
             return true;
         } else {
             resetToStartKey();

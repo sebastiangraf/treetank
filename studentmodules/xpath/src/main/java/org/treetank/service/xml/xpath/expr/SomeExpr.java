@@ -32,6 +32,7 @@ import java.util.List;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.node.AtomicValue;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -109,10 +110,10 @@ public class SomeExpr extends AbsExpression {
         }
 
         AtomicValue val =
-            new AtomicValue(TypedValue.getBytes(Boolean.toString(satisfiesCond)), getTransaction()
-                .keyForName("xs:boolean"));
-        final int mItemKey = getTransaction().getItemList().addItem(val);
-        getTransaction().moveTo(mItemKey);
+            new AtomicValue(TypedValue.getBytes(Boolean.toString(satisfiesCond)), NamePageHash
+                .generateHashForString("xs:boolean"));
+        final int mItemKey = getItemList().addItem(val);
+        moveTo(mItemKey);
         return val;
 
     }

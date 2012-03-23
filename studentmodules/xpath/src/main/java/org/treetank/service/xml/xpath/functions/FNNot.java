@@ -46,6 +46,9 @@ import org.treetank.utils.TypedValue;
  */
 public class FNNot extends AbsFunction {
 
+    /** Private Read trans for Function call. */
+    private final INodeReadTransaction mRtx;
+
     /**
      * Constructor.
      * 
@@ -69,6 +72,7 @@ public class FNNot extends AbsFunction {
         final int returnType) throws TTXPathException {
 
         super(rtx, args, min, max, returnType);
+        mRtx = rtx;
     }
 
     /**
@@ -79,7 +83,7 @@ public class FNNot extends AbsFunction {
     @Override
     protected byte[] computeResult() throws TTXPathException {
         final AbsAxis axis = getArgs().get(0);
-        final boolean value = !Function.ebv(axis);
+        final boolean value = !Function.ebv(axis, mRtx);
 
         return TypedValue.getBytes(Boolean.toString(value));
 

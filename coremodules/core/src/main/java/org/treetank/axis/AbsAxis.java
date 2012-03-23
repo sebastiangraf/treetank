@@ -28,8 +28,14 @@
 package org.treetank.axis;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.exception.AbsTTException;
+import org.treetank.node.AtomicValue;
+import org.treetank.node.interfaces.INode;
+import org.treetank.utils.ItemList;
 
 /**
  * <h1>AbstractAxis</h1>
@@ -62,6 +68,14 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
 
     /** Include self? */
     private final boolean mIncludeSelf;
+
+    /** Map with ItemList to each transaction. */
+    private final static Map<INodeReadTransaction, ItemList> atomics =
+        new ConcurrentHashMap<INodeReadTransaction, ItemList>();
+
+    /** Map with ItemList to each transaction. */
+    private final static Map<INodeReadTransaction, Long> lastPointer =
+        new ConcurrentHashMap<INodeReadTransaction, Long>();
 
     /**
      * Bind axis step to transaction.
@@ -135,15 +149,47 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
         mStartKey = paramNodeKey;
         mKey = paramNodeKey;
         mNext = false;
+        lastPointer.remove(mRTX);
     }
 
     /**
-     * Get current {@link INodeReadTransaction}.
+     * Move cursor to a node by its node key.
      * 
-     * @return the {@link INodeReadTransaction} used
+     * @param pKey
+     *            Key of node to select.
+     * @return True if the node with the given node key is selected.
      */
-    public final INodeReadTransaction getTransaction() {
-        return mRTX;
+    public boolean moveTo(final long pKey) {
+        if (pKey < 0 || mRTX.moveTo(pKey)) {
+            lastPointer.put(mRTX, pKey);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Closing the Transaction
+     * 
+     * @throws AbsTTException
+     */
+    public void close() throws AbsTTException {
+        atomics.remove(mRTX);
+        lastPointer.remove(mRTX);
+        mRTX.close();
+    }
+
+    /**
+     * Getting the current node (including items from the ItemList)
+     * 
+     * @return Getting the node.
+     */
+    public INode getNode() {
+        if (lastPointer.get(mRTX) != null && lastPointer.get(mRTX) < 0) {
+            return atomics.get(mRTX).getItem(lastPointer.get(mRTX));
+        } else {
+            return mRTX.getNode();
+        }
     }
 
     /**
@@ -155,7 +201,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      */
     protected final long resetToStartKey() {
         // No check because of IAxis Convention 4.
-        mRTX.moveTo(mStartKey);
+        moveTo(mStartKey);
         mNext = false;
         return mStartKey;
     }
@@ -169,7 +215,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      */
     protected final long resetToLastKey() {
         // No check because of IAxis Convention 4.
-        mRTX.moveTo(mKey);
+        moveTo(mKey);
         mNext = true;
         return mKey;
     }
@@ -198,4 +244,32 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
     @Override
     public abstract boolean hasNext();
 
+    /**
+     * Getting the ItemList.
+     * 
+     * @return the Itemlist
+     */
+    public ItemList getItemList() {
+        if (!atomics.containsKey(mRTX)) {
+            atomics.put(mRTX, new ItemList());
+        }
+        return atomics.get(mRTX);
+    }
+
+    /**
+     * Adding any AtomicVal to any ItemList staticly.
+     * 
+     * @param pRtx
+     *            as key
+     * @param pVal
+     *            to be added
+     * @return the index in the ItemList
+     */
+    public static int addAtomicToItemList(final INodeReadTransaction pRtx, final AtomicValue pVal) {
+        if (!atomics.containsKey(pRtx)) {
+            atomics.put(pRtx, new ItemList());
+        }
+        return atomics.get(pRtx).addItem(pVal);
+
+    }
 }

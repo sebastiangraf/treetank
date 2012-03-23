@@ -27,10 +27,10 @@
 
 package org.treetank.axis;
 
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
-
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 /**
  * <h1>ParentAxis</h1>
@@ -69,11 +69,10 @@ public class ParentAxis extends AbsAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (getTransaction().getNode().getKind() != ENode.ROOT_KIND && mFirst
-            && getTransaction().getNode().hasParent()
-            && getTransaction().getNode().getParentKey() != ROOT_NODE) {
+        if (getNode().getKind() != ENode.ROOT_KIND && mFirst && getNode().hasParent()
+            && getNode().getParentKey() != ROOT_NODE) {
             mFirst = false;
-            getTransaction().moveToParent();
+            moveTo(getNode().getParentKey());
             return true;
         } else {
             resetToStartKey();

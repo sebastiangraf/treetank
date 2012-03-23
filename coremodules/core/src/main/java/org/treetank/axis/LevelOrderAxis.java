@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Iterates over {@link AbsStructuralNode}s in a breath first traversal.
@@ -75,12 +76,12 @@ public final class LevelOrderAxis extends AbsAxis {
         super.reset(paramNodeKey);
         mFirstChildKeyList = new LinkedList<Long>();
         if (isSelfIncluded()) {
-            mNextKey = getTransaction().getNode().getNodeKey();
+            mNextKey = getNode().getNodeKey();
         } else {
-            if (getTransaction().getStructuralNode().hasRightSibling()) {
-                mNextKey = getTransaction().getStructuralNode().getRightSiblingKey();
-            } else if (getTransaction().getStructuralNode().hasFirstChild()) {
-                mNextKey = getTransaction().getStructuralNode().getFirstChildKey();
+            if (((IStructNode)getNode()).hasRightSibling()) {
+                mNextKey = ((IStructNode)getNode()).getRightSiblingKey();
+            } else if (((IStructNode)getNode()).hasFirstChild()) {
+                mNextKey = ((IStructNode)getNode()).getFirstChildKey();
             } else {
                 mNextKey = NULL_NODE;
             }
@@ -99,14 +100,14 @@ public final class LevelOrderAxis extends AbsAxis {
         }
 
         // First move to next key.
-        getTransaction().moveTo(mNextKey);
+        moveTo(mNextKey);
 
         // Follow right sibling if there is one.
-        if (getTransaction().getStructuralNode().hasRightSibling()) {
-            if (getTransaction().getStructuralNode().hasFirstChild()) {
-                mFirstChildKeyList.add(getTransaction().getStructuralNode().getFirstChildKey());
+        if (((IStructNode)getNode()).hasRightSibling()) {
+            if (((IStructNode)getNode()).hasFirstChild()) {
+                mFirstChildKeyList.add(((IStructNode)getNode()).getFirstChildKey());
             }
-            mNextKey = getTransaction().getStructuralNode().getRightSiblingKey();
+            mNextKey = ((IStructNode)getNode()).getRightSiblingKey();
             return true;
         }
 
@@ -117,8 +118,8 @@ public final class LevelOrderAxis extends AbsAxis {
         }
 
         // Then follow first child if there is one.
-        if (getTransaction().getStructuralNode().hasFirstChild()) {
-            mNextKey = getTransaction().getStructuralNode().getFirstChildKey();
+        if (((IStructNode)getNode()).hasFirstChild()) {
+            mNextKey = ((IStructNode)getNode()).getFirstChildKey();
             return true;
         }
 

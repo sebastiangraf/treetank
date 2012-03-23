@@ -37,6 +37,7 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
+import org.treetank.node.interfaces.IValNode;
 
 /**
  * <h1>GeneralComp</h1>
@@ -93,12 +94,11 @@ public class GeneralComp extends AbsComparator {
     @Override
     protected AtomicValue[] atomize(final AbsAxis mOperand) {
 
-        final INodeReadTransaction rtx = getTransaction();
         final List<AtomicValue> op = new ArrayList<AtomicValue>();
         AtomicValue atomized;
 
         do {
-            atomized = new AtomicValue(rtx.getValueOfCurrentNode().getBytes(), rtx.getNode().getTypeKey());
+            atomized = new AtomicValue(((IValNode)getNode()).getRawValue(), getNode().getTypeKey());
             op.add(atomized);
         } while (mOperand.hasNext());
 

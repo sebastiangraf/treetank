@@ -70,7 +70,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q1() throws TTXPathException {
         String query = xmbq.getQuery(1, FACTOR);
         String result = xmbq.getResult(1, FACTOR);
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), query), new String[] {
+        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
             result
         });
     }
@@ -79,7 +79,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q5() throws TTXPathException {
         String query = xmbq.getQuery(5, FACTOR);
         String result = xmbq.getResult(5, FACTOR);
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), query), new String[] {
+        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
             result
         });
     }
@@ -88,7 +88,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q6() throws TTXPathException {
         String query = xmbq.getQuery(6, FACTOR);
         String result = xmbq.getResult(6, FACTOR);
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), query), new String[] {
+        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
             result
         });
     }
@@ -97,7 +97,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q7() throws TTXPathException {
         String query = xmbq.getQuery(7, FACTOR);
         String result = xmbq.getResult(7, FACTOR);
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), query), new String[] {
+        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
             result
         });
     }
@@ -105,17 +105,17 @@ public class XMarkBenchTest {
     /*
      * @Test public void xMarkTest_Q21() { String query = xmbq.getQuery(21,
      * FACTOR); String result = xmbq.getResult(21, FACTOR);
-     * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
+     * XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(getRtx(), query),
      * new String[] { result }); }
      * 
      * @Test public void xMarkTest_Q22() { String query = xmbq.getQuery(22,
      * FACTOR); String result = xmbq.getResult(22, FACTOR);
-     * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
+     * XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(getRtx(), query),
      * new String[] { result }); }
      * 
      * @Test public void xMarkTest_Q23() { String query = xmbq.getQuery(23,
      * FACTOR); String result = xmbq.getResult(23, FACTOR);
-     * XPathStringChecker.testIAxisConventions(new XPathAxis(getRtx(), query),
+     * XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(getRtx(), query),
      * new String[] { result }); }
      */
 

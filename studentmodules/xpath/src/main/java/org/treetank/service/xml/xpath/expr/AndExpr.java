@@ -32,6 +32,7 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.functions.Function;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -79,6 +80,11 @@ public class AndExpr extends AbsExpression {
     private final AbsAxis mOp2;
 
     /**
+     * Private mRtx for instantiating new functions.
+     */
+    private final INodeReadTransaction mRtx;
+
+    /**
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
@@ -93,7 +99,7 @@ public class AndExpr extends AbsExpression {
         super(rtx);
         mOp1 = mOperand1;
         mOp2 = mOperand2;
-
+        mRtx = rtx;
     }
 
     /**
@@ -121,17 +127,17 @@ public class AndExpr extends AbsExpression {
 
         // first find the effective boolean values of the two operands, then
         // determine value of the and-expression and store it in an item
-        final boolean result = Function.ebv(mOp1) && Function.ebv(mOp2);
+        final boolean result = Function.ebv(mOp1, mRtx) && Function.ebv(mOp2, mRtx);
         // note: the error handling is implicitly done by the fnBoolean()
         // function.
 
         // add result item to list and set the item as the current item
 
         AtomicValue val =
-            new AtomicValue(TypedValue.getBytes(Boolean.toString(result)), getTransaction().keyForName(
-                "xs:boolean"));
-        final int mItemKey = getTransaction().getItemList().addItem(val);
-        getTransaction().moveTo(mItemKey);
+            new AtomicValue(TypedValue.getBytes(Boolean.toString(result)), NamePageHash
+                .generateHashForString("xs:boolean"));
+        final int mItemKey = getItemList().addItem(val);
+        moveTo(mItemKey);
         return val;
 
     }

@@ -34,6 +34,7 @@ import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -67,7 +68,7 @@ public class ModOpAxis extends AbsObAxis {
         throws TTXPathException {
 
         final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
-        final int typeKey = getTransaction().keyForName(returnType.getStringRepr());
+        final int typeKey = NamePageHash.generateHashForString(returnType.getStringRepr());
 
         final byte[] value;
 

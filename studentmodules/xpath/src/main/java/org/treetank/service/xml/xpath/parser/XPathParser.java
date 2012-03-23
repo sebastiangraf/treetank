@@ -105,7 +105,7 @@ public final class XPathParser {
 
         mRTX = rtx;
         mScanner = new XPathScanner(mQuery);
-        mPipeBuilder = new PipelineBuilder();
+        mPipeBuilder = new PipelineBuilder(mRTX);
 
     }
 
@@ -938,7 +938,7 @@ public final class XPathParser {
 
         final AbsFilter filter = parseNodeTest(isAttribute);
 
-        return new FilterAxis(axis, filter);
+        return new FilterAxis(axis, mRTX, filter);
     }
 
     /**

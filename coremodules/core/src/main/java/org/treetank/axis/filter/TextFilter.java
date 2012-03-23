@@ -54,7 +54,7 @@ public class TextFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return getTransaction().getNode().getKind() == ENode.TEXT_KIND;
+        return getNode().getKind() == ENode.TEXT_KIND;
     }
 
 }

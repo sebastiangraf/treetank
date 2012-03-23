@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.xpath;
 
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AncestorAxis;
 import org.treetank.axis.ChildAxis;
@@ -67,16 +68,20 @@ public class ExpressionSingle {
     /** Current duplicate state. */
     private DupState mDup;
 
+    /** Private IReadTrx for generating new axis. */
+    private final INodeReadTransaction mRtx;
+
     /**
      * Constructor. Initializes the internal state.
      */
-    public ExpressionSingle() {
+    public ExpressionSingle(final INodeReadTransaction pRtx) {
 
         mNumber = 0;
 
         mOrd = OrdState.MAX1;
         mOrd.init();
         mDup = DupState.MAX1;
+        mRtx = pRtx;
 
     }
 
@@ -92,7 +97,7 @@ public class ExpressionSingle {
         AbsAxis axis = mAx;
 
         if (isDupOrd(axis)) {
-            axis = new DupFilterAxis(axis.getTransaction(), axis);
+            axis = new DupFilterAxis(mRtx, axis);
             DupState.nodup = true;
         }
 
@@ -102,12 +107,12 @@ public class ExpressionSingle {
             mNumber++;
             break;
         case 1:
-            mExpr = new NestedAxis(mFirstAxis, axis);
+            mExpr = new NestedAxis(mFirstAxis, axis, mRtx);
             mNumber++;
             break;
         default:
             final AbsAxis cache = mExpr;
-            mExpr = new NestedAxis(cache, axis);
+            mExpr = new NestedAxis(cache, axis, mRtx);
         }
 
     }

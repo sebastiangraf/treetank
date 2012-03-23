@@ -615,12 +615,4 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         return mPageReadTransaction.getUberPage();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ItemList getItemList() {
-        return mPageReadTransaction.getItemList();
-    }
-
 }

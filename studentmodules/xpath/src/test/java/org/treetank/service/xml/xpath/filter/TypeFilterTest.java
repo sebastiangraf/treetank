@@ -32,7 +32,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.filter.AbsFilterTest;
 import org.treetank.axis.filter.TypeFilter;
@@ -60,21 +59,20 @@ public class TypeFilterTest {
     public void testIFilterConvetions() throws Exception {
 
         final AbsAxis axis = new XPathAxis(holder.getRtx(), "a");
-        final INodeReadTransaction xtx = axis.getTransaction();
 
-        xtx.moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"), false);
+        axis.moveTo(9L);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:untyped"), true);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:long"), false);
 
-        xtx.moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"), false);
+        holder.getRtx().moveTo(4L);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:untyped"), true);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:double"), false);
 
-        xtx.moveTo(1L);
-        xtx.moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
+        holder.getRtx().moveTo(1L);
+        holder.getRtx().moveToAttribute(0);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:untyped"), true);
 
-        AbsFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"), false);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:anyType"), false);
 
     }
 }

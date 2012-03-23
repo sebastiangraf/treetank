@@ -31,6 +31,7 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
+import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>WildcardFilter</h1>
@@ -47,6 +48,9 @@ public class WildcardFilter extends AbsFilter {
     /** Name key of the defined name part. */
     private final int mKnownPartKey;
 
+    /** NodeTrans for getting the localname. */
+    private final INodeReadTransaction mRtx;
+
     /**
      * Default constructor.
      * 
@@ -62,7 +66,8 @@ public class WildcardFilter extends AbsFilter {
     public WildcardFilter(final INodeReadTransaction rtx, final String mKnownPart, final boolean mIsName) {
         super(rtx);
         this.mIsName = mIsName;
-        mKnownPartKey = getTransaction().keyForName(mKnownPart);
+        mKnownPartKey = NamePageHash.generateHashForString(mKnownPart);
+        mRtx = rtx;
     }
 
     /**
@@ -70,29 +75,29 @@ public class WildcardFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        if (getTransaction().getNode().getKind() == ENode.ELEMENT_KIND) {
+        if (getNode().getKind() == ENode.ELEMENT_KIND) {
 
             if (mIsName) { // local name is given
                 final String localname =
-                    getTransaction().nameForKey(((INameNode)getTransaction().getNode()).getNameKey())
-                        .replaceFirst(".*:", "");
-                final int localnameKey = getTransaction().keyForName(localname);
+
+                mRtx.nameForKey(((INameNode)getNode()).getNameKey()).replaceFirst(".*:", "");
+                final int localnameKey = NamePageHash.generateHashForString(localname);
 
                 return localnameKey == mKnownPartKey;
             } else { // namespace prefix is given
-                final int nsCount = ((ElementNode)getTransaction().getNode()).getNamespaceCount();
+                final int nsCount = ((ElementNode)getNode()).getNamespaceCount();
                 for (int i = 0; i < nsCount; i++) {
-                    getTransaction().moveToNamespace(i);
+                    moveTo(((ElementNode)getNode()).getNamespaceKey(i));
                     final int prefixKey = mKnownPartKey;
-                    if (((INameNode)getTransaction().getNode()).getNameKey() == prefixKey) {
-                        getTransaction().moveToParent();
+                    if (((INameNode)getNode()).getNameKey() == prefixKey) {
+                        moveTo(getNode().getParentKey());
                         return true;
                     }
-                    getTransaction().moveToParent();
+                    moveTo(getNode().getParentKey());
                 }
             }
 
-        } else if (getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND) {
+        } else if (getNode().getKind() == ENode.ATTRIBUTE_KIND) {
             // supporting attributes here is difficult, because treetank
             // does not provide a way to acces the name and namespace of
             // the current attribute (attribute index is not known here)

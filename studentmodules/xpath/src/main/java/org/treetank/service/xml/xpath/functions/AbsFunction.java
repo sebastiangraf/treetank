@@ -159,8 +159,8 @@ public abstract class AbsFunction extends AbsExpression {
 
         // create an atomic value, add it to the list and move the cursor to it.
         AtomicValue val = new AtomicValue(value, mReturnType);
-        final int itemKey = getTransaction().getItemList().addItem(val);
-        getTransaction().moveTo(itemKey);
+        final int itemKey = getItemList().addItem(val);
+        moveTo(itemKey);
         return val;
 
     }
