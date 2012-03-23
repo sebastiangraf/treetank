@@ -33,7 +33,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 
 public class AbsFilterTest {
@@ -45,15 +44,13 @@ public class AbsFilterTest {
 
     public static void testIFilterConventions(final AbsFilter filter, final boolean expected) {
 
-        final INodeReadTransaction rtx = ((AbsFilter)filter).getTransaction();
-
         // IFilter Convention 1.
-        final long startKey = rtx.getNode().getNodeKey();
+        final long startKey = filter.getNode().getNodeKey();
 
         assertEquals(expected, filter.filter());
 
         // IAxis Convention 2.
-        assertEquals(startKey, rtx.getNode().getNodeKey());
+        assertEquals(startKey, filter.getNode().getNodeKey());
 
     }
 

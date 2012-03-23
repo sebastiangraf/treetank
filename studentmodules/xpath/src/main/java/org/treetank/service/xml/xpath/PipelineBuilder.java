@@ -84,13 +84,17 @@ public final class PipelineBuilder {
     /** Maps a variable name to the item that the variable holds. */
     private final Map<String, AbsAxis> mVarRefMap;
 
+    /** Private INodeRTx for accessing the data. */
+    private final INodeReadTransaction mRtx;
+
     /**
      * Constructor.
      */
-    public PipelineBuilder() {
+    public PipelineBuilder(final INodeReadTransaction pRtx) {
 
         mExprStack = new Stack<Stack<ExpressionSingle>>();
         mVarRefMap = new HashMap<String, AbsAxis>();
+        mRtx = pRtx;
     }
 
     /**
@@ -195,7 +199,7 @@ public final class PipelineBuilder {
         // expression, therefore a new expression chain is build and added to
         // the
         // stack.
-        getPipeStack().push(new ExpressionSingle());
+        getPipeStack().push(new ExpressionSingle(mRtx));
     }
 
     /**
@@ -227,7 +231,7 @@ public final class PipelineBuilder {
         int num = mForConditionNum;
 
         while (num-- > 0) {
-            forAxis = new ForAxis(getPipeStack().pop().getExpr(), forAxis);
+            forAxis = new ForAxis(getPipeStack().pop().getExpr(), forAxis, mRtx);
         }
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
@@ -478,7 +482,7 @@ public final class PipelineBuilder {
      *            key of the literal expression.
      */
     public void addLiteral(final INodeReadTransaction pTrans, final AtomicValue pVal) {
-        getExpression().add(new LiteralExpr(pTrans, pTrans.getItemList().addItem(pVal)));
+        getExpression().add(new LiteralExpr(pTrans, AbsAxis.addAtomicToItemList(pTrans, pVal)));
     }
 
     /**
@@ -502,7 +506,7 @@ public final class PipelineBuilder {
      */
     public void addStep(final AbsAxis axis, final AbsFilter mFilter) {
 
-        getExpression().add(new FilterAxis(axis, mFilter));
+        getExpression().add(new FilterAxis(axis, mRtx, mFilter));
     }
 
     /**

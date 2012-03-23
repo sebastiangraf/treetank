@@ -103,7 +103,7 @@ public class XPathAxisTest {
             9L
         });
 
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
             "descendant-or-self::node()/@p:x = 'y'"), new String[] {
             "true"
         });
@@ -436,7 +436,7 @@ public class XPathAxisTest {
         // Verify.
         holder.getRtx().moveTo(1L);
 
-        XPathStringChecker.testIAxisConventions(new XPathAxis(holder.getRtx(), "fn:count(//node())"),
+        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), "fn:count(//node())"),
             new String[] {
                 "10"
             });

@@ -38,7 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 
 public class AbsAxisTest {
@@ -60,10 +60,8 @@ public class AbsAxisTest {
 
     public static void testIAxisConventions(final AbsAxis axis, final long[] expectedKeys) {
 
-        final INodeReadTransaction rtx = axis.getTransaction();
-
         // IAxis Convention 1.
-        final long startKey = rtx.getNode().getNodeKey();
+        final long startKey = axis.getNode().getNodeKey();
 
         final long[] keys = new long[expectedKeys.length];
         int offset = 0;
@@ -71,7 +69,7 @@ public class AbsAxisTest {
             axis.next();
             // IAxis results.
             assertTrue(offset < expectedKeys.length);
-            keys[offset++] = rtx.getNode().getNodeKey();
+            keys[offset++] = axis.getNode().getNodeKey();
 
             // IAxis Convention 2.
             try {
@@ -82,12 +80,12 @@ public class AbsAxisTest {
             }
 
             // IAxis Convention 3.
-            rtx.moveToDocumentRoot();
+            axis.moveTo(NodeReadTransaction.ROOT_NODE);
 
         }
 
         // IAxis Convention 5.
-        assertEquals(startKey, rtx.getNode().getNodeKey());
+        assertEquals(startKey, axis.getNode().getNodeKey());
 
         // IAxis results.
         assertArrayEquals(expectedKeys, keys);

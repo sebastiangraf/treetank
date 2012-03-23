@@ -114,7 +114,7 @@ public class DupFilterAxis extends AbsAxis {
             // add current item key to the set. If true is returned the item is
             // no
             // duplicate and can be returned by the duplicate filter.
-            if (mDupSet.add(getTransaction().getNode().getNodeKey())) {
+            if (mDupSet.add(getNode().getNodeKey())) {
                 return true;
             }
         }

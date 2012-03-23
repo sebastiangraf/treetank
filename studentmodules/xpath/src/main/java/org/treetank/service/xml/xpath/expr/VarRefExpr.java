@@ -77,7 +77,7 @@ public class VarRefExpr extends AbsExpression {
 
         // assure that the transaction is set to the current context item of the
         // variable's binding sequence.
-        getTransaction().moveTo(mVarKey);
+        moveTo(mVarKey);
         return null;
     }
 

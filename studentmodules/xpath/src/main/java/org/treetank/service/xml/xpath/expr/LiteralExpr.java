@@ -61,8 +61,8 @@ public class LiteralExpr extends AbsExpression {
     public AtomicValue evaluate() {
 
         // set transaction to literal
-        getTransaction().moveTo(mLiteralKey);
-        return (AtomicValue)getTransaction().getItemList().getItem(mLiteralKey);
+        moveTo(mLiteralKey);
+        return getItemList().getItem(mLiteralKey);
 
     }
 }

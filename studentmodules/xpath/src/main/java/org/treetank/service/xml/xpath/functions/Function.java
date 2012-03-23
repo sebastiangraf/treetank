@@ -30,25 +30,28 @@ package org.treetank.service.xml.xpath.functions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.functions.sequences.FNBoolean;
+import org.treetank.utils.NamePageHash;
 
 public class Function {
 
-    public static boolean ebv(final AbsAxis axis) throws TTXPathException {
+    public static boolean ebv(final AbsAxis axis, final INodeReadTransaction pRtx) throws TTXPathException {
         final FuncDef ebv = FuncDef.BOOLEAN;
         final List<AbsAxis> param = new ArrayList<AbsAxis>();
         param.add(axis);
         final AbsAxis bAxis =
-            new FNBoolean(axis.getTransaction(), param, ebv.getMin(), ebv.getMax(), axis.getTransaction()
-                .keyForName(ebv.getReturnType()));
+            new FNBoolean(pRtx, param, ebv.getMin(), ebv.getMax(), NamePageHash.generateHashForString(ebv
+                .getReturnType()));
         if (bAxis.hasNext()) {
             bAxis.next();
-            final boolean result = Boolean.parseBoolean(bAxis.getTransaction().getValueOfCurrentNode());
+            final boolean result =
+                Boolean.parseBoolean(new String(((IValNode)bAxis.getNode()).getRawValue()));
             if (!bAxis.hasNext()) {
-                bAxis.reset(axis.getTransaction().getNode().getNodeKey());
-
+                bAxis.reset(axis.getNode().getNodeKey());
                 return result;
             }
         }

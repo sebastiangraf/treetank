@@ -54,7 +54,7 @@ public class AttributeFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND;
+        return getNode().getKind() == ENode.ATTRIBUTE_KIND;
     }
 
 }

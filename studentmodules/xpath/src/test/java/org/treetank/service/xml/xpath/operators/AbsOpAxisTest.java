@@ -40,7 +40,9 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
+import org.treetank.utils.NamePageHash;
 
 public class AbsOpAxisTest {
 
@@ -65,13 +67,16 @@ public class AbsOpAxisTest {
         AtomicValue item1 = new AtomicValue(1.0, Type.DOUBLE);
         AtomicValue item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-        AbsAxis op1 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item1));
-        AbsAxis op2 = new LiteralExpr(holder.getRtx(), holder.getRtx().getItemList().addItem(item2));
+        final int key1 = AbsAxis.addAtomicToItemList(holder.getRtx(), item1);
+        final int key2 = AbsAxis.addAtomicToItemList(holder.getRtx(), item2);
+
+        AbsAxis op1 = new LiteralExpr(holder.getRtx(), key1);
+        AbsAxis op2 = new LiteralExpr(holder.getRtx(), key2);
         AbsObAxis axis = new DivOpAxis(holder.getRtx(), op1, op2);
 
         assertEquals(true, axis.hasNext());
-        assertEquals(holder.getRtx().keyForName("xs:double"), holder.getRtx().getNode().getTypeKey());
-        assertThat(Double.parseDouble(holder.getRtx().getValueOfCurrentNode()), is(0.5));
+        assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode().getTypeKey());
+        assertThat(Double.parseDouble(new String(((IValNode)axis.getNode()).getRawValue())), is(0.5));
         assertEquals(false, axis.hasNext());
 
     }

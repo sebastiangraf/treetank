@@ -36,6 +36,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 
 /**
@@ -66,13 +67,13 @@ public class EveryExprTest {
         final AbsAxis axis1 =
             new XPathAxis(holder.getRtx(), "every $child in child::node()" + "satisfies $child/@i");
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
+        assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
         final AbsAxis axis2 =
             new XPathAxis(holder.getRtx(), "every $child in child::node()" + "satisfies $child/@abc");
         assertEquals(true, axis2.hasNext());
-        assertEquals(false, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
+        assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis2.getNode()).getRawValue())));
         assertEquals(false, axis2.hasNext());
 
         holder.getRtx().moveTo(1L);
@@ -80,14 +81,14 @@ public class EveryExprTest {
             new XPathAxis(holder.getRtx(), "every $child in child::element()"
                 + " satisfies $child/attribute::attribute()");
         assertEquals(true, axis3.hasNext());
-        assertEquals(false, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
+        assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis3.getNode()).getRawValue())));
         assertEquals(false, axis3.hasNext());
 
         holder.getRtx().moveTo(1L);
         final AbsAxis axis4 =
             new XPathAxis(holder.getRtx(), "every $child in child::element() satisfies $child/child::c");
         assertEquals(true, axis4.hasNext());
-        assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValueOfCurrentNode()));
+        assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis4.getNode()).getRawValue())));
         assertEquals(false, axis4.hasNext());
     }
 

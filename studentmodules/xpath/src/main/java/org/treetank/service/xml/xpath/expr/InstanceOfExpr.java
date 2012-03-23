@@ -31,6 +31,7 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.SequenceType;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -119,12 +120,11 @@ public class InstanceOfExpr extends AbsExpression {
 
         // create result item and move transaction to it.
         AtomicValue val =
-            new AtomicValue(TypedValue.getBytes(Boolean.toString(isInstanceOf)), getTransaction().keyForName(
-                "xs:boolean"));
-        final int mItemKey = getTransaction().getItemList().addItem(val);
-        getTransaction().moveTo(mItemKey);
+            new AtomicValue(TypedValue.getBytes(Boolean.toString(isInstanceOf)), NamePageHash
+                .generateHashForString("xs:boolean"));
+        final int mItemKey = getItemList().addItem(val);
+        moveTo(mItemKey);
         return val;
 
     }
-
 }

@@ -31,6 +31,8 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
+import org.treetank.node.interfaces.IValNode;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -93,14 +95,12 @@ public class RangeAxis extends AbsAxis {
 
         if (mFirst) {
             mFirst = false;
-            if (mFrom.hasNext()
-                && Type.getType(mFrom.getTransaction().getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
-                mStart = Integer.parseInt(mFrom.getTransaction().getValueOfCurrentNode());
+            if (mFrom.hasNext() && Type.getType(mFrom.getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
+                mStart = Integer.parseInt(new String(((IValNode)mFrom.getNode()).getRawValue()));
 
-                if (mTo.hasNext()
-                    && Type.getType(mTo.getTransaction().getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
+                if (mTo.hasNext() && Type.getType(mTo.getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
 
-                    mEnd = Integer.parseInt(mTo.getTransaction().getValueOfCurrentNode());
+                    mEnd = Integer.parseInt(new String(((IValNode)mTo.getNode()).getRawValue()));
 
                 } else {
                     // at least one operand is the empty sequence
@@ -116,11 +116,11 @@ public class RangeAxis extends AbsAxis {
 
         if (mStart <= mEnd) {
             AtomicValue val =
-                new AtomicValue(TypedValue.getBytes(Integer.toString(mStart)), getTransaction().keyForName(
-                    "xs:integer"));
+                new AtomicValue(TypedValue.getBytes(Integer.toString(mStart)), NamePageHash
+                    .generateHashForString("xs:integer"));
 
-            final int itemKey = getTransaction().getItemList().addItem(val);
-            getTransaction().moveTo(itemKey);
+            final int itemKey = getItemList().addItem(val);
+            moveTo(itemKey);
             mStart++;
             return true;
         } else {

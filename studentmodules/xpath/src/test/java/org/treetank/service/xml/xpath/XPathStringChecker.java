@@ -34,9 +34,11 @@ import static org.junit.Assert.fail;
 import org.junit.After;
 import org.junit.Before;
 import org.treetank.TestHelper;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.interfaces.IValNode;
 
 public class XPathStringChecker {
 
@@ -50,12 +52,11 @@ public class XPathStringChecker {
         TestHelper.closeEverything();
     }
 
-    public static void testIAxisConventions(final AbsAxis axis, final String[] expectedValues) {
-
-        final INodeReadTransaction rtx = axis.getTransaction();
+    public static void testIAxisConventions(final INodeReadTransaction rtx, final AbsAxis axis,
+        final String[] expectedValues) {
 
         // IAxis Convention 1.
-        final long startKey = rtx.getNode().getNodeKey();
+        final long startKey = axis.getNode().getNodeKey();
 
         final String[] strValues = new String[expectedValues.length];
         int offset = 0;
@@ -65,8 +66,9 @@ public class XPathStringChecker {
             if (offset >= expectedValues.length) {
                 fail("More nodes found than expected.");
             }
-            if (!("".equals(rtx.getValueOfCurrentNode()))) {
-                strValues[offset++] = rtx.getValueOfCurrentNode();
+            if (axis.getNode() instanceof IValNode
+                && !("".equals(new String(((IValNode)axis.getNode()).getRawValue())))) {
+                strValues[offset++] = new String(((IValNode)axis.getNode()).getRawValue());
             } else {
                 strValues[offset++] = rtx.getQNameOfCurrentNode().toString();
             }
@@ -80,12 +82,12 @@ public class XPathStringChecker {
             }
 
             // IAxis Convention 3.
-            rtx.moveToDocumentRoot();
+            axis.moveTo(NodeReadTransaction.ROOT_NODE);
 
         }
 
         // IAxis Convention 5.
-        assertEquals(startKey, rtx.getNode().getNodeKey());
+        assertEquals(startKey, axis.getNode().getNodeKey());
 
         // IAxis results.
         assertArrayEquals(expectedValues, strValues);

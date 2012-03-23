@@ -27,6 +27,8 @@
 
 package org.treetank.axis;
 
+import org.treetank.api.INodeReadTransaction;
+
 /**
  * <h1>ChainedAxis</h1>
  * 
@@ -53,8 +55,8 @@ public class NestedAxis extends AbsAxis {
      * @param mChildAxis
      *            Outer nested axis.
      */
-    public NestedAxis(final AbsAxis parentAxis, final AbsAxis mChildAxis) {
-        super(parentAxis.getTransaction());
+    public NestedAxis(final AbsAxis parentAxis, final AbsAxis mChildAxis, final INodeReadTransaction pRtx) {
+        super(pRtx);
         this.mParentAxis = parentAxis;
         this.mChildAxis = mChildAxis;
         this.mIsFirst = true;

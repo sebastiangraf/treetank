@@ -38,6 +38,7 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 
 /**
@@ -106,13 +107,13 @@ public class ForAxisTest {
         final AbsAxis axis = new XPathAxis(rtx, "for $i in (10, 20), $j in (1, 2) return ($i + $j)");
         assertEquals(true, axis.hasNext());
 
-        assertEquals("11.0", rtx.getValueOfCurrentNode());
+        assertEquals("11.0", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(true, axis.hasNext());
-        assertEquals("12.0", rtx.getValueOfCurrentNode());
+        assertEquals("12.0", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(true, axis.hasNext());
-        assertEquals("21.0", rtx.getValueOfCurrentNode());
+        assertEquals("21.0", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(true, axis.hasNext());
-        assertEquals("22.0", rtx.getValueOfCurrentNode());
+        assertEquals("22.0", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(false, axis.hasNext());
     }
 }

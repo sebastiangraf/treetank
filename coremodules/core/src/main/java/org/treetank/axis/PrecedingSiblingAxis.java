@@ -75,7 +75,7 @@ public class PrecedingSiblingAxis extends AbsAxis {
             mIsFirst = false;
             // if the context node is an attribute or namespace node,
             // the following-sibling axis is empty
-            if (getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND
+            if (getNode().getKind() == ENode.ATTRIBUTE_KIND
             // || getTransaction().isNamespaceKind()
             ) {
                 resetToStartKey();
@@ -85,8 +85,8 @@ public class PrecedingSiblingAxis extends AbsAxis {
 
         resetToLastKey();
 
-        if (((IStructNode)getTransaction().getNode()).hasLeftSibling()) {
-            getTransaction().moveToLeftSibling();
+        if (((IStructNode)getNode()).hasLeftSibling()) {
+            moveTo(((IStructNode)getNode()).getLeftSiblingKey());
             return true;
         }
         resetToStartKey();

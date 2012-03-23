@@ -62,8 +62,8 @@ public class NameFilter extends AbsFilter {
     public final boolean filter() {
 
         boolean returnVal = false;
-        if (getTransaction().getNode() instanceof INameNode) {
-            final INameNode node = (INameNode)getTransaction().getNode();
+        if (getNode() instanceof INameNode) {
+            final INameNode node = (INameNode)getNode();
             returnVal = (node.getNameKey() == mLocalPartKey);
         }
         return returnVal;

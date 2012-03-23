@@ -54,7 +54,7 @@ public class DocumentRootNodeFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return getTransaction().getNode().getKind() == ENode.ROOT_KIND;
+        return getNode().getKind() == ENode.ROOT_KIND;
     }
 
 }

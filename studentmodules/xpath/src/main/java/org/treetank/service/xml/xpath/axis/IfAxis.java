@@ -52,6 +52,7 @@ public class IfAxis extends AbsAxis {
     private final AbsAxis mElse;
     private boolean mFirst;
     private AbsAxis mResult;
+    private final INodeReadTransaction mRtx;
 
     /**
      * 
@@ -74,6 +75,7 @@ public class IfAxis extends AbsAxis {
         mThen = mThenAxis;
         mElse = mElseAxis;
         mFirst = true;
+        mRtx = rtx;
     }
 
     /**
@@ -110,7 +112,7 @@ public class IfAxis extends AbsAxis {
         if (mFirst) {
             mFirst = false;
             try {
-                mResult = (Function.ebv(mIf)) ? mThen : mElse;
+                mResult = (Function.ebv(mIf, mRtx)) ? mThen : mElse;
             } catch (TTXPathException e) {
                 throw new RuntimeException(e);
             }
@@ -123,5 +125,4 @@ public class IfAxis extends AbsAxis {
             return false;
         }
     }
-
 }

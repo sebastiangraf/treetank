@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.xpath.axis;
 
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 
 /**
@@ -68,9 +69,9 @@ public class ForAxis extends AbsAxis {
      * @param returnExpr
      *            the return expression of the for expression
      */
-    public ForAxis(final AbsAxis range, final AbsAxis returnExpr) {
+    public ForAxis(final AbsAxis range, final AbsAxis returnExpr, final INodeReadTransaction pRtx) {
 
-        super(range.getTransaction());
+        super(pRtx);
         mRange = range;
         mReturn = returnExpr;
         mIsFirst = true;

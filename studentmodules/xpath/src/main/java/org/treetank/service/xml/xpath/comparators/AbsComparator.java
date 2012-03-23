@@ -135,8 +135,8 @@ public abstract class AbsComparator extends AbsAxis {
                         final AtomicValue result = new AtomicValue(resultValue);
 
                         // add retrieved AtomicValue to item list
-                        final int itemKey = getTransaction().getItemList().addItem(result);
-                        getTransaction().moveTo(itemKey);
+                        final int itemKey = getItemList().addItem(result);
+                        moveTo(itemKey);
                         return true;
                     }
                 }

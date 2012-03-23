@@ -209,13 +209,6 @@ public interface INodeReadTransaction {
     void close() throws AbsTTException;
 
     /**
-     * Get item list containing volatile items such as atoms or fragments.
-     * 
-     * @return Item list.
-     */
-    ItemList getItemList();
-
-    /**
      * Is this transaction closed?
      * 
      * @return true if closed, false otherwise

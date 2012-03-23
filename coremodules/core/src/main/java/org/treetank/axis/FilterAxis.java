@@ -27,6 +27,7 @@
 
 package org.treetank.axis;
 
+import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.filter.AbsFilter;
 
 /**
@@ -52,8 +53,8 @@ public class FilterAxis extends AbsAxis {
      * @param axisTest
      *            Test to perform for each node found with axis.
      */
-    public FilterAxis(final AbsAxis axis, final AbsFilter... axisTest) {
-        super(axis.getTransaction());
+    public FilterAxis(final AbsAxis axis, final INodeReadTransaction pRtx, final AbsFilter... axisTest) {
+        super(pRtx);
         mAxis = axis;
         mAxisFilter = axisTest;
     }

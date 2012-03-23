@@ -36,6 +36,7 @@ import org.treetank.axis.FilterAxis;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.ENode;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -49,6 +50,9 @@ import org.treetank.utils.TypedValue;
  * </p>
  */
 public class FNString extends AbsFunction {
+
+    /** Readtrans, stored over here since needed for internal axis. */
+    private final INodeReadTransaction pRtx;
 
     /**
      * Constructor. Initializes internal state and do a statical analysis
@@ -71,6 +75,7 @@ public class FNString extends AbsFunction {
         final int returnType) throws TTXPathException {
 
         super(rtx, args, min, max, returnType);
+        pRtx = rtx;
     }
 
     /**
@@ -118,19 +123,16 @@ public class FNString extends AbsFunction {
 
         final StringBuilder value = new StringBuilder();
 
-        if (getTransaction().getNode().getNodeKey() >= 0) { // is node
-            if (getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND
-                || getTransaction().getNode().getKind() == ENode.TEXT_KIND) {
-                value.append(getTransaction().getValueOfCurrentNode());
-            } else if (getTransaction().getNode().getKind() == ENode.ROOT_KIND
-                || getTransaction().getNode().getKind() == ENode.ELEMENT_KIND) {
-                final AbsAxis axis =
-                    new FilterAxis(new DescendantAxis(getTransaction()), new TextFilter(getTransaction()));
+        if (getNode().getNodeKey() >= 0) { // is node
+            if (getNode().getKind() == ENode.ATTRIBUTE_KIND || getNode().getKind() == ENode.TEXT_KIND) {
+                value.append(new String(((IValNode)getNode()).getRawValue()));
+            } else if (getNode().getKind() == ENode.ROOT_KIND || getNode().getKind() == ENode.ELEMENT_KIND) {
+                final AbsAxis axis = new FilterAxis(new DescendantAxis(pRtx), pRtx, new TextFilter(pRtx));
                 while (axis.hasNext()) {
                     if (value.length() > 0) {
                         value.append(" ");
                     }
-                    value.append(getTransaction().getValueOfCurrentNode());
+                    value.append(new String(((IValNode)getNode()).getRawValue()));
 
                 }
 
@@ -139,10 +141,9 @@ public class FNString extends AbsFunction {
             }
 
         } else {
-            value.append(getTransaction().getValueOfCurrentNode());
+            value.append(new String(((IValNode)getNode()).getRawValue()));
         }
 
         return value.toString();
     }
-
 }

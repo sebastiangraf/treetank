@@ -33,6 +33,7 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.Type;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.functions.AbsFunction;
 import org.treetank.utils.TypedValue;
@@ -84,25 +85,23 @@ public class FNBoolean extends AbsFunction {
 
         if (axis.hasNext()) {
 
-            final INodeReadTransaction rtx = axis.getTransaction();
-
-            if (rtx.getNode().getNodeKey() >= 0) { // first item is a real node
-                                                   // ->
+            if (getNode().getNodeKey() >= 0) { // first item is a real node
+                                               // ->
                 // true
                 value = true;
             } else {
 
-                final Type type = Type.getType(rtx.getNode().getTypeKey());
+                final Type type = Type.getType(getNode().getTypeKey());
 
                 if (type.derivesFrom(Type.BOOLEAN)) {
-                    value = Boolean.parseBoolean(rtx.getValueOfCurrentNode());
+                    value = Boolean.parseBoolean(new String(((IValNode)getNode()).getRawValue()));
                     // value = TypedValue.parseBoolean(rtx.getRawValue());
                 } else if (type.derivesFrom(Type.STRING) || type.derivesFrom(Type.ANY_URI)
                     || type.derivesFrom(Type.UNTYPED_ATOMIC)) {
                     // if length = 0 -> false
-                    value = (rtx.getValueOfCurrentNode().length() > 0);
+                    value = (new String(((IValNode)getNode()).getRawValue()).length() > 0);
                 } else if (type.isNumericType()) {
-                    final double dValue = Double.parseDouble(rtx.getValueOfCurrentNode());
+                    final double dValue = Double.parseDouble(new String(((IValNode)getNode()).getRawValue()));
                     value = !(Double.isNaN(dValue) || dValue == 0.0d);
                 } else {
                     // for all other types throw error FORG0006

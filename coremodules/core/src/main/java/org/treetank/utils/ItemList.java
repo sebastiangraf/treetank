@@ -30,7 +30,7 @@ package org.treetank.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.node.interfaces.INode;
+import org.treetank.node.AtomicValue;
 
 /**
  * <h1>ItemList</h1>
@@ -53,19 +53,19 @@ public final class ItemList {
     /**
      * Internal storage of items.
      */
-    private final List<INode> mList;
+    private final List<AtomicValue> mList;
 
     /**
      * Constructor. Initializes the list.
      */
     public ItemList() {
-        mList = new ArrayList<INode>();
+        mList = new ArrayList<AtomicValue>();
     }
 
     /**
      * {@inheritDoc}
      */
-    public int addItem(final INode mItem) {
+    public int addItem(final AtomicValue mItem) {
         final int key = mList.size();
         mItem.setNodeKey(key);
         // TODO: +2 is necessary, because key -1 is the NULL_NODE
@@ -79,7 +79,7 @@ public final class ItemList {
     /**
      * {@inheritDoc}
      */
-    public INode getItem(final long mKey) {
+    public AtomicValue getItem(final long mKey) {
         assert mKey <= Integer.MAX_VALUE;
 
         int index = (int)mKey; // cast to integer, because the list only

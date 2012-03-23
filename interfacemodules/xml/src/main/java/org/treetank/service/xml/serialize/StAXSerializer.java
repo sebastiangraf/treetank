@@ -106,8 +106,15 @@ public final class StAXSerializer implements XMLEventReader {
      */
     private transient long mLastKey;
 
-    /** Determines if {@link IReadTransaction} should be closed afterwards. */
+    /**
+     * Determines if {@link IReadTransaction} should be closed afterwards.
+     * */
     private transient boolean mCloseRtx;
+
+    /**
+     * Rtx for access to the data.
+     */
+    private final INodeReadTransaction mRtx;
 
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -118,8 +125,8 @@ public final class StAXSerializer implements XMLEventReader {
      *            {@link AbsAxis} which is used to iterate over and generate
      *            StAX events.
      */
-    public StAXSerializer(final AbsAxis paramAxis) {
-        this(paramAxis, true);
+    public StAXSerializer(final AbsAxis paramAxis, final INodeReadTransaction pRtx) {
+        this(paramAxis, pRtx, true);
     }
 
     /**
@@ -133,11 +140,13 @@ public final class StAXSerializer implements XMLEventReader {
      * @param paramCloseRtx
      *            Determines if rtx should be closed afterwards.
      */
-    public StAXSerializer(final AbsAxis paramAxis, final boolean paramCloseRtx) {
+    public StAXSerializer(final AbsAxis paramAxis, final INodeReadTransaction pRtx,
+        final boolean paramCloseRtx) {
         mNextTag = false;
         mAxis = paramAxis;
         mCloseRtx = paramCloseRtx;
         mStack = new Stack<Long>();
+        mRtx = pRtx;
     }
 
     /**
@@ -146,10 +155,10 @@ public final class StAXSerializer implements XMLEventReader {
      * @param paramRTX
      *            Treetank reading transaction {@link IReadTransaction}.
      */
-    private void emitEndTag(final INodeReadTransaction paramRTX) {
-        final long nodeKey = paramRTX.getNode().getNodeKey();
-        mEvent = mFac.createEndElement(paramRTX.getQNameOfCurrentNode(), new NamespaceIterator(paramRTX));
-        paramRTX.moveTo(nodeKey);
+    private void emitEndTag() {
+        final long nodeKey = mRtx.getNode().getNodeKey();
+        mEvent = mFac.createEndElement(mRtx.getQNameOfCurrentNode(), new NamespaceIterator(mRtx));
+        mRtx.moveTo(nodeKey);
     }
 
     /**
@@ -158,21 +167,19 @@ public final class StAXSerializer implements XMLEventReader {
      * @param paramRTX
      *            Treetank reading transaction {@link IReadTransaction}.
      */
-    private void emitNode(final INodeReadTransaction paramRTX) {
-        switch (paramRTX.getNode().getKind()) {
+    private void emitNode() {
+        switch (mRtx.getNode().getKind()) {
         case ROOT_KIND:
             mEvent = mFac.createStartDocument();
             break;
         case ELEMENT_KIND:
-            final long key = paramRTX.getNode().getNodeKey();
-            final QName qName = paramRTX.getQNameOfCurrentNode();
-            mEvent =
-                mFac.createStartElement(qName, new AttributeIterator(paramRTX), new NamespaceIterator(
-                    paramRTX));
-            paramRTX.moveTo(key);
+            final long key = mRtx.getNode().getNodeKey();
+            final QName qName = mRtx.getQNameOfCurrentNode();
+            mEvent = mFac.createStartElement(qName, new AttributeIterator(mRtx), new NamespaceIterator(mRtx));
+            mRtx.moveTo(key);
             break;
         case TEXT_KIND:
-            mEvent = mFac.createCharacters(paramRTX.getValueOfCurrentNode());
+            mEvent = mFac.createCharacters(mRtx.getValueOfCurrentNode());
             break;
         default:
             throw new IllegalStateException("Kind not known!");
@@ -184,7 +191,7 @@ public final class StAXSerializer implements XMLEventReader {
     public void close() throws XMLStreamException {
         if (mCloseRtx) {
             try {
-                mAxis.getTransaction().close();
+                mAxis.close();
             } catch (final AbsTTException exc) {
                 exc.printStackTrace();
             }
@@ -194,8 +201,8 @@ public final class StAXSerializer implements XMLEventReader {
     /** {@inheritDoc} */
     @Override
     public String getElementText() throws XMLStreamException {
-        final INodeReadTransaction rtx = mAxis.getTransaction();
-        final long nodeKey = rtx.getNode().getNodeKey();
+
+        final long nodeKey = mAxis.getNode().getNodeKey();
 
         /*
          * The cursor has to move back (once) after determining, that a closing
@@ -204,27 +211,28 @@ public final class StAXSerializer implements XMLEventReader {
          */
         if (mCloseElements && (mGoBack || mGoUp)) {
             if (mGoUp) {
-                rtx.moveTo(mLastKey);
+                mAxis.moveTo(mLastKey);
                 mGoUp = false;
             } else if (mGoBack) {
-                rtx.moveTo(mStack.peek());
+                mAxis.moveTo(mStack.peek());
                 mGoBack = false;
             }
         }
 
         if (mEvent.getEventType() != XMLStreamConstants.START_ELEMENT) {
-            rtx.moveTo(nodeKey);
+            mAxis.moveTo(nodeKey);
             throw new XMLStreamException("getElementText() only can be called on a start element");
         }
-        final FilterAxis textFilterAxis = new FilterAxis(new DescendantAxis(rtx), new TextFilter(rtx));
+        final FilterAxis textFilterAxis =
+            new FilterAxis(new DescendantAxis(mRtx), mRtx, new TextFilter(mRtx));
         final StringBuilder strBuilder = new StringBuilder();
 
         while (textFilterAxis.hasNext()) {
             textFilterAxis.next();
-            strBuilder.append(mAxis.getTransaction().getValueOfCurrentNode());
+            strBuilder.append(mRtx.getValueOfCurrentNode());
         }
 
-        rtx.moveTo(nodeKey);
+        mRtx.moveTo(nodeKey);
         return strBuilder.toString();
     }
 
@@ -261,13 +269,13 @@ public final class StAXSerializer implements XMLEventReader {
                 mKey = mAxis.next();
 
                 if (mNextTag) {
-                    if (mAxis.getTransaction().getNode().getKind() != ENode.ELEMENT_KIND) {
+                    if (mAxis.getNode().getKind() != ENode.ELEMENT_KIND) {
                         throw new XMLStreamException("The next tag isn't a start- or end-tag!");
                     }
                     mNextTag = false;
                 }
             }
-            emit(mAxis.getTransaction());
+            emit();
         } catch (final IOException exc) {
             exc.printStackTrace();
         }
@@ -285,30 +293,29 @@ public final class StAXSerializer implements XMLEventReader {
     /** {@inheritDoc} */
     @Override
     public XMLEvent peek() throws XMLStreamException {
-        final long currNodeKey = mAxis.getTransaction().getNode().getNodeKey();
-        final INodeReadTransaction rtx = mAxis.getTransaction();
+        final long currNodeKey = mAxis.getNode().getNodeKey();
         try {
             if (mCloseElements) {
-                rtx.moveTo(mStack.peek());
-                emitEndTag(rtx);
+                mRtx.moveTo(mStack.peek());
+                emitEndTag();
             } else {
-                final ENode nodeKind = rtx.getNode().getKind();
-                if (rtx.getStructuralNode().hasFirstChild()) {
-                    rtx.moveToFirstChild();
-                    emitNode(rtx);
-                } else if (rtx.getStructuralNode().hasRightSibling()) {
-                    rtx.moveToRightSibling();
+                final ENode nodeKind = mRtx.getNode().getKind();
+                if (mRtx.getStructuralNode().hasFirstChild()) {
+                    mRtx.moveToFirstChild();
+                    emitNode();
+                } else if (mRtx.getStructuralNode().hasRightSibling()) {
+                    mRtx.moveToRightSibling();
                     processNode(nodeKind);
-                } else if (rtx.getStructuralNode().hasParent()) {
-                    rtx.moveToParent();
-                    emitEndTag(rtx);
+                } else if (mRtx.getStructuralNode().hasParent()) {
+                    mRtx.moveToParent();
+                    emitEndTag();
                 }
             }
         } catch (final IOException exc) {
             exc.printStackTrace();
         }
 
-        rtx.moveTo(currNodeKey);
+        mRtx.moveTo(currNodeKey);
         return mEvent;
     }
 
@@ -345,10 +352,10 @@ public final class StAXSerializer implements XMLEventReader {
     private void processNode(final ENode paramNodeKind) throws IOException {
         switch (paramNodeKind) {
         case ELEMENT_KIND:
-            emitEndTag(mAxis.getTransaction());
+            emitEndTag();
             break;
         case TEXT_KIND:
-            emitNode(mAxis.getTransaction());
+            emitNode();
             break;
         default:
             // Do nothing.
@@ -358,22 +365,20 @@ public final class StAXSerializer implements XMLEventReader {
     /**
      * Move to node and emit it.
      * 
-     * @param paramRtx
-     *            Read Transaction.
      * @throws IOException
      *             In case of any I/O error.
      */
-    private void emit(final INodeReadTransaction paramRtx) throws IOException {
+    private void emit() throws IOException {
         // Emit pending end elements.
         if (mCloseElements) {
-            if (!mStack.empty() && mStack.peek() != paramRtx.getStructuralNode().getLeftSiblingKey()) {
-                paramRtx.moveTo(mStack.pop());
-                emitEndTag(paramRtx);
-                paramRtx.moveTo(mKey);
+            if (!mStack.empty() && mStack.peek() != mRtx.getStructuralNode().getLeftSiblingKey()) {
+                mRtx.moveTo(mStack.pop());
+                emitEndTag();
+                mRtx.moveTo(mKey);
             } else if (!mStack.empty()) {
-                paramRtx.moveTo(mStack.pop());
-                emitEndTag(paramRtx);
-                paramRtx.moveTo(mKey);
+                mRtx.moveTo(mStack.pop());
+                emitEndTag();
+                mRtx.moveTo(mKey);
                 mCloseElements = false;
                 mCloseElementsEmitted = true;
             }
@@ -381,24 +386,23 @@ public final class StAXSerializer implements XMLEventReader {
             mCloseElementsEmitted = false;
 
             // Emit node.
-            emitNode(paramRtx);
+            emitNode();
 
-            final long nodeKey = paramRtx.getNode().getNodeKey();
+            final long nodeKey = mRtx.getNode().getNodeKey();
             mLastKey = nodeKey;
 
             // Push end element to stack if we are a start element.
-            if (paramRtx.getNode().getKind() == ENode.ELEMENT_KIND) {
+            if (mRtx.getNode().getKind() == ENode.ELEMENT_KIND) {
                 mStack.push(nodeKey);
             }
 
             // Remember to emit all pending end elements from stack if
             // required.
-            if (!paramRtx.getStructuralNode().hasFirstChild()
-                && !paramRtx.getStructuralNode().hasRightSibling()) {
+            if (!mRtx.getStructuralNode().hasFirstChild() && !mRtx.getStructuralNode().hasRightSibling()) {
                 mGoUp = true;
                 moveToNextNode();
-            } else if (paramRtx.getNode().getKind() == ENode.ELEMENT_KIND
-                && !((ElementNode)paramRtx.getNode()).hasFirstChild()) {
+            } else if (mRtx.getNode().getKind() == ENode.ELEMENT_KIND
+                && !((ElementNode)mRtx.getNode()).hasFirstChild()) {
                 // Case: Empty elements with right siblings.
                 mGoBack = true;
                 moveToNextNode();

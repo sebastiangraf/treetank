@@ -82,7 +82,7 @@ public class PrecedingAxis extends AbsAxis {
         // namespace
         if (mIsFirst) {
             mIsFirst = false;
-            if (getTransaction().getNode().getKind() == ENode.ATTRIBUTE_KIND
+            if (getNode().getKind() == ENode.ATTRIBUTE_KIND
             // || getTransaction().isNamespaceKind()
             ) {
                 resetToStartKey();
@@ -94,12 +94,12 @@ public class PrecedingAxis extends AbsAxis {
 
         if (!mStack.empty()) {
             // return all nodes of the current subtree in reverse document order
-            getTransaction().moveTo(mStack.pop());
+            moveTo(mStack.pop());
             return true;
         }
 
-        if (((IStructNode)getTransaction().getNode()).hasLeftSibling()) {
-            getTransaction().moveToLeftSibling();
+        if (((IStructNode)getNode()).hasLeftSibling()) {
+            moveTo(((IStructNode)getNode()).getLeftSiblingKey());
             // because this axis return the precedings in reverse document
             // order, we
             // need to travel to the node in the subtree, that comes last in
@@ -109,11 +109,11 @@ public class PrecedingAxis extends AbsAxis {
             return true;
         }
 
-        while (getTransaction().getNode().hasParent()) {
+        while (getNode().hasParent()) {
             // ancestors are not part of the preceding set
-            getTransaction().moveToParent();
-            if (((IStructNode)getTransaction().getNode()).hasLeftSibling()) {
-                getTransaction().moveToLeftSibling();
+            moveTo(getNode().getParentKey());
+            if (((IStructNode)getNode()).hasLeftSibling()) {
+                moveTo(((IStructNode)getNode()).getLeftSiblingKey());
                 // move to last node in the subtree
                 getLastChild();
                 return true;
@@ -134,52 +134,50 @@ public class PrecedingAxis extends AbsAxis {
     private void getLastChild() {
 
         // nodekey of the root of the current subtree
-        final long parent = getTransaction().getNode().getNodeKey();
+        final long parent = getNode().getNodeKey();
 
         // traverse tree in pre order to the leftmost leaf of the subtree and
         // push
         // all nodes to the stack
-        if (((IStructNode)getTransaction().getNode()).hasFirstChild()) {
-            while (((IStructNode)getTransaction().getNode()).hasFirstChild()) {
-                mStack.push(getTransaction().getNode().getNodeKey());
-                getTransaction().moveToFirstChild();
+        if (((IStructNode)getNode()).hasFirstChild()) {
+            while (((IStructNode)getNode()).hasFirstChild()) {
+                mStack.push(getNode().getNodeKey());
+                moveTo(((IStructNode)getNode()).getFirstChildKey());
             }
 
             // traverse all the siblings of the leftmost leave and all their
             // descendants and push all of them to the stack
-            while (((IStructNode)getTransaction().getNode()).hasRightSibling()) {
-                mStack.push(getTransaction().getNode().getNodeKey());
-                getTransaction().moveToRightSibling();
+            while (((IStructNode)getNode()).hasRightSibling()) {
+                mStack.push(getNode().getNodeKey());
+                moveTo(((IStructNode)getNode()).getRightSiblingKey());
                 getLastChild();
             }
 
             // step up the path till the root of the current subtree and process
             // all
             // right siblings and their descendants on each step
-            if (getTransaction().getNode().hasParent()
-                && (getTransaction().getNode().getParentKey() != parent)) {
+            if (getNode().hasParent() && (getNode().getParentKey() != parent)) {
 
-                mStack.push(getTransaction().getNode().getNodeKey());
-                while (getTransaction().getNode().hasParent()
-                    && (getTransaction().getNode().getParentKey() != parent)) {
+                mStack.push(getNode().getNodeKey());
+                while (getNode().hasParent() && (getNode().getParentKey() != parent)) {
 
-                    getTransaction().moveToParent();
+                    moveTo(getNode().getParentKey());
 
                     // traverse all the siblings of the leftmost leave and all
                     // their
                     // descendants and push all of them to the stack
-                    while (((IStructNode)getTransaction().getNode()).hasRightSibling()) {
+                    while (((IStructNode)getNode()).hasRightSibling()) {
 
-                        getTransaction().moveToRightSibling();
+                        moveTo(((IStructNode)getNode()).getRightSiblingKey());
                         getLastChild();
-                        mStack.push(getTransaction().getNode().getNodeKey());
+                        mStack.push(getNode().getNodeKey());
                     }
                 }
 
                 // set transaction to the node in the subtree that is last in
                 // document
                 // order
-                getTransaction().moveTo(mStack.pop());
+                moveTo(mStack.pop());
             }
         }
     }

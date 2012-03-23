@@ -78,9 +78,9 @@ public final class DescendantAxis extends AbsAxis {
         super.reset(mNodeKey);
         mRightSiblingKeyStack = new Stack<Long>();
         if (isSelfIncluded()) {
-            mNextKey = getTransaction().getNode().getNodeKey();
+            mNextKey = getNode().getNodeKey();
         } else {
-            mNextKey = ((IStructNode)getTransaction().getNode()).getFirstChildKey();
+            mNextKey = ((IStructNode)getNode()).getFirstChildKey();
         }
     }
 
@@ -97,26 +97,26 @@ public final class DescendantAxis extends AbsAxis {
             return false;
         }
 
-        getTransaction().moveTo(mNextKey);
+        moveTo(mNextKey);
 
         // Fail if the subtree is finished.
-        if (((IStructNode)getTransaction().getNode()).getLeftSiblingKey() == getStartKey()) {
+        if (((IStructNode)getNode()).getLeftSiblingKey() == getStartKey()) {
             resetToStartKey();
             return false;
         }
 
         // Always follow first child if there is one.
-        if (((IStructNode)getTransaction().getNode()).hasFirstChild()) {
-            mNextKey = ((IStructNode)getTransaction().getNode()).getFirstChildKey();
-            if (((IStructNode)getTransaction().getNode()).hasRightSibling()) {
-                mRightSiblingKeyStack.push(((IStructNode)getTransaction().getNode()).getRightSiblingKey());
+        if (((IStructNode)getNode()).hasFirstChild()) {
+            mNextKey = ((IStructNode)getNode()).getFirstChildKey();
+            if (((IStructNode)getNode()).hasRightSibling()) {
+                mRightSiblingKeyStack.push(((IStructNode)getNode()).getRightSiblingKey());
             }
             return true;
         }
 
         // Then follow right sibling if there is one.
-        if (((IStructNode)getTransaction().getNode()).hasRightSibling()) {
-            mNextKey = ((IStructNode)getTransaction().getNode()).getRightSiblingKey();
+        if (((IStructNode)getNode()).hasRightSibling()) {
+            mNextKey = ((IStructNode)getNode()).getRightSiblingKey();
             return true;
         }
 

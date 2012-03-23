@@ -89,10 +89,10 @@ public class AncestorAxis extends AbsAxis {
             return true;
         }
 
-        if (getTransaction().getNode().getKind() != ENode.ROOT_KIND
-            && getTransaction().getNode().hasParent()
-            && getTransaction().getNode().getParentKey() != ROOT_NODE) {
-            getTransaction().moveToParent();
+        if (getNode().getKind() != ENode.ROOT_KIND
+            && getNode().hasParent()
+            && getNode().getParentKey() != ROOT_NODE) {
+            moveTo(getNode().getParentKey());
             return true;
         }
         resetToStartKey();

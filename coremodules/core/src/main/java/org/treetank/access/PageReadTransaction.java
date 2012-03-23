@@ -49,7 +49,6 @@ import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.ItemList;
 
 /**
  * <h1>PageReadTransaction</h1>
@@ -74,8 +73,6 @@ public class PageReadTransaction implements IPageReadTransaction {
 
     /** Cached name page of this revision. */
     private final RevisionRootPage mRootPage;
-    /** Read-transaction-exclusive item list. */
-    private final ItemList mItemList;
     /** Internal reference to cache. */
     private final ICache mCache;
 
@@ -106,7 +103,6 @@ public class PageReadTransaction implements IPageReadTransaction {
         mUberPage = paramUberPage;
         mRootPage = loadRevRoot(paramRevision);
         initializeNamePage();
-        mItemList = new ItemList();
     }
 
     /**
@@ -122,7 +118,7 @@ public class PageReadTransaction implements IPageReadTransaction {
 
         // Immediately return node from item list if node key negative.
         if (paramNodeKey < 0) {
-            return mItemList.getItem(paramNodeKey);
+            throw new IllegalArgumentException();
         }
 
         // Calculate page and node part for given nodeKey.
@@ -244,15 +240,6 @@ public class PageReadTransaction implements IPageReadTransaction {
      */
     protected final UberPage getUberPage() {
         return mUberPage;
-    }
-
-    /**
-     * Get item list.
-     * 
-     * @return The item list.
-     */
-    public final ItemList getItemList() {
-        return mItemList;
     }
 
     /**

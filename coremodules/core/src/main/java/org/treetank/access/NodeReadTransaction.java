@@ -29,7 +29,6 @@ package org.treetank.access;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.annotations.NotNull;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.IPageReadTransaction;
 import org.treetank.exception.AbsTTException;
@@ -40,7 +39,6 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
-import org.treetank.utils.ItemList;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -109,14 +107,6 @@ public class NodeReadTransaction implements INodeReadTransaction {
     public final long getRevisionNumber() throws TTIOException {
         assertNotClosed();
         return mPageReadTransaction.getActualRevisionRootPage().getRevision();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final ItemList getItemList() {
-        return mPageReadTransaction.getItemList();
     }
 
     /**
@@ -416,8 +406,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
      *            the name including a possible prefix
      * @return the QName obj
      */
-    @NotNull
-    protected static final QName buildQName(final String paramUri, final String paramName) {
+    public static final QName buildQName(final String paramUri, final String paramName) {
         QName qname;
         if (paramName.contains(":")) {
             qname = new QName(paramUri, paramName.split(":")[1], paramName.split(":")[0]);

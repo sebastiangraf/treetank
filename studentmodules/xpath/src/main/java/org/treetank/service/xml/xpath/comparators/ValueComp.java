@@ -32,7 +32,9 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
+import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.EXPathError;
+import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>ValueComp</h1>
@@ -81,17 +83,14 @@ public class ValueComp extends AbsComparator {
     @Override
     protected AtomicValue[] atomize(final AbsAxis mOperand) throws TTXPathException {
 
-        final INodeReadTransaction trx = getTransaction();
-
-        int type = trx.getNode().getTypeKey();
+        int type = getNode().getTypeKey();
 
         // (3.) if type is untypedAtomic, cast to string
-        if (type == trx.keyForName("xs:unytpedAtomic")) {
-            type = trx.keyForName("xs:string");
+        if (type == NamePageHash.generateHashForString("xs:unytpedAtomic")) {
+            type = NamePageHash.generateHashForString("xs:string");
         }
 
-        final AtomicValue atomized =
-            new AtomicValue(mOperand.getTransaction().getValueOfCurrentNode().getBytes(), type);
+        final AtomicValue atomized = new AtomicValue(((IValNode)mOperand.getNode()).getRawValue(), type);
         final AtomicValue[] op = {
             atomized
         };
