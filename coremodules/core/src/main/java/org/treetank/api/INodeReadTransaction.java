@@ -29,11 +29,11 @@ package org.treetank.api;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.axis.ItemList;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.utils.ItemList;
 
 /**
 

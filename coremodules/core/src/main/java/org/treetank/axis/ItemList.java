@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.utils;
+package org.treetank.axis;
 
 import java.util.ArrayList;
 import java.util.List;
