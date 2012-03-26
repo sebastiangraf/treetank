@@ -35,7 +35,6 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.interfaces.INode;
-import org.treetank.utils.ItemList;
 
 /**
  * <h1>AbstractAxis</h1>

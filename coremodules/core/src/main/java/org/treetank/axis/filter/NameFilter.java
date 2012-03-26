@@ -29,6 +29,7 @@ package org.treetank.axis.filter;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.interfaces.INameNode;
+import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>NameAxisTest</h1>
@@ -52,7 +53,7 @@ public class NameFilter extends AbsFilter {
      */
     public NameFilter(final INodeReadTransaction rtx, final String mLocalPart) {
         super(rtx);
-        mLocalPartKey = rtx.keyForName(mLocalPart);
+        mLocalPartKey = NamePageHash.generateHashForString(mLocalPart);
     }
 
     /**

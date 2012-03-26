@@ -84,11 +84,6 @@
 		</dependency>
 		<dependency>
 			<groupId>treetank</groupId>
-			<artifactId>xpath</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>treetank</groupId>
 			<artifactId>commons</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>

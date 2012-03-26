@@ -39,7 +39,6 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
-import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>NodeReadTransaction</h1>
@@ -251,15 +250,6 @@ public class NodeReadTransaction implements INodeReadTransaction {
     public final String getTypeOfCurrentNode() {
         assertNotClosed();
         return mPageReadTransaction.getName(mCurrentNode.getTypeKey());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final int keyForName(final String mName) {
-        assertNotClosed();
-        return NamePageHash.generateHashForString(mName);
     }
 
     /**

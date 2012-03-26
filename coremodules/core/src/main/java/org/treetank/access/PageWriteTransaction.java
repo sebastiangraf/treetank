@@ -37,6 +37,7 @@ import javax.xml.namespace.QName;
 
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IPageWriteTransaction;
+import org.treetank.axis.ItemList;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.TransactionLogCache;
@@ -62,7 +63,6 @@ import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.ItemList;
 import org.treetank.utils.NamePageHash;
 
 /**
