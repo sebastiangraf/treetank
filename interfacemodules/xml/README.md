@@ -1,30 +1,68 @@
-Diff package for XML relying on Treetank node layer.
-=============
+# XML relying on Treetank node layer.
 
-Based on the inlying tree-encoding of Treetank, this package offers multiple possibilities to offer diffs.
-The implementation was performed by the master thesis of Johannes Lichtenberger.
+Based on the inlying tree-encoding of Treetank, this package offers multiple possibilities to work with XML.
+This includes diff algorithms as well as a native XPath 2.0 engine plus multiple possibilities for import/export.
+The source code in this bundle mainly consists of student projects:
 
-Implementation Nodes
--------
+* XPath-package: Master project of Tina Scherer
+* Diff-package: Master project of Johannes Lichtenberger
+
+## Implementation Nodes for Diff package
+
 Doesn't work when inserting a node with a name/value, then reverting
 and then inserting a node with the same name/value at the same level
 and comparing these two revisions since they both have the same node key
 and same QNames or text values and thus nodes are regarded as being deleted
 between the old node and the new node (if the new node is a right sibling).
 
-Proposed fix:
--------
+###Proposed fix:
+
 Load maximum node key of newest revision and add 1 for the first added node.	 
 
-License
--------
+## Implementation nodes for XPath package
+
+### Important to know:
+
+* the document order is NOT stable (the XPath engine does not return the result sequence in document order.) This is due to the XML encoding in treetank, which makes efficient node ordering impossible.
+* node comparison << and >> is not supported due to the same reason
+* namespace axis is not supported, because it is not supported in Treetank yet. This makes the engine not compatible with XPath 1.0, but has no	effect on the XPath 2.0 functionality, because the namespace axis is deprecated in the XPath 2.0 spec.
+* XMLSchema supported is implemented in the engine, but is not yet supported by Treetank, so every node' type is either "xs:untyped" or "xs:untypedAtomic"
+* functions and types can only be used with their namespace prefix.	e.g "fn:position()"
+				
+### Not yet implemented things:
+
+* functions: only a few very important functions are supported at the moment
+* cast and treat as
+* node constructors
+* ordered sequences 
+* nilled property
+* SchemaAttribute() / SchemaElement() node tests (no Schema support in Treetank)
+* interrogation in the element() node test (nilled property)
+* wildcards in the name of attributes (ns:name -> *:name or ns:*, because Treetank does not allow to access these easily)
+* NamespaceAxis
+* prefix optional (at the moment no support for missing prefixes)
+* processing instructions (no treetank support)
+
+### Things that have to be improved:
+
+* XPath error messages	
+* scanner: recognize maskings like &lt; ('<')
+* handling of untyped and untypedAtomic (casting)
+* quote signs within a stringliteral are ignored
+	
+### Optimization ideas:
+
+* use threads
+* use fulltext indices
+* convert queries with backward axis in queries only using forward axes
+
+##License
 
 This work is released in the public domain under the BSD 3-clause license
 
-Involved People
--------
+## Involved People
 
-* Tina Scherer (Implementation)
-* Marc Kramis (Supervision of first version)
+* Tina Scherer (XPath Implementation)
+* Johannes Lichtenberger (XML Diff Implementation)
 * Sebastian Graf (Maintenance)
-* Patrick Lang (Concurrent XPath 2.0 prototype)
+
