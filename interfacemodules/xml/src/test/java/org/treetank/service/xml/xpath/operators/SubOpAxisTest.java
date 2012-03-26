@@ -90,41 +90,43 @@ public class SubOpAxisTest {
         AbsAxis op2 = new SequenceAxis(holder.getRtx());
         AbsObAxis axis = new SubOpAxis(holder.getRtx(), op1, op2);
 
-        assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:double"), holder.getRtx()
-            .keyForName("xs:double")));
-        assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder
-            .getRtx().keyForName("xs:double")));
-        assertEquals(Type.FLOAT, axis.getReturnType(holder.getRtx().keyForName("xs:float"), holder.getRtx()
-            .keyForName("xs:decimal")));
-        assertEquals(Type.DECIMAL, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder
-            .getRtx().keyForName("xs:integer")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:double"),
+            NamePageHash.generateHashForString("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"),
+            NamePageHash.generateHashForString("xs:double")));
+        assertEquals(Type.FLOAT, axis.getReturnType(NamePageHash.generateHashForString("xs:float"),
+            NamePageHash.generateHashForString("xs:decimal")));
+        assertEquals(Type.DECIMAL, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"),
+            NamePageHash.generateHashForString("xs:integer")));
         // assertEquals(Type.INTEGER,
         // axis.getReturnType(holder.getRtx().keyForName("xs:integer"),
         // holder.getRtx().keyForName("xs:integer")));
 
-        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(holder.getRtx().keyForName(
-            "xs:yearMonthDuration"), holder.getRtx().keyForName("xs:yearMonthDuration")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.getRtx().keyForName(
-            "xs:dayTimeDuration"), holder.getRtx().keyForName("xs:dayTimeDuration")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.getRtx().keyForName("xs:date"), holder
-            .getRtx().keyForName("xs:date")));
-        assertEquals(Type.DATE, axis.getReturnType(holder.getRtx().keyForName("xs:date"), holder.getRtx()
-            .keyForName("xs:yearMonthDuration")));
-        assertEquals(Type.DATE, axis.getReturnType(holder.getRtx().keyForName("xs:date"), holder.getRtx()
-            .keyForName("xs:dayTimeDuration")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.getRtx().keyForName("xs:time"), holder
-            .getRtx().keyForName("xs:time")));
-        assertEquals(Type.DATE_TIME, axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder
-            .getRtx().keyForName("xs:yearMonthDuration")));
-        assertEquals(Type.DATE_TIME, axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder
-            .getRtx().keyForName("xs:dayTimeDuration")));
-        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"),
-            holder.getRtx().keyForName("xs:dateTime")));
+        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(NamePageHash
+            .generateHashForString("xs:yearMonthDuration"), NamePageHash
+            .generateHashForString("xs:yearMonthDuration")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(NamePageHash
+            .generateHashForString("xs:dayTimeDuration"), NamePageHash
+            .generateHashForString("xs:dayTimeDuration")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(
+            NamePageHash.generateHashForString("xs:date"), NamePageHash.generateHashForString("xs:date")));
+        assertEquals(Type.DATE, axis.getReturnType(NamePageHash.generateHashForString("xs:date"),
+            NamePageHash.generateHashForString("xs:yearMonthDuration")));
+        assertEquals(Type.DATE, axis.getReturnType(NamePageHash.generateHashForString("xs:date"),
+            NamePageHash.generateHashForString("xs:dayTimeDuration")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(
+            NamePageHash.generateHashForString("xs:time"), NamePageHash.generateHashForString("xs:time")));
+        assertEquals(Type.DATE_TIME, axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"),
+            NamePageHash.generateHashForString("xs:yearMonthDuration")));
+        assertEquals(Type.DATE_TIME, axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"),
+            NamePageHash.generateHashForString("xs:dayTimeDuration")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(NamePageHash
+            .generateHashForString("xs:dateTime"), NamePageHash.generateHashForString("xs:dateTime")));
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:string"), holder.getRtx().keyForName(
-                "xs:yearMonthDuration"));
+            axis.getReturnType(NamePageHash.generateHashForString("xs:string"), NamePageHash
+                .generateHashForString("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -133,8 +135,8 @@ public class SubOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
-                "xs:double"));
+            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash
+                .generateHashForString("xs:double"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -143,8 +145,8 @@ public class SubOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:string"), holder.getRtx().keyForName(
-                "xs:yearMonthDuration"));
+            axis.getReturnType(NamePageHash.generateHashForString("xs:string"), NamePageHash
+                .generateHashForString("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -153,8 +155,8 @@ public class SubOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
-                "xs:IDREF"));
+            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash
+                .generateHashForString("xs:IDREF"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "

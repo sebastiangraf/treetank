@@ -28,6 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.INodeReadTransaction;
+import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>TypeFilter</h1>
@@ -62,7 +63,7 @@ public class TypeFilter extends AbsFilter {
      *            Name of the type to match
      */
     public TypeFilter(final INodeReadTransaction rtx, final String mTypeName) {
-        this(rtx, rtx.keyForName(mTypeName));
+        this(rtx, NamePageHash.generateHashForString(mTypeName));
 
     }
 

@@ -29,7 +29,6 @@ package org.treetank.api;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.axis.ItemList;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
@@ -162,15 +161,6 @@ public interface INodeReadTransaction {
      * @return the normal type of the node
      */
     String getTypeOfCurrentNode();
-
-    /**
-     * Get key for given name. This is used for efficient name testing.
-     * 
-     * @param pName
-     *            Name, i.e., local part, URI, or prefix.
-     * @return Internal key assigned to given name.
-     */
-    int keyForName(final String pName);
 
     /**
      * Get name for key. This is used for efficient key testing.

@@ -69,6 +69,7 @@ import org.treetank.service.xml.xpath.operators.IDivOpAxis;
 import org.treetank.service.xml.xpath.operators.ModOpAxis;
 import org.treetank.service.xml.xpath.operators.MulOpAxis;
 import org.treetank.service.xml.xpath.operators.SubOpAxis;
+import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>PipeBuilder</h1>
@@ -544,9 +545,9 @@ public final class PipelineBuilder {
             mPredicate.hasNext();
             // if is numeric literal -> abbrev for position()
             final int type = mTransaction.getNode().getTypeKey();
-            if (type == mTransaction.keyForName("xs:integer") || type == mTransaction.keyForName("xs:double")
-                || type == mTransaction.keyForName("xs:float")
-                || type == mTransaction.keyForName("xs:decimal")) {
+            if (type == NamePageHash.generateHashForString("xs:integer") || type == NamePageHash.generateHashForString("xs:double")
+                || type == NamePageHash.generateHashForString("xs:float")
+                || type == NamePageHash.generateHashForString("xs:decimal")) {
 
                 throw new IllegalStateException("function fn:position() is not implemented yet.");
 
@@ -752,7 +753,7 @@ public final class PipelineBuilder {
         final Class<? extends AbsFunction> function = func.getFunc();
         final Integer min = func.getMin();
         final Integer max = func.getMax();
-        final Integer returnType = mTransaction.keyForName(func.getReturnType());
+        final Integer returnType = NamePageHash.generateHashForString(func.getReturnType());
 
         // parameter types of the function's constructor
         final Class<?>[] paramTypes = {

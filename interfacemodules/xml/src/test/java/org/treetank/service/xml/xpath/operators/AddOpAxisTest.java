@@ -90,14 +90,14 @@ public class AddOpAxisTest {
         AbsAxis op2 = new SequenceAxis(holder.getRtx());
         AbsObAxis axis = new AddOpAxis(holder.getRtx(), op1, op2);
 
-        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:double"), holder
-            .getRtx().keyForName("xs:double")));
-        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"), holder
-            .getRtx().keyForName("xs:double")));
-        assertEquals(Type.FLOAT, axis.getReturnType(NamePageHash.generateHashForString("xs:float"), holder
-            .getRtx().keyForName("xs:decimal")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:double"),
+            NamePageHash.generateHashForString("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"),
+            NamePageHash.generateHashForString("xs:double")));
+        assertEquals(Type.FLOAT, axis.getReturnType(NamePageHash.generateHashForString("xs:float"),
+            NamePageHash.generateHashForString("xs:decimal")));
         assertEquals(Type.DECIMAL, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"),
-            holder.getRtx().keyForName("xs:integer")));
+            NamePageHash.generateHashForString("xs:integer")));
         // assertEquals(Type.INTEGER,
         // axis.getReturnType(NamePageHash.generateHashForString("xs:integer"),
         // NamePageHash.generateHashForString("xs:integer")));
@@ -109,16 +109,16 @@ public class AddOpAxisTest {
             .generateHashForString("xs:dayTimeDuration"), NamePageHash
             .generateHashForString("xs:dayTimeDuration")));
 
-        assertEquals(Type.DATE, axis.getReturnType(NamePageHash.generateHashForString("xs:date"), holder
-            .getRtx().keyForName("xs:yearMonthDuration")));
-        assertEquals(Type.DATE, axis.getReturnType(NamePageHash.generateHashForString("xs:date"), holder
-            .getRtx().keyForName("xs:dayTimeDuration")));
-        assertEquals(Type.TIME, axis.getReturnType(NamePageHash.generateHashForString("xs:time"), holder
-            .getRtx().keyForName("xs:dayTimeDuration")));
+        assertEquals(Type.DATE, axis.getReturnType(NamePageHash.generateHashForString("xs:date"),
+            NamePageHash.generateHashForString("xs:yearMonthDuration")));
+        assertEquals(Type.DATE, axis.getReturnType(NamePageHash.generateHashForString("xs:date"),
+            NamePageHash.generateHashForString("xs:dayTimeDuration")));
+        assertEquals(Type.TIME, axis.getReturnType(NamePageHash.generateHashForString("xs:time"),
+            NamePageHash.generateHashForString("xs:dayTimeDuration")));
         assertEquals(Type.DATE_TIME, axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"),
-            holder.getRtx().keyForName("xs:yearMonthDuration")));
+            NamePageHash.generateHashForString("xs:yearMonthDuration")));
         assertEquals(Type.DATE_TIME, axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"),
-            holder.getRtx().keyForName("xs:dayTimeDuration")));
+            NamePageHash.generateHashForString("xs:dayTimeDuration")));
 
         try {
             axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash

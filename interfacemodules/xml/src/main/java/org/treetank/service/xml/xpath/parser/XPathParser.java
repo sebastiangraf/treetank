@@ -65,6 +65,7 @@ import org.treetank.service.xml.xpath.SingleType;
 import org.treetank.service.xml.xpath.filter.DocumentNodeAxis;
 import org.treetank.service.xml.xpath.filter.SchemaAttributeFilter;
 import org.treetank.service.xml.xpath.filter.SchemaElementFilter;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -1881,7 +1882,7 @@ public final class XPathParser {
         is(TokenType.SPACE, true);
 
         final AtomicValue mIntLiteral =
-            new AtomicValue(TypedValue.getBytes(value), getTransaction().keyForName(type));
+            new AtomicValue(TypedValue.getBytes(value), NamePageHash.generateHashForString(type));
         return mIntLiteral;
     }
 
@@ -1992,7 +1993,7 @@ public final class XPathParser {
         }
 
         final AtomicValue mStringLiteral =
-            new AtomicValue(TypedValue.getBytes(mValue.toString()), getTransaction().keyForName("xs:string"));
+            new AtomicValue(TypedValue.getBytes(mValue.toString()), NamePageHash.generateHashForString("xs:string"));
         return mStringLiteral;
     }
 

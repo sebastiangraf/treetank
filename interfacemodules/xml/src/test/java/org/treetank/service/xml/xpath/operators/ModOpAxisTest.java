@@ -90,21 +90,17 @@ public class ModOpAxisTest {
         AbsAxis op2 = new SequenceAxis(holder.getRtx());
         AbsObAxis axis = new ModOpAxis(holder.getRtx(), op1, op2);
 
-        assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:double"), holder.getRtx()
-            .keyForName("xs:double")));
-        assertEquals(Type.DOUBLE, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder
-            .getRtx().keyForName("xs:double")));
-        assertEquals(Type.FLOAT, axis.getReturnType(holder.getRtx().keyForName("xs:float"), holder.getRtx()
-            .keyForName("xs:decimal")));
-        assertEquals(Type.DECIMAL, axis.getReturnType(holder.getRtx().keyForName("xs:decimal"), holder
-            .getRtx().keyForName("xs:integer")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:double"), NamePageHash.generateHashForString("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"), NamePageHash.generateHashForString("xs:double")));
+        assertEquals(Type.FLOAT, axis.getReturnType(NamePageHash.generateHashForString("xs:float"), NamePageHash.generateHashForString("xs:decimal")));
+        assertEquals(Type.DECIMAL, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"), NamePageHash.generateHashForString("xs:integer")));
         // assertEquals(Type.INTEGER,
-        // axis.getReturnType(holder.getRtx().keyForName("xs:integer"),
-        // holder.getRtx().keyForName("xs:integer")));
+        // axis.getReturnType(NamePageHash.generateHashForString("xs:integer"),
+        // NamePageHash.generateHashForString("xs:integer")));
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash.generateHashForString(
                 "xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
@@ -114,7 +110,7 @@ public class ModOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash.generateHashForString(
                 "xs:double"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
@@ -124,7 +120,7 @@ public class ModOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:string"), holder.getRtx().keyForName(
+            axis.getReturnType(NamePageHash.generateHashForString("xs:string"), NamePageHash.generateHashForString(
                 "xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
@@ -134,7 +130,7 @@ public class ModOpAxisTest {
 
         try {
 
-            axis.getReturnType(holder.getRtx().keyForName("xs:dateTime"), holder.getRtx().keyForName(
+            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash.generateHashForString(
                 "xs:IDREF"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {

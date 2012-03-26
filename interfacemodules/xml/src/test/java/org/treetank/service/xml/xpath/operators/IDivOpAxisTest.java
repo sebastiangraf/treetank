@@ -95,7 +95,7 @@ public class IDivOpAxisTest {
         assertEquals(Type.INTEGER, axis.getReturnType(NamePageHash.generateHashForString("xs:double"),
             NamePageHash.generateHashForString("xs:double")));
         assertEquals(Type.INTEGER, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"),
-            holder.getRtx().keyForName("xs:double")));
+            NamePageHash.generateHashForString("xs:double")));
         assertEquals(Type.INTEGER, axis.getReturnType(NamePageHash.generateHashForString("xs:float"),
             NamePageHash.generateHashForString("xs:decimal")));
         assertEquals(Type.INTEGER, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"),
