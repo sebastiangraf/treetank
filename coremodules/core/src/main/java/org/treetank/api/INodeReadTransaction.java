@@ -40,13 +40,6 @@ import org.treetank.node.interfaces.IStructNode;
 public interface INodeReadTransaction {
 
     /**
-     * Get ID of transaction.
-     * 
-     * @return ID of transaction.
-     */
-    long getTransactionID();
-
-    /**
      * What is the revision number of this transaction?
      * 
      * @throws TTIOException
@@ -54,15 +47,6 @@ public interface INodeReadTransaction {
      * @return Immutable revision number of this INodeReadTransaction.
      */
     long getRevisionNumber() throws TTIOException;
-
-    /**
-     * UNIX-style timestamp of the commit of the revision.
-     * 
-     * @throws TTIOException
-     *             if can't get Max Node Key.
-     * @return Timestamp of revision commit.
-     */
-    long getRevisionTimestamp() throws TTIOException;
 
     /**
      * Getting the maximum nodekey avaliable in this revision.

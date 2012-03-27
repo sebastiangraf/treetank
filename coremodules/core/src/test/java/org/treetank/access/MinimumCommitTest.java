@@ -28,14 +28,12 @@
 package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.utils.DocumentCreater;
 
@@ -77,13 +75,4 @@ public class MinimumCommitTest {
 
     }
 
-    @Test
-    public void testTimestamp() throws AbsTTException {
-        assertEquals(0L, holder.getWtx().getRevisionTimestamp());
-        holder.getWtx().commit();
-
-        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
-        assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
-        rtx.close();
-    }
 }

@@ -94,7 +94,6 @@ public class NodeReadTransaction implements INodeReadTransaction {
     /**
      * {@inheritDoc}
      */
-    @Override
     public final long getTransactionID() {
         return mId;
     }
@@ -106,15 +105,6 @@ public class NodeReadTransaction implements INodeReadTransaction {
     public final long getRevisionNumber() throws TTIOException {
         assertNotClosed();
         return mPageReadTransaction.getActualRevisionRootPage().getRevision();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final long getRevisionTimestamp() throws TTIOException {
-        assertNotClosed();
-        return mPageReadTransaction.getActualRevisionRootPage().getRevisionTimestamp();
     }
 
     /**
