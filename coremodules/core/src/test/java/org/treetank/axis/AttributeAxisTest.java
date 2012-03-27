@@ -36,6 +36,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
@@ -62,18 +63,16 @@ public class AttributeAxisTest {
     public void testIterate() throws AbsTTException {
         final INodeReadTransaction wtx = holder.getRtx();
 
-        wtx.moveToDocumentRoot();
+        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
         wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
-            2L
-        });
+        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx),
+                new long[] { 2L });
 
         wtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
-            10L
-        });
+        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx),
+                new long[] { 10L });
 
         wtx.moveTo(12L);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
@@ -85,7 +84,8 @@ public class AttributeAxisTest {
     @Test
     @Ignore
     public void testMultipleAttributes() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTransaction wtx = holder.getSession()
+                .beginWriteTransaction();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");
         wtx.moveTo(nodeKey);
@@ -99,12 +99,12 @@ public class AttributeAxisTest {
         Assert.assertEquals("0", wtx.getValueOfCurrentNode());
         Assert.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
 
-        Assert.assertEquals(true, wtx.moveToParent());
+        Assert.assertEquals(true, wtx.moveTo(wtx.getNode().getParentKey()));
         Assert.assertEquals(true, wtx.moveToAttribute(1));
         Assert.assertEquals("1", wtx.getValueOfCurrentNode());
         Assert.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
 
-        Assert.assertEquals(true, wtx.moveToParent());
+        Assert.assertEquals(true, wtx.moveTo(wtx.getNode().getParentKey()));
         Assert.assertEquals(true, wtx.moveToAttribute(2));
         Assert.assertEquals("2", wtx.getValueOfCurrentNode());
         Assert.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());

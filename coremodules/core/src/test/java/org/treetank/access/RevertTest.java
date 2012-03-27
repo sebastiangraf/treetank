@@ -38,6 +38,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.DocumentCreater;
 
 public final class RevertTest {
@@ -68,7 +69,7 @@ public final class RevertTest {
 
         wtx = holder.getSession().beginWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
-        wtx.moveToFirstChild();
+        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
         wtx.insertElementAsFirstChild(new QName("bla"));
         wtx.commit();
         assertEquals(2L, wtx.getRevisionNumber());

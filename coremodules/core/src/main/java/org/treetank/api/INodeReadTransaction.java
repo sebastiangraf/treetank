@@ -86,41 +86,6 @@ public interface INodeReadTransaction {
     boolean moveTo(final long pKey);
 
     /**
-     * Move cursor to document root node.
-     * 
-     * @return True if the document root node is selected.
-     */
-    boolean moveToDocumentRoot();
-
-    /**
-     * Move cursor to parent node of currently selected node.
-     * 
-     * @return True if the parent node is selected.
-     */
-    boolean moveToParent();
-
-    /**
-     * Move cursor to first child node of currently selected node.
-     * 
-     * @return True if the first child node is selected.
-     */
-    boolean moveToFirstChild();
-
-    /**
-     * Move cursor to left sibling node of the currently selected node.
-     * 
-     * @return True if the left sibling node is selected.
-     */
-    boolean moveToLeftSibling();
-
-    /**
-     * Move cursor to right sibling node of the currently selected node.
-     * 
-     * @return True if the right sibling node is selected.
-     */
-    boolean moveToRightSibling();
-
-    /**
      * Move cursor to attribute by its index.
      * 
      * @param pIndex
@@ -208,8 +173,8 @@ public interface INodeReadTransaction {
     /**
      * This method returns the current {@link INode} as a {@link IStructNode}.
      * 
-     * @return the current node as {@link IStructNode} if possible,
-     *         otherwise null.
+     * @return the current node as {@link IStructNode} if possible, otherwise
+     *         null.
      */
     IStructNode getStructuralNode();
 }

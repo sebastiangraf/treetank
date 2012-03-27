@@ -32,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
@@ -39,13 +40,14 @@ import org.treetank.exception.AbsTTException;
  * <h1>TestDocument</h1>
  * 
  * <p>
- * This class creates an XML document that contains all features seen in the Extensible Markup Language (XML)
- * 1.1 (Second Edition) as well as the Namespaces in XML 1.1 (Second Edition).
+ * This class creates an XML document that contains all features seen in the
+ * Extensible Markup Language (XML) 1.1 (Second Edition) as well as the
+ * Namespaces in XML 1.1 (Second Edition).
  * </p>
  * 
  * <p>
- * The following figure describes the created test document (see <code>xml/test.xml</code>). The nodes are
- * described as follows:
+ * The following figure describes the created test document (see
+ * <code>xml/test.xml</code>). The nodes are described as follows:
  * 
  * <ul>
  * <li><code>ENode.ROOT_KIND     : doc()</code></li>
@@ -75,7 +77,8 @@ public final class DocumentCreater {
 
     /** String representation of test document. */
     public static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-        + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">" + "<c/>bar</b>oops3</p:a>";
+            + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
+            + "<c/>bar</b>oops3</p:a>";
 
     /**
      * Private Constructor, not used.
@@ -92,15 +95,16 @@ public final class DocumentCreater {
      * @throws AbsTTException
      *             if anything weird happens
      */
-    public static void create(final INodeWriteTransaction paramWtx) throws AbsTTException {
+    public static void create(final INodeWriteTransaction paramWtx)
+            throws AbsTTException {
         assertNotNull(paramWtx);
-        assertTrue(paramWtx.moveToDocumentRoot());
+        assertTrue(paramWtx.moveTo(NodeReadTransaction.ROOT_NODE));
 
         paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
         paramWtx.insertAttribute(new QName("i"), "j");
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
         paramWtx.insertNamespace(new QName("ns", "xmlns", "p"));
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
 
         paramWtx.insertTextAsFirstChild("oops1");
 
@@ -108,21 +112,21 @@ public final class DocumentCreater {
 
         paramWtx.insertTextAsFirstChild("foo");
         paramWtx.insertElementAsRightSibling(new QName("c"));
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
 
         paramWtx.insertTextAsRightSibling("oops2");
 
         paramWtx.insertElementAsRightSibling(new QName("b"));
         paramWtx.insertAttribute(new QName("ns", "x", "p"), "y");
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
 
         paramWtx.insertElementAsFirstChild(new QName("c"));
         paramWtx.insertTextAsRightSibling("bar");
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
 
         paramWtx.insertTextAsRightSibling("oops3");
 
-        paramWtx.moveToDocumentRoot();
+        paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
     }
 
 }

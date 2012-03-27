@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 
@@ -72,7 +73,7 @@ public class FollowingAxisTest {
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new FollowingAxis(rtx), new long[] {});
 
-        rtx.moveToDocumentRoot();
+        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new FollowingAxis(rtx), new long[] {});
 
         rtx.moveTo(9L);

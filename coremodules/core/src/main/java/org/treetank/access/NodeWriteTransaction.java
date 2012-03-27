@@ -57,12 +57,14 @@ import org.treetank.utils.TypedValue;
  * </p>
  * 
  * <p>
- * All methods throw {@link NullPointerException}s in case of null values for reference parameters.
+ * All methods throw {@link NullPointerException}s in case of null values for
+ * reference parameters.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public class NodeWriteTransaction extends NodeReadTransaction implements INodeWriteTransaction {
+public class NodeWriteTransaction extends NodeReadTransaction implements
+        INodeWriteTransaction {
 
     /**
      * How is the Hash for this storage computed?
@@ -109,9 +111,11 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * @throws TTUsageException
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
-    protected NodeWriteTransaction(final long paramTransactionID, final Session paramSessionState,
-        final IPageWriteTransaction paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
-        throws TTIOException, TTUsageException {
+    protected NodeWriteTransaction(final long paramTransactionID,
+            final Session paramSessionState,
+            final IPageWriteTransaction paramTransactionState,
+            final int paramMaxNodeCount, final int paramMaxTime)
+            throws TTIOException, TTUsageException {
         super(paramSessionState, paramTransactionID, paramTransactionState);
 
         // Do not accept negative values.
@@ -130,20 +134,22 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsFirstChild(final QName mQName) throws AbsTTException,
-        NullPointerException {
+    public synchronized long insertElementAsFirstChild(final QName mQName)
+            throws AbsTTException, NullPointerException {
         if (mQName == null) {
             throw new NullPointerException("mQName may not be null!");
         }
-        if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
+        if (getCurrentNode() instanceof ElementNode
+                || getCurrentNode() instanceof DocumentRootNode) {
 
             checkAccessAndCommit();
 
             final long parentKey = getCurrentNode().getNodeKey();
             final long leftSibKey = NULL_NODE;
-            final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
-            final ElementNode node =
-                getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQName);
+            final long rightSibKey = ((IStructNode) getCurrentNode())
+                    .getFirstChildKey();
+            final ElementNode node = getTransactionState().createElementNode(
+                    parentKey, leftSibKey, rightSibKey, 0, mQName);
 
             setCurrentNode(node);
             adaptForInsert(node, true);
@@ -151,7 +157,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
 
             return node.getNodeKey();
         } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException(
+                    "Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -159,7 +166,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsRightSibling(final QName paramQName) throws AbsTTException {
+    public synchronized long insertElementAsRightSibling(final QName paramQName)
+            throws AbsTTException {
         if (paramQName == null) {
             throw new NullPointerException("paramQName may not be null!");
         }
@@ -169,9 +177,10 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
 
             final long parentKey = getCurrentNode().getParentKey();
             final long leftSibKey = getCurrentNode().getNodeKey();
-            final long rightSibKey = ((IStructNode)getCurrentNode()).getRightSiblingKey();
-            final ElementNode node =
-                getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, paramQName);
+            final long rightSibKey = ((IStructNode) getCurrentNode())
+                    .getRightSiblingKey();
+            final ElementNode node = getTransactionState().createElementNode(
+                    parentKey, leftSibKey, rightSibKey, 0, paramQName);
 
             setCurrentNode(node);
             adaptForInsert(node, false);
@@ -180,7 +189,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             return node.getNodeKey();
         } else {
             throw new TTUsageException(
-                "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
+                    "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
         }
     }
 
@@ -188,20 +197,24 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsFirstChild(final String paramValueAsString) throws AbsTTException {
+    public synchronized long insertTextAsFirstChild(
+            final String paramValueAsString) throws AbsTTException {
         if (paramValueAsString == null) {
-            throw new NullPointerException("paramValueAsString may not be null!");
+            throw new NullPointerException(
+                    "paramValueAsString may not be null!");
         }
-        if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
+        if (getCurrentNode() instanceof ElementNode
+                || getCurrentNode() instanceof DocumentRootNode) {
 
             checkAccessAndCommit();
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
             final long parentKey = getCurrentNode().getNodeKey();
             final long leftSibKey = NULL_NODE;
-            final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
-            final TextNode node =
-                getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
+            final long rightSibKey = ((IStructNode) getCurrentNode())
+                    .getFirstChildKey();
+            final TextNode node = getTransactionState().createTextNode(
+                    parentKey, leftSibKey, rightSibKey, value);
 
             setCurrentNode(node);
             adaptForInsert(node, true);
@@ -209,7 +222,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
 
             return node.getNodeKey();
         } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException(
+                    "Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -217,9 +231,11 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsRightSibling(final String paramValueAsString) throws AbsTTException {
+    public synchronized long insertTextAsRightSibling(
+            final String paramValueAsString) throws AbsTTException {
         if (paramValueAsString == null) {
-            throw new NullPointerException("paramValueAsString may not be null!");
+            throw new NullPointerException(
+                    "paramValueAsString may not be null!");
         }
 
         if (getCurrentNode().getKind() == ENode.ELEMENT_KIND) {
@@ -228,9 +244,10 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             final byte[] value = TypedValue.getBytes(paramValueAsString);
             final long parentKey = getCurrentNode().getParentKey();
             final long leftSibKey = getCurrentNode().getNodeKey();
-            final long rightSibKey = ((IStructNode)getCurrentNode()).getRightSiblingKey();
-            final TextNode node =
-                getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
+            final long rightSibKey = ((IStructNode) getCurrentNode())
+                    .getRightSiblingKey();
+            final TextNode node = getTransactionState().createTextNode(
+                    parentKey, leftSibKey, rightSibKey, value);
 
             setCurrentNode(node);
             adaptForInsert(node, false);
@@ -239,7 +256,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             return node.getNodeKey();
 
         } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an element node!");
+            throw new TTUsageException(
+                    "Insert is not allowed if current node is not an element node!");
         }
     }
 
@@ -247,19 +265,20 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertAttribute(final QName paramQName, final String paramValueAsString)
-        throws AbsTTException {
+    public synchronized long insertAttribute(final QName paramQName,
+            final String paramValueAsString) throws AbsTTException {
         if (getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
             final long elementKey = getCurrentNode().getNodeKey();
-            final AttributeNode node =
-                getTransactionState().createAttributeNode(elementKey, paramQName, value);
+            final AttributeNode node = getTransactionState()
+                    .createAttributeNode(elementKey, paramQName, value);
 
-            final INode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
-            ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
+            final INode parentNode = getTransactionState()
+                    .prepareNodeForModification(node.getParentKey());
+            ((ElementNode) parentNode).insertAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
             setCurrentNode(node);
@@ -269,7 +288,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             return node.getNodeKey();
 
         } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException(
+                    "Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -277,7 +297,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertNamespace(final QName paramQName) throws AbsTTException {
+    public synchronized long insertNamespace(final QName paramQName)
+            throws AbsTTException {
         if (paramQName == null) {
             throw new NullPointerException("QName may not be null!");
         }
@@ -285,18 +306,21 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
 
             checkAccessAndCommit();
 
-            final int uriKey = getTransactionState().createNameKey(paramQName.getNamespaceURI());
+            final int uriKey = getTransactionState().createNameKey(
+                    paramQName.getNamespaceURI());
             // final String name =
             // paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" +
             // paramQName.getPrefix();
-            final int prefixKey = getTransactionState().createNameKey(paramQName.getPrefix());
+            final int prefixKey = getTransactionState().createNameKey(
+                    paramQName.getPrefix());
             final long elementKey = getCurrentNode().getNodeKey();
 
-            final NamespaceNode node =
-                getTransactionState().createNamespaceNode(elementKey, uriKey, prefixKey);
+            final NamespaceNode node = getTransactionState()
+                    .createNamespaceNode(elementKey, uriKey, prefixKey);
 
-            final INode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
-            ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
+            final INode parentNode = getTransactionState()
+                    .prepareNodeForModification(node.getParentKey());
+            ((ElementNode) parentNode).insertNamespace(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
             setCurrentNode(node);
@@ -304,7 +328,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             adaptHashesWithAdd();
             return node.getNodeKey();
         } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException(
+                    "Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -317,9 +342,10 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         if (getCurrentNode().getKind() == ENode.ROOT_KIND) {
             throw new TTUsageException("Document root can not be removed.");
         } else if (getCurrentNode() instanceof IStructNode) {
-            final IStructNode node = (IStructNode)getCurrentNode();
+            final IStructNode node = (IStructNode) getCurrentNode();
             // Remove subtree.
-            for (final AbsAxis desc = new DescendantAxis(this, false); desc.hasNext(); desc.next()) {
+            for (final AbsAxis desc = new DescendantAxis(this, false); desc
+                    .hasNext(); desc.next()) {
                 getTransactionState().removeNode(getCurrentNode());
             }
             moveTo(node.getNodeKey());
@@ -337,21 +363,21 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         } else if (getCurrentNode().getKind() == ENode.ATTRIBUTE_KIND) {
             final INode node = getCurrentNode();
 
-            final ElementNode parent =
-                (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
+            final ElementNode parent = (ElementNode) getTransactionState()
+                    .prepareNodeForModification(node.getParentKey());
             parent.removeAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parent);
             adaptHashesWithRemove();
-            moveToParent();
+            moveTo(getCurrentNode().getParentKey());
         } else if (getCurrentNode().getKind() == ENode.NAMESPACE_KIND) {
             final INode node = getCurrentNode();
 
-            final ElementNode parent =
-                (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
+            final ElementNode parent = (ElementNode) getTransactionState()
+                    .prepareNodeForModification(node.getParentKey());
             parent.removeNamespace(node.getNodeKey());
             getTransactionState().finishNodeModification(parent);
             adaptHashesWithRemove();
-            moveToParent();
+            moveTo(getCurrentNode().getParentKey());
         }
     }
 
@@ -359,22 +385,24 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setQName(final QName paramName) throws AbsTTException {
+    public synchronized void setQName(final QName paramName)
+            throws AbsTTException {
         if (getCurrentNode() instanceof INameNode) {
             assertNotClosed();
             mModificationCount++;
             final long oldHash = getCurrentNode().hashCode();
 
-            final INameNode node =
-                (INameNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            node.setNameKey(getTransactionState().createNameKey(PageWriteTransaction.buildName(paramName)));
+            final INameNode node = (INameNode) getTransactionState()
+                    .prepareNodeForModification(getCurrentNode().getNodeKey());
+            node.setNameKey(getTransactionState().createNameKey(
+                    PageWriteTransaction.buildName(paramName)));
             getTransactionState().finishNodeModification(node);
 
             setCurrentNode(node);
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
-                "setQName is not allowed if current node is not an INameNode implementation!");
+                    "setQName is not allowed if current node is not an INameNode implementation!");
         }
     }
 
@@ -382,14 +410,15 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setURI(final String paramUri) throws AbsTTException {
+    public synchronized void setURI(final String paramUri)
+            throws AbsTTException {
         if (getCurrentNode() instanceof INameNode) {
             assertNotClosed();
             mModificationCount++;
             final long oldHash = getCurrentNode().hashCode();
 
-            final INameNode node =
-                (INameNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            final INameNode node = (INameNode) getTransactionState()
+                    .prepareNodeForModification(getCurrentNode().getNodeKey());
             node.setURIKey(getTransactionState().createNameKey(paramUri));
             getTransactionState().finishNodeModification(node);
 
@@ -397,7 +426,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
-                "setURI is not allowed if current node is not an INameNode implementation!");
+                    "setURI is not allowed if current node is not an INameNode implementation!");
         }
 
     }
@@ -406,14 +435,15 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final String paramValue) throws AbsTTException {
+    public synchronized void setValue(final String paramValue)
+            throws AbsTTException {
         if (getCurrentNode() instanceof IValNode) {
             assertNotClosed();
             mModificationCount++;
             final long oldHash = getCurrentNode().hashCode();
 
-            final IValNode node =
-                (IValNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            final IValNode node = (IValNode) getTransactionState()
+                    .prepareNodeForModification(getCurrentNode().getNodeKey());
             node.setValue(TypedValue.getBytes(paramValue));
             getTransactionState().finishNodeModification(node);
 
@@ -421,7 +451,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
-                "SetValue is not allowed if current node is not an IValNode implementation!");
+                    "SetValue is not allowed if current node is not an IValNode implementation!");
         }
     }
 
@@ -434,19 +464,21 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      *             if an I/O operation fails
      */
     @Override
-    public void revertTo(final long paramRevision) throws TTUsageException, TTIOException {
+    public void revertTo(final long paramRevision) throws TTUsageException,
+            TTIOException {
         if (paramRevision < 0) {
-            throw new IllegalArgumentException("paramRevision parameter must be >= 0");
+            throw new IllegalArgumentException(
+                    "paramRevision parameter must be >= 0");
         }
         assertNotClosed();
         mSession.assertAccess(paramRevision);
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
-        setTransactionState(mSession.createWriteTransactionState(getTransactionID(), paramRevision,
-            getRevisionNumber() - 1));
+        setTransactionState(mSession.createWriteTransactionState(
+                getTransactionID(), paramRevision, getRevisionNumber() - 1));
         // Reset modification counter.
         mModificationCount = 0L;
-        moveToDocumentRoot();
+        moveTo(NodeReadTransaction.ROOT_NODE);
 
     }
 
@@ -469,8 +501,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
 
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
-        setTransactionState(mSession.createWriteTransactionState(getTransactionID(), getRevisionNumber(),
-            getRevisionNumber()));
+        setTransactionState(mSession.createWriteTransactionState(
+                getTransactionID(), getRevisionNumber(), getRevisionNumber()));
 
     }
 
@@ -493,8 +525,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         }
 
         // Reset internal transaction state to last committed uber page.
-        setTransactionState(mSession.createWriteTransactionState(getTransactionID(), revisionToSet,
-            revisionToSet));
+        setTransactionState(mSession.createWriteTransactionState(
+                getTransactionID(), revisionToSet, revisionToSet));
     }
 
     /**
@@ -505,7 +537,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         if (!isClosed()) {
             // Make sure to commit all dirty data.
             if (mModificationCount > 0) {
-                throw new TTUsageException("Must commit/abort transaction first");
+                throw new TTUsageException(
+                        "Must commit/abort transaction first");
             }
             // Release all state immediately.
             getTransactionState().close();
@@ -543,13 +576,14 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForInsert(final INode paramNewNode, final boolean addAsFirstChild) throws TTIOException {
+    private void adaptForInsert(final INode paramNewNode,
+            final boolean addAsFirstChild) throws TTIOException {
         assert paramNewNode != null;
 
         if (paramNewNode instanceof IStructNode) {
-            final IStructNode strucNode = (IStructNode)paramNewNode;
-            final IStructNode parent =
-                (IStructNode)getTransactionState().prepareNodeForModification(paramNewNode.getParentKey());
+            final IStructNode strucNode = (IStructNode) paramNewNode;
+            final IStructNode parent = (IStructNode) getTransactionState()
+                    .prepareNodeForModification(paramNewNode.getParentKey());
             parent.incrementChildCount();
             if (addAsFirstChild) {
                 parent.setFirstChildKey(paramNewNode.getNodeKey());
@@ -557,16 +591,16 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             getTransactionState().finishNodeModification(parent);
 
             if (strucNode.hasRightSibling()) {
-                final IStructNode rightSiblingNode =
-                    (IStructNode)getTransactionState().prepareNodeForModification(
-                        strucNode.getRightSiblingKey());
+                final IStructNode rightSiblingNode = (IStructNode) getTransactionState()
+                        .prepareNodeForModification(
+                                strucNode.getRightSiblingKey());
                 rightSiblingNode.setLeftSiblingKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(rightSiblingNode);
             }
             if (strucNode.hasLeftSibling()) {
-                final IStructNode leftSiblingNode =
-                    (IStructNode)getTransactionState().prepareNodeForModification(
-                        strucNode.getLeftSiblingKey());
+                final IStructNode leftSiblingNode = (IStructNode) getTransactionState()
+                        .prepareNodeForModification(
+                                strucNode.getLeftSiblingKey());
                 leftSiblingNode.setRightSiblingKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(leftSiblingNode);
             }
@@ -590,30 +624,31 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForRemove(final IStructNode paramOldNode) throws TTIOException {
+    private void adaptForRemove(final IStructNode paramOldNode)
+            throws TTIOException {
         assert paramOldNode != null;
 
         // Adapt left sibling node if there is one.
         if (paramOldNode.hasLeftSibling()) {
-            final IStructNode leftSibling =
-                (IStructNode)getTransactionState().prepareNodeForModification(
-                    paramOldNode.getLeftSiblingKey());
+            final IStructNode leftSibling = (IStructNode) getTransactionState()
+                    .prepareNodeForModification(
+                            paramOldNode.getLeftSiblingKey());
             leftSibling.setRightSiblingKey(paramOldNode.getRightSiblingKey());
             getTransactionState().finishNodeModification(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
         if (paramOldNode.hasRightSibling()) {
-            final IStructNode rightSibling =
-                (IStructNode)getTransactionState().prepareNodeForModification(
-                    paramOldNode.getRightSiblingKey());
+            final IStructNode rightSibling = (IStructNode) getTransactionState()
+                    .prepareNodeForModification(
+                            paramOldNode.getRightSiblingKey());
             rightSibling.setLeftSiblingKey(paramOldNode.getLeftSiblingKey());
             getTransactionState().finishNodeModification(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
-        final IStructNode parent =
-            (IStructNode)getTransactionState().prepareNodeForModification(paramOldNode.getParentKey());
+        final IStructNode parent = (IStructNode) getTransactionState()
+                .prepareNodeForModification(paramOldNode.getParentKey());
         if (!paramOldNode.hasLeftSibling()) {
             parent.setFirstChildKey(paramOldNode.getRightSiblingKey());
         }
@@ -622,14 +657,16 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
 
         if (paramOldNode.getKind() == ENode.ELEMENT_KIND) {
             // removing attributes
-            for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
-                moveTo(((ElementNode)paramOldNode).getAttributeKey(i));
+            for (int i = 0; i < ((ElementNode) paramOldNode)
+                    .getAttributeCount(); i++) {
+                moveTo(((ElementNode) paramOldNode).getAttributeKey(i));
                 getTransactionState().removeNode(this.getCurrentNode());
             }
             // removing namespaces
             moveTo(paramOldNode.getNodeKey());
-            for (int i = 0; i < ((ElementNode)paramOldNode).getNamespaceCount(); i++) {
-                moveTo(((ElementNode)paramOldNode).getNamespaceKey(i));
+            for (int i = 0; i < ((ElementNode) paramOldNode)
+                    .getNamespaceCount(); i++) {
+                moveTo(((ElementNode) paramOldNode).getNamespaceKey(i));
                 getTransactionState().removeNode(this.getCurrentNode());
             }
         }
@@ -661,7 +698,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * @return The state of this transaction.
      */
     private PageWriteTransaction getTransactionState() {
-        return (PageWriteTransaction)super.mPageReadTransaction;
+        return (PageWriteTransaction) super.mPageReadTransaction;
     }
 
     /**
@@ -709,7 +746,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * @throws TTIOException
      *             of anything weird happened.
      */
-    private void adaptHashedWithUpdate(final long paramOldHash) throws TTIOException {
+    private void adaptHashedWithUpdate(final long paramOldHash)
+            throws TTIOException {
         switch (mHashKind) {
         case Rolling:
             rollingUpdate(paramOldHash);
@@ -746,7 +784,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
         if (!(getCurrentNode() instanceof IStructNode)) {
-            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            getTransactionState().prepareNodeForModification(
+                    getCurrentNode().getNodeKey());
             getCurrentNode().setHash(getCurrentNode().hashCode());
             getTransactionState().finishNodeModification(getCurrentNode());
             moveTo(getCurrentNode().getParentKey());
@@ -755,21 +794,26 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         IStructNode cursorToRoot;
         do {
             synchronized (getCurrentNode()) {
-                cursorToRoot =
-                    (IStructNode)getTransactionState().prepareNodeForModification(
-                        getCurrentNode().getNodeKey());
-                hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                cursorToRoot = (IStructNode) getTransactionState()
+                        .prepareNodeForModification(
+                                getCurrentNode().getNodeKey());
+                hashCodeForParent = getCurrentNode().hashCode()
+                        + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
                 if (cursorToRoot.getKind() == ENode.ELEMENT_KIND) {
-                    final ElementNode currentElement = (ElementNode)cursorToRoot;
+                    final ElementNode currentElement = (ElementNode) cursorToRoot;
                     // setting the attributes and namespaces
-                    for (int i = 0; i < ((ElementNode)cursorToRoot).getAttributeCount(); i++) {
+                    for (int i = 0; i < ((ElementNode) cursorToRoot)
+                            .getAttributeCount(); i++) {
                         moveTo(currentElement.getAttributeKey(i));
-                        hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                        hashCodeForParent = getCurrentNode().hashCode()
+                                + hashCodeForParent * PRIME;
                     }
-                    for (int i = 0; i < ((ElementNode)cursorToRoot).getNamespaceCount(); i++) {
+                    for (int i = 0; i < ((ElementNode) cursorToRoot)
+                            .getNamespaceCount(); i++) {
                         moveTo(currentElement.getNamespaceKey(i));
-                        hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                        hashCodeForParent = getCurrentNode().hashCode()
+                                + hashCodeForParent * PRIME;
                     }
                     moveTo(cursorToRoot.getNodeKey());
                 }
@@ -777,7 +821,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
                 // Caring about the children of a node
                 if (moveTo(getStructuralNode().getFirstChildKey())) {
                     do {
-                        hashCodeForParent = getCurrentNode().getHash() + hashCodeForParent * PRIME;
+                        hashCodeForParent = getCurrentNode().getHash()
+                                + hashCodeForParent * PRIME;
                     } while (moveTo(getStructuralNode().getRightSiblingKey()));
                     moveTo(getStructuralNode().getParentKey());
                 }
@@ -809,12 +854,14 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         // go the path to the root
         do {
             synchronized (getCurrentNode()) {
-                getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                getTransactionState().prepareNodeForModification(
+                        getCurrentNode().getNodeKey());
                 if (getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
                     resultNew = getCurrentNode().getHash() - paramOldHash;
                     resultNew = resultNew + newNodeHash;
                 } else {
-                    resultNew = getCurrentNode().getHash() - (paramOldHash * PRIME);
+                    resultNew = getCurrentNode().getHash()
+                            - (paramOldHash * PRIME);
                     resultNew = resultNew + newNodeHash * PRIME;
                 }
                 getCurrentNode().setHash(resultNew);
@@ -840,17 +887,21 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         // go the path to the root
         do {
             synchronized (getCurrentNode()) {
-                getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                getTransactionState().prepareNodeForModification(
+                        getCurrentNode().getNodeKey());
                 if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
                     // the begin node is always null
                     newHash = 0;
-                } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                } else if (getCurrentNode().getNodeKey() == startNode
+                        .getParentKey()) {
                     // the parent node is just removed
-                    newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
+                    newHash = getCurrentNode().getHash()
+                            - (hashToRemove * PRIME);
                     hashToRemove = getCurrentNode().getHash();
                 } else {
                     // the ancestors are all touched regarding the modification
-                    newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
+                    newHash = getCurrentNode().getHash()
+                            - (hashToRemove * PRIME);
                     newHash = newHash + hashToAdd * PRIME;
                     hashToRemove = getCurrentNode().getHash();
                 }
@@ -879,11 +930,13 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         // go the path to the root
         do {
             synchronized (getCurrentNode()) {
-                getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                getTransactionState().prepareNodeForModification(
+                        getCurrentNode().getNodeKey());
                 if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
                     // at the beginning, take the hashcode of the node only
                     newHash = hashToAdd;
-                } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                } else if (getCurrentNode().getNodeKey() == startNode
+                        .getParentKey()) {
                     // at the parent level, just add the node
                     possibleOldHash = getCurrentNode().getHash();
                     newHash = possibleOldHash + hashToAdd * PRIME;
@@ -891,7 +944,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
                 } else {
                     // at the rest, remove the existing old key for this element
                     // and add the new one
-                    newHash = getCurrentNode().getHash() - (possibleOldHash * PRIME);
+                    newHash = getCurrentNode().getHash()
+                            - (possibleOldHash * PRIME);
                     newHash = newHash + hashToAdd * PRIME;
                     hashToAdd = newHash;
                     possibleOldHash = getCurrentNode().getHash();

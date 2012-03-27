@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.filter.NameFilter;
 import org.treetank.axis.filter.NodeFilter;
@@ -60,21 +61,23 @@ public class NestedAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         // Find descendants starting from nodeKey 0L (root).
-        rtx.moveToDocumentRoot();
+        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
 
         // XPath expression /p:a/b/text()
         // Part: /p:a
-        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx,
+                new NameFilter(rtx, "p:a"));
         // Part: /b
-        final AbsAxis childB = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "b"));
+        final AbsAxis childB = new FilterAxis(new ChildAxis(rtx), rtx,
+                new NameFilter(rtx, "b"));
         // Part: /text()
-        final AbsAxis text = new FilterAxis(new ChildAxis(rtx), rtx, new TextFilter(rtx));
+        final AbsAxis text = new FilterAxis(new ChildAxis(rtx), rtx,
+                new TextFilter(rtx));
         // Part: /p:a/b/text()
-        final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB, rtx), text, rtx);
+        final AbsAxis axis = new NestedAxis(
+                new NestedAxis(childA, childB, rtx), text, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis, new long[] {
-            6L, 12L
-        });
+        AbsAxisTest.testIAxisConventions(axis, new long[] { 6L, 12L });
     }
 
     @Test
@@ -82,21 +85,23 @@ public class NestedAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         // Find descendants starting from nodeKey 0L (root).
-        rtx.moveToDocumentRoot();
+        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
 
         // XPath expression /[:a/b/@p:x]
         // Part: /p:a
-        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx,
+                new NameFilter(rtx, "p:a"));
         // Part: /b
-        final AbsAxis childB = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "b"));
+        final AbsAxis childB = new FilterAxis(new ChildAxis(rtx), rtx,
+                new NameFilter(rtx, "b"));
         // Part: /@x
-        final AbsAxis attributeX = new FilterAxis(new AttributeAxis(rtx), rtx, new NameFilter(rtx, "p:x"));
+        final AbsAxis attributeX = new FilterAxis(new AttributeAxis(rtx), rtx,
+                new NameFilter(rtx, "p:x"));
         // Part: /p:a/b/@p:x
-        final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB, rtx), attributeX, rtx);
+        final AbsAxis axis = new NestedAxis(
+                new NestedAxis(childA, childB, rtx), attributeX, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis, new long[] {
-            10L
-        });
+        AbsAxisTest.testIAxisConventions(axis, new long[] { 10L });
 
     }
 
@@ -105,21 +110,22 @@ public class NestedAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         // Find desceFndants starting from nodeKey 0L (root).
-        rtx.moveToDocumentRoot();
+        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
 
         // XPath expression p:a/node():
         // Part: /p:a
-        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx,
+                new NameFilter(rtx, "p:a"));
 
         // Part: /node()
-        final AbsAxis childNode = new FilterAxis(new ChildAxis(rtx), rtx, new NodeFilter(rtx));
+        final AbsAxis childNode = new FilterAxis(new ChildAxis(rtx), rtx,
+                new NodeFilter(rtx));
 
         // Part: /p:a/node():
         final AbsAxis axis = new NestedAxis(childA, childNode, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis, new long[] {
-            4L, 5L, 8L, 9L, 13L
-        });
+        AbsAxisTest.testIAxisConventions(axis,
+                new long[] { 4L, 5L, 8L, 9L, 13L });
 
     }
 }
