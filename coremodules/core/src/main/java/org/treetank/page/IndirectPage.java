@@ -53,8 +53,7 @@ public final class IndirectPage implements IPage {
      *            Revision Number
      */
     public IndirectPage(final long paramRevision) {
-        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT,
-                paramRevision);
+        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, paramRevision);
     }
 
     /**
@@ -64,8 +63,7 @@ public final class IndirectPage implements IPage {
      *            Input bytes.
      */
     protected IndirectPage(final ITTSource paramIn) {
-        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT,
-                paramIn.readLong());
+        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, paramIn.readLong());
         mDelegate.initialize(paramIn);
     }
 
@@ -78,8 +76,7 @@ public final class IndirectPage implements IPage {
      *            Revision number to use
      */
     public IndirectPage(final IndirectPage page, final long revisionToUse) {
-        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT,
-                revisionToUse);
+        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, revisionToUse);
         mDelegate.initialize(page);
     }
 

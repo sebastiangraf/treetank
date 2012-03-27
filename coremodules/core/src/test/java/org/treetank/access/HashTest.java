@@ -58,78 +58,66 @@ public class HashTest {
 
     @Test
     public void testPostorderInsertRemove() throws AbsTTException {
-        final IDatabase database = TestHelper
-                .getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(
-                TestHelper.RESOURCE, PATHS.PATH1.getConfig()).setHashKind(
-                HashKind.Postorder).build());
-        final INodeWriteTransaction wtx = database.getSession(
-                new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Postorder).build());
+        final INodeWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
     public void testPostorderDeep() throws AbsTTException {
-        final IDatabase database = TestHelper
-                .getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(
-                TestHelper.RESOURCE, PATHS.PATH1.getConfig()).setHashKind(
-                HashKind.Postorder).build());
-        final INodeWriteTransaction wtx = database.getSession(
-                new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Postorder).build());
+        final INodeWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testDeepTree(wtx);
     }
 
     @Test
     public void testPostorderSetter() throws AbsTTException {
-        final IDatabase database = TestHelper
-                .getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(
-                TestHelper.RESOURCE, PATHS.PATH1.getConfig()).setHashKind(
-                HashKind.Postorder).build());
-        final INodeWriteTransaction wtx = database.getSession(
-                new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Postorder).build());
+        final INodeWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testSetter(wtx);
     }
 
     @Test
     public void testRollingInsertRemove() throws AbsTTException {
-        final IDatabase database = TestHelper
-                .getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(
-                TestHelper.RESOURCE, PATHS.PATH1.getConfig()).setHashKind(
-                HashKind.Rolling).build());
-        final INodeWriteTransaction wtx = database.getSession(
-                new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Rolling).build());
+        final INodeWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
     public void testRollingDeep() throws AbsTTException {
-        final IDatabase database = TestHelper
-                .getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(
-                TestHelper.RESOURCE, PATHS.PATH1.getConfig()).setHashKind(
-                HashKind.Rolling).build());
-        final INodeWriteTransaction wtx = database.getSession(
-                new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Rolling).build());
+        final INodeWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testDeepTree(wtx);
     }
 
     @Test
     public void testRollingSetter() throws AbsTTException {
-        final IDatabase database = TestHelper
-                .getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(
-                TestHelper.RESOURCE, PATHS.PATH1.getConfig()).setHashKind(
-                HashKind.Rolling).build());
-        final INodeWriteTransaction wtx = database.getSession(
-                new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(HashKind.Rolling).build());
+        final INodeWriteTransaction wtx =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
                 .beginWriteTransaction();
         testSetter(wtx);
     }
@@ -152,8 +140,7 @@ public class HashTest {
      * @param wtx
      * @throws AbsTTException
      */
-    private void testHashTreeWithInsertAndRemove(final INodeWriteTransaction wtx)
-            throws AbsTTException {
+    private void testHashTreeWithInsertAndRemove(final INodeWriteTransaction wtx) throws AbsTTException {
 
         // inserting a element as root
         wtx.insertElementAsFirstChild(new QName(NAME1));
@@ -167,7 +154,7 @@ public class HashTest {
         final long secondRootHash = wtx.getNode().getHash();
 
         // inserting a second element on level 2 under the only element
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.insertElementAsRightSibling(new QName(NAME2));
         wtx.insertAttribute(new QName(NAME2), NAME1);
         wtx.moveTo(rootKey);
@@ -179,8 +166,8 @@ public class HashTest {
         assertFalse(secondRootHash == thirdRootHash);
 
         // removing the second element
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
-        wtx.moveTo(((IStructNode) wtx.getNode()).getRightSiblingKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getRightSiblingKey());
         wtx.remove();
         wtx.moveTo(rootKey);
         assertEquals(secondRootHash, wtx.getNode().getHash());
@@ -195,7 +182,7 @@ public class HashTest {
         wtx.insertAttribute(new QName(NAME2), NAME1);
 
         wtx.moveTo(rootKey);
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.remove();
         wtx.remove();
         wtx.remove();
@@ -204,8 +191,7 @@ public class HashTest {
         assertEquals(firstRootHash, wtx.getNode().getHash());
     }
 
-    private void testDeepTree(final INodeWriteTransaction wtx)
-            throws AbsTTException {
+    private void testDeepTree(final INodeWriteTransaction wtx) throws AbsTTException {
 
         wtx.insertElementAsFirstChild(new QName(NAME1));
         final long oldHash = wtx.getNode().getHash();
@@ -221,44 +207,43 @@ public class HashTest {
         wtx.insertElementAsFirstChild(new QName(NAME1));
 
         wtx.moveTo(1);
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.remove();
         assertEquals(oldHash, wtx.getNode().getHash());
     }
 
-    private void testSetter(final INodeWriteTransaction wtx)
-            throws AbsTTException {
+    private void testSetter(final INodeWriteTransaction wtx) throws AbsTTException {
 
         // Testing node inheritance
         wtx.insertElementAsFirstChild(new QName(NAME1));
         wtx.insertElementAsFirstChild(new QName(NAME1));
         wtx.insertElementAsFirstChild(new QName(NAME1));
         wtx.moveTo(NodeReadTransaction.ROOT_NODE);
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         final long hashRoot1 = wtx.getNode().getHash();
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         final long hashLeaf1 = wtx.getNode().getHash();
         wtx.setQName(new QName(NAME2));
         final long hashLeaf2 = wtx.getNode().getHash();
         wtx.moveTo(NodeReadTransaction.ROOT_NODE);
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         final long hashRoot2 = wtx.getNode().getHash();
         assertFalse(hashRoot1 == hashRoot2);
         assertFalse(hashLeaf1 == hashLeaf2);
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.setQName(new QName(NAME1));
         final long hashLeaf3 = wtx.getNode().getHash();
         assertEquals(hashLeaf1, hashLeaf3);
         wtx.moveTo(NodeReadTransaction.ROOT_NODE);
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         final long hashRoot3 = wtx.getNode().getHash();
         assertEquals(hashRoot1, hashRoot3);
 
         // Testing root inheritance
         wtx.moveTo(NodeReadTransaction.ROOT_NODE);
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.setQName(new QName(NAME2));
         final long hashRoot4 = wtx.getNode().getHash();
         assertFalse(hashRoot4 == hashRoot2);

@@ -49,55 +49,51 @@ import org.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
  */
 public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
-	/** Treetank database on books document. */
-	private transient Holder mHolder;
+    /** Treetank database on books document. */
+    private transient Holder mHolder;
 
-	@Before
-	public void setUp() throws Exception {
-		SaxonHelper.createBookDB();
-		mHolder = Holder.generateSession();
-	}
+    @Before
+    public void setUp() throws Exception {
+        SaxonHelper.createBookDB();
+        mHolder = Holder.generateSession();
+    }
 
-	@After
-	public void tearDown() throws AbsTTException {
-		TestHelper.closeEverything();
-		TestHelper.deleteEverything();
-	}
+    @After
+    public void tearDown() throws AbsTTException {
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+    }
 
-	@Test
-	public void testWhereBooks() throws Exception {
-		final OutputStream out = new ByteArrayOutputStream();
-		new XQueryEvaluatorOutputStream(
-				"for $x in /bookstore/book where $x/price>30 return $x/title",
-				mHolder.getSession(), out).call();
-		final String result = out.toString();
-		assertEquals(
-				"<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
-				result);
-	}
+    @Test
+    public void testWhereBooks() throws Exception {
+        final OutputStream out = new ByteArrayOutputStream();
+        new XQueryEvaluatorOutputStream("for $x in /bookstore/book where $x/price>30 return $x/title",
+            mHolder.getSession(), out).call();
+        final String result = out.toString();
+        assertEquals("<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
+            result);
+    }
 
-	@Test
-	public void testOrderByBooks() throws Exception {
-		final OutputStream out = new ByteArrayOutputStream();
-		new XQueryEvaluatorOutputStream(
-				"for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
-				mHolder.getSession(), out).call();
-		final String result = out.toString();
-		assertEquals(
-				"<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
-				result);
-	}
+    @Test
+    public void testOrderByBooks() throws Exception {
+        final OutputStream out = new ByteArrayOutputStream();
+        new XQueryEvaluatorOutputStream(
+            "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title", mHolder
+                .getSession(), out).call();
+        final String result = out.toString();
+        assertEquals("<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
+            result);
+    }
 
-	@Test
-	public void testFLOWR() throws Exception {
-		final OutputStream out = new ByteArrayOutputStream();
-		new XQueryEvaluatorOutputStream(
-				"for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
-				mHolder.getSession(), out).call();
-		final String result = out.toString();
-		assertEquals(
-				"<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
-				result);
-	}
+    @Test
+    public void testFLOWR() throws Exception {
+        final OutputStream out = new ByteArrayOutputStream();
+        new XQueryEvaluatorOutputStream(
+            "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
+            mHolder.getSession(), out).call();
+        final String result = out.toString();
+        assertEquals("<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
+            result);
+    }
 
 }

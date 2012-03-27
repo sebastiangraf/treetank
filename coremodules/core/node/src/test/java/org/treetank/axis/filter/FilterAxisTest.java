@@ -63,9 +63,10 @@ public class FilterAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(NodeReadTransaction.ROOT_NODE);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(
-                new DescendantAxis(rtx), rtx, new NameFilter(rtx, "b")),
-                new long[] { 5L, 9L });
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), rtx,
+            new NameFilter(rtx, "b")), new long[] {
+            5L, 9L
+        });
     }
 
     @Test
@@ -74,9 +75,10 @@ public class FilterAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(NodeReadTransaction.ROOT_NODE);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(
-                new DescendantAxis(rtx), rtx, new ValueFilter(rtx, "foo")),
-                new long[] { 6L });
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), rtx, new ValueFilter(rtx,
+            "foo")), new long[] {
+            6L
+        });
     }
 
     @Test
@@ -85,14 +87,14 @@ public class FilterAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx),
-                rtx, new NameFilter(rtx, "i"), new ValueFilter(rtx, "j")),
-                new long[] { 2L });
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx), rtx,
+            new NameFilter(rtx, "i"), new ValueFilter(rtx, "j")), new long[] {
+            2L
+        });
 
         rtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx),
-                rtx, new NameFilter(rtx, "y"), new ValueFilter(rtx, "y")),
-                new long[] {});
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx), rtx,
+            new NameFilter(rtx, "y"), new ValueFilter(rtx, "y")), new long[] {});
 
     }
 

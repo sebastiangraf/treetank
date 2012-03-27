@@ -69,9 +69,10 @@ public class FunctionsTest {
     public final void testBoolean() throws TTXPathException {
         final String query = "fn:boolean(0)";
         final String result = "false";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -83,9 +84,10 @@ public class FunctionsTest {
     public final void testBooleanXPath10() throws TTXPathException {
         final String query = "boolean(1)";
         final String result = "true";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -97,9 +99,10 @@ public class FunctionsTest {
     public final void testCount() throws TTXPathException {
         final String query = "fn:count(//p:a/b)";
         final String result = "2";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -111,9 +114,10 @@ public class FunctionsTest {
     public final void testCountXPath10() throws TTXPathException {
         final String query = "count(//p:a/b)";
         final String result = "2";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -125,9 +129,10 @@ public class FunctionsTest {
     public final void testString() throws TTXPathException {
         final String query = "fn:string(/p:a/b)";
         final String result = "foo bar";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -139,9 +144,10 @@ public class FunctionsTest {
     public final void testStringXPath10() throws TTXPathException {
         final String query = "string(/p:a/b)";
         final String result = "foo bar";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -153,9 +159,10 @@ public class FunctionsTest {
     public final void testComment() throws TTXPathException {
         final String query = "2 (: this is a comment :)";
         final String result = "2";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -167,9 +174,10 @@ public class FunctionsTest {
     public final void testNode() throws TTXPathException {
         final String query = "p:a[./node()/node()]";
         final String result = "{ns}a";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -181,9 +189,10 @@ public class FunctionsTest {
     public final void testText() throws TTXPathException {
         final String query = "p:a[./text()]";
         final String result = "{ns}a";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -195,9 +204,10 @@ public class FunctionsTest {
     public final void testNot() throws TTXPathException {
         final String query = "fn:not(//b)";
         final String result = "false";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -209,9 +219,10 @@ public class FunctionsTest {
     public final void testNotXPath10() throws TTXPathException {
         final String query = "not(//b)";
         final String result = "false";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -223,9 +234,10 @@ public class FunctionsTest {
     public final void testSum() throws TTXPathException {
         final String query = "fn:sum(5)";
         final String result = "1";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -237,9 +249,10 @@ public class FunctionsTest {
     public final void testSumXPath10() throws TTXPathException {
         final String query = "sum(5)";
         final String result = "1";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -252,9 +265,10 @@ public class FunctionsTest {
     public final void testPosition() throws TTXPathException {
         final String query = "//b[position()=2]";
         final String result = "{ns}b";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -267,9 +281,10 @@ public class FunctionsTest {
     public final void testId() throws TTXPathException {
         final String query = "//b/fn:id()";
         final String result = "";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -282,9 +297,10 @@ public class FunctionsTest {
     public final void testData() throws TTXPathException {
         final String query = "fn:data(//b)";
         final String result = "foo bar";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -297,9 +313,10 @@ public class FunctionsTest {
     public final void testContains() throws TTXPathException {
         final String query = "fn:contains(/p:a/b, \"\")";
         final String result = "true";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -312,9 +329,10 @@ public class FunctionsTest {
     public final void testExactlyOne() throws TTXPathException {
         final String query = "fn:exactly-one(\"a\")";
         final String result = "a";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -327,9 +345,10 @@ public class FunctionsTest {
     public final void testZeroOrOne() throws TTXPathException {
         final String query = "fn:zero-or-one(\"a\")";
         final String result = "a";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -342,9 +361,10 @@ public class FunctionsTest {
     public final void testMax() throws TTXPathException {
         final String query = "fn:max((2, 1, 5, 4, 3))";
         final String result = "5";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -357,9 +377,10 @@ public class FunctionsTest {
     public final void testMin() throws TTXPathException {
         final String query = "fn:min((2, 1, 5, 4, 3))";
         final String result = "1";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -372,9 +393,10 @@ public class FunctionsTest {
     public final void testEmpty() throws TTXPathException {
         final String query = "fn:empty(/p:a)";
         final String result = "true";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -387,9 +409,10 @@ public class FunctionsTest {
     public final void testOneOrMore() throws TTXPathException {
         final String query = "fn:one-or-more(//b/c)";
         final String result = "<c xmlns:p=\"ns\"/><c xmlns:p=\"ns\"/>";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -402,9 +425,10 @@ public class FunctionsTest {
     public final void testExists() throws TTXPathException {
         final String query = "fn:exists(('a', 'b', 'c'))";
         final String result = "true";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -417,9 +441,10 @@ public class FunctionsTest {
     public final void testSubstringAfter() throws TTXPathException {
         final String query = "fn:substring-after(\"query\", \"u\")";
         final String result = "ery";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -432,9 +457,10 @@ public class FunctionsTest {
     public final void testSubstringBefore() throws TTXPathException {
         final String query = "fn:substring-before(\"query\", \"r\")";
         final String result = "que";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -447,9 +473,10 @@ public class FunctionsTest {
     public final void testLast() throws TTXPathException {
         final String query = "//b[last()]";
         final String result = "<b xmlns:p=\"ns\" p:x=\"y\"><c/>bar</b>";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -462,9 +489,10 @@ public class FunctionsTest {
     public final void testNumber() throws TTXPathException {
         final String query = "fn:number('29.99')";
         final String result = "29.99";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -477,9 +505,10 @@ public class FunctionsTest {
     public final void testDistinctValues() throws TTXPathException {
         final String query = "fn:distinct-values(('a', 'a'))";
         final String result = "a";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -492,9 +521,10 @@ public class FunctionsTest {
     public final void testRoot() throws TTXPathException {
         final String query = "fn:root()//c";
         final String result = "<c xmlns:p=\"ns\"/><c xmlns:p=\"ns\"/>";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -507,9 +537,10 @@ public class FunctionsTest {
     public final void testFloor() throws TTXPathException {
         final String query = "fn:floor(5.7)";
         final String result = "5";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**
@@ -522,9 +553,10 @@ public class FunctionsTest {
     public final void testElementAttributeInReturn() throws TTXPathException {
         final String query = "for $x in //b/text() return <element attr=\"{$x}\"/>";
         final String result = "<element attr=\"foo\"/><element attr=\"bar\"/>";
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query), new String[] {
-            result
-        });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+            new String[] {
+                result
+            });
     }
 
     /**

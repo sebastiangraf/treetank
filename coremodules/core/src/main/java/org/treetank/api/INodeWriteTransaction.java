@@ -56,8 +56,10 @@ import org.treetank.exception.TTIOException;
  * <p>
  * <ol>
  * <li>Only a single thread accesses the single INodeWriteTransaction instance.</li>
- * <li><strong>Precondition</strong> before moving cursor: <code>INodeWriteTransaction.getNodeKey() == n</code>.</li>
- * <li><strong>Postcondition</strong> after modifying the cursor: <code>(INodeWriteTransaction.insertX() == m &&
+ * <li><strong>Precondition</strong> before moving cursor:
+ * <code>INodeWriteTransaction.getNodeKey() == n</code>.</li>
+ * <li><strong>Postcondition</strong> after modifying the cursor:
+ * <code>(INodeWriteTransaction.insertX() == m &&
  *       INodeWriteTransaction.getNodeKey() == m)</code>.</li>
  * </ol>
  * </p>
@@ -256,7 +258,8 @@ public interface INodeWriteTransaction extends INodeReadTransaction {
 
     /**
      * Reverting all changes to the revision defined. This command has to be
-     * finalized with a commit. A revert is always bound to a {@link INodeReadTransaction#moveToDocumentRoot()}.
+     * finalized with a commit. A revert is always bound to a
+     * {@link INodeReadTransaction#moveToDocumentRoot()}.
      * 
      * @param pRev
      *            revert to the revision

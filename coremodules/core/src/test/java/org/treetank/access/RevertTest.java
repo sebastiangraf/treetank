@@ -69,7 +69,7 @@ public final class RevertTest {
 
         wtx = holder.getSession().beginWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
-        wtx.moveTo(((IStructNode) wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.insertElementAsFirstChild(new QName("bla"));
         wtx.commit();
         assertEquals(2L, wtx.getRevisionNumber());

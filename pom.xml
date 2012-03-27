@@ -82,6 +82,7 @@
 	</developers>
 	<modules>
 		<module>coremodules/core</module>
+		<module>coremodules/core/node</module>
 		<module>coremodules/commons</module>
 		<module>interfacemodules/saxon</module>
 		<module>interfacemodules/jax-rx</module>

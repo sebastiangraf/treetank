@@ -27,22 +27,10 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
-import org.treetank.axis.AbsAxis;
-import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 
 public class ThreadTest {
@@ -64,43 +52,43 @@ public class ThreadTest {
         TestHelper.closeEverything();
     }
 
-    @Test
-    public void testThreads() throws Exception {
-        final ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
-        long newKey = 10L;
-        for (int i = 0; i < WORKER_COUNT; i++) {
-            taskExecutor.submit(new Task(holder.getSession().beginReadTransaction(i)));
-            final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
-            wtx.moveTo(newKey);
-            wtx.setValue("value" + i);
-            newKey = wtx.getNode().getNodeKey();
-            wtx.commit();
-            wtx.close();
-        }
-        taskExecutor.shutdown();
-        taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
+    // @Test
+    // public void testThreads() throws Exception {
+    // final ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
+    // long newKey = 10L;
+    // for (int i = 0; i < WORKER_COUNT; i++) {
+    // taskExecutor.submit(new Task(holder.getSession().beginReadTransaction(i)));
+    // final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+    // wtx.moveTo(newKey);
+    // wtx.setValue("value" + i);
+    // newKey = wtx.getNode().getNodeKey();
+    // wtx.commit();
+    // wtx.close();
+    // }
+    // taskExecutor.shutdown();
+    // taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
+    //
+    // }
 
-    }
-
-    private class Task implements Callable<Void> {
-
-        private INodeReadTransaction mRTX;
-
-        public Task(final INodeReadTransaction rtx) {
-            mRTX = rtx;
-        }
-
-        public Void call() throws Exception {
-            final AbsAxis axis = new DescendantAxis(mRTX);
-            while (axis.hasNext()) {
-                axis.next();
-            }
-
-            mRTX.moveTo(12L);
-            assertEquals("bar", mRTX.getValueOfCurrentNode());
-            mRTX.close();
-            return null;
-        }
-    }
+    // private class Task implements Callable<Void> {
+    //
+    // private INodeReadTransaction mRTX;
+    //
+    // public Task(final INodeReadTransaction rtx) {
+    // mRTX = rtx;
+    // }
+    //
+    // public Void call() throws Exception {
+    // final AbsAxis axis = new DescendantAxis(mRTX);
+    // while (axis.hasNext()) {
+    // axis.next();
+    // }
+    //
+    // mRTX.moveTo(12L);
+    // assertEquals("bar", mRTX.getValueOfCurrentNode());
+    // mRTX.close();
+    // return null;
+    // }
+    // }
 
 }

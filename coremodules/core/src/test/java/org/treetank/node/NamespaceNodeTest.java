@@ -51,7 +51,6 @@ public class NamespaceNodeTest {
         final NamespaceNode node2 = (NamespaceNode)ENode.NAMESPACE_KIND.deserialize(out);
         check(node2);
 
-
     }
 
     private final static void check(final NamespaceNode node) {

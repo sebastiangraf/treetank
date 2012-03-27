@@ -1993,7 +1993,8 @@ public final class XPathParser {
         }
 
         final AtomicValue mStringLiteral =
-            new AtomicValue(TypedValue.getBytes(mValue.toString()), NamePageHash.generateHashForString("xs:string"));
+            new AtomicValue(TypedValue.getBytes(mValue.toString()), NamePageHash
+                .generateHashForString("xs:string"));
         return mStringLiteral;
     }
 

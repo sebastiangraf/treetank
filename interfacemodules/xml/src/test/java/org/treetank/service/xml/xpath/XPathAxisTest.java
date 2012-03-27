@@ -436,10 +436,10 @@ public class XPathAxisTest {
         // Verify.
         holder.getRtx().moveTo(1L);
 
-        XPathStringChecker.testIAxisConventions(holder.getRtx(),new XPathAxis(holder.getRtx(), "fn:count(//node())"),
-            new String[] {
-                "10"
-            });
+        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
+            "fn:count(//node())"), new String[] {
+            "10"
+        });
     }
 
 }

@@ -60,7 +60,7 @@ public final class FileKey implements IKey {
      * @return the length of the file fragment
      */
     public int getLength() {
-        return (int) getKeys()[1];
+        return (int)getKeys()[1];
     }
 
     /**
@@ -87,7 +87,7 @@ public final class FileKey implements IKey {
     public long[] getKeys() {
         return mKey.getKeys();
     }
-    
+
     /**
      * {@inheritDoc}
      */

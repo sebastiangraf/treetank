@@ -44,8 +44,8 @@ import org.treetank.node.interfaces.IValNode;
  * <h1>NodeReadTransaction</h1>
  * 
  * <p>
- * Read-only transaction wiht single-threaded cursor semantics. Each read-only
- * transaction works on a given revision key.
+ * Read-only transaction wiht single-threaded cursor semantics. Each read-only transaction works on a given
+ * revision key.
  * </p>
  */
 public class NodeReadTransaction implements INodeReadTransaction {
@@ -82,10 +82,8 @@ public class NodeReadTransaction implements INodeReadTransaction {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected NodeReadTransaction(final Session paramSession,
-            final long paramTransactionID,
-            final IPageReadTransaction paramTransactionState)
-            throws TTIOException {
+    protected NodeReadTransaction(final Session paramSession, final long paramTransactionID,
+        final IPageReadTransaction paramTransactionState) throws TTIOException {
         mSession = paramSession;
         mId = paramTransactionID;
         mPageReadTransaction = paramTransactionState;
@@ -116,8 +114,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final long getRevisionTimestamp() throws TTIOException {
         assertNotClosed();
-        return mPageReadTransaction.getActualRevisionRootPage()
-                .getRevisionTimestamp();
+        return mPageReadTransaction.getActualRevisionRootPage().getRevisionTimestamp();
     }
 
     /**
@@ -154,7 +151,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final boolean moveToAttribute(final int mIndex) {
         if (mCurrentNode.getKind() == ENode.ELEMENT_KIND) {
-            return moveTo(((ElementNode) mCurrentNode).getAttributeKey(mIndex));
+            return moveTo(((ElementNode)mCurrentNode).getAttributeKey(mIndex));
         } else {
             return false;
         }
@@ -166,7 +163,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final boolean moveToNamespace(final int mIndex) {
         if (mCurrentNode.getKind() == ENode.ELEMENT_KIND) {
-            return moveTo(((ElementNode) mCurrentNode).getNamespaceKey(mIndex));
+            return moveTo(((ElementNode)mCurrentNode).getNamespaceKey(mIndex));
         } else {
             return false;
         }
@@ -181,7 +178,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
         assertNotClosed();
         String returnVal;
         if (mCurrentNode instanceof IValNode) {
-            returnVal = new String(((IValNode) mCurrentNode).getRawValue());
+            returnVal = new String(((IValNode)mCurrentNode).getRawValue());
         } else {
             returnVal = "";
         }
@@ -197,10 +194,8 @@ public class NodeReadTransaction implements INodeReadTransaction {
         String name = "";
         String uri = "";
         if (mCurrentNode instanceof INameNode) {
-            name = mPageReadTransaction.getName(((INameNode) mCurrentNode)
-                    .getNameKey());
-            uri = mPageReadTransaction.getName(((INameNode) mCurrentNode)
-                    .getURIKey());
+            name = mPageReadTransaction.getName(((INameNode)mCurrentNode).getNameKey());
+            uri = mPageReadTransaction.getName(((INameNode)mCurrentNode).getURIKey());
         }
         return buildQName(uri, name);
     }
@@ -259,14 +254,12 @@ public class NodeReadTransaction implements INodeReadTransaction {
     public final String toString() {
         assertNotClosed();
         final StringBuilder builder = new StringBuilder();
-        if (getNode().getKind() == ENode.ATTRIBUTE_KIND
-                || getNode().getKind() == ENode.ELEMENT_KIND) {
+        if (getNode().getKind() == ENode.ATTRIBUTE_KIND || getNode().getKind() == ENode.ELEMENT_KIND) {
             builder.append("Name of Node: ");
             builder.append(getQNameOfCurrentNode().toString());
             builder.append("\n");
         }
-        if (getNode().getKind() == ENode.ATTRIBUTE_KIND
-                || getNode().getKind() == ENode.TEXT_KIND) {
+        if (getNode().getKind() == ENode.ATTRIBUTE_KIND || getNode().getKind() == ENode.TEXT_KIND) {
             builder.append("Value of Node: ");
             builder.append(getValueOfCurrentNode());
             builder.append("\n");
@@ -311,8 +304,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setTransactionState(
-            final IPageReadTransaction paramTransactionState) {
+    protected final void setTransactionState(final IPageReadTransaction paramTransactionState) {
         mPageReadTransaction = paramTransactionState;
     }
 
@@ -361,12 +353,10 @@ public class NodeReadTransaction implements INodeReadTransaction {
      *            the name including a possible prefix
      * @return the QName obj
      */
-    public static final QName buildQName(final String paramUri,
-            final String paramName) {
+    public static final QName buildQName(final String paramUri, final String paramName) {
         QName qname;
         if (paramName.contains(":")) {
-            qname = new QName(paramUri, paramName.split(":")[1],
-                    paramName.split(":")[0]);
+            qname = new QName(paramUri, paramName.split(":")[1], paramName.split(":")[0]);
         } else {
             qname = new QName(paramUri, paramName);
         }
@@ -379,7 +369,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final IStructNode getStructuralNode() {
         if (mCurrentNode instanceof IStructNode) {
-            return (IStructNode) mCurrentNode;
+            return (IStructNode)mCurrentNode;
         } else {
             return null;
         }

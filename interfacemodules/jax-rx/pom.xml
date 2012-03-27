@@ -93,6 +93,11 @@
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>node</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.jaxrx</groupId>
 			<artifactId>jax-rx</artifactId>
 			<version>1.2.7</version>

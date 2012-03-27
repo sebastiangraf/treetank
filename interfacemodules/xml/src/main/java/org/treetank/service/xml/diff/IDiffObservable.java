@@ -52,8 +52,8 @@ interface IDiffObservable {
      * @param paramDepth
      *            current {@link DiffDepth} instance
      */
-    void fireDiff(final EDiff paramDiff, final IStructNode paramNewNode,
-        final IStructNode paramOldNode, final DiffDepth paramDepth);
+    void fireDiff(final EDiff paramDiff, final IStructNode paramNewNode, final IStructNode paramOldNode,
+        final DiffDepth paramDepth);
 
     /**
      * Diff computation done, thus inform listeners.

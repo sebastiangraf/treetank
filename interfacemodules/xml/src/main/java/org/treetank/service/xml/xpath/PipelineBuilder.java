@@ -545,7 +545,8 @@ public final class PipelineBuilder {
             mPredicate.hasNext();
             // if is numeric literal -> abbrev for position()
             final int type = mTransaction.getNode().getTypeKey();
-            if (type == NamePageHash.generateHashForString("xs:integer") || type == NamePageHash.generateHashForString("xs:double")
+            if (type == NamePageHash.generateHashForString("xs:integer")
+                || type == NamePageHash.generateHashForString("xs:double")
                 || type == NamePageHash.generateHashForString("xs:float")
                 || type == NamePageHash.generateHashForString("xs:decimal")) {
 

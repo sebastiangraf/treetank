@@ -37,7 +37,6 @@ import javax.xml.namespace.QName;
 
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IPageWriteTransaction;
-import org.treetank.axis.ItemList;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.TransactionLogCache;

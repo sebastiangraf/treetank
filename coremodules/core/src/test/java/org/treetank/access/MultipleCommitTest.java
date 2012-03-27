@@ -39,12 +39,7 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTransaction;
-import org.treetank.axis.AbsAxis;
-import org.treetank.axis.DescendantAxis;
-import org.treetank.axis.PostOrderAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
-import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.DocumentCreater;
 
@@ -84,8 +79,7 @@ public class MultipleCommitTest {
         DocumentCreater.create(holder.getWtx());
         holder.getWtx().commit();
 
-        final INodeReadTransaction rtx = holder.getSession()
-                .beginReadTransaction();
+        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
         rtx.close();
     }
 
@@ -96,51 +90,50 @@ public class MultipleCommitTest {
         assertEquals(1L, holder.getWtx().getRevisionNumber());
 
         holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
-        holder.getWtx().moveTo(
-                ((IStructNode) holder.getWtx().getNode()).getFirstChildKey());
+        holder.getWtx().moveTo(((IStructNode)holder.getWtx().getNode()).getFirstChildKey());
         holder.getWtx().remove();
         holder.getWtx().commit();
         assertEquals(2L, holder.getWtx().getRevisionNumber());
     }
 
-    @Test
-    public void testAttributeRemove() throws AbsTTException {
-        DocumentCreater.create(holder.getWtx());
-        holder.getWtx().commit();
-        holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
-
-        final AbsAxis postorderAxis = new PostOrderAxis(holder.getWtx());
-        while (postorderAxis.hasNext()) {
-            postorderAxis.next();
-            if (holder.getWtx().getNode().getKind() == ENode.ELEMENT_KIND
-                    && ((ElementNode) holder.getWtx().getNode())
-                            .getAttributeCount() > 0) {
-                for (int i = 0, attrCount = ((ElementNode) holder.getWtx()
-                        .getNode()).getAttributeCount(); i < attrCount; i++) {
-                    holder.getWtx().moveToAttribute(i);
-                    holder.getWtx().remove();
-                }
-            }
-        }
-        holder.getWtx().commit();
-        holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
-
-        int attrTouch = 0;
-        final AbsAxis descAxis = new DescendantAxis(holder.getWtx());
-        while (descAxis.hasNext()) {
-            descAxis.next();
-            if (holder.getWtx().getNode().getKind() == ENode.ELEMENT_KIND) {
-                for (int i = 0, attrCount = ((ElementNode) holder.getWtx()
-                        .getNode()).getAttributeCount(); i < attrCount; i++) {
-                    if (holder.getWtx().moveToAttribute(i)) {
-                        attrTouch++;
-                    } else {
-                        throw new IllegalStateException("Should never occur!");
-                    }
-                }
-            }
-        }
-        assertEquals(0, attrTouch);
-
-    }
+    // @Test
+    // public void testAttributeRemove() throws AbsTTException {
+    // DocumentCreater.create(holder.getWtx());
+    // holder.getWtx().commit();
+    // holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
+    //
+    // final AbsAxis postorderAxis = new PostOrderAxis(holder.getWtx());
+    // while (postorderAxis.hasNext()) {
+    // postorderAxis.next();
+    // if (holder.getWtx().getNode().getKind() == ENode.ELEMENT_KIND
+    // && ((ElementNode) holder.getWtx().getNode())
+    // .getAttributeCount() > 0) {
+    // for (int i = 0, attrCount = ((ElementNode) holder.getWtx()
+    // .getNode()).getAttributeCount(); i < attrCount; i++) {
+    // holder.getWtx().moveToAttribute(i);
+    // holder.getWtx().remove();
+    // }
+    // }
+    // }
+    // holder.getWtx().commit();
+    // holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
+    //
+    // int attrTouch = 0;
+    // final AbsAxis descAxis = new DescendantAxis(holder.getWtx());
+    // while (descAxis.hasNext()) {
+    // descAxis.next();
+    // if (holder.getWtx().getNode().getKind() == ENode.ELEMENT_KIND) {
+    // for (int i = 0, attrCount = ((ElementNode) holder.getWtx()
+    // .getNode()).getAttributeCount(); i < attrCount; i++) {
+    // if (holder.getWtx().moveToAttribute(i)) {
+    // attrTouch++;
+    // } else {
+    // throw new IllegalStateException("Should never occur!");
+    // }
+    // }
+    // }
+    // }
+    // assertEquals(0, attrTouch);
+    //
+    // }
 }

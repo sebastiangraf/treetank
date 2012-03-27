@@ -36,7 +36,9 @@ import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 
-public class PostOrderTest {
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+
+public class DescendantAxisTest {
 
     private Holder holder;
 
@@ -58,8 +60,47 @@ public class PostOrderTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         rtx.moveTo(NodeReadTransaction.ROOT_NODE);
-        AbsAxisTest.testIAxisConventions(new PostOrderAxis(rtx), new long[] {
-                4L, 6L, 7L, 5L, 8L, 11L, 12L, 9L, 13L, 1L, 0L });
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
+            1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+        });
+
+        rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
+            4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+        });
+
+        rtx.moveTo(9L);
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
+            11L, 12L
+        });
+
+        rtx.moveTo(13L);
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {});
+    }
+
+    @Test
+    public void testIterateIncludingSelf() throws AbsTTException {
+        final INodeReadTransaction rtx = holder.getRtx();
+        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
+            ROOT_NODE, 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+        });
+
+        rtx.moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
+            1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+        });
+
+        rtx.moveTo(9L);
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
+            9L, 11L, 12L
+        });
+
+        rtx.moveTo(13L);
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
+            13L
+        });
 
     }
+
 }

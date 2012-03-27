@@ -90,18 +90,22 @@ public class ModOpAxisTest {
         AbsAxis op2 = new SequenceAxis(holder.getRtx());
         AbsObAxis axis = new ModOpAxis(holder.getRtx(), op1, op2);
 
-        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:double"), NamePageHash.generateHashForString("xs:double")));
-        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"), NamePageHash.generateHashForString("xs:double")));
-        assertEquals(Type.FLOAT, axis.getReturnType(NamePageHash.generateHashForString("xs:float"), NamePageHash.generateHashForString("xs:decimal")));
-        assertEquals(Type.DECIMAL, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"), NamePageHash.generateHashForString("xs:integer")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:double"),
+            NamePageHash.generateHashForString("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"),
+            NamePageHash.generateHashForString("xs:double")));
+        assertEquals(Type.FLOAT, axis.getReturnType(NamePageHash.generateHashForString("xs:float"),
+            NamePageHash.generateHashForString("xs:decimal")));
+        assertEquals(Type.DECIMAL, axis.getReturnType(NamePageHash.generateHashForString("xs:decimal"),
+            NamePageHash.generateHashForString("xs:integer")));
         // assertEquals(Type.INTEGER,
         // axis.getReturnType(NamePageHash.generateHashForString("xs:integer"),
         // NamePageHash.generateHashForString("xs:integer")));
 
         try {
 
-            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash.generateHashForString(
-                "xs:yearMonthDuration"));
+            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash
+                .generateHashForString("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -110,8 +114,8 @@ public class ModOpAxisTest {
 
         try {
 
-            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash.generateHashForString(
-                "xs:double"));
+            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash
+                .generateHashForString("xs:double"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -120,8 +124,8 @@ public class ModOpAxisTest {
 
         try {
 
-            axis.getReturnType(NamePageHash.generateHashForString("xs:string"), NamePageHash.generateHashForString(
-                "xs:yearMonthDuration"));
+            axis.getReturnType(NamePageHash.generateHashForString("xs:string"), NamePageHash
+                .generateHashForString("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
@@ -130,8 +134,8 @@ public class ModOpAxisTest {
 
         try {
 
-            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash.generateHashForString(
-                "xs:IDREF"));
+            axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash
+                .generateHashForString("xs:IDREF"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "

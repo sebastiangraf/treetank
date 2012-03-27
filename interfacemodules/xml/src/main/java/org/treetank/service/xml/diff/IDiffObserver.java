@@ -49,8 +49,8 @@ public interface IDiffObserver {
      * @param paramDepth
      *            current {@link DiffDepth} instance
      */
-    void diffListener(final EDiff paramDiff, final IStructNode paramNewNode,
-        final IStructNode paramOldNode, final DiffDepth paramDepth);
+    void diffListener(final EDiff paramDiff, final IStructNode paramNewNode, final IStructNode paramOldNode,
+        final DiffDepth paramDepth);
 
     /** Signals that the diff calculation is done. */
     void diffDone();

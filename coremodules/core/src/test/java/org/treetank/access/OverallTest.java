@@ -84,23 +84,17 @@ public final class OverallTest {
             } else {
                 if (holder.getWtx().getNode() instanceof ElementNode) {
                     if (ran.nextBoolean()) {
-                        holder.getWtx().insertElementAsFirstChild(
-                                new QName(getString()));
+                        holder.getWtx().insertElementAsFirstChild(new QName(getString()));
                     } else {
-                        holder.getWtx().insertElementAsRightSibling(
-                                new QName(getString()));
+                        holder.getWtx().insertElementAsRightSibling(new QName(getString()));
                     }
                     while (ran.nextBoolean()) {
-                        holder.getWtx().insertAttribute(new QName(getString()),
-                                getString());
-                        holder.getWtx().moveTo(
-                                holder.getWtx().getNode().getParentKey());
+                        holder.getWtx().insertAttribute(new QName(getString()), getString());
+                        holder.getWtx().moveTo(holder.getWtx().getNode().getParentKey());
                     }
                     while (ran.nextBoolean()) {
-                        holder.getWtx().insertNamespace(
-                                new QName(getString(), getString()));
-                        holder.getWtx().moveTo(
-                                holder.getWtx().getNode().getParentKey());
+                        holder.getWtx().insertNamespace(new QName(getString(), getString()));
+                        holder.getWtx().moveTo(holder.getWtx().getNode().getParentKey());
                     }
                 }
 
@@ -117,8 +111,7 @@ public final class OverallTest {
                 } while (holder.getWtx().getNode() == null);
                 // TODO Check if reference check can occur on "=="
                 if (holder.getWtx().getNode().getKind() != ENode.ELEMENT_KIND) {
-                    holder.getWtx().moveTo(
-                            holder.getWtx().getNode().getParentKey());
+                    holder.getWtx().moveTo(holder.getWtx().getNode().getParentKey());
                 }
             }
         }

@@ -49,109 +49,109 @@ import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
  */
 public final class StructuralDiffTest {
 
-	private Holder mHolder;
+    private Holder mHolder;
 
-	private IDiffObserver mObserver;
+    private IDiffObserver mObserver;
 
-	@Before
-	public void setUp() throws AbsTTException {
-		DiffTestHelper.setUp();
-		mHolder = Holder.generateWtx();
-		mObserver = DiffTestHelper.createMock();
-	}
+    @Before
+    public void setUp() throws AbsTTException {
+        DiffTestHelper.setUp();
+        mHolder = Holder.generateWtx();
+        mObserver = DiffTestHelper.createMock();
+    }
 
-	@After
-	public void tearDown() throws AbsTTException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws AbsTTException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void testStructuralDiffFirst() throws Exception {
-		DiffTestHelper.setUpFirst(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
-		DiffTestHelper.verifyDiffFirst(mObserver);
-	}
+    @Test
+    public void testStructuralDiffFirst() throws Exception {
+        DiffTestHelper.setUpFirst(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.verifyDiffFirst(mObserver);
+    }
 
-	@Test
-	public void testOptimizedFirst() throws Exception {
-		DiffTestHelper.setUpFirst(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
-		DiffTestHelper.verifyOptimizedFirst(mObserver);
-	}
+    @Test
+    public void testOptimizedFirst() throws Exception {
+        DiffTestHelper.setUpFirst(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
+        DiffTestHelper.verifyOptimizedFirst(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffSecond() throws AbsTTException,
-			InterruptedException, IOException, XMLStreamException {
-		DiffTestHelper.setUpSecond(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
-		DiffTestHelper.verifyDiffSecond(mObserver);
-	}
+    @Test
+    public void testStructuralDiffSecond() throws AbsTTException, InterruptedException, IOException,
+        XMLStreamException {
+        DiffTestHelper.setUpSecond(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.verifyDiffSecond(mObserver);
+    }
 
-	@Test
-	@Ignore
-	public void testStructuralDiffOptimizedSecond() throws AbsTTException,
-			IOException, XMLStreamException, InterruptedException {
-		DiffTestHelper.setUpSecond(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
-		DiffTestHelper.verifyDiffSecond(mObserver);
-	}
+    @Test
+    @Ignore
+    public void testStructuralDiffOptimizedSecond() throws AbsTTException, IOException, XMLStreamException,
+        InterruptedException {
+        DiffTestHelper.setUpSecond(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
+        DiffTestHelper.verifyDiffSecond(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffThird() throws AbsTTException, IOException,
-			XMLStreamException, InterruptedException {
-		DiffTestHelper.setUpThird(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
-		DiffTestHelper.verifyDiffThird(mObserver);
-	}
+    @Test
+    public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
+        InterruptedException {
+        DiffTestHelper.setUpThird(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.verifyDiffThird(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffOptimizedThird() throws AbsTTException,
-			IOException, XMLStreamException, InterruptedException {
-		DiffTestHelper.setUpThird(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
-		DiffTestHelper.verifyOptimizedThird(mObserver);
-	}
+    @Test
+    public void testStructuralDiffOptimizedThird() throws AbsTTException, IOException, XMLStreamException,
+        InterruptedException {
+        DiffTestHelper.setUpThird(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
+        DiffTestHelper.verifyOptimizedThird(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffFourth() throws Exception {
-		DiffTestHelper.setUpFourth(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
-		DiffTestHelper.verifyDiffFourth(mObserver);
-	}
+    @Test
+    public void testStructuralDiffFourth() throws Exception {
+        DiffTestHelper.setUpFourth(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.verifyDiffFourth(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffOptimizedFourth() throws Exception {
-		DiffTestHelper.setUpFourth(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
-		DiffTestHelper.verifyDiffFourth(mObserver);
-	}
+    @Test
+    public void testStructuralDiffOptimizedFourth() throws Exception {
+        DiffTestHelper.setUpFourth(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
+        DiffTestHelper.verifyDiffFourth(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffFifth() throws Exception {
-		DiffTestHelper.setUpFifth(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
-		DiffTestHelper.verifyDiffFifth(mObserver);
-	}
+    @Test
+    public void testStructuralDiffFifth() throws Exception {
+        DiffTestHelper.setUpFifth(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.verifyDiffFifth(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffOptimizedFifth() throws Exception {
-		DiffTestHelper.setUpFifth(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
-		DiffTestHelper.verifyDiffFifth(mObserver);
-	}
+    @Test
+    public void testStructuralDiffOptimizedFifth() throws Exception {
+        DiffTestHelper.setUpFifth(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
+        DiffTestHelper.verifyDiffFifth(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffSixth() throws Exception {
-		DiffTestHelper.setUpSixth(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
-		DiffTestHelper.verifyDiffSixth(mObserver);
-	}
+    @Test
+    public void testStructuralDiffSixth() throws Exception {
+        DiffTestHelper.setUpSixth(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.verifyDiffSixth(mObserver);
+    }
 
-	@Test
-	public void testStructuralDiffOptimizedSixth() throws Exception {
-		DiffTestHelper.setUpSixth(mHolder);
-		DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
-		DiffTestHelper.verifyDiffSixth(mObserver);
-	}
+    @Test
+    public void testStructuralDiffOptimizedSixth() throws Exception {
+        DiffTestHelper.setUpSixth(mHolder);
+        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
+        DiffTestHelper.verifyDiffSixth(mObserver);
+    }
 
 }

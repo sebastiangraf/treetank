@@ -24,30 +24,78 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/**
- * 
- */
-package org.treetank.node.interfaces;
+
+package org.treetank.axis;
+
+import org.treetank.api.INodeReadTransaction;
+import org.treetank.node.ENode;
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 /**
- * @author Sebastian Graf, University of Konstanz
+ * <h1>AncestorAxis</h1>
  * 
+ * <p>
+ * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
+ * </p>
  */
-public interface IValNode extends INode {
+public class AncestorAxis extends AbsAxis {
 
     /**
-     * Return a byte array representation of the item's value.
-     * 
-     * @return returns the value of the item
+     * First touch of node.
      */
-    byte[] getRawValue();
+    private boolean mFirst;
 
     /**
-     * Setting the value key.
+     * Constructor initializing internal state.
      * 
-     * @param pValue
-     *            the value to be set.
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
      */
-    void setValue(byte[] pValue);
+    public AncestorAxis(final INodeReadTransaction rtx) {
+        super(rtx);
+    }
+
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param mIncludeSelf
+     *            Is self included?
+     */
+    public AncestorAxis(final INodeReadTransaction rtx, final boolean mIncludeSelf) {
+        super(rtx, mIncludeSelf);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long mNodeKey) {
+        super.reset(mNodeKey);
+        mFirst = true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean hasNext() {
+        resetToLastKey();
+
+        // Self
+        if (mFirst && isSelfIncluded()) {
+            mFirst = false;
+            return true;
+        }
+
+        if (getNode().getKind() != ENode.ROOT_KIND && getNode().hasParent()
+            && getNode().getParentKey() != ROOT_NODE) {
+            moveTo(getNode().getParentKey());
+            return true;
+        }
+        resetToStartKey();
+        return false;
+    }
 
 }

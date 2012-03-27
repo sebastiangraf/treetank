@@ -44,12 +44,11 @@ public class ElementNodeTest {
     public void testElementNode() {
 
         final NodeDelegate del = new NodeDelegate(13, 14, 0);
-        final StructNodeDelegate strucDel = new StructNodeDelegate(del, 12l,
-                17l, 16l, 1l);
+        final StructNodeDelegate strucDel = new StructNodeDelegate(del, 12l, 17l, 16l, 1l);
         final NameNodeDelegate nameDel = new NameNodeDelegate(del, 18, 19);
 
-        final ElementNode node1 = new ElementNode(del, strucDel, nameDel,
-                new ArrayList<Long>(), new ArrayList<Long>());
+        final ElementNode node1 =
+            new ElementNode(del, strucDel, nameDel, new ArrayList<Long>(), new ArrayList<Long>());
 
         // Create empty node.
         node1.insertAttribute(97);
@@ -62,8 +61,7 @@ public class ElementNodeTest {
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
         ENode.getKind(node1.getClass()).serialize(out, node1);
         out.position(0);
-        final ElementNode node2 = (ElementNode) ENode.ELEMENT_KIND
-                .deserialize(out);
+        final ElementNode node2 = (ElementNode)ENode.ELEMENT_KIND.deserialize(out);
         check(node2);
     }
 
@@ -79,8 +77,7 @@ public class ElementNodeTest {
         assertEquals(2, node.getNamespaceCount());
         assertEquals(18, node.getNameKey());
         assertEquals(19, node.getURIKey());
-        assertEquals(NamePageHash.generateHashForString("xs:untyped"),
-                node.getTypeKey());
+        assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
         assertEquals(ENode.ELEMENT_KIND, node.getKind());
         assertEquals(true, node.hasFirstChild());
         assertEquals(true, node.hasParent());

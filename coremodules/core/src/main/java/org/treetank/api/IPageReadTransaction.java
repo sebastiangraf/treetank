@@ -3,7 +3,6 @@
  */
 package org.treetank.api;
 
-import org.treetank.axis.ItemList;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
 import org.treetank.page.RevisionRootPage;
