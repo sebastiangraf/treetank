@@ -145,7 +145,7 @@ public final class DocumentWrapper implements DocumentInfo {
                             if ("xml:id".equalsIgnoreCase(rtx.getQNameOfCurrentNode().getLocalPart())
                                 && ID.equals(rtx.getValueOfCurrentNode())) {
                                 if (getParent) {
-                                    rtx.moveToParent();
+                                    rtx.moveTo(rtx.getNode().getParentKey());
                                 }
                                 return new NodeWrapper(this, rtx.getNode().getNodeKey());
                             }

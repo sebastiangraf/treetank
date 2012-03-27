@@ -74,6 +74,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>NodeWrapper</h1>
@@ -828,7 +829,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         try {
             final INodeReadTransaction rtx = createRtxAndMove();
             while (rtx.getStructuralNode().hasLeftSibling()) {
-                rtx.moveToLeftSibling();
+                rtx.moveTo(((IStructNode)rtx.getNode()).getLeftSiblingKey());
                 index++;
             }
             rtx.close();
