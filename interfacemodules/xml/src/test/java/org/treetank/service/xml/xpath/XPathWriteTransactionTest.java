@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -79,7 +80,7 @@ public final class XPathWriteTransactionTest {
 
     @Test
     public void test() throws TTXPathException {
-        wtx.moveToDocumentRoot();
+        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
         // final XPathAxis xpa =
         // new XPathAxis(wtx, "//revision[./parent::page/title/text() = '"
         // + "AmericanSamoa"

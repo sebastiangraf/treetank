@@ -123,7 +123,7 @@ public final class Matching {
         if (paramNode.hasParent()) {
             paramRtx.moveTo(paramNode.getNodeKey());
             while (paramRtx.getStructuralNode().hasParent()) {
-                paramRtx.moveToParent();
+                paramRtx.moveTo(paramRtx.getNode().getParentKey());
                 mIsInSubtree.set(paramRtx.getNode(), paramNode, true);
             }
         }

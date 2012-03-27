@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
@@ -64,7 +65,7 @@ public class XPathAxisWideTest {
     public void testIterateFactbook() throws Exception {
         // Verify.
         final Holder holder = Holder.generateRtx();
-        holder.getRtx().moveToDocumentRoot();
+        holder.getRtx().moveTo(NodeReadTransaction.ROOT_NODE);
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/mondial/continent[@id]"),
             new long[] {

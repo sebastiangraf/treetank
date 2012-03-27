@@ -48,6 +48,7 @@ import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>StAXSerializer</h1>
@@ -301,13 +302,13 @@ public final class StAXSerializer implements XMLEventReader {
             } else {
                 final ENode nodeKind = mRtx.getNode().getKind();
                 if (mRtx.getStructuralNode().hasFirstChild()) {
-                    mRtx.moveToFirstChild();
+                    mRtx.moveTo(((IStructNode)mRtx.getNode()).getFirstChildKey());
                     emitNode();
                 } else if (mRtx.getStructuralNode().hasRightSibling()) {
-                    mRtx.moveToRightSibling();
+                    mRtx.moveTo(((IStructNode)mRtx.getNode()).getRightSiblingKey());
                     processNode(nodeKind);
                 } else if (mRtx.getStructuralNode().hasParent()) {
-                    mRtx.moveToParent();
+                    mRtx.moveTo(mRtx.getNode().getParentKey());
                     emitEndTag();
                 }
             }
