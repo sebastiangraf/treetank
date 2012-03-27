@@ -62,8 +62,8 @@ public final class Diff {
      * @param paramDepth
      *            current {@link DiffDepth} instance
      */
-    public Diff(final EDiff paramDiff, final IStructNode paramNewNode,
-        final IStructNode paramOldNode, final DiffDepth paramDepth) {
+    public Diff(final EDiff paramDiff, final IStructNode paramNewNode, final IStructNode paramOldNode,
+        final DiffDepth paramDepth) {
         assert paramDiff != null;
         assert paramNewNode != null;
         assert paramOldNode != null;

@@ -33,6 +33,7 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Keeps track of nodes in a matching.
@@ -122,8 +123,8 @@ public final class Matching {
         mIsInSubtree.set(paramNode, paramNode, true);
         if (paramNode.hasParent()) {
             paramRtx.moveTo(paramNode.getNodeKey());
-            while (paramRtx.getStructuralNode().hasParent()) {
-                paramRtx.moveToParent();
+            while (((IStructNode)paramRtx.getNode()).hasParent()) {
+                paramRtx.moveTo(paramRtx.getNode().getParentKey());
                 mIsInSubtree.set(paramRtx.getNode(), paramNode, true);
             }
         }

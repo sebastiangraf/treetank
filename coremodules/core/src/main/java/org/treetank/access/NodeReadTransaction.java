@@ -37,7 +37,6 @@ import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 
 /**
@@ -94,7 +93,6 @@ public class NodeReadTransaction implements INodeReadTransaction {
     /**
      * {@inheritDoc}
      */
-    @Override
     public final long getTransactionID() {
         return mId;
     }
@@ -106,15 +104,6 @@ public class NodeReadTransaction implements INodeReadTransaction {
     public final long getRevisionNumber() throws TTIOException {
         assertNotClosed();
         return mPageReadTransaction.getActualRevisionRootPage().getRevision();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final long getRevisionTimestamp() throws TTIOException {
-        assertNotClosed();
-        return mPageReadTransaction.getActualRevisionRootPage().getRevisionTimestamp();
     }
 
     /**
@@ -143,49 +132,6 @@ public class NodeReadTransaction implements INodeReadTransaction {
                 return true;
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean moveToDocumentRoot() {
-        return moveTo(ROOT_NODE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean moveToParent() {
-        return moveTo(mCurrentNode.getParentKey());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean moveToFirstChild() {
-        final IStructNode node = getStructuralNode();
-        return node == null ? false : moveTo(node.getFirstChildKey());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean moveToLeftSibling() {
-        final IStructNode node = getStructuralNode();
-        return node == null ? false : moveTo(node.getLeftSiblingKey());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean moveToRightSibling() {
-        final IStructNode node = getStructuralNode();
-        return node == null ? false : moveTo(node.getRightSiblingKey());
     }
 
     /**
@@ -404,17 +350,5 @@ public class NodeReadTransaction implements INodeReadTransaction {
             qname = new QName(paramUri, paramName);
         }
         return qname;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final IStructNode getStructuralNode() {
-        if (mCurrentNode instanceof IStructNode) {
-            return (IStructNode)mCurrentNode;
-        } else {
-            return null;
-        }
     }
 }

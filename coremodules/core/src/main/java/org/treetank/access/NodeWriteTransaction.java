@@ -31,8 +31,6 @@ import javax.xml.namespace.QName;
 
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.api.IPageWriteTransaction;
-import org.treetank.axis.AbsAxis;
-import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
@@ -318,10 +316,12 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             throw new TTUsageException("Document root can not be removed.");
         } else if (getCurrentNode() instanceof IStructNode) {
             final IStructNode node = (IStructNode)getCurrentNode();
-            // Remove subtree.
-            for (final AbsAxis desc = new DescendantAxis(this, false); desc.hasNext(); desc.next()) {
-                getTransactionState().removeNode(getCurrentNode());
-            }
+            // Remove subtree, excluded since 1. axis is now moved to extra bundle and 2. attributes and
+            // namespaces are ignored
+            // for (final AbsAxis desc = new DescendantAxis(this, false); desc
+            // .hasNext(); desc.next()) {
+            // getTransactionState().removeNode(getCurrentNode());
+            // }
             moveTo(node.getNodeKey());
             adaptForRemove(node);
             adaptHashesWithRemove();
@@ -342,7 +342,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             parent.removeAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parent);
             adaptHashesWithRemove();
-            moveToParent();
+            moveTo(getCurrentNode().getParentKey());
         } else if (getCurrentNode().getKind() == ENode.NAMESPACE_KIND) {
             final INode node = getCurrentNode();
 
@@ -351,7 +351,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             parent.removeNamespace(node.getNodeKey());
             getTransactionState().finishNodeModification(parent);
             adaptHashesWithRemove();
-            moveToParent();
+            moveTo(getCurrentNode().getParentKey());
         }
     }
 
@@ -446,7 +446,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             getRevisionNumber() - 1));
         // Reset modification counter.
         mModificationCount = 0L;
-        moveToDocumentRoot();
+        moveTo(NodeReadTransaction.ROOT_NODE);
 
     }
 
@@ -775,11 +775,11 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
                 }
 
                 // Caring about the children of a node
-                if (moveTo(getStructuralNode().getFirstChildKey())) {
+                if (moveTo(((IStructNode)getNode()).getFirstChildKey())) {
                     do {
                         hashCodeForParent = getCurrentNode().getHash() + hashCodeForParent * PRIME;
-                    } while (moveTo(getStructuralNode().getRightSiblingKey()));
-                    moveTo(getStructuralNode().getParentKey());
+                    } while (moveTo(((IStructNode)getNode()).getRightSiblingKey()));
+                    moveTo(((IStructNode)getNode()).getParentKey());
                 }
 
                 // setting hash and resetting hash

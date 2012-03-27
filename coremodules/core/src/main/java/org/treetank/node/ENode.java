@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -69,17 +69,17 @@ public enum ENode {
             final List<Long> namespKeys = new ArrayList<Long>();
 
             // node delegate
-            final NodeDelegate nodeDel = new NodeDelegate(pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
+            final NodeDelegate nodeDel =
+                new NodeDelegate(pSource.readLong(), pSource.readLong(), pSource.readLong());
 
             // struct delegate
-            final StructNodeDelegate structDel = new StructNodeDelegate(
-                    nodeDel, pSource.readLong(), pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
+            final StructNodeDelegate structDel =
+                new StructNodeDelegate(nodeDel, pSource.readLong(), pSource.readLong(), pSource.readLong(),
+                    pSource.readLong());
 
             // name delegate
-            final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel,
-                    pSource.readInt(), pSource.readInt());
+            final NameNodeDelegate nameDel =
+                new NameNodeDelegate(nodeDel, pSource.readInt(), pSource.readInt());
 
             // Attributes getting
             int attrCount = pSource.readInt();
@@ -93,13 +93,12 @@ public enum ENode {
                 namespKeys.add(pSource.readLong());
             }
 
-            return new ElementNode(nodeDel, structDel, nameDel, attrKeys,
-                    namespKeys);
+            return new ElementNode(nodeDel, structDel, nameDel, attrKeys, namespKeys);
         }
 
         @Override
         public void serialize(final ITTSink pSink, final INode pToSerialize) {
-            ElementNode node = (ElementNode) pToSerialize;
+            ElementNode node = (ElementNode)pToSerialize;
             serializeDelegate(node.getNodeDelegate(), pSink);
             serializeStrucDelegate(node.getStrucNodeDelegate(), pSink);
             serializeNameDelegate(node.getNameNodeDelegate(), pSink);
@@ -119,11 +118,11 @@ public enum ENode {
         @Override
         public INode deserialize(final ITTSource pSource) {
             // node delegate
-            final NodeDelegate nodeDel = new NodeDelegate(pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
+            final NodeDelegate nodeDel =
+                new NodeDelegate(pSource.readLong(), pSource.readLong(), pSource.readLong());
             // name delegate
-            final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel,
-                    pSource.readInt(), pSource.readInt());
+            final NameNodeDelegate nameDel =
+                new NameNodeDelegate(nodeDel, pSource.readInt(), pSource.readInt());
             // val delegate
             final byte[] vals = new byte[pSource.readInt()];
             for (int i = 0; i < vals.length; i++) {
@@ -136,7 +135,7 @@ public enum ENode {
 
         @Override
         public void serialize(final ITTSink pSink, final INode pToSerialize) {
-            AttributeNode node = (AttributeNode) pToSerialize;
+            AttributeNode node = (AttributeNode)pToSerialize;
             serializeDelegate(node.getNodeDelegate(), pSink);
             serializeNameDelegate(node.getNameNodeDelegate(), pSink);
             serializeValDelegate(node.getValNodeDelegate(), pSink);
@@ -148,8 +147,8 @@ public enum ENode {
         @Override
         public INode deserialize(final ITTSource pSource) {
             // node delegate
-            final NodeDelegate nodeDel = new NodeDelegate(pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
+            final NodeDelegate nodeDel =
+                new NodeDelegate(pSource.readLong(), pSource.readLong(), pSource.readLong());
             // val delegate
             final byte[] vals = new byte[pSource.readInt()];
             for (int i = 0; i < vals.length; i++) {
@@ -157,16 +156,16 @@ public enum ENode {
             }
             final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, vals);
             // struct delegate
-            final StructNodeDelegate structDel = new StructNodeDelegate(
-                    nodeDel, pSource.readLong(), pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
+            final StructNodeDelegate structDel =
+                new StructNodeDelegate(nodeDel, pSource.readLong(), pSource.readLong(), pSource.readLong(),
+                    pSource.readLong());
             // returning the data
             return new TextNode(nodeDel, valDel, structDel);
         }
 
         @Override
         public void serialize(final ITTSink pSink, final INode pToSerialize) {
-            TextNode node = (TextNode) pToSerialize;
+            TextNode node = (TextNode)pToSerialize;
             serializeDelegate(node.getNodeDelegate(), pSink);
             serializeValDelegate(node.getValNodeDelegate(), pSink);
             serializeStrucDelegate(node.getStrucNodeDelegate(), pSink);
@@ -179,17 +178,17 @@ public enum ENode {
         @Override
         public INode deserialize(final ITTSource pSource) {
             // node delegate
-            final NodeDelegate nodeDel = new NodeDelegate(pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
+            final NodeDelegate nodeDel =
+                new NodeDelegate(pSource.readLong(), pSource.readLong(), pSource.readLong());
             // name delegate
-            final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel,
-                    pSource.readInt(), pSource.readInt());
+            final NameNodeDelegate nameDel =
+                new NameNodeDelegate(nodeDel, pSource.readInt(), pSource.readInt());
             return new NamespaceNode(nodeDel, nameDel);
         }
 
         @Override
         public void serialize(final ITTSink pSink, final INode pToSerialize) {
-            NamespaceNode node = (NamespaceNode) pToSerialize;
+            NamespaceNode node = (NamespaceNode)pToSerialize;
             serializeDelegate(node.getNodeDelegate(), pSink);
             serializeNameDelegate(node.getNameNodeDelegate(), pSink);
         }
@@ -225,17 +224,17 @@ public enum ENode {
     ROOT_KIND(9, DocumentRootNode.class) {
         @Override
         public INode deserialize(final ITTSource pSource) {
-            final NodeDelegate nodeDel = new NodeDelegate(pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
-            final StructNodeDelegate structDel = new StructNodeDelegate(
-                    nodeDel, pSource.readLong(), pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
+            final NodeDelegate nodeDel =
+                new NodeDelegate(pSource.readLong(), pSource.readLong(), pSource.readLong());
+            final StructNodeDelegate structDel =
+                new StructNodeDelegate(nodeDel, pSource.readLong(), pSource.readLong(), pSource.readLong(),
+                    pSource.readLong());
             return new DocumentRootNode(nodeDel, structDel);
         }
 
         @Override
         public void serialize(final ITTSink pSink, final INode pToSerialize) {
-            DocumentRootNode node = (DocumentRootNode) pToSerialize;
+            DocumentRootNode node = (DocumentRootNode)pToSerialize;
             serializeDelegate(node.getNodeDelegate(), pSink);
             serializeStrucDelegate(node.getStrucNodeDelegate(), pSink);
         }
@@ -258,15 +257,15 @@ public enum ENode {
     DELETE_KIND(5, DeletedNode.class) {
         @Override
         public INode deserialize(final ITTSource pSource) {
-            final NodeDelegate delegate = new NodeDelegate(pSource.readLong(),
-                    pSource.readLong(), pSource.readLong());
+            final NodeDelegate delegate =
+                new NodeDelegate(pSource.readLong(), pSource.readLong(), pSource.readLong());
             final DeletedNode node = new DeletedNode(delegate);
             return node;
         }
 
         @Override
         public void serialize(final ITTSink pSink, final INode pToSerialize) {
-            DeletedNode node = (DeletedNode) pToSerialize;
+            DeletedNode node = (DeletedNode)pToSerialize;
             serializeDelegate(node.getNodeDelegate(), pSink);
         }
 
@@ -278,7 +277,8 @@ public enum ENode {
 
     /** Mapping of keys -> Nodes */
     private final static Map<Integer, ENode> INSTANCEFORID = new HashMap<Integer, ENode>();
-    private final static Map<Class<? extends INode>, ENode> INSTANCEFORCLASS = new HashMap<Class<? extends INode>, ENode>();
+    private final static Map<Class<? extends INode>, ENode> INSTANCEFORCLASS =
+        new HashMap<Class<? extends INode>, ENode>();
     static {
         for (final ENode node : values()) {
             INSTANCEFORID.put(node.mKind, node);
@@ -359,8 +359,7 @@ public enum ENode {
      * @param pSink
      *            to serialize to.
      */
-    private static final void serializeDelegate(final NodeDelegate pDel,
-            final ITTSink pSink) {
+    private static final void serializeDelegate(final NodeDelegate pDel, final ITTSink pSink) {
         pSink.writeLong(pDel.getNodeKey());
         pSink.writeLong(pDel.getParentKey());
         pSink.writeLong(pDel.getHash());
@@ -374,8 +373,7 @@ public enum ENode {
      * @param pSink
      *            to serialize to.
      */
-    private static final void serializeStrucDelegate(
-            final StructNodeDelegate pDel, final ITTSink pSink) {
+    private static final void serializeStrucDelegate(final StructNodeDelegate pDel, final ITTSink pSink) {
         pSink.writeLong(pDel.getFirstChildKey());
         pSink.writeLong(pDel.getRightSiblingKey());
         pSink.writeLong(pDel.getLeftSiblingKey());
@@ -390,8 +388,7 @@ public enum ENode {
      * @param pSink
      *            to serialize to.
      */
-    private static final void serializeNameDelegate(
-            final NameNodeDelegate pDel, final ITTSink pSink) {
+    private static final void serializeNameDelegate(final NameNodeDelegate pDel, final ITTSink pSink) {
         pSink.writeInt(pDel.getNameKey());
         pSink.writeInt(pDel.getURIKey());
     }
@@ -404,8 +401,7 @@ public enum ENode {
      * @param pSink
      *            to serialize to.
      */
-    private static final void serializeValDelegate(final ValNodeDelegate pDel,
-            final ITTSink pSink) {
+    private static final void serializeValDelegate(final ValNodeDelegate pDel, final ITTSink pSink) {
         pSink.writeInt(pDel.getRawValue().length);
         for (byte value : pDel.getRawValue()) {
             pSink.writeByte(value);

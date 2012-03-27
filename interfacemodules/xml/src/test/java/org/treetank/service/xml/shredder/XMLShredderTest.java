@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -94,13 +95,13 @@ public class XMLShredderTest extends XMLTestCase {
         final ISession session =
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeReadTransaction rtx = session.beginReadTransaction();
-        rtx.moveToDocumentRoot();
+        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
         final Iterator<Long> descendants = new DescendantAxis(rtx);
 
         while (expectedDescendants.hasNext() && descendants.hasNext()) {
-            final IStructNode expDesc = expectedTrx.getStructuralNode();
-            final IStructNode desc = rtx.getStructuralNode();
+            final IStructNode expDesc = ((IStructNode)expectedTrx.getNode());
+            final IStructNode desc = ((IStructNode)rtx.getNode());
             assertEquals(expDesc.getNodeKey(), desc.getNodeKey());
             assertEquals(expDesc.getParentKey(), desc.getParentKey());
             assertEquals(expDesc.getFirstChildKey(), desc.getFirstChildKey());
@@ -131,8 +132,9 @@ public class XMLShredderTest extends XMLTestCase {
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         assertEquals(1, wtx.getRevisionNumber());
-        wtx.moveToDocumentRoot();
-        wtx.moveToFirstChild();
+        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
+
         final XMLShredder shredder2 =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)),
                 EShredderInsert.ADDASRIGHTSIBLING);
@@ -148,7 +150,7 @@ public class XMLShredderTest extends XMLTestCase {
         final INodeWriteTransaction expectedTrx = expectedSession.beginWriteTransaction();
         org.treetank.utils.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
-        expectedTrx.moveToDocumentRoot();
+        expectedTrx.moveTo(NodeReadTransaction.ROOT_NODE);
 
         // Verify.
         final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
@@ -163,7 +165,7 @@ public class XMLShredderTest extends XMLTestCase {
             assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
         }
 
-        expectedTrx.moveToDocumentRoot();
+        expectedTrx.moveTo(NodeReadTransaction.ROOT_NODE);
         final Iterator<Long> expectedDescendants2 = new DescendantAxis(expectedTrx);
         while (expectedDescendants2.hasNext()) {
             expectedDescendants2.next();
@@ -201,7 +203,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Verify.
         final INodeReadTransaction rtx = session2.beginReadTransaction();
-        rtx.moveToDocumentRoot();
+        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
         final Iterator<Long> expectedAttributes = new DescendantAxis(expectedTrx2);
         final Iterator<Long> attributes = new DescendantAxis(rtx);
 
@@ -239,13 +241,13 @@ public class XMLShredderTest extends XMLTestCase {
         wtx.close();
 
         final INodeReadTransaction rtx = session.beginReadTransaction();
-        assertTrue(rtx.moveToFirstChild());
-        assertTrue(rtx.moveToFirstChild());
+        assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
+        assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
 
         final StringBuilder tnkBuilder = new StringBuilder();
         do {
             tnkBuilder.append(rtx.getValueOfCurrentNode());
-        } while (rtx.moveToRightSibling());
+        } while (rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey()));
 
         final String tnkString = tnkBuilder.toString();
 

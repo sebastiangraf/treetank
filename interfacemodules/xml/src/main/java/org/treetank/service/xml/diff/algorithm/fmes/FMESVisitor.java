@@ -34,6 +34,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Initialize data structures.
@@ -106,11 +107,12 @@ public final class FMESVisitor {
     private void countDescendants() {
         long descendants = 1;
         final long nodeKey = mRtx.getNode().getNodeKey();
-        if (mRtx.getStructuralNode().hasFirstChild()) {
-            mRtx.moveToFirstChild();
+        if (((IStructNode)mRtx.getNode()).hasFirstChild()) {
+            mRtx.moveTo(((IStructNode)mRtx.getNode()).getFirstChildKey());
             do {
                 descendants += mDescendants.get(mRtx.getNode());
-            } while (mRtx.getStructuralNode().hasRightSibling() && mRtx.moveToRightSibling());
+            } while (((IStructNode)mRtx.getNode()).hasRightSibling()
+                && mRtx.moveTo(((IStructNode)mRtx.getNode()).getRightSiblingKey()));
         }
         mRtx.moveTo(nodeKey);
         mDescendants.put(mRtx.getNode(), descendants);

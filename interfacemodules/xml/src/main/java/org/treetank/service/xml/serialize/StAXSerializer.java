@@ -48,6 +48,7 @@ import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>StAXSerializer</h1>
@@ -300,14 +301,14 @@ public final class StAXSerializer implements XMLEventReader {
                 emitEndTag();
             } else {
                 final ENode nodeKind = mRtx.getNode().getKind();
-                if (mRtx.getStructuralNode().hasFirstChild()) {
-                    mRtx.moveToFirstChild();
+                if (((IStructNode)mRtx.getNode()).hasFirstChild()) {
+                    mRtx.moveTo(((IStructNode)mRtx.getNode()).getFirstChildKey());
                     emitNode();
-                } else if (mRtx.getStructuralNode().hasRightSibling()) {
-                    mRtx.moveToRightSibling();
+                } else if (((IStructNode)mRtx.getNode()).hasRightSibling()) {
+                    mRtx.moveTo(((IStructNode)mRtx.getNode()).getRightSiblingKey());
                     processNode(nodeKind);
-                } else if (mRtx.getStructuralNode().hasParent()) {
-                    mRtx.moveToParent();
+                } else if (((IStructNode)mRtx.getNode()).hasParent()) {
+                    mRtx.moveTo(mRtx.getNode().getParentKey());
                     emitEndTag();
                 }
             }
@@ -371,7 +372,7 @@ public final class StAXSerializer implements XMLEventReader {
     private void emit() throws IOException {
         // Emit pending end elements.
         if (mCloseElements) {
-            if (!mStack.empty() && mStack.peek() != mRtx.getStructuralNode().getLeftSiblingKey()) {
+            if (!mStack.empty() && mStack.peek() != ((IStructNode)mRtx.getNode()).getLeftSiblingKey()) {
                 mRtx.moveTo(mStack.pop());
                 emitEndTag();
                 mRtx.moveTo(mKey);
@@ -398,7 +399,8 @@ public final class StAXSerializer implements XMLEventReader {
 
             // Remember to emit all pending end elements from stack if
             // required.
-            if (!mRtx.getStructuralNode().hasFirstChild() && !mRtx.getStructuralNode().hasRightSibling()) {
+            if (!((IStructNode)mRtx.getNode()).hasFirstChild()
+                && !((IStructNode)mRtx.getNode()).hasRightSibling()) {
                 mGoUp = true;
                 moveToNextNode();
             } else if (mRtx.getNode().getKind() == ENode.ELEMENT_KIND

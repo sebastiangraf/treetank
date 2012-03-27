@@ -62,8 +62,7 @@ public class CryptoJavaImpl {
      *            data that should be compressed
      * @return compressed data, null if failed
      */
-    public int crypt(final int paramLength,
-            final ByteBufferSinkAndSource paramBuffer) {
+    public int crypt(final int paramLength, final ByteBufferSinkAndSource paramBuffer) {
         try {
             paramBuffer.position(IConstants.BEACON_LENGTH);
             final byte[] tmp = new byte[paramLength - IConstants.BEACON_LENGTH];
@@ -98,8 +97,7 @@ public class CryptoJavaImpl {
      *            of the data to be decompressed
      * @return Decompressed data, null if failed
      */
-    public int decrypt(final int paramLength,
-            final ByteBufferSinkAndSource paramBuffer) {
+    public int decrypt(final int paramLength, final ByteBufferSinkAndSource paramBuffer) {
         try {
             paramBuffer.position(IConstants.BEACON_LENGTH);
             final byte[] tmp = new byte[paramLength - IConstants.BEACON_LENGTH];

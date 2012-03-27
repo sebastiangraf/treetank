@@ -54,61 +54,56 @@ import org.xml.sax.helpers.XMLFilterImpl;
  */
 public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
-	/** Treetank database on books document. */
-	private transient Holder mHolder;
+    /** Treetank database on books document. */
+    private transient Holder mHolder;
 
-	@Before
-	public void setUp() throws Exception {
-		SaxonHelper.createBookDB();
-		mHolder = Holder.generateSession();
-	}
+    @Before
+    public void setUp() throws Exception {
+        SaxonHelper.createBookDB();
+        mHolder = Holder.generateSession();
+    }
 
-	@After
-	public void tearDown() throws AbsTTException {
-		TestHelper.closeEverything();
-		TestHelper.deleteEverything();
-	}
+    @After
+    public void tearDown() throws AbsTTException {
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+    }
 
-	@Test
-	public void testWhereBooks() throws Exception {
-		final StringBuilder strBuilder = new StringBuilder();
-		final ContentHandler contHandler = new XMLFilterImpl() {
+    @Test
+    public void testWhereBooks() throws Exception {
+        final StringBuilder strBuilder = new StringBuilder();
+        final ContentHandler contHandler = new XMLFilterImpl() {
 
-			@Override
-			public void startElement(final String uri, final String localName,
-					final String qName, final Attributes atts)
-					throws SAXException {
-				strBuilder.append("<" + localName);
+            @Override
+            public void startElement(final String uri, final String localName, final String qName,
+                final Attributes atts) throws SAXException {
+                strBuilder.append("<" + localName);
 
-				for (int i = 0; i < atts.getLength(); i++) {
-					strBuilder.append(" " + atts.getQName(i));
-					strBuilder.append("=\"" + atts.getValue(i) + "\"");
-				}
+                for (int i = 0; i < atts.getLength(); i++) {
+                    strBuilder.append(" " + atts.getQName(i));
+                    strBuilder.append("=\"" + atts.getValue(i) + "\"");
+                }
 
-				strBuilder.append(">");
-			}
+                strBuilder.append(">");
+            }
 
-			@Override
-			public void endElement(String uri, String localName, String qName)
-					throws SAXException {
-				strBuilder.append("</" + localName + ">");
-			}
+            @Override
+            public void endElement(String uri, String localName, String qName) throws SAXException {
+                strBuilder.append("</" + localName + ">");
+            }
 
-			@Override
-			public void characters(final char[] ch, final int start,
-					final int length) throws SAXException {
-				for (int i = start; i < start + length; i++) {
-					strBuilder.append(ch[i]);
-				}
-			}
-		};
+            @Override
+            public void characters(final char[] ch, final int start, final int length) throws SAXException {
+                for (int i = start; i < start + length; i++) {
+                    strBuilder.append(ch[i]);
+                }
+            }
+        };
 
-		new XQueryEvaluatorSAXHandler(
-				"for $x in /bookstore/book where $x/price>30 return $x/title",
-				mHolder.getSession(), contHandler).call();
+        new XQueryEvaluatorSAXHandler("for $x in /bookstore/book where $x/price>30 return $x/title", mHolder
+            .getSession(), contHandler).call();
 
-		assertEquals(
-				strBuilder.toString(),
-				"<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>");
-	}
+        assertEquals(strBuilder.toString(),
+            "<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>");
+    }
 }

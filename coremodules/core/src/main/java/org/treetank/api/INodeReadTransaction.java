@@ -32,19 +32,11 @@ import javax.xml.namespace.QName;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 
 /**
 
  */
 public interface INodeReadTransaction {
-
-    /**
-     * Get ID of transaction.
-     * 
-     * @return ID of transaction.
-     */
-    long getTransactionID();
 
     /**
      * What is the revision number of this transaction?
@@ -54,15 +46,6 @@ public interface INodeReadTransaction {
      * @return Immutable revision number of this INodeReadTransaction.
      */
     long getRevisionNumber() throws TTIOException;
-
-    /**
-     * UNIX-style timestamp of the commit of the revision.
-     * 
-     * @throws TTIOException
-     *             if can't get Max Node Key.
-     * @return Timestamp of revision commit.
-     */
-    long getRevisionTimestamp() throws TTIOException;
 
     /**
      * Getting the maximum nodekey avaliable in this revision.
@@ -84,41 +67,6 @@ public interface INodeReadTransaction {
      * @return True if the node with the given node key is selected.
      */
     boolean moveTo(final long pKey);
-
-    /**
-     * Move cursor to document root node.
-     * 
-     * @return True if the document root node is selected.
-     */
-    boolean moveToDocumentRoot();
-
-    /**
-     * Move cursor to parent node of currently selected node.
-     * 
-     * @return True if the parent node is selected.
-     */
-    boolean moveToParent();
-
-    /**
-     * Move cursor to first child node of currently selected node.
-     * 
-     * @return True if the first child node is selected.
-     */
-    boolean moveToFirstChild();
-
-    /**
-     * Move cursor to left sibling node of the currently selected node.
-     * 
-     * @return True if the left sibling node is selected.
-     */
-    boolean moveToLeftSibling();
-
-    /**
-     * Move cursor to right sibling node of the currently selected node.
-     * 
-     * @return True if the right sibling node is selected.
-     */
-    boolean moveToRightSibling();
 
     /**
      * Move cursor to attribute by its index.
@@ -204,12 +152,4 @@ public interface INodeReadTransaction {
      * @return true if closed, false otherwise
      */
     boolean isClosed();
-
-    /**
-     * This method returns the current {@link INode} as a {@link IStructNode}.
-     * 
-     * @return the current node as {@link IStructNode} if possible,
-     *         otherwise null.
-     */
-    IStructNode getStructuralNode();
 }

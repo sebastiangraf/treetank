@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 
 import org.treetank.access.Database;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -40,6 +41,7 @@ import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.interfaces.IStructNode;
 
 /**
  * This class acts as a commando line interface to navigate through a treetank
@@ -303,19 +305,19 @@ public final class TreeTankCommandoLineExplorer {
                 final StringBuilder builder = new StringBuilder("Move to ");
                 if (mParameter.equals("up")) {
                     builder.append("parent ");
-                    succeed = mCurrentRtx.moveToParent();
+                    succeed = mCurrentRtx.moveTo(mCurrentRtx.getNode().getParentKey());
                 } else if (mParameter.equals("down")) {
                     builder.append("first child ");
-                    succeed = mCurrentRtx.moveToFirstChild();
+                    succeed = mCurrentRtx.moveTo(((IStructNode)mCurrentRtx.getNode()).getFirstChildKey());
                 } else if (mParameter.equals("right")) {
                     builder.append("right sibling ");
-                    succeed = mCurrentRtx.moveToRightSibling();
+                    succeed = mCurrentRtx.moveTo(((IStructNode)mCurrentRtx.getNode()).getRightSiblingKey());
                 } else if (mParameter.equals("left")) {
                     builder.append("left sibling ");
-                    succeed = mCurrentRtx.moveToLeftSibling();
+                    succeed = mCurrentRtx.moveTo(((IStructNode)mCurrentRtx.getNode()).getLeftSiblingKey());
                 } else if (mParameter.equals("root")) {
                     builder.append("document root ");
-                    succeed = mCurrentRtx.moveToDocumentRoot();
+                    succeed = mCurrentRtx.moveTo(NodeReadTransaction.ROOT_NODE);
                 } else {
                     try {
                         final long nodeKey = Long.parseLong(mParameter);

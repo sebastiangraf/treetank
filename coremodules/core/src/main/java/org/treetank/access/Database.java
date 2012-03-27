@@ -144,13 +144,11 @@ public final class Database implements IDatabase {
      * @throws AbsTTException
      *             any kind of false Treetank behaviour
      */
-    public static synchronized void truncateDatabase(final DatabaseConfiguration pConf)
-        throws AbsTTException {
+    public static synchronized void truncateDatabase(final DatabaseConfiguration pConf) throws AbsTTException {
         // check that database must be closed beforehand
         if (!DATABASEMAP.containsKey(pConf.mFile)) {
             // if file is existing and folder is a tt-dataplace, delete it
-            if (pConf.mFile.exists()
-                && DatabaseConfiguration.Paths.compareStructure(pConf.mFile) == 0) {
+            if (pConf.mFile.exists() && DatabaseConfiguration.Paths.compareStructure(pConf.mFile) == 0) {
                 // instantiate the database for deletion
                 EStorage.recursiveDelete(pConf.mFile);
             }
@@ -373,8 +371,7 @@ public final class Database implements IDatabase {
      * @throws IOException
      *             if serialization fails
      */
-    private static void serializeConfiguration(final IConfigureSerializable pConf)
-        throws IOException {
+    private static void serializeConfiguration(final IConfigureSerializable pConf) throws IOException {
         FileOutputStream os = null;
         os = new FileOutputStream(pConf.getConfigFile());
         final ObjectOutputStream en = new ObjectOutputStream(os);

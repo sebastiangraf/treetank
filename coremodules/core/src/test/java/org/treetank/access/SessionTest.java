@@ -42,11 +42,12 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.INode;
+import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.DocumentCreater;
 import org.treetank.utils.IConstants;
 
@@ -108,10 +109,10 @@ public class SessionTest {
     public void testInsertChild() throws AbsTTException {
         final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
         DocumentCreater.create(wtx);
-        assertNotNull(wtx.moveToDocumentRoot());
+        assertNotNull(wtx.moveTo(NodeReadTransaction.ROOT_NODE));
         assertEquals(ENode.ROOT_KIND, wtx.getNode().getKind());
 
-        assertNotNull(wtx.moveToFirstChild());
+        assertNotNull(wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey()));
         assertEquals(ENode.ELEMENT_KIND, wtx.getNode().getKind());
         assertEquals("p:a", new StringBuilder(wtx.getQNameOfCurrentNode().getPrefix()).append(":").append(
             wtx.getQNameOfCurrentNode().getLocalPart()).toString());

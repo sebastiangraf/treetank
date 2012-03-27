@@ -36,6 +36,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
@@ -62,7 +63,7 @@ public class AttributeAxisTest {
     public void testIterate() throws AbsTTException {
         final INodeReadTransaction wtx = holder.getRtx();
 
-        wtx.moveToDocumentRoot();
+        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
         wtx.moveTo(1L);
@@ -99,12 +100,12 @@ public class AttributeAxisTest {
         Assert.assertEquals("0", wtx.getValueOfCurrentNode());
         Assert.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
 
-        Assert.assertEquals(true, wtx.moveToParent());
+        Assert.assertEquals(true, wtx.moveTo(wtx.getNode().getParentKey()));
         Assert.assertEquals(true, wtx.moveToAttribute(1));
         Assert.assertEquals("1", wtx.getValueOfCurrentNode());
         Assert.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
 
-        Assert.assertEquals(true, wtx.moveToParent());
+        Assert.assertEquals(true, wtx.moveTo(wtx.getNode().getParentKey()));
         Assert.assertEquals(true, wtx.moveToAttribute(2));
         Assert.assertEquals("2", wtx.getValueOfCurrentNode());
         Assert.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());

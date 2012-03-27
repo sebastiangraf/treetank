@@ -27,76 +27,40 @@
 
 package org.treetank.axis;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
-import org.treetank.node.ENode;
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+import org.treetank.exception.AbsTTException;
 
-/**
- * <h1>AncestorAxis</h1>
- * 
- * <p>
- * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
- * </p>
- */
-public class AncestorAxis extends AbsAxis {
+public class PostOrderTest {
 
-    /**
-     * First touch of node.
-     */
-    private boolean mFirst;
+    private Holder holder;
 
-    /**
-     * Constructor initializing internal state.
-     * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
-     */
-    public AncestorAxis(final INodeReadTransaction rtx) {
-        super(rtx);
+    @Before
+    public void setUp() throws AbsTTException {
+        TestHelper.deleteEverything();
+        TestHelper.createTestDocument();
+        holder = Holder.generateRtx();
     }
 
-    /**
-     * Constructor initializing internal state.
-     * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
-     * @param mIncludeSelf
-     *            Is self included?
-     */
-    public AncestorAxis(final INodeReadTransaction rtx, final boolean mIncludeSelf) {
-        super(rtx, mIncludeSelf);
+    @After
+    public void tearDown() throws AbsTTException {
+        holder.close();
+        TestHelper.closeEverything();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void reset(final long mNodeKey) {
-        super.reset(mNodeKey);
-        mFirst = true;
+    @Test
+    public void testIterate() throws AbsTTException {
+        final INodeReadTransaction rtx = holder.getRtx();
+
+        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        AbsAxisTest.testIAxisConventions(new PostOrderAxis(rtx), new long[] {
+            4L, 6L, 7L, 5L, 8L, 11L, 12L, 9L, 13L, 1L, 0L
+        });
+
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean hasNext() {
-        resetToLastKey();
-
-        // Self
-        if (mFirst && isSelfIncluded()) {
-            mFirst = false;
-            return true;
-        }
-
-        if (getNode().getKind() != ENode.ROOT_KIND
-            && getNode().hasParent()
-            && getNode().getParentKey() != ROOT_NODE) {
-            moveTo(getNode().getParentKey());
-            return true;
-        }
-        resetToStartKey();
-        return false;
-    }
-
 }

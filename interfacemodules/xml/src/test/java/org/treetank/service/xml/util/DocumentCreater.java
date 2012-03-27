@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
@@ -49,7 +50,7 @@ public class DocumentCreater {
         org.treetank.utils.DocumentCreater.create(paramWtx);
         paramWtx.commit();
         for (int i = 0; i <= 1; i++) {
-            paramWtx.moveToDocumentRoot();
+            paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
             paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
             paramWtx.insertTextAsFirstChild("OOPS4!");
             paramWtx.commit();
@@ -68,11 +69,11 @@ public class DocumentCreater {
      */
     public static void createWithoutNamespace(final INodeWriteTransaction paramWtx) throws AbsTTException {
         assertNotNull(paramWtx);
-        paramWtx.moveToDocumentRoot();
+        paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
 
         paramWtx.insertElementAsFirstChild(new QName("a"));
         paramWtx.insertAttribute(new QName("i"), "j");
-        paramWtx.moveToParent();
+        paramWtx.moveTo(paramWtx.getNode().getParentKey());
 
         paramWtx.insertTextAsFirstChild("oops1");
 
@@ -80,20 +81,20 @@ public class DocumentCreater {
 
         paramWtx.insertTextAsFirstChild("foo");
         paramWtx.insertElementAsRightSibling(new QName("c"));
-        paramWtx.moveToParent();
+        paramWtx.moveTo(paramWtx.getNode().getParentKey());
 
         paramWtx.insertTextAsRightSibling("oops2");
 
         paramWtx.insertElementAsRightSibling(new QName("b"));
         paramWtx.insertAttribute(new QName("x"), "y");
-        paramWtx.moveToParent();
+        paramWtx.moveTo(paramWtx.getNode().getParentKey());
 
         paramWtx.insertElementAsFirstChild(new QName("c"));
         paramWtx.insertTextAsRightSibling("bar");
-        paramWtx.moveToParent();
+        paramWtx.moveTo(paramWtx.getNode().getParentKey());
 
         paramWtx.insertTextAsRightSibling("oops3");
 
-        paramWtx.moveToDocumentRoot();
+        paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
     }
 }

@@ -82,14 +82,12 @@ public final class TestHelper {
     public enum PATHS {
 
         // PATH1
-        PATH1(new File(new StringBuilder(File.separator).append("tmp")
-                .append(File.separator).append("tnk").append(File.separator)
-                .append("path1").toString())),
+            PATH1(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
+                "tnk").append(File.separator).append("path1").toString())),
 
-        // PATH2
-        PATH2(new File(new StringBuilder(File.separator).append("tmp")
-                .append(File.separator).append("tnk").append(File.separator)
-                .append("path2").toString()));
+            // PATH2
+            PATH2(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
+                "tnk").append(File.separator).append("path2").toString()));
 
         final File file;
 
@@ -134,14 +132,12 @@ public final class TestHelper {
             return INSTANCES.get(file);
         } else {
             try {
-                final DatabaseConfiguration config = new DatabaseConfiguration(
-                        file);
+                final DatabaseConfiguration config = new DatabaseConfiguration(file);
                 if (!file.exists()) {
                     Database.createDatabase(config);
                 }
                 final IDatabase database = Database.openDatabase(file);
-                database.createResource(new ResourceConfiguration.Builder(
-                        RESOURCE, config).build());
+                database.createResource(new ResourceConfiguration.Builder(RESOURCE, config).build());
                 INSTANCES.put(file, database);
                 return database;
             } catch (final AbsTTException exc) {
@@ -181,8 +177,8 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static NodePage getNodePage(final long revision, final int offset,
-            final int length, final long nodePageKey) {
+    public static NodePage getNodePage(final long revision, final int offset, final int length,
+        final long nodePageKey) {
         final NodePage page = new NodePage(nodePageKey, revision);
         NodeDelegate nodeDel;
         NameNodeDelegate nameDel;
@@ -191,49 +187,46 @@ public final class TestHelper {
         for (int i = offset; i < length; i++) {
             switch (random.nextInt(6)) {
             case 0:
-                nodeDel = new NodeDelegate(random.nextLong(),
-                        random.nextLong(), random.nextLong());
-                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(),
-                        random.nextInt());
-                valDel = new ValNodeDelegate(nodeDel, new byte[] { 0, 1, 2, 3,
-                        4 });
+                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
+                valDel = new ValNodeDelegate(nodeDel, new byte[] {
+                    0, 1, 2, 3, 4
+                });
                 page.setNode(i, new AttributeNode(nodeDel, nameDel, valDel));
                 break;
             case 1:
-                page.setNode(i,
-                        new DeletedNode(new NodeDelegate(random.nextLong(),
-                                random.nextLong(), random.nextLong())));
+                page.setNode(i, new DeletedNode(new NodeDelegate(random.nextLong(), random.nextLong(), random
+                    .nextLong())));
                 break;
             case 2:
-                nodeDel = new NodeDelegate(random.nextLong(),
-                        random.nextLong(), random.nextLong());
-                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(),
-                        random.nextInt());
-                strucDel = new StructNodeDelegate(nodeDel, random.nextLong(),
-                        random.nextLong(), random.nextLong(), random.nextLong());
-                page.setNode(i, new ElementNode(nodeDel, strucDel, nameDel,
-                        new ArrayList<Long>(), new ArrayList<Long>()));
+                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
+                strucDel =
+                    new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
+                        random.nextLong());
+                page.setNode(i, new ElementNode(nodeDel, strucDel, nameDel, new ArrayList<Long>(),
+                    new ArrayList<Long>()));
                 break;
             case 3:
-                nodeDel = new NodeDelegate(random.nextLong(),
-                        random.nextLong(), random.nextLong());
-                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(),
-                        random.nextInt());
+                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
                 page.setNode(i, new NamespaceNode(nodeDel, nameDel));
                 break;
             case 4:
-                nodeDel = new NodeDelegate(random.nextLong(),
-                        random.nextLong(), random.nextLong());
-                strucDel = new StructNodeDelegate(nodeDel, random.nextLong(),
-                        random.nextLong(), random.nextLong(), random.nextLong());
+                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                strucDel =
+                    new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
+                        random.nextLong());
                 page.setNode(i, new DocumentRootNode(nodeDel, strucDel));
                 break;
             case 5:
-                nodeDel = new NodeDelegate(random.nextLong(),
-                        random.nextLong(), random.nextLong());
-                valDel = new ValNodeDelegate(nodeDel, new byte[] { 0, 1 });
-                strucDel = new StructNodeDelegate(nodeDel, random.nextLong(),
-                        random.nextLong(), random.nextLong(), random.nextLong());
+                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
+                valDel = new ValNodeDelegate(nodeDel, new byte[] {
+                    0, 1
+                });
+                strucDel =
+                    new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
+                        random.nextLong());
                 page.setNode(i, new TextNode(nodeDel, valDel, strucDel));
                 break;
             }
@@ -255,8 +248,8 @@ public final class TestHelper {
      *             throws an IOException if any I/O operation fails.
      */
     @Ignore("Not a test, utility method only")
-    public static StringBuilder readFile(final File paramFile,
-            final boolean paramWhitespaces) throws IOException {
+    public static StringBuilder readFile(final File paramFile, final boolean paramWhitespaces)
+        throws IOException {
         final BufferedReader in = new BufferedReader(new FileReader(paramFile));
         final StringBuilder sBuilder = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -282,12 +275,9 @@ public final class TestHelper {
      * @throws AbsTTException
      */
     public static void createTestDocument() throws AbsTTException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(RESOURCE,
-                PATHS.PATH1.config).build());
-        final ISession session = database
-                .getSession(new SessionConfiguration.Builder(RESOURCE).build());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.config).build());
+        final ISession session = database.getSession(new SessionConfiguration.Builder(RESOURCE).build());
         final INodeWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();

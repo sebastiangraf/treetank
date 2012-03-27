@@ -46,7 +46,6 @@ import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTThreadedException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
@@ -172,10 +171,6 @@ public final class Session implements ISession {
             new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTransaction(
                 this, mLastCommittedUberPage, paramRevisionKey, mFac.getReader()));
 
-        // Remember transaction for debugging and safe close.
-        if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
-            throw new TTUsageException("ID generation is bogus because of duplicate ID.");
-        }
         return rtx;
     }
 

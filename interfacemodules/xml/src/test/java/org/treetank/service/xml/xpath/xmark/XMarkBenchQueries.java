@@ -38,12 +38,11 @@ import org.treetank.exception.TTIOException;
  */
 public class XMarkBenchQueries {
 
-    // /*
-    // * Queries and expected results for factor 0.01; XML file with size 1MB
-    // */
-    // private final String Q1_Fac001 =
-    // "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
-    // private final String R1_Fac001 = "Klemens Pelz";
+    /*
+     * Queries and expected results for factor 0.01; XML file with size 1MB
+     */
+    public final String Q1_Fac001 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
+    public final String R1_Fac001 = "Klemens Pelz";
     //
     // private final String Q2_Fac001 = "";
     // private final String R2_Fac001 = "";
@@ -54,16 +53,16 @@ public class XMarkBenchQueries {
     // private final String Q4_Fac001 = "";
     // private final String R4_Fac001 = "";
     //
-    // private final String Q5_Fac001 =
-    // "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
-    // private final String R5_Fac001 = "75";
-    //
-    // private final String Q6_Fac001 = "for $b in //site/regions return fn:count($b//item)";
-    // private final String R6_Fac001 = "217";
-    //
-    // private final String Q7_Fac001 = "for $p in /site return fn:count($p//description) + "
-    // + "fn:count($p//annotation) + fn:count($p//emailaddress)";
-    // private final String R7_Fac001 = "916.0";
+    public final String Q5_Fac001 =
+        "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
+    public final String R5_Fac001 = "75";
+
+    public final String Q6_Fac001 = "for $b in //site/regions return fn:count($b//item)";
+    public final String R6_Fac001 = "217";
+
+    public final String Q7_Fac001 = "for $p in /site return fn:count($p//description) + "
+        + "fn:count($p//annotation) + fn:count($p//emailaddress)";
+    public final String R7_Fac001 = "916.0";
     //
     // private final String Q8_Fac001 = "";
     // private final String R8_Fac001 = "";
@@ -104,23 +103,23 @@ public class XMarkBenchQueries {
     // private final String Q20_Fac001 = "";
     // private final String R20_Fac001 = "";
     //
-    // // own queries
-    // private final String Q21_Fac001 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
-    // private final String R21_Fac001 = "officer embrace such fears distinction attires";
-    //
-    // // private final String Q22_Fac001 =
-    // // "/site/open_auctions/open_auction[@id=\"open_auction0\"]/bidder/personref[@person=\"person175\"]";
-    // // private final String R22_Fac001 = "<personref person=\"person175\"/>";
-    // //
-    // // private final String Q23_Fac001 =
-    // // "/site/people/person[@id=\"person3\"][address and (phone or homepage)]/name";
-    // // private final String R23_Fac001 = "<name>Mehrdad Suermann</name>";
-    //
-    // /*
-    // * Queries and expected results for factor 0.1; XML file with size 10MB
-    // */
-    // private final String Q1_Fac01 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
-    // private final String R1_Fac01 = "Krishna Merle";
+    // own queries
+    public final String Q21_Fac001 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
+    public final String R21_Fac001 = "officer embrace such fears distinction attires";
+
+    public final String Q22_Fac001 =
+        "/site/open_auctions/open_auction[@id=\"open_auction0\"]/bidder/personref[@person=\"person175\"]";
+    public final String R22_Fac001 = "<personref person=\"person175\"/>";
+
+    public final String Q23_Fac001 =
+        "/site/people/person[@id=\"person3\"][address and (phone or homepage)]/name";
+    public final String R23_Fac001 = "<name>Mehrdad Suermann</name>";
+
+    /*
+     * Queries and expected results for factor 0.1; XML file with size 10MB
+     */
+    public final String Q1_Fac01 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
+    public final String R1_Fac01 = "Krishna Merle";
     //
     // private final String Q2_Fac01 = "";
     // private final String R2_Fac01 = "";
@@ -131,16 +130,16 @@ public class XMarkBenchQueries {
     // private final String Q4_Fac01 = "";
     // private final String R4_Fac01 = "";
     //
-    // private final String Q5_Fac01 =
-    // "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
-    // private final String R5_Fac01 = "670";
-    //
-    // private final String Q6_Fac01 = "for $b in //site/regions return fn:count($b//item)";
-    // private final String R6_Fac01 = "2175";
-    //
-    // private final String Q7_Fac01 = "for $p in /site return fn:count($p//description) + "
-    // + "fn:count($p//annotation) + fn:count($p//emailaddress)";
-    // private final String R7_Fac01 = "9175.0";
+    public final String Q5_Fac01 =
+        "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
+    public final String R5_Fac01 = "670";
+
+    public final String Q6_Fac01 = "for $b in //site/regions return fn:count($b//item)";
+    public final String R6_Fac01 = "2175";
+
+    public final String Q7_Fac01 = "for $p in /site return fn:count($p//description) + "
+        + "fn:count($p//annotation) + fn:count($p//emailaddress)";
+    public final String R7_Fac01 = "9175.0";
     //
     // private final String Q8_Fac01 = "";
     // private final String R8_Fac01 = "";
@@ -181,15 +180,15 @@ public class XMarkBenchQueries {
     // private final String Q20_Fac01 = "";
     // private final String R20_Fac01 = "";
     //
-    // // own queries
-    // private final String Q21_Fac01 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
-    // private final String R21_Fac01 = "officer embrace such fears distinction attires";
-    //
-    // /*
-    // * Queries for factor 1.0; XML file with size 100 MB
-    // */
-    // private final String Q1_Fac1 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
-    // private final String R1_Fac1 = "Kasidit Treweek";
+    // own queries
+    public final String Q21_Fac01 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
+    public final String R21_Fac01 = "officer embrace such fears distinction attires";
+
+    /*
+     * Queries for factor 1.0; XML file with size 100 MB
+     */
+    public final String Q1_Fac1 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
+    public final String R1_Fac1 = "Kasidit Treweek";
     //
     // private final String Q2_Fac1 = "";
     // private final String R2_Fac1 = "";
@@ -200,16 +199,16 @@ public class XMarkBenchQueries {
     // private final String Q4_Fac1 = "";
     // private final String R4_Fac1 = "";
     //
-    // private final String Q5_Fac1 =
-    // "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
-    // private final String R5_Fac1 = "6539";
-    //
-    // private final String Q6_Fac1 = "for $b in //site/regions return fn:count($b//item)";
-    // private final String R6_Fac1 = "21750";
-    //
-    // private final String Q7_Fac1 = "for $p in /site return fn:count($p//description) + "
-    // + "fn:count($p//annotation) + fn:count($p//emailaddress)";
-    // private final String R7_Fac1 = "91750.0";
+    public final String Q5_Fac1 =
+        "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
+    public final String R5_Fac1 = "6539";
+
+    public final String Q6_Fac1 = "for $b in //site/regions return fn:count($b//item)";
+    public final String R6_Fac1 = "21750";
+
+    public final String Q7_Fac1 = "for $p in /site return fn:count($p//description) + "
+        + "fn:count($p//annotation) + fn:count($p//emailaddress)";
+    public final String R7_Fac1 = "91750.0";
     //
     // private final String Q8_Fac1 = "";
     // private final String R8_Fac1 = "";
@@ -250,15 +249,15 @@ public class XMarkBenchQueries {
     // private final String Q20_Fac1 = "";
     // private final String R20_Fac1 = "";
     //
-    // // own queries
-    // private final String Q21_Fac1 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
-    // private final String R21_Fac1 = "officer embrace such fears distinction attires";
-    //
-    // /*
-    // * Queries for factor 10.0; XML file with size 1000 MB
-    // */
-    // private final String Q1_Fac10 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
-    // private final String R1_Fac10 = "Waldo Birch";
+    // own queries
+    public final String Q21_Fac1 = "/site/regions/*/item[@id=\"item0\"]/description//keyword/text()";
+    public final String R21_Fac1 = "officer embrace such fears distinction attires";
+
+    /*
+     * Queries for factor 10.0; XML file with size 1000 MB
+     */
+    public final String Q1_Fac10 = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
+    public final String R1_Fac10 = "Waldo Birch";
     //
     // private final String Q2_Fac10 = "";
     // private final String R2_Fac10 = "";
@@ -269,16 +268,17 @@ public class XMarkBenchQueries {
     // private final String Q4_Fac10 = "";
     // private final String R4_Fac10 = "";
     //
-    // private final String Q5_Fac10 =
-    // "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
-    // private final String R5_Fac10 = "65851";
-    //
-    // private final String Q6_Fac10 = "for $b in //site/regions return fn:count($b//item)";
-    // private final String R6_Fac10 = "217500";
-    //
-    // private final String Q7_Fac10 = "for $p in /site return fn:count($p//description) + "
-    // + "fn:count($p//annotation) + fn:count($p//emailaddress)";
-    // private final String R7_Fac10 = "917500";
+    public final String Q5_Fac10 =
+        "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
+    public final String R5_Fac10 = "65851";
+
+    public final String Q6_Fac10 = "for $b in //site/regions return fn:count($b//item)";
+    public final String R6_Fac10 = "217500";
+
+    public final String Q7_Fac10 = "for $p in /site return fn:count($p//description) + "
+        + "fn:count($p//annotation) + fn:count($p//emailaddress)";
+    public final String R7_Fac10 = "917500";
+
     //
     // private final String Q8_Fac10 = "";
     // private final String R8_Fac10 = "";

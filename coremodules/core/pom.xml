@@ -82,7 +82,5 @@
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-	<!-- <modules> <module>page</module> <module>node</module> <module>io</module> 
-		</modules> -->
 
 </project>

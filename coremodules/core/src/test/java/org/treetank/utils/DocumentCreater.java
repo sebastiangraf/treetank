@@ -32,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
@@ -94,13 +95,13 @@ public final class DocumentCreater {
      */
     public static void create(final INodeWriteTransaction paramWtx) throws AbsTTException {
         assertNotNull(paramWtx);
-        assertTrue(paramWtx.moveToDocumentRoot());
+        assertTrue(paramWtx.moveTo(NodeReadTransaction.ROOT_NODE));
 
         paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
         paramWtx.insertAttribute(new QName("i"), "j");
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
         paramWtx.insertNamespace(new QName("ns", "xmlns", "p"));
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
 
         paramWtx.insertTextAsFirstChild("oops1");
 
@@ -108,21 +109,21 @@ public final class DocumentCreater {
 
         paramWtx.insertTextAsFirstChild("foo");
         paramWtx.insertElementAsRightSibling(new QName("c"));
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
 
         paramWtx.insertTextAsRightSibling("oops2");
 
         paramWtx.insertElementAsRightSibling(new QName("b"));
         paramWtx.insertAttribute(new QName("ns", "x", "p"), "y");
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
 
         paramWtx.insertElementAsFirstChild(new QName("c"));
         paramWtx.insertTextAsRightSibling("bar");
-        assertTrue(paramWtx.moveToParent());
+        assertTrue(paramWtx.moveTo(paramWtx.getNode().getParentKey()));
 
         paramWtx.insertTextAsRightSibling("oops3");
 
-        paramWtx.moveToDocumentRoot();
+        paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
     }
 
 }

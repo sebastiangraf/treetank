@@ -516,20 +516,20 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                  * move this time to parent node.
                  */
                 assert mWtx.getNode().hasParent() && mWtx.getNode().getKind() == ENode.ELEMENT_KIND;
-                mWtx.moveToParent();
+                mWtx.moveTo(mWtx.getNode().getParentKey());
             } else {
                 if (mWtx.getNode().getKind() == ENode.ELEMENT_KIND) {
                     final ElementNode element = (ElementNode)mWtx.getNode();
                     if (element.hasFirstChild() && element.hasParent()) {
                         // It's not an empty element, thus move to parent.
-                        mWtx.moveToParent();
+                        mWtx.moveTo(mWtx.getNode().getParentKey());
                     }
                     // } else {
                     // checkIfLastNode(true);
                     // }
-                } else if (mWtx.getStructuralNode().hasParent()) {
-                    if (mWtx.getStructuralNode().hasRightSibling()) {
-                        mWtx.moveToRightSibling();
+                } else if (((IStructNode)mWtx.getNode()).hasParent()) {
+                    if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
+                        mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
                         /*
                          * Means next event is an end tag in StAX reader, but
                          * something different where the Treetank transaction
@@ -539,7 +539,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                         mDelete = EDelete.ATBOTTOM;
                         deleteNode();
                     }
-                    mWtx.moveToParent();
+                    mWtx.moveTo(mWtx.getNode().getParentKey());
                 }
 
             }
@@ -547,8 +547,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             mLastNodeKey = mWtx.getNode().getNodeKey();
 
             // Move cursor to right sibling if it has one.
-            if (mWtx.getStructuralNode().hasRightSibling()) {
-                mWtx.moveToRightSibling();
+            if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
+                mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
                 mMovedToRightSibling = true;
 
                 skipWhitespaces(mReader);
@@ -619,7 +619,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // }
             // mWtx.moveTo(mKeyMatches);
             // }
-        } while (!mFound && mWtx.moveToRightSibling());
+        } while (!mFound && mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey()));
         mWtx.moveTo(mNodeKey);
     }
 
@@ -673,7 +673,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             //
             // // If next node doesn't match/isn't the same move on.
             // if (!found) {
-            if (mWtx.moveToRightSibling()) {
+            if (mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey())) {
                 mMovedToRightSibling = true;
             } else {
                 mMovedToRightSibling = false;
@@ -755,7 +755,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
              * top of the subtree, as first child.
              */
             mInsert = EInsert.ATTOP;
-            mWtx.moveToFirstChild();
+            mWtx.moveTo(((IStructNode)mWtx.getNode()).getFirstChildKey());
 
             if (mReader.peek().getEventType() == XMLStreamConstants.END_ELEMENT) {
                 /*
@@ -833,7 +833,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // before.
             if (!mEmptyElement) {
                 // Has to be inserted on the parent node.
-                mWtx.moveToParent();
+                mWtx.moveTo(mWtx.getNode().getParentKey());
             }
 
             // Insert element as first child.
@@ -856,7 +856,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // Possibly move one sibling back if transaction already moved to
             // next node.
             if (mMovedToRightSibling) {
-                mWtx.moveToLeftSibling();
+                mWtx.moveTo(((IStructNode)mWtx.getNode()).getLeftSiblingKey());
             }
 
             // Make sure if transaction is on a text node the node is inserted
@@ -873,7 +873,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // Move one sibling back.
             if (mMovedToRightSibling) {
                 mMovedToRightSibling = false;
-                mWtx.moveToLeftSibling();
+                mWtx.moveTo(((IStructNode)mWtx.getNode()).getLeftSiblingKey());
             }
 
             // Insert element as right sibling.
@@ -914,7 +914,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // immediately before).
 
             // Move to parent.
-            mWtx.moveToParent();
+            mWtx.moveTo(mWtx.getNode().getParentKey());
 
             // Insert as first child.
             addNewText(EAdd.ASFIRSTCHILD, paramText);
@@ -922,12 +922,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // Move to next node if no end tag follows (thus cursor isn't moved
             // to parent in processEndTag()).
             if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
-                if (mWtx.moveToRightSibling()) {
+                if (mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey())) {
                     mMovedToRightSibling = true;
                 } else {
                     mMovedToRightSibling = false;
                 }
-            } else if (mWtx.getStructuralNode().hasRightSibling()) {
+            } else if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
                 mMovedToRightSibling = false;
                 mInserted = true;
                 mKeyMatches = -1;
@@ -947,7 +947,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                  * left sibling if there is one and insert as right sibling.
                  */
                 if (mMovedToRightSibling) {
-                    mWtx.moveToLeftSibling();
+                    mWtx.moveTo(((IStructNode)mWtx.getNode()).getLeftSiblingKey());
                 }
                 addNode = EAdd.ASRIGHTSIBLING;
                 mInsertedEndTag = false;
@@ -959,7 +959,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // Move to next node if no end tag follows (thus cursor isn't moved
             // to parent in processEndTag()).
             if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
-                if (mWtx.moveToRightSibling()) {
+                if (mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey())) {
                     mMovedToRightSibling = true;
                 } else {
                     mMovedToRightSibling = false;
@@ -971,14 +971,14 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
             // Move one sibling back.
             if (mMovedToRightSibling) {
-                mWtx.moveToLeftSibling();
+                mWtx.moveTo(((IStructNode)mWtx.getNode()).getLeftSiblingKey());
             }
 
             // Insert element as right sibling.
             addNewText(EAdd.ASRIGHTSIBLING, paramText);
 
             // Move to next node.
-            mWtx.moveToRightSibling();
+            mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
 
             mInsert = EInsert.INTERMEDIATE;
             break;
@@ -1004,9 +1004,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
          */
         if (mInserted && !mMovedToRightSibling) {
             mInserted = false;
-            if (mWtx.getStructuralNode().hasRightSibling()) {
+            if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
                 // Cursor is on the inserted node, so move to right sibling.
-                mWtx.moveToRightSibling();
+                mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
             }
         }
 
@@ -1057,9 +1057,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
              * Treetank transaction has been moved to parent, because all child
              * nodes have been deleted, thus to right sibling.
              */
-            mWtx.moveToRightSibling();
+            mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
         } else {
-            if (mWtx.getStructuralNode().hasFirstChild()) {
+            if (((IStructNode)mWtx.getNode()).hasFirstChild()) {
                 if (mDelete == EDelete.ATBOTTOM && isLast) {
                     /*
                      * Deleted right before an end tag has been parsed, thus
@@ -1071,8 +1071,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 if (isLast) {
                     // If last node of a subtree has been removed, move to
                     // parent and right sibling.
-                    mWtx.moveToParent();
-                    mWtx.moveToRightSibling();
+                    mWtx.moveTo(mWtx.getNode().getParentKey());
+                    mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
 
                     // // If the delete occurs right before an end tag the level
                     // // hasn't been incremented.

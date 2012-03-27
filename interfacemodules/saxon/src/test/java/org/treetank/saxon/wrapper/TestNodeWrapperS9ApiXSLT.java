@@ -75,135 +75,127 @@ import org.treetank.service.xml.shredder.XMLShredder;
  */
 public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
 
-	/** Stylesheet file. */
-	private static final File STYLESHEET = new File("src" + File.separator
-			+ "test" + File.separator + "resources" + File.separator + "styles"
-			+ File.separator + "books.xsl");
+    /** Stylesheet file. */
+    private static final File STYLESHEET = new File("src" + File.separator + "test" + File.separator
+        + "resources" + File.separator + "styles" + File.separator + "books.xsl");
 
-	/** Books XML file. */
-	private static final File BOOKS = new File("src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator + "data"
-			+ File.separator + "books.xml");
+    /** Books XML file. */
+    private static final File BOOKS = new File("src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "data" + File.separator + "books.xml");
 
-	private Holder mHolder;
+    private Holder mHolder;
 
-	@Override
-	@Before
-	public void setUp() throws Exception {
-		TestHelper.deleteEverything();
-		final DatabaseConfiguration dbConfig = new DatabaseConfiguration(
-				TestHelper.PATHS.PATH1.getFile());
-		Database.createDatabase(dbConfig);
-		final IDatabase databaseBooks = Database
-				.openDatabase(TestHelper.PATHS.PATH1.getFile());
-		databaseBooks.createResource(new ResourceConfiguration.Builder(
-				TestHelper.RESOURCE, dbConfig).build());
-		final ISession session = databaseBooks
-				.getSession(new SessionConfiguration.Builder(
-						TestHelper.RESOURCE).build());
-		final INodeWriteTransaction wtx = session.beginWriteTransaction();
-		final XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
-		final XMLShredder shredder = new XMLShredder(wtx, reader,
-				EShredderInsert.ADDASFIRSTCHILD);
-		shredder.call();
-		wtx.close();
-		session.close();
-		databaseBooks.close();
-		mHolder = Holder.generateSession();
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        TestHelper.deleteEverything();
+        final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
+        Database.createDatabase(dbConfig);
+        final IDatabase databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        databaseBooks
+            .createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
+        final ISession session =
+            databaseBooks.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
+        final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
+        shredder.call();
+        wtx.close();
+        session.close();
+        databaseBooks.close();
+        mHolder = Holder.generateSession();
 
-		saxonTransform(BOOKS, STYLESHEET);
+        saxonTransform(BOOKS, STYLESHEET);
 
-		XMLUnit.setIgnoreWhitespace(true);
-	}
+        XMLUnit.setIgnoreWhitespace(true);
+    }
 
-	@Override
-	@After
-	public void tearDown() throws AbsTTException {
-		TestHelper.closeEverything();
-		TestHelper.deleteEverything();
-	}
+    @Override
+    @After
+    public void tearDown() throws AbsTTException {
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
+    }
 
-	@Test
-	public void testWithoutSerializer() throws Exception {
-		final OutputStream out = new XSLTEvaluator(mHolder.getSession(),
-				STYLESHEET, new ByteArrayOutputStream()).call();
+    @Test
+    public void testWithoutSerializer() throws Exception {
+        final OutputStream out =
+            new XSLTEvaluator(mHolder.getSession(), STYLESHEET, new ByteArrayOutputStream()).call();
 
-		final StringBuilder sBuilder = readFile();
+        final StringBuilder sBuilder = readFile();
 
-		final Diff diff = new Diff(sBuilder.toString(), out.toString());
-		diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
+        final Diff diff = new Diff(sBuilder.toString(), out.toString());
+        diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
 
-		assertTrue(diff.toString(), diff.similar());
-	}
+        assertTrue(diff.toString(), diff.similar());
+    }
 
-	@Test
-	public void testWithSerializer() throws Exception {
-		final Serializer serializer = new Serializer();
-		serializer.setOutputProperty(Serializer.Property.METHOD, "xml");
-		serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
+    @Test
+    public void testWithSerializer() throws Exception {
+        final Serializer serializer = new Serializer();
+        serializer.setOutputProperty(Serializer.Property.METHOD, "xml");
+        serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
 
-		final OutputStream out = new XSLTEvaluator(mHolder.getSession(),
-				STYLESHEET, new ByteArrayOutputStream(), serializer).call();
+        final OutputStream out =
+            new XSLTEvaluator(mHolder.getSession(), STYLESHEET, new ByteArrayOutputStream(), serializer)
+                .call();
 
-		final StringBuilder sBuilder = readFile();
+        final StringBuilder sBuilder = readFile();
 
-		final Diff diff = new Diff(sBuilder.toString(), out.toString());
-		diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
+        final Diff diff = new Diff(sBuilder.toString(), out.toString());
+        diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
 
-		assertTrue(diff.toString(), diff.similar());
-	}
+        assertTrue(diff.toString(), diff.similar());
+    }
 
-	/**
-	 * Transform source document with the given stylesheet.
-	 * 
-	 * @param xml
-	 *            Source xml file.
-	 * @param stylesheet
-	 *            Stylesheet to transform source xml file.
-	 * @throws SaxonApiException
-	 *             Exception from Saxon in case anything goes wrong.
-	 */
-	@Ignore("Not a test, utility method only")
-	public void saxonTransform(final File xml, final File stylesheet)
-			throws SaxonApiException {
-		final Processor proc = new Processor(false);
-		final XsltCompiler comp = proc.newXsltCompiler();
-		final XsltExecutable exp = comp.compile(new StreamSource(stylesheet));
-		final XdmNode source = proc.newDocumentBuilder().build(
-				new StreamSource(xml));
-		final Serializer out = new Serializer();
-		out.setOutputProperty(Serializer.Property.METHOD, "xml");
-		out.setOutputProperty(Serializer.Property.INDENT, "yes");
-		out.setOutputFile(new File(TestHelper.PATHS.PATH1.getFile(),
-				"books1.html"));
-		final XsltTransformer trans = exp.load();
-		trans.setInitialContextNode(source);
-		trans.setDestination(out);
-		trans.transform();
-	}
+    /**
+     * Transform source document with the given stylesheet.
+     * 
+     * @param xml
+     *            Source xml file.
+     * @param stylesheet
+     *            Stylesheet to transform source xml file.
+     * @throws SaxonApiException
+     *             Exception from Saxon in case anything goes wrong.
+     */
+    @Ignore("Not a test, utility method only")
+    public void saxonTransform(final File xml, final File stylesheet) throws SaxonApiException {
+        final Processor proc = new Processor(false);
+        final XsltCompiler comp = proc.newXsltCompiler();
+        final XsltExecutable exp = comp.compile(new StreamSource(stylesheet));
+        final XdmNode source = proc.newDocumentBuilder().build(new StreamSource(xml));
+        final Serializer out = new Serializer();
+        out.setOutputProperty(Serializer.Property.METHOD, "xml");
+        out.setOutputProperty(Serializer.Property.INDENT, "yes");
+        out.setOutputFile(new File(TestHelper.PATHS.PATH1.getFile(), "books1.html"));
+        final XsltTransformer trans = exp.load();
+        trans.setInitialContextNode(source);
+        trans.setDestination(out);
+        trans.transform();
+    }
 
-	/**
-	 * Read file, which has been generated by "pure" Saxon.
-	 * 
-	 * @return StringBuilder instance, which has the string representation of
-	 *         the document.
-	 * @throws IOException
-	 *             throws an IOException if any I/O operation fails.
-	 */
-	@Ignore("Not a test, utility method only")
-	public StringBuilder readFile() throws IOException {
-		final BufferedReader in = new BufferedReader(new FileReader(new File(
-				TestHelper.PATHS.PATH1.getFile(), "books1.html")));
-		final StringBuilder sBuilder = new StringBuilder();
-		for (String line = in.readLine(); line != null; line = in.readLine()) {
-			sBuilder.append(line + "\n");
-		}
+    /**
+     * Read file, which has been generated by "pure" Saxon.
+     * 
+     * @return StringBuilder instance, which has the string representation of
+     *         the document.
+     * @throws IOException
+     *             throws an IOException if any I/O operation fails.
+     */
+    @Ignore("Not a test, utility method only")
+    public StringBuilder readFile() throws IOException {
+        final BufferedReader in =
+            new BufferedReader(new FileReader(new File(TestHelper.PATHS.PATH1.getFile(), "books1.html")));
+        final StringBuilder sBuilder = new StringBuilder();
+        for (String line = in.readLine(); line != null; line = in.readLine()) {
+            sBuilder.append(line + "\n");
+        }
 
-		// Remove last newline.
-		sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), "");
-		in.close();
+        // Remove last newline.
+        sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), "");
+        in.close();
 
-		return sBuilder;
-	}
+        return sBuilder;
+    }
 
 }
