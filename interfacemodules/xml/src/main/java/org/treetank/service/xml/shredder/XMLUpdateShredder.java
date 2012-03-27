@@ -527,8 +527,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                     // } else {
                     // checkIfLastNode(true);
                     // }
-                } else if (mWtx.getStructuralNode().hasParent()) {
-                    if (mWtx.getStructuralNode().hasRightSibling()) {
+                } else if (((IStructNode)mWtx.getNode()).hasParent()) {
+                    if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
                         mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
                         /*
                          * Means next event is an end tag in StAX reader, but
@@ -547,7 +547,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             mLastNodeKey = mWtx.getNode().getNodeKey();
 
             // Move cursor to right sibling if it has one.
-            if (mWtx.getStructuralNode().hasRightSibling()) {
+            if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
                 mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
                 mMovedToRightSibling = true;
 
@@ -927,7 +927,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 } else {
                     mMovedToRightSibling = false;
                 }
-            } else if (mWtx.getStructuralNode().hasRightSibling()) {
+            } else if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
                 mMovedToRightSibling = false;
                 mInserted = true;
                 mKeyMatches = -1;
@@ -1004,7 +1004,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
          */
         if (mInserted && !mMovedToRightSibling) {
             mInserted = false;
-            if (mWtx.getStructuralNode().hasRightSibling()) {
+            if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
                 // Cursor is on the inserted node, so move to right sibling.
                 mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
             }
@@ -1059,7 +1059,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
              */
             mWtx.moveTo(((IStructNode)mWtx.getNode()).getRightSiblingKey());
         } else {
-            if (mWtx.getStructuralNode().hasFirstChild()) {
+            if (((IStructNode)mWtx.getNode()).hasFirstChild()) {
                 if (mDelete == EDelete.ATBOTTOM && isLast) {
                     /*
                      * Deleted right before an end tag has been parsed, thus

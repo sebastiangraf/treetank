@@ -100,8 +100,8 @@ public class XMLShredderTest extends XMLTestCase {
         final Iterator<Long> descendants = new DescendantAxis(rtx);
 
         while (expectedDescendants.hasNext() && descendants.hasNext()) {
-            final IStructNode expDesc = expectedTrx.getStructuralNode();
-            final IStructNode desc = rtx.getStructuralNode();
+            final IStructNode expDesc = ((IStructNode)expectedTrx.getNode());
+            final IStructNode desc = ((IStructNode)rtx.getNode());
             assertEquals(expDesc.getNodeKey(), desc.getNodeKey());
             assertEquals(expDesc.getParentKey(), desc.getParentKey());
             assertEquals(expDesc.getFirstChildKey(), desc.getFirstChildKey());

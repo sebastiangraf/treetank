@@ -94,9 +94,9 @@ public class UpdateTest {
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
         assertEquals(1, pRtx.getNode().getNodeKey());
         assertEquals(0, ((IStructNode)pRtx.getNode()).getChildCount());
-        assertEquals(NULL_NODE, pRtx.getStructuralNode().getLeftSiblingKey());
-        assertEquals(NULL_NODE, pRtx.getStructuralNode().getRightSiblingKey());
-        assertEquals(NULL_NODE, pRtx.getStructuralNode().getFirstChildKey());
+        assertEquals(NULL_NODE, ((IStructNode)pRtx.getNode()).getLeftSiblingKey());
+        assertEquals(NULL_NODE, ((IStructNode)pRtx.getNode()).getRightSiblingKey());
+        assertEquals(NULL_NODE, ((IStructNode)pRtx.getNode()).getFirstChildKey());
     }
 
     @Test

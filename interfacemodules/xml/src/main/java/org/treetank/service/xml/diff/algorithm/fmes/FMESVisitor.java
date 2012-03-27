@@ -107,11 +107,11 @@ public final class FMESVisitor {
     private void countDescendants() {
         long descendants = 1;
         final long nodeKey = mRtx.getNode().getNodeKey();
-        if (mRtx.getStructuralNode().hasFirstChild()) {
+        if (((IStructNode)mRtx.getNode()).hasFirstChild()) {
             mRtx.moveTo(((IStructNode)mRtx.getNode()).getFirstChildKey());
             do {
                 descendants += mDescendants.get(mRtx.getNode());
-            } while (mRtx.getStructuralNode().hasRightSibling()
+            } while (((IStructNode)mRtx.getNode()).hasRightSibling()
                 && mRtx.moveTo(((IStructNode)mRtx.getNode()).getRightSiblingKey()));
         }
         mRtx.moveTo(nodeKey);

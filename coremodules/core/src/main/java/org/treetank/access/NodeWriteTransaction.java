@@ -775,11 +775,11 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
                 }
 
                 // Caring about the children of a node
-                if (moveTo(getStructuralNode().getFirstChildKey())) {
+                if (moveTo(((IStructNode)getNode()).getFirstChildKey())) {
                     do {
                         hashCodeForParent = getCurrentNode().getHash() + hashCodeForParent * PRIME;
-                    } while (moveTo(getStructuralNode().getRightSiblingKey()));
-                    moveTo(getStructuralNode().getParentKey());
+                    } while (moveTo(((IStructNode)getNode()).getRightSiblingKey()));
+                    moveTo(((IStructNode)getNode()).getParentKey());
                 }
 
                 // setting hash and resetting hash

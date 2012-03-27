@@ -37,7 +37,6 @@ import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 
 /**
@@ -351,17 +350,5 @@ public class NodeReadTransaction implements INodeReadTransaction {
             qname = new QName(paramUri, paramName);
         }
         return qname;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final IStructNode getStructuralNode() {
-        if (mCurrentNode instanceof IStructNode) {
-            return (IStructNode)mCurrentNode;
-        } else {
-            return null;
-        }
     }
 }

@@ -192,7 +192,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         boolean moved = false;
 
-        final IStructNode node = paramRtx.getStructuralNode();
+        final IStructNode node = ((IStructNode)paramRtx.getNode());
         if (node.hasFirstChild()) {
             if (node.getKind() != ENode.ROOT_KIND && mDiffKind == EDiffOptimized.HASHED
                 && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
@@ -238,8 +238,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      */
     private boolean moveToFollowingNode(final INodeReadTransaction paramRtx, final ERevision paramRevision) {
         boolean moved = false;
-        while (!paramRtx.getStructuralNode().hasRightSibling() && paramRtx.getStructuralNode().hasParent()
-            && paramRtx.getNode().getNodeKey() != mRootKey) {
+        while (!((IStructNode)paramRtx.getNode()).hasRightSibling()
+            && ((IStructNode)paramRtx.getNode()).hasParent() && paramRtx.getNode().getNodeKey() != mRootKey) {
             moved = paramRtx.moveTo(paramRtx.getNode().getParentKey());
             if (moved) {
                 switch (paramRevision) {
@@ -297,8 +297,8 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         if (paramFireDiff == EFireDiff.TRUE) {
-            fireDiff(diff, paramNewRtx.getStructuralNode(), paramOldRtx.getStructuralNode(), new DiffDepth(
-                paramDepth.getNewDepth(), paramDepth.getOldDepth()));
+            fireDiff(diff, ((IStructNode)paramNewRtx.getNode()), ((IStructNode)paramOldRtx.getNode()),
+                new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
         }
         return diff;
     }
@@ -359,10 +359,10 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         if (paramFireDiff == EFireDiff.TRUE) {
             if (diff == EDiff.SAMEHASH) {
-                fireDiff(EDiff.SAME, paramNewRtx.getStructuralNode(), paramOldRtx.getStructuralNode(),
-                    new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
+                fireDiff(EDiff.SAME, ((IStructNode)paramNewRtx.getNode()), ((IStructNode)paramOldRtx
+                    .getNode()), new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
             } else {
-                fireDiff(diff, paramNewRtx.getStructuralNode(), paramOldRtx.getStructuralNode(),
+                fireDiff(diff, ((IStructNode)paramNewRtx.getNode()), ((IStructNode)paramOldRtx.getNode()),
                     new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
             }
         }

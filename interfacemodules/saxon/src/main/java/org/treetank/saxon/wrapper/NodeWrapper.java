@@ -607,7 +607,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         boolean hasChildNodes = false;
         try {
             final INodeReadTransaction rtx = createRtxAndMove();
-            if (rtx.getStructuralNode().getChildCount() > 0) {
+            if (((IStructNode)rtx.getNode()).getChildCount() > 0) {
                 hasChildNodes = true;
             }
             rtx.close();
@@ -828,7 +828,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         int index = 0;
         try {
             final INodeReadTransaction rtx = createRtxAndMove();
-            while (rtx.getStructuralNode().hasLeftSibling()) {
+            while (((IStructNode)rtx.getNode()).hasLeftSibling()) {
                 rtx.moveTo(((IStructNode)rtx.getNode()).getLeftSiblingKey());
                 index++;
             }

@@ -32,7 +32,6 @@ import javax.xml.namespace.QName;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 
 /**
 
@@ -153,12 +152,4 @@ public interface INodeReadTransaction {
      * @return true if closed, false otherwise
      */
     boolean isClosed();
-
-    /**
-     * This method returns the current {@link INode} as a {@link IStructNode}.
-     * 
-     * @return the current node as {@link IStructNode} if possible, otherwise
-     *         null.
-     */
-    IStructNode getStructuralNode();
 }
