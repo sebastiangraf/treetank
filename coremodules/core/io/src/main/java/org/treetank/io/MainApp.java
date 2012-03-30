@@ -3,58 +3,69 @@
  */
 package org.treetank.io;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.Random;
 
-import org.jclouds.atmos.AtmosAsyncClient;
-import org.jclouds.atmos.AtmosClient;
-import org.jclouds.azureblob.AzureBlobAsyncClient;
-import org.jclouds.azureblob.AzureBlobClient;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.Constants;
+import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.filesystem.reference.FilesystemConstants;
-import org.jclouds.openstack.swift.SwiftAsyncClient;
-import org.jclouds.openstack.swift.SwiftClient;
-import org.jclouds.rest.RestContext;
-import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.S3Client;
+
+import com.google.common.io.ByteStreams;
 
 public class MainApp {
+
+    private static byte[][] vals = new byte[128][128];
+
+    static {
+        Random ran = new Random();
+        for (int i = 0; i < vals.length; i++) {
+            ran.nextBytes(vals[i]);
+        }
+    }
 
     public static void main(String[] args) throws IOException {
 
         // setup where the provider must store the files
         Properties properties = new Properties();
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, "/tmp/filesystemstorage");
-        // setup the container name used by the provider (like bucket in S3)
-        String containerName = "test-container";
+        properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
 
         // get a context with filesystem that offers the portable BlobStore api
         BlobStoreContext context = new BlobStoreContextFactory().createContext("filesystem", properties);
 
-        // create a container in the default location
-        BlobStore blobStore = context.getBlobStore();
-        blobStore.createContainerInLocation(null, containerName);
+        BlobMap map = context.createBlobMap("container1");
+        BlobBuilder builder = map.blobBuilder();
+        Blob blob = builder.build();
 
-        // add blob
-//        Blob blob = blobStore.newBlob("test");
-//        blob.setPayload("test data");
-//        blobStore.putBlob(containerName, blob);
-//
-//        // retrieve blob
-//        Blob blobRetrieved = blobStore.getBlob(containerName, "test");
-//
-//        // delete blob
-//        blobStore.removeBlob(containerName, "test");
-
-        // close context
+        for (int i = 0; i < vals.length; i++) {
+            blob.setPayload(vals[i]);
+            map.put(new StringBuilder("key").append(i).toString(), blob);
+        }
         context.close();
+        context = new BlobStoreContextFactory().createContext("filesystem", properties);
+
+        map = context.createBlobMap("container1");
+        builder = map.blobBuilder();
+        for (int i = 0; i < vals.length; i++) {
+            blob = map.get(new StringBuilder("key").append(i).toString());
+            InputStream in = blob.getPayload().getInput();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteStreams.copy(in, out);
+            if (!Arrays.equals(out.toByteArray(), vals[i])) {
+                throw new IllegalStateException();
+            } else {
+                System.out.println("Checked array offset " + i);
+            }
+
+        }
 
     }
 }
