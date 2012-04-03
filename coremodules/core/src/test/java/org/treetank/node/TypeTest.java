@@ -27,15 +27,11 @@
 
 package org.treetank.node;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.Type;
 
 public class TypeTest {
 

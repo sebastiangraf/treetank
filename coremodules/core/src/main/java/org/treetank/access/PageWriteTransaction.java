@@ -27,11 +27,8 @@
 
 package org.treetank.access;
 
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 import static org.treetank.access.PageReadTransaction.nodePageKey;
 import static org.treetank.access.PageReadTransaction.nodePageOffset;
-
-import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
@@ -43,15 +40,8 @@ import org.treetank.cache.TransactionLogCache;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
-import org.treetank.node.AttributeNode;
 import org.treetank.node.DeletedNode;
-import org.treetank.node.ElementNode;
-import org.treetank.node.NamespaceNode;
-import org.treetank.node.TextNode;
-import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.INode;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
@@ -182,7 +172,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
      * @throws TTIOException
      *             if IO Error
      */
-    protected INode createNode(final INode paramNode) throws TTIOException {
+    public INode createNode(final INode paramNode) throws TTIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         final long nodeKey = mNewRoot.getMaxNodeKey();
@@ -194,52 +184,6 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         finishNodeModification(paramNode);
 
         return paramNode;
-    }
-
-    protected ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
-        final long rightSibKey, final long hash, final QName mName) throws TTIOException {
-
-        final int nameKey = createNameKey(buildName(mName));
-        final int namespaceKey = createNameKey(mName.getNamespaceURI());
-
-        final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, parentKey, 0);
-        final StructNodeDelegate structDel =
-            new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
-        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
-
-        return (ElementNode)createNode(new ElementNode(nodeDel, structDel, nameDel, new ArrayList<Long>(),
-            new ArrayList<Long>()));
-    }
-
-    protected TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
-        final byte[] mValue) throws TTIOException {
-        final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, mParentKey, 0);
-        final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
-        final StructNodeDelegate structDel =
-            new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
-
-        return (TextNode)createNode(new TextNode(nodeDel, valDel, structDel));
-    }
-
-    protected AttributeNode createAttributeNode(final long parentKey, final QName mName, final byte[] mValue)
-        throws TTIOException {
-
-        final int nameKey = createNameKey(buildName(mName));
-        final int namespaceKey = createNameKey(mName.getNamespaceURI());
-        final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, parentKey, 0);
-        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
-        final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
-
-        return (AttributeNode)createNode(new AttributeNode(nodeDel, nameDel, valDel));
-    }
-
-    protected NamespaceNode
-        createNamespaceNode(final long mParentKey, final int mUriKey, final int prefixKey)
-            throws TTIOException {
-        final NodeDelegate nodeDel = new NodeDelegate(mNewRoot.getMaxNodeKey() + 1, mParentKey, 0);
-        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, mUriKey);
-
-        return (NamespaceNode)createNode(new NamespaceNode(nodeDel, nameDel));
     }
 
     /**
@@ -448,6 +392,10 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         // super.close();
         mLog.clear();
         mPageWriter.close();
+    }
+
+    public long getMaxNodeKey() {
+        return mNewRoot.getMaxNodeKey();
     }
 
     protected IndirectPage prepareIndirectPage(final PageReference paramReference) throws TTIOException {

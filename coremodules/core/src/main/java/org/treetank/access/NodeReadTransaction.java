@@ -293,7 +293,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setTransactionState(final IPageReadTransaction paramTransactionState) {
+    protected final void setPageTransaction(final IPageReadTransaction paramTransactionState) {
         mPageReadTransaction = paramTransactionState;
     }
 

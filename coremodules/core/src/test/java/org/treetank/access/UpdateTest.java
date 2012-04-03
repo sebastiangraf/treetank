@@ -29,6 +29,7 @@ package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 import javax.xml.namespace.QName;
 
@@ -43,8 +44,6 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.DocumentCreater;
-
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 public class UpdateTest {
 

@@ -28,14 +28,13 @@
 package org.treetank.node;
 
 import static org.junit.Assert.assertEquals;
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 import org.junit.Test;
 import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
-
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 public class DocumentRootNodeTest {
 

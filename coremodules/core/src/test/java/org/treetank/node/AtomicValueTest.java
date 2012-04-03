@@ -33,8 +33,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
 
 public class AtomicValueTest {
 

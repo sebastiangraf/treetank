@@ -27,6 +27,9 @@
 
 package org.treetank.page;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+
 import org.treetank.access.PageWriteTransaction;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
@@ -37,9 +40,6 @@ import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.page.delegates.PageDelegate;
 import org.treetank.page.interfaces.IPage;
 import org.treetank.utils.IConstants;
-
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 /**
  * <h1>UberPage</h1>
