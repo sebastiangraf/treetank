@@ -26,9 +26,10 @@
  */
 package org.treetank.node.delegates;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * Delegate method for all nodes building up the structure. That means that all

@@ -27,6 +27,8 @@
 
 package org.treetank.node;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+
 import java.util.List;
 
 import org.treetank.node.delegates.NameNodeDelegate;
@@ -34,7 +36,6 @@ import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>ElementNode</h1>

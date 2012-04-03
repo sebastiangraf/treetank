@@ -27,13 +27,14 @@
 
 package org.treetank.node;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>TextNode</h1>

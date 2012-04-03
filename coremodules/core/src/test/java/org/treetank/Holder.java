@@ -31,8 +31,8 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 
 /**
