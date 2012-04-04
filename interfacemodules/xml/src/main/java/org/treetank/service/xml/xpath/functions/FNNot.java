@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.functions;
 
 import java.util.List;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.utils.TypedValue;
@@ -47,7 +47,7 @@ import org.treetank.utils.TypedValue;
 public class FNNot extends AbsFunction {
 
     /** Private Read trans for Function call. */
-    private final INodeReadTransaction mRtx;
+    private final INodeReadTrx mRtx;
 
     /**
      * Constructor.
@@ -68,7 +68,7 @@ public class FNNot extends AbsFunction {
      * @throws TTXPathException
      *             if function check fails
      */
-    public FNNot(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min, final int max,
+    public FNNot(final INodeReadTrx rtx, final List<AbsAxis> args, final int min, final int max,
         final int returnType) throws TTXPathException {
 
         super(rtx, args, min, max, returnType);

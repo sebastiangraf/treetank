@@ -99,7 +99,7 @@ public class PageDelegate implements IPage {
      * Recursively call commit on all referenced pages.
      * 
      * @param paramState
-     *            INodeWriteTransaction state.
+     *            INodeWriteTrx state.
      * @throws AbsTTException
      *             thorw when write error
      */

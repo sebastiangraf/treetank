@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.filter.AbsFilter;
 
 /**
@@ -60,7 +60,7 @@ public class SchemaAttributeFilter extends AbsFilter {
      * @param rtx
      *            Transaction this filter is bound to.
      */
-    public SchemaAttributeFilter(final INodeReadTransaction rtx) {
+    public SchemaAttributeFilter(final INodeReadTrx rtx) {
 
         super(rtx);
         // attributeName = declaration;

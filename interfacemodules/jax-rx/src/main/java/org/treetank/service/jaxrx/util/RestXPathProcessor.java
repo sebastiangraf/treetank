@@ -43,7 +43,7 @@ import javax.ws.rs.core.Response;
 import org.treetank.access.Database;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
@@ -145,7 +145,7 @@ public class RestXPathProcessor {
 
         IDatabase database = null;
         ISession session = null;
-        INodeReadTransaction rtx = null;
+        INodeReadTrx rtx = null;
         try {
             database = Database.openDatabase(dbFile.getParentFile());
             session = database.getSession(new SessionConfiguration.Builder(dbFile.getName()).build());
@@ -205,7 +205,7 @@ public class RestXPathProcessor {
         // Database connection to treetank
         IDatabase database = null;
         ISession session = null;
-        INodeReadTransaction rtx = null;
+        INodeReadTrx rtx = null;
         try {
             database = Database.openDatabase(STOREDBPATH);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());

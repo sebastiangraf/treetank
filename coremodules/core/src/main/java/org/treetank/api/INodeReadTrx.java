@@ -36,14 +36,14 @@ import org.treetank.node.interfaces.INode;
 /**
 
  */
-public interface INodeReadTransaction {
+public interface INodeReadTrx {
 
     /**
      * What is the revision number of this transaction?
      * 
      * @throws TTIOException
      *             if can't get Max Node Key.
-     * @return Immutable revision number of this INodeReadTransaction.
+     * @return Immutable revision number of this INodeReadTrx.
      */
     long getRevisionNumber() throws TTIOException;
 

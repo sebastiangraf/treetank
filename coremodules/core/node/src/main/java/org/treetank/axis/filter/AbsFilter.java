@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 
 /**
@@ -48,7 +48,7 @@ public abstract class AbsFilter extends AbsAxis {
      * @param rtx
      *            Transaction to operate with.
      */
-    protected AbsFilter(final INodeReadTransaction rtx) {
+    protected AbsFilter(final INodeReadTrx rtx) {
         super(rtx);
         mIsFirst = true;
     }

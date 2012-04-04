@@ -40,7 +40,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.XMLEvent;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
@@ -115,7 +115,7 @@ public final class StAXSerializer implements XMLEventReader {
     /**
      * Rtx for access to the data.
      */
-    private final INodeReadTransaction mRtx;
+    private final INodeReadTrx mRtx;
 
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -126,7 +126,7 @@ public final class StAXSerializer implements XMLEventReader {
      *            {@link AbsAxis} which is used to iterate over and generate
      *            StAX events.
      */
-    public StAXSerializer(final AbsAxis paramAxis, final INodeReadTransaction pRtx) {
+    public StAXSerializer(final AbsAxis paramAxis, final INodeReadTrx pRtx) {
         this(paramAxis, pRtx, true);
     }
 
@@ -141,7 +141,7 @@ public final class StAXSerializer implements XMLEventReader {
      * @param paramCloseRtx
      *            Determines if rtx should be closed afterwards.
      */
-    public StAXSerializer(final AbsAxis paramAxis, final INodeReadTransaction pRtx,
+    public StAXSerializer(final AbsAxis paramAxis, final INodeReadTrx pRtx,
         final boolean paramCloseRtx) {
         mNextTag = false;
         mAxis = paramAxis;
@@ -432,7 +432,7 @@ public final class StAXSerializer implements XMLEventReader {
         /**
          * Treetank {@link IReadTransaction}.
          */
-        private final INodeReadTransaction mRTX;
+        private final INodeReadTrx mRTX;
 
         /** Number of attribute nodes. */
         private final int mAttCount;
@@ -452,7 +452,7 @@ public final class StAXSerializer implements XMLEventReader {
          * @param rtx
          *            Treetank reading transaction.
          */
-        public AttributeIterator(final INodeReadTransaction rtx) {
+        public AttributeIterator(final INodeReadTrx rtx) {
             mRTX = rtx;
             mNodeKey = mRTX.getNode().getNodeKey();
             mIndex = 0;
@@ -504,7 +504,7 @@ public final class StAXSerializer implements XMLEventReader {
         /**
          * Treetank {@link IReadTransaction}.
          */
-        private final INodeReadTransaction mRTX;
+        private final INodeReadTrx mRTX;
 
         /** Number of namespace nodes. */
         private final int mNamespCount;
@@ -524,7 +524,7 @@ public final class StAXSerializer implements XMLEventReader {
          * @param rtx
          *            Treetank reading transaction.
          */
-        public NamespaceIterator(final INodeReadTransaction rtx) {
+        public NamespaceIterator(final INodeReadTrx rtx) {
             mRTX = rtx;
             mNodeKey = mRTX.getNode().getNodeKey();
             mIndex = 0;

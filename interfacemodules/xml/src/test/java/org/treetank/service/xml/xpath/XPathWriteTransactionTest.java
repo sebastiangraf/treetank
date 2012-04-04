@@ -40,7 +40,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
@@ -61,7 +61,7 @@ public final class XPathWriteTransactionTest {
 
     private ISession session;
 
-    private INodeWriteTransaction wtx;
+    private INodeWriteTrx wtx;
 
     private IDatabase database;
 

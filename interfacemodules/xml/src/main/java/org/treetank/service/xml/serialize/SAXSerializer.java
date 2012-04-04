@@ -38,7 +38,7 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.node.ElementNode;
 import org.xml.sax.ContentHandler;
@@ -86,7 +86,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /** {@inheritDoc} */
     @Override
-    protected void emitStartElement(final INodeReadTransaction rtx) {
+    protected void emitStartElement(final INodeReadTrx rtx) {
         switch (rtx.getNode().getKind()) {
         case ROOT_KIND:
             break;
@@ -103,7 +103,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /** {@inheritDoc} */
     @Override
-    protected void emitEndElement(final INodeReadTransaction rtx) {
+    protected void emitEndElement(final INodeReadTrx rtx) {
         final QName qName = rtx.getQNameOfCurrentNode();
         final String mURI = qName.getNamespaceURI();
         try {
@@ -142,7 +142,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      * @param paramRtx
      *            Read Transaction
      */
-    private void generateElement(final INodeReadTransaction paramRtx) {
+    private void generateElement(final INodeReadTrx paramRtx) {
         final AttributesImpl atts = new AttributesImpl();
         final long key = paramRtx.getNode().getNodeKey();
 
@@ -193,7 +193,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      * @param mRtx
      *            Read Transaction.
      */
-    private void generateText(final INodeReadTransaction paramRtx) {
+    private void generateText(final INodeReadTrx paramRtx) {
         try {
             mContHandler.characters(paramRtx.getValueOfCurrentNode().toCharArray(), 0, paramRtx
                 .getValueOfCurrentNode().length());

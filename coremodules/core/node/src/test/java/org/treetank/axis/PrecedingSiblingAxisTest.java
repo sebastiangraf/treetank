@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 
 public class PrecedingSiblingAxisTest {
@@ -54,29 +54,28 @@ public class PrecedingSiblingAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final INodeReadTransaction rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getRtx();
 
         rtx.moveTo(12L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
-            11L
-        });
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
+                new long[] { 11L });
 
         rtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
-            4L
-        });
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
+                new long[] { 4L });
 
         rtx.moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
-            9L, 8L, 5L, 4L
-        });
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
+                new long[] { 9L, 8L, 5L, 4L });
 
         rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {});
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
+                new long[] {});
 
         rtx.moveTo(9L);
         rtx.moveToAttribute(0);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {});
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
+                new long[] {});
     }
 
 }

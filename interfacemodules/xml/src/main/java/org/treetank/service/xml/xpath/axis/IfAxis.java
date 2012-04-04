@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.axis;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.functions.Function;
@@ -52,7 +52,7 @@ public class IfAxis extends AbsAxis {
     private final AbsAxis mElse;
     private boolean mFirst;
     private AbsAxis mResult;
-    private final INodeReadTransaction mRtx;
+    private final INodeReadTrx mRtx;
 
     /**
      * 
@@ -67,7 +67,7 @@ public class IfAxis extends AbsAxis {
      * @param mElseAxis
      *            Will be evaluated if test expression evaluates to false.
      */
-    public IfAxis(final INodeReadTransaction rtx, final AbsAxis mIfAxis, final AbsAxis mThenAxis,
+    public IfAxis(final INodeReadTrx rtx, final AbsAxis mIfAxis, final AbsAxis mThenAxis,
         final AbsAxis mElseAxis) {
 
         super(rtx);

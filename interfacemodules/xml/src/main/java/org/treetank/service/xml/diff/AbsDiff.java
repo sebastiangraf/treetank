@@ -31,8 +31,8 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.access.NodeWriteTransaction.HashKind;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.access.NodeWriteTrx.HashKind;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
@@ -188,7 +188,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
      */
-    boolean moveCursor(final INodeReadTransaction paramRtx, final ERevision paramRevision) {
+    boolean moveCursor(final INodeReadTrx paramRtx, final ERevision paramRevision) {
         assert paramRtx != null;
 
         boolean moved = false;
@@ -237,7 +237,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
      */
-    private boolean moveToFollowingNode(final INodeReadTransaction paramRtx, final ERevision paramRevision) {
+    private boolean moveToFollowingNode(final INodeReadTrx paramRtx, final ERevision paramRevision) {
         boolean moved = false;
         while (!((IStructNode)paramRtx.getNode()).hasRightSibling()
             && ((IStructNode)paramRtx.getNode()).hasParent() && paramRtx.getNode().getNodeKey() != mRootKey) {
@@ -276,7 +276,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            determines if a diff should be fired
      * @return kind of difference
      */
-    EDiff diff(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx,
+    EDiff diff(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx,
         final DepthCounter paramDepth, final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
@@ -318,7 +318,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            determines if a diff should be fired
      * @return kind of difference
      */
-    EDiff optimizedDiff(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx,
+    EDiff optimizedDiff(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx,
         final DepthCounter paramDepth, final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
@@ -382,8 +382,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            transaction cursors
      * @return kind of diff
      */
-    private EDiff diffAlgorithm(final INodeReadTransaction paramNewRtx,
-        final INodeReadTransaction paramOldRtx, final DepthCounter paramDepth) {
+    private EDiff diffAlgorithm(final INodeReadTrx paramNewRtx,
+        final INodeReadTrx paramOldRtx, final DepthCounter paramDepth) {
         EDiff diff = null;
 
         // Check if node has been deleted.
@@ -423,7 +423,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @return true if nodes are "equal" according to their {@link QName}s,
      *         otherwise false
      */
-    boolean checkName(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx) {
+    boolean checkName(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         boolean found = false;
@@ -455,7 +455,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @return true if nodes are "equal", otherwise false
      */
     abstract boolean
-        checkNodes(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx);
+        checkNodes(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx);
 
     /**
      * Check for an update of a node.
@@ -466,7 +466,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            second {@link IReadTransaction} instance
      * @return kind of diff
      */
-    boolean checkUpdate(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx) {
+    boolean checkUpdate(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         boolean updated = false;

@@ -30,7 +30,7 @@ package org.treetank.service.xml.xpath.filter;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.NestedAxis;
@@ -69,7 +69,7 @@ public class DupFilterAxis extends AbsAxis {
      * @param mDupAxis
      *            Sequence that may return duplicates.
      */
-    public DupFilterAxis(final INodeReadTransaction rtx, final AbsAxis mDupAxis) {
+    public DupFilterAxis(final INodeReadTrx rtx, final AbsAxis mDupAxis) {
 
         super(rtx);
         mAxis = mDupAxis;

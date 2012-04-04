@@ -38,7 +38,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -65,7 +65,7 @@ public final class SaxonHelper {
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKSXML);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

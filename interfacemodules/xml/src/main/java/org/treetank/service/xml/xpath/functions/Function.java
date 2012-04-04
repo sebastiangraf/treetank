@@ -30,7 +30,7 @@ package org.treetank.service.xml.xpath.functions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.interfaces.IValNode;
@@ -39,7 +39,7 @@ import org.treetank.utils.NamePageHash;
 
 public class Function {
 
-    public static boolean ebv(final AbsAxis axis, final INodeReadTransaction pRtx) throws TTXPathException {
+    public static boolean ebv(final AbsAxis axis, final INodeReadTrx pRtx) throws TTXPathException {
         final FuncDef ebv = FuncDef.BOOLEAN;
         final List<AbsAxis> param = new ArrayList<AbsAxis>();
         param.add(axis);

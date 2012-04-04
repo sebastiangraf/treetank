@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.functions;
 
 import java.util.List;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
@@ -59,7 +59,7 @@ import org.treetank.service.xml.xpath.expr.AbsExpression;
  *   
  *   public class ExampleFunctionAxis extends AbstractFunction implements IAxis {
  *  
- *     public ExampleAxis(final INodeReadTransaction rtx, final List&lt;IAxis&gt; args,
+ *     public ExampleAxis(final INodeReadTrx rtx, final List&lt;IAxis&gt; args,
  *       final int min, final int max, final int returnType) {
  *       // Must be called as first.
  *       super(rtx, args, min, max, returnType);
@@ -104,7 +104,7 @@ public abstract class AbsFunction extends AbsExpression {
      * @throws TTXPathException
      *             if the verify process is failing.
      */
-    public AbsFunction(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min,
+    public AbsFunction(final INodeReadTrx rtx, final List<AbsAxis> args, final int min,
         final int max, final int returnType) throws TTXPathException {
 
         super(rtx);

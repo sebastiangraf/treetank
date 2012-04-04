@@ -43,9 +43,9 @@ import javax.xml.stream.XMLStreamException;
 
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
@@ -94,7 +94,7 @@ public final class WorkerHelper {
      * @param value
      *            InputStream to be shred
      */
-    public static void shredInputStream(final INodeWriteTransaction wtx, final InputStream value,
+    public static void shredInputStream(final INodeWriteTrx wtx, final InputStream value,
         final EShredderInsert child) {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
@@ -217,19 +217,19 @@ public final class WorkerHelper {
 
     /**
      * This method closes all open treetank connections concerning a
-     * NodeWriteTransaction.
+     * NodeWriteTrx.
      * 
      * @param abortTransaction
      *            <code>true</code> if the transaction has to be aborted, <code>false</code> otherwise.
      * @param wtx
-     *            INodeWriteTransaction to be closed
+     *            INodeWriteTrx to be closed
      * @param ses
      *            ISession to be closed
      * @param dbase
      *            IDatabase to be closed
      * @throws TreetankException
      */
-    public static void closeWTX(final boolean abortTransaction, final INodeWriteTransaction wtx,
+    public static void closeWTX(final boolean abortTransaction, final INodeWriteTrx wtx,
         final ISession ses, final IDatabase dbase) throws AbsTTException {
         synchronized (dbase) {
             if (abortTransaction) {
@@ -241,17 +241,17 @@ public final class WorkerHelper {
 
     /**
      * This method closes all open treetank connections concerning a
-     * NodeReadTransaction.
+     * NodeReadTrx.
      * 
      * @param rtx
-     *            INodeReadTransaction to be closed
+     *            INodeReadTrx to be closed
      * @param ses
      *            ISession to be closed
      * @param dbase
      *            IDatabase to be closed
      * @throws AbsTTException
      */
-    public static void closeRTX(final INodeReadTransaction rtx, final ISession ses, final IDatabase dbase)
+    public static void closeRTX(final INodeReadTrx rtx, final ISession ses, final IDatabase dbase)
         throws AbsTTException {
         synchronized (dbase) {
             dbase.close();

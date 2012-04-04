@@ -43,7 +43,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
 import org.treetank.utils.DocumentCreater;
@@ -73,7 +73,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();

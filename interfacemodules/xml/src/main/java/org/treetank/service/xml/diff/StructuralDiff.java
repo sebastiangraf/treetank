@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.diff;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
 
@@ -53,7 +53,7 @@ final class StructuralDiff extends AbsDiff {
 
     /** {@inheritDoc} */
     @Override
-    boolean checkNodes(final INodeReadTransaction paramNewRtx, final INodeReadTransaction paramOldRtx) {
+    boolean checkNodes(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx) {
         boolean found = false;
         if (paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey()) {
             if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {

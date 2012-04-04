@@ -29,7 +29,7 @@ package org.treetank.access;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
@@ -43,14 +43,14 @@ import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 /**
- * <h1>NodeReadTransaction</h1>
+ * <h1>NodeReadTrx</h1>
  * 
  * <p>
  * Read-only transaction wiht single-threaded cursor semantics. Each read-only transaction works on a given
  * revision key.
  * </p>
  */
-public class NodeReadTransaction implements INodeReadTransaction {
+public class NodeReadTrx implements INodeReadTrx {
 
     /** ID of transaction. */
     private final long mId;
@@ -80,7 +80,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected NodeReadTransaction(final Session paramSession, final long paramTransactionID,
+    protected NodeReadTrx(final Session paramSession, final long paramTransactionID,
         final IPageReadTrx paramTransactionState) throws TTIOException {
         mSession = paramSession;
         mId = paramTransactionID;

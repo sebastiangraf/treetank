@@ -31,7 +31,7 @@ import static org.treetank.node.IConstants.NULL_NODE;
 
 import java.util.Stack;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
@@ -55,7 +55,7 @@ public class PostOrderAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public PostOrderAxis(final INodeReadTransaction rtx) {
+    public PostOrderAxis(final INodeReadTrx rtx) {
         super(rtx);
     }
 
@@ -79,17 +79,18 @@ public class PostOrderAxis extends AbsAxis {
         long key = mNextKey;
         if (key != NULL_NODE) {
             moveTo(mNextKey);
-            while (((IStructNode)getNode()).hasFirstChild() && key != mLastParent.peek()) {
+            while (((IStructNode) getNode()).hasFirstChild()
+                    && key != mLastParent.peek()) {
                 mLastParent.push(key);
-                key = ((IStructNode)getNode()).getFirstChildKey();
-                moveTo(((IStructNode)getNode()).getFirstChildKey());
+                key = ((IStructNode) getNode()).getFirstChildKey();
+                moveTo(((IStructNode) getNode()).getFirstChildKey());
             }
             if (key == mLastParent.peek()) {
                 mLastParent.pop();
             }
 
-            if (((IStructNode)getNode()).hasRightSibling()) {
-                mNextKey = ((IStructNode)getNode()).getRightSiblingKey();
+            if (((IStructNode) getNode()).hasRightSibling()) {
+                mNextKey = ((IStructNode) getNode()).getRightSiblingKey();
 
             } else {
                 mNextKey = mLastParent.peek();

@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
@@ -82,7 +82,7 @@ public class AndExpr extends AbsExpression {
     /**
      * Private mRtx for instantiating new functions.
      */
-    private final INodeReadTransaction mRtx;
+    private final INodeReadTrx mRtx;
 
     /**
      * Constructor. Initializes the internal state.
@@ -94,7 +94,7 @@ public class AndExpr extends AbsExpression {
      * @param mOperand2
      *            Second operand
      */
-    public AndExpr(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
+    public AndExpr(final INodeReadTrx rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
         mOp1 = mOperand1;

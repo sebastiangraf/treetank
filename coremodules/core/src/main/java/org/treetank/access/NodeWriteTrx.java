@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
@@ -57,7 +57,7 @@ import org.treetank.page.UberPage;
 import org.treetank.utils.TypedValue;
 
 /**
- * <h1>NodeWriteTransaction</h1>
+ * <h1>NodeWriteTrx</h1>
  * 
  * <p>
  * Single-threaded instance of only write transaction per session.
@@ -69,7 +69,7 @@ import org.treetank.utils.TypedValue;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public class NodeWriteTransaction implements INodeWriteTransaction {
+public class NodeWriteTrx implements INodeWriteTrx {
 
     /**
      * How is the Hash for this storage computed?
@@ -98,7 +98,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
     /** Hash kind of Structure. */
     private final HashKind mHashKind;
 
-    private NodeReadTransaction mDelegate;
+    private NodeReadTrx mDelegate;
 
     /**
      * Constructor.
@@ -118,7 +118,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
      * @throws TTUsageException
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
-    protected NodeWriteTransaction(final long paramTransactionID, final Session paramSessionState,
+    protected NodeWriteTrx(final long paramTransactionID, final Session paramSessionState,
         final IPageWriteTrx paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
 
@@ -132,7 +132,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
         mModificationCount = 0L;
 
         mHashKind = paramSessionState.mResourceConfig.mHashKind;
-        mDelegate = new NodeReadTransaction(paramSessionState, paramTransactionID, paramTransactionState);
+        mDelegate = new NodeReadTrx(paramSessionState, paramTransactionID, paramTransactionState);
     }
 
     /**

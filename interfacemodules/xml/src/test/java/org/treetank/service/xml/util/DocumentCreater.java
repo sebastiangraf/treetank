@@ -8,7 +8,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.AbsTTException;
 
 /**
@@ -45,7 +45,7 @@ public class DocumentCreater {
      * @throws AbsTTException
      *             if anything went wrong
      */
-    public static void createVersioned(final INodeWriteTransaction paramWtx) throws AbsTTException {
+    public static void createVersioned(final INodeWriteTrx paramWtx) throws AbsTTException {
         assertNotNull(paramWtx);
         org.treetank.utils.DocumentCreater.create(paramWtx);
         paramWtx.commit();
@@ -67,7 +67,7 @@ public class DocumentCreater {
      * @throws AbsTTException
      *             if anything went wrong
      */
-    public static void createWithoutNamespace(final INodeWriteTransaction paramWtx) throws AbsTTException {
+    public static void createWithoutNamespace(final INodeWriteTrx paramWtx) throws AbsTTException {
         assertNotNull(paramWtx);
         paramWtx.moveTo(ROOT_NODE);
 

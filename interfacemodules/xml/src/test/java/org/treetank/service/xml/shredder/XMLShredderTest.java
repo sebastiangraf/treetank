@@ -47,8 +47,8 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
@@ -87,7 +87,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Setup parsed session.
         XMLShredder.main(XML, PATHS.PATH2.getFile().getAbsolutePath());
-        final INodeReadTransaction expectedTrx = holder.getWtx();
+        final INodeReadTrx expectedTrx = holder.getWtx();
 
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
@@ -95,7 +95,7 @@ public class XMLShredderTest extends XMLTestCase {
             .getConfig()).build());
         final ISession session =
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeReadTransaction rtx = session.beginNodeReadTransaction();
+        final INodeReadTrx rtx = session.beginNodeReadTransaction();
         rtx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
         final Iterator<Long> descendants = new DescendantAxis(rtx);
@@ -128,7 +128,7 @@ public class XMLShredderTest extends XMLTestCase {
     @Test
     public void testShredIntoExisting() throws Exception {
 
-        final INodeWriteTransaction wtx = holder.getWtx();
+        final INodeWriteTrx wtx = holder.getWtx();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
@@ -148,13 +148,13 @@ public class XMLShredderTest extends XMLTestCase {
         final ISession expectedSession =
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
 
-        final INodeWriteTransaction expectedTrx = expectedSession.beginNodeWriteTransaction();
+        final INodeWriteTrx expectedTrx = expectedSession.beginNodeWriteTransaction();
         org.treetank.utils.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
         expectedTrx.moveTo(ROOT_NODE);
 
         // Verify.
-        final INodeReadTransaction rtx = holder.getSession().beginNodeReadTransaction();
+        final INodeReadTrx rtx = holder.getSession().beginNodeReadTransaction();
 
         final Iterator<Long> descendants = new DescendantAxis(rtx);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
@@ -186,7 +186,7 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession expectedSession2 =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTransaction expectedTrx2 = expectedSession2.beginNodeWriteTransaction();
+        final INodeWriteTrx expectedTrx2 = expectedSession2.beginNodeWriteTransaction();
         DocumentCreater.createWithoutNamespace(expectedTrx2);
         expectedTrx2.commit();
 
@@ -194,7 +194,7 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session2 =
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTransaction wtx = session2.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = session2.beginNodeWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML2)),
                 EShredderInsert.ADDASFIRSTCHILD);
@@ -203,7 +203,7 @@ public class XMLShredderTest extends XMLTestCase {
         wtx.close();
 
         // Verify.
-        final INodeReadTransaction rtx = session2.beginNodeReadTransaction();
+        final INodeReadTrx rtx = session2.beginNodeReadTransaction();
         rtx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedAttributes = new DescendantAxis(expectedTrx2);
         final Iterator<Long> attributes = new DescendantAxis(rtx);
@@ -234,14 +234,14 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML3)),
                 EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.close();
 
-        final INodeReadTransaction rtx = session.beginNodeReadTransaction();
+        final INodeReadTrx rtx = session.beginNodeReadTransaction();
         assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
         assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
 

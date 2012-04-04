@@ -30,7 +30,7 @@ package org.treetank.service.xml.xpath.axis;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.expr.VarRefExpr;
 
@@ -57,7 +57,7 @@ public class VariableAxis extends AbsAxis {
      * @param mInSeq
      *            sequence, the variable is bound to.
      */
-    public VariableAxis(final INodeReadTransaction rtx, final AbsAxis mInSeq) {
+    public VariableAxis(final INodeReadTrx rtx, final AbsAxis mInSeq) {
 
         super(rtx);
         mBindingSeq = mInSeq;

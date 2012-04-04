@@ -42,8 +42,8 @@ import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.IStructNode;
@@ -210,7 +210,7 @@ public class NodeIdRepresentation {
         synchronized (resourceName) {
             ISession session = null;
             IDatabase database = null;
-            INodeWriteTransaction wtx = null;
+            INodeWriteTrx wtx = null;
             boolean abort = false;
             if (WorkerHelper.checkExistingResource(resourceName)) {
                 try {
@@ -261,7 +261,7 @@ public class NodeIdRepresentation {
         synchronized (resourceName) {
             ISession session = null;
             IDatabase database = null;
-            INodeWriteTransaction wtx = null;
+            INodeWriteTrx wtx = null;
             boolean abort = false;
             if (WorkerHelper.checkExistingResource(resourceName)) {
                 try {
@@ -319,7 +319,7 @@ public class NodeIdRepresentation {
         final EIdAccessType type) throws JaxRxException {
         ISession session = null;
         IDatabase database = null;
-        INodeWriteTransaction wtx = null;
+        INodeWriteTrx wtx = null;
         synchronized (resourceName) {
             boolean abort;
             if (WorkerHelper.checkExistingResource(resourceName)) {
@@ -483,7 +483,7 @@ public class NodeIdRepresentation {
         if (WorkerHelper.checkExistingResource(resource)) {
             ISession session = null;
             IDatabase database = null;
-            INodeReadTransaction rtx = null;
+            INodeReadTrx rtx = null;
             try {
                 database = Database.openDatabase(STOREDBPATH);
                 session = database.getSession(new SessionConfiguration.Builder(resource).build());

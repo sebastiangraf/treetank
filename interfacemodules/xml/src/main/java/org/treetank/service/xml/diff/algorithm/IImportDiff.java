@@ -26,8 +26,8 @@
  */
 package org.treetank.service.xml.diff.algorithm;
 
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 
 /**
  * Diff interface for Import algorithms.
@@ -46,7 +46,7 @@ public interface IImportDiff {
      *            {@link IReadTransaction} implementation reference on new
      *            revision
      */
-    void diff(final INodeWriteTransaction paramWtx, final INodeReadTransaction paramRtx);
+    void diff(final INodeWriteTrx paramWtx, final INodeReadTrx paramRtx);
 
     /**
      * Name of algorithm.

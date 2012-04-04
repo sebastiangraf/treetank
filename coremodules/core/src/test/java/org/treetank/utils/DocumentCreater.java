@@ -33,7 +33,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.AbsTTException;
 
 /**
@@ -89,11 +89,11 @@ public final class DocumentCreater {
      * Create simple test document containing all supported node kinds.
      * 
      * @param paramWtx
-     *            {@link INodeWriteTransaction} to write to
+     *            {@link INodeWriteTrx} to write to
      * @throws AbsTTException
      *             if anything weird happens
      */
-    public static void create(final INodeWriteTransaction paramWtx) throws AbsTTException {
+    public static void create(final INodeWriteTrx paramWtx) throws AbsTTException {
         assertNotNull(paramWtx);
         assertTrue(paramWtx.moveTo(ROOT_NODE));
 

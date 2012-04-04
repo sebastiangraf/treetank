@@ -53,8 +53,8 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
@@ -288,7 +288,7 @@ public class DatabaseRepresentation {
      */
     public final boolean shred(final InputStream xmlInput, final String resource) throws AbsTTException {
         boolean allOk;
-        INodeWriteTransaction wtx = null;
+        INodeWriteTrx wtx = null;
         IDatabase database = null;
         ISession session = null;
         boolean abort = false;
@@ -375,7 +375,7 @@ public class DatabaseRepresentation {
         long lastRevision;
         if (WorkerHelper.checkExistingResource(resourceName)) {
             IDatabase database = Database.openDatabase(STOREDBPATH);
-            INodeReadTransaction rtx = null;
+            INodeReadTrx rtx = null;
             ISession session = null;
             try {
                 session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
@@ -434,7 +434,7 @@ public class DatabaseRepresentation {
             // Connection to treetank, creating a session
             IDatabase database = null;
             AbsAxis axis = null;
-            INodeReadTransaction rtx = null;
+            INodeReadTrx rtx = null;
             ISession session = null;
             // List for all restIds of modifications
             final List<Long> modificRestids = new LinkedList<Long>();
@@ -570,7 +570,7 @@ public class DatabaseRepresentation {
         // Connection to treetank, creating a session
         IDatabase database = null;
         ISession session = null;
-        // INodeReadTransaction rtx = null;
+        // INodeReadTrx rtx = null;
         try {
             database = Database.openDatabase(STOREDBPATH);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
@@ -612,7 +612,7 @@ public class DatabaseRepresentation {
         AbsTTException {
         IDatabase database = null;
         ISession session = null;
-        INodeWriteTransaction wtx = null;
+        INodeWriteTrx wtx = null;
         boolean abort = false;
         try {
             database = Database.openDatabase(STOREDBPATH);

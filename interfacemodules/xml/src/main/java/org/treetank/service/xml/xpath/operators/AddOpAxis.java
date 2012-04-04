@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
@@ -54,7 +54,7 @@ public class AddOpAxis extends AbsObAxis {
      * @param mOp2
      *            Second value of the operation
      */
-    public AddOpAxis(final INodeReadTransaction rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
+    public AddOpAxis(final INodeReadTrx rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
 
         super(rtx, mOp1, mOp2);
     }

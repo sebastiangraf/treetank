@@ -35,7 +35,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 import org.junit.After;
 import org.junit.Before;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.IValNode;
@@ -52,7 +52,7 @@ public class XPathStringChecker {
         TestHelper.closeEverything();
     }
 
-    public static void testIAxisConventions(final INodeReadTransaction rtx, final AbsAxis axis,
+    public static void testIAxisConventions(final INodeReadTrx rtx, final AbsAxis axis,
         final String[] expectedValues) {
 
         // IAxis Convention 1.

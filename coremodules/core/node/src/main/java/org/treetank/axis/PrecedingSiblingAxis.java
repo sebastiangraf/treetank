@@ -27,7 +27,7 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -35,7 +35,8 @@ import org.treetank.node.interfaces.IStructNode;
  * <h1>PrecedingSiblingAxis</h1>
  * 
  * <p>
- * Iterate over all preceding siblings of kind ELEMENT or TEXT starting at a given node. Self is not included.
+ * Iterate over all preceding siblings of kind ELEMENT or TEXT starting at a
+ * given node. Self is not included.
  * </p>
  */
 public class PrecedingSiblingAxis extends AbsAxis {
@@ -48,7 +49,7 @@ public class PrecedingSiblingAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public PrecedingSiblingAxis(final INodeReadTransaction rtx) {
+    public PrecedingSiblingAxis(final INodeReadTrx rtx) {
 
         super(rtx);
         mIsFirst = true;
@@ -85,8 +86,8 @@ public class PrecedingSiblingAxis extends AbsAxis {
 
         resetToLastKey();
 
-        if (((IStructNode)getNode()).hasLeftSibling()) {
-            moveTo(((IStructNode)getNode()).getLeftSiblingKey());
+        if (((IStructNode) getNode()).hasLeftSibling()) {
+            moveTo(((IStructNode) getNode()).getLeftSiblingKey());
             return true;
         }
         resetToStartKey();

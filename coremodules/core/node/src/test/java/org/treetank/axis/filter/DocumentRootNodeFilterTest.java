@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 
 public class DocumentRootNodeFilterTest {
@@ -56,40 +56,50 @@ public class DocumentRootNodeFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        final INodeReadTransaction rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getRtx();
 
         rtx.moveTo(0L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), true);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                true);
 
         rtx.moveTo(1L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                false);
 
         rtx.moveTo(1L);
         rtx.moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                false);
 
         rtx.moveTo(3L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                false);
 
         rtx.moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                false);
 
         rtx.moveTo(5L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                false);
 
         rtx.moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                false);
 
         rtx.moveTo(9L);
         rtx.moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                false);
 
         rtx.moveTo(12L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                false);
 
         rtx.moveTo(13L);
         rtx.moveTo(ROOT_NODE);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), true);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
+                true);
     }
 
 }

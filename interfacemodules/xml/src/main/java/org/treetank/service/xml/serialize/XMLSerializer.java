@@ -46,7 +46,7 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
@@ -121,7 +121,7 @@ public final class XMLSerializer extends AbsSerializer {
      * Emit node (start element or characters).
      */
     @Override
-    protected void emitStartElement(final INodeReadTransaction paramRTX) {
+    protected void emitStartElement(final INodeReadTrx paramRTX) {
         try {
             switch (paramRTX.getNode().getKind()) {
             case ROOT_KIND:
@@ -205,7 +205,7 @@ public final class XMLSerializer extends AbsSerializer {
      *            Read Transaction
      */
     @Override
-    protected void emitEndElement(final INodeReadTransaction paramRTX) {
+    protected void emitEndElement(final INodeReadTrx paramRTX) {
         try {
             indent();
             mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());

@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 
 public class PrecedingAxisTest {
@@ -54,22 +54,19 @@ public class PrecedingAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final INodeReadTransaction rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getRtx();
 
         rtx.moveTo(12L);
         AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
-            11L, 8L, 7L, 6L, 5L, 4L
-        });
+                11L, 8L, 7L, 6L, 5L, 4L });
 
         rtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
-            4L
-        });
+        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx),
+                new long[] { 4L });
 
         rtx.moveTo(13L);
         AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
-            12L, 11L, 9L, 8L, 7L, 6L, 5L, 4L
-        });
+                12L, 11L, 9L, 8L, 7L, 6L, 5L, 4L });
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {});

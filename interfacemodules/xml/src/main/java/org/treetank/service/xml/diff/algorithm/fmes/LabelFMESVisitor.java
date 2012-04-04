@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
@@ -48,7 +48,7 @@ import org.treetank.node.interfaces.INode;
 public final class LabelFMESVisitor {
 
     /** {@link IReadTransaction} implementation. */
-    private final INodeReadTransaction mRtx;
+    private final INodeReadTrx mRtx;
 
     /** For each node type: list of inner nodes. */
     private final Map<ENode, List<INode>> mLabels;
