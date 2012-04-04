@@ -52,7 +52,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 /**
- * <h1>PageReadTransaction</h1>
+ * <h1>PageReadTrx</h1>
  * 
  * <p>
  * State of a reading transaction. The only thing shared amongst transactions is the page cache. Everything
@@ -64,7 +64,7 @@ import com.google.common.cache.CacheBuilder;
  * A path-like cache boosts sequential operations.
  * </p>
  */
-public class PageReadTransaction implements IPageReadTrx {
+public class PageReadTrx implements IPageReadTrx {
 
     /** Page reader exclusively assigned to this transaction. */
     private final IReader mPageReader;
@@ -96,7 +96,7 @@ public class PageReadTransaction implements IPageReadTrx {
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected PageReadTransaction(final Session paramSessionState, final UberPage paramUberPage,
+    protected PageReadTrx(final Session paramSessionState, final UberPage paramUberPage,
         final long paramRevision, final IReader paramReader) throws TTIOException {
         mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
         mSession = paramSessionState;

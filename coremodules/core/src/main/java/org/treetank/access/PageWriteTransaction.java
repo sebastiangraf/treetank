@@ -27,8 +27,8 @@
 
 package org.treetank.access;
 
-import static org.treetank.access.PageReadTransaction.nodePageKey;
-import static org.treetank.access.PageReadTransaction.nodePageOffset;
+import static org.treetank.access.PageReadTrx.nodePageKey;
+import static org.treetank.access.PageReadTrx.nodePageOffset;
 
 import javax.xml.namespace.QName;
 
@@ -58,7 +58,7 @@ import org.treetank.utils.NamePageHash;
  * <h1>PageWriteTransaction</h1>
  * 
  * <p>
- * See {@link PageReadTransaction}.
+ * See {@link PageReadTrx}.
  * </p>
  */
 public final class PageWriteTransaction implements IPageWriteTransaction {
@@ -75,7 +75,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
     /** Last reference to the actual revRoot. */
     private final RevisionRootPage mNewRoot;
 
-    private PageReadTransaction mPageReadTransaction;
+    private PageReadTrx mPageReadTransaction;
 
     /**
      * Standard constructor.
@@ -100,7 +100,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         final IWriter paramWriter, final long paramRepresentRev, final long paramStoreRev)
         throws TTIOException {
         mPageReadTransaction =
-            new PageReadTransaction(paramSessionState, paramUberPage, paramRepresentRev, paramWriter);
+            new PageReadTrx(paramSessionState, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mLog = new TransactionLogCache(paramSessionState.mResourceConfig.mPath, paramStoreRev);
         mPageWriter = paramWriter;

@@ -155,7 +155,7 @@ public final class Session implements ISession {
         INodeReadTransaction rtx = null;
         // Create new read transaction.
         rtx =
-            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTransaction(
+            new NodeReadTransaction(this, mTransactionIDCounter.incrementAndGet(), new PageReadTrx(
                 this, mLastCommittedUberPage, paramRevisionKey, mFac.getReader()));
 
         return rtx;
