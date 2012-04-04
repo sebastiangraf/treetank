@@ -33,7 +33,7 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.treetank.access.Database;
-import org.treetank.access.PageWriteTransaction;
+import org.treetank.access.PageWriteTrx;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -107,7 +107,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         final QName qName = rtx.getQNameOfCurrentNode();
         final String mURI = qName.getNamespaceURI();
         try {
-            mContHandler.endElement(mURI, qName.getLocalPart(), PageWriteTransaction.buildName(qName));
+            mContHandler.endElement(mURI, qName.getLocalPart(), PageWriteTrx.buildName(qName));
         } catch (final SAXException exc) {
             exc.printStackTrace();
         }
@@ -167,19 +167,19 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
                 paramRtx.moveToAttribute(i);
                 final QName qName = paramRtx.getQNameOfCurrentNode();
                 final String mURI = qName.getNamespaceURI();
-                atts.addAttribute(mURI, qName.getLocalPart(), PageWriteTransaction.buildName(qName), paramRtx
+                atts.addAttribute(mURI, qName.getLocalPart(), PageWriteTrx.buildName(qName), paramRtx
                     .getTypeOfCurrentNode(), paramRtx.getValueOfCurrentNode());
                 paramRtx.moveTo(key);
             }
 
             // Create SAX events.
             final QName qName = paramRtx.getQNameOfCurrentNode();
-            mContHandler.startElement(qName.getNamespaceURI(), qName.getLocalPart(), PageWriteTransaction
+            mContHandler.startElement(qName.getNamespaceURI(), qName.getLocalPart(), PageWriteTrx
                 .buildName(qName), atts);
 
             // Empty elements.
             if (!((ElementNode)paramRtx.getNode()).hasFirstChild()) {
-                mContHandler.endElement(qName.getNamespaceURI(), qName.getLocalPart(), PageWriteTransaction
+                mContHandler.endElement(qName.getNamespaceURI(), qName.getLocalPart(), PageWriteTrx
                     .buildName(qName));
             }
         } catch (final SAXException exc) {
