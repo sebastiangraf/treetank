@@ -35,41 +35,7 @@ import org.treetank.node.ENode;
  * Common interface for all item kinds. An item can be a node or an atomic value.
  * </p>
  */
-public interface INode {
-
-    /**
-     * Setting the actual hash of the structure. The hash of one node should
-     * have the entire integrity of the related subtree.
-     * 
-     * @param pHash
-     *            hash to be set for this node
-     * 
-     */
-    void setHash(final long pHash);
-
-    /**
-     * Getting the persistent stored hash.
-     * 
-     * @return the hash of this node
-     */
-    long getHash();
-
-    /**
-     * Sets unique node key.
-     * 
-     * 
-     * @param pNodeKey
-     *            Unique key of item, maybe negative when atomics from the
-     *            XPath-engine.
-     */
-    void setNodeKey(final long pNodeKey);
-
-    /**
-     * Gets unique node key.
-     * 
-     * @return node key
-     */
-    long getNodeKey();
+public interface INode extends org.treetank.api.INode {
 
     /**
      * Gets key of the context item's parent.

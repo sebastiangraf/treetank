@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.treetank.api.IPageReadTransaction;
-import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
-import org.treetank.cache.RAMCache;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.node.DeletedNode;
@@ -49,6 +47,9 @@ import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 import org.treetank.settings.ERevisioning;
 import org.treetank.utils.IConstants;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 /**
  * <h1>PageReadTransaction</h1>
@@ -74,7 +75,7 @@ public class PageReadTransaction implements IPageReadTransaction {
     /** Cached name page of this revision. */
     private final RevisionRootPage mRootPage;
     /** Internal reference to cache. */
-    private final ICache mCache;
+    private final Cache<Long, NodePageContainer> mCache;
 
     /** Configuration of the session */
     protected final Session mSession;
@@ -97,7 +98,7 @@ public class PageReadTransaction implements IPageReadTransaction {
      */
     protected PageReadTransaction(final Session paramSessionState, final UberPage paramUberPage,
         final long paramRevision, final IReader paramReader) throws TTIOException {
-        mCache = new RAMCache();
+        mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
         mSession = paramSessionState;
         mPageReader = paramReader;
         mUberPage = paramUberPage;
@@ -125,7 +126,7 @@ public class PageReadTransaction implements IPageReadTransaction {
         final long nodePageKey = nodePageKey(paramNodeKey);
         final int nodePageOffset = nodePageOffset(paramNodeKey);
 
-        NodePageContainer cont = mCache.get(nodePageKey);
+        NodePageContainer cont = mCache.getIfPresent(nodePageKey);
 
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
@@ -193,7 +194,7 @@ public class PageReadTransaction implements IPageReadTransaction {
      */
     public void close() throws TTIOException {
         mPageReader.close();
-        mCache.clear();
+        mCache.invalidateAll();
     }
 
     /**
