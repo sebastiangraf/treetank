@@ -86,7 +86,7 @@ public class AttributeAxisTest {
     @Test
     @Ignore
     public void testMultipleAttributes() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");
         wtx.moveTo(nodeKey);

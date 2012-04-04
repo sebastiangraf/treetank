@@ -147,15 +147,15 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public INodeReadTransaction beginReadTransaction() throws AbsTTException {
-        return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber());
+    public INodeReadTransaction beginNodeReadTransaction() throws AbsTTException {
+        return beginNodeReadTransaction(mLastCommittedUberPage.getRevisionNumber());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized INodeReadTransaction beginReadTransaction(final long paramRevisionKey)
+    public synchronized INodeReadTransaction beginNodeReadTransaction(final long paramRevisionKey)
         throws AbsTTException {
         assertAccess(paramRevisionKey);
         // Make sure not to exceed available number of read transactions.
@@ -178,15 +178,15 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public INodeWriteTransaction beginWriteTransaction() throws AbsTTException {
-        return beginWriteTransaction(0, 0);
+    public INodeWriteTransaction beginNodeWriteTransaction() throws AbsTTException {
+        return beginNodeReadTransaction(0, 0);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized INodeWriteTransaction beginWriteTransaction(final int paramMaxNodeCount,
+    public synchronized INodeWriteTransaction beginNodeReadTransaction(final int paramMaxNodeCount,
         final int paramMaxTime) throws AbsTTException {
         assertAccess(mLastCommittedUberPage.getRevision());
 
@@ -203,7 +203,7 @@ public final class Session implements ISession {
 
         final long currentID = mTransactionIDCounter.incrementAndGet();
         final IPageWriteTransaction wtxState =
-            createWriteTransactionState(currentID, mLastCommittedUberPage.getRevisionNumber(),
+            beginPageWriteTransaction(currentID, mLastCommittedUberPage.getRevisionNumber(),
                 mLastCommittedUberPage.getRevisionNumber());
 
         // Create new write transaction.
@@ -220,7 +220,7 @@ public final class Session implements ISession {
 
     }
 
-    protected IPageWriteTransaction createWriteTransactionState(final long mId,
+    protected IPageWriteTransaction beginPageWriteTransaction(final long mId,
         final long mRepresentRevision, final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 

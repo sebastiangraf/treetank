@@ -66,14 +66,14 @@ public class Holder {
 
     public static Holder generateWtx() throws AbsTTException {
         final Holder holder = generateSession();
-        final INodeWriteTransaction wtx = holder.mSession.beginWriteTransaction();
+        final INodeWriteTransaction wtx = holder.mSession.beginNodeWriteTransaction();
         holder.setWtx(wtx);
         return holder;
     }
 
     public static Holder generateRtx() throws AbsTTException {
         final Holder holder = generateSession();
-        final INodeReadTransaction rtx = holder.mSession.beginReadTransaction();
+        final INodeReadTransaction rtx = holder.mSession.beginNodeReadTransaction();
         holder.setRtx(rtx);
         return holder;
     }

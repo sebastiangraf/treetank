@@ -483,7 +483,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         mSession.assertAccess(paramRevision);
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        setPageTransaction(mSession.createWriteTransactionState(getTransactionID(), paramRevision,
+        setPageTransaction(mSession.beginPageWriteTransaction(getTransactionID(), paramRevision,
             getRevisionNumber() - 1));
         // Reset modification counter.
         mModificationCount = 0L;
@@ -510,7 +510,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
 
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        setPageTransaction(mSession.createWriteTransactionState(getTransactionID(), getRevisionNumber(),
+        setPageTransaction(mSession.beginPageWriteTransaction(getTransactionID(), getRevisionNumber(),
             getRevisionNumber()));
 
     }
@@ -534,7 +534,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         }
 
         // Reset internal transaction state to last committed uber page.
-        setPageTransaction(mSession.createWriteTransactionState(getTransactionID(), revisionToSet,
+        setPageTransaction(mSession.beginPageWriteTransaction(getTransactionID(), revisionToSet,
             revisionToSet));
     }
 

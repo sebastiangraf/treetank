@@ -135,7 +135,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
         this.mDocWrapper = paramDocWrapper;
 
-        final INodeReadTransaction rtx = mDocWrapper.mSession.beginReadTransaction();
+        final INodeReadTransaction rtx = mDocWrapper.mSession.beginNodeReadTransaction();
         rtx.moveTo(nodekeyToStart);
         this.nodeKind = rtx.getNode().getKind();
         this.mKey = rtx.getNode().getNodeKey();
@@ -840,7 +840,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     }
 
     private final INodeReadTransaction createRtxAndMove() throws AbsTTException {
-        final INodeReadTransaction rtx = mDocWrapper.mSession.beginReadTransaction();
+        final INodeReadTransaction rtx = mDocWrapper.mSession.beginNodeReadTransaction();
         rtx.moveTo(mKey);
         return rtx;
     }

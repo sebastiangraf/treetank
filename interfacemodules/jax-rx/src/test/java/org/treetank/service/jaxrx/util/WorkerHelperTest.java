@@ -156,7 +156,7 @@ public class WorkerHelperTest {
         final IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
 
         final InputStream inputStream = new ByteArrayInputStream("<testNode/>".getBytes());
 
@@ -176,7 +176,7 @@ public class WorkerHelperTest {
     public void testClose() throws AbsTTException {
         IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         ISession session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
 
         WorkerHelper.closeWTX(false, wtx, session, database);
 
@@ -184,7 +184,7 @@ public class WorkerHelperTest {
 
         database = Database.openDatabase(DBFILE.getParentFile());
         session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeReadTransaction rtx = session.beginReadTransaction();
+        final INodeReadTransaction rtx = session.beginNodeReadTransaction();
         WorkerHelper.closeRTX(rtx, session, database);
 
         rtx.moveTo(11);

@@ -1403,7 +1403,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             final IDatabase db = Database.openDatabase(target);
             db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
             final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
-            final INodeWriteTransaction wtx = session.beginWriteTransaction();
+            final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
             final XMLEventReader reader = createFileReader(new File(args[0]));
             final XMLUpdateShredder shredder =
                 new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD, new File(args[0]),

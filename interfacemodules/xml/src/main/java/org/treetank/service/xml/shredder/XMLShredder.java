@@ -333,7 +333,7 @@ public class XMLShredder implements Callable<Long> {
         final IDatabase db = Database.openDatabase(target);
         db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
         final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
         final XMLEventReader reader = createFileReader(new File(paramArgs[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

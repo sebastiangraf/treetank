@@ -75,7 +75,7 @@ public final class XPathWriteTransactionTest {
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.getConfig()).build());
         session = database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        wtx = session.beginWriteTransaction();
+        wtx = session.beginNodeWriteTransaction();
     }
 
     @Test

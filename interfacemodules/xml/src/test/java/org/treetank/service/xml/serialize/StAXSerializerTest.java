@@ -86,7 +86,7 @@ public class StAXSerializerTest {
             final XMLSerializer xmlSerializer = builder.build();
             xmlSerializer.call();
 
-            final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
+            final INodeReadTransaction rtx = holder.getSession().beginNodeReadTransaction();
             StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
             final StringBuilder strBuilder = new StringBuilder();
             boolean isEmptyElement = false;

@@ -70,7 +70,7 @@ public class ReadTransactionTest {
         db.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH2.getConfig())
             .build());
         final ISession session = db.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeReadTransaction rtx = session.beginReadTransaction();
+        final INodeReadTransaction rtx = session.beginNodeReadTransaction();
         rtx.getRevisionNumber();
         rtx.close();
         session.close();

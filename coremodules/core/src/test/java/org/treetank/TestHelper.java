@@ -278,7 +278,7 @@ public final class TestHelper {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.config).build());
         final ISession session = database.getSession(new SessionConfiguration.Builder(RESOURCE).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();

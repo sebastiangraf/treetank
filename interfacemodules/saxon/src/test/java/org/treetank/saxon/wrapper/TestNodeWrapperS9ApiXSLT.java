@@ -96,7 +96,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
             .createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
         final ISession session =
             databaseBooks.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

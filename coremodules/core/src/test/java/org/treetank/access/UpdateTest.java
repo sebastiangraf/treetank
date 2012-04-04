@@ -62,12 +62,12 @@ public class UpdateTest {
 
     @Test
     public void testNodeTransactionIsolation() throws AbsTTException {
-        INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         wtx.insertElementAsFirstChild(new QName(""));
         testNodeTransactionIsolation(wtx);
         wtx.commit();
         testNodeTransactionIsolation(wtx);
-        INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
+        INodeReadTransaction rtx = holder.getSession().beginNodeReadTransaction();
         testNodeTransactionIsolation(rtx);
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.insertElementAsFirstChild(new QName(""));
@@ -101,23 +101,23 @@ public class UpdateTest {
     @Test
     public void testInsertChild() throws AbsTTException {
 
-        INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         wtx.commit();
         wtx.close();
 
-        INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
+        INodeReadTransaction rtx = holder.getSession().beginNodeReadTransaction();
         assertEquals(0L, rtx.getRevisionNumber());
         rtx.close();
 
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
-            wtx = holder.getSession().beginWriteTransaction();
+            wtx = holder.getSession().beginNodeWriteTransaction();
             wtx.moveTo(NodeReadTransaction.ROOT_NODE);
             wtx.insertTextAsFirstChild(Integer.toString(i));
             wtx.commit();
             wtx.close();
 
-            rtx = holder.getSession().beginReadTransaction();
+            rtx = holder.getSession().beginNodeReadTransaction();
             rtx.moveTo(NodeReadTransaction.ROOT_NODE);
             rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
             assertEquals(Integer.toString(i), rtx.getValueOfCurrentNode());
@@ -125,7 +125,7 @@ public class UpdateTest {
             rtx.close();
         }
 
-        rtx = holder.getSession().beginReadTransaction();
+        rtx = holder.getSession().beginNodeReadTransaction();
         rtx.moveTo(NodeReadTransaction.ROOT_NODE);
         rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
         assertEquals("10", rtx.getValueOfCurrentNode());
@@ -136,11 +136,11 @@ public class UpdateTest {
 
     @Test
     public void testInsertPath() throws AbsTTException {
-        INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         wtx.commit();
         wtx.close();
 
-        wtx = holder.getSession().beginWriteTransaction();
+        wtx = holder.getSession().beginNodeWriteTransaction();
         wtx.moveTo(NodeReadTransaction.ROOT_NODE);
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
@@ -150,7 +150,7 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        final INodeWriteTransaction wtx2 = holder.getSession().beginWriteTransaction();
+        final INodeWriteTransaction wtx2 = holder.getSession().beginNodeWriteTransaction();
         assertTrue(wtx2.moveTo(NodeReadTransaction.ROOT_NODE));
         assertEquals(5L, wtx2.insertElementAsFirstChild(new QName("")));
         wtx2.commit();
@@ -160,7 +160,7 @@ public class UpdateTest {
 
     @Test
     public void testPageBoundary() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
 
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));
@@ -173,7 +173,7 @@ public class UpdateTest {
         wtx.commit();
         testPageBoundary(wtx);
         wtx.close();
-        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
+        final INodeReadTransaction rtx = holder.getSession().beginNodeReadTransaction();
         testPageBoundary(rtx);
         rtx.close();
 
@@ -194,7 +194,7 @@ public class UpdateTest {
 
     @Test(expected = TTUsageException.class)
     public void testRemoveDocument() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.moveTo(NodeReadTransaction.ROOT_NODE);
         try {
@@ -208,7 +208,7 @@ public class UpdateTest {
 
     @Test
     public void testRemoveDescendant() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.moveTo(5L);
@@ -217,7 +217,7 @@ public class UpdateTest {
         wtx.commit();
         testRemoveDescendant(wtx);
         wtx.close();
-        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
+        final INodeReadTransaction rtx = holder.getSession().beginNodeReadTransaction();
         testRemoveDescendant(rtx);
         rtx.close();
     }

@@ -102,9 +102,9 @@ public final class TreeTankCommandoLineExplorer {
             database.createResource(new ResourceConfiguration.Builder("TMP", config).build());
             session = database.getSession(new SessionConfiguration.Builder("TMP").build());
             if (revision != 0) {
-                rtx = session.beginWriteTransaction();
+                rtx = session.beginNodeWriteTransaction();
             } else {
-                rtx = session.beginReadTransaction(revision);
+                rtx = session.beginNodeReadTransaction(revision);
             }
         } else {
             System.out.println("Usage: java TreeTankCommandoLineExplorer \"tnk-file\" [revision] "
@@ -134,7 +134,7 @@ public final class TreeTankCommandoLineExplorer {
                     if (file != null) {
                         database = Database.openDatabase(file);
                         session = database.getSession(new SessionConfiguration.Builder("TMP").build());
-                        rtx = session.beginReadTransaction();
+                        rtx = session.beginNodeReadTransaction();
                         System.out.println(command.executeCommand(rtx));
                     } else {
                         System.out.println("Invalid path to tt-file! Please use other!");

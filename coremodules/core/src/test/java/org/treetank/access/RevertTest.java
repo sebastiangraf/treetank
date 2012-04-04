@@ -59,7 +59,7 @@ public final class RevertTest {
 
     @Test
     public void test() throws AbsTTException {
-        INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
         assertEquals(0L, wtx.getRevisionNumber());
@@ -67,7 +67,7 @@ public final class RevertTest {
         assertEquals(1L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = holder.getSession().beginWriteTransaction();
+        wtx = holder.getSession().beginNodeWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.insertElementAsFirstChild(new QName("bla"));
@@ -75,14 +75,14 @@ public final class RevertTest {
         assertEquals(2L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = holder.getSession().beginWriteTransaction();
+        wtx = holder.getSession().beginNodeWriteTransaction();
         assertEquals(2L, wtx.getRevisionNumber());
         wtx.revertTo(0);
         wtx.commit();
         assertEquals(3L, wtx.getRevisionNumber());
         wtx.close();
 
-        wtx = holder.getSession().beginWriteTransaction();
+        wtx = holder.getSession().beginNodeWriteTransaction();
         assertEquals(3L, wtx.getRevisionNumber());
         wtx.close();
 

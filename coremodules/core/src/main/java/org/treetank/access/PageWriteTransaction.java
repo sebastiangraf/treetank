@@ -377,8 +377,8 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         uberPageReference.setPage(uberPage);
         mPageWriter.writeFirstReference(uberPageReference);
         uberPageReference.setPage(null);
-
         return uberPage;
+
     }
 
     /**

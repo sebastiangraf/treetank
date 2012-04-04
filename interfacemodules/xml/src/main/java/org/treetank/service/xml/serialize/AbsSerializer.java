@@ -98,7 +98,7 @@ abstract class AbsSerializer implements Callable<Void> {
         emitStartDocument();
 
         long[] versionsToUse;
-        INodeReadTransaction rtx = mSession.beginReadTransaction();
+        INodeReadTransaction rtx = mSession.beginNodeReadTransaction();
         rtx.moveTo(mNodeKey);
         final long lastRevisionNumber = rtx.getRevisionNumber();
         rtx.close();
@@ -118,7 +118,7 @@ abstract class AbsSerializer implements Callable<Void> {
 
         for (long i = 0; versionsToUse == null ? i < lastRevisionNumber : i < versionsToUse.length; i++) {
 
-            rtx = mSession.beginReadTransaction(versionsToUse == null ? i : versionsToUse[(int)i]);
+            rtx = mSession.beginNodeReadTransaction(versionsToUse == null ? i : versionsToUse[(int)i]);
             if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);
             }

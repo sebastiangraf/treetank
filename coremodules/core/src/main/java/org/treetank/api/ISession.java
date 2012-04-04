@@ -50,7 +50,7 @@ public interface ISession {
      *             If can't begin Read Transaction.
      * @return INodeReadTransaction instance.
      */
-    INodeReadTransaction beginReadTransaction() throws AbsTTException;
+    INodeReadTransaction beginNodeReadTransaction() throws AbsTTException;
 
     /**
      * Begin a read-only transaction on the given revision key.
@@ -61,7 +61,7 @@ public interface ISession {
      *             If can't begin Read Transaction.
      * @return {@link INodeReadTransaction} instance
      */
-    INodeReadTransaction beginReadTransaction(final long pRev) throws AbsTTException;
+    INodeReadTransaction beginNodeReadTransaction(final long pRev) throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
@@ -70,7 +70,7 @@ public interface ISession {
      *             If can't begin Write Transaction.
      * @return INodeWriteTransaction instance.
      */
-    INodeWriteTransaction beginWriteTransaction() throws AbsTTException;
+    INodeWriteTransaction beginNodeWriteTransaction() throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction with auto commit.
@@ -83,7 +83,7 @@ public interface ISession {
      *             If can't begin Write Transaction.
      * @return INodeWriteTransaction instance.
      */
-    INodeWriteTransaction beginWriteTransaction(final int pMaxNodes, final int pMaxTime)
+    INodeWriteTransaction beginNodeReadTransaction(final int pMaxNodes, final int pMaxTime)
         throws AbsTTException;
 
     /**

@@ -303,7 +303,7 @@ public class DatabaseRepresentation {
             database = Database.openDatabase(dbConf.mFile);
             database.createResource(resConf);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
-            wtx = session.beginWriteTransaction();
+            wtx = session.beginNodeWriteTransaction();
             wtx.moveTo(NodeReadTransaction.ROOT_NODE);
             final XMLShredder shredder =
                 new XMLShredder(wtx, RESTXMLShredder.createReader(xmlInput), EShredderInsert.ADDASFIRSTCHILD);
@@ -378,7 +378,7 @@ public class DatabaseRepresentation {
             ISession session = null;
             try {
                 session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
-                rtx = session.beginReadTransaction();
+                rtx = session.beginNodeReadTransaction();
                 lastRevision = rtx.getRevisionNumber();
 
             } catch (final Exception globExcep) {
@@ -446,7 +446,7 @@ public class DatabaseRepresentation {
                 session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
 
                 // get highest rest-id from given revision 1
-                rtx = session.beginReadTransaction(revision1);
+                rtx = session.beginNodeReadTransaction(revision1);
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
@@ -460,7 +460,7 @@ public class DatabaseRepresentation {
                 rtx.close();
 
                 // get highest rest-id from given revision 2
-                rtx = session.beginReadTransaction(revision2);
+                rtx = session.beginNodeReadTransaction(revision2);
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
@@ -485,7 +485,7 @@ public class DatabaseRepresentation {
                 rtx.moveTo(NodeReadTransaction.ROOT_NODE);
                 rtx.close();
 
-                rtx = session.beginReadTransaction(revision1);
+                rtx = session.beginNodeReadTransaction(revision1);
 
                 // linked list for holding unique restids from revision 1
                 final List<Long> restIdsRev1New = new LinkedList<Long>();
@@ -512,7 +512,7 @@ public class DatabaseRepresentation {
                  * Shred modified restids from revision 2 to xml fragment Just
                  * modifications done by post commands
                  */
-                rtx = session.beginReadTransaction(revision2);
+                rtx = session.beginNodeReadTransaction(revision2);
 
                 for (Long nodeKey : modificRestids) {
                     rtx.moveTo(nodeKey);
@@ -525,7 +525,7 @@ public class DatabaseRepresentation {
                  * Shred modified restids from revision 1 to xml fragment Just
                  * modifications done by put and deletes
                  */
-                rtx = session.beginReadTransaction(revision1);
+                rtx = session.beginNodeReadTransaction(revision1);
                 for (Long nodeKey : restIdsRev1New) {
                     rtx.moveTo(nodeKey);
                     WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision1).call();
@@ -616,7 +616,7 @@ public class DatabaseRepresentation {
         try {
             database = Database.openDatabase(STOREDBPATH);
             session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
-            wtx = session.beginWriteTransaction();
+            wtx = session.beginNodeWriteTransaction();
             wtx.revertTo(backToRevision);
             wtx.commit();
         } catch (final AbsTTException exce) {

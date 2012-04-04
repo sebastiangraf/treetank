@@ -197,13 +197,6 @@ public class NodePage implements IPage {
         return mNodePageKey;
     }
 
-    private long getRightKey(final ITTSource mIn) {
-        final long rightKey = mIn.readLong();
-        mIn.readInt();
-        mIn.readInt();
-        return rightKey;
-    }
-
     /**
      * Get node at a given offset.
      * 

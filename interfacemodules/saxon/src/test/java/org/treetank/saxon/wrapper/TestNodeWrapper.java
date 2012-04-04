@@ -169,7 +169,7 @@ public class TestNodeWrapper {
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db2).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
         final XMLEventReader reader = XMLShredder.createFileReader(source);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

@@ -70,7 +70,7 @@ public final class FMESVisitor {
         assert paramSession != null;
         assert paramInOrder != null;
         assert paramDescendants != null;
-        mRtx = paramSession.beginReadTransaction();
+        mRtx = paramSession.beginNodeReadTransaction();
         mInOrder = paramInOrder;
         mDescendants = paramDescendants;
     }

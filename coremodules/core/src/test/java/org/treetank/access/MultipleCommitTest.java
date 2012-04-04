@@ -79,7 +79,7 @@ public class MultipleCommitTest {
         DocumentCreater.create(holder.getWtx());
         holder.getWtx().commit();
 
-        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
+        final INodeReadTransaction rtx = holder.getSession().beginNodeReadTransaction();
         rtx.close();
     }
 

@@ -152,9 +152,9 @@ public class RestXPathProcessor {
             // Creating a transaction
 
             if (doRevision == null) {
-                rtx = session.beginReadTransaction();
+                rtx = session.beginNodeReadTransaction();
             } else {
-                rtx = session.beginReadTransaction(doRevision);
+                rtx = session.beginNodeReadTransaction(doRevision);
             }
 
             final boolean exist = rtx.moveTo(rId);
@@ -211,9 +211,9 @@ public class RestXPathProcessor {
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
             // Creating a transaction
             if (revision == null) {
-                rtx = session.beginReadTransaction();
+                rtx = session.beginNodeReadTransaction();
             } else {
-                rtx = session.beginReadTransaction(revision);
+                rtx = session.beginNodeReadTransaction(revision);
             }
 
             final AbsAxis axis = new XPathAxis(rtx, xpath);

@@ -63,7 +63,7 @@ public class HashTest {
             .getConfig()).setHashKind(HashKind.Postorder).build());
         final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginWriteTransaction();
+                .beginNodeWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
 
@@ -74,7 +74,7 @@ public class HashTest {
             .getConfig()).setHashKind(HashKind.Postorder).build());
         final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginWriteTransaction();
+                .beginNodeWriteTransaction();
         testDeepTree(wtx);
     }
 
@@ -85,7 +85,7 @@ public class HashTest {
             .getConfig()).setHashKind(HashKind.Postorder).build());
         final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginWriteTransaction();
+                .beginNodeWriteTransaction();
         testSetter(wtx);
     }
 
@@ -96,7 +96,7 @@ public class HashTest {
             .getConfig()).setHashKind(HashKind.Rolling).build());
         final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginWriteTransaction();
+                .beginNodeWriteTransaction();
         testHashTreeWithInsertAndRemove(wtx);
     }
 
@@ -107,7 +107,7 @@ public class HashTest {
             .getConfig()).setHashKind(HashKind.Rolling).build());
         final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginWriteTransaction();
+                .beginNodeWriteTransaction();
         testDeepTree(wtx);
     }
 
@@ -118,7 +118,7 @@ public class HashTest {
             .getConfig()).setHashKind(HashKind.Rolling).build());
         final INodeWriteTransaction wtx =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginWriteTransaction();
+                .beginNodeWriteTransaction();
         testSetter(wtx);
     }
 

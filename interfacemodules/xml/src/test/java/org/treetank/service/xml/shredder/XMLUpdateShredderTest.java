@@ -245,7 +245,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
-                final INodeWriteTransaction wtx = session.beginWriteTransaction();
+                final INodeWriteTransaction wtx = session.beginNodeWriteTransaction();
                 if (first) {
                     final XMLShredder shredder =
                         new XMLShredder(wtx, XMLShredder.createFileReader(file),

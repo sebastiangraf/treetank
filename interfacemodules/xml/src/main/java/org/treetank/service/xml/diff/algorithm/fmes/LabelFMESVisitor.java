@@ -65,7 +65,7 @@ public final class LabelFMESVisitor {
      *             if setting up treetank fails
      */
     public LabelFMESVisitor(final ISession paramSession) throws AbsTTException {
-        mRtx = paramSession.beginReadTransaction();
+        mRtx = paramSession.beginNodeReadTransaction();
         mLabels = new HashMap<ENode, List<INode>>();
         mLeafLabels = new HashMap<ENode, List<INode>>();
     }
