@@ -27,6 +27,8 @@
 
 package org.treetank.access;
 
+import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+
 import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
@@ -66,7 +68,7 @@ import org.treetank.utils.TypedValue;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public class NodeWriteTransaction extends NodeReadTransaction implements INodeWriteTransaction {
+public class NodeWriteTransaction implements INodeWriteTransaction {
 
     /**
      * How is the Hash for this storage computed?
@@ -95,6 +97,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
     /** Hash kind of Structure. */
     private final HashKind mHashKind;
 
+    private NodeReadTransaction mDelegate;
+
     /**
      * Constructor.
      * 
@@ -116,7 +120,6 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
     protected NodeWriteTransaction(final long paramTransactionID, final Session paramSessionState,
         final IPageWriteTransaction paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
-        super(paramSessionState, paramTransactionID, paramTransactionState);
 
         // Do not accept negative values.
         if ((paramMaxNodeCount < 0) || (paramMaxTime < 0)) {
@@ -128,6 +131,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         mModificationCount = 0L;
 
         mHashKind = paramSessionState.mResourceConfig.mHashKind;
+        mDelegate = new NodeReadTransaction(paramSessionState, paramTransactionID, paramTransactionState);
     }
 
     /**
@@ -139,16 +143,17 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         if (mQName == null) {
             throw new NullPointerException("mQName may not be null!");
         }
-        if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
+        if (mDelegate.getCurrentNode() instanceof ElementNode
+            || mDelegate.getCurrentNode() instanceof DocumentRootNode) {
 
             checkAccessAndCommit();
 
-            final long parentKey = getCurrentNode().getNodeKey();
+            final long parentKey = mDelegate.getCurrentNode().getNodeKey();
             final long leftSibKey = NULL_NODE;
-            final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
+            final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
             final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQName);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptForInsert(node, true);
             adaptHashesWithAdd();
 
@@ -166,16 +171,16 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         if (paramQName == null) {
             throw new NullPointerException("paramQName may not be null!");
         }
-        if (getCurrentNode() instanceof IStructNode) {
+        if (mDelegate.getCurrentNode() instanceof IStructNode) {
 
             checkAccessAndCommit();
 
-            final long parentKey = getCurrentNode().getParentKey();
-            final long leftSibKey = getCurrentNode().getNodeKey();
-            final long rightSibKey = ((IStructNode)getCurrentNode()).getRightSiblingKey();
+            final long parentKey = mDelegate.getCurrentNode().getParentKey();
+            final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
+            final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
             final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, paramQName);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptForInsert(node, false);
             adaptHashesWithAdd();
 
@@ -194,17 +199,18 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         if (paramValueAsString == null) {
             throw new NullPointerException("paramValueAsString may not be null!");
         }
-        if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
+        if (mDelegate.getCurrentNode() instanceof ElementNode
+            || mDelegate.getCurrentNode() instanceof DocumentRootNode) {
 
             checkAccessAndCommit();
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
-            final long parentKey = getCurrentNode().getNodeKey();
+            final long parentKey = mDelegate.getCurrentNode().getNodeKey();
             final long leftSibKey = NULL_NODE;
-            final long rightSibKey = ((IStructNode)getCurrentNode()).getFirstChildKey();
+            final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
             final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptForInsert(node, true);
             adaptHashesWithAdd();
 
@@ -223,16 +229,16 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             throw new NullPointerException("paramValueAsString may not be null!");
         }
 
-        if (getCurrentNode().getKind() == ENode.ELEMENT_KIND) {
+        if (mDelegate.getCurrentNode().getKind() == ENode.ELEMENT_KIND) {
             checkAccessAndCommit();
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
-            final long parentKey = getCurrentNode().getParentKey();
-            final long leftSibKey = getCurrentNode().getNodeKey();
-            final long rightSibKey = ((IStructNode)getCurrentNode()).getRightSiblingKey();
+            final long parentKey = mDelegate.getCurrentNode().getParentKey();
+            final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
+            final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
             final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptForInsert(node, false);
             adaptHashesWithAdd();
 
@@ -249,12 +255,12 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
     @Override
     public synchronized long insertAttribute(final QName paramQName, final String paramValueAsString)
         throws AbsTTException {
-        if (getCurrentNode() instanceof ElementNode) {
+        if (mDelegate.getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
-            final long elementKey = getCurrentNode().getNodeKey();
+            final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
             final int nameKey =
                 getPageTransaction().createNameKey(PageWriteTransaction.buildName(paramQName));
@@ -271,7 +277,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
             getPageTransaction().finishNodeModification(parentNode);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptForInsert(node, false);
 
             adaptHashesWithAdd();
@@ -290,7 +296,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         if (paramQName == null) {
             throw new NullPointerException("QName may not be null!");
         }
-        if (getCurrentNode() instanceof ElementNode) {
+        if (mDelegate.getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
 
@@ -299,7 +305,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             // paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" +
             // paramQName.getPrefix();
             final int prefixKey = getPageTransaction().createNameKey(paramQName.getPrefix());
-            final long elementKey = getCurrentNode().getNodeKey();
+            final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
             final NodeDelegate nodeDel =
                 new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
@@ -311,7 +317,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
             getPageTransaction().finishNodeModification(parentNode);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptForInsert(node, false);
             adaptHashesWithAdd();
             return node.getNodeKey();
@@ -352,10 +358,10 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
     @Override
     public synchronized void remove() throws AbsTTException {
         checkAccessAndCommit();
-        if (getCurrentNode().getKind() == ENode.ROOT_KIND) {
+        if (mDelegate.getCurrentNode().getKind() == ENode.ROOT_KIND) {
             throw new TTUsageException("Document root can not be removed.");
-        } else if (getCurrentNode() instanceof IStructNode) {
-            final IStructNode node = (IStructNode)getCurrentNode();
+        } else if (mDelegate.getCurrentNode() instanceof IStructNode) {
+            final IStructNode node = (IStructNode)mDelegate.getCurrentNode();
             // Remove subtree, excluded since 1. axis is now moved to extra
             // bundle and 2. attributes and
             // namespaces are ignored
@@ -375,24 +381,24 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             } else {
                 moveTo(node.getParentKey());
             }
-        } else if (getCurrentNode().getKind() == ENode.ATTRIBUTE_KIND) {
-            final INode node = getCurrentNode();
+        } else if (mDelegate.getCurrentNode().getKind() == ENode.ATTRIBUTE_KIND) {
+            final INode node = mDelegate.getCurrentNode();
 
             final ElementNode parent =
                 (ElementNode)getPageTransaction().prepareNodeForModification(node.getParentKey());
             parent.removeAttribute(node.getNodeKey());
             getPageTransaction().finishNodeModification(parent);
             adaptHashesWithRemove();
-            moveTo(getCurrentNode().getParentKey());
-        } else if (getCurrentNode().getKind() == ENode.NAMESPACE_KIND) {
-            final INode node = getCurrentNode();
+            moveTo(mDelegate.getCurrentNode().getParentKey());
+        } else if (mDelegate.getCurrentNode().getKind() == ENode.NAMESPACE_KIND) {
+            final INode node = mDelegate.getCurrentNode();
 
             final ElementNode parent =
                 (ElementNode)getPageTransaction().prepareNodeForModification(node.getParentKey());
             parent.removeNamespace(node.getNodeKey());
             getPageTransaction().finishNodeModification(parent);
             adaptHashesWithRemove();
-            moveTo(getCurrentNode().getParentKey());
+            moveTo(mDelegate.getCurrentNode().getParentKey());
         }
     }
 
@@ -401,17 +407,18 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      */
     @Override
     public synchronized void setQName(final QName paramName) throws AbsTTException {
-        if (getCurrentNode() instanceof INameNode) {
-            assertNotClosed();
+        if (mDelegate.getCurrentNode() instanceof INameNode) {
+            mDelegate.assertNotClosed();
             mModificationCount++;
-            final long oldHash = getCurrentNode().hashCode();
+            final long oldHash = mDelegate.getCurrentNode().hashCode();
 
             final INameNode node =
-                (INameNode)getPageTransaction().prepareNodeForModification(getCurrentNode().getNodeKey());
+                (INameNode)getPageTransaction().prepareNodeForModification(
+                    mDelegate.getCurrentNode().getNodeKey());
             node.setNameKey(getPageTransaction().createNameKey(PageWriteTransaction.buildName(paramName)));
             getPageTransaction().finishNodeModification(node);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
@@ -424,17 +431,18 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      */
     @Override
     public synchronized void setURI(final String paramUri) throws AbsTTException {
-        if (getCurrentNode() instanceof INameNode) {
-            assertNotClosed();
+        if (mDelegate.getCurrentNode() instanceof INameNode) {
+            mDelegate.assertNotClosed();
             mModificationCount++;
-            final long oldHash = getCurrentNode().hashCode();
+            final long oldHash = mDelegate.getCurrentNode().hashCode();
 
             final INameNode node =
-                (INameNode)getPageTransaction().prepareNodeForModification(getCurrentNode().getNodeKey());
+                (INameNode)getPageTransaction().prepareNodeForModification(
+                    mDelegate.getCurrentNode().getNodeKey());
             node.setURIKey(getPageTransaction().createNameKey(paramUri));
             getPageTransaction().finishNodeModification(node);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
@@ -448,17 +456,18 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      */
     @Override
     public synchronized void setValue(final String paramValue) throws AbsTTException {
-        if (getCurrentNode() instanceof IValNode) {
-            assertNotClosed();
+        if (mDelegate.getCurrentNode() instanceof IValNode) {
+            mDelegate.assertNotClosed();
             mModificationCount++;
-            final long oldHash = getCurrentNode().hashCode();
+            final long oldHash = mDelegate.getCurrentNode().hashCode();
 
             final IValNode node =
-                (IValNode)getPageTransaction().prepareNodeForModification(getCurrentNode().getNodeKey());
+                (IValNode)getPageTransaction().prepareNodeForModification(
+                    mDelegate.getCurrentNode().getNodeKey());
             node.setValue(TypedValue.getBytes(paramValue));
             getPageTransaction().finishNodeModification(node);
 
-            setCurrentNode(node);
+            mDelegate.setCurrentNode(node);
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
@@ -479,12 +488,12 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         if (paramRevision < 0) {
             throw new IllegalArgumentException("paramRevision parameter must be >= 0");
         }
-        assertNotClosed();
-        mSession.assertAccess(paramRevision);
+        mDelegate.assertNotClosed();
+        mDelegate.mSession.assertAccess(paramRevision);
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        setPageTransaction(mSession.beginPageWriteTransaction(getTransactionID(), paramRevision,
-            getRevisionNumber() - 1));
+        mDelegate.setPageTransaction(mDelegate.mSession.beginPageWriteTransaction(mDelegate
+            .getTransactionID(), paramRevision, getRevisionNumber() - 1));
         // Reset modification counter.
         mModificationCount = 0L;
         moveTo(NodeReadTransaction.ROOT_NODE);
@@ -497,21 +506,21 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
     @Override
     public synchronized void commit() throws AbsTTException {
 
-        assertNotClosed();
+        mDelegate.assertNotClosed();
 
         // Commit uber page.
         final UberPage uberPage = getPageTransaction().commit();
 
         // Remember succesfully committed uber page in session state.
-        mSession.setLastCommittedUberPage(uberPage);
+        mDelegate.mSession.setLastCommittedUberPage(uberPage);
 
         // Reset modification counter.
         mModificationCount = 0L;
 
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        setPageTransaction(mSession.beginPageWriteTransaction(getTransactionID(), getRevisionNumber(),
-            getRevisionNumber()));
+        mDelegate.setPageTransaction(mDelegate.mSession.beginPageWriteTransaction(mDelegate
+            .getTransactionID(), getRevisionNumber(), getRevisionNumber()));
 
     }
 
@@ -521,7 +530,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
     @Override
     public synchronized void abort() throws TTIOException {
 
-        assertNotClosed();
+        mDelegate.assertNotClosed();
 
         // Reset modification counter.
         mModificationCount = 0L;
@@ -534,8 +543,8 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         }
 
         // Reset internal transaction state to last committed uber page.
-        setPageTransaction(mSession.beginPageWriteTransaction(getTransactionID(), revisionToSet,
-            revisionToSet));
+        mDelegate.setPageTransaction(mDelegate.mSession.beginPageWriteTransaction(mDelegate
+            .getTransactionID(), revisionToSet, revisionToSet));
     }
 
     /**
@@ -550,11 +559,11 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             }
             // Release all state immediately.
             getPageTransaction().close();
-            mSession.closeWriteTransaction(getTransactionID());
-            setPageTransaction(null);
-            setCurrentNode(null);
+            mDelegate.mSession.closeWriteTransaction(mDelegate.getTransactionID());
+            mDelegate.setPageTransaction(null);
+            mDelegate.setCurrentNode(null);
             // Remember that we are closed.
-            setClosed();
+            mDelegate.setClosed();
         }
     }
 
@@ -565,7 +574,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      *             if anything weird happens
      */
     private void checkAccessAndCommit() throws AbsTTException {
-        assertNotClosed();
+        mDelegate.assertNotClosed();
         mModificationCount++;
         intermediateCommitIfRequired();
     }
@@ -665,13 +674,13 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             // removing attributes
             for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
                 moveTo(((ElementNode)paramOldNode).getAttributeKey(i));
-                getPageTransaction().removeNode(this.getCurrentNode());
+                getPageTransaction().removeNode(mDelegate.getCurrentNode());
             }
             // removing namespaces
             moveTo(paramOldNode.getNodeKey());
             for (int i = 0; i < ((ElementNode)paramOldNode).getNamespaceCount(); i++) {
                 moveTo(((ElementNode)paramOldNode).getNamespaceKey(i));
-                getPageTransaction().removeNode(this.getCurrentNode());
+                getPageTransaction().removeNode(mDelegate.getCurrentNode());
             }
         }
 
@@ -690,7 +699,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      *             if commit fails.
      */
     private void intermediateCommitIfRequired() throws AbsTTException {
-        assertNotClosed();
+        mDelegate.assertNotClosed();
         if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
             commit();
         }
@@ -702,7 +711,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      * @return The state of this transaction.
      */
     private PageWriteTransaction getPageTransaction() {
-        return (PageWriteTransaction)super.mPageReadTransaction;
+        return (PageWriteTransaction)mDelegate.mPageReadTransaction;
     }
 
     /**
@@ -769,7 +778,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      *             if anything weird happens
      */
     private void postorderRemove() throws TTIOException {
-        moveTo(getCurrentNode().getParentKey());
+        moveTo(mDelegate.getCurrentNode().getParentKey());
         postorderAdd();
     }
 
@@ -782,35 +791,35 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      */
     private void postorderAdd() throws TTIOException {
         // start with hash to add
-        final INode startNode = getCurrentNode();
+        final INode startNode = mDelegate.getCurrentNode();
         // long for adapting the hash of the parent
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
-        if (!(getCurrentNode() instanceof IStructNode)) {
-            getPageTransaction().prepareNodeForModification(getCurrentNode().getNodeKey());
-            getCurrentNode().setHash(getCurrentNode().hashCode());
-            getPageTransaction().finishNodeModification(getCurrentNode());
-            moveTo(getCurrentNode().getParentKey());
+        if (!(mDelegate.getCurrentNode() instanceof IStructNode)) {
+            getPageTransaction().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+            mDelegate.getCurrentNode().setHash(mDelegate.getCurrentNode().hashCode());
+            getPageTransaction().finishNodeModification(mDelegate.getCurrentNode());
+            moveTo(mDelegate.getCurrentNode().getParentKey());
         }
         // Cursor to root
         IStructNode cursorToRoot;
         do {
-            synchronized (getCurrentNode()) {
+            synchronized (mDelegate.getCurrentNode()) {
                 cursorToRoot =
                     (IStructNode)getPageTransaction().prepareNodeForModification(
-                        getCurrentNode().getNodeKey());
-                hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                        mDelegate.getCurrentNode().getNodeKey());
+                hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
                 if (cursorToRoot.getKind() == ENode.ELEMENT_KIND) {
                     final ElementNode currentElement = (ElementNode)cursorToRoot;
                     // setting the attributes and namespaces
                     for (int i = 0; i < ((ElementNode)cursorToRoot).getAttributeCount(); i++) {
                         moveTo(currentElement.getAttributeKey(i));
-                        hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                        hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                     }
                     for (int i = 0; i < ((ElementNode)cursorToRoot).getNamespaceCount(); i++) {
                         moveTo(currentElement.getNamespaceKey(i));
-                        hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                        hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                     }
                     moveTo(cursorToRoot.getNodeKey());
                 }
@@ -818,7 +827,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
                 // Caring about the children of a node
                 if (moveTo(((IStructNode)getNode()).getFirstChildKey())) {
                     do {
-                        hashCodeForParent = getCurrentNode().getHash() + hashCodeForParent * PRIME;
+                        hashCodeForParent = mDelegate.getCurrentNode().getHash() + hashCodeForParent * PRIME;
                     } while (moveTo(((IStructNode)getNode()).getRightSiblingKey()));
                     moveTo(((IStructNode)getNode()).getParentKey());
                 }
@@ -830,7 +839,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             }
         } while (moveTo(cursorToRoot.getParentKey()));
 
-        setCurrentNode(startNode);
+        mDelegate.setCurrentNode(startNode);
     }
 
     /**
@@ -843,27 +852,27 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      *             if anything weird happened
      */
     private void rollingUpdate(final long paramOldHash) throws TTIOException {
-        final INode newNode = getCurrentNode();
+        final INode newNode = mDelegate.getCurrentNode();
         final long newNodeHash = newNode.hashCode();
         long resultNew = newNode.hashCode();
 
         // go the path to the root
         do {
-            synchronized (getCurrentNode()) {
-                getPageTransaction().prepareNodeForModification(getCurrentNode().getNodeKey());
-                if (getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
-                    resultNew = getCurrentNode().getHash() - paramOldHash;
+            synchronized (mDelegate.getCurrentNode()) {
+                getPageTransaction().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+                if (mDelegate.getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
+                    resultNew = mDelegate.getCurrentNode().getHash() - paramOldHash;
                     resultNew = resultNew + newNodeHash;
                 } else {
-                    resultNew = getCurrentNode().getHash() - (paramOldHash * PRIME);
+                    resultNew = mDelegate.getCurrentNode().getHash() - (paramOldHash * PRIME);
                     resultNew = resultNew + newNodeHash * PRIME;
                 }
-                getCurrentNode().setHash(resultNew);
-                getPageTransaction().finishNodeModification(getCurrentNode());
+                mDelegate.getCurrentNode().setHash(resultNew);
+                getPageTransaction().finishNodeModification(mDelegate.getCurrentNode());
             }
-        } while (moveTo(getCurrentNode().getParentKey()));
+        } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
 
-        setCurrentNode(newNode);
+        mDelegate.setCurrentNode(newNode);
     }
 
     /**
@@ -874,34 +883,34 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      *             if anything weird happened
      */
     private void rollingRemove() throws TTIOException {
-        final INode startNode = getCurrentNode();
+        final INode startNode = mDelegate.getCurrentNode();
         long hashToRemove = startNode.getHash();
         long hashToAdd = 0;
         long newHash = 0;
         // go the path to the root
         do {
-            synchronized (getCurrentNode()) {
-                getPageTransaction().prepareNodeForModification(getCurrentNode().getNodeKey());
-                if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+            synchronized (mDelegate.getCurrentNode()) {
+                getPageTransaction().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+                if (mDelegate.getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
                     // the begin node is always null
                     newHash = 0;
-                } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                } else if (mDelegate.getCurrentNode().getNodeKey() == startNode.getParentKey()) {
                     // the parent node is just removed
-                    newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
-                    hashToRemove = getCurrentNode().getHash();
+                    newHash = mDelegate.getCurrentNode().getHash() - (hashToRemove * PRIME);
+                    hashToRemove = mDelegate.getCurrentNode().getHash();
                 } else {
                     // the ancestors are all touched regarding the modification
-                    newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
+                    newHash = mDelegate.getCurrentNode().getHash() - (hashToRemove * PRIME);
                     newHash = newHash + hashToAdd * PRIME;
-                    hashToRemove = getCurrentNode().getHash();
+                    hashToRemove = mDelegate.getCurrentNode().getHash();
                 }
-                getCurrentNode().setHash(newHash);
+                mDelegate.getCurrentNode().setHash(newHash);
                 hashToAdd = newHash;
-                getPageTransaction().finishNodeModification(getCurrentNode());
+                getPageTransaction().finishNodeModification(mDelegate.getCurrentNode());
             }
-        } while (moveTo(getCurrentNode().getParentKey()));
+        } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
 
-        setCurrentNode(startNode);
+        mDelegate.setCurrentNode(startNode);
     }
 
     /**
@@ -913,34 +922,130 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
      */
     private void rollingAdd() throws TTIOException {
         // start with hash to add
-        final INode startNode = getCurrentNode();
+        final INode startNode = mDelegate.getCurrentNode();
         long hashToAdd = startNode.hashCode();
         long newHash = 0;
         long possibleOldHash = 0;
         // go the path to the root
         do {
-            synchronized (getCurrentNode()) {
-                getPageTransaction().prepareNodeForModification(getCurrentNode().getNodeKey());
-                if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+            synchronized (mDelegate.getCurrentNode()) {
+                getPageTransaction().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+                if (mDelegate.getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
                     // at the beginning, take the hashcode of the node only
                     newHash = hashToAdd;
-                } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                } else if (mDelegate.getCurrentNode().getNodeKey() == startNode.getParentKey()) {
                     // at the parent level, just add the node
-                    possibleOldHash = getCurrentNode().getHash();
+                    possibleOldHash = mDelegate.getCurrentNode().getHash();
                     newHash = possibleOldHash + hashToAdd * PRIME;
                     hashToAdd = newHash;
                 } else {
                     // at the rest, remove the existing old key for this element
                     // and add the new one
-                    newHash = getCurrentNode().getHash() - (possibleOldHash * PRIME);
+                    newHash = mDelegate.getCurrentNode().getHash() - (possibleOldHash * PRIME);
                     newHash = newHash + hashToAdd * PRIME;
                     hashToAdd = newHash;
-                    possibleOldHash = getCurrentNode().getHash();
+                    possibleOldHash = mDelegate.getCurrentNode().getHash();
                 }
-                getCurrentNode().setHash(newHash);
-                getPageTransaction().finishNodeModification(getCurrentNode());
+                mDelegate.getCurrentNode().setHash(newHash);
+                getPageTransaction().finishNodeModification(mDelegate.getCurrentNode());
             }
-        } while (moveTo(getCurrentNode().getParentKey()));
-        setCurrentNode(startNode);
+        } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
+        mDelegate.setCurrentNode(startNode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getRevisionNumber() throws TTIOException {
+        return mDelegate.getRevisionNumber();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getMaxNodeKey() throws TTIOException {
+        return mDelegate.getMaxNodeKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean moveTo(long pKey) {
+        return mDelegate.moveTo(pKey);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean moveToAttribute(int pIndex) {
+        return mDelegate.moveToAttribute(pIndex);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean moveToNamespace(int pIndex) {
+        return mDelegate.moveToNamespace(pIndex);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getValueOfCurrentNode() {
+        return mDelegate.getValueOfCurrentNode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QName getQNameOfCurrentNode() {
+        return mDelegate.getQNameOfCurrentNode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTypeOfCurrentNode() {
+        return mDelegate.getTypeOfCurrentNode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String nameForKey(int pKey) {
+        return mDelegate.nameForKey(pKey);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] rawNameForKey(int pKey) {
+        return mDelegate.rawNameForKey(pKey);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public INode getNode() {
+        return mDelegate.getNode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+        return mDelegate.isClosed();
     }
 }
