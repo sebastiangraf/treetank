@@ -27,15 +27,10 @@
 
 package org.treetank.access;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -83,14 +78,8 @@ public final class Session implements ISession {
     /** Remember all running transactions (both read and write). */
     private final Map<Long, INodeReadTransaction> mTransactionMap;
 
-    /** Lock for blocking the commit. */
-    protected final Lock mCommitLock;
-
     /** Remember the write seperatly because of the concurrent writes. */
     private final Map<Long, IPageWriteTransaction> mWriteTransactionStateMap;
-
-    /** Storing all return futures from the sync process. */
-    private final Map<Long, Map<Long, Collection<Future<Void>>>> mSyncTransactionsReturns;
 
     /** abstract factory for all interaction to the storage. */
     private final IStorage mFac;
@@ -120,10 +109,8 @@ public final class Session implements ISession {
         mSessionConfig = paramSessionConf;
         mTransactionMap = new ConcurrentHashMap<Long, INodeReadTransaction>();
         mWriteTransactionStateMap = new ConcurrentHashMap<Long, IPageWriteTransaction>();
-        mSyncTransactionsReturns = new ConcurrentHashMap<Long, Map<Long, Collection<Future<Void>>>>();
 
         mTransactionIDCounter = new AtomicLong();
-        mCommitLock = new ReentrantLock(false);
 
         // Init session members.
         mWriteSemaphore = new Semaphore(paramSessionConf.mWtxAllowed);
@@ -179,14 +166,14 @@ public final class Session implements ISession {
      */
     @Override
     public INodeWriteTransaction beginNodeWriteTransaction() throws AbsTTException {
-        return beginNodeReadTransaction(0, 0);
+        return beginNodeWriteTransaction(0, 0);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized INodeWriteTransaction beginNodeReadTransaction(final int paramMaxNodeCount,
+    public synchronized INodeWriteTransaction beginNodeWriteTransaction(final int paramMaxNodeCount,
         final int paramMaxTime) throws AbsTTException {
         assertAccess(mLastCommittedUberPage.getRevision());
 
@@ -220,8 +207,8 @@ public final class Session implements ISession {
 
     }
 
-    protected IPageWriteTransaction beginPageWriteTransaction(final long mId,
-        final long mRepresentRevision, final long mStoreRevision) throws TTIOException {
+    protected IPageWriteTransaction beginPageWriteTransaction(final long mId, final long mRepresentRevision,
+        final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
         return new PageWriteTransaction(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
@@ -308,24 +295,6 @@ public final class Session implements ISession {
     @Override
     public String getUser() {
         return mSessionConfig.mUser;
-    }
-
-    protected synchronized void waitForFinishedSync(final long mTransactionKey) throws TTThreadedException {
-        final Map<Long, Collection<Future<Void>>> completeVals =
-            mSyncTransactionsReturns.remove(mTransactionKey);
-        if (completeVals != null) {
-            for (final Collection<Future<Void>> singleVals : completeVals.values()) {
-                for (final Future<Void> returnVal : singleVals) {
-                    try {
-                        returnVal.get();
-                    } catch (final InterruptedException exc) {
-                        throw new TTThreadedException(exc);
-                    } catch (final ExecutionException exc) {
-                        throw new TTThreadedException(exc);
-                    }
-                }
-            }
-        }
     }
 
     protected void setLastCommittedUberPage(final UberPage paramPage) {

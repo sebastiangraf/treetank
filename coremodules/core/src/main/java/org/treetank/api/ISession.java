@@ -83,7 +83,7 @@ public interface ISession {
      *             If can't begin Write Transaction.
      * @return INodeWriteTransaction instance.
      */
-    INodeWriteTransaction beginNodeReadTransaction(final int pMaxNodes, final int pMaxTime)
+    INodeWriteTransaction beginNodeWriteTransaction(final int pMaxNodes, final int pMaxTime)
         throws AbsTTException;
 
     /**
