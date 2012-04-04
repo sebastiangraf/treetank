@@ -16,6 +16,6 @@ public interface IPageWriteTransaction extends IPageReadTransaction {
 
     long getMaxNodeKey();
 
-    INode createNode(INode pnode) throws TTIOException;
+    <T extends INode> T createNode(T pnode) throws TTIOException;
 
 }

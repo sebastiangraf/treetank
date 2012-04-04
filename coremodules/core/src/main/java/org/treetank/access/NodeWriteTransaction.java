@@ -265,7 +265,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, value);
 
             final AttributeNode node =
-                (AttributeNode)getPageTransaction().createNode(new AttributeNode(nodeDel, nameDel, valDel));
+                getPageTransaction().createNode(new AttributeNode(nodeDel, nameDel, valDel));
 
             final INode parentNode = getPageTransaction().prepareNodeForModification(node.getParentKey());
             ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
@@ -305,8 +305,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
                 new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
             final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, uriKey);
 
-            final NamespaceNode node =
-                (NamespaceNode)getPageTransaction().createNode(new NamespaceNode(nodeDel, nameDel));
+            final NamespaceNode node = getPageTransaction().createNode(new NamespaceNode(nodeDel, nameDel));
 
             final INode parentNode = getPageTransaction().prepareNodeForModification(node.getParentKey());
             ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
@@ -332,7 +331,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
 
-        return (ElementNode)getPageTransaction().createNode(
+        return getPageTransaction().createNode(
             new ElementNode(nodeDel, structDel, nameDel, new ArrayList<Long>(), new ArrayList<Long>()));
     }
 
@@ -344,7 +343,7 @@ public class NodeWriteTransaction extends NodeReadTransaction implements INodeWr
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
 
-        return (TextNode)getPageTransaction().createNode(new TextNode(nodeDel, valDel, structDel));
+        return getPageTransaction().createNode(new TextNode(nodeDel, valDel, structDel));
     }
 
     /**

@@ -172,7 +172,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
      * @throws TTIOException
      *             if IO Error
      */
-    public INode createNode(final INode paramNode) throws TTIOException {
+    public <T extends INode> T createNode(final T paramNode) throws TTIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         final long nodeKey = mNewRoot.getMaxNodeKey();
@@ -182,7 +182,6 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         final NodePage page = mNodePageCon.getModified();
         page.setNode(nodePageOffset, paramNode);
         finishNodeModification(paramNode);
-
         return paramNode;
     }
 

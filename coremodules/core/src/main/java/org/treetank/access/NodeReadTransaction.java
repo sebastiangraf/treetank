@@ -49,8 +49,9 @@ import org.treetank.node.interfaces.IValNode;
  */
 public class NodeReadTransaction implements INodeReadTransaction {
 
+    /**Static to determine ROOT_NODE.*/
     public static final long ROOT_NODE = 0;
-
+    /**Static to determine NULL_NODE.*/
     public static final long NULL_NODE = -1;
 
     /** ID of transaction. */
