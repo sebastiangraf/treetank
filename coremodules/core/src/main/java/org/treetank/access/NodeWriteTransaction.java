@@ -712,7 +712,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
      * @return The state of this transaction.
      */
     private PageWriteTransaction getPageTransaction() {
-        return (PageWriteTransaction)mDelegate.mPageReadTransaction;
+        return (PageWriteTransaction)mDelegate.mPageReadTrx;
     }
 
     /**

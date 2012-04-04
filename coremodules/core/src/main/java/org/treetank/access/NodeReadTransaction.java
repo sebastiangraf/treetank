@@ -30,7 +30,7 @@ package org.treetank.access;
 import javax.xml.namespace.QName;
 
 import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.IPageReadTransaction;
+import org.treetank.api.IPageReadTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ENode;
@@ -59,7 +59,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     protected final Session mSession;
 
     /** State of transaction including all cached stuff. */
-    protected IPageReadTransaction mPageReadTransaction;
+    protected IPageReadTrx mPageReadTrx;
 
     /** Strong reference to currently selected node. */
     private INode mCurrentNode;
@@ -81,11 +81,11 @@ public class NodeReadTransaction implements INodeReadTransaction {
      *             if something odd happens within the creation process.
      */
     protected NodeReadTransaction(final Session paramSession, final long paramTransactionID,
-        final IPageReadTransaction paramTransactionState) throws TTIOException {
+        final IPageReadTrx paramTransactionState) throws TTIOException {
         mSession = paramSession;
         mId = paramTransactionID;
-        mPageReadTransaction = paramTransactionState;
-        mCurrentNode = mPageReadTransaction.getNode(ROOT_NODE);
+        mPageReadTrx = paramTransactionState;
+        mCurrentNode = mPageReadTrx.getNode(ROOT_NODE);
         mClosed = false;
     }
 
@@ -102,7 +102,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final long getRevisionNumber() throws TTIOException {
         assertNotClosed();
-        return mPageReadTransaction.getActualRevisionRootPage().getRevision();
+        return mPageReadTrx.getActualRevisionRootPage().getRevision();
     }
 
     /**
@@ -119,7 +119,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
             // Remember old node and fetch new one.
             final INode oldNode = mCurrentNode;
             try {
-                mCurrentNode = mPageReadTransaction.getNode(paramNodeKey);
+                mCurrentNode = mPageReadTrx.getNode(paramNodeKey);
             } catch (final TTIOException exc) {
                 mCurrentNode = null;
             }
@@ -182,8 +182,8 @@ public class NodeReadTransaction implements INodeReadTransaction {
         String name = "";
         String uri = "";
         if (mCurrentNode instanceof INameNode) {
-            name = mPageReadTransaction.getName(((INameNode)mCurrentNode).getNameKey());
-            uri = mPageReadTransaction.getName(((INameNode)mCurrentNode).getURIKey());
+            name = mPageReadTrx.getName(((INameNode)mCurrentNode).getNameKey());
+            uri = mPageReadTrx.getName(((INameNode)mCurrentNode).getURIKey());
         }
         return buildQName(uri, name);
     }
@@ -194,7 +194,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final String getTypeOfCurrentNode() {
         assertNotClosed();
-        return mPageReadTransaction.getName(mCurrentNode.getTypeKey());
+        return mPageReadTrx.getName(mCurrentNode.getTypeKey());
     }
 
     /**
@@ -203,7 +203,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final String nameForKey(final int mKey) {
         assertNotClosed();
-        return mPageReadTransaction.getName(mKey);
+        return mPageReadTrx.getName(mKey);
     }
 
     /**
@@ -212,7 +212,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
     @Override
     public final byte[] rawNameForKey(final int paramKey) {
         assertNotClosed();
-        return mPageReadTransaction.getRawName(paramKey);
+        return mPageReadTrx.getRawName(paramKey);
     }
 
     /**
@@ -222,13 +222,13 @@ public class NodeReadTransaction implements INodeReadTransaction {
     public void close() throws AbsTTException {
         if (!mClosed) {
             // Close own state.
-            mPageReadTransaction.close();
+            mPageReadTrx.close();
 
             // Callback on session to make sure everything is cleaned up.
             mSession.closeReadTransaction(mId);
 
             // Immediately release all references.
-            mPageReadTransaction = null;
+            mPageReadTrx = null;
             mCurrentNode = null;
 
             mClosed = true;
@@ -292,8 +292,8 @@ public class NodeReadTransaction implements INodeReadTransaction {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setPageTransaction(final IPageReadTransaction paramTransactionState) {
-        mPageReadTransaction = paramTransactionState;
+    protected final void setPageTransaction(final IPageReadTrx paramTransactionState) {
+        mPageReadTrx = paramTransactionState;
     }
 
     /**
@@ -328,7 +328,7 @@ public class NodeReadTransaction implements INodeReadTransaction {
      */
     @Override
     public final long getMaxNodeKey() throws TTIOException {
-        return mPageReadTransaction.getActualRevisionRootPage().getMaxNodeKey();
+        return mPageReadTrx.getActualRevisionRootPage().getMaxNodeKey();
     }
 
     /**

@@ -11,7 +11,7 @@ import org.treetank.page.UberPage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IPageWriteTransaction extends IPageReadTransaction {
+public interface IPageWriteTransaction extends IPageReadTrx {
     UberPage getUberPage();
 
     long getMaxNodeKey();

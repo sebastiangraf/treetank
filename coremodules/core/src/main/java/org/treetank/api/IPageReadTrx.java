@@ -11,7 +11,7 @@ import org.treetank.page.RevisionRootPage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IPageReadTransaction {
+public interface IPageReadTrx {
 
     INode getNode(final long pKey) throws TTIOException;
 

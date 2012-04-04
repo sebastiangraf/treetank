@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.treetank.api.IPageReadTransaction;
+import org.treetank.api.IPageReadTrx;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
@@ -64,7 +64,7 @@ import com.google.common.cache.CacheBuilder;
  * A path-like cache boosts sequential operations.
  * </p>
  */
-public class PageReadTransaction implements IPageReadTransaction {
+public class PageReadTransaction implements IPageReadTrx {
 
     /** Page reader exclusively assigned to this transaction. */
     private final IReader mPageReader;
