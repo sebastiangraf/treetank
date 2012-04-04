@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
@@ -36,8 +36,8 @@ import org.treetank.utils.NamePageHash;
 /**
  * <h1>WildcardFilter</h1>
  * <p>
- * Filters ELEMENTS and ATTRIBUTES and supports wildcards either instead of the namespace prefix, or the local
- * name.
+ * Filters ELEMENTS and ATTRIBUTES and supports wildcards either instead of the
+ * namespace prefix, or the local name.
  * </p>
  */
 public class WildcardFilter extends AbsFilter {
@@ -49,7 +49,7 @@ public class WildcardFilter extends AbsFilter {
     private final int mKnownPartKey;
 
     /** NodeTrans for getting the localname. */
-    private final INodeReadTransaction mRtx;
+    private final INodeReadTrx mRtx;
 
     /**
      * Default constructor.
@@ -63,7 +63,8 @@ public class WildcardFilter extends AbsFilter {
      *            defines, if the specified part is the prefix, or the local
      *            name (true, if it is the local name)
      */
-    public WildcardFilter(final INodeReadTransaction rtx, final String mKnownPart, final boolean mIsName) {
+    public WildcardFilter(final INodeReadTrx rtx, final String mKnownPart,
+            final boolean mIsName) {
         super(rtx);
         this.mIsName = mIsName;
         mKnownPartKey = NamePageHash.generateHashForString(mKnownPart);
@@ -75,33 +76,38 @@ public class WildcardFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        if (getNode().getKind() == ENode.ELEMENT_KIND) {
+        if (mRtx.getNode().getKind() == ENode.ELEMENT_KIND) {
 
             if (mIsName) { // local name is given
                 final String localname =
 
-                mRtx.nameForKey(((INameNode)getNode()).getNameKey()).replaceFirst(".*:", "");
-                final int localnameKey = NamePageHash.generateHashForString(localname);
+                mRtx.nameForKey(((INameNode) mRtx.getNode()).getNameKey())
+                        .replaceFirst(".*:", "");
+                final int localnameKey = NamePageHash
+                        .generateHashForString(localname);
 
                 return localnameKey == mKnownPartKey;
             } else { // namespace prefix is given
-                final int nsCount = ((ElementNode)getNode()).getNamespaceCount();
+                final int nsCount = ((ElementNode) mRtx.getNode())
+                        .getNamespaceCount();
                 for (int i = 0; i < nsCount; i++) {
-                    moveTo(((ElementNode)getNode()).getNamespaceKey(i));
+                    mRtx.moveTo(((ElementNode) mRtx.getNode())
+                            .getNamespaceKey(i));
                     final int prefixKey = mKnownPartKey;
-                    if (((INameNode)getNode()).getNameKey() == prefixKey) {
-                        moveTo(getNode().getParentKey());
+                    if (((INameNode) mRtx.getNode()).getNameKey() == prefixKey) {
+                        mRtx.moveTo(mRtx.getNode().getParentKey());
                         return true;
                     }
-                    moveTo(getNode().getParentKey());
+                    mRtx.moveTo(mRtx.getNode().getParentKey());
                 }
             }
 
-        } else if (getNode().getKind() == ENode.ATTRIBUTE_KIND) {
+        } else if (mRtx.getNode().getKind() == ENode.ATTRIBUTE_KIND) {
             // supporting attributes here is difficult, because treetank
             // does not provide a way to acces the name and namespace of
             // the current attribute (attribute index is not known here)
-            throw new IllegalStateException("Wildcards are not supported in attribute names yet.");
+            throw new IllegalStateException(
+                    "Wildcards are not supported in attribute names yet.");
         }
 
         return false;

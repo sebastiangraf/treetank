@@ -27,6 +27,8 @@
 
 package org.treetank.axis;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import javax.xml.namespace.QName;
 
 import org.junit.After;
@@ -36,9 +38,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.AbsTTException;
 
 public class AttributeAxisTest {
@@ -61,20 +62,18 @@ public class AttributeAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final INodeReadTransaction wtx = holder.getRtx();
+        final INodeReadTrx wtx = holder.getRtx();
 
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
         wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
-            2L
-        });
+        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx),
+                new long[] { 2L });
 
         wtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
-            10L
-        });
+        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx),
+                new long[] { 10L });
 
         wtx.moveTo(12L);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
@@ -86,7 +85,8 @@ public class AttributeAxisTest {
     @Test
     @Ignore
     public void testMultipleAttributes() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTrx wtx = holder.getSession()
+                .beginNodeWriteTransaction();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");
         wtx.moveTo(nodeKey);

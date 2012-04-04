@@ -58,7 +58,7 @@ public class ThreadTest {
     // long newKey = 10L;
     // for (int i = 0; i < WORKER_COUNT; i++) {
     // taskExecutor.submit(new Task(holder.getSession().beginReadTransaction(i)));
-    // final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+    // final INodeWriteTrx wtx = holder.getSession().beginWriteTransaction();
     // wtx.moveTo(newKey);
     // wtx.setValue("value" + i);
     // newKey = wtx.getNode().getNodeKey();
@@ -72,9 +72,9 @@ public class ThreadTest {
 
     // private class Task implements Callable<Void> {
     //
-    // private INodeReadTransaction mRTX;
+    // private INodeReadTrx mRTX;
     //
-    // public Task(final INodeReadTransaction rtx) {
+    // public Task(final INodeReadTrx rtx) {
     // mRTX = rtx;
     // }
     //

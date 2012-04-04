@@ -27,9 +27,9 @@
 
 package org.treetank.axis;
 
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.ENode;
 
 /**
@@ -50,7 +50,7 @@ public class ParentAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public ParentAxis(final INodeReadTransaction rtx) {
+    public ParentAxis(final INodeReadTrx rtx) {
         super(rtx);
     }
 
@@ -69,8 +69,9 @@ public class ParentAxis extends AbsAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (getNode().getKind() != ENode.ROOT_KIND && mFirst && getNode().hasParent()
-            && getNode().getParentKey() != ROOT_NODE) {
+        if (getNode().getKind() != ENode.ROOT_KIND && mFirst
+                && getNode().hasParent()
+                && getNode().getParentKey() != ROOT_NODE) {
             mFirst = false;
             moveTo(getNode().getParentKey());
             return true;

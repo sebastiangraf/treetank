@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 
 public class AncestorAxisTest {
@@ -54,22 +54,19 @@ public class AncestorAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final INodeReadTransaction rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getRtx();
 
         rtx.moveTo(12L);
         AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {
-            9L, 1L
-        });
+                9L, 1L });
 
         rtx.moveTo(4L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {
-            1L
-        });
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx),
+                new long[] { 1L });
 
         rtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {
-            1L
-        });
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx),
+                new long[] { 1L });
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {});
@@ -77,26 +74,22 @@ public class AncestorAxisTest {
 
     @Test
     public void testAxisConventionsIncludingSelf() throws AbsTTException {
-        final INodeReadTransaction rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getRtx();
 
         rtx.moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true), new long[] {
-            11L, 9L, 1L
-        });
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true),
+                new long[] { 11L, 9L, 1L });
 
         rtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true), new long[] {
-            5L, 1L
-        });
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true),
+                new long[] { 5L, 1L });
 
         rtx.moveTo(4L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true), new long[] {
-            4L, 1L
-        });
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true),
+                new long[] { 4L, 1L });
 
         rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true), new long[] {
-            1L
-        });
+        AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true),
+                new long[] { 1L });
     }
 }

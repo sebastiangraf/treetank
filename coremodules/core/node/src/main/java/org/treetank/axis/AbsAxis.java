@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.interfaces.INode;
@@ -54,7 +54,7 @@ import org.treetank.node.interfaces.INode;
 public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
 
     /** Iterate over transaction exclusive to this step. */
-    private final INodeReadTransaction mRTX;
+    private final INodeReadTrx mRTX;
 
     /** Key of last found node. */
     private long mKey;
@@ -69,12 +69,12 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
     private final boolean mIncludeSelf;
 
     /** Map with ItemList to each transaction. */
-    private final static Map<INodeReadTransaction, ItemList> atomics =
-        new ConcurrentHashMap<INodeReadTransaction, ItemList>();
+    private final static Map<INodeReadTrx, ItemList> atomics =
+        new ConcurrentHashMap<INodeReadTrx, ItemList>();
 
     /** Map with ItemList to each transaction. */
-    private final static Map<INodeReadTransaction, Long> lastPointer =
-        new ConcurrentHashMap<INodeReadTransaction, Long>();
+    private final static Map<INodeReadTrx, Long> lastPointer =
+        new ConcurrentHashMap<INodeReadTrx, Long>();
 
     /**
      * Bind axis step to transaction.
@@ -82,7 +82,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      * @param paramRtx
      *            transaction to operate with
      */
-    public AbsAxis(final INodeReadTransaction paramRtx) {
+    public AbsAxis(final INodeReadTrx paramRtx) {
         if (paramRtx == null) {
             throw new IllegalArgumentException("Transaction may not be null!");
         }
@@ -99,7 +99,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      * @param paramIncludeSelf
      *            determines if self is included
      */
-    public AbsAxis(final INodeReadTransaction paramRtx, final boolean paramIncludeSelf) {
+    public AbsAxis(final INodeReadTrx paramRtx, final boolean paramIncludeSelf) {
         if (paramRtx == null) {
             throw new IllegalArgumentException("Transaction may not be null!");
         }
@@ -264,7 +264,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      *            to be added
      * @return the index in the ItemList
      */
-    public static int addAtomicToItemList(final INodeReadTransaction pRtx, final AtomicValue pVal) {
+    public static int addAtomicToItemList(final INodeReadTrx pRtx, final AtomicValue pVal) {
         if (!atomics.containsKey(pRtx)) {
             atomics.put(pRtx, new ItemList());
         }

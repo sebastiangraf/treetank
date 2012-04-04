@@ -28,7 +28,7 @@ package org.treetank.service.xml.diff.algorithm.fmes;
 
 import java.util.Map;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ElementNode;
@@ -45,7 +45,7 @@ import org.treetank.node.interfaces.IStructNode;
 public final class FMESVisitor {
 
     /** {@link IReadTransaction} reference. */
-    private final INodeReadTransaction mRtx;
+    private final INodeReadTrx mRtx;
 
     /** Determines if nodes are in order. */
     private final Map<INode, Boolean> mInOrder;
@@ -70,7 +70,7 @@ public final class FMESVisitor {
         assert paramSession != null;
         assert paramInOrder != null;
         assert paramDescendants != null;
-        mRtx = paramSession.beginReadTransaction();
+        mRtx = paramSession.beginNodeReadTransaction();
         mInOrder = paramInOrder;
         mDescendants = paramDescendants;
     }

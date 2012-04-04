@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.ENode;
 
 /**
@@ -45,7 +45,7 @@ public class NodeFilter extends AbsFilter {
      * @param rtx
      *            Transaction this filter is bound to.
      */
-    public NodeFilter(final INodeReadTransaction rtx) {
+    public NodeFilter(final INodeReadTrx rtx) {
         super(rtx);
     }
 
@@ -54,7 +54,8 @@ public class NodeFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return (getNode().getKind() == ENode.ELEMENT_KIND || getNode().getKind() == ENode.TEXT_KIND);
+        return (getNode().getKind() == ENode.ELEMENT_KIND || getNode()
+                .getKind() == ENode.TEXT_KIND);
     }
 
 }

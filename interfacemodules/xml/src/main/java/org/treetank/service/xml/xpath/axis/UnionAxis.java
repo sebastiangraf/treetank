@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.axis;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
@@ -59,7 +59,7 @@ public class UnionAxis extends AbsAxis {
      * @param mOperand2
      *            Second operand
      */
-    public UnionAxis(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
+    public UnionAxis(final INodeReadTrx rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
 
         super(rtx);
         mOp1 = mOperand1;

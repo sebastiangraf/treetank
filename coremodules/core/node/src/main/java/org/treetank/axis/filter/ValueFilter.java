@@ -27,7 +27,7 @@
 
 package org.treetank.axis.filter;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.TypedValue;
@@ -52,7 +52,7 @@ public class ValueFilter extends AbsFilter {
      * @param mValue
      *            Value to find.
      */
-    public ValueFilter(final INodeReadTransaction rtx, final byte[] mValue) {
+    public ValueFilter(final INodeReadTrx rtx, final byte[] mValue) {
         super(rtx);
         this.mValue = mValue;
     }
@@ -65,7 +65,7 @@ public class ValueFilter extends AbsFilter {
      * @param mValue
      *            Value to find.
      */
-    public ValueFilter(final INodeReadTransaction rtx, final String mValue) {
+    public ValueFilter(final INodeReadTrx rtx, final String mValue) {
         this(rtx, TypedValue.getBytes(mValue));
     }
 
@@ -77,7 +77,7 @@ public class ValueFilter extends AbsFilter {
      * @param mValue
      *            Value to find.
      */
-    public ValueFilter(final INodeReadTransaction rtx, final int mValue) {
+    public ValueFilter(final INodeReadTrx rtx, final int mValue) {
         this(rtx, TypedValue.getBytes(mValue));
     }
 
@@ -89,7 +89,7 @@ public class ValueFilter extends AbsFilter {
      * @param mValue
      *            Value to find.
      */
-    public ValueFilter(final INodeReadTransaction rtx, final long mValue) {
+    public ValueFilter(final INodeReadTrx rtx, final long mValue) {
         this(rtx, TypedValue.getBytes(mValue));
     }
 
@@ -99,7 +99,9 @@ public class ValueFilter extends AbsFilter {
     @Override
     public final boolean filter() {
         return (getNode().getKind() == ENode.TEXT_KIND || getNode().getKind() == ENode.ATTRIBUTE_KIND)
-            && (TypedValue.equals(new String(((IValNode)getNode()).getRawValue()), mValue));
+                && (TypedValue.equals(
+                        new String(((IValNode) getNode()).getRawValue()),
+                        mValue));
     }
 
 }

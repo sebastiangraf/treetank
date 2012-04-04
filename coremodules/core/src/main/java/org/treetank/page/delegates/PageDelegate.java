@@ -27,7 +27,7 @@
 
 package org.treetank.page.delegates;
 
-import org.treetank.access.PageWriteTransaction;
+import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
@@ -99,12 +99,12 @@ public class PageDelegate implements IPage {
      * Recursively call commit on all referenced pages.
      * 
      * @param paramState
-     *            INodeWriteTransaction state.
+     *            INodeWriteTrx state.
      * @throws AbsTTException
      *             thorw when write error
      */
 
-    public final void commit(final PageWriteTransaction paramState) throws AbsTTException {
+    public final void commit(final PageWriteTrx paramState) throws AbsTTException {
         for (final PageReference reference : getReferences()) {
             paramState.commit(reference);
         }

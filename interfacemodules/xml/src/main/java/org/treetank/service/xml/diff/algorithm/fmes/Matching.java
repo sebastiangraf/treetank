@@ -29,7 +29,7 @@ package org.treetank.service.xml.diff.algorithm.fmes;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.node.interfaces.INode;
@@ -57,10 +57,10 @@ public final class Matching {
     private final ConnectionMap<INode> mIsInSubtree;
 
     /** {@link IReadTransaction} reference on old revision. */
-    private final INodeReadTransaction mRtxOld;
+    private final INodeReadTrx mRtxOld;
 
     /** {@link IReadTransaction} reference on new revision. */
-    private final INodeReadTransaction mRtxNew;
+    private final INodeReadTrx mRtxNew;
 
     /**
      * Creates a new matching.
@@ -70,7 +70,7 @@ public final class Matching {
      * @param paramRtxNew
      *            {@link IReadTransaction} reference on new revision.
      */
-    public Matching(final INodeReadTransaction paramRtxOld, final INodeReadTransaction paramRtxNew) {
+    public Matching(final INodeReadTrx paramRtxOld, final INodeReadTrx paramRtxNew) {
         mMapping = new IdentityHashMap<INode, INode>();
         mReverseMapping = new IdentityHashMap<INode, INode>();
         mIsInSubtree = new ConnectionMap<INode>();
@@ -116,7 +116,7 @@ public final class Matching {
      * @param paramRtx
      *            {@link IReadTransaction} reference
      */
-    private void updateSubtreeMap(final INode paramNode, final INodeReadTransaction paramRtx) {
+    private void updateSubtreeMap(final INode paramNode, final INodeReadTrx paramRtx) {
         assert paramNode != null;
         assert paramRtx != null;
 

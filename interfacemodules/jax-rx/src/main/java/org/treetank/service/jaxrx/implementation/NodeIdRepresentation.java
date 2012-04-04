@@ -42,8 +42,8 @@ import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.IStructNode;
@@ -210,7 +210,7 @@ public class NodeIdRepresentation {
         synchronized (resourceName) {
             ISession session = null;
             IDatabase database = null;
-            INodeWriteTransaction wtx = null;
+            INodeWriteTrx wtx = null;
             boolean abort = false;
             if (WorkerHelper.checkExistingResource(resourceName)) {
                 try {
@@ -218,7 +218,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = session.beginWriteTransaction();
+                    wtx = session.beginNodeWriteTransaction();
                     // move to node with given rest id and deletes it
                     if (wtx.moveTo(nodeId)) {
                         wtx.remove();
@@ -261,7 +261,7 @@ public class NodeIdRepresentation {
         synchronized (resourceName) {
             ISession session = null;
             IDatabase database = null;
-            INodeWriteTransaction wtx = null;
+            INodeWriteTrx wtx = null;
             boolean abort = false;
             if (WorkerHelper.checkExistingResource(resourceName)) {
                 try {
@@ -269,7 +269,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = session.beginWriteTransaction();
+                    wtx = session.beginNodeWriteTransaction();
 
                     if (wtx.moveTo(nodeId)) {
                         final long parentKey = wtx.getNode().getParentKey();
@@ -319,7 +319,7 @@ public class NodeIdRepresentation {
         final EIdAccessType type) throws JaxRxException {
         ISession session = null;
         IDatabase database = null;
-        INodeWriteTransaction wtx = null;
+        INodeWriteTrx wtx = null;
         synchronized (resourceName) {
             boolean abort;
             if (WorkerHelper.checkExistingResource(resourceName)) {
@@ -330,7 +330,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = session.beginWriteTransaction();
+                    wtx = session.beginNodeWriteTransaction();
                     final boolean exist = wtx.moveTo(nodeId);
                     if (exist) {
                         if (type == EIdAccessType.FIRSTCHILD) {
@@ -483,14 +483,14 @@ public class NodeIdRepresentation {
         if (WorkerHelper.checkExistingResource(resource)) {
             ISession session = null;
             IDatabase database = null;
-            INodeReadTransaction rtx = null;
+            INodeReadTrx rtx = null;
             try {
                 database = Database.openDatabase(STOREDBPATH);
                 session = database.getSession(new SessionConfiguration.Builder(resource).build());
                 if (revision == null) {
-                    rtx = session.beginReadTransaction();
+                    rtx = session.beginNodeReadTransaction();
                 } else {
-                    rtx = session.beginReadTransaction(revision);
+                    rtx = session.beginNodeReadTransaction(revision);
                 }
 
                 if (rtx.moveTo(nodeId)) {

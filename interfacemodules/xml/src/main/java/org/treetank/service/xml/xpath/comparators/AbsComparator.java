@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
@@ -66,7 +66,7 @@ public abstract class AbsComparator extends AbsAxis {
      * @param mComp
      *            comparison kind
      */
-    public AbsComparator(final INodeReadTransaction mRtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
+    public AbsComparator(final INodeReadTrx mRtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
         final CompKind mComp) {
 
         super(mRtx);
@@ -224,7 +224,7 @@ public abstract class AbsComparator extends AbsAxis {
      *            string value to estimate
      * @return AbsComparator the comparator of two axis
      */
-    public static final AbsComparator getComparator(final INodeReadTransaction paramRtx,
+    public static final AbsComparator getComparator(final INodeReadTrx paramRtx,
         final AbsAxis paramOperandOne, final AbsAxis paramOperandTwo, final CompKind paramKind,
         final String paramVal) {
         if ("eq".equals(paramVal) || "lt".equals(paramVal) || "le".equals(paramVal) || "gt".equals(paramVal)

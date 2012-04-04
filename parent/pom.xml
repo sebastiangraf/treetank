@@ -177,20 +177,10 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>commons-primitives</groupId>
-			<artifactId>commons-primitives</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8.2</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-math</groupId>
-			<artifactId>commons-math</artifactId>
-			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sleepycat</groupId>
@@ -219,14 +209,14 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-			<version>1.3</version>
-		</dependency>
-		<dependency>
 			<groupId>com.google.code.guice</groupId>
 			<artifactId>guice</artifactId>
 			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>11.0.2</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>

@@ -33,7 +33,7 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 
 /**
- * <h1>INodeWriteTransaction</h1>
+ * <h1>INodeWriteTrx</h1>
  * 
  * <h2>Description</h2>
  * 
@@ -55,12 +55,12 @@ import org.treetank.exception.TTIOException;
  * 
  * <p>
  * <ol>
- * <li>Only a single thread accesses the single INodeWriteTransaction instance.</li>
+ * <li>Only a single thread accesses the single INodeWriteTrx instance.</li>
  * <li><strong>Precondition</strong> before moving cursor:
- * <code>INodeWriteTransaction.getNodeKey() == n</code>.</li>
+ * <code>INodeWriteTrx.getNodeKey() == n</code>.</li>
  * <li><strong>Postcondition</strong> after modifying the cursor:
- * <code>(INodeWriteTransaction.insertX() == m &&
- *       INodeWriteTransaction.getNodeKey() == m)</code>.</li>
+ * <code>(INodeWriteTrx.insertX() == m &&
+ *       INodeWriteTrx.getNodeKey() == m)</code>.</li>
  * </ol>
  * </p>
  * 
@@ -70,26 +70,26 @@ import org.treetank.exception.TTIOException;
  * 
  * <pre>
  * // Without auto commit.
- * final INodeWriteTransaction wtx = session.beginWriteTransaction();
+ * final INodeWriteTrx wtx = session.beginWriteTransaction();
  * wtx.insertElementAsFirstChild(&quot;foo&quot;);
  * // Explicit forced commit.
  * wtx.commit();
  * wtx.close();
  * 
  * // With auto commit after every 10th modification.
- * final INodeWriteTransaction wtx = session.beginWriteTransaction(10, 0);
+ * final INodeWriteTrx wtx = session.beginWriteTransaction(10, 0);
  * wtx.insertElementAsFirstChild(new QName(&quot;foo&quot;));
  * // Implicit commit.
  * wtx.close();
  * 
  * // With auto commit after every second.
- * final INodeWriteTransaction wtx = session.beginWriteTransaction(0, 1);
+ * final INodeWriteTrx wtx = session.beginWriteTransaction(0, 1);
  * wtx.insertElementAsFirstChild(new QName(&quot;foo&quot;));
  * // Implicit commit.
  * wtx.close();
  * 
  * // With auto commit after every 10th modification and every second.
- * final INodeWriteTransaction wtx = session.beginWriteTransaction(10, 1);
+ * final INodeWriteTrx wtx = session.beginWriteTransaction(10, 1);
  * wtx.insertElementAsFirstChild(new QName(&quot;foo&quot;));
  * // Implicit commit.
  * wtx.close();
@@ -113,7 +113,7 @@ import org.treetank.exception.TTIOException;
  * 
  * </p>
  */
-public interface INodeWriteTransaction extends INodeReadTransaction {
+public interface INodeWriteTrx extends INodeReadTrx {
 
     // --- Node Modifiers
     // --------------------------------------------------------
@@ -259,7 +259,7 @@ public interface INodeWriteTransaction extends INodeReadTransaction {
     /**
      * Reverting all changes to the revision defined. This command has to be
      * finalized with a commit. A revert is always bound to a
-     * {@link INodeReadTransaction#moveToDocumentRoot()}.
+     * {@link INodeReadTrx#moveToDocumentRoot()}.
      * 
      * @param pRev
      *            revert to the revision
@@ -269,7 +269,7 @@ public interface INodeWriteTransaction extends INodeReadTransaction {
     void revertTo(final long pRev) throws AbsTTException;
 
     /**
-     * Closing current NodeWriteTransaction.
+     * Closing current NodeWriteTrx.
      * 
      * @throws AbsTTException
      *             if write transaction couldn't be closed

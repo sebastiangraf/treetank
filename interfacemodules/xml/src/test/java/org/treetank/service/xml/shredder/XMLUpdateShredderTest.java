@@ -46,7 +46,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.serialize.XMLSerializer;
@@ -245,7 +245,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
-                final INodeWriteTransaction wtx = session.beginWriteTransaction();
+                final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
                 if (first) {
                     final XMLShredder shredder =
                         new XMLShredder(wtx, XMLShredder.createFileReader(file),

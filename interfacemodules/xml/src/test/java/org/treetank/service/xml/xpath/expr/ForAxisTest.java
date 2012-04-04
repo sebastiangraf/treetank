@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
@@ -66,7 +66,7 @@ public class ForAxisTest {
 
     @Test
     public void testFor() throws AbsTTException {
-        final INodeReadTransaction rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getRtx();
 
         rtx.moveTo(1L);
 

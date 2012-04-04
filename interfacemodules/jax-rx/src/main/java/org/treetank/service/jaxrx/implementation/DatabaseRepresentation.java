@@ -29,6 +29,8 @@ package org.treetank.service.jaxrx.implementation; // NOPMD we need all these im
 
 // pointless
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,13 +49,12 @@ import javax.ws.rs.core.StreamingOutput;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
@@ -287,7 +288,7 @@ public class DatabaseRepresentation {
      */
     public final boolean shred(final InputStream xmlInput, final String resource) throws AbsTTException {
         boolean allOk;
-        INodeWriteTransaction wtx = null;
+        INodeWriteTrx wtx = null;
         IDatabase database = null;
         ISession session = null;
         boolean abort = false;
@@ -303,8 +304,8 @@ public class DatabaseRepresentation {
             database = Database.openDatabase(dbConf.mFile);
             database.createResource(resConf);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
-            wtx = session.beginWriteTransaction();
-            wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+            wtx = session.beginNodeWriteTransaction();
+            wtx.moveTo(ROOT_NODE);
             final XMLShredder shredder =
                 new XMLShredder(wtx, RESTXMLShredder.createReader(xmlInput), EShredderInsert.ADDASFIRSTCHILD);
             shredder.call();
@@ -374,11 +375,11 @@ public class DatabaseRepresentation {
         long lastRevision;
         if (WorkerHelper.checkExistingResource(resourceName)) {
             IDatabase database = Database.openDatabase(STOREDBPATH);
-            INodeReadTransaction rtx = null;
+            INodeReadTrx rtx = null;
             ISession session = null;
             try {
                 session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
-                rtx = session.beginReadTransaction();
+                rtx = session.beginNodeReadTransaction();
                 lastRevision = rtx.getRevisionNumber();
 
             } catch (final Exception globExcep) {
@@ -433,7 +434,7 @@ public class DatabaseRepresentation {
             // Connection to treetank, creating a session
             IDatabase database = null;
             AbsAxis axis = null;
-            INodeReadTransaction rtx = null;
+            INodeReadTrx rtx = null;
             ISession session = null;
             // List for all restIds of modifications
             final List<Long> modificRestids = new LinkedList<Long>();
@@ -446,7 +447,7 @@ public class DatabaseRepresentation {
                 session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
 
                 // get highest rest-id from given revision 1
-                rtx = session.beginReadTransaction(revision1);
+                rtx = session.beginNodeReadTransaction(revision1);
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
@@ -456,11 +457,11 @@ public class DatabaseRepresentation {
                     // stores all restids from revision 1 into a list
                     restIdsRev1.add(rtx.getNode().getNodeKey());
                 }
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
                 // get highest rest-id from given revision 2
-                rtx = session.beginReadTransaction(revision2);
+                rtx = session.beginNodeReadTransaction(revision2);
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
@@ -482,10 +483,10 @@ public class DatabaseRepresentation {
                      */
                     restIdsRev1.remove(nodeKey);
                 }
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
-                rtx = session.beginReadTransaction(revision1);
+                rtx = session.beginNodeReadTransaction(revision1);
 
                 // linked list for holding unique restids from revision 1
                 final List<Long> restIdsRev1New = new LinkedList<Long>();
@@ -502,7 +503,7 @@ public class DatabaseRepresentation {
                         restIdsRev1New.add(nodeKey);
                     }
                 }
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
                 if (wrap) {
@@ -512,20 +513,20 @@ public class DatabaseRepresentation {
                  * Shred modified restids from revision 2 to xml fragment Just
                  * modifications done by post commands
                  */
-                rtx = session.beginReadTransaction(revision2);
+                rtx = session.beginNodeReadTransaction(revision2);
 
                 for (Long nodeKey : modificRestids) {
                     rtx.moveTo(nodeKey);
                     WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision2).call();
                 }
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
                 /*
                  * Shred modified restids from revision 1 to xml fragment Just
                  * modifications done by put and deletes
                  */
-                rtx = session.beginReadTransaction(revision1);
+                rtx = session.beginNodeReadTransaction(revision1);
                 for (Long nodeKey : restIdsRev1New) {
                     rtx.moveTo(nodeKey);
                     WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision1).call();
@@ -534,7 +535,7 @@ public class DatabaseRepresentation {
                     output.write(endResult.getBytes());
                 }
 
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
 
             } catch (final Exception globExcep) {
                 throw new JaxRxException(globExcep);
@@ -569,7 +570,7 @@ public class DatabaseRepresentation {
         // Connection to treetank, creating a session
         IDatabase database = null;
         ISession session = null;
-        // INodeReadTransaction rtx = null;
+        // INodeReadTrx rtx = null;
         try {
             database = Database.openDatabase(STOREDBPATH);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
@@ -611,12 +612,12 @@ public class DatabaseRepresentation {
         AbsTTException {
         IDatabase database = null;
         ISession session = null;
-        INodeWriteTransaction wtx = null;
+        INodeWriteTrx wtx = null;
         boolean abort = false;
         try {
             database = Database.openDatabase(STOREDBPATH);
             session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
-            wtx = session.beginWriteTransaction();
+            wtx = session.beginNodeWriteTransaction();
             wtx.revertTo(backToRevision);
             wtx.commit();
         } catch (final AbsTTException exce) {

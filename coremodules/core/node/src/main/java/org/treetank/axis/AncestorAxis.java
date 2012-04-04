@@ -27,15 +27,17 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.INodeReadTransaction;
+import static org.treetank.node.IConstants.ROOT_NODE;
+
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.ENode;
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 /**
  * <h1>AncestorAxis</h1>
  * 
  * <p>
- * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
+ * Iterate over all descendants of kind ELEMENT or TEXT starting at a given
+ * node. Self is not included.
  * </p>
  */
 public class AncestorAxis extends AbsAxis {
@@ -51,7 +53,7 @@ public class AncestorAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public AncestorAxis(final INodeReadTransaction rtx) {
+    public AncestorAxis(final INodeReadTrx rtx) {
         super(rtx);
     }
 
@@ -63,7 +65,7 @@ public class AncestorAxis extends AbsAxis {
      * @param mIncludeSelf
      *            Is self included?
      */
-    public AncestorAxis(final INodeReadTransaction rtx, final boolean mIncludeSelf) {
+    public AncestorAxis(final INodeReadTrx rtx, final boolean mIncludeSelf) {
         super(rtx, mIncludeSelf);
     }
 
@@ -90,7 +92,7 @@ public class AncestorAxis extends AbsAxis {
         }
 
         if (getNode().getKind() != ENode.ROOT_KIND && getNode().hasParent()
-            && getNode().getParentKey() != ROOT_NODE) {
+                && getNode().getParentKey() != ROOT_NODE) {
             moveTo(getNode().getParentKey());
             return true;
         }

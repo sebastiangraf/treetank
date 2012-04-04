@@ -11,11 +11,11 @@ import org.treetank.page.UberPage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IPageWriteTransaction extends IPageReadTransaction {
+public interface IPageWriteTrx extends IPageReadTrx {
     UberPage getUberPage();
 
     long getMaxNodeKey();
 
-    INode createNode(INode pnode) throws TTIOException;
+    <T extends INode> T createNode(T pnode) throws TTIOException;
 
 }

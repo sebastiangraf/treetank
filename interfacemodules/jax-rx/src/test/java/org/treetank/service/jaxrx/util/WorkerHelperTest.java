@@ -46,9 +46,9 @@ import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -146,7 +146,7 @@ public class WorkerHelperTest {
 
     /**
      * This method tests
-     * {@link WorkerHelper#shredInputStream(INodeWriteTransaction, InputStream, EShredderInsert)}
+     * {@link WorkerHelper#shredInputStream(INodeWriteTrx, InputStream, EShredderInsert)}
      */
     @Test
     public void testShredInputStream() throws AbsTTException, IOException {
@@ -156,7 +156,7 @@ public class WorkerHelperTest {
         final IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
 
         final InputStream inputStream = new ByteArrayInputStream("<testNode/>".getBytes());
 
@@ -170,13 +170,13 @@ public class WorkerHelperTest {
     }
 
     /**
-     * This method tests {@link WorkerHelper#closeWTX(boolean, INodeWriteTransaction, ISession, IDatabase)}
+     * This method tests {@link WorkerHelper#closeWTX(boolean, INodeWriteTrx, ISession, IDatabase)}
      */
     @Test(expected = IllegalStateException.class)
     public void testClose() throws AbsTTException {
         IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         ISession session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
 
         WorkerHelper.closeWTX(false, wtx, session, database);
 
@@ -184,7 +184,7 @@ public class WorkerHelperTest {
 
         database = Database.openDatabase(DBFILE.getParentFile());
         session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeReadTransaction rtx = session.beginReadTransaction();
+        final INodeReadTrx rtx = session.beginNodeReadTransaction();
         WorkerHelper.closeRTX(rtx, session, database);
 
         rtx.moveTo(11);

@@ -29,6 +29,7 @@ package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.junit.After;
 import org.junit.Before;
@@ -39,7 +40,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
@@ -70,7 +71,7 @@ public class ReadTransactionTest {
         db.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH2.getConfig())
             .build());
         final ISession session = db.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeReadTransaction rtx = session.beginReadTransaction();
+        final INodeReadTrx rtx = session.beginNodeReadTransaction();
         rtx.getRevisionNumber();
         rtx.close();
         session.close();
@@ -79,7 +80,7 @@ public class ReadTransactionTest {
 
     @Test
     public void testDocumentRoot() throws AbsTTException {
-        assertEquals(true, holder.getRtx().moveTo(NodeReadTransaction.ROOT_NODE));
+        assertEquals(true, holder.getRtx().moveTo(ROOT_NODE));
         assertEquals(ENode.ROOT_KIND, holder.getRtx().getNode().getKind());
         assertEquals(false, holder.getRtx().getNode().hasParent());
         assertEquals(false, ((IStructNode)holder.getRtx().getNode()).hasLeftSibling());
@@ -91,11 +92,11 @@ public class ReadTransactionTest {
     @Test
     public void testConventions() throws AbsTTException {
 
-        // INodeReadTransaction Convention 1.
-        assertEquals(true, holder.getRtx().moveTo(NodeReadTransaction.ROOT_NODE));
+        // INodeReadTrx Convention 1.
+        assertEquals(true, holder.getRtx().moveTo(ROOT_NODE));
         long key = holder.getRtx().getNode().getNodeKey();
 
-        // INodeReadTransaction Convention 2.
+        // INodeReadTrx Convention 2.
         assertEquals(holder.getRtx().getNode().hasParent(), holder.getRtx().moveTo(
             holder.getRtx().getNode().getParentKey()));
         assertEquals(key, holder.getRtx().getNode().getNodeKey());

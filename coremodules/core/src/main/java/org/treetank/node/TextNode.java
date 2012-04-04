@@ -27,7 +27,7 @@
 
 package org.treetank.node;
 
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.node.IConstants.NULL_NODE;
 
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -35,6 +35,8 @@ import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
+
+import com.google.common.hash.Hasher;
 
 /**
  * <h1>TextNode</h1>
@@ -303,42 +305,17 @@ public final class TextNode implements IStructNode, IValNode, INode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
-        result = prime * result + ((mStrucDel == null) ? 0 : mStrucDel.hashCode());
-        result = prime * result + ((mValDel == null) ? 0 : mValDel.hashCode());
-        return result;
+        Hasher hc = IConstants.HF.newHasher();
+        hc.putInt(mValDel.hashCode());
+        return hc.hash().asInt();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object pObj) {
-        if (this == pObj)
-            return true;
-        if (pObj == null)
-            return false;
-        if (getClass() != pObj.getClass())
-            return false;
-        TextNode other = (TextNode)pObj;
-        if (mDel == null) {
-            if (other.mDel != null)
-                return false;
-        } else if (!mDel.equals(other.mDel))
-            return false;
-        if (mStrucDel == null) {
-            if (other.mStrucDel != null)
-                return false;
-        } else if (!mStrucDel.equals(other.mStrucDel))
-            return false;
-        if (mValDel == null) {
-            if (other.mValDel != null)
-                return false;
-        } else if (!mValDel.equals(other.mValDel))
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
     }
 
     /** {@inheritDoc} */

@@ -61,7 +61,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.saxon.evaluator.XSLTEvaluator;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -96,7 +96,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
             .createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
         final ISession session =
             databaseBooks.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

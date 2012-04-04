@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.parser.XPathParser;
@@ -45,14 +45,14 @@ import org.treetank.service.xml.xpath.parser.XPathParser;
  * <h2>User Example</h2>
  * <p>
  * In order to use it, at first a treetank session has to be bound to the XML document in question or an tnk
- * file and a <code>NodeReadTransaction</code> with an <code>IItemList</code> as argument has to be started on
+ * file and a <code>NodeReadTrx</code> with an <code>IItemList</code> as argument has to be started on
  * it. (For more information how to do that, see the treetank documentation.) Then the <code>XPathAxis</code>
  * can be used like this:
  * <p>
  * 
  * <pre>
  *   ...
- *   INodeReadTransaction rtx = session.beginReadTransaction(new ItemList());
+ *   INodeReadTrx rtx = session.beginReadTransaction(new ItemList());
  *   
  *   final String query = 
  *   &quot;for $a in /articles/article[@name = \&quot;book\&quot;] return $a/price&quot;;
@@ -99,7 +99,7 @@ public final class XPathAxis extends AbsAxis {
      * @throws TTXPathException
      *             throw a treetank xpath exception.
      */
-    public XPathAxis(final INodeReadTransaction rtx, final String mQuery) throws TTXPathException {
+    public XPathAxis(final INodeReadTrx rtx, final String mQuery) throws TTXPathException {
 
         super(rtx);
 

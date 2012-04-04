@@ -28,6 +28,7 @@
 package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
@@ -38,7 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.DocumentCreater;
@@ -79,7 +80,7 @@ public class MultipleCommitTest {
         DocumentCreater.create(holder.getWtx());
         holder.getWtx().commit();
 
-        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
+        final INodeReadTrx rtx = holder.getSession().beginNodeReadTransaction();
         rtx.close();
     }
 
@@ -89,7 +90,7 @@ public class MultipleCommitTest {
         holder.getWtx().commit();
         assertEquals(1L, holder.getWtx().getRevisionNumber());
 
-        holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
+        holder.getWtx().moveTo(ROOT_NODE);
         holder.getWtx().moveTo(((IStructNode)holder.getWtx().getNode()).getFirstChildKey());
         holder.getWtx().remove();
         holder.getWtx().commit();
@@ -100,7 +101,7 @@ public class MultipleCommitTest {
     // public void testAttributeRemove() throws AbsTTException {
     // DocumentCreater.create(holder.getWtx());
     // holder.getWtx().commit();
-    // holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
+    // holder.getWtx().moveTo(NodeReadTrx.ROOT_NODE);
     //
     // final AbsAxis postorderAxis = new PostOrderAxis(holder.getWtx());
     // while (postorderAxis.hasNext()) {
@@ -116,7 +117,7 @@ public class MultipleCommitTest {
     // }
     // }
     // holder.getWtx().commit();
-    // holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
+    // holder.getWtx().moveTo(NodeReadTrx.ROOT_NODE);
     //
     // int attrTouch = 0;
     // final AbsAxis descAxis = new DescendantAxis(holder.getWtx());

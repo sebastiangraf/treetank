@@ -36,7 +36,7 @@ import org.treetank.exception.AbsTTException;
  * 
  * <p>
  * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
- * can then be started from this instance. There can only be one <code>INodeWriteTransaction</code> at the
+ * can then be started from this instance. There can only be one <code>INodeWriteTrx</code> at the
  * time. However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
  * 
@@ -48,9 +48,9 @@ public interface ISession {
      * 
      * @throws AbsTTException
      *             If can't begin Read Transaction.
-     * @return INodeReadTransaction instance.
+     * @return INodeReadTrx instance.
      */
-    INodeReadTransaction beginReadTransaction() throws AbsTTException;
+    INodeReadTrx beginNodeReadTransaction() throws AbsTTException;
 
     /**
      * Begin a read-only transaction on the given revision key.
@@ -59,18 +59,18 @@ public interface ISession {
      *            Revision key to read from.
      * @throws AbsTTException
      *             If can't begin Read Transaction.
-     * @return {@link INodeReadTransaction} instance
+     * @return {@link INodeReadTrx} instance
      */
-    INodeReadTransaction beginReadTransaction(final long pRev) throws AbsTTException;
+    INodeReadTrx beginNodeReadTransaction(final long pRev) throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
      * 
      * @throws AbsTTException
      *             If can't begin Write Transaction.
-     * @return INodeWriteTransaction instance.
+     * @return INodeWriteTrx instance.
      */
-    INodeWriteTransaction beginWriteTransaction() throws AbsTTException;
+    INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException;
 
     /**
      * Begin exclusive read/write transaction with auto commit.
@@ -81,9 +81,9 @@ public interface ISession {
      *            Time in seconds after which a commit is issued.
      * @throws AbsTTException
      *             If can't begin Write Transaction.
-     * @return INodeWriteTransaction instance.
+     * @return INodeWriteTrx instance.
      */
-    INodeWriteTransaction beginWriteTransaction(final int pMaxNodes, final int pMaxTime)
+    INodeWriteTrx beginNodeWriteTransaction(final int pMaxNodes, final int pMaxTime)
         throws AbsTTException;
 
     /**

@@ -40,7 +40,7 @@ public class XPathTestQueries {
     // final private static String QUERY = "//country/name";
     //
     // public void executeQuery() {
-    // INodeReadTransaction rtx = null;
+    // INodeReadTrx rtx = null;
     // IDatabase db = null;
     // ISession session = null;
     //
@@ -69,7 +69,7 @@ public class XPathTestQueries {
     // public void shredXML() {
     // long startTime = System.currentTimeMillis();
     //
-    // INodeWriteTransaction wtx = null;
+    // INodeWriteTrx wtx = null;
     // IDatabase database = null;
     // ISession session = null;
     //

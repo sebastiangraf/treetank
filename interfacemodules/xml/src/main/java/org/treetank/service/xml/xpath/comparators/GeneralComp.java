@@ -32,7 +32,7 @@ import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
@@ -60,7 +60,7 @@ public class GeneralComp extends AbsComparator {
      * @param mCom
      *            comparison kind
      */
-    public GeneralComp(final INodeReadTransaction rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
+    public GeneralComp(final INodeReadTrx rtx, final AbsAxis mOperand1, final AbsAxis mOperand2,
         final CompKind mCom) {
 
         super(rtx, mOperand1, mOperand2, mCom);

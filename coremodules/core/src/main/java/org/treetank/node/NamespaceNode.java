@@ -32,6 +32,8 @@ import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
+import com.google.common.hash.Hasher;
+
 /**
  * <h1>NamespaceNode</h1>
  * 
@@ -193,36 +195,18 @@ public final class NamespaceNode implements INode, INameNode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
-        result = prime * result + ((mNameDel == null) ? 0 : mNameDel.hashCode());
-        return result;
+        Hasher hc = IConstants.HF.newHasher();
+        hc.putInt(mDel.hashCode());
+        hc.putInt(mNameDel.hashCode());
+        return hc.hash().asInt();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object pObj) {
-        if (this == pObj)
-            return true;
-        if (pObj == null)
-            return false;
-        if (getClass() != pObj.getClass())
-            return false;
-        NamespaceNode other = (NamespaceNode)pObj;
-        if (mDel == null) {
-            if (other.mDel != null)
-                return false;
-        } else if (!mDel.equals(other.mDel))
-            return false;
-        if (mNameDel == null) {
-            if (other.mNameDel != null)
-                return false;
-        } else if (!mNameDel.equals(other.mNameDel))
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
     }
 
     /** {@inheritDoc} */

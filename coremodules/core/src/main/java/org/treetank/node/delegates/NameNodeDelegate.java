@@ -30,7 +30,10 @@
 package org.treetank.node.delegates;
 
 import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
+
+import com.google.common.hash.Hasher;
 
 /**
  * Delegate method for all nodes containing \"naming\"-data. That means that
@@ -201,11 +204,10 @@ public class NameNodeDelegate implements INameNode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + mNameKey;
-        result = prime * result + mUriKey;
-        return result;
+        Hasher hc = IConstants.HF.newHasher();
+        hc.putInt(mNameKey);
+        hc.putInt(mUriKey);
+        return hc.hash().asInt();
     }
 
     /**
@@ -213,18 +215,7 @@ public class NameNodeDelegate implements INameNode {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        NameNodeDelegate other = (NameNodeDelegate)obj;
-        if (mNameKey != other.mNameKey)
-            return false;
-        if (mUriKey != other.mUriKey)
-            return false;
-        return true;
+        return hashCode() == obj.hashCode();
     }
 
     /**

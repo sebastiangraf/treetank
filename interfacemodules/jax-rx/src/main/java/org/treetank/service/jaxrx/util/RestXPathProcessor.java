@@ -30,6 +30,7 @@
  */
 package org.treetank.service.jaxrx.util;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
 import static org.treetank.service.jaxrx.implementation.DatabaseRepresentation.STOREDBPATH;
 
 import java.io.File;
@@ -40,10 +41,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.treetank.access.Database;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
@@ -145,16 +145,16 @@ public class RestXPathProcessor {
 
         IDatabase database = null;
         ISession session = null;
-        INodeReadTransaction rtx = null;
+        INodeReadTrx rtx = null;
         try {
             database = Database.openDatabase(dbFile.getParentFile());
             session = database.getSession(new SessionConfiguration.Builder(dbFile.getName()).build());
             // Creating a transaction
 
             if (doRevision == null) {
-                rtx = session.beginReadTransaction();
+                rtx = session.beginNodeReadTransaction();
             } else {
-                rtx = session.beginReadTransaction(doRevision);
+                rtx = session.beginNodeReadTransaction(doRevision);
             }
 
             final boolean exist = rtx.moveTo(rId);
@@ -205,15 +205,15 @@ public class RestXPathProcessor {
         // Database connection to treetank
         IDatabase database = null;
         ISession session = null;
-        INodeReadTransaction rtx = null;
+        INodeReadTrx rtx = null;
         try {
             database = Database.openDatabase(STOREDBPATH);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
             // Creating a transaction
             if (revision == null) {
-                rtx = session.beginReadTransaction();
+                rtx = session.beginNodeReadTransaction();
             } else {
-                rtx = session.beginReadTransaction(revision);
+                rtx = session.beginNodeReadTransaction(revision);
             }
 
             final AbsAxis axis = new XPathAxis(rtx, xpath);
@@ -224,7 +224,7 @@ public class RestXPathProcessor {
         } catch (final Exception globExcep) {
             throw new WebApplicationException(globExcep, Response.Status.INTERNAL_SERVER_ERROR);
         } finally {
-            rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+            rtx.moveTo(ROOT_NODE);
 
             WorkerHelper.closeRTX(rtx, session, database);
 

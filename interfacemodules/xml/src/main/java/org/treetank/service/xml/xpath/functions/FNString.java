@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.functions;
 
 import java.util.List;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
@@ -52,7 +52,7 @@ import org.treetank.utils.TypedValue;
 public class FNString extends AbsFunction {
 
     /** Readtrans, stored over here since needed for internal axis. */
-    private final INodeReadTransaction pRtx;
+    private final INodeReadTrx pRtx;
 
     /**
      * Constructor. Initializes internal state and do a statical analysis
@@ -71,7 +71,7 @@ public class FNString extends AbsFunction {
      * @throws TTXPathException
      *             if function check fails
      */
-    public FNString(final INodeReadTransaction rtx, final List<AbsAxis> args, final int min, final int max,
+    public FNString(final INodeReadTrx rtx, final List<AbsAxis> args, final int min, final int max,
         final int returnType) throws TTXPathException {
 
         super(rtx, args, min, max, returnType);

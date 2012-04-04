@@ -27,8 +27,9 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import org.treetank.access.NodeReadTransaction;
-import org.treetank.api.INodeReadTransaction;
+import static org.treetank.node.IConstants.ROOT_NODE;
+
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 
 /**
@@ -48,7 +49,7 @@ public class DocumentNodeAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) transaction to iterate with.
      */
-    public DocumentNodeAxis(final INodeReadTransaction rtx) {
+    public DocumentNodeAxis(final INodeReadTrx rtx) {
 
         super(rtx);
     }
@@ -73,7 +74,7 @@ public class DocumentNodeAxis extends AbsAxis {
 
         if (mFirst) {
             mFirst = false;
-            moveTo(NodeReadTransaction.ROOT_NODE);
+            moveTo(ROOT_NODE);
             return true;
         } else {
             resetToStartKey();

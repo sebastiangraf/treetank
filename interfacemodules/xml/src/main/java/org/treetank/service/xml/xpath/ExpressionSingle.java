@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AncestorAxis;
 import org.treetank.axis.ChildAxis;
@@ -69,12 +69,12 @@ public class ExpressionSingle {
     private DupState mDup;
 
     /** Private IReadTrx for generating new axis. */
-    private final INodeReadTransaction mRtx;
+    private final INodeReadTrx mRtx;
 
     /**
      * Constructor. Initializes the internal state.
      */
-    public ExpressionSingle(final INodeReadTransaction pRtx) {
+    public ExpressionSingle(final INodeReadTrx pRtx) {
 
         mNumber = 0;
 

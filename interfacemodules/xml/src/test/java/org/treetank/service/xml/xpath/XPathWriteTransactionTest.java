@@ -28,6 +28,7 @@
 package org.treetank.service.xml.xpath;
 
 import static org.junit.Assert.fail;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
 
@@ -36,11 +37,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTXPathException;
@@ -61,7 +61,7 @@ public final class XPathWriteTransactionTest {
 
     private ISession session;
 
-    private INodeWriteTransaction wtx;
+    private INodeWriteTrx wtx;
 
     private IDatabase database;
 
@@ -75,12 +75,12 @@ public final class XPathWriteTransactionTest {
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.getConfig()).build());
         session = database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        wtx = session.beginWriteTransaction();
+        wtx = session.beginNodeWriteTransaction();
     }
 
     @Test
     public void test() throws TTXPathException {
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         // final XPathAxis xpa =
         // new XPathAxis(wtx, "//revision[./parent::page/title/text() = '"
         // + "AmericanSamoa"

@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.AtomicValue;
 
 /**
@@ -48,7 +48,7 @@ public class LiteralExpr extends AbsExpression {
      * @param mItemKey
      *            itemKey of the literal
      */
-    public LiteralExpr(final INodeReadTransaction rtx, final long mItemKey) {
+    public LiteralExpr(final INodeReadTrx rtx, final long mItemKey) {
         super(rtx);
 
         mLiteralKey = mItemKey;

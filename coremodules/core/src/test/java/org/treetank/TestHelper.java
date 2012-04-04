@@ -46,7 +46,7 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AttributeNode;
@@ -278,7 +278,7 @@ public final class TestHelper {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.config).build());
         final ISession session = database.getSession(new SessionConfiguration.Builder(RESOURCE).build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();

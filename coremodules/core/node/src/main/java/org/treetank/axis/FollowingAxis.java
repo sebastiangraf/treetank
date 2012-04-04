@@ -29,7 +29,7 @@ package org.treetank.axis;
 
 import java.util.Stack;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -37,7 +37,8 @@ import org.treetank.node.interfaces.IStructNode;
  * <h1>FollowingAxis</h1>
  * 
  * <p>
- * Iterate over all following nodes of kind ELEMENT or TEXT starting at a given node. Self is not included.
+ * Iterate over all following nodes of kind ELEMENT or TEXT starting at a given
+ * node. Self is not included.
  * </p>
  */
 public class FollowingAxis extends AbsAxis {
@@ -52,7 +53,7 @@ public class FollowingAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
      */
-    public FollowingAxis(final INodeReadTransaction rtx) {
+    public FollowingAxis(final INodeReadTrx rtx) {
 
         super(rtx);
         mIsFirst = true;
@@ -95,22 +96,24 @@ public class FollowingAxis extends AbsAxis {
             // sibling of
             // the first ancestor that has a right sibling.
             // note: ancestors and descendants are no following node!
-            if ((((IStructNode)getNode()).hasRightSibling())) {
-                moveTo(((IStructNode)getNode()).getRightSiblingKey());
+            if ((((IStructNode) getNode()).hasRightSibling())) {
+                moveTo(((IStructNode) getNode()).getRightSiblingKey());
 
-                if ((((IStructNode)getNode()).hasRightSibling())) {
+                if ((((IStructNode) getNode()).hasRightSibling())) {
                     // push right sibling on a stack to reduce path traversal
-                    mRightSiblingStack.push(((IStructNode)getNode()).getRightSiblingKey());
+                    mRightSiblingStack.push(((IStructNode) getNode())
+                            .getRightSiblingKey());
                 }
                 return true;
             }
             // Try to find the right sibling of one of the ancestors.
             while (getNode().hasParent()) {
                 moveTo(getNode().getParentKey());
-                if ((((IStructNode)getNode()).hasRightSibling())) {
-                    moveTo(((IStructNode)getNode()).getRightSiblingKey());
-                    if ((((IStructNode)getNode()).hasRightSibling())) {
-                        mRightSiblingStack.push(((IStructNode)getNode()).getRightSiblingKey());
+                if ((((IStructNode) getNode()).hasRightSibling())) {
+                    moveTo(((IStructNode) getNode()).getRightSiblingKey());
+                    if ((((IStructNode) getNode()).hasRightSibling())) {
+                        mRightSiblingStack.push(((IStructNode) getNode())
+                                .getRightSiblingKey());
                     }
                     return true;
                 }
@@ -121,11 +124,12 @@ public class FollowingAxis extends AbsAxis {
 
         }
         // step down the tree in document order
-        if ((((IStructNode)getNode()).hasFirstChild())) {
-            moveTo(((IStructNode)getNode()).getFirstChildKey());
-            if ((((IStructNode)getNode()).hasRightSibling())) {
+        if ((((IStructNode) getNode()).hasFirstChild())) {
+            moveTo(((IStructNode) getNode()).getFirstChildKey());
+            if ((((IStructNode) getNode()).hasRightSibling())) {
                 // push right sibling on a stack to reduce path traversal
-                mRightSiblingStack.push(((IStructNode)getNode()).getRightSiblingKey());
+                mRightSiblingStack.push(((IStructNode) getNode())
+                        .getRightSiblingKey());
             }
 
             return true;
@@ -135,12 +139,13 @@ public class FollowingAxis extends AbsAxis {
             // Try to find the right sibling of one of the ancestors.
             while (getNode().hasParent()) {
                 moveTo(getNode().getParentKey());
-                if (((IStructNode)getNode()).hasRightSibling()) {
-                    moveTo(((IStructNode)getNode()).getRightSiblingKey());
-                    if (((IStructNode)getNode()).hasRightSibling()) {
+                if (((IStructNode) getNode()).hasRightSibling()) {
+                    moveTo(((IStructNode) getNode()).getRightSiblingKey());
+                    if (((IStructNode) getNode()).hasRightSibling()) {
                         // push right sibling on a stack to reduce path
                         // traversal
-                        mRightSiblingStack.push(((IStructNode)getNode()).getRightSiblingKey());
+                        mRightSiblingStack.push(((IStructNode) getNode())
+                                .getRightSiblingKey());
                     }
                     return true;
                 }
@@ -150,9 +155,10 @@ public class FollowingAxis extends AbsAxis {
 
             // get root key of sibling subtree
             moveTo(mRightSiblingStack.pop());
-            if (((IStructNode)getNode()).hasRightSibling()) {
+            if (((IStructNode) getNode()).hasRightSibling()) {
                 // push right sibling on a stack to reduce path traversal
-                mRightSiblingStack.push(((IStructNode)getNode()).getRightSiblingKey());
+                mRightSiblingStack.push(((IStructNode) getNode())
+                        .getRightSiblingKey());
             }
             return true;
 

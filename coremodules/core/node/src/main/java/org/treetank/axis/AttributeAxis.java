@@ -27,7 +27,7 @@
 
 package org.treetank.axis;
 
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 
@@ -49,7 +49,7 @@ public class AttributeAxis extends AbsAxis {
      * @param rtx
      *            Exclusive (immutable) mTrx to iterate with.
      */
-    public AttributeAxis(final INodeReadTransaction rtx) {
+    public AttributeAxis(final INodeReadTrx rtx) {
         super(rtx);
     }
 
@@ -75,8 +75,8 @@ public class AttributeAxis extends AbsAxis {
             moveTo(getNode().getParentKey());
         }
         if (getNode().getKind() == ENode.ELEMENT_KIND
-            && mNextIndex < ((ElementNode)getNode()).getAttributeCount()) {
-            moveTo(((ElementNode)getNode()).getAttributeKey(mNextIndex));
+                && mNextIndex < ((ElementNode) getNode()).getAttributeCount()) {
+            moveTo(((ElementNode) getNode()).getAttributeKey(mNextIndex));
             mNextIndex += 1;
             return true;
         }

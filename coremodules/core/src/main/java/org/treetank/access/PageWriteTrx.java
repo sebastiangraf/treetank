@@ -27,13 +27,13 @@
 
 package org.treetank.access;
 
-import static org.treetank.access.PageReadTransaction.nodePageKey;
-import static org.treetank.access.PageReadTransaction.nodePageOffset;
+import static org.treetank.access.PageReadTrx.nodePageKey;
+import static org.treetank.access.PageReadTrx.nodePageOffset;
 
 import javax.xml.namespace.QName;
 
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IPageWriteTransaction;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.TransactionLogCache;
@@ -55,13 +55,13 @@ import org.treetank.utils.IConstants;
 import org.treetank.utils.NamePageHash;
 
 /**
- * <h1>PageWriteTransaction</h1>
+ * <h1>PageWriteTrx</h1>
  * 
  * <p>
- * See {@link PageReadTransaction}.
+ * See {@link PageReadTrx}.
  * </p>
  */
-public final class PageWriteTransaction implements IPageWriteTransaction {
+public final class PageWriteTrx implements IPageWriteTrx {
 
     /** Page writer to serialize. */
     private final IWriter mPageWriter;
@@ -75,7 +75,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
     /** Last reference to the actual revRoot. */
     private final RevisionRootPage mNewRoot;
 
-    private PageReadTransaction mPageReadTransaction;
+    private PageReadTrx mPageReadTransaction;
 
     /**
      * Standard constructor.
@@ -96,11 +96,11 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
      * @throws TTIOException
      *             if IO Error
      */
-    protected PageWriteTransaction(final Session paramSessionState, final UberPage paramUberPage,
+    protected PageWriteTrx(final Session paramSessionState, final UberPage paramUberPage,
         final IWriter paramWriter, final long paramRepresentRev, final long paramStoreRev)
         throws TTIOException {
         mPageReadTransaction =
-            new PageReadTransaction(paramSessionState, paramUberPage, paramRepresentRev, paramWriter);
+            new PageReadTrx(paramSessionState, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mLog = new TransactionLogCache(paramSessionState.mResourceConfig.mPath, paramStoreRev);
         mPageWriter = paramWriter;
@@ -172,7 +172,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
      * @throws TTIOException
      *             if IO Error
      */
-    public INode createNode(final INode paramNode) throws TTIOException {
+    public <T extends INode> T createNode(final T paramNode) throws TTIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         final long nodeKey = mNewRoot.getMaxNodeKey();
@@ -182,7 +182,6 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         final NodePage page = mNodePageCon.getModified();
         page.setNode(nodePageOffset, paramNode);
         finishNodeModification(paramNode);
-
         return paramNode;
     }
 
@@ -378,8 +377,8 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
         uberPageReference.setPage(uberPage);
         mPageWriter.writeFirstReference(uberPageReference);
         uberPageReference.setPage(null);
-
         return uberPage;
+
     }
 
     /**

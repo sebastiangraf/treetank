@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.shredder;
 
+import static org.treetank.node.IConstants.NULL_NODE;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +57,7 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
@@ -63,7 +65,6 @@ import org.treetank.exception.TTUsageException;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.utils.TypedValue;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
@@ -79,7 +80,7 @@ import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 public class XMLShredder implements Callable<Long> {
 
     /** {@link IWriteTransaction}. */
-    protected final transient INodeWriteTransaction mWtx;
+    protected final transient INodeWriteTrx mWtx;
 
     /** {@link XMLEventReader}. */
     protected transient XMLEventReader mReader;
@@ -110,7 +111,7 @@ public class XMLShredder implements Callable<Long> {
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
      */
-    public XMLShredder(final INodeWriteTransaction paramWtx, final XMLEventReader paramReader,
+    public XMLShredder(final INodeWriteTrx paramWtx, final XMLEventReader paramReader,
         final EShredderInsert paramAddAsFirstChild) throws TTUsageException {
         this(paramWtx, paramReader, paramAddAsFirstChild, EShredderCommit.COMMIT);
     }
@@ -135,7 +136,7 @@ public class XMLShredder implements Callable<Long> {
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
      */
-    public XMLShredder(final INodeWriteTransaction paramWtx, final XMLEventReader paramReader,
+    public XMLShredder(final INodeWriteTrx paramWtx, final XMLEventReader paramReader,
         final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit)
         throws TTUsageException {
         if (paramWtx == null || paramReader == null || paramAddAsFirstChild == null || paramCommit == null) {
@@ -333,7 +334,7 @@ public class XMLShredder implements Callable<Long> {
         final IDatabase db = Database.openDatabase(target);
         db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
         final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
-        final INodeWriteTransaction wtx = session.beginWriteTransaction();
+        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
         final XMLEventReader reader = createFileReader(new File(paramArgs[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

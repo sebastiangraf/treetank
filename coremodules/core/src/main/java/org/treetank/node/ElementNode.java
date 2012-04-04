@@ -27,7 +27,7 @@
 
 package org.treetank.node;
 
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.node.IConstants.NULL_NODE;
 
 import java.util.List;
 
@@ -441,30 +441,15 @@ public final class ElementNode implements IStructNode, INameNode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mNameDel == null) ? 0 : mNameDel.hashCode());
-        return result;
+        return mNameDel.hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ElementNode other = (ElementNode)obj;
-        if (mNameDel == null) {
-            if (other.mNameDel != null)
-                return false;
-        } else if (!mNameDel.equals(other.mNameDel))
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
     }
 
     /**

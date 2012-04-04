@@ -27,13 +27,14 @@
 
 package org.treetank.axis;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
-import org.treetank.api.INodeReadTransaction;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 
 public class FollowingAxisTest {
@@ -55,17 +56,15 @@ public class FollowingAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final INodeReadTransaction rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getRtx();
 
         rtx.moveTo(11L);
         AbsAxisTest.testIAxisConventions(new FollowingAxis(rtx), new long[] {
-            12L, 13L
-        });
+                12L, 13L });
 
         rtx.moveTo(5L);
         AbsAxisTest.testIAxisConventions(new FollowingAxis(rtx), new long[] {
-            8L, 9L, 11L, 12L, 13L
-        });
+                8L, 9L, 11L, 12L, 13L });
 
         rtx.moveTo(13L);
         AbsAxisTest.testIAxisConventions(new FollowingAxis(rtx), new long[] {});
@@ -73,7 +72,7 @@ public class FollowingAxisTest {
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new FollowingAxis(rtx), new long[] {});
 
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new FollowingAxis(rtx), new long[] {});
 
         rtx.moveTo(9L);

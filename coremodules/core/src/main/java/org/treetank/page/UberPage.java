@@ -27,10 +27,10 @@
 
 package org.treetank.page;
 
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
-import org.treetank.access.PageWriteTransaction;
+import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
@@ -211,7 +211,7 @@ public final class UberPage implements IPage {
     }
 
     @Override
-    public void commit(PageWriteTransaction paramState) throws AbsTTException {
+    public void commit(PageWriteTrx paramState) throws AbsTTException {
         mDelegate.commit(paramState);
     }
 

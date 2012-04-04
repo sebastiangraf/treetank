@@ -32,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.junit.After;
 import org.junit.Before;
@@ -41,8 +42,8 @@ import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTransaction;
-import org.treetank.api.INodeWriteTransaction;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
@@ -84,7 +85,7 @@ public class SessionTest {
 
     @Test
     public void testClosed() throws AbsTTException {
-        INodeReadTransaction rtx = holder.getRtx();
+        INodeReadTrx rtx = holder.getRtx();
         rtx.close();
 
         try {
@@ -107,9 +108,9 @@ public class SessionTest {
 
     @Test
     public void testInsertChild() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTrx wtx = holder.getSession().beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
-        assertNotNull(wtx.moveTo(NodeReadTransaction.ROOT_NODE));
+        assertNotNull(wtx.moveTo(ROOT_NODE));
         assertEquals(ENode.ROOT_KIND, wtx.getNode().getKind());
 
         assertNotNull(wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey()));
@@ -123,22 +124,22 @@ public class SessionTest {
 
     @Test
     public void testRevision() throws AbsTTException {
-        INodeReadTransaction rtx = holder.getRtx();
+        INodeReadTrx rtx = holder.getRtx();
         assertEquals(0L, rtx.getRevisionNumber());
 
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTrx wtx = holder.getSession().beginNodeWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
 
         // Commit and check.
         wtx.commit();
         wtx.close();
 
-        rtx = holder.getSession().beginReadTransaction();
+        rtx = holder.getSession().beginNodeReadTransaction();
 
         assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx.getRevisionNumber());
         rtx.close();
 
-        final INodeReadTransaction rtx2 = holder.getSession().beginReadTransaction();
+        final INodeReadTrx rtx2 = holder.getSession().beginNodeReadTransaction();
         assertEquals(0L, rtx2.getRevisionNumber());
         rtx2.close();
     }
@@ -146,18 +147,18 @@ public class SessionTest {
     @Test
     public void testShreddedRevision() throws AbsTTException {
 
-        final INodeWriteTransaction wtx1 = holder.getSession().beginWriteTransaction();
+        final INodeWriteTrx wtx1 = holder.getSession().beginNodeWriteTransaction();
         DocumentCreater.create(wtx1);
         assertEquals(0L, wtx1.getRevisionNumber());
         wtx1.commit();
         wtx1.close();
 
-        final INodeReadTransaction rtx1 = holder.getSession().beginReadTransaction();
+        final INodeReadTrx rtx1 = holder.getSession().beginNodeReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
         assertEquals("bar", rtx1.getValueOfCurrentNode());
 
-        final INodeWriteTransaction wtx2 = holder.getSession().beginWriteTransaction();
+        final INodeWriteTrx wtx2 = holder.getSession().beginNodeWriteTransaction();
         assertEquals(1L, wtx2.getRevisionNumber());
         wtx2.moveTo(12L);
         wtx2.setValue("bar2");
@@ -168,7 +169,7 @@ public class SessionTest {
         wtx2.abort();
         wtx2.close();
 
-        final INodeReadTransaction rtx2 = holder.getSession().beginReadTransaction();
+        final INodeReadTrx rtx2 = holder.getSession().beginNodeReadTransaction();
         assertEquals(0L, rtx2.getRevisionNumber());
         rtx2.moveTo(12L);
         assertEquals("bar", rtx2.getValueOfCurrentNode());
@@ -181,7 +182,7 @@ public class SessionTest {
         final ISession session1 =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
 
-        final INodeWriteTransaction wtx1 = session1.beginWriteTransaction();
+        final INodeWriteTrx wtx1 = session1.beginNodeWriteTransaction();
         DocumentCreater.create(wtx1);
         assertEquals(0L, wtx1.getRevisionNumber());
         wtx1.commit();
@@ -190,12 +191,12 @@ public class SessionTest {
 
         final ISession session2 =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeReadTransaction rtx1 = session2.beginReadTransaction();
+        final INodeReadTrx rtx1 = session2.beginNodeReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
         assertEquals("bar", rtx1.getValueOfCurrentNode());
 
-        final INodeWriteTransaction wtx2 = session2.beginWriteTransaction();
+        final INodeWriteTrx wtx2 = session2.beginNodeWriteTransaction();
         assertEquals(1L, wtx2.getRevisionNumber());
         wtx2.moveTo(12L);
         wtx2.setValue("bar2");
@@ -211,7 +212,7 @@ public class SessionTest {
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session3 =
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeReadTransaction rtx2 = session3.beginReadTransaction();
+        final INodeReadTrx rtx2 = session3.beginNodeReadTransaction();
         assertEquals(1L, rtx2.getRevisionNumber());
         rtx2.moveTo(12L);
         assertEquals("bar2", rtx2.getValueOfCurrentNode());
@@ -223,13 +224,13 @@ public class SessionTest {
 
     @Test
     public void testIdempotentClose() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTrx wtx = holder.getSession().beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
         wtx.close();
 
-        final INodeReadTransaction rtx = holder.getSession().beginReadTransaction();
+        final INodeReadTrx rtx = holder.getSession().beginNodeReadTransaction();
         assertEquals(false, rtx.moveTo(14L));
         rtx.close();
         rtx.close();
@@ -239,7 +240,7 @@ public class SessionTest {
 
     @Test
     public void testAutoCommit() throws AbsTTException {
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTrx wtx = holder.getSession().beginNodeWriteTransaction();
 
         DocumentCreater.create(wtx);
     }
@@ -247,9 +248,9 @@ public class SessionTest {
     @Test
     public void testAutoClose() throws AbsTTException {
 
-        final INodeWriteTransaction wtx = holder.getSession().beginWriteTransaction();
+        final INodeWriteTrx wtx = holder.getSession().beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
-        holder.getSession().beginReadTransaction();
+        holder.getSession().beginNodeReadTransaction();
     }
 }

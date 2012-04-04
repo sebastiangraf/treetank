@@ -28,7 +28,7 @@ package org.treetank.access.conf;
 
 import java.io.File;
 
-import org.treetank.access.NodeWriteTransaction.HashKind;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Session;
 import org.treetank.io.EStorage;
 import org.treetank.settings.ERevisioning;
