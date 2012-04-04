@@ -27,10 +27,13 @@
 package org.treetank.node.delegates;
 
 import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.node.IConstants.TYPE_KEY;
 
 import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
-import org.treetank.utils.NamePageHash;
+
+import com.google.common.hash.Hasher;
 
 /**
  * Delegate method for all nodes. That means that all nodes stored in Treetank
@@ -42,8 +45,6 @@ import org.treetank.utils.NamePageHash;
  * 
  */
 public class NodeDelegate implements INode {
-
-    private static final int TYPE_KEY = NamePageHash.generateHashForString("xs:untyped");
 
     /** Key of the current node. Must be unique for all nodes. */
     private long mNodeKey;
@@ -135,36 +136,20 @@ public class NodeDelegate implements INode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int)(getHash() ^ (getHash() >>> 32));
-        result = prime * result + (int)(getNodeKey() ^ (getNodeKey() >>> 32));
-        result = prime * result + (int)(getParentKey() ^ (getParentKey() >>> 32));
-        result = prime * result + getTypeKey();
-        return result;
+        Hasher hc = IConstants.HF.newHasher();
+        hc.putLong(mHash);
+        hc.putLong(mNodeKey);
+        hc.putLong(mParentKey);
+        hc.putInt(mTypeKey);
+        return hc.hash().asInt();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object pObj) {
-        if (this == pObj)
-            return true;
-        if (pObj == null)
-            return false;
-        if (getClass() != pObj.getClass())
-            return false;
-        NodeDelegate other = (NodeDelegate)pObj;
-        if (getHash() != other.getHash())
-            return false;
-        if (getNodeKey() != other.getNodeKey())
-            return false;
-        if (getParentKey() != other.getParentKey())
-            return false;
-        if (getTypeKey() != other.getTypeKey())
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
     }
 
     /**

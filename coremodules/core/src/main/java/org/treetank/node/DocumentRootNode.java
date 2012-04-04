@@ -128,6 +128,10 @@ public final class DocumentRootNode implements IStructNode {
         return mDel.hashCode();
     }
 
+    public boolean equals(Object pObj) {
+        return pObj.hashCode() == hashCode();
+    }
+
     /**
      * Delegate method for getTypeKey.
      * 

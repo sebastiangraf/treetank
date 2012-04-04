@@ -257,30 +257,23 @@ public class AtomicValue implements INode, IValNode {
 
     @Override
     public void setHash(long hash) {
-        // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long getHash() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    public AtomicValue clone() {
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setParentKey(long paramKey) {
-        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
 
     }
 
     @Override
     public void setTypeKey(int paramType) {
-        // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException();
     }
 
     /**

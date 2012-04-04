@@ -158,30 +158,7 @@ public final class DeletedNode implements INode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object pObj) {
-        if (this == pObj)
-            return true;
-        if (pObj == null)
-            return false;
-        if (getClass() != pObj.getClass())
-            return false;
-        DeletedNode other = (DeletedNode)pObj;
-        if (mDel == null) {
-            if (other.mDel != null)
-                return false;
-        } else if (!mDel.equals(other.mDel))
-            return false;
-        return true;
+        return mDel.hashCode();
     }
 
     /**

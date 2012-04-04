@@ -29,7 +29,10 @@ package org.treetank.node.delegates;
 import static org.treetank.node.IConstants.NULL_NODE;
 
 import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
+
+import com.google.common.hash.Hasher;
 
 /**
  * Delegate method for all nodes building up the structure. That means that all
@@ -275,42 +278,21 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int)(mChildCount ^ (mChildCount >>> 32));
-        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
-        result = prime * result + (int)(mFirstChild ^ (mFirstChild >>> 32));
-        result = prime * result + (int)(mLeftSibling ^ (mLeftSibling >>> 32));
-        result = prime * result + (int)(mRightSibling ^ (mRightSibling >>> 32));
-        return result;
+        Hasher hc = IConstants.HF.newHasher();
+        hc.putLong(mChildCount);
+        hc.putInt(mDelegate.hashCode());
+        hc.putLong(mFirstChild);
+        hc.putLong(mLeftSibling);
+        hc.putLong(mLeftSibling);
+        return hc.hash().asInt();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object pObj) {
-        if (this == pObj)
-            return true;
-        if (pObj == null)
-            return false;
-        if (getClass() != pObj.getClass())
-            return false;
-        StructNodeDelegate other = (StructNodeDelegate)pObj;
-        if (mChildCount != other.mChildCount)
-            return false;
-        if (mDelegate == null) {
-            if (other.mDelegate != null)
-                return false;
-        } else if (!mDelegate.equals(other.mDelegate))
-            return false;
-        if (mFirstChild != other.mFirstChild)
-            return false;
-        if (mLeftSibling != other.mLeftSibling)
-            return false;
-        if (mRightSibling != other.mRightSibling)
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
     }
 
     /**

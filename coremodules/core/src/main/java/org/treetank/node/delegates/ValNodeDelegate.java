@@ -26,10 +26,11 @@
  */
 package org.treetank.node.delegates;
 
-import java.util.Arrays;
-
 import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IValNode;
+
+import com.google.common.hash.Hasher;
 
 /**
  * Delegate method for all nodes containing \"value\"-data. That means that
@@ -181,10 +182,9 @@ public class ValNodeDelegate implements IValNode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(mVal);
-        return result;
+        Hasher hc = IConstants.HF.newHasher();
+        hc.putBytes(mVal);
+        return hc.hash().asInt();
     }
 
     /**
@@ -192,16 +192,7 @@ public class ValNodeDelegate implements IValNode {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ValNodeDelegate other = (ValNodeDelegate)obj;
-        if (!Arrays.equals(mVal, other.mVal))
-            return false;
-        return true;
+        return hashCode() == obj.hashCode();
     }
 
     /**

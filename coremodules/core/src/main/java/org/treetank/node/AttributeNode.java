@@ -35,6 +35,8 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 
+import com.google.common.hash.Hasher;
+
 /**
  * <h1>AttributeNode</h1>
  * 
@@ -244,36 +246,18 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mNameDel == null) ? 0 : mNameDel.hashCode());
-        result = prime * result + ((mValDel == null) ? 0 : mValDel.hashCode());
-        return result;
+        Hasher hc = IConstants.HF.newHasher();
+        hc.putInt(mDel.hashCode());
+        hc.putInt(mValDel.hashCode());
+        return hc.hash().asInt();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object pObj) {
-        if (this == pObj)
-            return true;
-        if (pObj == null)
-            return false;
-        if (getClass() != pObj.getClass())
-            return false;
-        AttributeNode other = (AttributeNode)pObj;
-        if (mNameDel == null) {
-            if (other.mNameDel != null)
-                return false;
-        } else if (!mNameDel.equals(other.mNameDel))
-            return false;
-        if (mValDel == null) {
-            if (other.mValDel != null)
-                return false;
-        } else if (!mValDel.equals(other.mValDel))
-            return false;
-        return true;
+    public boolean equals(Object obj) {
+        return hashCode() == obj.hashCode();
     }
 
     /**
