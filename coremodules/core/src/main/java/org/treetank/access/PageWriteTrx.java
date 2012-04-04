@@ -33,7 +33,7 @@ import static org.treetank.access.PageReadTrx.nodePageOffset;
 import javax.xml.namespace.QName;
 
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IPageWriteTransaction;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.TransactionLogCache;
@@ -55,13 +55,13 @@ import org.treetank.utils.IConstants;
 import org.treetank.utils.NamePageHash;
 
 /**
- * <h1>PageWriteTransaction</h1>
+ * <h1>PageWriteTrx</h1>
  * 
  * <p>
  * See {@link PageReadTrx}.
  * </p>
  */
-public final class PageWriteTransaction implements IPageWriteTransaction {
+public final class PageWriteTrx implements IPageWriteTrx {
 
     /** Page writer to serialize. */
     private final IWriter mPageWriter;
@@ -96,7 +96,7 @@ public final class PageWriteTransaction implements IPageWriteTransaction {
      * @throws TTIOException
      *             if IO Error
      */
-    protected PageWriteTransaction(final Session paramSessionState, final UberPage paramUberPage,
+    protected PageWriteTrx(final Session paramSessionState, final UberPage paramUberPage,
         final IWriter paramWriter, final long paramRepresentRev, final long paramStoreRev)
         throws TTIOException {
         mPageReadTransaction =

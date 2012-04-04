@@ -28,7 +28,7 @@ package org.treetank.page;
 
 import java.util.Arrays;
 
-import org.treetank.access.PageWriteTransaction;
+import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
@@ -388,7 +388,7 @@ public class NodePage implements IPage {
     }
 
     @Override
-    public void commit(PageWriteTransaction paramState) throws AbsTTException {
+    public void commit(PageWriteTrx paramState) throws AbsTTException {
         mDelegate.commit(paramState);
 
     }

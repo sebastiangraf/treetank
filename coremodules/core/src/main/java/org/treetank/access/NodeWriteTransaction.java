@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import javax.xml.namespace.QName;
 
 import org.treetank.api.INodeWriteTransaction;
-import org.treetank.api.IPageWriteTransaction;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
@@ -119,7 +119,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
     protected NodeWriteTransaction(final long paramTransactionID, final Session paramSessionState,
-        final IPageWriteTransaction paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
+        final IPageWriteTrx paramTransactionState, final int paramMaxNodeCount, final int paramMaxTime)
         throws TTIOException, TTUsageException {
 
         // Do not accept negative values.
@@ -264,7 +264,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
             final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
             final int nameKey =
-                getPageTransaction().createNameKey(PageWriteTransaction.buildName(paramQName));
+                getPageTransaction().createNameKey(PageWriteTrx.buildName(paramQName));
             final int namespaceKey = getPageTransaction().createNameKey(paramQName.getNamespaceURI());
             final NodeDelegate nodeDel =
                 new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
@@ -330,7 +330,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
     private ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
         final long rightSibKey, final long hash, final QName mName) throws TTIOException {
 
-        final int nameKey = getPageTransaction().createNameKey(PageWriteTransaction.buildName(mName));
+        final int nameKey = getPageTransaction().createNameKey(PageWriteTrx.buildName(mName));
         final int namespaceKey = getPageTransaction().createNameKey(mName.getNamespaceURI());
 
         final NodeDelegate nodeDel = new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, parentKey, 0);
@@ -416,7 +416,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
             final INameNode node =
                 (INameNode)getPageTransaction().prepareNodeForModification(
                     mDelegate.getCurrentNode().getNodeKey());
-            node.setNameKey(getPageTransaction().createNameKey(PageWriteTransaction.buildName(paramName)));
+            node.setNameKey(getPageTransaction().createNameKey(PageWriteTrx.buildName(paramName)));
             getPageTransaction().finishNodeModification(node);
 
             mDelegate.setCurrentNode(node);
@@ -711,8 +711,8 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
      * 
      * @return The state of this transaction.
      */
-    private PageWriteTransaction getPageTransaction() {
-        return (PageWriteTransaction)mDelegate.mPageReadTrx;
+    private PageWriteTrx getPageTransaction() {
+        return (PageWriteTrx)mDelegate.mPageReadTrx;
     }
 
     /**

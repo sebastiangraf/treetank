@@ -36,7 +36,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
-import org.treetank.api.IPageWriteTransaction;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
@@ -79,7 +79,7 @@ public final class Session implements ISession {
     private final Map<Long, INodeReadTransaction> mTransactionMap;
 
     /** Remember the write seperatly because of the concurrent writes. */
-    private final Map<Long, IPageWriteTransaction> mWriteTransactionStateMap;
+    private final Map<Long, IPageWriteTrx> mWriteTransactionStateMap;
 
     /** abstract factory for all interaction to the storage. */
     private final IStorage mFac;
@@ -108,7 +108,7 @@ public final class Session implements ISession {
         mResourceConfig = paramResourceConf;
         mSessionConfig = paramSessionConf;
         mTransactionMap = new ConcurrentHashMap<Long, INodeReadTransaction>();
-        mWriteTransactionStateMap = new ConcurrentHashMap<Long, IPageWriteTransaction>();
+        mWriteTransactionStateMap = new ConcurrentHashMap<Long, IPageWriteTrx>();
 
         mTransactionIDCounter = new AtomicLong();
 
@@ -189,7 +189,7 @@ public final class Session implements ISession {
         }
 
         final long currentID = mTransactionIDCounter.incrementAndGet();
-        final IPageWriteTransaction wtxState =
+        final IPageWriteTrx wtxState =
             beginPageWriteTransaction(currentID, mLastCommittedUberPage.getRevisionNumber(),
                 mLastCommittedUberPage.getRevisionNumber());
 
@@ -207,11 +207,11 @@ public final class Session implements ISession {
 
     }
 
-    protected IPageWriteTransaction beginPageWriteTransaction(final long mId, final long mRepresentRevision,
+    protected IPageWriteTrx beginPageWriteTransaction(final long mId, final long mRepresentRevision,
         final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
-        return new PageWriteTransaction(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
+        return new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
             writer, mRepresentRevision, mStoreRevision);
     }
 
