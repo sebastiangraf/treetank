@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.shredder;
 
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
 import java.io.IOException;

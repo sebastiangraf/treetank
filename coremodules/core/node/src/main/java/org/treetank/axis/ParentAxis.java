@@ -27,7 +27,7 @@
 
 package org.treetank.axis;
 
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;

@@ -31,6 +31,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -38,7 +39,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 
 public class AbsAxisTest {
@@ -80,7 +80,7 @@ public class AbsAxisTest {
             }
 
             // IAxis Convention 3.
-            axis.moveTo(NodeReadTransaction.ROOT_NODE);
+            axis.moveTo(ROOT_NODE);
 
         }
 

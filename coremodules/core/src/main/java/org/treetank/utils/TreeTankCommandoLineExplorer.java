@@ -27,12 +27,13 @@
 
 package org.treetank.utils;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
 import org.treetank.access.Database;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -317,7 +318,7 @@ public final class TreeTankCommandoLineExplorer {
                     succeed = mCurrentRtx.moveTo(((IStructNode)mCurrentRtx.getNode()).getLeftSiblingKey());
                 } else if (mParameter.equals("root")) {
                     builder.append("document root ");
-                    succeed = mCurrentRtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                    succeed = mCurrentRtx.moveTo(ROOT_NODE);
                 } else {
                     try {
                         final long nodeKey = Long.parseLong(mParameter);

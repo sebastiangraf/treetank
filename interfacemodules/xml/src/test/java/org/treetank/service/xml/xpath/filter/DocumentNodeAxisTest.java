@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.junit.After;
 import org.junit.Before;

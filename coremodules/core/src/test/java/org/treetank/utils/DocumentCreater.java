@@ -29,10 +29,10 @@ package org.treetank.utils;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
@@ -95,7 +95,7 @@ public final class DocumentCreater {
      */
     public static void create(final INodeWriteTransaction paramWtx) throws AbsTTException {
         assertNotNull(paramWtx);
-        assertTrue(paramWtx.moveTo(NodeReadTransaction.ROOT_NODE));
+        assertTrue(paramWtx.moveTo(ROOT_NODE));
 
         paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
         paramWtx.insertAttribute(new QName("i"), "j");
@@ -123,7 +123,7 @@ public final class DocumentCreater {
 
         paramWtx.insertTextAsRightSibling("oops3");
 
-        paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        assertTrue(paramWtx.moveTo(ROOT_NODE));
     }
 
 }

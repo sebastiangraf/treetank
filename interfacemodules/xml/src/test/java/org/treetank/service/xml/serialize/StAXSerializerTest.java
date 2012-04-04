@@ -29,6 +29,7 @@ package org.treetank.service.xml.serialize;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
@@ -49,7 +50,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
@@ -126,7 +126,7 @@ public class StAXSerializerTest {
 
             // Check getElementText().
             // ========================================================
-            holder.getRtx().moveTo(NodeReadTransaction.ROOT_NODE);
+            holder.getRtx().moveTo(ROOT_NODE);
             serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
             String elemText = null;
 

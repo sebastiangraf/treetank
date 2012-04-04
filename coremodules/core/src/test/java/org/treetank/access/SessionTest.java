@@ -32,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.junit.After;
 import org.junit.Before;
@@ -109,7 +110,7 @@ public class SessionTest {
     public void testInsertChild() throws AbsTTException {
         final INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
-        assertNotNull(wtx.moveTo(NodeReadTransaction.ROOT_NODE));
+        assertNotNull(wtx.moveTo(ROOT_NODE));
         assertEquals(ENode.ROOT_KIND, wtx.getNode().getKind());
 
         assertNotNull(wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey()));

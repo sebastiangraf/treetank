@@ -27,9 +27,10 @@
 
 package org.treetank.service.xml.diff;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import javax.xml.namespace.QName;
 
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.NodeWriteTransaction.HashKind;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
@@ -216,7 +217,7 @@ abstract class AbsDiff extends AbsDiffObservable {
             }
         } else if (node.hasRightSibling()) {
             if (paramRtx.getNode().getNodeKey() == mRootKey) {
-                paramRtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                paramRtx.moveTo(ROOT_NODE);
             } else {
                 moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());
             }
@@ -254,7 +255,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         if (paramRtx.getNode().getNodeKey() == mRootKey) {
-            paramRtx.moveTo(NodeReadTransaction.ROOT_NODE);
+            paramRtx.moveTo(ROOT_NODE);
         }
 
         moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());

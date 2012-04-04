@@ -29,6 +29,8 @@ package org.treetank.service.jaxrx.implementation; // NOPMD we need all these im
 
 // pointless
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +49,6 @@ import javax.ws.rs.core.StreamingOutput;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -304,7 +305,7 @@ public class DatabaseRepresentation {
             database.createResource(resConf);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
             wtx = session.beginNodeWriteTransaction();
-            wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+            wtx.moveTo(ROOT_NODE);
             final XMLShredder shredder =
                 new XMLShredder(wtx, RESTXMLShredder.createReader(xmlInput), EShredderInsert.ADDASFIRSTCHILD);
             shredder.call();
@@ -456,7 +457,7 @@ public class DatabaseRepresentation {
                     // stores all restids from revision 1 into a list
                     restIdsRev1.add(rtx.getNode().getNodeKey());
                 }
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
                 // get highest rest-id from given revision 2
@@ -482,7 +483,7 @@ public class DatabaseRepresentation {
                      */
                     restIdsRev1.remove(nodeKey);
                 }
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
                 rtx = session.beginNodeReadTransaction(revision1);
@@ -502,7 +503,7 @@ public class DatabaseRepresentation {
                         restIdsRev1New.add(nodeKey);
                     }
                 }
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
                 if (wrap) {
@@ -518,7 +519,7 @@ public class DatabaseRepresentation {
                     rtx.moveTo(nodeKey);
                     WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision2).call();
                 }
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
                 /*
@@ -534,7 +535,7 @@ public class DatabaseRepresentation {
                     output.write(endResult.getBytes());
                 }
 
-                rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+                rtx.moveTo(ROOT_NODE);
 
             } catch (final Exception globExcep) {
                 throw new JaxRxException(globExcep);

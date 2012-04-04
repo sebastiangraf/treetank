@@ -27,7 +27,8 @@
 
 package org.treetank.access;
 
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.util.ArrayList;
 
@@ -496,7 +497,7 @@ public class NodeWriteTransaction implements INodeWriteTransaction {
             .getTransactionID(), paramRevision, getRevisionNumber() - 1));
         // Reset modification counter.
         mModificationCount = 0L;
-        moveTo(NodeReadTransaction.ROOT_NODE);
+        moveTo(ROOT_NODE);
 
     }
 

@@ -27,7 +27,7 @@
 
 package org.treetank.node;
 
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.node.IConstants.NULL_NODE;
 
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;

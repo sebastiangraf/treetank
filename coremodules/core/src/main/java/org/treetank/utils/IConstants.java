@@ -37,14 +37,7 @@ package org.treetank.utils;
  */
 public final class IConstants {
 
-    /**
-     * Private constructor.
-     */
-    private IConstants() {
-        // Cannot be instantiated.
-        throw new AssertionError("May not be instantiated!");
-    }
-
+    
     // --- Varia
     // ------------------------------------------------------------------
 

@@ -28,6 +28,7 @@
 package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
@@ -89,7 +90,7 @@ public class MultipleCommitTest {
         holder.getWtx().commit();
         assertEquals(1L, holder.getWtx().getRevisionNumber());
 
-        holder.getWtx().moveTo(NodeReadTransaction.ROOT_NODE);
+        holder.getWtx().moveTo(ROOT_NODE);
         holder.getWtx().moveTo(((IStructNode)holder.getWtx().getNode()).getFirstChildKey());
         holder.getWtx().remove();
         holder.getWtx().commit();

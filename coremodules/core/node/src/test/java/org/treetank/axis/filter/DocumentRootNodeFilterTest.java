@@ -27,12 +27,13 @@
 
 package org.treetank.axis.filter;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.exception.AbsTTException;
 
@@ -87,7 +88,7 @@ public class DocumentRootNodeFilterTest {
         AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(13L);
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
         AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), true);
     }
 

@@ -27,12 +27,13 @@
 
 package org.treetank.axis.filter;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.AttributeAxis;
@@ -62,7 +63,7 @@ public class FilterAxisTest {
         // Build simple test tree.
         final INodeReadTransaction rtx = holder.getRtx();
 
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), rtx,
             new NameFilter(rtx, "b")), new long[] {
             5L, 9L
@@ -74,7 +75,7 @@ public class FilterAxisTest {
         // Build simple test tree.
         final INodeReadTransaction rtx = holder.getRtx();
 
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), rtx, new ValueFilter(rtx,
             "foo")), new long[] {
             6L

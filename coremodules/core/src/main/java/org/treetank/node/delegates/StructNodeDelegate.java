@@ -26,7 +26,7 @@
  */
 package org.treetank.node.delegates;
 
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.node.IConstants.NULL_NODE;
 
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;

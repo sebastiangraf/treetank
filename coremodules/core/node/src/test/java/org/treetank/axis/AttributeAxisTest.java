@@ -27,6 +27,8 @@
 
 package org.treetank.axis;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import javax.xml.namespace.QName;
 
 import org.junit.After;
@@ -36,7 +38,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
@@ -63,7 +64,7 @@ public class AttributeAxisTest {
     public void testIterate() throws AbsTTException {
         final INodeReadTransaction wtx = holder.getRtx();
 
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
         wtx.moveTo(1L);

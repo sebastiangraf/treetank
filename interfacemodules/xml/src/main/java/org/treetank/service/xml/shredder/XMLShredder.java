@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.shredder;
 
+import static org.treetank.node.IConstants.NULL_NODE;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,7 +65,6 @@ import org.treetank.exception.TTUsageException;
 import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.utils.TypedValue;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the

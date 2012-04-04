@@ -29,6 +29,7 @@ package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
@@ -218,7 +219,7 @@ public class HashTest {
         wtx.insertElementAsFirstChild(new QName(NAME1));
         wtx.insertElementAsFirstChild(new QName(NAME1));
         wtx.insertElementAsFirstChild(new QName(NAME1));
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         final long hashRoot1 = wtx.getNode().getHash();
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
@@ -226,7 +227,7 @@ public class HashTest {
         final long hashLeaf1 = wtx.getNode().getHash();
         wtx.setQName(new QName(NAME2));
         final long hashLeaf2 = wtx.getNode().getHash();
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         final long hashRoot2 = wtx.getNode().getHash();
         assertFalse(hashRoot1 == hashRoot2);
@@ -236,13 +237,13 @@ public class HashTest {
         wtx.setQName(new QName(NAME1));
         final long hashLeaf3 = wtx.getNode().getHash();
         assertEquals(hashLeaf1, hashLeaf3);
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         final long hashRoot3 = wtx.getNode().getHash();
         assertEquals(hashRoot1, hashRoot3);
 
         // Testing root inheritance
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.setQName(new QName(NAME2));
         final long hashRoot4 = wtx.getNode().getHash();

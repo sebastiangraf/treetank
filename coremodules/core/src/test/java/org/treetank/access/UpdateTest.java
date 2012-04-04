@@ -29,7 +29,8 @@ package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
@@ -88,7 +89,7 @@ public class UpdateTest {
      */
     private final static void testNodeTransactionIsolation(final INodeReadTransaction pRtx)
         throws AbsTTException {
-        assertTrue(pRtx.moveTo(NodeReadTransaction.ROOT_NODE));
+        assertTrue(pRtx.moveTo(ROOT_NODE));
         assertEquals(0, pRtx.getNode().getNodeKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
         assertEquals(1, pRtx.getNode().getNodeKey());
@@ -112,13 +113,13 @@ public class UpdateTest {
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
             wtx = holder.getSession().beginNodeWriteTransaction();
-            wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+            wtx.moveTo(ROOT_NODE);
             wtx.insertTextAsFirstChild(Integer.toString(i));
             wtx.commit();
             wtx.close();
 
             rtx = holder.getSession().beginNodeReadTransaction();
-            rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+            rtx.moveTo(ROOT_NODE);
             rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
             assertEquals(Integer.toString(i), rtx.getValueOfCurrentNode());
             assertEquals(i, rtx.getRevisionNumber());
@@ -126,7 +127,7 @@ public class UpdateTest {
         }
 
         rtx = holder.getSession().beginNodeReadTransaction();
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
         rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
         assertEquals("10", rtx.getValueOfCurrentNode());
         assertEquals(10L, rtx.getRevisionNumber());
@@ -141,7 +142,7 @@ public class UpdateTest {
         wtx.close();
 
         wtx = holder.getSession().beginNodeWriteTransaction();
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(3L, wtx.insertElementAsFirstChild(new QName("")));
@@ -151,7 +152,7 @@ public class UpdateTest {
         wtx.close();
 
         final INodeWriteTransaction wtx2 = holder.getSession().beginNodeWriteTransaction();
-        assertTrue(wtx2.moveTo(NodeReadTransaction.ROOT_NODE));
+        assertTrue(wtx2.moveTo(ROOT_NODE));
         assertEquals(5L, wtx2.insertElementAsFirstChild(new QName("")));
         wtx2.commit();
         wtx2.close();
@@ -196,7 +197,7 @@ public class UpdateTest {
     public void testRemoveDocument() throws AbsTTException {
         final INodeWriteTransaction wtx = holder.getSession().beginNodeWriteTransaction();
         DocumentCreater.create(wtx);
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         try {
             wtx.remove();
         } finally {
@@ -231,7 +232,7 @@ public class UpdateTest {
      * @throws AbsTTException
      */
     private final static void testRemoveDescendant(final INodeReadTransaction pRtx) throws AbsTTException {
-        assertTrue(pRtx.moveTo(NodeReadTransaction.ROOT_NODE));
+        assertTrue(pRtx.moveTo(ROOT_NODE));
         assertEquals(0, pRtx.getNode().getNodeKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
         assertEquals(1, pRtx.getNode().getNodeKey());

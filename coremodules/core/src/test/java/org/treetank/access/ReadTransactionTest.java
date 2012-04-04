@@ -29,6 +29,7 @@ package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.junit.After;
 import org.junit.Before;
@@ -79,7 +80,7 @@ public class ReadTransactionTest {
 
     @Test
     public void testDocumentRoot() throws AbsTTException {
-        assertEquals(true, holder.getRtx().moveTo(NodeReadTransaction.ROOT_NODE));
+        assertEquals(true, holder.getRtx().moveTo(ROOT_NODE));
         assertEquals(ENode.ROOT_KIND, holder.getRtx().getNode().getKind());
         assertEquals(false, holder.getRtx().getNode().hasParent());
         assertEquals(false, ((IStructNode)holder.getRtx().getNode()).hasLeftSibling());
@@ -92,7 +93,7 @@ public class ReadTransactionTest {
     public void testConventions() throws AbsTTException {
 
         // INodeReadTransaction Convention 1.
-        assertEquals(true, holder.getRtx().moveTo(NodeReadTransaction.ROOT_NODE));
+        assertEquals(true, holder.getRtx().moveTo(ROOT_NODE));
         long key = holder.getRtx().getNode().getNodeKey();
 
         // INodeReadTransaction Convention 2.

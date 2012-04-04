@@ -39,6 +39,9 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 
+import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 /**
  * <h1>NodeReadTransaction</h1>
  * 
@@ -48,11 +51,6 @@ import org.treetank.node.interfaces.IValNode;
  * </p>
  */
 public class NodeReadTransaction implements INodeReadTransaction {
-
-    /**Static to determine ROOT_NODE.*/
-    public static final long ROOT_NODE = 0;
-    /**Static to determine NULL_NODE.*/
-    public static final long NULL_NODE = -1;
 
     /** ID of transaction. */
     private final long mId;

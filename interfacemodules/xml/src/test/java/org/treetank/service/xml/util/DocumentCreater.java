@@ -4,10 +4,10 @@
 package org.treetank.service.xml.util;
 
 import static org.junit.Assert.assertNotNull;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeWriteTransaction;
 import org.treetank.exception.AbsTTException;
 
@@ -50,7 +50,7 @@ public class DocumentCreater {
         org.treetank.utils.DocumentCreater.create(paramWtx);
         paramWtx.commit();
         for (int i = 0; i <= 1; i++) {
-            paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
+            paramWtx.moveTo(ROOT_NODE);
             paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
             paramWtx.insertTextAsFirstChild("OOPS4!");
             paramWtx.commit();
@@ -69,7 +69,7 @@ public class DocumentCreater {
      */
     public static void createWithoutNamespace(final INodeWriteTransaction paramWtx) throws AbsTTException {
         assertNotNull(paramWtx);
-        paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        paramWtx.moveTo(ROOT_NODE);
 
         paramWtx.insertElementAsFirstChild(new QName("a"));
         paramWtx.insertAttribute(new QName("i"), "j");
@@ -95,6 +95,6 @@ public class DocumentCreater {
 
         paramWtx.insertTextAsRightSibling("oops3");
 
-        paramWtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        paramWtx.moveTo(ROOT_NODE);
     }
 }

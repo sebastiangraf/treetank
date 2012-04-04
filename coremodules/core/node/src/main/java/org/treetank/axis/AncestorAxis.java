@@ -27,9 +27,10 @@
 
 package org.treetank.axis;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.ENode;
-import static org.treetank.access.NodeReadTransaction.ROOT_NODE;
 
 /**
  * <h1>AncestorAxis</h1>

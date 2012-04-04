@@ -26,9 +26,11 @@
  */
 package org.treetank.axis;
 
+import static org.treetank.node.IConstants.NULL_NODE;
+
 import java.util.LinkedList;
 import java.util.List;
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
+
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.interfaces.IStructNode;
 

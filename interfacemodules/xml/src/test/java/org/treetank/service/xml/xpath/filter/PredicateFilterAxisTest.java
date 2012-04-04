@@ -27,12 +27,13 @@
 
 package org.treetank.service.xml.xpath.filter;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.xml.xpath.XPathAxis;
@@ -63,7 +64,7 @@ public class PredicateFilterAxisTest {
     public void testPredicates() throws AbsTTException {
 
         // Find descendants starting from nodeKey 0L (root).
-        holder.getRtx().moveTo(NodeReadTransaction.ROOT_NODE);
+        holder.getRtx().moveTo(ROOT_NODE);
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a[@i]"), new long[] {
             1L

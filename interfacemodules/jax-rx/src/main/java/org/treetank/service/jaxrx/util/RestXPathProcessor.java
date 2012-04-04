@@ -30,6 +30,7 @@
  */
 package org.treetank.service.jaxrx.util;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
 import static org.treetank.service.jaxrx.implementation.DatabaseRepresentation.STOREDBPATH;
 
 import java.io.File;
@@ -40,7 +41,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.treetank.access.Database;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTransaction;
@@ -224,7 +224,7 @@ public class RestXPathProcessor {
         } catch (final Exception globExcep) {
             throw new WebApplicationException(globExcep, Response.Status.INTERNAL_SERVER_ERROR);
         } finally {
-            rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+            rtx.moveTo(ROOT_NODE);
 
             WorkerHelper.closeRTX(rtx, session, database);
 

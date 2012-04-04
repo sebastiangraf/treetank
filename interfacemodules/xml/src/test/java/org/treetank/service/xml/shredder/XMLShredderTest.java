@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.shredder;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import java.io.File;
 import java.util.Iterator;
 
@@ -42,7 +44,6 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -95,7 +96,7 @@ public class XMLShredderTest extends XMLTestCase {
         final ISession session =
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeReadTransaction rtx = session.beginNodeReadTransaction();
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
         final Iterator<Long> descendants = new DescendantAxis(rtx);
 
@@ -132,7 +133,7 @@ public class XMLShredderTest extends XMLTestCase {
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         assertEquals(1, wtx.getRevisionNumber());
-        wtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        wtx.moveTo(ROOT_NODE);
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
 
         final XMLShredder shredder2 =
@@ -150,7 +151,7 @@ public class XMLShredderTest extends XMLTestCase {
         final INodeWriteTransaction expectedTrx = expectedSession.beginNodeWriteTransaction();
         org.treetank.utils.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
-        expectedTrx.moveTo(NodeReadTransaction.ROOT_NODE);
+        expectedTrx.moveTo(ROOT_NODE);
 
         // Verify.
         final INodeReadTransaction rtx = holder.getSession().beginNodeReadTransaction();
@@ -165,7 +166,7 @@ public class XMLShredderTest extends XMLTestCase {
             assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
         }
 
-        expectedTrx.moveTo(NodeReadTransaction.ROOT_NODE);
+        expectedTrx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedDescendants2 = new DescendantAxis(expectedTrx);
         while (expectedDescendants2.hasNext()) {
             expectedDescendants2.next();
@@ -203,7 +204,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Verify.
         final INodeReadTransaction rtx = session2.beginNodeReadTransaction();
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedAttributes = new DescendantAxis(expectedTrx2);
         final Iterator<Long> attributes = new DescendantAxis(rtx);
 

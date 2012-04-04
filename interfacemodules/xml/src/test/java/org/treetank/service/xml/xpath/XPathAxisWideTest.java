@@ -28,6 +28,7 @@
 package org.treetank.service.xml.xpath;
 
 import static org.junit.Assert.assertEquals;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
 
@@ -37,7 +38,6 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.AbsTTException;
@@ -65,7 +65,7 @@ public class XPathAxisWideTest {
     public void testIterateFactbook() throws Exception {
         // Verify.
         final Holder holder = Holder.generateRtx();
-        holder.getRtx().moveTo(NodeReadTransaction.ROOT_NODE);
+        holder.getRtx().moveTo(ROOT_NODE);
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/mondial/continent[@id]"),
             new long[] {

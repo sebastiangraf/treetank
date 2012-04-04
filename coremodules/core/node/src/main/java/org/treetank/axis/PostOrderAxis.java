@@ -27,12 +27,12 @@
 
 package org.treetank.axis;
 
+import static org.treetank.node.IConstants.NULL_NODE;
+
 import java.util.Stack;
 
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.node.interfaces.IStructNode;
-
-import static org.treetank.access.NodeReadTransaction.NULL_NODE;
 
 /**
  * <h1>PostOrder</h1>

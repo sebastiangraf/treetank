@@ -30,11 +30,11 @@ package org.treetank.service.xml.xpath;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.junit.After;
 import org.junit.Before;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
@@ -82,7 +82,7 @@ public class XPathStringChecker {
             }
 
             // IAxis Convention 3.
-            axis.moveTo(NodeReadTransaction.ROOT_NODE);
+            axis.moveTo(ROOT_NODE);
 
         }
 

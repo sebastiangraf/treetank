@@ -27,12 +27,13 @@
 
 package org.treetank.axis;
 
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.NodeReadTransaction;
 import org.treetank.api.INodeReadTransaction;
 import org.treetank.axis.filter.NameFilter;
 import org.treetank.axis.filter.NodeFilter;
@@ -61,7 +62,7 @@ public class NestedAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         // Find descendants starting from nodeKey 0L (root).
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
 
         // XPath expression /p:a/b/text()
         // Part: /p:a
@@ -83,7 +84,7 @@ public class NestedAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         // Find descendants starting from nodeKey 0L (root).
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
 
         // XPath expression /[:a/b/@p:x]
         // Part: /p:a
@@ -106,7 +107,7 @@ public class NestedAxisTest {
         final INodeReadTransaction rtx = holder.getRtx();
 
         // Find desceFndants starting from nodeKey 0L (root).
-        rtx.moveTo(NodeReadTransaction.ROOT_NODE);
+        rtx.moveTo(ROOT_NODE);
 
         // XPath expression p:a/node():
         // Part: /p:a
