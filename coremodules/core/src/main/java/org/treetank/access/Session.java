@@ -133,7 +133,6 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    @Override
     public INodeReadTrx beginNodeReadTransaction() throws AbsTTException {
         return beginNodeReadTransaction(mLastCommittedUberPage.getRevisionNumber());
     }
@@ -141,7 +140,6 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    @Override
     public synchronized INodeReadTrx beginNodeReadTransaction(final long paramRevisionKey)
         throws AbsTTException {
         assertAccess(paramRevisionKey);
@@ -164,7 +162,6 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    @Override
     public synchronized INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException {
         assertAccess(mLastCommittedUberPage.getRevision());
 
