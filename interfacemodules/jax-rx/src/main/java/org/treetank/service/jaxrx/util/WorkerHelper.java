@@ -27,8 +27,6 @@
 
 package org.treetank.service.jaxrx.util;
 
-import static org.treetank.service.jaxrx.implementation.DatabaseRepresentation.STOREDBPATH;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,11 +42,10 @@ import javax.xml.stream.XMLStreamException;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
-import org.treetank.api.ISession;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
-import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import org.treetank.service.xml.serialize.XMLSerializerProperties;
@@ -116,13 +113,15 @@ public final class WorkerHelper {
     /**
      * This method checks if the file is available and not empty.
      * 
+     * @param storagePath
+     *            the storage path
      * @param resource
      *            The file that will be checked.
      * @return <code>true</code> when the file exists and is not empty. <code>false</code> otherwise.
      */
-    public static boolean checkExistingResource(final String resource) {
+    public static boolean checkExistingResource(final File storagePath, final String resource) {
         final File resourceFile =
-            new File(new File(STOREDBPATH, DatabaseConfiguration.Paths.Data.getFile().getName()), resource);
+            new File(new File(storagePath, DatabaseConfiguration.Paths.Data.getFile().getName()), resource);
 
         boolean isExisting;
         if (resourceFile.getTotalSpace() > 0) {
@@ -198,15 +197,6 @@ public final class WorkerHelper {
     }
 
     /**
-     * This method creates a new TreeTank reference
-     * 
-     * @return new Treetank reference
-     */
-    public DatabaseRepresentation createTreeTrankObject() {
-        return new DatabaseRepresentation();
-    }
-
-    /**
      * This method creates a new StringBuilder reference
      * 
      * @return new StringBuilder reference
@@ -229,8 +219,8 @@ public final class WorkerHelper {
      *            IDatabase to be closed
      * @throws TreetankException
      */
-    public static void closeWTX(final boolean abortTransaction, final INodeWriteTrx wtx,
-        final ISession ses, final IDatabase dbase) throws AbsTTException {
+    public static void closeWTX(final boolean abortTransaction, final INodeWriteTrx wtx, final ISession ses,
+        final IDatabase dbase) throws AbsTTException {
         synchronized (dbase) {
             if (abortTransaction) {
                 wtx.abort();

@@ -4,6 +4,7 @@
 package org.treetank.io;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 
 public class MainApp {
 
@@ -35,7 +37,8 @@ public class MainApp {
 
         // setup where the provider must store the files
         Properties properties = new Properties();
-        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, "/tmp/filesystemstorage");
+        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new StringBuilder(Files.createTempDir()
+            .getAbsolutePath()).append(File.pathSeparator).append("filesystemstorage").toString());
         properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
 
         // get a context with filesystem that offers the portable BlobStore api

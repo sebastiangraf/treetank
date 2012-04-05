@@ -29,7 +29,6 @@ package org.treetank.service.jaxrx.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.treetank.service.jaxrx.implementation.DatabaseRepresentation.STOREDBPATH;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,8 +46,8 @@ import org.treetank.access.Database;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
-import org.treetank.api.ISession;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -75,7 +74,7 @@ public class WorkerHelperTest {
     /**
      * The test file that has to be saved on the server.
      */
-    private final static File DBFILE = new File(STOREDBPATH, RESOURCENAME);
+    private final static File DBFILE = new File(TestHelper.PATHS.PATH1.getFile(), RESOURCENAME);
 
     /**
      * The test file that has to be saved on the server.
@@ -94,7 +93,7 @@ public class WorkerHelperTest {
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         workerHelper = WorkerHelper.getInstance();
-        treeTank = new DatabaseRepresentation();
+        treeTank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
         treeTank.shred(INPUTFILE, RESOURCENAME);
     }
 
@@ -109,15 +108,8 @@ public class WorkerHelperTest {
      */
     @Test
     public void testCheckExistingResource() {
-        assertEquals("test check existing resource", true, WorkerHelper.checkExistingResource(RESOURCENAME));
-    }
-
-    /**
-     * This method tests {@link WorkerHelper#createTreeTrankObject()}
-     */
-    @Test
-    public void testCreateTreeTankObject() {
-        assertNotNull("test create treetank object", workerHelper.createTreeTrankObject());
+        assertEquals("test check existing resource", true, WorkerHelper.checkExistingResource(
+            TestHelper.PATHS.PATH1.getFile(), RESOURCENAME));
     }
 
     /**
@@ -145,8 +137,7 @@ public class WorkerHelperTest {
     }
 
     /**
-     * This method tests
-     * {@link WorkerHelper#shredInputStream(INodeWriteTrx, InputStream, EShredderInsert)}
+     * This method tests {@link WorkerHelper#shredInputStream(INodeWriteTrx, InputStream, EShredderInsert)}
      */
     @Test
     public void testShredInputStream() throws AbsTTException, IOException {

@@ -29,11 +29,11 @@ package org.treetank.page;
 import java.util.Arrays;
 
 import org.treetank.access.PageWriteTrx;
+import org.treetank.api.INode;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.ENode;
-import org.treetank.node.interfaces.INode;
 import org.treetank.page.delegates.PageDelegate;
 import org.treetank.page.interfaces.IPage;
 import org.treetank.utils.IConstants;
@@ -225,94 +225,13 @@ public class NodePage implements IPage {
      */
     @Override
     public void serialize(final ITTSink mOut) {
+        // TODO respect new INode hierarchy, must rely on normal INodes only
         mDelegate.serialize(mOut);
         mOut.writeLong(mNodePageKey);
-
-        // final EncryptionController enController = EncryptionController
-        // .getInstance();
-        //
-        // if (enController.checkEncryption()) {
-        // NodeOutputSink mNodeOut = null;
-        // for (final INode node : getNodes()) {
-        // if (node != null) {
-        // mNodeOut = new NodeOutputSink();
-        //
-        // final long mDek = enController.getDataEncryptionKey();
-        //
-        // final KeySelector mKeySel = enController.getSelDb()
-        // .getEntry(mDek);
-        // final byte[] mSecretKey = mKeySel.getSecretKey();
-        //
-        // mOut.writeLong(mKeySel.getPrimaryKey());
-        // mOut.writeInt(mKeySel.getRevision());
-        // mOut.writeInt(mKeySel.getVersion());
-        // final int kind = node.getKind().getId();
-        // mOut.writeInt(kind);
-        // ENode.getKind(kind).serialize(mOut, node);
-        //
-        // final byte[] mStream = mNodeOut.getOutputStream()
-        // .toByteArray();
-        //
-        // byte[] mEncrypted = null;
-        // final int pointerEnSize;
-        //
-        // if (mStream.length > 0) {
-        //
-        // final byte[] mPointer = new byte[mStream.length];
-        //
-        // for (int i = 0; i < mPointer.length; i++) {
-        // mPointer[i] = mStream[i];
-        // }
-        //
-        // final byte[] mData = new byte[mStream.length
-        // - mPointer.length];
-        // for (int i = 0; i < mData.length; i++) {
-        // mData[i] = mStream[mPointer.length + i];
-        // }
-        //
-        // final byte[] mEnPointer = NodeEncryption.encrypt(
-        // mPointer, mSecretKey);
-        // pointerEnSize = mEnPointer.length;
-        // final byte[] mEnData = NodeEncryption.encrypt(mData,
-        // mSecretKey);
-        //
-        // mEncrypted = new byte[mEnPointer.length
-        // + mEnData.length];
-        //
-        // int mCounter = 0;
-        // for (int i = 0; i < mEnPointer.length; i++) {
-        // mEncrypted[mCounter] = mEnPointer[i];
-        // mCounter++;
-        // }
-        // for (int i = 0; i < mEnData.length; i++) {
-        // mEncrypted[mCounter] = mEnData[i];
-        // mCounter++;
-        // }
-        //
-        // } else {
-        // pointerEnSize = 0;
-        // mEncrypted = NodeEncryption
-        // .encrypt(mStream, mSecretKey);
-        // }
-        //
-        // mOut.writeInt(mEncrypted.length);
-        // mOut.writeInt(pointerEnSize);
-        //
-        // for (byte aByte : mEncrypted) {
-        // mOut.writeByte(aByte);
-        // }
-        //
-        // } else {
-        // mOut.writeLong(-1);
-        // mOut.writeInt(-1);
-        // mOut.writeInt(-1);
-        // mOut.writeInt(ENode.UNKOWN_KIND.getId());
-        // }
-        // }
-        // } else {
         for (int i = 0; i < getNodes().length; i++) {
             if (getNodes()[i] != null) {
-                final int kind = getNodes()[i].getKind().getId();
+                final int kind = ((org.treetank.node.interfaces.INode) getNodes()[i])
+                        .getKind().getId();
                 mOut.writeInt(kind);
             } else {
                 mOut.writeInt(ENode.UNKOWN_KIND.getId());
@@ -321,10 +240,10 @@ public class NodePage implements IPage {
 
         for (final INode node : getNodes()) {
             if (node != null) {
-                ENode.getKind(node.getClass()).serialize(mOut, node);
+                org.treetank.node.interfaces.INode nodenode = (org.treetank.node.interfaces.INode) node;
+                ENode.getKind(nodenode.getClass()).serialize(mOut, nodenode);
             }
         }
-        // }
     }
 
     /**
@@ -356,7 +275,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -375,7 +294,7 @@ public class NodePage implements IPage {
             return false;
         }
 
-        final NodePage mOther = (NodePage)mObj;
+        final NodePage mOther = (NodePage) mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
             return false;
         }

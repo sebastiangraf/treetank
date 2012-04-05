@@ -63,6 +63,8 @@ import org.treetank.page.NodePage;
 import org.treetank.settings.ECharsForSerializing;
 import org.treetank.utils.DocumentCreater;
 
+import com.google.common.io.Files;
+
 /**
  * 
  * Helper class for offering convenient usage of {@link Session}s for test
@@ -82,12 +84,12 @@ public final class TestHelper {
     public enum PATHS {
 
         // PATH1
-            PATH1(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
-                "tnk").append(File.separator).append("path1").toString())),
+            PATH1(new File(new StringBuilder(Files.createTempDir().getAbsolutePath()).append(File.separator)
+                .append("tnk").append(File.separator).append("path1").toString())),
 
             // PATH2
-            PATH2(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
-                "tnk").append(File.separator).append("path2").toString()));
+            PATH2(new File(new StringBuilder(Files.createTempDir().getAbsolutePath()).append(File.separator)
+                .append("tnk").append(File.separator).append("path2").toString()));
 
         final File file;
 

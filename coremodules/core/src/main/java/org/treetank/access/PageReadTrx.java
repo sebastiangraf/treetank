@@ -32,12 +32,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.node.DeletedNode;
-import org.treetank.node.interfaces.INode;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;

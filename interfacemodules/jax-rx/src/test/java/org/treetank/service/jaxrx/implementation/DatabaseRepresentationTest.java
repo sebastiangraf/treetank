@@ -123,7 +123,7 @@ public class DatabaseRepresentationTest {
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
-        treetank = new DatabaseRepresentation();
+        treetank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
         treetank.shred(input, RESOURCENAME);
     }
 
@@ -361,7 +361,7 @@ public class DatabaseRepresentationTest {
     @Test
     public void getLastRevision() throws AbsTTException {
         assertEquals(ASSEQUALS, 0, treetank.getLastRevision(RESOURCENAME));
-        final NodeIdRepresentation rid = new NodeIdRepresentation();
+        final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
         rid.deleteResource(RESOURCENAME, 8);
         assertEquals(ASSEQUALS, 1, treetank.getLastRevision(RESOURCENAME));
     }
@@ -379,7 +379,7 @@ public class DatabaseRepresentationTest {
     @Test
     public void getModificHistory() throws WebApplicationException, AbsTTException, SAXException,
         IOException, ParserConfigurationException {
-        final NodeIdRepresentation rid = new NodeIdRepresentation();
+        final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
         rid.deleteResource(RESOURCENAME, 8);
         final OutputStream output = new ByteArrayOutputStream();
         treetank.getModificHistory(RESOURCENAME, "0-1", false, output, true);
@@ -403,7 +403,7 @@ public class DatabaseRepresentationTest {
     @Test
     public void revertToRevision() throws AbsTTException, WebApplicationException, IOException,
         ParserConfigurationException, SAXException, InterruptedException {
-        final NodeIdRepresentation rid = new NodeIdRepresentation();
+        final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
         rid.deleteResource(RESOURCENAME, 8);
         rid.deleteResource(RESOURCENAME, 11);
         rid.deleteResource(RESOURCENAME, 14);

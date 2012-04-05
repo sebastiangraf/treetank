@@ -27,6 +27,7 @@
 
 package org.treetank.service.jaxrx.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -57,9 +58,6 @@ import org.w3c.dom.Element;
  * 
  */
 public final class RESTResponseHelper {
-
-    /** Reference to get access to worker help classes */
-    private static transient final WorkerHelper WORKERHELPER = WorkerHelper.getInstance();
 
     /**
      * The private empty constructor.
@@ -102,14 +100,16 @@ public final class RESTResponseHelper {
      * 
      * @param resources
      *            The list with the path of the available resources.
+     * @param pStoragePath
+     *            path where the data must be stored
      * @param document
      *            The XML {@link Document} instance.
      * @return A list of XML {@link Element} as the collection.
      * @throws AbsTTException
      * @throws WebApplicationException
      */
-    private static List<Element> createCollectionElementDBs(final List<String> resources,
-        final Document document) throws WebApplicationException, AbsTTException {
+    private static List<Element> createCollectionElementDBs(final File pStoragePath,
+        final List<String> resources, final Document document) throws WebApplicationException, AbsTTException {
         final List<Element> collectionsEls = new ArrayList<Element>();
         for (final String res : resources) {
             final Element elRes = document.createElement("resource");
@@ -117,7 +117,7 @@ public final class RESTResponseHelper {
             elRes.setAttribute("name", res);
 
             // get last revision from given db name
-            final DatabaseRepresentation dbWorker = WORKERHELPER.createTreeTrankObject();
+            final DatabaseRepresentation dbWorker = new DatabaseRepresentation(pStoragePath);
             final String lastRevision = Long.toString(dbWorker.getLastRevision(res.toString()));
 
             elRes.setAttribute("lastRevision", lastRevision);
@@ -131,11 +131,14 @@ public final class RESTResponseHelper {
      * This method builds the overview for the resources and collection we offer
      * in our implementation.
      * 
+     * @param pStoragePath
+     *            path to the storage
      * @param availableRes
      *            A list of available resources or collections.
      * @return The streaming output for the HTTP response body.
      */
-    public static StreamingOutput buildResponseOfDomLR(final List<String> availableRes) {
+    public static StreamingOutput buildResponseOfDomLR(final File pStoragePath,
+        final List<String> availableRes) {
 
         final StreamingOutput sOutput = new StreamingOutput() {
 
@@ -148,7 +151,9 @@ public final class RESTResponseHelper {
 
                     List<Element> collections;
                     try {
-                        collections = RESTResponseHelper.createCollectionElementDBs(availableRes, document);
+                        collections =
+                            RESTResponseHelper.createCollectionElementDBs(pStoragePath, availableRes,
+                                document);
                     } catch (final AbsTTException exce) {
                         throw new WebApplicationException(exce);
                     }

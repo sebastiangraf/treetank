@@ -31,7 +31,6 @@
 package org.treetank.service.jaxrx.util;
 
 import static org.treetank.node.IConstants.ROOT_NODE;
-import static org.treetank.service.jaxrx.implementation.DatabaseRepresentation.STOREDBPATH;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +67,22 @@ public class RestXPathProcessor {
     private static transient String endResult = "</jaxrx:result>";
 
     /**
+     * Path to storage.
+     */
+    private final File mStoragePath;
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pStoragePath
+     *            path to the storage
+     */
+    public RestXPathProcessor(final File pStoragePath) {
+        mStoragePath = pStoragePath;
+    }
+
+    /**
      * Getting part of the XML based on a XPath query
      * 
      * @param resourceName
@@ -96,7 +111,7 @@ public class RestXPathProcessor {
         String qQuery = xpath;
         if (xpath.charAt(0) == '/')
             qQuery = ".".concat(xpath);
-        if (WorkerHelper.checkExistingResource(resourceName)) {
+        if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
             if (wrapResult) {
                 output.write(beginResult.getBytes());
                 doXPathRes(resourceName, revision, output, nodeid, qQuery);
@@ -207,7 +222,7 @@ public class RestXPathProcessor {
         ISession session = null;
         INodeReadTrx rtx = null;
         try {
-            database = Database.openDatabase(STOREDBPATH);
+            database = Database.openDatabase(mStoragePath);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
             // Creating a transaction
             if (revision == null) {

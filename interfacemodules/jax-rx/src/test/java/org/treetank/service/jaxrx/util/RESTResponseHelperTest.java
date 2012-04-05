@@ -128,7 +128,7 @@ public class RESTResponseHelperTest {
         availResources.add(BOOK);
         availResources.add(SHAKE);
 
-        final DatabaseRepresentation treeTank = new DatabaseRepresentation();
+        final DatabaseRepresentation treeTank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
         InputStream input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
         treeTank.shred(input, FACT);
         input.close();
@@ -148,7 +148,8 @@ public class RESTResponseHelperTest {
         Node node;
         Attr attribute;
 
-        final StreamingOutput result = RESTResponseHelper.buildResponseOfDomLR(availResources);
+        final StreamingOutput result =
+            RESTResponseHelper.buildResponseOfDomLR(TestHelper.PATHS.PATH1.getFile(), availResources);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         result.write(outputStream);
         final Document doc = DOMHelper.buildDocument(outputStream);

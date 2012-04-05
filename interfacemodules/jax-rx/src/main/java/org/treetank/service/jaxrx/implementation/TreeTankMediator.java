@@ -27,6 +27,7 @@
 
 package org.treetank.service.jaxrx.implementation;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,12 +55,24 @@ public final class TreeTankMediator implements JaxRx {
     /**
      * The instance of the database.
      */
-    private final transient DatabaseRepresentation database = new DatabaseRepresentation();
+    private final transient DatabaseRepresentation database;
 
     /**
      * The instance of access to a node id in a database.
      */
-    private final transient NodeIdRepresentation nodeIdResource = new NodeIdRepresentation();
+    private final transient NodeIdRepresentation nodeIdResource;
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pStoragePath
+     *            where the data should be stored.
+     */
+    public TreeTankMediator(final File pStoragePath) {
+        database = new DatabaseRepresentation(pStoragePath);
+        nodeIdResource = new NodeIdRepresentation(pStoragePath);
+    }
 
     /**
      * Not allowed message string.

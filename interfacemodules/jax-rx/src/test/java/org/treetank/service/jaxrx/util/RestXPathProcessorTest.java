@@ -32,7 +32,6 @@ package org.treetank.service.jaxrx.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.treetank.service.jaxrx.implementation.DatabaseRepresentation.STOREDBPATH;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,6 +45,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
@@ -63,7 +63,8 @@ public class RestXPathProcessorTest {
     /**
      * The rxProcessor reference;
      */
-    private final transient RestXPathProcessor rxProcessor = new RestXPathProcessor();
+    private final transient RestXPathProcessor rxProcessor = new RestXPathProcessor(TestHelper.PATHS.PATH1
+        .getFile());
 
     /**
      * The resource name.
@@ -89,9 +90,9 @@ public class RestXPathProcessorTest {
 
     @BeforeClass
     public static void setUpGlobal() throws AbsTTException {
-        deleteDirectory(STOREDBPATH);
+        deleteDirectory(TestHelper.PATHS.PATH1.getFile());
         final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
-        new DatabaseRepresentation().shred(xmlInput, RESOURCENAME);
+        new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile()).shred(xmlInput, RESOURCENAME);
     }
 
     /**
@@ -99,7 +100,7 @@ public class RestXPathProcessorTest {
      */
     @Test
     public final void testRestXPathProcessor() {
-        final RestXPathProcessor reference = new RestXPathProcessor();
+        final RestXPathProcessor reference = new RestXPathProcessor(TestHelper.PATHS.PATH1.getFile());
         assertNotNull("checks if the reference is not null and constructor works", reference);
     }
 
@@ -163,7 +164,7 @@ public class RestXPathProcessorTest {
         String xPath = "//author";
         boolean withNodeIds = true;
         OutputStream output = new ByteArrayOutputStream();
-        final File tnkFile = new File(STOREDBPATH, RESOURCENAME);
+        final File tnkFile = new File(TestHelper.PATHS.PATH1.getFile(), RESOURCENAME);
         rxProcessor.getXpathResource(tnkFile, 10L, xPath, withNodeIds, 0L, output, true);
         InputStream xmlInput = new ByteArrayInputStream(((ByteArrayOutputStream)output).toByteArray());
         Document resultDoc = xmlDocument(xmlInput);

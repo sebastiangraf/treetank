@@ -49,11 +49,12 @@ public class NodePageTest {
         assertEquals(0L, page1.getNodePageKey());
 
         final NodeDelegate del = new NodeDelegate(0, 1, 0);
-        final StructNodeDelegate strucDel = new StructNodeDelegate(del, 12l, 4l, 3l, 1l);
+        final StructNodeDelegate strucDel = new StructNodeDelegate(del, 12l,
+                4l, 3l, 1l);
         final NameNodeDelegate nameDel = new NameNodeDelegate(del, 6, 7);
 
-        final ElementNode node1 =
-            new ElementNode(del, strucDel, nameDel, new ArrayList<Long>(), new ArrayList<Long>());
+        final ElementNode node1 = new ElementNode(del, strucDel, nameDel,
+                new ArrayList<Long>(), new ArrayList<Long>());
         node1.insertAttribute(88L);
         node1.insertAttribute(87L);
         node1.insertNamespace(99L);
@@ -66,23 +67,24 @@ public class NodePageTest {
         final int position = out.position();
 
         out.position(0);
-        final NodePage page2 = (NodePage)PagePersistenter.createPage(out);
+        final NodePage page2 = (NodePage) PagePersistenter.createPage(out);
         assertEquals(position, out.position());
         assertEquals(0L, page2.getNode(0).getNodeKey());
-        assertEquals(1L, page2.getNode(0).getParentKey());
-        assertEquals(12L, ((ElementNode)page2.getNode(0)).getFirstChildKey());
-        assertEquals(3L, ((ElementNode)page2.getNode(0)).getLeftSiblingKey());
-        assertEquals(4L, ((ElementNode)page2.getNode(0)).getRightSiblingKey());
-        assertEquals(1, ((ElementNode)page2.getNode(0)).getChildCount());
-        assertEquals(2, ((ElementNode)page2.getNode(0)).getAttributeCount());
-        assertEquals(2, ((ElementNode)page2.getNode(0)).getNamespaceCount());
-        assertEquals(88L, ((ElementNode)page2.getNode(0)).getAttributeKey(0));
-        assertEquals(87L, ((ElementNode)page2.getNode(0)).getAttributeKey(1));
-        assertEquals(99L, ((ElementNode)page2.getNode(0)).getNamespaceKey(0));
-        assertEquals(98L, ((ElementNode)page2.getNode(0)).getNamespaceKey(1));
-        assertEquals(6, ((INameNode)page2.getNode(0)).getNameKey());
-        assertEquals(7, ((INameNode)page2.getNode(0)).getURIKey());
-        assertEquals(NamePageHash.generateHashForString("xs:untyped"), page2.getNode(0).getTypeKey());
+        assertEquals(1L, ((ElementNode) page2.getNode(0)).getParentKey());
+        assertEquals(12L, ((ElementNode) page2.getNode(0)).getFirstChildKey());
+        assertEquals(3L, ((ElementNode) page2.getNode(0)).getLeftSiblingKey());
+        assertEquals(4L, ((ElementNode) page2.getNode(0)).getRightSiblingKey());
+        assertEquals(1, ((ElementNode) page2.getNode(0)).getChildCount());
+        assertEquals(2, ((ElementNode) page2.getNode(0)).getAttributeCount());
+        assertEquals(2, ((ElementNode) page2.getNode(0)).getNamespaceCount());
+        assertEquals(88L, ((ElementNode) page2.getNode(0)).getAttributeKey(0));
+        assertEquals(87L, ((ElementNode) page2.getNode(0)).getAttributeKey(1));
+        assertEquals(99L, ((ElementNode) page2.getNode(0)).getNamespaceKey(0));
+        assertEquals(98L, ((ElementNode) page2.getNode(0)).getNamespaceKey(1));
+        assertEquals(6, ((INameNode) page2.getNode(0)).getNameKey());
+        assertEquals(7, ((INameNode) page2.getNode(0)).getURIKey());
+        assertEquals(NamePageHash.generateHashForString("xs:untyped"),
+                ((ElementNode) page2.getNode(0)).getTypeKey());
 
     }
 }

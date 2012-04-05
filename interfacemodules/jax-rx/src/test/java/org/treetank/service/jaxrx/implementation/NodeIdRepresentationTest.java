@@ -138,8 +138,8 @@ public class NodeIdRepresentationTest {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        ridWorker = new NodeIdRepresentation();
-        treeTank = new DatabaseRepresentation();
+        ridWorker = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
+        treeTank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
         final InputStream input =
             NodeIdRepresentationTest.class.getClass().getResourceAsStream("/factbook.xml");
         treeTank.shred(input, RESOURCENAME);
