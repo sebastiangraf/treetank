@@ -28,6 +28,7 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IKey;
 import org.treetank.io.IWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.interfaces.IPage;
@@ -200,8 +201,8 @@ public final class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(final PageReference pageReference) throws TTIOException {
-        return mReader.read(pageReference);
+    public IPage read(final IKey pKey) throws TTIOException {
+        return mReader.read(pKey);
     }
 
     /**

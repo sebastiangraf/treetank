@@ -36,8 +36,8 @@ import org.treetank.exception.AbsTTException;
  * 
  * <p>
  * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
- * can then be started from this instance. There can only be one <code>INodeWriteTrx</code> at the
- * time. However, multiple <code>IReadTransactions</code> can coexist concurrently.
+ * can then be started from this instance. There can only be one <code>INodeWriteTrx</code> at the time.
+ * However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
  * 
  */
@@ -64,7 +64,7 @@ public interface ISession {
     INodeReadTrx beginNodeReadTransaction(final long pRev) throws AbsTTException;
 
     /**
-     * Begin exclusive read/write transaction without auto commit.
+     * Begin exclusive read/write transaction .
      * 
      * @throws AbsTTException
      *             If can't begin Write Transaction.
@@ -73,18 +73,14 @@ public interface ISession {
     INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException;
 
     /**
-     * Begin exclusive read/write transaction with auto commit.
+     * Begin exclusive read transaction on the page layer
      * 
-     * @param pMaxNodes
-     *            Count of node modifications after which a commit is issued.
-     * @param pMaxTime
-     *            Time in seconds after which a commit is issued.
+     * @param pRevKey
+     *            revision key for the revision ask
+     * @return a {@link IPageReadTrx} instance
      * @throws AbsTTException
-     *             If can't begin Write Transaction.
-     * @return INodeWriteTrx instance.
      */
-    INodeWriteTrx beginNodeWriteTransaction(final int pMaxNodes, final int pMaxTime)
-        throws AbsTTException;
+    IPageReadTrx beginPageReadTransaction(final long pRevKey) throws AbsTTException;
 
     /**
      * Safely close session and immediately release all resources. If there are
@@ -98,18 +94,4 @@ public interface ISession {
      */
     void close() throws AbsTTException;
 
-    /**
-     * Test if session is closed. Needed for check against database for creation
-     * of a new one.
-     * 
-     * @return if session was closed
-     */
-    boolean isClosed();
-
-    /**
-     * Returns user that is bound to the session.
-     * 
-     * @return current session bound user.
-     */
-    String getUser();
 }

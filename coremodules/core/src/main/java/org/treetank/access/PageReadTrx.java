@@ -74,36 +74,41 @@ public class PageReadTrx implements IPageReadTrx {
 
     /** Cached name page of this revision. */
     private final RevisionRootPage mRootPage;
+
     /** Internal reference to cache. */
     private final Cache<Long, NodePageContainer> mCache;
 
     /** Configuration of the session */
     protected final Session mSession;
 
+    /** Boolean for determinc close. */
+    private boolean mClose;
+
     /**
      * Standard constructor.
      * 
-     * @param paramSessionState
+     * @param pSession
      *            State of state.
-     * @param paramUberPage
+     * @param pUberpage
      *            Uber page to start reading with.
-     * @param paramRevision
+     * @param pRevision
      *            Key of revision to read from uber page.
      * @param paramItemList
      *            List of non-persistent items.
-     * @param paramReader
+     * @param pReader
      *            for this transaction
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected PageReadTrx(final Session paramSessionState, final UberPage paramUberPage,
-        final long paramRevision, final IReader paramReader) throws TTIOException {
+    protected PageReadTrx(final Session pSession, final UberPage pUberpage, final long pRevision,
+        final IReader pReader) throws TTIOException {
         mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
-        mSession = paramSessionState;
-        mPageReader = paramReader;
-        mUberPage = paramUberPage;
-        mRootPage = loadRevRoot(paramRevision);
+        mSession = pSession;
+        mPageReader = pReader;
+        mUberPage = pUberpage;
+        mRootPage = loadRevRoot(pRevision);
         initializeNamePage();
+        mClose = false;
     }
 
     /**
@@ -193,8 +198,10 @@ public class PageReadTrx implements IPageReadTrx {
      *             if the closing to the persistent storage fails.
      */
     public void close() throws TTIOException {
+        mSession.deregisterTrx(this);
         mPageReader.close();
         mCache.invalidateAll();
+        mClose = true;
     }
 
     /**
@@ -214,7 +221,7 @@ public class PageReadTrx implements IPageReadTrx {
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            page = (RevisionRootPage)mPageReader.read(ref);
+            page = (RevisionRootPage)mPageReader.read(ref.getKey());
         }
 
         // Get revision root page which is the leaf of the indirect tree.
@@ -230,7 +237,7 @@ public class PageReadTrx implements IPageReadTrx {
     protected final void initializeNamePage() throws TTIOException {
         final PageReference ref = mRootPage.getNamePageReference();
         if (ref.getPage() == null) {
-            ref.setPage((NamePage)mPageReader.read(ref));
+            ref.setPage((NamePage)mPageReader.read(ref.getKey()));
         }
     }
 
@@ -281,10 +288,10 @@ public class PageReadTrx implements IPageReadTrx {
         // Afterwards read the nodepages if they are not dereferences...
         final NodePage[] pages = new NodePage[refs.size()];
         for (int i = 0; i < pages.length; i++) {
-            final PageReference rev = refs.get(i);
-            pages[i] = (NodePage)rev.getPage();
+            final PageReference ref = refs.get(i);
+            pages[i] = (NodePage)ref.getPage();
             if (pages[i] == null) {
-                pages[i] = (NodePage)mPageReader.read(rev);
+                pages[i] = (NodePage)mPageReader.read(ref.getKey());
             }
         }
         return pages;
@@ -301,14 +308,14 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final IndirectPage dereferenceIndirectPage(final PageReference reference) throws TTIOException {
+    protected final IndirectPage dereferenceIndirectPage(final PageReference ref) throws TTIOException {
 
-        IndirectPage page = (IndirectPage)reference.getPage();
+        IndirectPage page = (IndirectPage)ref.getPage();
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            page = (IndirectPage)mPageReader.read(reference);
-            reference.setPage(page);
+            page = (IndirectPage)mPageReader.read(ref.getKey());
+            ref.setPage(page);
         }
 
         return page;
@@ -396,6 +403,14 @@ public class PageReadTrx implements IPageReadTrx {
         return new StringBuilder("SessionConfiguration: ").append(mSession.mSessionConfig).append(
             "\nPageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage).append(
             "\nRevRootPage: ").append(mRootPage).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+        return mClose;
     }
 
 }

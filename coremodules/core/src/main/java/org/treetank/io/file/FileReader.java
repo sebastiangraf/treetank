@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IKey;
 import org.treetank.io.IReader;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
@@ -91,14 +92,14 @@ public final class FileReader implements IReader {
      * @throws TTIOException
      *             if there was an error during reading.
      */
-    public IPage read(final PageReference pageReference) throws TTIOException {
+    public IPage read(final IKey pKey) throws TTIOException {
 
-        if (pageReference.getKey() == null) {
+        if (pKey == null) {
             return null;
         }
 
         try {
-            final FileKey fileKey = (FileKey)pageReference.getKey();
+            final FileKey fileKey = (FileKey)pKey;
 
             // Prepare environment for read.
             final int inputLength = fileKey.getLength() + IConstants.BEACON_LENGTH;
@@ -143,7 +144,7 @@ public final class FileReader implements IReader {
                 mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
             }
 
-            final UberPage page = (UberPage)read(uberPageReference);
+            final UberPage page = (UberPage)read(uberPageReference.getKey());
             uberPageReference.setPage(page);
 
             return uberPageReference;

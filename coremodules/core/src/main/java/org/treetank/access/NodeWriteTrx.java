@@ -72,6 +72,9 @@ import org.treetank.utils.TypedValue;
  */
 public class NodeWriteTrx implements INodeWriteTrx {
 
+    /** Session for abort/commit. */
+    private final Session mSession;
+
     /**
      * How is the Hash for this storage computed?
      */
@@ -90,12 +93,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
     /** Prime for computing the hash. */
     private static final int PRIME = 77081;
 
-    /** Maximum number of node modifications before auto commit. */
-    private final int mMaxNodeCount;
-
-    /** Modification counter. */
-    private long mModificationCount;
-
     /** Hash kind of Structure. */
     private final HashKind mHashKind;
 
@@ -104,38 +101,23 @@ public class NodeWriteTrx implements INodeWriteTrx {
     /**
      * Constructor.
      * 
-     * @param paramTransactionID
-     *            ID of transaction
-     * @param paramSessionState
+     * @param pSession
      *            state of the session
      * @param pPageWriteTrx
      *            state of this transaction
-     * @param paramMaxNodeCount
-     *            maximum number of node modifications before auto commit
-     * @param paramMaxTime
-     *            maximum number of seconds before auto commit
+     * 
      * @throws TTIOException
      *             if the reading of the props is failing
      * @throws TTUsageException
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
-    protected NodeWriteTrx(final long paramTransactionID,
-            final Session paramSessionState, final IPageWriteTrx pPageWriteTrx,
-            final int paramMaxNodeCount, final int paramMaxTime)
-            throws TTIOException, TTUsageException {
+    protected NodeWriteTrx(final Session pSession,
+            final IPageWriteTrx pPageWriteTrx) throws TTIOException,
+            TTUsageException {
 
-        // Do not accept negative values.
-        if ((paramMaxNodeCount < 0) || (paramMaxTime < 0)) {
-            throw new TTUsageException("Negative arguments are not accepted.");
-        }
-
-        // Only auto commit by node modifications if it is more then 0.
-        mMaxNodeCount = paramMaxNodeCount;
-        mModificationCount = 0L;
-
-        mHashKind = paramSessionState.mResourceConfig.mHashKind;
-        mDelegate = new NodeReadTrx(paramSessionState, paramTransactionID,
-                pPageWriteTrx);
+        mHashKind = pSession.mResourceConfig.mHashKind;
+        mDelegate = new NodeReadTrx(pPageWriteTrx);
+        mSession = pSession;
     }
 
     /**
@@ -449,7 +431,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
             throws AbsTTException {
         if (mDelegate.getCurrentNode() instanceof INameNode) {
             mDelegate.assertNotClosed();
-            mModificationCount++;
             final long oldHash = mDelegate.getCurrentNode().hashCode();
 
             final INameNode node = (INameNode) getPageTransaction()
@@ -475,7 +456,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
             throws AbsTTException {
         if (mDelegate.getCurrentNode() instanceof INameNode) {
             mDelegate.assertNotClosed();
-            mModificationCount++;
             final long oldHash = mDelegate.getCurrentNode().hashCode();
 
             final INameNode node = (INameNode) getPageTransaction()
@@ -501,7 +481,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
             throws AbsTTException {
         if (mDelegate.getCurrentNode() instanceof IValNode) {
             mDelegate.assertNotClosed();
-            mModificationCount++;
             final long oldHash = mDelegate.getCurrentNode().hashCode();
 
             final IValNode node = (IValNode) getPageTransaction()
@@ -534,14 +513,12 @@ public class NodeWriteTrx implements INodeWriteTrx {
                     "paramRevision parameter must be >= 0");
         }
         mDelegate.assertNotClosed();
-        mDelegate.mSession.assertAccess(paramRevision);
+        mSession.assertAccess(paramRevision);
+        final long revNumber = getRevisionNumber();
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mDelegate.mSession
-                .beginPageWriteTransaction(mDelegate.getTransactionID(),
-                        paramRevision, getRevisionNumber() - 1));
-        // Reset modification counter.
-        mModificationCount = 0L;
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(
+                paramRevision, revNumber - 1));
         moveTo(ROOT_NODE);
 
     }
@@ -558,16 +535,14 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final UberPage uberPage = getPageTransaction().commit();
 
         // Remember succesfully committed uber page in session state.
-        mDelegate.mSession.setLastCommittedUberPage(uberPage);
+        mSession.setLastCommittedUberPage(uberPage);
 
-        // Reset modification counter.
-        mModificationCount = 0L;
+        final long revNumber = getRevisionNumber();
 
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mDelegate.mSession
-                .beginPageWriteTransaction(mDelegate.getTransactionID(),
-                        getRevisionNumber(), getRevisionNumber()));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(
+                revNumber, revNumber));
 
     }
 
@@ -579,20 +554,16 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         mDelegate.assertNotClosed();
 
-        // Reset modification counter.
-        mModificationCount = 0L;
-
-        getPageTransaction().close();
-
         long revisionToSet = 0;
         if (!getPageTransaction().getUberPage().isBootstrap()) {
             revisionToSet = getRevisionNumber() - 1;
         }
 
+        getPageTransaction().close();
+
         // Reset internal transaction state to last committed uber page.
-        mDelegate.setPageTransaction(mDelegate.mSession
-                .beginPageWriteTransaction(mDelegate.getTransactionID(),
-                        revisionToSet, revisionToSet));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(
+                revisionToSet, revisionToSet));
     }
 
     /**
@@ -601,19 +572,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public synchronized void close() throws AbsTTException {
         if (!isClosed()) {
-            // Make sure to commit all dirty data.
-            if (mModificationCount > 0) {
-                throw new TTUsageException(
-                        "Must commit/abort transaction first");
-            }
-            // Release all state immediately.
-            getPageTransaction().close();
-            mDelegate.mSession.closeWriteTransaction(mDelegate
-                    .getTransactionID());
-            mDelegate.setPageTransaction(null);
-            mDelegate.setCurrentNode(null);
-            // Remember that we are closed.
-            mDelegate.setClosed();
+            mDelegate.close();
         }
     }
 
@@ -625,8 +584,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     private void checkAccessAndCommit() throws AbsTTException {
         mDelegate.assertNotClosed();
-        mModificationCount++;
-        intermediateCommitIfRequired();
     }
 
     // ////////////////////////////////////////////////////////////
@@ -745,19 +702,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
     // ////////////////////////////////////////////////////////////
     // end of remove operation
     // ////////////////////////////////////////////////////////////
-
-    /**
-     * Making an intermediate commit based on set attributes.
-     * 
-     * @throws AbsTTException
-     *             if commit fails.
-     */
-    private void intermediateCommitIfRequired() throws AbsTTException {
-        mDelegate.assertNotClosed();
-        if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
-            commit();
-        }
-    }
 
     /**
      * Getter for superclasses.
