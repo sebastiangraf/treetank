@@ -52,13 +52,13 @@ public interface IReader {
     /**
      * Getting a reference for the given pointer.
      * 
-     * @param pageReference
+     * @param pKey
      *            the reference for the page to be determined
      * @return a {@link PageDelegate} as the base for a page
      * @throws TTIOException
      *             if something bad happens during read
      */
-    IPage read(final PageReference pageReference) throws TTIOException;
+    IPage read(final IKey pKey) throws TTIOException;
 
     /**
      * Closing the storage.

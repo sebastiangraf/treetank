@@ -28,6 +28,7 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IKey;
 import org.treetank.io.IReader;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
@@ -87,11 +88,11 @@ public final class BerkeleyReader implements IReader {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(final PageReference paramPageReference) throws TTIOException {
+    public IPage read(final IKey pKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
-        BerkeleyFactory.KEY.objectToEntry(paramPageReference.getKey(), keyEntry);
+        BerkeleyFactory.KEY.objectToEntry((BerkeleyKey)pKey, keyEntry);
 
         IPage page = null;
         try {
@@ -121,7 +122,7 @@ public final class BerkeleyReader implements IReader {
             if (status == OperationStatus.SUCCESS) {
                 uberPageReference = BerkeleyFactory.FIRST_REV_VAL_B.entryToObject(valueEntry);
             }
-            final UberPage page = (UberPage)read(uberPageReference);
+            final UberPage page = (UberPage)read(uberPageReference.getKey());
 
             if (uberPageReference != null) {
                 uberPageReference.setPage(page);

@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IKey;
 import org.treetank.io.IWriter;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
@@ -183,8 +184,8 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public IPage read(final PageReference pageReference) throws TTIOException {
-        return reader.read(pageReference);
+    public IPage read(final IKey pKey) throws TTIOException {
+        return reader.read(pKey);
     }
 
     /**

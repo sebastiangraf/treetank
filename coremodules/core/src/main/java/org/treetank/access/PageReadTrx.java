@@ -214,7 +214,7 @@ public class PageReadTrx implements IPageReadTrx {
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            page = (RevisionRootPage)mPageReader.read(ref);
+            page = (RevisionRootPage)mPageReader.read(ref.getKey());
         }
 
         // Get revision root page which is the leaf of the indirect tree.
@@ -230,7 +230,7 @@ public class PageReadTrx implements IPageReadTrx {
     protected final void initializeNamePage() throws TTIOException {
         final PageReference ref = mRootPage.getNamePageReference();
         if (ref.getPage() == null) {
-            ref.setPage((NamePage)mPageReader.read(ref));
+            ref.setPage((NamePage)mPageReader.read(ref.getKey()));
         }
     }
 
@@ -281,10 +281,10 @@ public class PageReadTrx implements IPageReadTrx {
         // Afterwards read the nodepages if they are not dereferences...
         final NodePage[] pages = new NodePage[refs.size()];
         for (int i = 0; i < pages.length; i++) {
-            final PageReference rev = refs.get(i);
-            pages[i] = (NodePage)rev.getPage();
+            final PageReference ref = refs.get(i);
+            pages[i] = (NodePage)ref.getPage();
             if (pages[i] == null) {
-                pages[i] = (NodePage)mPageReader.read(rev);
+                pages[i] = (NodePage)mPageReader.read(ref.getKey());
             }
         }
         return pages;
@@ -301,14 +301,14 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final IndirectPage dereferenceIndirectPage(final PageReference reference) throws TTIOException {
+    protected final IndirectPage dereferenceIndirectPage(final PageReference ref) throws TTIOException {
 
-        IndirectPage page = (IndirectPage)reference.getPage();
+        IndirectPage page = (IndirectPage)ref.getPage();
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            page = (IndirectPage)mPageReader.read(reference);
-            reference.setPage(page);
+            page = (IndirectPage)mPageReader.read(ref.getKey());
+            ref.setPage(page);
         }
 
         return page;
