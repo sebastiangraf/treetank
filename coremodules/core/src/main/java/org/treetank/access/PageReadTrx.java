@@ -83,26 +83,26 @@ public class PageReadTrx implements IPageReadTrx {
     /**
      * Standard constructor.
      * 
-     * @param paramSessionState
+     * @param pSession
      *            State of state.
-     * @param paramUberPage
+     * @param pUberpage
      *            Uber page to start reading with.
-     * @param paramRevision
+     * @param pRevision
      *            Key of revision to read from uber page.
      * @param paramItemList
      *            List of non-persistent items.
-     * @param paramReader
+     * @param pReader
      *            for this transaction
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected PageReadTrx(final Session paramSessionState, final UberPage paramUberPage,
-        final long paramRevision, final IReader paramReader) throws TTIOException {
+    protected PageReadTrx(final Session pSession, final UberPage pUberpage, final long pRevision,
+        final IReader pReader) throws TTIOException {
         mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
-        mSession = paramSessionState;
-        mPageReader = paramReader;
-        mUberPage = paramUberPage;
-        mRootPage = loadRevRoot(paramRevision);
+        mSession = pSession;
+        mPageReader = pReader;
+        mUberPage = pUberpage;
+        mRootPage = loadRevRoot(pRevision);
         initializeNamePage();
     }
 
