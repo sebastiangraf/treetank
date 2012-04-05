@@ -52,20 +52,11 @@ import static org.treetank.node.IConstants.ROOT_NODE;
  */
 public class NodeReadTrx implements INodeReadTrx {
 
-    /** ID of transaction. */
-    private final long mId;
-
-    /** Session state this write transaction is bound to. */
-    protected final Session mSession;
-
     /** State of transaction including all cached stuff. */
     protected IPageReadTrx mPageReadTrx;
 
     /** Strong reference to currently selected node. */
     private INode mCurrentNode;
-
-    /** Tracks whether the transaction is closed. */
-    private boolean mClosed;
 
     /**
      * Constructor.
@@ -80,22 +71,11 @@ public class NodeReadTrx implements INodeReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected NodeReadTrx(final Session paramSession,
-            final long paramTransactionID,
-            final IPageReadTrx paramTransactionState) throws TTIOException {
-        mSession = paramSession;
-        mId = paramTransactionID;
+    protected NodeReadTrx(final IPageReadTrx paramTransactionState)
+            throws TTIOException {
         mPageReadTrx = paramTransactionState;
         mCurrentNode = (org.treetank.node.interfaces.INode) mPageReadTrx
                 .getNode(ROOT_NODE);
-        mClosed = false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public final long getTransactionID() {
-        return mId;
     }
 
     /**
@@ -141,6 +121,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final boolean moveToAttribute(final int mIndex) {
+        assertNotClosed();
         if (mCurrentNode.getKind() == ENode.ELEMENT_KIND) {
             return moveTo(((ElementNode) mCurrentNode).getAttributeKey(mIndex));
         } else {
@@ -153,6 +134,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final boolean moveToNamespace(final int mIndex) {
+        assertNotClosed();
         if (mCurrentNode.getKind() == ENode.ELEMENT_KIND) {
             return moveTo(((ElementNode) mCurrentNode).getNamespaceKey(mIndex));
         } else {
@@ -224,18 +206,9 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public void close() throws AbsTTException {
-        if (!mClosed) {
+        if (!mPageReadTrx.isClosed()) {
             // Close own state.
             mPageReadTrx.close();
-
-            // Callback on session to make sure everything is cleaned up.
-            mSession.closeReadTransaction(mId);
-
-            // Immediately release all references.
-            mPageReadTrx = null;
-            mCurrentNode = null;
-
-            mClosed = true;
         }
     }
 
@@ -268,26 +241,19 @@ public class NodeReadTrx implements INodeReadTrx {
     }
 
     /**
-     * Set state to closed.
-     */
-    protected final void setClosed() {
-        mClosed = true;
-    }
-
-    /**
      * Is the transaction closed?
      * 
      * @return True if the transaction was closed.
      */
     public final boolean isClosed() {
-        return mClosed;
+        return mPageReadTrx.isClosed();
     }
 
     /**
      * Make sure that the session is not yet closed when calling this method.
      */
     protected final void assertNotClosed() {
-        if (mClosed) {
+        if (mPageReadTrx.isClosed()) {
             throw new IllegalStateException("Transaction is already closed.");
         }
     }
@@ -319,6 +285,7 @@ public class NodeReadTrx implements INodeReadTrx {
      *            The current node to set.
      */
     protected final void setCurrentNode(final INode paramCurrentNode) {
+        assertNotClosed();
         mCurrentNode = paramCurrentNode;
     }
 
@@ -327,6 +294,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final INode getNode() {
+        assertNotClosed();
         return mCurrentNode;
     }
 
@@ -335,6 +303,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final long getMaxNodeKey() throws TTIOException {
+        assertNotClosed();
         return mPageReadTrx.getActualRevisionRootPage().getMaxNodeKey();
     }
 

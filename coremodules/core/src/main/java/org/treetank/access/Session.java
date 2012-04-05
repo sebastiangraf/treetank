@@ -27,20 +27,18 @@
 
 package org.treetank.access;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTThreadedException;
 import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
@@ -52,7 +50,8 @@ import org.treetank.page.UberPage;
  * <h1>Session</h1>
  * 
  * <p>
- * Makes sure that there only is a single session instance bound to a TreeTank file.
+ * Makes sure that there only is a single session instance bound to a TreeTank
+ * file.
  * </p>
  */
 public final class Session implements ISession {
@@ -66,26 +65,14 @@ public final class Session implements ISession {
     /** Database for centralized closure of related Sessions. */
     private final Database mDatabase;
 
-    /** Write semaphore to assure only one exclusive write transaction exists. */
-    private final Semaphore mWriteSemaphore;
-
-    /** Read semaphore to control running read transactions. */
-    private final Semaphore mReadSemaphore;
-
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
 
-    /** Remember all running transactions (both read and write). */
-    private final Map<Long, INodeReadTrx> mTransactionMap;
-
     /** Remember the write seperatly because of the concurrent writes. */
-    private final Map<Long, IPageWriteTrx> mWriteTransactionStateMap;
+    private final Set<IPageReadTrx> mPageTrxs;
 
     /** abstract factory for all interaction to the storage. */
     private final IStorage mFac;
-
-    /** Atomic counter for concurrent generation of transaction id. */
-    private final AtomicLong mTransactionIDCounter;
 
     /** Determines if session was closed. */
     private transient boolean mClosed;
@@ -102,19 +89,13 @@ public final class Session implements ISession {
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    protected Session(final Database paramDatabase, final ResourceConfiguration paramResourceConf,
-        final SessionConfiguration paramSessionConf) throws AbsTTException {
+    protected Session(final Database paramDatabase,
+            final ResourceConfiguration paramResourceConf,
+            final SessionConfiguration paramSessionConf) throws AbsTTException {
         mDatabase = paramDatabase;
         mResourceConfig = paramResourceConf;
         mSessionConfig = paramSessionConf;
-        mTransactionMap = new ConcurrentHashMap<Long, INodeReadTrx>();
-        mWriteTransactionStateMap = new ConcurrentHashMap<Long, IPageWriteTrx>();
-
-        mTransactionIDCounter = new AtomicLong();
-
-        // Init session members.
-        mWriteSemaphore = new Semaphore(paramSessionConf.mWtxAllowed);
-        mReadSemaphore = new Semaphore(paramSessionConf.mRtxAllowed);
+        mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
 
         mFac = EStorage.getStorage(mResourceConfig);
         if (!mFac.exists()) {
@@ -124,7 +105,7 @@ public final class Session implements ISession {
         } else {
             final IReader reader = mFac.getReader();
             final PageReference firstRef = reader.readFirstReference();
-            mLastCommittedUberPage = (UberPage)firstRef.getPage();
+            mLastCommittedUberPage = (UberPage) firstRef.getPage();
             reader.close();
         }
         mClosed = false;
@@ -134,92 +115,79 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     public INodeReadTrx beginNodeReadTransaction() throws AbsTTException {
-        return beginNodeReadTransaction(mLastCommittedUberPage.getRevisionNumber());
+        return beginNodeReadTransaction(mLastCommittedUberPage
+                .getRevisionNumber());
     }
 
     /**
      * {@inheritDoc}
      */
-    public synchronized INodeReadTrx beginNodeReadTransaction(final long paramRevisionKey)
-        throws AbsTTException {
-        assertAccess(paramRevisionKey);
-        // Make sure not to exceed available number of read transactions.
-        try {
-            mReadSemaphore.acquire();
-        } catch (final InterruptedException exc) {
-            throw new TTThreadedException(exc);
-        }
-
-        INodeReadTrx rtx = null;
-        // Create new read transaction.
-        rtx =
-            new NodeReadTrx(this, mTransactionIDCounter.incrementAndGet(), new PageReadTrx(this,
-                mLastCommittedUberPage, paramRevisionKey, mFac.getReader()));
-
-        return rtx;
+    public synchronized INodeReadTrx beginNodeReadTransaction(final long pRevKey)
+            throws AbsTTException {
+        return new NodeReadTrx(beginPageReadTransaction(pRevKey));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException {
+    public IPageReadTrx beginPageReadTransaction(final long pRevKey)
+            throws AbsTTException {
+        assertAccess(pRevKey);
+        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage,
+                pRevKey, mFac.getReader());
+        mPageTrxs.add(trx);
+        return trx;
+    }
+
+    public IPageWriteTrx beginPageWriteTransaction() throws AbsTTException {
         assertAccess(mLastCommittedUberPage.getRevision());
 
-        // Make sure not to exceed available number of write transactions.
-        if (mWriteSemaphore.availablePermits() == 0) {
-            throw new IllegalStateException("There already is a running exclusive write transaction.");
-        }
-        try {
-            mWriteSemaphore.acquire();
-        } catch (final InterruptedException exc) {
-            throw new TTThreadedException(exc);
-
-        }
-
-        final long currentID = mTransactionIDCounter.incrementAndGet();
-        final IPageWriteTrx wtxState =
-            beginPageWriteTransaction(currentID, mLastCommittedUberPage.getRevisionNumber(),
+        final IPageWriteTrx trx = beginPageWriteTransaction(
+                mLastCommittedUberPage.getRevisionNumber(),
                 mLastCommittedUberPage.getRevisionNumber());
+        mPageTrxs.add(trx);
+
+        return trx;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized INodeWriteTrx beginNodeWriteTransaction()
+            throws AbsTTException {
 
         // Create new write transaction.
-        final INodeWriteTrx wtx = new NodeWriteTrx(currentID, this, wtxState);
-
-        // Remember transaction for debugging and safe close.
-        if (mTransactionMap.put(currentID, wtx) != null
-            || mWriteTransactionStateMap.put(currentID, wtxState) != null) {
-            throw new TTThreadedException("ID generation is bogus because of duplicate ID.");
-        }
+        final INodeWriteTrx wtx = new NodeWriteTrx(this,
+                beginPageWriteTransaction());
 
         return wtx;
 
     }
 
-    protected IPageWriteTrx beginPageWriteTransaction(final long mId, final long mRepresentRevision,
-        final long mStoreRevision) throws TTIOException {
+    protected IPageWriteTrx beginPageWriteTransaction(
+            final long mRepresentRevision, final long mStoreRevision)
+            throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
-        return new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), writer,
-            mRepresentRevision, mStoreRevision);
+        return new PageWriteTrx(this, new UberPage(mLastCommittedUberPage,
+                mStoreRevision + 1), writer, mRepresentRevision, mStoreRevision);
+    }
+
+    protected void deregisterTrx(final IPageReadTrx pReadTrx) {
+        mPageTrxs.remove(pReadTrx);
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public synchronized void close() throws AbsTTException {
         if (!mClosed) {
             // Forcibly close all open transactions.
-            for (final INodeReadTrx rtx : mTransactionMap.values()) {
-                if (rtx instanceof INodeWriteTrx) {
-                    ((INodeWriteTrx)rtx).abort();
-                }
+            for (final IPageReadTrx rtx : mPageTrxs) {
                 rtx.close();
             }
 
             // Immediately release all ressources.
             mLastCommittedUberPage = null;
-            mTransactionMap.clear();
-            mWriteTransactionStateMap.clear();
+            mPageTrxs.clear();
 
             mFac.close();
             mDatabase.removeSession(mResourceConfig.mPath);
@@ -242,25 +210,11 @@ public final class Session implements ISession {
         if (paramRevision < 0) {
             throw new IllegalArgumentException("Revision must be at least 0");
         } else if (paramRevision > mLastCommittedUberPage.getRevision()) {
-            throw new IllegalArgumentException(new StringBuilder("Revision must not be bigger than").append(
-                Long.toString(mLastCommittedUberPage.getRevision())).toString());
+            throw new IllegalArgumentException(new StringBuilder(
+                    "Revision must not be bigger than").append(
+                    Long.toString(mLastCommittedUberPage.getRevision()))
+                    .toString());
         }
-    }
-
-    protected void closeWriteTransaction(final long mTransactionID) {
-        // Purge transaction from internal state.
-        mTransactionMap.remove(mTransactionID);
-        // Removing the write from the own internal mapping
-        mWriteTransactionStateMap.remove(mTransactionID);
-        // Make new transactions available.
-        mWriteSemaphore.release();
-    }
-
-    protected void closeReadTransaction(final long mTransactionID) {
-        // Purge transaction from internal state.
-        mTransactionMap.remove(mTransactionID);
-        // Make new transactions available.
-        mReadSemaphore.release();
     }
 
     /**

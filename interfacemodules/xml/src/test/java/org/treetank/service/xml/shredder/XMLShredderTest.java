@@ -141,7 +141,6 @@ public class XMLShredderTest extends XMLTestCase {
                 EShredderInsert.ADDASRIGHTSIBLING);
         shredder2.call();
         assertEquals(2, wtx.getRevisionNumber());
-        wtx.close();
 
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
@@ -175,9 +174,6 @@ public class XMLShredderTest extends XMLTestCase {
             assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
         }
 
-        expectedTrx.close();
-        expectedSession.close();
-        rtx.close();
     }
 
     @Test
@@ -200,7 +196,6 @@ public class XMLShredderTest extends XMLTestCase {
                 EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.commit();
-        wtx.close();
 
         // Verify.
         final INodeReadTrx rtx = session2.beginNodeReadTransaction();
@@ -222,11 +217,6 @@ public class XMLShredderTest extends XMLTestCase {
         }
 
         assertEquals(expectedAttributes.hasNext(), attributes.hasNext());
-
-        expectedTrx2.close();
-        expectedSession2.close();
-        rtx.close();
-        session2.close();
     }
 
     @Test

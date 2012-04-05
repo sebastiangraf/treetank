@@ -34,32 +34,19 @@ import org.treetank.access.Session;
  * <h1>SessionConfiguration</h1>
  * 
  * <p>
- * Holds the {@link Session}-wide settings that can not change within the runtime of a {@link Session}. This
- * included stuff like commit-threshold and number of usable write/read transactions. Each
- * {@link SessionConfiguration} is only bound through the location to a {@link Database} and related
+ * Holds the {@link Session}-wide settings that can not change within the
+ * runtime of a {@link Session}. This included stuff like commit-threshold and
+ * number of usable write/read transactions. Each {@link SessionConfiguration}
+ * is only bound through the location to a {@link Database} and related
  * resources.
  * </p>
  */
 public final class SessionConfiguration {
 
-    // STATIC STANDARD FIELDS
-    /** Number of concurrent exclusive write transactions. */
-    public static final int MAX_WRITE_TRANSACTIONS = 1;
-    /** Number of concurrent shared read transactions. */
-    public static final int MAX_READ_TRANSACTIONS = 128;
-    /** Commit threshold. */
-    public static final int COMMIT_THRESHOLD = 262144;
     /** Default User. */
     public static final String DEFAULT_USER = "ALL";
     // END STATIC STANDARD FIELDS
 
-    // MEMBERS FOR FLEXIBLE FIELDS
-    /** Numbers of allowed INodeWriteTrx Instances. */
-    public final int mWtxAllowed;
-    /** Numbers of allowed INodeWriteTrx Instances. */
-    public final int mRtxAllowed;
-    /** Number of node modifications until an automatic commit occurs. */
-    public final int mCommitThreshold;
     /** User for this session. */
     public final String mUser;
     // END MEMBERS FOR FIXED FIELDS
@@ -74,9 +61,6 @@ public final class SessionConfiguration {
      *            {@link Builder} reference
      */
     private SessionConfiguration(final SessionConfiguration.Builder pBuilder) {
-        mWtxAllowed = pBuilder.mWtxAllowed;
-        mRtxAllowed = pBuilder.mRtxAllowed;
-        mCommitThreshold = pBuilder.mCommitThreshold;
         mUser = pBuilder.mUser;
         mResource = pBuilder.mResource;
     }
@@ -89,9 +73,6 @@ public final class SessionConfiguration {
         final int prime = 90599;
         int result = 13;
         result = prime * result + mUser.hashCode();
-        result = prime * result + new Integer(mWtxAllowed).hashCode();
-        result = prime * result + new Integer(mRtxAllowed).hashCode();
-        result = prime * result + new Integer(mCommitThreshold).hashCode();
         return result;
     }
 
@@ -128,15 +109,6 @@ public final class SessionConfiguration {
      */
     public static final class Builder {
 
-        /** Numbers of allowed INodeWriteTrx Instances. */
-        private int mWtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
-
-        /** Numbers of allowed INodeWriteTrx Instances. */
-        private int mRtxAllowed = SessionConfiguration.MAX_READ_TRANSACTIONS;
-
-        /** Number of node modifications until an automatic commit occurs. */
-        private int mCommitThreshold = SessionConfiguration.COMMIT_THRESHOLD;
-
         /** User for this session. */
         private String mUser = SessionConfiguration.DEFAULT_USER;
 
@@ -151,54 +123,10 @@ public final class SessionConfiguration {
          */
         public Builder(final String pRes) {
             if (pRes == null) {
-                throw new IllegalArgumentException("Parameter must not be null!");
+                throw new IllegalArgumentException(
+                        "Parameter must not be null!");
             }
             this.mResource = pRes;
-        }
-
-        /**
-         * Setter for field mWtxAllowed.
-         * 
-         * @param pMaxWtx
-         *            new value for field
-         * @return reference to the builder object
-         */
-        public Builder setWtxAllowed(final int pMaxWtx) {
-            if (pMaxWtx < 1) {
-                throw new IllegalArgumentException("Value must be > 0!");
-            }
-            mWtxAllowed = pMaxWtx;
-            return this;
-        }
-
-        /**
-         * Setter for field mRtxAllowed.
-         * 
-         * @param paramRtxAllowed
-         *            new value for field
-         * @return reference to the builder object
-         */
-        public Builder setRtxAllowed(final int paramRtxAllowed) {
-            if (paramRtxAllowed < 1) {
-                throw new IllegalArgumentException("Value must be > 0!");
-            }
-            mRtxAllowed = paramRtxAllowed;
-            return this;
-        }
-
-        /**
-         * Setter for field mCommitThreshold.
-         * 
-         * @param pCommitThreshold
-         *            new value for field
-         * @return reference to the builder object
-         */
-        public Builder setCommitThreshold(final int pCommitThreshold) {
-            if (pCommitThreshold < 100) {
-                throw new IllegalArgumentException("Value must be > 100!");
-            }
-            mCommitThreshold = pCommitThreshold;
-            return this;
         }
 
         /**

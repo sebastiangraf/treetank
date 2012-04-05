@@ -64,13 +64,23 @@ public interface ISession {
     INodeReadTrx beginNodeReadTransaction(final long pRev) throws AbsTTException;
 
     /**
-     * Begin exclusive read/write transaction without auto commit.
+     * Begin exclusive read/write transaction .
      * 
      * @throws AbsTTException
      *             If can't begin Write Transaction.
      * @return INodeWriteTrx instance.
      */
     INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException;
+
+    /**
+     * Begin exclusive read transaction on the page layer
+     * 
+     * @param pRevKey
+     *            revision key for the revision ask
+     * @return a {@link IPageReadTrx} instance
+     * @throws AbsTTException
+     */
+    IPageReadTrx beginPageReadTransaction(final long pRevKey) throws AbsTTException;
 
     /**
      * Safely close session and immediately release all resources. If there are

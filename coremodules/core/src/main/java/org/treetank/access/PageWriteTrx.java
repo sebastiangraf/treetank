@@ -75,7 +75,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /** Last reference to the actual revRoot. */
     private final RevisionRootPage mNewRoot;
 
-    private PageReadTrx mPageReadTransaction;
+    private PageReadTrx mDelegate;
 
     /**
      * Standard constructor.
@@ -100,8 +100,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
             final UberPage paramUberPage, final IWriter paramWriter,
             final long paramRepresentRev, final long paramStoreRev)
             throws TTIOException {
-        mPageReadTransaction = new PageReadTrx(paramSessionState,
-                paramUberPage, paramRepresentRev, paramWriter);
+        mDelegate = new PageReadTrx(paramSessionState, paramUberPage,
+                paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev,
                 paramStoreRev);
         mLog = new TransactionLogCache(paramSessionState.mResourceConfig.mPath,
@@ -225,14 +225,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         final NodePageContainer pageCont = mLog.get(nodePageKey);
         if (pageCont == null) {
-            return mPageReadTransaction.getNode(pNodeKey);
+            return mDelegate.getNode(pNodeKey);
         } else if (pageCont.getModified().getNode(nodePageOffset) == null) {
             final INode item = pageCont.getComplete().getNode(nodePageOffset);
-            return mPageReadTransaction.checkItemIfDeleted(item);
+            return mDelegate.checkItemIfDeleted(item);
 
         } else {
             final INode item = pageCont.getModified().getNode(nodePageOffset);
-            return mPageReadTransaction.checkItemIfDeleted(item);
+            return mDelegate.checkItemIfDeleted(item);
         }
 
     }
@@ -252,7 +252,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         // prepareNodepage was invoked yet
         if (currentNamePage == null
                 || currentNamePage.getName(mNameKey) == null) {
-            returnVal = mPageReadTransaction.getName(mNameKey);
+            returnVal = mDelegate.getName(mNameKey);
         } else {
             returnVal = currentNamePage.getName(mNameKey);
         }
@@ -323,7 +323,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     protected UberPage commit() throws AbsTTException {
 
         final PageReference uberPageReference = new PageReference();
-        final UberPage uberPage = mPageReadTransaction.getUberPage();
+        final UberPage uberPage = mDelegate.getUberPage();
         uberPageReference.setPage(uberPage);
 
         // // // /////////////
@@ -401,7 +401,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if something weird happened in the storage
      */
     public void close() throws TTIOException {
-        // super.close();
+        mDelegate.mSession.deregisterTrx(this);
+        mDelegate.close();
         mLog.clear();
         mPageWriter.close();
     }
@@ -416,11 +417,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
         IndirectPage page = (IndirectPage) paramReference.getPage();
         if (page == null) {
             if (paramReference.getKey() == null) {
-                page = new IndirectPage(mPageReadTransaction.getUberPage()
-                        .getRevision());
+                page = new IndirectPage(mDelegate.getUberPage().getRevision());
             } else {
                 page = new IndirectPage(
-                        (IndirectPage) mPageReadTransaction
+                        (IndirectPage) mDelegate
                                 .dereferenceIndirectPage(paramReference),
                         mNewRoot.getRevision() + 1);
 
@@ -464,28 +464,26 @@ public final class PageWriteTrx implements IPageWriteTrx {
             final long mBaseRevision, final long representRevision)
             throws TTIOException {
 
-        if (mPageReadTransaction.getUberPage().isBootstrap()) {
-            return mPageReadTransaction.loadRevRoot(mBaseRevision);
+        if (mDelegate.getUberPage().isBootstrap()) {
+            return mDelegate.loadRevRoot(mBaseRevision);
         } else {
 
             // Prepare revision root nodePageReference.
             final RevisionRootPage revisionRootPage = new RevisionRootPage(
-                    mPageReadTransaction.loadRevRoot(mBaseRevision),
-                    representRevision + 1);
+                    mDelegate.loadRevRoot(mBaseRevision), representRevision + 1);
 
             // Prepare indirect tree to hold reference to prepared revision root
             // nodePageReference.
             final PageReference revisionRootPageReference = prepareLeafOfTree(
-                    mPageReadTransaction.getUberPage()
-                            .getIndirectPageReference(), mPageReadTransaction
-                            .getUberPage().getRevisionNumber());
+                    mDelegate.getUberPage().getIndirectPageReference(),
+                    mDelegate.getUberPage().getRevisionNumber());
 
             // Link the prepared revision root nodePageReference with the
             // prepared indirect tree.
             revisionRootPageReference.setPage(revisionRootPage);
 
             revisionRootPage.getNamePageReference().setPage(
-                    (NamePage) mPageReadTransaction.getActualRevisionRootPage()
+                    (NamePage) mDelegate.getActualRevisionRootPage()
                             .getNamePageReference().getPage());
 
             // Return prepared revision root nodePageReference.
@@ -527,10 +525,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     private NodePageContainer dereferenceNodePageForModification(
             final long paramNodePageKey) throws TTIOException {
-        final NodePage[] revs = mPageReadTransaction
-                .getSnapshotPages(paramNodePageKey);
-        final ERevisioning revision = mPageReadTransaction.mSession.mResourceConfig.mRevision;
-        final int mileStoneRevision = mPageReadTransaction.mSession.mResourceConfig.mRevisionsToRestore;
+        final NodePage[] revs = mDelegate.getSnapshotPages(paramNodePageKey);
+        final ERevisioning revision = mDelegate.mSession.mResourceConfig.mRevision;
+        final int mileStoneRevision = mDelegate.mSession.mResourceConfig.mRevisionsToRestore;
 
         return revision.combinePagesForModification(revs, mileStoneRevision);
     }
@@ -571,7 +568,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     @Override
     public byte[] getRawName(int pKey) {
-        return mPageReadTransaction.getRawName(pKey);
+        return mDelegate.getRawName(pKey);
     }
 
     /**
@@ -579,7 +576,15 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     @Override
     public UberPage getUberPage() {
-        return mPageReadTransaction.getUberPage();
+        return mDelegate.getUberPage();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+        return mDelegate.isClosed();
     }
 
 }

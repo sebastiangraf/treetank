@@ -74,11 +74,15 @@ public class PageReadTrx implements IPageReadTrx {
 
     /** Cached name page of this revision. */
     private final RevisionRootPage mRootPage;
+
     /** Internal reference to cache. */
     private final Cache<Long, NodePageContainer> mCache;
 
     /** Configuration of the session */
     protected final Session mSession;
+
+    /** Boolean for determinc close. */
+    private boolean mClose;
 
     /**
      * Standard constructor.
@@ -104,6 +108,7 @@ public class PageReadTrx implements IPageReadTrx {
         mUberPage = pUberpage;
         mRootPage = loadRevRoot(pRevision);
         initializeNamePage();
+        mClose = false;
     }
 
     /**
@@ -193,8 +198,10 @@ public class PageReadTrx implements IPageReadTrx {
      *             if the closing to the persistent storage fails.
      */
     public void close() throws TTIOException {
+        mSession.deregisterTrx(this);
         mPageReader.close();
         mCache.invalidateAll();
+        mClose = true;
     }
 
     /**
@@ -396,6 +403,14 @@ public class PageReadTrx implements IPageReadTrx {
         return new StringBuilder("SessionConfiguration: ").append(mSession.mSessionConfig).append(
             "\nPageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage).append(
             "\nRevRootPage: ").append(mRootPage).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+        return mClose;
     }
 
 }

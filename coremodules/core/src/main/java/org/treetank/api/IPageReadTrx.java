@@ -22,4 +22,6 @@ public interface IPageReadTrx {
 
     void close() throws TTIOException;
 
+    boolean isClosed();
+    
 }
