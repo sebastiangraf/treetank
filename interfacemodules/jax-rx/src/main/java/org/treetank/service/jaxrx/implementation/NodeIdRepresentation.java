@@ -27,8 +27,6 @@
 
 package org.treetank.service.jaxrx.implementation;
 
-import static org.treetank.service.jaxrx.implementation.DatabaseRepresentation.STOREDBPATH;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,6 +81,22 @@ public class NodeIdRepresentation {
      * The 'yes' string.
      */
     private static final transient String YESSTRING = "yes";
+
+    /**
+     * Storage path to the data.
+     */
+    private final File mStoragePath;
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pStoragePath
+     *            storage to be set
+     */
+    public NodeIdRepresentation(final File pStoragePath) {
+        mStoragePath = pStoragePath;
+    }
 
     /**
      * This method is responsible to deliver the whole XML resource addressed by
@@ -176,14 +190,14 @@ public class NodeIdRepresentation {
             @Override
             public void write(final OutputStream output) throws IOException, JaxRxException {
 
-                final File dbFile = new File(STOREDBPATH, resourceName);
+                final File dbFile = new File(mStoragePath, resourceName);
                 final String revision = queryParams.get(QueryParameter.REVISION);
                 final String wrap = queryParams.get(QueryParameter.WRAP);
                 final String doNodeId = queryParams.get(QueryParameter.OUTPUT);
                 final boolean wrapResult = (wrap == null) ? true : wrap.equalsIgnoreCase(YESSTRING);
                 final boolean nodeid = (doNodeId == null) ? false : doNodeId.equalsIgnoreCase(YESSTRING);
                 final Long rev = revision == null ? null : Long.valueOf(revision);
-                final RestXPathProcessor xpathProcessor = new RestXPathProcessor();
+                final RestXPathProcessor xpathProcessor = new RestXPathProcessor(mStoragePath);
                 try {
                     xpathProcessor.getXpathResource(dbFile, nodeId, query, nodeid, rev, output, wrapResult);
                 } catch (final AbsTTException exce) {
@@ -212,9 +226,9 @@ public class NodeIdRepresentation {
             IDatabase database = null;
             INodeWriteTrx wtx = null;
             boolean abort = false;
-            if (WorkerHelper.checkExistingResource(resourceName)) {
+            if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
                 try {
-                    database = Database.openDatabase(STOREDBPATH);
+                    database = Database.openDatabase(mStoragePath);
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
@@ -263,9 +277,9 @@ public class NodeIdRepresentation {
             IDatabase database = null;
             INodeWriteTrx wtx = null;
             boolean abort = false;
-            if (WorkerHelper.checkExistingResource(resourceName)) {
+            if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
                 try {
-                    database = Database.openDatabase(STOREDBPATH);
+                    database = Database.openDatabase(mStoragePath);
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
@@ -322,11 +336,11 @@ public class NodeIdRepresentation {
         INodeWriteTrx wtx = null;
         synchronized (resourceName) {
             boolean abort;
-            if (WorkerHelper.checkExistingResource(resourceName)) {
+            if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
                 abort = false;
                 try {
 
-                    database = Database.openDatabase(STOREDBPATH);
+                    database = Database.openDatabase(mStoragePath);
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
@@ -400,11 +414,11 @@ public class NodeIdRepresentation {
      */
     private void serialize(final String resource, final long nodeId, final Long revision,
         final boolean doNodeId, final OutputStream output, final boolean wrapResult) {
-        if (WorkerHelper.checkExistingResource(resource)) {
+        if (WorkerHelper.checkExistingResource(mStoragePath, resource)) {
             ISession session = null;
             IDatabase database = null;
             try {
-                database = Database.openDatabase(STOREDBPATH);
+                database = Database.openDatabase(mStoragePath);
                 session = database.getSession(new SessionConfiguration.Builder(resource).build());
                 if (wrapResult) {
                     output.write(BEGINRESULT);
@@ -480,12 +494,12 @@ public class NodeIdRepresentation {
     private void serializeAT(final String resource, final long nodeId, final Long revision,
         final boolean doNodeId, final OutputStream output, final boolean wrapResult,
         final EIdAccessType accessType) {
-        if (WorkerHelper.checkExistingResource(resource)) {
+        if (WorkerHelper.checkExistingResource(mStoragePath, resource)) {
             ISession session = null;
             IDatabase database = null;
             INodeReadTrx rtx = null;
             try {
-                database = Database.openDatabase(STOREDBPATH);
+                database = Database.openDatabase(mStoragePath);
                 session = database.getSession(new SessionConfiguration.Builder(resource).build());
                 if (revision == null) {
                     rtx = session.beginNodeReadTransaction();

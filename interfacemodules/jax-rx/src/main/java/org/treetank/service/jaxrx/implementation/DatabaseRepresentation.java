@@ -80,11 +80,8 @@ import org.treetank.service.xml.xpath.XPathAxis;
  */
 public class DatabaseRepresentation {
 
-    /**
-     * The path where the databases will be stored.
-     */
-    public final static transient File STOREDBPATH = new File(new StringBuilder(File.separator).append("tmp")
-        .append(File.separator).append("tnk").append(File.separator).append("path1").toString());
+    /** Path to storage. */
+    private final File mStoragePath;
 
     /**
      * This field the begin result element of a XQuery or XPath expression.
@@ -100,6 +97,10 @@ public class DatabaseRepresentation {
      * Often used 'yes' {@link String}.
      */
     private final static transient String YESSTRING = "yes";
+
+    public DatabaseRepresentation(final File pStoragePath) {
+        mStoragePath = pStoragePath;
+    }
 
     /**
      * This method is responsible to create a new database.
@@ -198,7 +199,7 @@ public class DatabaseRepresentation {
                 final boolean wrapResult = (wrap == null) ? true : wrap.equalsIgnoreCase(YESSTRING);
                 final boolean nodeid = (nodeId == null) ? false : nodeId.equalsIgnoreCase(YESSTRING);
                 final Long rev = revision == null ? null : Long.valueOf(revision);
-                final RestXPathProcessor xpathProcessor = new RestXPathProcessor();
+                final RestXPathProcessor xpathProcessor = new RestXPathProcessor(mStoragePath);
                 try {
                     xpathProcessor.getXpathResource(resource, query, nodeid, rev, output, wrapResult);
                 } catch (final AbsTTException exce) {
@@ -221,7 +222,7 @@ public class DatabaseRepresentation {
     public StreamingOutput getResourcesNames() throws JaxRxException {
         final List<String> availResources = new ArrayList<String>();
         final File[] files =
-            new File(STOREDBPATH, DatabaseConfiguration.Paths.Data.getFile().getName()).listFiles();
+            new File(mStoragePath, DatabaseConfiguration.Paths.Data.getFile().getName()).listFiles();
         if (files != null) {
             for (final File file : files) {
                 if (file.isDirectory()) {
@@ -231,7 +232,7 @@ public class DatabaseRepresentation {
             }
         }
 
-        return RESTResponseHelper.buildResponseOfDomLR(availResources);
+        return RESTResponseHelper.buildResponseOfDomLR(mStoragePath, availResources);
     }
 
     /**
@@ -266,8 +267,8 @@ public class DatabaseRepresentation {
     public void deleteResource(final String resourceName) throws WebApplicationException {
         synchronized (resourceName) {
             try {
-                final DatabaseConfiguration dbConfig = new DatabaseConfiguration(STOREDBPATH);
-                final IDatabase database = Database.openDatabase(STOREDBPATH);
+                final DatabaseConfiguration dbConfig = new DatabaseConfiguration(mStoragePath);
+                final IDatabase database = Database.openDatabase(mStoragePath);
                 database.truncateResource(new ResourceConfiguration.Builder(resourceName, dbConfig).build());
             } catch (final AbsTTException exc) {
                 throw new JaxRxException(500, "Deletion could not be performed");
@@ -294,7 +295,7 @@ public class DatabaseRepresentation {
         boolean abort = false;
         try {
 
-            final DatabaseConfiguration dbConf = new DatabaseConfiguration(STOREDBPATH);
+            final DatabaseConfiguration dbConf = new DatabaseConfiguration(mStoragePath);
 
             // Shredding the database to the file as XML
             final ResourceConfiguration resConf =
@@ -340,7 +341,7 @@ public class DatabaseRepresentation {
         final OutputStream output, final boolean wrapResult) throws IOException, JaxRxException,
         AbsTTException {
 
-        if (WorkerHelper.checkExistingResource(resource)) {
+        if (WorkerHelper.checkExistingResource(mStoragePath, resource)) {
             try {
                 if (wrapResult) {
                     output.write(beginResult.getBytes());
@@ -373,8 +374,8 @@ public class DatabaseRepresentation {
     public long getLastRevision(final String resourceName) throws JaxRxException, AbsTTException {
 
         long lastRevision;
-        if (WorkerHelper.checkExistingResource(resourceName)) {
-            IDatabase database = Database.openDatabase(STOREDBPATH);
+        if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
+            IDatabase database = Database.openDatabase(mStoragePath);
             INodeReadTrx rtx = null;
             ISession session = null;
             try {
@@ -443,7 +444,7 @@ public class DatabaseRepresentation {
             final List<Long> restIdsRev1 = new LinkedList<Long>();
 
             try {
-                database = Database.openDatabase(DatabaseRepresentation.STOREDBPATH);
+                database = Database.openDatabase(mStoragePath);
                 session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
 
                 // get highest rest-id from given revision 1
@@ -572,7 +573,7 @@ public class DatabaseRepresentation {
         ISession session = null;
         // INodeReadTrx rtx = null;
         try {
-            database = Database.openDatabase(STOREDBPATH);
+            database = Database.openDatabase(mStoragePath);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
             // and creating a transaction
             // if (revision == null) {
@@ -615,7 +616,7 @@ public class DatabaseRepresentation {
         INodeWriteTrx wtx = null;
         boolean abort = false;
         try {
-            database = Database.openDatabase(STOREDBPATH);
+            database = Database.openDatabase(mStoragePath);
             session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
             wtx = session.beginNodeWriteTransaction();
             wtx.revertTo(backToRevision);
