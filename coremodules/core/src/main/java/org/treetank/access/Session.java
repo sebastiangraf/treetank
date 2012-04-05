@@ -155,8 +155,8 @@ public final class Session implements ISession {
         INodeReadTrx rtx = null;
         // Create new read transaction.
         rtx =
-            new NodeReadTrx(this, mTransactionIDCounter.incrementAndGet(), new PageReadTrx(
-                this, mLastCommittedUberPage, paramRevisionKey, mFac.getReader()));
+            new NodeReadTrx(this, mTransactionIDCounter.incrementAndGet(), new PageReadTrx(this,
+                mLastCommittedUberPage, paramRevisionKey, mFac.getReader()));
 
         return rtx;
     }
@@ -165,16 +165,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException {
-        return beginNodeWriteTransaction(0, 0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized INodeWriteTrx beginNodeWriteTransaction(final int paramMaxNodeCount,
-        final int paramMaxTime) throws AbsTTException {
+    public synchronized INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException {
         assertAccess(mLastCommittedUberPage.getRevision());
 
         // Make sure not to exceed available number of write transactions.
@@ -194,8 +185,7 @@ public final class Session implements ISession {
                 mLastCommittedUberPage.getRevisionNumber());
 
         // Create new write transaction.
-        final INodeWriteTrx wtx =
-            new NodeWriteTrx(currentID, this, wtxState, paramMaxNodeCount, paramMaxTime);
+        final INodeWriteTrx wtx = new NodeWriteTrx(currentID, this, wtxState);
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(currentID, wtx) != null
@@ -211,8 +201,8 @@ public final class Session implements ISession {
         final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
-        return new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1),
-            writer, mRepresentRevision, mStoreRevision);
+        return new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), writer,
+            mRepresentRevision, mStoreRevision);
     }
 
     /**

@@ -36,8 +36,8 @@ import org.treetank.exception.AbsTTException;
  * 
  * <p>
  * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
- * can then be started from this instance. There can only be one <code>INodeWriteTrx</code> at the
- * time. However, multiple <code>IReadTransactions</code> can coexist concurrently.
+ * can then be started from this instance. There can only be one <code>INodeWriteTrx</code> at the time.
+ * However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
  * 
  */
@@ -71,20 +71,6 @@ public interface ISession {
      * @return INodeWriteTrx instance.
      */
     INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException;
-
-    /**
-     * Begin exclusive read/write transaction with auto commit.
-     * 
-     * @param pMaxNodes
-     *            Count of node modifications after which a commit is issued.
-     * @param pMaxTime
-     *            Time in seconds after which a commit is issued.
-     * @throws AbsTTException
-     *             If can't begin Write Transaction.
-     * @return INodeWriteTrx instance.
-     */
-    INodeWriteTrx beginNodeWriteTransaction(final int pMaxNodes, final int pMaxTime)
-        throws AbsTTException;
 
     /**
      * Safely close session and immediately release all resources. If there are
