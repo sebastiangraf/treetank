@@ -266,12 +266,6 @@ public final class Session implements ISession {
         mReadSemaphore.release();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public synchronized boolean isClosed() {
-        return mClosed;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -280,11 +274,6 @@ public final class Session implements ISession {
         final StringBuilder builder = new StringBuilder();
         builder.append(this.mSessionConfig);
         return builder.toString();
-    }
-
-    @Override
-    public String getUser() {
-        return mSessionConfig.mUser;
     }
 
     protected void setLastCommittedUberPage(final UberPage paramPage) {

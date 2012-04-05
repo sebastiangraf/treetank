@@ -84,18 +84,4 @@ public interface ISession {
      */
     void close() throws AbsTTException;
 
-    /**
-     * Test if session is closed. Needed for check against database for creation
-     * of a new one.
-     * 
-     * @return if session was closed
-     */
-    boolean isClosed();
-
-    /**
-     * Returns user that is bound to the session.
-     * 
-     * @return current session bound user.
-     */
-    String getUser();
 }
