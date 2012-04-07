@@ -18,6 +18,8 @@ scripts					bash scripts for syncing against disy-internal repo.
 pom.xml					Simple pom (yes we do use Maven)
 parent					Location of parent pom
 
+[![Build Status](https://secure.travis-ci.org/disy/treetank.png)](http://travis-ci.org/disy/treetank)
+
 Further information
 -------
 
