@@ -71,12 +71,10 @@
 				<role>Developer</role>
 				<role>Architect</role>
 			</roles>
-			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme/mitglieder/Sebastian-Graf
-			</url>
+			<url>http://www.disy.uni-konstanz.de</url>
 			<organization>University of Konstanz, Distributed Systems Lab
 			</organization>
-			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/
-			</organizationUrl>
+			<organizationUrl>http://www.disy.uni-konstanz.de</organizationUrl>
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
@@ -171,10 +169,10 @@
 			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
-		<site>
+<!--		<site>
 			<id>github</id>
 			<url>gitsite:git@github.com/disy/treetank.git</url>
-		</site>
+		</site>-->
 	</distributionManagement>
 
 </project>
