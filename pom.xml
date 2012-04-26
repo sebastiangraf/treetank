@@ -80,12 +80,12 @@
     </developers>
     <modules>
         <module>coremodules/commons</module>
-<!--        <module>coremodules/core</module>
-        <module>coremodules/core/node</module>
+        <module>coremodules/core</module>
+    <!--    <module>coremodules/core/node</module>
         <module>coremodules/core/io</module>-->
-    <!--    <module>interfacemodules/saxon</module>
+        <module>interfacemodules/saxon</module>
         <module>interfacemodules/jax-rx</module>
-        <module>interfacemodules/xml</module>-->
+        <module>interfacemodules/xml</module>
     </modules>
     <build>
         <plugins>
