@@ -27,6 +27,7 @@
     <packaging>pom</packaging>
     <name>Parent pom for all projects</name>
     <version>1.0.6-SNAPSHOT</version>
+    <url>http://disy.github.com/treetank/</url>
     <repositories>
         <repository>
             <id>disyInternal</id>

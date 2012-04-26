@@ -29,7 +29,7 @@
     <packaging>pom</packaging>
     <name>Treetank</name>
     <version>1.0.3-SNAPSHOT</version>
-    <url>https://github.com/disy/treetank</url>
+    <url>http://disy.github.com/treetank/</url>
     <organization>
         <name>Distributed Systems Group</name>
         <url>http://www.disy.uni-konstanz.de</url>
@@ -81,11 +81,11 @@
     <modules>
         <module>coremodules/commons</module>
         <module>coremodules/core</module>
-        <module>coremodules/core/node</module>
-        <module>coremodules/core/io</module>
-        <module>interfacemodules/saxon</module>
+<!--        <module>coremodules/core/node</module>
+        <module>coremodules/core/io</module>-->
+    <!--    <module>interfacemodules/saxon</module>
         <module>interfacemodules/jax-rx</module>
-        <module>interfacemodules/xml</module>
+        <module>interfacemodules/xml</module>-->
     </modules>
     <build>
         <plugins>
