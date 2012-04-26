@@ -169,8 +169,8 @@
             <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
-        <!-- <site> <id>github</id> <url>gitsite:git@github.com/disy/treetank.git</url> 
-            </site> -->
+<site> <id>github</id> <url>gitsite:git@github.com/disy/treetank.git</url> 
+            </site>
     </distributionManagement>
 
 </project>
