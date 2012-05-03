@@ -27,6 +27,7 @@
     <packaging>pom</packaging>
     <name>Parent pom for all projects</name>
     <version>1.0.6-SNAPSHOT</version>
+    <url>http://disy.github.com/treetank/</url>
     <repositories>
         <repository>
             <id>disyInternal</id>
@@ -165,14 +166,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <!-- <extensions> <extension> <groupId>org.apache.maven.scm</groupId> 
-                <artifactId>maven-scm-provider-gitexe</artifactId> <version>1.3</version> 
-                </extension> <extension> <groupId>org.apache.maven.scm</groupId> <artifactId>maven-scm-manager-plexus</artifactId> 
-                <version>1.3</version> </extension> <extension> <groupId>org.kathrynhuxtable.maven.wagon</groupId> 
-                <artifactId>wagon-gitsite</artifactId> <version>0.4-SNAPSHOT</version> </extension> 
-                </extensions> -->
         </plugins>
-
     </build>
     <dependencies>
         <dependency>
@@ -229,8 +223,8 @@
             <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
-        <!-- <site> <id>github</id> <url>gitsite:git@github.com/disy/treetank.git</url> 
-            </site> -->
+		<site> <id>file</id> <url>file:${project.build.directory}/deploy</url> 
+		            </site>
     </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
