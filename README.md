@@ -1,27 +1,23 @@
-Treetank - Secure Treebased Storage
-=============
+#Treetank - Secure Treebased Storage
 
 Treetank stores data securely by applying different layers on the stored data. Flexible handling of flat as well as tree-based data is supported by a native encoding of the tree-structures ongoing with suitable paging supporting integrity and confidentiality to provide throughout security.
 
 Secure in this context includes integrity-checks, confidentiality with tree-aware key handling, versioning to provide accountability.
 Furthermore, different backends are provided while a binding to different cloud-infrastructures is in progress.
 
-Content
--------
-
-README					this readme file
-LICENSE	 				license file
-coremodules				Bundles containing main treetank functionality
-interfacemodules		Bundles implementing third-party interfaces
-studentmodules			Bundles containing student projects
-scripts					bash scripts for syncing against disy-internal repo.
-pom.xml					Simple pom (yes we do use Maven)
-parent					Location of parent pom
-
 [![Build Status](https://secure.travis-ci.org/disy/treetank.png)](http://travis-ci.org/disy/treetank)
 
-Further information
--------
+##Content
+
+* README:					this readme file
+* LICENSE:	 				license file
+* coremodules:				Bundles containing main treetank functionality
+* interfacemodules:			Bundles implementing third-party interfaces
+* studentmodules:			Bundles containing student projects
+* scripts:					bash scripts for syncing against disy-internal repo.
+* pom.xml:					Simple pom (yes we do use Maven)
+
+##Further information
 
 The documentation so far is accessible under http://treetank.org (pointing to http://disy.github.com/treetank/).
 
@@ -37,14 +33,12 @@ The framework was presented at various conferences and acted as base for multipl
 
 Any questions, just contact sebastian.graf AT uni-konstanz.de
 
-License
--------
+##License
 
 This work is released in the public domain under the BSD 3-clause license
 
 
-Involved People
--------
+##Involved People
 
 Treetank is maintained by:
 

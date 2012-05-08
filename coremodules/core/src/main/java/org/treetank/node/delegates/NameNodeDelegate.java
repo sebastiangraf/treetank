@@ -82,7 +82,7 @@ public class NameNodeDelegate implements INameNode {
     /**
      * Delegate method for getHash.
      * 
-     * @return
+     * @return the hash
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
@@ -102,7 +102,7 @@ public class NameNodeDelegate implements INameNode {
     /**
      * Delegate method for getNodeKey.
      * 
-     * @return
+     * @return the key of the node
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
     public long getNodeKey() {
@@ -112,7 +112,7 @@ public class NameNodeDelegate implements INameNode {
     /**
      * Delegate method for getParentKey.
      * 
-     * @return
+     * @return the key of the parent node
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
@@ -122,7 +122,7 @@ public class NameNodeDelegate implements INameNode {
     /**
      * Delegate method for hasParent.
      * 
-     * @return
+     * @return if the node has a parent
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
@@ -132,7 +132,7 @@ public class NameNodeDelegate implements INameNode {
     /**
      * Delegate method for getTypeKey.
      * 
-     * @return
+     * @return the key of the type
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
@@ -219,10 +219,7 @@ public class NameNodeDelegate implements INameNode {
     }
 
     /**
-     * Delegate method for toString.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         final StringBuilder builder = new StringBuilder();

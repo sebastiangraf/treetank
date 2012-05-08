@@ -36,6 +36,11 @@ package org.treetank.exception;
 public class TTUsageException extends AbsTTException {
 
     /**
+     * Serial because of Serializable
+     */
+    private static final long serialVersionUID = -5499218683388743947L;
+
+    /**
      * Constructor.
      * 
      * @param message

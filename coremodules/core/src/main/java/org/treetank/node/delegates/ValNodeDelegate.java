@@ -63,7 +63,7 @@ public class ValNodeDelegate implements IValNode {
     /**
      * Delegate method for getKind.
      * 
-     * @return
+     * @return the kind of the node
      * @see org.treetank.node.delegates.NodeDelegate#getKind()
      */
     public ENode getKind() {
@@ -73,7 +73,7 @@ public class ValNodeDelegate implements IValNode {
     /**
      * Delegate method for getNodeKey.
      * 
-     * @return
+     * @return the node of the key
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
     public long getNodeKey() {
@@ -93,7 +93,7 @@ public class ValNodeDelegate implements IValNode {
     /**
      * Delegate method for getParentKey.
      * 
-     * @return
+     * @return the key of the parent
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
@@ -113,7 +113,7 @@ public class ValNodeDelegate implements IValNode {
     /**
      * Delegate method for getHash.
      * 
-     * @return
+     * @return the hash
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
@@ -133,7 +133,7 @@ public class ValNodeDelegate implements IValNode {
     /**
      * Delegate method for getTypeKey.
      * 
-     * @return
+     * @return the key of the type
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
@@ -153,7 +153,7 @@ public class ValNodeDelegate implements IValNode {
     /**
      * Delegate method for hasParent.
      * 
-     * @return
+     * @return if the node has a parent
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
@@ -196,10 +196,7 @@ public class ValNodeDelegate implements IValNode {
     }
 
     /**
-     * Delegate method for toString.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         final StringBuilder builder = new StringBuilder();
