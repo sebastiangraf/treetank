@@ -72,7 +72,6 @@ public class NodePage implements IPage {
      * 
      * @param mIn
      *            Input bytes to read page from.
-     * @throws
      */
     protected NodePage(final ITTSource mIn) {
         mDelegate = new PageDelegate(0, mIn.readLong());

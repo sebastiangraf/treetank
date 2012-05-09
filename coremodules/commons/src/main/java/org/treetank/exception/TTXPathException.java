@@ -33,6 +33,11 @@ package org.treetank.exception;
 public class TTXPathException extends AbsTTException {
 
     /**
+     * Serial because of Serializable
+     */
+    private static final long serialVersionUID = 662450904873917701L;
+
+    /**
      * Constructor.
      * 
      * @param paramMessage

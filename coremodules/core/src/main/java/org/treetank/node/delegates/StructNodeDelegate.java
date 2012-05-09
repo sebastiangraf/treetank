@@ -186,7 +186,7 @@ public class StructNodeDelegate implements IStructNode {
     /**
      * Delegate method for getNodeKey.
      * 
-     * @return
+     * @return the key of the node
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
     public long getNodeKey() {
@@ -206,7 +206,7 @@ public class StructNodeDelegate implements IStructNode {
     /**
      * Delegate method for getParentKey.
      * 
-     * @return
+     * @return the key of the parent
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
@@ -226,7 +226,7 @@ public class StructNodeDelegate implements IStructNode {
     /**
      * Delegate method for getHash.
      * 
-     * @return
+     * @return the hash
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
@@ -246,7 +246,7 @@ public class StructNodeDelegate implements IStructNode {
     /**
      * Delegate method for getTypeKey.
      * 
-     * @return
+     * @return the type of the node
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
@@ -266,7 +266,7 @@ public class StructNodeDelegate implements IStructNode {
     /**
      * Delegate method for hasParent.
      * 
-     * @return
+     * @return if the node has a parent
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
