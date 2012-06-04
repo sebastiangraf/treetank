@@ -1,5 +1,4 @@
-Treetank - Secure Treebased Storage
-=============
+#Treetank - Secure Treebased Storage
 
 Treetank stores data securely by applying different layers on the stored data. Flexible handling of flat as well as tree-based data is supported by a native encoding of the tree-structures ongoing with suitable paging supporting integrity and confidentiality to provide throughout security.
 
@@ -8,8 +7,7 @@ Furthermore, different backends are provided while a binding to different cloud-
 
 ![Architectural Overview](images/csg.png)
 
-What components does Treetank consists of?
-------------
+##What components does Treetank consists of?
 
 Treetank consists out of three main components:
 
@@ -17,8 +15,7 @@ Treetank consists out of three main components:
 * The core layer containing the page layer and security measures are located in the coremodules. The corelayer furthermore contains the binding to different backends.
 * Student projects are located in the studentmodules. Note that student projects are mainly well-tested and reviewed but neither feature-complete nor maintained.
 
-What is Treetank ?
-------------
+##What is Treetank ?
 
 Treetank is: 
 
@@ -27,8 +24,7 @@ Treetank is:
 * offering flexible interfaces for storing various data (ranging from blocks to REST-resources)
 * for a university project well-document and tested
 
-Publications:
--------------
+##Publications:
 
 Treetank acted as a base in various thesis and papers namely:
 
@@ -40,14 +36,12 @@ Treetank acted as a base in various thesis and papers namely:
 * JAX-RX - Unified REST Access to XML Resources; TechReport'10: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-120511
 * Distributing XML with focus on parallel evaluation; DBISP2P'08: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-84487
 
-License
--------
+##License
 
 This work is released in the public domain under the BSD 3-clause license
 
 
-Involved People
--------
+##Involved People
 
 Treetank is maintained by:
 
