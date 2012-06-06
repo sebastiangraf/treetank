@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
+import org.treetank.api.ISession;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
@@ -79,7 +80,7 @@ public class PageReadTrx implements IPageReadTrx {
     private final Cache<Long, NodePageContainer> mCache;
 
     /** Configuration of the session */
-    protected final Session mSession;
+    protected final ISession mSession;
 
     /** Boolean for determinc close. */
     private boolean mClose;
@@ -100,7 +101,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected PageReadTrx(final Session pSession, final UberPage pUberpage, final long pRevision,
+    protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevision,
         final IReader pReader) throws TTIOException {
         mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
         mSession = pSession;
@@ -138,10 +139,10 @@ public class PageReadTrx implements IPageReadTrx {
             if (revs.length == 0) {
                 return null;
             }
-            final int mileStoneRevision = mSession.mResourceConfig.mRevisionsToRestore;
+            final int mileStoneRevision = mSession.getConfig().mRevisionsToRestore;
 
             // Build up the complete page.
-            final ERevisioning revision = mSession.mResourceConfig.mRevision;
+            final ERevisioning revision = mSession.getConfig().mRevision;
             final NodePage completePage = revision.combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
@@ -198,7 +199,7 @@ public class PageReadTrx implements IPageReadTrx {
      *             if the closing to the persistent storage fails.
      */
     public void close() throws TTIOException {
-        mSession.deregisterTrx(this);
+        mSession.deregisterPageTrx(this);
         mPageReader.close();
         mCache.invalidateAll();
         mClose = true;
@@ -276,7 +277,7 @@ public class PageReadTrx implements IPageReadTrx {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == mSession.mResourceConfig.mRevisionsToRestore) {
+                if (refs.size() == mSession.getConfig().mRevisionsToRestore) {
                     break;
                 }
 
@@ -400,9 +401,8 @@ public class PageReadTrx implements IPageReadTrx {
      */
     @Override
     public String toString() {
-        return new StringBuilder("SessionConfiguration: ").append(mSession.mSessionConfig).append(
-            "\nPageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage).append(
-            "\nRevRootPage: ").append(mRootPage).toString();
+        return new StringBuilder("PageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage)
+            .append("\nRevRootPage: ").append(mRootPage).toString();
     }
 
     /**

@@ -43,6 +43,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
+import org.treetank.access.NodeReadTrx;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
@@ -147,7 +149,7 @@ public class WorkerHelperTest {
         final IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
 
         final InputStream inputStream = new ByteArrayInputStream("<testNode/>".getBytes());
 
@@ -167,7 +169,7 @@ public class WorkerHelperTest {
     public void testClose() throws AbsTTException {
         IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         ISession session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
 
         WorkerHelper.closeWTX(false, wtx, session, database);
 
@@ -175,7 +177,8 @@ public class WorkerHelperTest {
 
         database = Database.openDatabase(DBFILE.getParentFile());
         session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
-        final INodeReadTrx rtx = session.beginNodeReadTransaction();
+        final INodeReadTrx rtx =
+            new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
         WorkerHelper.closeRTX(rtx, session, database);
 
         rtx.moveTo(11);

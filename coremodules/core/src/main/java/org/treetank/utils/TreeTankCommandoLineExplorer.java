@@ -34,12 +34,14 @@ import java.io.File;
 import java.io.InputStreamReader;
 
 import org.treetank.access.Database;
+import org.treetank.access.NodeReadTrx;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.IPageReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.IStructNode;
@@ -88,7 +90,8 @@ public final class TreeTankCommandoLineExplorer {
     public static void main(final String[] args) throws Exception {
         IDatabase database = null;
         ISession session = null;
-        INodeReadTrx rtx = null;
+        INodeReadTrx nRtx = null;
+        IPageReadTrx pRtx = null;
         if (args.length > 0) {
 
             long revision = 0;
@@ -103,10 +106,11 @@ public final class TreeTankCommandoLineExplorer {
             database.createResource(new ResourceConfiguration.Builder("TMP", config).build());
             session = database.getSession(new SessionConfiguration.Builder("TMP").build());
             if (revision != 0) {
-                rtx = session.beginNodeWriteTransaction();
+                pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
             } else {
-                rtx = session.beginNodeReadTransaction(revision);
+                pRtx = session.beginPageReadTransaction(revision);
             }
+            nRtx = new NodeReadTrx(pRtx);
         } else {
             System.out.println("Usage: java TreeTankCommandoLineExplorer \"tnk-file\" [revision] "
                 + "(if revision not given, explorer works in write mode");
@@ -125,8 +129,8 @@ public final class TreeTankCommandoLineExplorer {
                 final Command command = Command.toCommand(line);
                 switch (command) {
                 case LOGIN:
-                    if (rtx != null) {
-                        rtx.close();
+                    if (nRtx != null) {
+                        nRtx.close();
                     }
                     if (session != null) {
                         session.close();
@@ -135,25 +139,26 @@ public final class TreeTankCommandoLineExplorer {
                     if (file != null) {
                         database = Database.openDatabase(file);
                         session = database.getSession(new SessionConfiguration.Builder("TMP").build());
-                        rtx = session.beginNodeReadTransaction();
-                        System.out.println(command.executeCommand(rtx));
+                        pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
+                        nRtx = new NodeReadTrx(pRtx);
+                        System.out.println(command.executeCommand(nRtx));
                     } else {
                         System.out.println("Invalid path to tt-file! Please use other!");
                     }
                     break;
                 case LOGOUT:
-                    System.out.println(command.executeCommand(rtx));
-                    if (rtx != null) {
-                        rtx.close();
+                    System.out.println(command.executeCommand(nRtx));
+                    if (nRtx != null) {
+                        nRtx.close();
                     }
                     if (session != null) {
                         session.close();
                     }
                     break;
                 case EXIT:
-                    System.out.println(command.executeCommand(rtx));
-                    if (rtx != null) {
-                        rtx.close();
+                    System.out.println(command.executeCommand(nRtx));
+                    if (nRtx != null) {
+                        nRtx.close();
                     }
                     if (session != null) {
                         session.close();
@@ -161,19 +166,19 @@ public final class TreeTankCommandoLineExplorer {
                     System.exit(1);
                     break;
                 default:
-                    if (session == null || rtx == null) {
+                    if (session == null || nRtx == null) {
                         System.out.println(new StringBuilder("No database loaded!, Please use ").append(
                             Command.LOGIN.mCommand).append(" to load tt-database").toString());
                     } else {
-                        System.out.println(command.executeCommand(rtx));
+                        System.out.println(command.executeCommand(nRtx));
                     }
                     System.out.print(">");
                 }
             }
 
         } catch (final Exception e) {
-            if (rtx != null) {
-                rtx.close();
+            if (nRtx != null) {
+                nRtx.close();
             }
             if (session != null) {
                 session.close();
@@ -348,12 +353,10 @@ public final class TreeTankCommandoLineExplorer {
 
                         if (mParameter.equals("commit")) {
                             wtx.commit();
-                            builder.append(" operation: commit succeed. New revision-number is ").append(
-                                wtx.getRevisionNumber());
+                            builder.append(" operation: commit succeed.");
                         } else if (mParameter.equals("abort")) {
                             wtx.abort();
-                            builder.append(" operation: abort succeed. Old revision-number is ").append(
-                                wtx.getRevisionNumber());
+                            builder.append(" operation: abort succeed. ");
                         }
 
                     } else {

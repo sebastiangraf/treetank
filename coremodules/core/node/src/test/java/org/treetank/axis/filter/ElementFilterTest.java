@@ -55,7 +55,7 @@ public class ElementFilterTest {
     @Test
     public void testIFilterConvetions() throws AbsTTException {
         // Build simple test tree.
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(0L);
         AbsFilterTest.testIFilterConventions(new ElementFilter(rtx), false);

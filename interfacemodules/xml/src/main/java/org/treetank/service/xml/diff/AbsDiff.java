@@ -31,6 +31,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
@@ -103,8 +104,8 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         mDiffKind = paramBuilder.mKind;
         synchronized (paramBuilder.mSession) {
-            mNewRtx = paramBuilder.mSession.beginNodeReadTransaction(paramBuilder.mNewRev);
-            mOldRtx = paramBuilder.mSession.beginNodeReadTransaction(paramBuilder.mOldRev);
+            mNewRtx = new NodeReadTrx(paramBuilder.mSession.beginPageReadTransaction(paramBuilder.mNewRev));
+            mOldRtx = new NodeReadTrx(paramBuilder.mSession.beginPageReadTransaction(paramBuilder.mOldRev));
             mHashKind = HashKind.Postorder;
         }
         mNewRtx.moveTo(paramBuilder.mKey);
@@ -276,8 +277,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            determines if a diff should be fired
      * @return kind of difference
      */
-    EDiff diff(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx,
-        final DepthCounter paramDepth, final EFireDiff paramFireDiff) {
+    EDiff diff(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx, final DepthCounter paramDepth,
+        final EFireDiff paramFireDiff) {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         assert paramDepth != null;
@@ -382,8 +383,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            transaction cursors
      * @return kind of diff
      */
-    private EDiff diffAlgorithm(final INodeReadTrx paramNewRtx,
-        final INodeReadTrx paramOldRtx, final DepthCounter paramDepth) {
+    private EDiff diffAlgorithm(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx,
+        final DepthCounter paramDepth) {
         EDiff diff = null;
 
         // Check if node has been deleted.
@@ -454,8 +455,7 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            {@link IReadTransaction} on old revision
      * @return true if nodes are "equal", otherwise false
      */
-    abstract boolean
-        checkNodes(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx);
+    abstract boolean checkNodes(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx);
 
     /**
      * Check for an update of a node.

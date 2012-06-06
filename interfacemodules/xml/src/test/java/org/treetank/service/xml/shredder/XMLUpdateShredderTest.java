@@ -43,6 +43,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -211,7 +212,6 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final File folder = new File(FOLDER);
-        int i = 1;
         final File[] filesList = folder.listFiles();
         final List<File> list = new ArrayList<File>();
         for (final File file : filesList) {
@@ -245,7 +245,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
-                final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+                final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
                 if (first) {
                     final XMLShredder shredder =
                         new XMLShredder(wtx, XMLShredder.createFileReader(file),
@@ -258,9 +258,6 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                             EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
                     shredder.call();
                 }
-                assertEquals(i, wtx.getRevisionNumber());
-
-                i++;
 
                 final OutputStream out = new ByteArrayOutputStream();
                 final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();

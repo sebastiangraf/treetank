@@ -59,7 +59,7 @@ public class NestedAxisTest {
 
     @Test
     public void testNestedAxisTest() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveTo(ROOT_NODE);
@@ -83,7 +83,7 @@ public class NestedAxisTest {
 
     @Test
     public void testNestedAxisTest2() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveTo(ROOT_NODE);
@@ -108,7 +108,7 @@ public class NestedAxisTest {
 
     @Test
     public void testNestedAxisTest3() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         // Find desceFndants starting from nodeKey 0L (root).
         rtx.moveTo(ROOT_NODE);

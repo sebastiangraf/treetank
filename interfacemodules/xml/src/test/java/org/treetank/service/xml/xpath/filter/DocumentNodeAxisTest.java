@@ -57,29 +57,29 @@ public class DocumentNodeAxisTest {
     @Test
     public void testIterate() throws AbsTTException {
 
-        holder.getRtx().moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
+        holder.getNRtx().moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 
-        holder.getRtx().moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
+        holder.getNRtx().moveTo(5L);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 
-        holder.getRtx().moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
+        holder.getNRtx().moveTo(9L);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 
-        holder.getRtx().moveTo(9L);
-        holder.getRtx().moveToAttribute(0);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
+        holder.getNRtx().moveTo(9L);
+        holder.getNRtx().moveToAttribute(0);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 
-        holder.getRtx().moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getRtx()), new long[] {
+        holder.getNRtx().moveTo(13L);
+        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 

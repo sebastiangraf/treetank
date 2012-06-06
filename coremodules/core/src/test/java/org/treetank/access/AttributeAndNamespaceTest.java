@@ -56,25 +56,25 @@ public class AttributeAndNamespaceTest {
 
     @Test
     public void testAttribute() throws AbsTTException {
-        holder.getRtx().moveTo(1L);
-        assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getAttributeCount());
-        holder.getRtx().moveToAttribute(0);
-        assertEquals("i", holder.getRtx().getQNameOfCurrentNode().getLocalPart());
+        holder.getNRtx().moveTo(1L);
+        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
+        holder.getNRtx().moveToAttribute(0);
+        assertEquals("i", holder.getNRtx().getQNameOfCurrentNode().getLocalPart());
 
-        holder.getRtx().moveTo(9L);
-        assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getAttributeCount());
-        holder.getRtx().moveToAttribute(0);
-        assertEquals("p:x", new StringBuilder(holder.getRtx().getQNameOfCurrentNode().getPrefix())
-            .append(":").append(holder.getRtx().getQNameOfCurrentNode().getLocalPart()).toString());
-        assertEquals("ns", holder.getRtx().getQNameOfCurrentNode().getNamespaceURI());
+        holder.getNRtx().moveTo(9L);
+        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
+        holder.getNRtx().moveToAttribute(0);
+        assertEquals("p:x", new StringBuilder(holder.getNRtx().getQNameOfCurrentNode().getPrefix())
+            .append(":").append(holder.getNRtx().getQNameOfCurrentNode().getLocalPart()).toString());
+        assertEquals("ns", holder.getNRtx().getQNameOfCurrentNode().getNamespaceURI());
     }
 
     @Test
     public void testNamespace() throws AbsTTException {
-        holder.getRtx().moveTo(1L);
-        assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getNamespaceCount());
-        holder.getRtx().moveToNamespace(0);
-        assertEquals("p", holder.getRtx().getQNameOfCurrentNode().getLocalPart());
-        assertEquals("ns", holder.getRtx().getQNameOfCurrentNode().getNamespaceURI());
+        holder.getNRtx().moveTo(1L);
+        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getNamespaceCount());
+        holder.getNRtx().moveToNamespace(0);
+        assertEquals("p", holder.getNRtx().getQNameOfCurrentNode().getLocalPart());
+        assertEquals("ns", holder.getNRtx().getQNameOfCurrentNode().getNamespaceURI());
     }
 }

@@ -56,7 +56,7 @@ public class DescendantAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
@@ -77,7 +77,7 @@ public class DescendantAxisTest {
 
     @Test
     public void testIterateIncludingSelf() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
         rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true),
                 new long[] { ROOT_NODE, 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L,

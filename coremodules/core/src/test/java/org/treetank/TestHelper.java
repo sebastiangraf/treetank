@@ -41,12 +41,14 @@ import java.util.Random;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.access.Database;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AttributeNode;
@@ -280,10 +282,11 @@ public final class TestHelper {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.config).build());
         final ISession session = database.getSession(new SessionConfiguration.Builder(RESOURCE).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
+        final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
+        final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx);
+        DocumentCreater.create(nWtx);
+        nWtx.commit();
+        nWtx.close();
         session.close();
     }
 }

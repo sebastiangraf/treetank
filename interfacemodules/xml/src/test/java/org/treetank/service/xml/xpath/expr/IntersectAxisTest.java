@@ -62,35 +62,35 @@ public class IntersectAxisTest {
     @Test
     public void testIntersect() throws AbsTTException {
 
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::node() intersect b"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::node() intersect b"),
             new long[] {
                 5L, 9L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node() intersect b intersect child::node()[@p:x]"), new long[] {
             9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node() intersect child::node()[attribute::p:x]"), new long[] {
             9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node()/parent::node() intersect self::node()"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//node() intersect //text()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//node() intersect //text()"),
             new long[] {
                 4L, 8L, 13L, 6L, 12L
             });
 
-        holder.getRtx().moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        holder.getNRtx().moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "b/preceding::node() intersect text()"), new long[] {
             4L, 8L
         });

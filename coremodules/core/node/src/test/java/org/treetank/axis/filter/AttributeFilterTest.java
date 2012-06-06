@@ -54,7 +54,7 @@ public class AttributeFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        final INodeReadTrx wtx = holder.getRtx();
+        final INodeReadTrx wtx = holder.getNRtx();
         wtx.moveTo(9L);
         AbsFilterTest.testIFilterConventions(new AttributeFilter(wtx), false);
 

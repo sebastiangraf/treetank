@@ -66,7 +66,7 @@ public class ForAxisTest {
 
     @Test
     public void testFor() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(1L);
 

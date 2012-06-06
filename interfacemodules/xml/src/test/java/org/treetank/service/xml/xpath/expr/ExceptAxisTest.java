@@ -62,28 +62,28 @@ public class ExceptAxisTest {
     @Test
     public void testExcept() throws AbsTTException {
 
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::node() except b"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::node() except b"),
             new long[] {
                 4L, 8L, 13L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node() except child::node()[attribute::p:x]"), new long[] {
             4L, 5L, 8L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node()/parent::node() except self::node()"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//node() except //text()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//node() except //text()"),
             new long[] {
                 1L, 5L, 9L, 7L, 11L
             });
 
-        holder.getRtx().moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/preceding::node() except text()"),
+        holder.getNRtx().moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/preceding::node() except text()"),
             new long[] {
                 7L, 6L, 5L
             });

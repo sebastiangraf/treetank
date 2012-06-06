@@ -68,13 +68,13 @@ public class CastableExprTest {
     @Test
     public void testCastableExpr() throws AbsTTException {
 
-        final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "1 castable as xs:decimal");
+        final AbsAxis axis1 = new XPathAxis(holder.getNRtx(), "1 castable as xs:decimal");
         assertEquals(true, axis1.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis1.getNode().getTypeKey());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "10.0 castable as xs:anyAtomicType");
+        final AbsAxis axis2 = new XPathAxis(holder.getNRtx(), "10.0 castable as xs:anyAtomicType");
         try {
             assertEquals(true, axis2.hasNext());
         } catch (XPathError e) {
@@ -91,7 +91,7 @@ public class CastableExprTest {
         // assertEquals(true, holder.getRtx().getValueAsBoolean());
         // assertEquals(false, axis3.hasNext());
 
-        final AbsAxis axis4 = new XPathAxis(holder.getRtx(), "\"hello\" castable as xs:string");
+        final AbsAxis axis4 = new XPathAxis(holder.getNRtx(), "\"hello\" castable as xs:string");
         assertEquals(true, axis4.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis4.getNode().getTypeKey());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis4.getNode()).getRawValue())));

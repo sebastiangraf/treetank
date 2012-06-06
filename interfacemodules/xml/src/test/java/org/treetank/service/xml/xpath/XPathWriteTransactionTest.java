@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -75,7 +76,7 @@ public final class XPathWriteTransactionTest {
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.getConfig()).build());
         session = database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        wtx = session.beginNodeWriteTransaction();
+        wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
     }
 
     @Test

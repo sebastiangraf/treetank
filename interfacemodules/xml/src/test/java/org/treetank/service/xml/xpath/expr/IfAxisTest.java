@@ -62,19 +62,19 @@ public class IfAxisTest {
     @Test
     public void testIf() throws AbsTTException {
 
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "if (text()) then . else child::node()"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "if (node()) then . else child::node()"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "if (processing-instruction()) then . else child::node()"), new long[] {
             4L, 5L, 8L, 9L, 13L
         });

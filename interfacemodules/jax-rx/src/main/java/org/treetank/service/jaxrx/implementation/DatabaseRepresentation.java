@@ -49,12 +49,15 @@ import javax.ws.rs.core.StreamingOutput;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
+import org.treetank.access.NodeReadTrx;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.AbsTTException;
@@ -290,6 +293,7 @@ public class DatabaseRepresentation {
     public final boolean shred(final InputStream xmlInput, final String resource) throws AbsTTException {
         boolean allOk;
         INodeWriteTrx wtx = null;
+        IPageWriteTrx pWtx = null;
         IDatabase database = null;
         ISession session = null;
         boolean abort = false;
@@ -305,7 +309,8 @@ public class DatabaseRepresentation {
             database = Database.openDatabase(dbConf.mFile);
             database.createResource(resConf);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
-            wtx = session.beginNodeWriteTransaction();
+            pWtx = session.beginPageWriteTransaction();
+            wtx = new NodeWriteTrx(session, pWtx);
             wtx.moveTo(ROOT_NODE);
             final XMLShredder shredder =
                 new XMLShredder(wtx, RESTXMLShredder.createReader(xmlInput), EShredderInsert.ADDASFIRSTCHILD);
@@ -376,17 +381,15 @@ public class DatabaseRepresentation {
         long lastRevision;
         if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
             IDatabase database = Database.openDatabase(mStoragePath);
-            INodeReadTrx rtx = null;
             ISession session = null;
             try {
                 session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
-                rtx = session.beginNodeReadTransaction();
-                lastRevision = rtx.getRevisionNumber();
-
+                lastRevision = session.getMostRecentVersion();
             } catch (final Exception globExcep) {
                 throw new JaxRxException(globExcep);
             } finally {
-                WorkerHelper.closeRTX(rtx, session, database);
+                session.close();
+                database.close();
             }
         } else {
             throw new JaxRxException(404, "Resource not found");
@@ -448,7 +451,7 @@ public class DatabaseRepresentation {
                 session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
 
                 // get highest rest-id from given revision 1
-                rtx = session.beginNodeReadTransaction(revision1);
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision1));
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
@@ -462,7 +465,7 @@ public class DatabaseRepresentation {
                 rtx.close();
 
                 // get highest rest-id from given revision 2
-                rtx = session.beginNodeReadTransaction(revision2);
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision2));
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
@@ -487,7 +490,7 @@ public class DatabaseRepresentation {
                 rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
-                rtx = session.beginNodeReadTransaction(revision1);
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision1));
 
                 // linked list for holding unique restids from revision 1
                 final List<Long> restIdsRev1New = new LinkedList<Long>();
@@ -514,7 +517,7 @@ public class DatabaseRepresentation {
                  * Shred modified restids from revision 2 to xml fragment Just
                  * modifications done by post commands
                  */
-                rtx = session.beginNodeReadTransaction(revision2);
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision2));
 
                 for (Long nodeKey : modificRestids) {
                     rtx.moveTo(nodeKey);
@@ -527,7 +530,7 @@ public class DatabaseRepresentation {
                  * Shred modified restids from revision 1 to xml fragment Just
                  * modifications done by put and deletes
                  */
-                rtx = session.beginNodeReadTransaction(revision1);
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision1));
                 for (Long nodeKey : restIdsRev1New) {
                     rtx.moveTo(nodeKey);
                     WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision1).call();
@@ -618,7 +621,7 @@ public class DatabaseRepresentation {
         try {
             database = Database.openDatabase(mStoragePath);
             session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
-            wtx = session.beginNodeWriteTransaction();
+            wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
             wtx.revertTo(backToRevision);
             wtx.commit();
         } catch (final AbsTTException exce) {

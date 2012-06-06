@@ -54,7 +54,7 @@ public class FollowingSiblingAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
         rtx.moveTo(9L);
         AbsAxisTest.testIAxisConventions(new FollowingSiblingAxis(rtx),
                 new long[] { 13L });

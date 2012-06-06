@@ -64,32 +64,32 @@ public class VarRefExprTest {
     @Test
     public void testEveryExpr() throws AbsTTException {
 
-        final AbsAxis axis = new XPathAxis(holder.getRtx(), "for $a in b return $a");
+        final AbsAxis axis = new XPathAxis(holder.getNRtx(), "for $a in b return $a");
 
-        final VariableAxis variable = new VariableAxis(holder.getRtx(), axis);
+        final VariableAxis variable = new VariableAxis(holder.getNRtx(), axis);
 
-        final VarRefExpr axis1 = new VarRefExpr(holder.getRtx(), variable);
+        final VarRefExpr axis1 = new VarRefExpr(holder.getNRtx(), variable);
         // assertEquals(false, axis1.hasNext());
         axis1.update(5L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(5L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(5L, holder.getNRtx().getNode().getNodeKey());
         axis1.update(13L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(13L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(13L, holder.getNRtx().getNode().getNodeKey());
         axis1.update(1L);
         assertEquals(true, axis1.hasNext());
-        assertEquals(1L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(1L, holder.getNRtx().getNode().getNodeKey());
         assertEquals(false, axis1.hasNext());
 
-        final VarRefExpr axis2 = new VarRefExpr(holder.getRtx(), variable);
+        final VarRefExpr axis2 = new VarRefExpr(holder.getNRtx(), variable);
         // assertEquals(false, axis2.hasNext());
         axis2.update(13L);
         assertEquals(true, axis2.hasNext());
-        assertEquals(13L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(13L, holder.getNRtx().getNode().getNodeKey());
         assertEquals(false, axis2.hasNext());
         axis2.update(12L);
         assertEquals(true, axis2.hasNext());
-        assertEquals(12L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(12L, holder.getNRtx().getNode().getNodeKey());
         assertEquals(false, axis2.hasNext());
 
     }

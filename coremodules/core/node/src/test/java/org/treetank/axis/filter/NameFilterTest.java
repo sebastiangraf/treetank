@@ -54,7 +54,7 @@ public class NameFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(9L);
         AbsFilterTest.testIFilterConventions(new NameFilter(rtx, "b"), true);

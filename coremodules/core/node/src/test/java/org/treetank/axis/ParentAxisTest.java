@@ -54,7 +54,7 @@ public class ParentAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(5L);
         AbsAxisTest

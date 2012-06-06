@@ -30,7 +30,6 @@ package org.treetank.api;
 import javax.xml.namespace.QName;
 
 import org.treetank.exception.AbsTTException;
-import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
 
 /**
@@ -38,23 +37,6 @@ import org.treetank.node.interfaces.INode;
  */
 public interface INodeReadTrx {
 
-    /**
-     * What is the revision number of this transaction?
-     * 
-     * @throws TTIOException
-     *             if can't get Max Node Key.
-     * @return Immutable revision number of this INodeReadTrx.
-     */
-    long getRevisionNumber() throws TTIOException;
-
-    /**
-     * Getting the maximum nodekey avaliable in this revision.
-     * 
-     * @throws TTIOException
-     *             if can't get Max Node Key.
-     * @return the maximum nodekey
-     */
-    long getMaxNodeKey() throws TTIOException;
 
     // --- Node Selectors
     // --------------------------------------------------------

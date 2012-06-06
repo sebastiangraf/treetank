@@ -50,6 +50,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
+import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
@@ -86,7 +87,9 @@ public class StAXSerializerTest {
             final XMLSerializer xmlSerializer = builder.build();
             xmlSerializer.call();
 
-            final INodeReadTrx rtx = holder.getSession().beginNodeReadTransaction();
+            final INodeReadTrx rtx =
+                new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+                    holder.getSession().getMostRecentVersion()));
             StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
             final StringBuilder strBuilder = new StringBuilder();
             boolean isEmptyElement = false;
@@ -126,7 +129,7 @@ public class StAXSerializerTest {
 
             // Check getElementText().
             // ========================================================
-            holder.getRtx().moveTo(ROOT_NODE);
+            holder.getNRtx().moveTo(ROOT_NODE);
             serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
             String elemText = null;
 

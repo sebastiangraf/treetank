@@ -54,7 +54,7 @@ public class ValueFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
         rtx.moveTo(4L);
         AbsFilterTest.testIFilterConventions(new ValueFilter(rtx, "oops1"),
                 true);

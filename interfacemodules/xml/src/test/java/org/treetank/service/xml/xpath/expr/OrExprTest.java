@@ -67,30 +67,30 @@ public class OrExprTest {
     @Test
     public void testOr() throws AbsTTException {
 
-        long iTrue = AbsAxis.addAtomicToItemList(holder.getRtx(), new AtomicValue(true));
-        long iFalse = AbsAxis.addAtomicToItemList(holder.getRtx(), new AtomicValue(false));
+        long iTrue = AbsAxis.addAtomicToItemList(holder.getNRtx(), new AtomicValue(true));
+        long iFalse = AbsAxis.addAtomicToItemList(holder.getNRtx(), new AtomicValue(false));
 
-        AbsAxis trueLit1 = new LiteralExpr(holder.getRtx(), iTrue);
-        AbsAxis trueLit2 = new LiteralExpr(holder.getRtx(), iTrue);
-        AbsAxis falseLit1 = new LiteralExpr(holder.getRtx(), iFalse);
-        AbsAxis falseLit2 = new LiteralExpr(holder.getRtx(), iFalse);
+        AbsAxis trueLit1 = new LiteralExpr(holder.getNRtx(), iTrue);
+        AbsAxis trueLit2 = new LiteralExpr(holder.getNRtx(), iTrue);
+        AbsAxis falseLit1 = new LiteralExpr(holder.getNRtx(), iFalse);
+        AbsAxis falseLit2 = new LiteralExpr(holder.getNRtx(), iFalse);
 
-        AbsAxis axis1 = new OrExpr(holder.getRtx(), trueLit1, trueLit2);
+        AbsAxis axis1 = new OrExpr(holder.getNRtx(), trueLit1, trueLit2);
         assertEquals(true, axis1.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
-        AbsAxis axis2 = new OrExpr(holder.getRtx(), trueLit1, falseLit1);
+        AbsAxis axis2 = new OrExpr(holder.getNRtx(), trueLit1, falseLit1);
         assertEquals(true, axis2.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis2.getNode()).getRawValue())));
         assertEquals(false, axis2.hasNext());
 
-        AbsAxis axis3 = new OrExpr(holder.getRtx(), falseLit1, trueLit1);
+        AbsAxis axis3 = new OrExpr(holder.getNRtx(), falseLit1, trueLit1);
         assertEquals(true, axis3.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis3.getNode()).getRawValue())));
         assertEquals(false, axis3.hasNext());
 
-        AbsAxis axis4 = new OrExpr(holder.getRtx(), falseLit1, falseLit2);
+        AbsAxis axis4 = new OrExpr(holder.getNRtx(), falseLit1, falseLit2);
         assertEquals(true, axis4.hasNext());
         assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis4.getNode()).getRawValue())));
         assertEquals(false, axis4.hasNext());
@@ -99,29 +99,29 @@ public class OrExprTest {
     @Test
     public void testOrQuery() throws AbsTTException {
 
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "text() or node()");
+        final AbsAxis axis1 = new XPathAxis(holder.getNRtx(), "text() or node()");
         assertEquals(true, axis1.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "comment() or node()");
+        final AbsAxis axis2 = new XPathAxis(holder.getNRtx(), "comment() or node()");
         assertEquals(true, axis2.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis2.getNode()).getRawValue())));
         assertEquals(false, axis2.hasNext());
 
-        final AbsAxis axis3 = new XPathAxis(holder.getRtx(), "1 eq 1 or 2 eq 2");
+        final AbsAxis axis3 = new XPathAxis(holder.getNRtx(), "1 eq 1 or 2 eq 2");
         assertEquals(true, axis3.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis3.getNode()).getRawValue())));
         assertEquals(false, axis3.hasNext());
 
-        final AbsAxis axis4 = new XPathAxis(holder.getRtx(), "1 eq 1 or 2 eq 3");
+        final AbsAxis axis4 = new XPathAxis(holder.getNRtx(), "1 eq 1 or 2 eq 3");
         assertEquals(true, axis4.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis4.getNode()).getRawValue())));
         assertEquals(false, axis4.hasNext());
 
-        final AbsAxis axis5 = new XPathAxis(holder.getRtx(), "1 eq 2 or (3 idiv 0 = 1)");
+        final AbsAxis axis5 = new XPathAxis(holder.getNRtx(), "1 eq 2 or (3 idiv 0 = 1)");
         try {
             assertEquals(true, axis5.hasNext());
             assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis5.getNode()).getRawValue())));
@@ -131,7 +131,7 @@ public class OrExprTest {
             assertEquals("err:FOAR0001: Division by zero.", e.getMessage());
         }
 
-        final AbsAxis axis6 = new XPathAxis(holder.getRtx(), "1 eq 1 or (3 idiv 0 = 1)");
+        final AbsAxis axis6 = new XPathAxis(holder.getNRtx(), "1 eq 1 or (3 idiv 0 = 1)");
         assertEquals(true, axis6.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis6.getNode()).getRawValue())));
 

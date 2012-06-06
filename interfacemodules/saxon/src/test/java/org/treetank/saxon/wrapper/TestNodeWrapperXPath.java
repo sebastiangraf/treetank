@@ -53,6 +53,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
+import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
@@ -157,14 +158,14 @@ public final class TestNodeWrapperXPath {
                 for (int j = 0; j < test.size(); j++) {
                     final INode item = test.get(j);
 
-                    mHolder.getRtx().moveTo(item.getNodeKey());
+                    mHolder.getNRtx().moveTo(item.getNodeKey());
 
-                    final QName qName = mHolder.getRtx().getQNameOfCurrentNode();
+                    final QName qName = mHolder.getNRtx().getQNameOfCurrentNode();
 
-                    if (mHolder.getRtx().getNode().getKind() == ENode.ELEMENT_KIND) {
+                    if (mHolder.getNRtx().getNode().getKind() == ENode.ELEMENT_KIND) {
                         assertEquals(expRes[j], qName.getPrefix() + ":" + qName.getLocalPart());
-                    } else if (mHolder.getRtx().getNode().getKind() == ENode.TEXT_KIND) {
-                        assertEquals(expRes[j], mHolder.getRtx().getValueOfCurrentNode());
+                    } else if (mHolder.getNRtx().getNode().getKind() == ENode.TEXT_KIND) {
+                        assertEquals(expRes[j], mHolder.getNRtx().getValueOfCurrentNode());
                     }
 
                 }
@@ -373,7 +374,9 @@ public final class TestNodeWrapperXPath {
         final ArrayList<INode> result = (ArrayList<INode>)findLine.evaluate(doc, XPathConstants.NODESET);
         assertNotNull(result);
 
-        final INodeReadTrx rtx = mHolder.getSession().beginNodeReadTransaction();
+        final INodeReadTrx rtx =
+            new NodeReadTrx(mHolder.getSession().beginPageReadTransaction(
+                mHolder.getSession().getMostRecentVersion()));
         rtx.moveTo(result.get(0).getNodeKey());
         assertEquals("oops1", rtx.getValueOfCurrentNode());
         rtx.moveTo(result.get(1).getNodeKey());
@@ -423,7 +426,9 @@ public final class TestNodeWrapperXPath {
         assertEquals(5, result.get(0).getNodeKey());
         assertEquals(9, result.get(1).getNodeKey());
 
-        final INodeReadTrx rtx = mHolder.getSession().beginNodeReadTransaction();
+        final INodeReadTrx rtx =
+            new NodeReadTrx(mHolder.getSession().beginPageReadTransaction(
+                mHolder.getSession().getMostRecentVersion()));
         rtx.moveTo(result.get(0).getNodeKey());
         assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
 

@@ -64,17 +64,17 @@ public class CompAxisTest {
     @Test
     public void testComp() throws AbsTTException {
 
-        final AbsAxis axis1 = new XPathAxis(holder.getRtx(), "1.0 = 1.0");
+        final AbsAxis axis1 = new XPathAxis(holder.getNRtx(), "1.0 = 1.0");
         assertEquals(true, axis1.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new XPathAxis(holder.getRtx(), "(1, 2, 3) < (2, 3)");
+        final AbsAxis axis2 = new XPathAxis(holder.getNRtx(), "(1, 2, 3) < (2, 3)");
         assertEquals(true, axis2.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis2.getNode()).getRawValue())));
         assertEquals(false, axis2.hasNext());
 
-        final AbsAxis axis3 = new XPathAxis(holder.getRtx(), "(1, 2, 3) > (3, 4)");
+        final AbsAxis axis3 = new XPathAxis(holder.getNRtx(), "(1, 2, 3) > (3, 4)");
         assertEquals(true, axis3.hasNext());
         assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis3.getNode()).getRawValue())));
         assertEquals(false, axis3.hasNext());

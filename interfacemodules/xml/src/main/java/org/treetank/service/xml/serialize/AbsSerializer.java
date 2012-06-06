@@ -30,6 +30,7 @@ package org.treetank.service.xml.serialize;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
+import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
@@ -98,15 +99,11 @@ abstract class AbsSerializer implements Callable<Void> {
         emitStartDocument();
 
         long[] versionsToUse;
-        INodeReadTrx rtx = mSession.beginNodeReadTransaction();
-        rtx.moveTo(mNodeKey);
-        final long lastRevisionNumber = rtx.getRevisionNumber();
-        rtx.close();
 
         // if there is one negative number in there, serialize all versions
         if (mVersions.length == 0) {
             versionsToUse = new long[] {
-                lastRevisionNumber
+                mSession.getMostRecentVersion()
             };
         } else {
             if (mVersions.length == 1 && mVersions[0] < 0) {
@@ -116,9 +113,13 @@ abstract class AbsSerializer implements Callable<Void> {
             }
         }
 
-        for (long i = 0; versionsToUse == null ? i < lastRevisionNumber : i < versionsToUse.length; i++) {
+        for (long i = 0; versionsToUse == null ? i < mSession.getMostRecentVersion()
+            : i < versionsToUse.length; i++) {
 
-            rtx = mSession.beginNodeReadTransaction(versionsToUse == null ? i : versionsToUse[(int)i]);
+            INodeReadTrx rtx =
+                new NodeReadTrx(mSession.beginPageReadTransaction(versionsToUse == null ? i
+                    : versionsToUse[(int)i]));
+
             if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);
             }

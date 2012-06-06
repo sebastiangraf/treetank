@@ -54,7 +54,7 @@ public class PrecedingAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(12L);
         AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {

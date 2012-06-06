@@ -33,6 +33,7 @@ import javax.xml.stream.XMLEventReader;
 import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -65,7 +66,7 @@ public final class SaxonHelper {
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKSXML);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

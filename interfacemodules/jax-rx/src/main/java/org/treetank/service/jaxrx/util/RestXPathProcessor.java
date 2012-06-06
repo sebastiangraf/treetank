@@ -40,6 +40,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.treetank.access.Database;
+import org.treetank.access.NodeReadTrx;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
@@ -167,9 +168,9 @@ public class RestXPathProcessor {
             // Creating a transaction
 
             if (doRevision == null) {
-                rtx = session.beginNodeReadTransaction();
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
             } else {
-                rtx = session.beginNodeReadTransaction(doRevision);
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(doRevision));
             }
 
             final boolean exist = rtx.moveTo(rId);
@@ -226,9 +227,9 @@ public class RestXPathProcessor {
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
             // Creating a transaction
             if (revision == null) {
-                rtx = session.beginNodeReadTransaction();
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
             } else {
-                rtx = session.beginNodeReadTransaction(revision);
+                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision));
             }
 
             final AbsAxis axis = new XPathAxis(rtx, xpath);

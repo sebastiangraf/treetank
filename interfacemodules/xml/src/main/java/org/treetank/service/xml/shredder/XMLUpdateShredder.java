@@ -48,6 +48,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.treetank.access.Database;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -74,7 +75,7 @@ import org.treetank.utils.TypedValue;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
+public final class XMLUpdateShredder extends XMLShredder implements Callable<Void> {
 
     /** File to parse. */
     protected transient File mFile;
@@ -114,9 +115,6 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * right siblings and therefore if nodes have been deleted).
      */
     private transient long mKeyMatches;
-
-    /** Maximum node key in revision. */
-    private transient long mMaxNodeKey;
 
     /** Determines if changes should be commited. */
     private transient EShredderCommit mCommit;
@@ -242,7 +240,6 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         if (paramData == null || paramCommit == null) {
             throw new IllegalArgumentException("None of the constructor parameters may be null!");
         }
-        mMaxNodeKey = mWtx.getMaxNodeKey();
         mCommit = paramCommit;
 
         if (paramData instanceof File) {
@@ -260,13 +257,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * @return revision of last revision (before commit)
      */
     @Override
-    public Long call() throws AbsTTException {
-        final long revision = mWtx.getRevisionNumber();
+    public Void call() throws AbsTTException {
         updateOnly();
         if (mCommit == EShredderCommit.COMMIT) {
             mWtx.commit();
         }
-        return revision;
+        return null;
     }
 
     /**
@@ -284,93 +280,93 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             mMovedToRightSibling = false;
             boolean firstEvent = true;
 
-            // If structure already exists, make a sync against the current
-            // structure.
-            if (mMaxNodeKey == 0) {
-                // If no content is in the XML, a normal insertNewContent is
-                // executed.
-                insertNewContent();
-            } else {
-                if (mWtx.getNode().getKind() == ENode.ROOT_KIND) {
-                    // Find the start key for the update operation.
-                    long startkey = ROOT_NODE + 1;
-                    while (!mWtx.moveTo(startkey)) {
-                        startkey++;
-                    }
+            // // If structure already exists, make a sync against the current
+            // // structure.
+            // if (mMaxNodeKey == 0) {
+            // // If no content is in the XML, a normal insertNewContent is
+            // // executed.
+            // insertNewContent();
+            // } else {
+            if (mWtx.getNode().getKind() == ENode.ROOT_KIND) {
+                // Find the start key for the update operation.
+                long startkey = ROOT_NODE + 1;
+                while (!mWtx.moveTo(startkey)) {
+                    startkey++;
                 }
+            }
 
-                XMLEvent event = null;
-                StringBuilder sBuilder = new StringBuilder();
-                final XMLEventFactory fac = XMLEventFactory.newInstance();
+            XMLEvent event = null;
+            StringBuilder sBuilder = new StringBuilder();
+            final XMLEventFactory fac = XMLEventFactory.newInstance();
 
-                // Iterate over all nodes.
-                while (mReader.hasNext()) {
-                    // Parsing the next event.
-                    if (mDelete == EDelete.ATSTARTMIDDLE) {
-                        /*
-                         * Do not move StAX parser forward if nodes have been
-                         * deleted at the start or in the middle of a subtree.
-                         */
-                        mDelete = EDelete.NODELETE;
-                    } else {
-                        // After an insert or after nodes were equal.
-                        event = mReader.nextEvent();
-                        if (event.isCharacters() && event.asCharacters().isWhiteSpace()) {
-                            continue;
-                        }
-                        // mElemsParsed++;
-
-                        assert event != null;
-                        if (firstEvent) {
-                            // Setup start element from StAX parser.
-                            firstEvent = false;
-
-                            if (event.getEventType() == XMLStreamConstants.START_DOCUMENT) {
-                                while (mReader.hasNext()
-                                    && event.getEventType() != XMLStreamConstants.START_ELEMENT) {
-                                    event = mReader.nextEvent();
-                                }
-                                assert event.getEventType() == XMLStreamConstants.START_ELEMENT;
-                                // mElemsParsed++;
-                            }
-                            if (event.getEventType() != XMLStreamConstants.START_ELEMENT) {
-                                throw new IllegalStateException(
-                                    "StAX parser has to be on START_DOCUMENT or START_ELEMENT event!");
-                            }
-
-                            // Get root element of subtree or whole XML document
-                            // to shredder.
-                            mRootElem = event.asStartElement().getName();
-                        } else if (event != null && event.isEndElement()
-                            && mRootElem.equals(event.asEndElement().getName()) && mLevelInToShredder == 1) {
-                            // End with shredding if end_elem equals root-elem.
-                            break;
-                        }
+            // Iterate over all nodes.
+            while (mReader.hasNext()) {
+                // Parsing the next event.
+                if (mDelete == EDelete.ATSTARTMIDDLE) {
+                    /*
+                     * Do not move StAX parser forward if nodes have been
+                     * deleted at the start or in the middle of a subtree.
+                     */
+                    mDelete = EDelete.NODELETE;
+                } else {
+                    // After an insert or after nodes were equal.
+                    event = mReader.nextEvent();
+                    if (event.isCharacters() && event.asCharacters().isWhiteSpace()) {
+                        continue;
                     }
+                    // mElemsParsed++;
 
                     assert event != null;
+                    if (firstEvent) {
+                        // Setup start element from StAX parser.
+                        firstEvent = false;
 
-                    switch (event.getEventType()) {
-                    case XMLStreamConstants.START_ELEMENT:
-                        processStartTag(event.asStartElement());
-                        break;
-                    case XMLStreamConstants.CHARACTERS:
-                        sBuilder.append(event.asCharacters().getData());
-                        while (mReader.peek().getEventType() == XMLStreamConstants.CHARACTERS) {
-                            sBuilder.append(mReader.nextEvent().asCharacters().getData());
+                        if (event.getEventType() == XMLStreamConstants.START_DOCUMENT) {
+                            while (mReader.hasNext()
+                                && event.getEventType() != XMLStreamConstants.START_ELEMENT) {
+                                event = mReader.nextEvent();
+                            }
+                            assert event.getEventType() == XMLStreamConstants.START_ELEMENT;
+                            // mElemsParsed++;
                         }
-                        final Characters text = fac.createCharacters(sBuilder.toString().trim());
-                        processCharacters(text);
-                        sBuilder = new StringBuilder();
+                        if (event.getEventType() != XMLStreamConstants.START_ELEMENT) {
+                            throw new IllegalStateException(
+                                "StAX parser has to be on START_DOCUMENT or START_ELEMENT event!");
+                        }
+
+                        // Get root element of subtree or whole XML document
+                        // to shredder.
+                        mRootElem = event.asStartElement().getName();
+                    } else if (event != null && event.isEndElement()
+                        && mRootElem.equals(event.asEndElement().getName()) && mLevelInToShredder == 1) {
+                        // End with shredding if end_elem equals root-elem.
                         break;
-                    case XMLStreamConstants.END_ELEMENT:
-                        processEndTag();
-                        break;
-                    default:
-                        // Other nodes which are currently not supported by
-                        // Treetank.
                     }
                 }
+
+                assert event != null;
+
+                switch (event.getEventType()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    processStartTag(event.asStartElement());
+                    break;
+                case XMLStreamConstants.CHARACTERS:
+                    sBuilder.append(event.asCharacters().getData());
+                    while (mReader.peek().getEventType() == XMLStreamConstants.CHARACTERS) {
+                        sBuilder.append(mReader.nextEvent().asCharacters().getData());
+                    }
+                    final Characters text = fac.createCharacters(sBuilder.toString().trim());
+                    processCharacters(text);
+                    sBuilder = new StringBuilder();
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    processEndTag();
+                    break;
+                default:
+                    // Other nodes which are currently not supported by
+                    // Treetank.
+                }
+                // }
 
                 // if (!mIsLastNode) {
                 // if (mInserted) {
@@ -1403,7 +1399,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             final IDatabase db = Database.openDatabase(target);
             db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
             final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
-            final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+            final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
             final XMLEventReader reader = createFileReader(new File(args[0]));
             final XMLUpdateShredder shredder =
                 new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD, new File(args[0]),
