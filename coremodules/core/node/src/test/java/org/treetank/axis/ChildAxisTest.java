@@ -54,7 +54,7 @@ public class ChildAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] { 4L,

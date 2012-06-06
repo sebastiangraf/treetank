@@ -54,7 +54,7 @@ public class SelfAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
         rtx.moveTo(4L);
         AbsAxisTest.testIAxisConventions(new SelfAxis(rtx), new long[] { 4L });
 

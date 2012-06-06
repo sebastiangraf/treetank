@@ -64,20 +64,20 @@ public class SomeExprTest {
     public void testEveryExpr() throws AbsTTException {
 
         final AbsAxis axis1 =
-            new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/@i");
+            new XPathAxis(holder.getNRtx(), "some $child in child::node() satisfies $child/@i");
         assertEquals(true, axis1.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
         final AbsAxis axis2 =
-            new XPathAxis(holder.getRtx(), "some $child in child::node() satisfies $child/@abc");
+            new XPathAxis(holder.getNRtx(), "some $child in child::node() satisfies $child/@abc");
         assertEquals(true, axis2.hasNext());
         assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis2.getNode()).getRawValue())));
         assertEquals(false, axis2.hasNext());
 
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
         final AbsAxis axis3 =
-            new XPathAxis(holder.getRtx(),
+            new XPathAxis(holder.getNRtx(),
                 "some $child in child::node() satisfies $child/attribute::attribute()");
         assertEquals(true, axis3.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis3.getNode()).getRawValue())));

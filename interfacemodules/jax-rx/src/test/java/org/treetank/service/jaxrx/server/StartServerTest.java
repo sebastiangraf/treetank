@@ -32,6 +32,7 @@ package org.treetank.service.jaxrx.server;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sun.jersey.api.client.Client;
@@ -53,6 +54,7 @@ public class StartServerTest {
      *             Exception occurred.
      */
     @Test
+    @Ignore
     public void startServer() throws Exception {
         StartServer.main(new String[] {
             "8093"

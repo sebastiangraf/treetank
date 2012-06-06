@@ -62,24 +62,24 @@ public class NestedFilterTest {
     @Test
     public void testIFilterConvetions() throws AbsTTException {
 
-        holder.getRtx().moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(),
-            new ItemFilter(holder.getRtx()), new ElementFilter(holder.getRtx()), new NameFilter(holder
-                .getRtx(), "b")), true);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(),
-            new ItemFilter(holder.getRtx()), new AttributeFilter(holder.getRtx()), new NameFilter(holder
-                .getRtx(), "b")), false);
+        holder.getNRtx().moveTo(9L);
+        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(),
+            new ItemFilter(holder.getNRtx()), new ElementFilter(holder.getNRtx()), new NameFilter(holder
+                .getNRtx(), "b")), true);
+        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(),
+            new ItemFilter(holder.getNRtx()), new AttributeFilter(holder.getNRtx()), new NameFilter(holder
+                .getNRtx(), "b")), false);
 
-        holder.getRtx().moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(),
-            new NodeFilter(holder.getRtx()), new ElementFilter(holder.getRtx())), false);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(),
-            new NodeFilter(holder.getRtx()), new TextFilter(holder.getRtx())), true);
+        holder.getNRtx().moveTo(4L);
+        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(),
+            new NodeFilter(holder.getNRtx()), new ElementFilter(holder.getNRtx())), false);
+        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(),
+            new NodeFilter(holder.getNRtx()), new TextFilter(holder.getNRtx())), true);
 
-        holder.getRtx().moveTo(1L);
-        holder.getRtx().moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getRtx(), new AttributeFilter(holder
-            .getRtx()), new NameFilter(holder.getRtx(), "i")), true);
+        holder.getNRtx().moveTo(1L);
+        holder.getNRtx().moveToAttribute(0);
+        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(), new AttributeFilter(holder
+            .getNRtx()), new NameFilter(holder.getNRtx(), "i")), true);
 
     }
 }

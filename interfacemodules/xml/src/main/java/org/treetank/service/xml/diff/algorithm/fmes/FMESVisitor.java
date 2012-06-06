@@ -28,6 +28,7 @@ package org.treetank.service.xml.diff.algorithm.fmes;
 
 import java.util.Map;
 
+import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
@@ -70,7 +71,7 @@ public final class FMESVisitor {
         assert paramSession != null;
         assert paramInOrder != null;
         assert paramDescendants != null;
-        mRtx = paramSession.beginNodeReadTransaction();
+        mRtx = new NodeReadTrx(paramSession.beginPageReadTransaction(paramSession.getMostRecentVersion()));
         mInOrder = paramInOrder;
         mDescendants = paramDescendants;
     }

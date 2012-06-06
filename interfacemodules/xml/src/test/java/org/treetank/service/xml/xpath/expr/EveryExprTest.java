@@ -65,28 +65,28 @@ public class EveryExprTest {
     public void testEveryExpr() throws AbsTTException {
 
         final AbsAxis axis1 =
-            new XPathAxis(holder.getRtx(), "every $child in child::node()" + "satisfies $child/@i");
+            new XPathAxis(holder.getNRtx(), "every $child in child::node()" + "satisfies $child/@i");
         assertEquals(true, axis1.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
         final AbsAxis axis2 =
-            new XPathAxis(holder.getRtx(), "every $child in child::node()" + "satisfies $child/@abc");
+            new XPathAxis(holder.getNRtx(), "every $child in child::node()" + "satisfies $child/@abc");
         assertEquals(true, axis2.hasNext());
         assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis2.getNode()).getRawValue())));
         assertEquals(false, axis2.hasNext());
 
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
         final AbsAxis axis3 =
-            new XPathAxis(holder.getRtx(), "every $child in child::element()"
+            new XPathAxis(holder.getNRtx(), "every $child in child::element()"
                 + " satisfies $child/attribute::attribute()");
         assertEquals(true, axis3.hasNext());
         assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis3.getNode()).getRawValue())));
         assertEquals(false, axis3.hasNext());
 
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
         final AbsAxis axis4 =
-            new XPathAxis(holder.getRtx(), "every $child in child::element() satisfies $child/child::c");
+            new XPathAxis(holder.getNRtx(), "every $child in child::element() satisfies $child/child::c");
         assertEquals(true, axis4.hasNext());
         assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis4.getNode()).getRawValue())));
         assertEquals(false, axis4.hasNext());

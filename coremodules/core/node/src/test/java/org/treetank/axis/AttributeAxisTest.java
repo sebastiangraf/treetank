@@ -62,18 +62,20 @@ public class AttributeAxisTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final INodeReadTrx wtx = holder.getRtx();
+        final INodeReadTrx wtx = holder.getNRtx();
 
         wtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
         wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx),
-                new long[] { 2L });
+        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
+            2L
+        });
 
         wtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx),
-                new long[] { 10L });
+        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
+            10L
+        });
 
         wtx.moveTo(12L);
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
@@ -85,8 +87,7 @@ public class AttributeAxisTest {
     @Test
     @Ignore
     public void testMultipleAttributes() throws AbsTTException {
-        final INodeWriteTrx wtx = holder.getSession()
-                .beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = holder.getNWtx();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");
         wtx.moveTo(nodeKey);

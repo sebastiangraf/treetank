@@ -38,6 +38,8 @@ import javax.ws.rs.core.StreamingOutput;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
+import org.treetank.access.NodeReadTrx;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
@@ -232,7 +234,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = session.beginNodeWriteTransaction();
+                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
                     // move to node with given rest id and deletes it
                     if (wtx.moveTo(nodeId)) {
                         wtx.remove();
@@ -283,7 +285,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = session.beginNodeWriteTransaction();
+                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
 
                     if (wtx.moveTo(nodeId)) {
                         final long parentKey = wtx.getNode().getParentKey();
@@ -344,7 +346,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = session.beginNodeWriteTransaction();
+                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
                     final boolean exist = wtx.moveTo(nodeId);
                     if (exist) {
                         if (type == EIdAccessType.FIRSTCHILD) {
@@ -502,9 +504,9 @@ public class NodeIdRepresentation {
                 database = Database.openDatabase(mStoragePath);
                 session = database.getSession(new SessionConfiguration.Builder(resource).build());
                 if (revision == null) {
-                    rtx = session.beginNodeReadTransaction();
+                    rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
                 } else {
-                    rtx = session.beginNodeReadTransaction(revision);
+                    rtx = new NodeReadTrx(session.beginPageReadTransaction(revision));
                 }
 
                 if (rtx.moveTo(nodeId)) {
@@ -589,5 +591,4 @@ public class NodeIdRepresentation {
         }
 
     }
-
 }

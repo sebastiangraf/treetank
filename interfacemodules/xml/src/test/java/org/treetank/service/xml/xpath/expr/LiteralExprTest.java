@@ -70,10 +70,10 @@ public class LiteralExprTest {
         final AtomicValue item1 = new AtomicValue(false);
         final AtomicValue item2 = new AtomicValue(14, Type.INTEGER);
 
-        final int key1 = AbsAxis.addAtomicToItemList(holder.getRtx(), item1);
-        final int key2 = AbsAxis.addAtomicToItemList(holder.getRtx(), item2);
+        final int key1 = AbsAxis.addAtomicToItemList(holder.getNRtx(), item1);
+        final int key2 = AbsAxis.addAtomicToItemList(holder.getNRtx(), item2);
 
-        final AbsAxis axis1 = new LiteralExpr(holder.getRtx(), key1);
+        final AbsAxis axis1 = new LiteralExpr(holder.getNRtx(), key1);
 
         assertEquals(true, axis1.hasNext());
         assertEquals(key1, axis1.getNode().getNodeKey());
@@ -81,7 +81,7 @@ public class LiteralExprTest {
         assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis1.getNode()).getRawValue())));
         assertEquals(false, axis1.hasNext());
 
-        final AbsAxis axis2 = new LiteralExpr(holder.getRtx(), key2);
+        final AbsAxis axis2 = new LiteralExpr(holder.getNRtx(), key2);
         assertEquals(true, axis2.hasNext());
         assertEquals(key2, axis2.getNode().getNodeKey());
         assertEquals(NamePageHash.generateHashForString("xs:integer"), axis2.getNode().getTypeKey());

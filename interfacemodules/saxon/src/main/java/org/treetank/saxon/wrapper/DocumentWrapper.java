@@ -44,6 +44,7 @@ import net.sf.saxon.value.Value;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
@@ -130,7 +131,8 @@ public final class DocumentWrapper implements DocumentInfo {
     @Override
     public NodeInfo selectID(final String ID, final boolean getParent) {
         try {
-            final INodeReadTrx rtx = mSession.beginNodeReadTransaction();
+            final INodeReadTrx rtx =
+                new NodeReadTrx(mSession.beginPageReadTransaction(mSession.getMostRecentVersion()));
             final AbsAxis axis = new DescendantAxis(rtx, true);
             while (axis.hasNext()) {
                 if (rtx.getNode().getKind() == ENode.ELEMENT_KIND) {

@@ -27,15 +27,11 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
-import org.treetank.utils.DocumentCreater;
 
 public class MinimumCommitTest {
 
@@ -53,26 +49,26 @@ public class MinimumCommitTest {
         TestHelper.closeEverything();
     }
 
-    @Test
-    public void test() throws AbsTTException {
-        assertEquals(0L, holder.getWtx().getRevisionNumber());
-        holder.getWtx().commit();
-        holder.close();
-
-        holder = Holder.generateWtx();
-        assertEquals(1L, holder.getWtx().getRevisionNumber());
-        DocumentCreater.create(holder.getWtx());
-        holder.getWtx().commit();
-        holder.close();
-
-        holder = Holder.generateWtx();
-        assertEquals(2L, holder.getWtx().getRevisionNumber());
-        holder.getWtx().commit();
-        holder.close();
-
-        holder = Holder.generateRtx();
-        assertEquals(2L, holder.getRtx().getRevisionNumber());
-
-    }
+//    @Test
+//    public void test() throws AbsTTException {
+//        assertEquals(0L, holder.getWtx().getRevisionNumber());
+//        holder.getWtx().commit();
+//        holder.close();
+//
+//        holder = Holder.generateWtx();
+//        assertEquals(1L, holder.getWtx().getRevisionNumber());
+//        DocumentCreater.create(holder.getWtx());
+//        holder.getWtx().commit();
+//        holder.close();
+//
+//        holder = Holder.generateWtx();
+//        assertEquals(2L, holder.getWtx().getRevisionNumber());
+//        holder.getWtx().commit();
+//        holder.close();
+//
+//        holder = Holder.generateRtx();
+//        assertEquals(2L, holder.getRtx().getRevisionNumber());
+//
+//    }
 
 }

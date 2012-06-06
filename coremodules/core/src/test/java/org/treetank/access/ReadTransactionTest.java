@@ -28,7 +28,6 @@
 package org.treetank.access;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.junit.After;
@@ -36,12 +35,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.INodeReadTrx;
-import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
@@ -63,72 +56,59 @@ public class ReadTransactionTest {
         TestHelper.closeEverything();
     }
 
-    @Test
-    public void testEmptyRtx() throws AbsTTException {
-        assertFalse(PATHS.PATH2.getFile().exists());
-        Database.createDatabase(PATHS.PATH2.getConfig());
-        final IDatabase db = Database.openDatabase(PATHS.PATH2.getFile());
-        db.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH2.getConfig())
-            .build());
-        final ISession session = db.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeReadTrx rtx = session.beginNodeReadTransaction();
-        rtx.getRevisionNumber();
-        rtx.close();
-        session.close();
-        db.close();
-    }
+
 
     @Test
     public void testDocumentRoot() throws AbsTTException {
-        assertEquals(true, holder.getRtx().moveTo(ROOT_NODE));
-        assertEquals(ENode.ROOT_KIND, holder.getRtx().getNode().getKind());
-        assertEquals(false, holder.getRtx().getNode().hasParent());
-        assertEquals(false, ((IStructNode)holder.getRtx().getNode()).hasLeftSibling());
-        assertEquals(false, ((IStructNode)holder.getRtx().getNode()).hasRightSibling());
-        assertEquals(true, ((IStructNode)holder.getRtx().getNode()).hasFirstChild());
-        holder.getRtx().close();
+        assertEquals(true, holder.getNRtx().moveTo(ROOT_NODE));
+        assertEquals(ENode.ROOT_KIND, holder.getNRtx().getNode().getKind());
+        assertEquals(false, holder.getNRtx().getNode().hasParent());
+        assertEquals(false, ((IStructNode)holder.getNRtx().getNode()).hasLeftSibling());
+        assertEquals(false, ((IStructNode)holder.getNRtx().getNode()).hasRightSibling());
+        assertEquals(true, ((IStructNode)holder.getNRtx().getNode()).hasFirstChild());
+        holder.getNRtx().close();
     }
 
     @Test
     public void testConventions() throws AbsTTException {
 
         // INodeReadTrx Convention 1.
-        assertEquals(true, holder.getRtx().moveTo(ROOT_NODE));
-        long key = holder.getRtx().getNode().getNodeKey();
+        assertEquals(true, holder.getNRtx().moveTo(ROOT_NODE));
+        long key = holder.getNRtx().getNode().getNodeKey();
 
         // INodeReadTrx Convention 2.
-        assertEquals(holder.getRtx().getNode().hasParent(), holder.getRtx().moveTo(
-            holder.getRtx().getNode().getParentKey()));
-        assertEquals(key, holder.getRtx().getNode().getNodeKey());
+        assertEquals(holder.getNRtx().getNode().hasParent(), holder.getNRtx().moveTo(
+            holder.getNRtx().getNode().getParentKey()));
+        assertEquals(key, holder.getNRtx().getNode().getNodeKey());
 
-        assertEquals(((IStructNode)holder.getRtx().getNode()).hasFirstChild(), holder.getRtx().moveTo(
-            ((IStructNode)holder.getRtx().getNode()).getFirstChildKey()));
-        assertEquals(1L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasFirstChild(), holder.getNRtx().moveTo(
+            ((IStructNode)holder.getNRtx().getNode()).getFirstChildKey()));
+        assertEquals(1L, holder.getNRtx().getNode().getNodeKey());
 
-        assertEquals(false, holder.getRtx().moveTo(Integer.MAX_VALUE));
-        assertEquals(1L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(false, holder.getNRtx().moveTo(Integer.MAX_VALUE));
+        assertEquals(1L, holder.getNRtx().getNode().getNodeKey());
 
-        assertEquals(((IStructNode)holder.getRtx().getNode()).hasRightSibling(), holder.getRtx().moveTo(
-            ((IStructNode)holder.getRtx().getNode()).getRightSiblingKey()));
-        assertEquals(1L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasRightSibling(), holder.getNRtx().moveTo(
+            ((IStructNode)holder.getNRtx().getNode()).getRightSiblingKey()));
+        assertEquals(1L, holder.getNRtx().getNode().getNodeKey());
 
-        assertEquals(((IStructNode)holder.getRtx().getNode()).hasFirstChild(), holder.getRtx().moveTo(
-            ((IStructNode)holder.getRtx().getNode()).getFirstChildKey()));
-        assertEquals(4L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasFirstChild(), holder.getNRtx().moveTo(
+            ((IStructNode)holder.getNRtx().getNode()).getFirstChildKey()));
+        assertEquals(4L, holder.getNRtx().getNode().getNodeKey());
 
-        assertEquals(((IStructNode)holder.getRtx().getNode()).hasRightSibling(), holder.getRtx().moveTo(
-            ((IStructNode)holder.getRtx().getNode()).getRightSiblingKey()));
-        assertEquals(5L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasRightSibling(), holder.getNRtx().moveTo(
+            ((IStructNode)holder.getNRtx().getNode()).getRightSiblingKey()));
+        assertEquals(5L, holder.getNRtx().getNode().getNodeKey());
 
-        assertEquals(((IStructNode)holder.getRtx().getNode()).hasLeftSibling(), holder.getRtx().moveTo(
-            ((IStructNode)holder.getRtx().getNode()).getLeftSiblingKey()));
-        assertEquals(4L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasLeftSibling(), holder.getNRtx().moveTo(
+            ((IStructNode)holder.getNRtx().getNode()).getLeftSiblingKey()));
+        assertEquals(4L, holder.getNRtx().getNode().getNodeKey());
 
-        assertEquals(holder.getRtx().getNode().hasParent(), holder.getRtx().moveTo(
-            holder.getRtx().getNode().getParentKey()));
-        assertEquals(1L, holder.getRtx().getNode().getNodeKey());
+        assertEquals(holder.getNRtx().getNode().hasParent(), holder.getNRtx().moveTo(
+            holder.getNRtx().getNode().getParentKey()));
+        assertEquals(1L, holder.getNRtx().getNode().getNodeKey());
 
-        holder.getRtx().close();
+        holder.getNRtx().close();
     }
 
 }

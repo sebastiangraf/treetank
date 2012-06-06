@@ -56,7 +56,7 @@ public class DocumentRootNodeFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(0L);
         AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),

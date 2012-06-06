@@ -59,68 +59,68 @@ public final class OverallTest {
 
     @Test
     public void testJustEverything() throws AbsTTException {
-        holder.getWtx().insertElementAsFirstChild(new QName(getString()));
+        holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
-                switch (holder.getWtx().getNode().getKind()) {
+                switch (holder.getNWtx().getNode().getKind()) {
                 case ELEMENT_KIND:
-                    holder.getWtx().setQName(new QName(getString()));
-                    holder.getWtx().setURI(getString());
+                    holder.getNWtx().setQName(new QName(getString()));
+                    holder.getNWtx().setURI(getString());
                     break;
                 case ATTRIBUTE_KIND:
-                    holder.getWtx().setQName(new QName(getString()));
-                    holder.getWtx().setURI(getString());
-                    holder.getWtx().setValue(getString());
+                    holder.getNWtx().setQName(new QName(getString()));
+                    holder.getNWtx().setURI(getString());
+                    holder.getNWtx().setValue(getString());
                     break;
                 case NAMESPACE_KIND:
-                    holder.getWtx().setQName(new QName(getString()));
-                    holder.getWtx().setURI(getString());
+                    holder.getNWtx().setQName(new QName(getString()));
+                    holder.getNWtx().setURI(getString());
                     break;
                 case TEXT_KIND:
-                    holder.getWtx().setValue(getString());
+                    holder.getNWtx().setValue(getString());
                     break;
                 default:
                 }
             } else {
-                if (holder.getWtx().getNode() instanceof ElementNode) {
+                if (holder.getNWtx().getNode() instanceof ElementNode) {
                     if (ran.nextBoolean()) {
-                        holder.getWtx().insertElementAsFirstChild(new QName(getString()));
+                        holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
                     } else {
-                        holder.getWtx().insertElementAsRightSibling(new QName(getString()));
+                        holder.getNWtx().insertElementAsRightSibling(new QName(getString()));
                     }
                     while (ran.nextBoolean()) {
-                        holder.getWtx().insertAttribute(new QName(getString()), getString());
-                        holder.getWtx().moveTo(holder.getWtx().getNode().getParentKey());
+                        holder.getNWtx().insertAttribute(new QName(getString()), getString());
+                        holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
                     }
                     while (ran.nextBoolean()) {
-                        holder.getWtx().insertNamespace(new QName(getString(), getString()));
-                        holder.getWtx().moveTo(holder.getWtx().getNode().getParentKey());
+                        holder.getNWtx().insertNamespace(new QName(getString(), getString()));
+                        holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
                     }
                 }
 
                 if (ran.nextInt(100) < REMOVEPERCENTAGE) {
-                    holder.getWtx().remove();
+                    holder.getNWtx().remove();
                 }
 
                 if (ran.nextInt(100) < COMMITPERCENTAGE) {
-                    holder.getWtx().commit();
+                    holder.getNWtx().commit();
                 }
                 do {
                     final int newKey = ran.nextInt(i + 1) + 1;
-                    holder.getWtx().moveTo(newKey);
-                } while (holder.getWtx().getNode() == null);
+                    holder.getNWtx().moveTo(newKey);
+                } while (holder.getNWtx().getNode() == null);
                 // TODO Check if reference check can occur on "=="
-                if (holder.getWtx().getNode().getKind() != ENode.ELEMENT_KIND) {
-                    holder.getWtx().moveTo(holder.getWtx().getNode().getParentKey());
+                if (holder.getNWtx().getNode().getKind() != ENode.ELEMENT_KIND) {
+                    holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
                 }
             }
         }
-        final long key = holder.getWtx().getNode().getNodeKey();
-        holder.getWtx().remove();
-        holder.getWtx().insertElementAsFirstChild(new QName(getString()));
-        holder.getWtx().moveTo(key);
-        holder.getWtx().commit();
-        holder.getWtx().close();
+        final long key = holder.getNWtx().getNode().getNodeKey();
+        holder.getNWtx().remove();
+        holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
+        holder.getNWtx().moveTo(key);
+        holder.getNWtx().commit();
+        holder.getNWtx().close();
     }
 
     @After

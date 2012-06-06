@@ -27,6 +27,7 @@
 
 package org.treetank.api;
 
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.AbsTTException;
 
 /**
@@ -44,33 +45,56 @@ import org.treetank.exception.AbsTTException;
 public interface ISession {
 
     /**
-     * Begin a read-only transaction on the latest committed revision key.
+     * Deregisters a registered page transaction.
      * 
-     * @throws AbsTTException
-     *             If can't begin Read Transaction.
-     * @return INodeReadTrx instance.
+     * @param pTrx
+     *            to be deregistered.
      */
-    INodeReadTrx beginNodeReadTransaction() throws AbsTTException;
+    void deregisterPageTrx(final IPageReadTrx pTrx);
 
     /**
-     * Begin a read-only transaction on the given revision key.
+     * Checks for valid revision.
      * 
-     * @param pRev
-     *            Revision key to read from.
-     * @throws AbsTTException
-     *             If can't begin Read Transaction.
-     * @return {@link INodeReadTrx} instance
+     * @param paramRevision
+     *            revision parameter to check
+     * @throws IllegalArgumentException
+     *             if revision isn't valid
      */
-    INodeReadTrx beginNodeReadTransaction(final long pRev) throws AbsTTException;
+    void assertAccess(final long paramRevision);
 
     /**
-     * Begin exclusive read/write transaction .
+     * Getting the resource configuration
      * 
-     * @throws AbsTTException
-     *             If can't begin Write Transaction.
-     * @return INodeWriteTrx instance.
+     * @return the config of the resource
      */
-    INodeWriteTrx beginNodeWriteTransaction() throws AbsTTException;
+    ResourceConfiguration getConfig();
+
+    /**
+     * Getting the most recent version from the storage.
+     * 
+     * @return the most recent version
+     */
+    long getMostRecentVersion();
+
+    /**
+     * Begin exclusive write transaction on the page layer
+     * 
+     * 
+     * @return a {@link IPageReadTrx} instance
+     * @throws AbsTTException
+     */
+    IPageWriteTrx beginPageWriteTransaction() throws AbsTTException;
+
+    /**
+     * Begin exclusive write transaction on the page layer with fixed revisions.
+     * 
+     * @param pRevToRepresent
+     * @param pRevToStore
+     * @return a {@link IPageReadTrx} instance
+     * @throws AbsTTException
+     */
+    IPageWriteTrx beginPageWriteTransaction(final long pRevToRepresent, final long pRevToStore)
+        throws AbsTTException;
 
     /**
      * Begin exclusive read transaction on the page layer

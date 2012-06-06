@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
@@ -61,7 +62,7 @@ public class XMLSerializerTest {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
         org.treetank.utils.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
@@ -79,7 +80,7 @@ public class XMLSerializerTest {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
         org.treetank.utils.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
@@ -102,7 +103,7 @@ public class XMLSerializerTest {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
         org.treetank.utils.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
@@ -123,7 +124,7 @@ public class XMLSerializerTest {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // generate serialize all from this session
@@ -153,7 +154,7 @@ public class XMLSerializerTest {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = session.beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // generate serialize all from this session

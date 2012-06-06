@@ -27,22 +27,11 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-import static org.treetank.node.IConstants.ROOT_NODE;
-
-import javax.xml.namespace.QName;
-
-import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.interfaces.IStructNode;
-import org.treetank.utils.DocumentCreater;
 
 public class MultipleCommitTest {
 
@@ -60,81 +49,41 @@ public class MultipleCommitTest {
         TestHelper.closeEverything();
     }
 
-    @Test
-    public void test() throws AbsTTException {
-        Assert.assertEquals(0L, holder.getWtx().getRevisionNumber());
-
-        holder.getWtx().commit();
-
-        holder.getWtx().insertElementAsFirstChild(new QName("foo"));
-        assertEquals(1L, holder.getWtx().getRevisionNumber());
-        holder.getWtx().moveTo(1);
-        assertEquals(new QName("foo"), holder.getWtx().getQNameOfCurrentNode());
-        holder.getWtx().abort();
-
-        assertEquals(1L, holder.getWtx().getRevisionNumber());
-    }
-
-    @Test
-    public void testAutoCommit() throws AbsTTException {
-        DocumentCreater.create(holder.getWtx());
-        holder.getWtx().commit();
-
-        final INodeReadTrx rtx = holder.getSession().beginNodeReadTransaction();
-        rtx.close();
-    }
-
-    @Test
-    public void testRemove() throws AbsTTException {
-        DocumentCreater.create(holder.getWtx());
-        holder.getWtx().commit();
-        assertEquals(1L, holder.getWtx().getRevisionNumber());
-
-        holder.getWtx().moveTo(ROOT_NODE);
-        holder.getWtx().moveTo(((IStructNode)holder.getWtx().getNode()).getFirstChildKey());
-        holder.getWtx().remove();
-        holder.getWtx().commit();
-        assertEquals(2L, holder.getWtx().getRevisionNumber());
-    }
-
     // @Test
-    // public void testAttributeRemove() throws AbsTTException {
-    // DocumentCreater.create(holder.getWtx());
-    // holder.getWtx().commit();
-    // holder.getWtx().moveTo(NodeReadTrx.ROOT_NODE);
+    // public void test() throws AbsTTException {
+    // Assert.assertEquals(0L, holder.getSession().getMostRecentVersion());
     //
-    // final AbsAxis postorderAxis = new PostOrderAxis(holder.getWtx());
-    // while (postorderAxis.hasNext()) {
-    // postorderAxis.next();
-    // if (holder.getWtx().getNode().getKind() == ENode.ELEMENT_KIND
-    // && ((ElementNode) holder.getWtx().getNode())
-    // .getAttributeCount() > 0) {
-    // for (int i = 0, attrCount = ((ElementNode) holder.getWtx()
-    // .getNode()).getAttributeCount(); i < attrCount; i++) {
-    // holder.getWtx().moveToAttribute(i);
-    // holder.getWtx().remove();
-    // }
-    // }
-    // }
-    // holder.getWtx().commit();
-    // holder.getWtx().moveTo(NodeReadTrx.ROOT_NODE);
+    // holder.getNWtx().commit();
     //
-    // int attrTouch = 0;
-    // final AbsAxis descAxis = new DescendantAxis(holder.getWtx());
-    // while (descAxis.hasNext()) {
-    // descAxis.next();
-    // if (holder.getWtx().getNode().getKind() == ENode.ELEMENT_KIND) {
-    // for (int i = 0, attrCount = ((ElementNode) holder.getWtx()
-    // .getNode()).getAttributeCount(); i < attrCount; i++) {
-    // if (holder.getWtx().moveToAttribute(i)) {
-    // attrTouch++;
-    // } else {
-    // throw new IllegalStateException("Should never occur!");
-    // }
-    // }
-    // }
-    // }
-    // assertEquals(0, attrTouch);
+    // holder.getNWtx().insertElementAsFirstChild(new QName("foo"));
+    // assertEquals(1L, holder.getSession().getMostRecentVersion());
+    // holder.getNWtx().moveTo(1);
+    // assertEquals(new QName("foo"), holder.getNWtx().getQNameOfCurrentNode());
+    // holder.getNWtx().abort();
     //
+    // assertEquals(1L, holder.getSession().getMostRecentVersion());
     // }
+    //
+    // @Test
+    // public void testAutoCommit() throws AbsTTException {
+    // DocumentCreater.create(holder.getNWtx());
+    // holder.getNWtx().commit();
+    //
+    // final INodeReadTrx rtx = holder.getNRtx();
+    // rtx.close();
+    // }
+    //
+    // @Test
+    // public void testRemove() throws AbsTTException {
+    // DocumentCreater.create(holder.getNWtx());
+    // holder.getNWtx().commit();
+    // assertEquals(1L, holder.getSession().getMostRecentVersion());
+    //
+    // holder.getNWtx().moveTo(ROOT_NODE);
+    // holder.getNWtx().moveTo(((IStructNode)holder.getNWtx().getNode()).getFirstChildKey());
+    // holder.getNWtx().remove();
+    // holder.getNWtx().commit();
+    // assertEquals(2L, holder.getSession().getMostRecentVersion());
+    // }
+
 }

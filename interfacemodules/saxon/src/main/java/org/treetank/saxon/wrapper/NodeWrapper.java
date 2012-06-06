@@ -57,6 +57,7 @@ import net.sf.saxon.value.Value;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AncestorAxis;
@@ -135,7 +136,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
         this.mDocWrapper = paramDocWrapper;
 
-        final INodeReadTrx rtx = mDocWrapper.mSession.beginNodeReadTransaction();
+        final INodeReadTrx rtx =
+            new NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
+                .getMostRecentVersion()));
         rtx.moveTo(nodekeyToStart);
         this.nodeKind = rtx.getNode().getKind();
         this.mKey = rtx.getNode().getNodeKey();
@@ -840,7 +843,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     }
 
     private final INodeReadTrx createRtxAndMove() throws AbsTTException {
-        final INodeReadTrx rtx = mDocWrapper.mSession.beginNodeReadTransaction();
+        final INodeReadTrx rtx =
+            new NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
+                .getMostRecentVersion()));
         rtx.moveTo(mKey);
         return rtx;
     }

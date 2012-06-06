@@ -61,25 +61,25 @@ public class XPathAxisTest {
     public void testSteps() throws AbsTTException {
         // Verify.
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/text:p/b"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/text:p/b"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/b"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/b/c"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/b/c"), new long[] {
             7L, 11L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::p:a/child::b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::p:a/child::b"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::p:" + "a/child::b/child::c"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::p:" + "a/child::b/child::c"),
             new long[] {
                 7L, 11L
             });
@@ -89,69 +89,69 @@ public class XPathAxisTest {
     @Test
     public void testAttributes() throws AbsTTException {
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a[@i]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a[@i]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/@i"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/@i"), new long[] {
             2L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/@i/@*"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/@i/@*"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a/b[@p:x]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/b[@p:x]"), new long[] {
             9L
         });
 
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
             "descendant-or-self::node()/@p:x = 'y'"), new String[] {
             "true"
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[text()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[text()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[element()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[element()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[node()/text()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[node()/text()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[./node()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[./node()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[./node()/node()/node()]"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[./node()/node()/node()]"),
             new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[//element()]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[//element()]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[/text()]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[/text()]"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[16<65]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[16<65]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[13>=4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[13>=4]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[13.0>=4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[13.0>=4]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[4 = 4]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[4 = 4]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[3=4]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[3=4]"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[3.2 = 3.22]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[3.2 = 3.22]"), new long[] {});
 
         // TODO:error with XPath 1.0 compatibility because one operand is parsed
         // to
@@ -160,23 +160,23 @@ public class XPathAxisTest {
         // to
         // string
         // from the byte array
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[(3.2 + 0.02) = 3.22]"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[(3.2 + 0.02) = 3.22]"),
             new long[] {
                 1L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[@i = \"j\"]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[@i = \"j\"]"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "descendant-or-self::node()[@p:x = \"y\"]"), new long[] {
             9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a[@i=\"k\"]"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a[@i=\"k\"]"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a/b[@p:x=\"y\"]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/b[@p:x=\"y\"]"), new long[] {
             9L
         });
 
@@ -185,19 +185,19 @@ public class XPathAxisTest {
     @Test
     public void testNodeTests() throws AbsTTException {
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/node()"), new long[] {
             4L, 5L, 8L, 9L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a/text()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/text()"), new long[] {
             4L, 8L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/b/text()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/b/text()"), new long[] {
             6L, 12L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a/b/node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/b/node()"), new long[] {
             6L, 7L, 11L, 12L
         });
     }
@@ -205,53 +205,53 @@ public class XPathAxisTest {
     @Test
     public void testDescendant() throws AbsTTException {
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a//b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a//b"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "//p:a"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//p:a"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "descendant-or-self::p:a"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "descendant-or-self::p:a"),
             new long[] {
                 1L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/descendant-or-self::b"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/descendant-or-self::b"),
             new long[] {
                 5L, 9L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a/descendant::b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/descendant::b"), new long[] {
             5L, 9L
         });
 
         AbsAxisTest
-            .testIAxisConventions(new XPathAxis(holder.getRtx(), "p:a/descendant::p:a"), new long[] {});
+            .testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/descendant::p:a"), new long[] {});
 
     }
 
     @Test
     public void testAncestor() throws AbsTTException {
         // Find ancestor starting from nodeKey 8L.
-        holder.getRtx().moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "ancestor::p:a"), new long[] {
+        holder.getNRtx().moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "ancestor::p:a"), new long[] {
             1L
         });
 
-        holder.getRtx().moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "ancestor::p:a"), new long[] {
+        holder.getNRtx().moveTo(13L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "ancestor::p:a"), new long[] {
             1L
         });
 
-        holder.getRtx().moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "ancestor::node()"), new long[] {
+        holder.getNRtx().moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "ancestor::node()"), new long[] {
             9L, 1L
         });
 
-        holder.getRtx().moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "ancestor-or-self::node()"),
+        holder.getNRtx().moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "ancestor-or-self::node()"),
             new long[] {
                 11L, 9L, 1L
             });
@@ -260,49 +260,49 @@ public class XPathAxisTest {
     @Test
     public void testParent() throws AbsTTException {
         // Find ancestor starting from nodeKey 8L.
-        holder.getRtx().moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "parent::p:a"), new long[] {
+        holder.getNRtx().moveTo(9L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "parent::p:a"), new long[] {
             1L
         });
 
-        holder.getRtx().moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "parent::b"), new long[] {
+        holder.getNRtx().moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "parent::b"), new long[] {
             9L
         });
 
-        holder.getRtx().moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "parent::node()"), new long[] {
+        holder.getNRtx().moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "parent::node()"), new long[] {
             9L
         });
 
-        holder.getRtx().moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "parent::node()"), new long[] {
+        holder.getNRtx().moveTo(13L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "parent::node()"), new long[] {
             1L
         });
     }
 
     @Test
     public void testSelf() throws AbsTTException {
-        holder.getRtx().moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "self::p:a"), new long[] {
+        holder.getNRtx().moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "self::p:a"), new long[] {
             1L
         });
 
-        holder.getRtx().moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "self::b"), new long[] {
+        holder.getNRtx().moveTo(9L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "self::b"), new long[] {
             9L
         });
 
-        holder.getRtx().moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "./node()"), new long[] {});
+        holder.getNRtx().moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "./node()"), new long[] {});
 
-        holder.getRtx().moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "self::node()"), new long[] {
+        holder.getNRtx().moveTo(11L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "self::node()"), new long[] {
             11L
         });
 
-        holder.getRtx().moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "./b/node()"), new long[] {
+        holder.getNRtx().moveTo(1L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "./b/node()"), new long[] {
             6L, 7L, 11L, 12L
         });
 
@@ -310,21 +310,21 @@ public class XPathAxisTest {
 
     @Test
     public void testPosition() throws AbsTTException {
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/c"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/c"), new long[] {
             7L, 11L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/text()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/text()"), new long[] {
             6L, 12L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/b/c"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/b/c"), new long[] {
             7L, 11L
         });
 
@@ -333,22 +333,22 @@ public class XPathAxisTest {
     //
     @Test
     public void testDupElemination() throws AbsTTException {
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::node()/parent::node()"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::node()/parent::node()"),
             new long[] {
                 1L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/c"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/c"), new long[] {
             7L, 11L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/text()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/text()"), new long[] {
             6L, 12L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/b/c"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/b/c"), new long[] {
             7L, 11L
         });
 
@@ -356,76 +356,76 @@ public class XPathAxisTest {
 
     @Test
     public void testUnabbreviate() throws AbsTTException {
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::b"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::*"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::*"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::text()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::text()"), new long[] {
             4L, 8L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "attribute::i"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "attribute::i"), new long[] {
             2L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "attribute::*"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "attribute::*"), new long[] {
             2L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "parent::node()"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "parent::node()"), new long[] {
             0L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "self::blau"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "self::blau"), new long[] {});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/"), new long[] {
             0L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::b[attribute::p:x = \"y\"]"),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::b[attribute::p:x = \"y\"]"),
             new long[] {
                 9L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::b[child::c]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::b[child::c]"), new long[] {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "child::*[text() or c]"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::*[text() or c]"), new long[] {
             5l, 9L
         });
 
         AbsAxisTest.testIAxisConventions(
-            new XPathAxis(holder.getRtx(), "child::*[text() or c], /node(), //c"), new long[] {
+            new XPathAxis(holder.getNRtx(), "child::*[text() or c], /node(), //c"), new long[] {
                 5l, 9L, 1L, 7L, 11L
             });
     }
 
     @Test
     public void testMultiExpr() throws AbsTTException {
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b, b, b"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b, b, b"), new long[] {
             5L, 9L, 5L, 9L, 5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "b/c, ., //c"), new long[] {
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/c, ., //c"), new long[] {
             7L, 11L, 1L, 7L, 11L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "b/text(), //text(), descendant-or-self::element()"), new long[] {
             6L, 12L, 4L, 8L, 13L, 6L, 12L, 1L, 5L, 7L, 9L, 11L
         });
 
-        holder.getRtx().moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(), "/p:a/b/c, ., .., .//text()"),
+        holder.getNRtx().moveTo(5L);
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/b/c, ., .., .//text()"),
             new long[] {
                 7L, 11L, 5L, 1L, 6L
             });
@@ -434,9 +434,9 @@ public class XPathAxisTest {
     @Test
     public void testCount() throws AbsTTException {
         // Verify.
-        holder.getRtx().moveTo(1L);
+        holder.getNRtx().moveTo(1L);
 
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
             "fn:count(//node())"), new String[] {
             "10"
         });

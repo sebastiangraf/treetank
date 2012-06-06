@@ -43,6 +43,8 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -59,67 +61,37 @@ public class HashTest {
 
     @Test
     public void testPostorderInsertRemove() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(HashKind.Postorder).build());
-        final INodeWriteTrx wtx =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
     public void testPostorderDeep() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(HashKind.Postorder).build());
-        final INodeWriteTrx wtx =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testDeepTree(wtx);
     }
 
     @Test
     public void testPostorderSetter() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(HashKind.Postorder).build());
-        final INodeWriteTrx wtx =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testSetter(wtx);
     }
 
     @Test
     public void testRollingInsertRemove() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(HashKind.Rolling).build());
-        final INodeWriteTrx wtx =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = createWtx(HashKind.Rolling);
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
     public void testRollingDeep() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(HashKind.Rolling).build());
-        final INodeWriteTrx wtx =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = createWtx(HashKind.Rolling);
         testDeepTree(wtx);
     }
 
     @Test
     public void testRollingSetter() throws AbsTTException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(HashKind.Rolling).build());
-        final INodeWriteTrx wtx =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build())
-                .beginNodeWriteTransaction();
+        final INodeWriteTrx wtx = createWtx(HashKind.Rolling);
         testSetter(wtx);
     }
 
@@ -253,6 +225,17 @@ public class HashTest {
         assertFalse(hashRoot4 == hashLeaf1);
         assertFalse(hashRoot4 == hashLeaf2);
         assertFalse(hashRoot4 == hashLeaf3);
+    }
+
+    private INodeWriteTrx createWtx(final HashKind kind) throws AbsTTException {
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+            .getConfig()).setHashKind(kind).build());
+        final ISession session =
+            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+        final IPageWriteTrx pTrx = session.beginPageWriteTransaction();
+        final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx);
+        return wTrx;
     }
 
     @After

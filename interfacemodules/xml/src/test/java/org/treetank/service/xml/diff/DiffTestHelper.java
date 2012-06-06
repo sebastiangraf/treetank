@@ -62,7 +62,7 @@ public final class DiffTestHelper {
     }
 
     static void setUpFirst(final Holder paramHolder) throws AbsTTException {
-        DocumentCreater.createVersioned(paramHolder.getWtx());
+        DocumentCreater.createVersioned(paramHolder.getNWtx());
     }
 
     static void setUpSecond(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
@@ -99,11 +99,11 @@ public final class DiffTestHelper {
             XMLShredder init;
             if (i == 0) {
                 init =
-                    new XMLShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
+                    new XMLShredder(paramHolder.getNWtx(), XMLShredder.createFileReader(file),
                         EShredderInsert.ADDASFIRSTCHILD);
             } else {
                 init =
-                    new XMLUpdateShredder(paramHolder.getWtx(), XMLShredder.createFileReader(file),
+                    new XMLUpdateShredder(paramHolder.getNWtx(), XMLShredder.createFileReader(file),
                         EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
             }
             i++;

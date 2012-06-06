@@ -27,11 +27,15 @@
 package org.treetank;
 
 import org.treetank.TestHelper.PATHS;
+import org.treetank.access.NodeReadTrx;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 
@@ -48,9 +52,9 @@ public class Holder {
 
     private ISession mSession;
 
-    private INodeReadTrx mRtx;
+    private IPageReadTrx mPRtx;
 
-    private INodeWriteTrx mWtx;
+    private INodeReadTrx mNRtx;
 
     public static Holder generateSession() throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -59,32 +63,30 @@ public class Holder {
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final Holder holder = new Holder();
-        holder.setDatabase(database);
-        holder.setSession(session);
+        holder.mDatabase = database;
+        holder.mSession = session;
         return holder;
     }
 
     public static Holder generateWtx() throws AbsTTException {
         final Holder holder = generateSession();
-        final INodeWriteTrx wtx = holder.mSession.beginNodeWriteTransaction();
-        holder.setWtx(wtx);
+        final IPageWriteTrx pRtx = holder.mSession.beginPageWriteTransaction();
+        holder.mPRtx = pRtx;
+        holder.mNRtx = new NodeWriteTrx(holder.mSession, pRtx);
         return holder;
     }
 
     public static Holder generateRtx() throws AbsTTException {
         final Holder holder = generateSession();
-        final INodeReadTrx rtx = holder.mSession.beginNodeReadTransaction();
-        holder.setRtx(rtx);
+        final IPageReadTrx pRtx =
+            holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
+        holder.mNRtx = new NodeReadTrx(pRtx);
         return holder;
     }
 
     public void close() throws AbsTTException {
-        if (mRtx != null && !mRtx.isClosed()) {
-            mRtx.close();
-        }
-        if (mWtx != null && !mWtx.isClosed()) {
-            mWtx.abort();
-            mWtx.close();
+        if (mNRtx != null && !mNRtx.isClosed()) {
+            mNRtx.close();
         }
         mSession.close();
     }
@@ -97,28 +99,30 @@ public class Holder {
         return mSession;
     }
 
-    public INodeReadTrx getRtx() {
-        return mRtx;
+    public IPageReadTrx getPRtx() {
+        return mPRtx;
     }
 
-    public INodeWriteTrx getWtx() {
-        return mWtx;
+    public IPageWriteTrx getPWtx() {
+        if (mPRtx instanceof IPageWriteTrx) {
+            return (IPageWriteTrx)mPRtx;
+        } else {
+            throw new IllegalStateException();
+        }
+
     }
 
-    private void setWtx(final INodeWriteTrx paramWtx) {
-        this.mWtx = paramWtx;
+    public INodeReadTrx getNRtx() {
+        return mNRtx;
     }
 
-    private void setRtx(final INodeReadTrx paramRtx) {
-        this.mRtx = paramRtx;
-    }
+    public INodeWriteTrx getNWtx() {
+        if (mNRtx instanceof INodeWriteTrx) {
+            return (INodeWriteTrx)mNRtx;
+        } else {
+            throw new IllegalStateException();
+        }
 
-    private void setSession(final ISession paramSession) {
-        this.mSession = paramSession;
-    }
-
-    private void setDatabase(final IDatabase paramDatabase) {
-        this.mDatabase = paramDatabase;
     }
 
 }

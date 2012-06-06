@@ -95,7 +95,7 @@ public class AbsAxisTest {
     @Test
     public void testIAxisUserExample() throws AbsTTException {
 
-        final AbsAxis axis = new DescendantAxis(holder.getRtx());
+        final AbsAxis axis = new DescendantAxis(holder.getNRtx());
         long count = 0L;
         while (axis.hasNext()) {
             count += 1;

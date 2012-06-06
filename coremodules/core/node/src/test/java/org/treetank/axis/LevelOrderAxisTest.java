@@ -59,7 +59,7 @@ public class LevelOrderAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(11L);
         AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx),

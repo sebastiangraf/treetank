@@ -70,7 +70,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q1() throws TTXPathException {
         String query = xmbq.getQuery(1, FACTOR);
         String result = xmbq.getResult(1, FACTOR);
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(), query),
             new String[] {
                 result
             });
@@ -80,7 +80,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q5() throws TTXPathException {
         String query = xmbq.getQuery(5, FACTOR);
         String result = xmbq.getResult(5, FACTOR);
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(), query),
             new String[] {
                 result
             });
@@ -90,7 +90,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q6() throws TTXPathException {
         String query = xmbq.getQuery(6, FACTOR);
         String result = xmbq.getResult(6, FACTOR);
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(), query),
             new String[] {
                 result
             });
@@ -100,7 +100,7 @@ public class XMarkBenchTest {
     public void xMarkTest_Q7() throws TTXPathException {
         String query = xmbq.getQuery(7, FACTOR);
         String result = xmbq.getResult(7, FACTOR);
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(), query),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(), query),
             new String[] {
                 result
             });

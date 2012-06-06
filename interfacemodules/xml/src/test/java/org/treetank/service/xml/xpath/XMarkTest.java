@@ -72,7 +72,7 @@ public class XMarkTest {
     public void testQ1_10() throws AbsTTException {
         // Verify.
 
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
             "/site/people/person[@id=\"person0\"]/name/text()"), new String[] {
             "Sinisa Farrel"
         });
@@ -82,7 +82,7 @@ public class XMarkTest {
     public void testQ1() throws AbsTTException {
 
         // Q1 The name of the person with ID 'person0' {projecting}
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
             "for $b in /site/people/person[@id=\"person0\"] " + "return $b/name/text()"), new String[] {
             "Sinisa Farrel"
         });
@@ -92,7 +92,7 @@ public class XMarkTest {
     public void testQ5() throws AbsTTException {
 
         // Q5 How many sold items cost more than 40?
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
             "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] "
                 + "return $i/price)"), new String[] {
             "75"
@@ -103,7 +103,7 @@ public class XMarkTest {
     public void testQ6() throws AbsTTException {
 
         // Q6 How many items are listed on all continents?
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
             "for $b in //site/regions return fn:count($b//item)"), new String[] {
             "217"
         });
@@ -112,7 +112,7 @@ public class XMarkTest {
     @Test
     public void testQ7() throws AbsTTException {
         // Q7 How many pieces of prose are in our database?
-        XPathStringChecker.testIAxisConventions(holder.getRtx(), new XPathAxis(holder.getRtx(),
+        XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
             "for $p in /site return fn:count($p//description) + "
                 + "fn:count($p//annotation) + fn:count($p//emailaddress)"), new String[] {
             "916.0"

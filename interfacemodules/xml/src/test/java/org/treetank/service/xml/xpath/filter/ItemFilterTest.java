@@ -56,15 +56,15 @@ public class ItemFilterTest {
     @Test
     public void testIFilterConvetions() throws AbsTTException {
 
-        holder.getRtx().moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
+        holder.getNRtx().moveTo(9L);
+        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getNRtx()), true);
 
-        holder.getRtx().moveTo(3L);
-        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
+        holder.getNRtx().moveTo(3L);
+        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getNRtx()), true);
 
-        holder.getRtx().moveTo(2L);
-        holder.getRtx().moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()), true);
+        holder.getNRtx().moveTo(2L);
+        holder.getNRtx().moveToAttribute(0);
+        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getNRtx()), true);
 
     }
 }

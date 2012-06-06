@@ -61,7 +61,7 @@ public class FilterAxisTest {
     @Test
     public void testNameAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new FilterAxis(
@@ -72,7 +72,7 @@ public class FilterAxisTest {
     @Test
     public void testValueAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new FilterAxis(
@@ -83,7 +83,7 @@ public class FilterAxisTest {
     @Test
     public void testValueAndNameAxisTest() throws AbsTTException {
         // Build simple test tree.
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx),

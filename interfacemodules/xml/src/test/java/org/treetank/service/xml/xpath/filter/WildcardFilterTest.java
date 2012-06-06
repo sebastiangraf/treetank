@@ -59,11 +59,11 @@ public class WildcardFilterTest {
 
     @Test
     public void testIFilterConvetions() throws AbsTTException {
-        holder.getRtx().moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b", true), true);
-        holder.getRtx().moveToAttribute(0);
+        holder.getNRtx().moveTo(9L);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "b", true), true);
+        holder.getNRtx().moveToAttribute(0);
         try {
-            AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);
+            AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
             fail("Expected an Exception, because attributes are not supported.");
         } catch (IllegalStateException e) {
             assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
@@ -77,11 +77,11 @@ public class WildcardFilterTest {
         // IFilterTest.testIFilterConventions(new ItemFilter(holder.getRtx()),
         // true);
 
-        holder.getRtx().moveTo(1L);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "p", false), true);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "a", true), true);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "c", true), false);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getRtx(), "b", false), false);
+        holder.getNRtx().moveTo(1L);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "a", true), true);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "c", true), false);
+        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "b", false), false);
 
     }
 }

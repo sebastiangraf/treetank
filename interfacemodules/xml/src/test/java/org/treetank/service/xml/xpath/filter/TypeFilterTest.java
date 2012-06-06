@@ -58,21 +58,21 @@ public class TypeFilterTest {
     @Test
     public void testIFilterConvetions() throws Exception {
 
-        final AbsAxis axis = new XPathAxis(holder.getRtx(), "a");
+        final AbsAxis axis = new XPathAxis(holder.getNRtx(), "a");
 
         axis.moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:untyped"), true);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:long"), false);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:long"), false);
 
-        holder.getRtx().moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:untyped"), true);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:double"), false);
+        holder.getNRtx().moveTo(4L);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:double"), false);
 
-        holder.getRtx().moveTo(1L);
-        holder.getRtx().moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:untyped"), true);
+        holder.getNRtx().moveTo(1L);
+        holder.getNRtx().moveToAttribute(0);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
 
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getRtx(), "xs:anyType"), false);
+        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:anyType"), false);
 
     }
 }

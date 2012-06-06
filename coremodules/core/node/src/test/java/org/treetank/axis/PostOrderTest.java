@@ -56,7 +56,7 @@ public class PostOrderTest {
 
     @Test
     public void testIterate() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new PostOrderAxis(rtx), new long[] {

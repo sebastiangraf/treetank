@@ -56,10 +56,8 @@ import org.treetank.exception.TTIOException;
  * <p>
  * <ol>
  * <li>Only a single thread accesses the single INodeWriteTrx instance.</li>
- * <li><strong>Precondition</strong> before moving cursor:
- * <code>INodeWriteTrx.getNodeKey() == n</code>.</li>
- * <li><strong>Postcondition</strong> after modifying the cursor:
- * <code>(INodeWriteTrx.insertX() == m &&
+ * <li><strong>Precondition</strong> before moving cursor: <code>INodeWriteTrx.getNodeKey() == n</code>.</li>
+ * <li><strong>Postcondition</strong> after modifying the cursor: <code>(INodeWriteTrx.insertX() == m &&
  *       INodeWriteTrx.getNodeKey() == m)</code>.</li>
  * </ol>
  * </p>
@@ -254,12 +252,11 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * @throws TTIOException
      *             if this revision couldn't be aborted
      */
-    void abort() throws TTIOException;
+    void abort() throws AbsTTException;
 
     /**
      * Reverting all changes to the revision defined. This command has to be
-     * finalized with a commit. A revert is always bound to a
-     * {@link INodeReadTrx#moveToDocumentRoot()}.
+     * finalized with a commit. A revert is always bound to a {@link INodeReadTrx#moveToDocumentRoot()}.
      * 
      * @param pRev
      *            revert to the revision

@@ -32,8 +32,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.INodeReadTrx;
-import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
@@ -50,14 +48,13 @@ import org.treetank.page.UberPage;
  * <h1>Session</h1>
  * 
  * <p>
- * Makes sure that there only is a single session instance bound to a TreeTank
- * file.
+ * Makes sure that there only is a single session instance bound to a TreeTank file.
  * </p>
  */
 public final class Session implements ISession {
 
     /** Session configuration. */
-    protected final ResourceConfiguration mResourceConfig;
+    private final ResourceConfiguration mResourceConfig;
 
     /** Session configuration. */
     protected final SessionConfiguration mSessionConfig;
@@ -89,9 +86,8 @@ public final class Session implements ISession {
      * @throws AbsTTException
      *             Exception if something weird happens
      */
-    protected Session(final Database paramDatabase,
-            final ResourceConfiguration paramResourceConf,
-            final SessionConfiguration paramSessionConf) throws AbsTTException {
+    protected Session(final Database paramDatabase, final ResourceConfiguration paramResourceConf,
+        final SessionConfiguration paramSessionConf) throws AbsTTException {
         mDatabase = paramDatabase;
         mResourceConfig = paramResourceConf;
         mSessionConfig = paramSessionConf;
@@ -105,33 +101,15 @@ public final class Session implements ISession {
         } else {
             final IReader reader = mFac.getReader();
             final PageReference firstRef = reader.readFirstReference();
-            mLastCommittedUberPage = (UberPage) firstRef.getPage();
+            mLastCommittedUberPage = (UberPage)firstRef.getPage();
             reader.close();
         }
         mClosed = false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public INodeReadTrx beginNodeReadTransaction() throws AbsTTException {
-        return beginNodeReadTransaction(mLastCommittedUberPage
-                .getRevisionNumber());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized INodeReadTrx beginNodeReadTransaction(final long pRevKey)
-            throws AbsTTException {
-        return new NodeReadTrx(beginPageReadTransaction(pRevKey));
-    }
-
-    public IPageReadTrx beginPageReadTransaction(final long pRevKey)
-            throws AbsTTException {
+    public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws AbsTTException {
         assertAccess(pRevKey);
-        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage,
-                pRevKey, mFac.getReader());
+        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mFac.getReader());
         mPageTrxs.add(trx);
         return trx;
     }
@@ -139,40 +117,21 @@ public final class Session implements ISession {
     public IPageWriteTrx beginPageWriteTransaction() throws AbsTTException {
         assertAccess(mLastCommittedUberPage.getRevision());
 
-        final IPageWriteTrx trx = beginPageWriteTransaction(
-                mLastCommittedUberPage.getRevisionNumber(),
-                mLastCommittedUberPage.getRevisionNumber());
+        final IPageWriteTrx trx =
+            beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber(), mLastCommittedUberPage
+                .getRevisionNumber());
         mPageTrxs.add(trx);
 
         return trx;
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized INodeWriteTrx beginNodeWriteTransaction()
-            throws AbsTTException {
-
-        // Create new write transaction.
-        final INodeWriteTrx wtx = new NodeWriteTrx(this,
-                beginPageWriteTransaction());
-
-        return wtx;
-
-    }
-
-    protected IPageWriteTrx beginPageWriteTransaction(
-            final long mRepresentRevision, final long mStoreRevision)
-            throws TTIOException {
+    public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision, final long mStoreRevision)
+        throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
-        return new PageWriteTrx(this, new UberPage(mLastCommittedUberPage,
-                mStoreRevision + 1), writer, mRepresentRevision, mStoreRevision);
-    }
-
-    protected void deregisterTrx(final IPageReadTrx pReadTrx) {
-        mPageTrxs.remove(pReadTrx);
+        return new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), writer,
+            mRepresentRevision, mStoreRevision);
     }
 
     /**
@@ -196,24 +155,17 @@ public final class Session implements ISession {
     }
 
     /**
-     * Checks for valid revision.
-     * 
-     * @param paramRevision
-     *            revision parameter to check
-     * @throws IllegalArgumentException
-     *             if revision isn't valid
+     * {@inheritDoc}
      */
-    protected void assertAccess(final long paramRevision) {
+    public void assertAccess(final long paramRevision) {
         if (mClosed) {
             throw new IllegalStateException("Session is already closed.");
         }
         if (paramRevision < 0) {
             throw new IllegalArgumentException("Revision must be at least 0");
         } else if (paramRevision > mLastCommittedUberPage.getRevision()) {
-            throw new IllegalArgumentException(new StringBuilder(
-                    "Revision must not be bigger than").append(
-                    Long.toString(mLastCommittedUberPage.getRevision()))
-                    .toString());
+            throw new IllegalArgumentException(new StringBuilder("Revision must not be bigger than").append(
+                Long.toString(mLastCommittedUberPage.getRevision())).toString());
         }
     }
 
@@ -229,5 +181,29 @@ public final class Session implements ISession {
 
     protected void setLastCommittedUberPage(final UberPage paramPage) {
         this.mLastCommittedUberPage = paramPage;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getMostRecentVersion() {
+        return mLastCommittedUberPage.getRevisionNumber();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceConfiguration getConfig() {
+        return mResourceConfig;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deregisterPageTrx(IPageReadTrx pTrx) {
+        mPageTrxs.remove(pTrx);
     }
 }

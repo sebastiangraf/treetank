@@ -60,41 +60,41 @@ public class XPathParserTest {
     @Test
     public void testLiterals() throws AbsTTException {
 
-        holder.getRtx().moveTo(2L);
+        holder.getNRtx().moveTo(2L);
 
         AbsAxis axis;
 
-        axis = new XPathAxis(holder.getRtx(), "\"12.5\"");
+        axis = new XPathAxis(holder.getNRtx(), "\"12.5\"");
         assertEquals(true, axis.hasNext());
         assertEquals("12.5", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(NamePageHash.generateHashForString("xs:string"), axis.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
-        axis = new XPathAxis(holder.getRtx(), "\"He said, \"\"I don't like it\"\"\"");
+        axis = new XPathAxis(holder.getNRtx(), "\"He said, \"\"I don't like it\"\"\"");
         assertEquals(true, axis.hasNext());
         assertEquals("He said, I don't like it", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(NamePageHash.generateHashForString("xs:string"), axis.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
-        axis = new XPathAxis(holder.getRtx(), "12");
+        axis = new XPathAxis(holder.getNRtx(), "12");
         assertEquals(true, axis.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:integer"), axis.getNode().getTypeKey());
         assertEquals("12", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(false, axis.hasNext());
 
-        axis = new XPathAxis(holder.getRtx(), "12.5");
+        axis = new XPathAxis(holder.getNRtx(), "12.5");
         assertEquals(true, axis.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:decimal"), axis.getNode().getTypeKey());
         assertEquals("12.5", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(false, axis.hasNext());
 
-        axis = new XPathAxis(holder.getRtx(), "12.5E2");
+        axis = new XPathAxis(holder.getNRtx(), "12.5E2");
         assertEquals(true, axis.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode().getTypeKey());
         assertEquals("12.5E2", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(false, axis.hasNext());
 
-        axis = new XPathAxis(holder.getRtx(), "1");
+        axis = new XPathAxis(holder.getNRtx(), "1");
         assertEquals(true, axis.hasNext());
         assertEquals("1", new String(((IValNode)axis.getNode()).getRawValue()));
         assertEquals(NamePageHash.generateHashForString("xs:integer"), axis.getNode().getTypeKey());
@@ -105,34 +105,34 @@ public class XPathParserTest {
     @Test
     public void testEBNF() throws AbsTTException {
 
-        XPathParser parser = new XPathParser(holder.getRtx(), "/p:a");
+        XPathParser parser = new XPathParser(holder.getNRtx(), "/p:a");
         parser.parseQuery();
 
-        parser = new XPathParser(holder.getRtx(), "/p:a/node(), /b/descendant-or-self::adsfj");
+        parser = new XPathParser(holder.getNRtx(), "/p:a/node(), /b/descendant-or-self::adsfj");
         parser.parseQuery();
 
-        parser = new XPathParser(holder.getRtx(), "for $i in /p:a return $i");
+        parser = new XPathParser(holder.getNRtx(), "for $i in /p:a return $i");
         parser.parseQuery();
 
-        parser = new XPathParser(holder.getRtx(), "for $i in /p:a return /p:a");
+        parser = new XPathParser(holder.getNRtx(), "for $i in /p:a return /p:a");
         parser.parseQuery();
 
-        parser = new XPathParser(holder.getRtx(), "child::element(person)");
+        parser = new XPathParser(holder.getNRtx(), "child::element(person)");
         parser.parseQuery();
 
-        parser = new XPathParser(holder.getRtx(), "child::element(person, xs:string)");
+        parser = new XPathParser(holder.getNRtx(), "child::element(person, xs:string)");
         parser.parseQuery();
 
-        parser = new XPathParser(holder.getRtx(), " child::element(*, xs:string)");
+        parser = new XPathParser(holder.getNRtx(), " child::element(*, xs:string)");
         parser.parseQuery();
 
-        parser = new XPathParser(holder.getRtx(), "child::element()");
+        parser = new XPathParser(holder.getNRtx(), "child::element()");
         parser.parseQuery();
 
         // parser = new XPathParser(holder.getRtx(), ". treat as item()");
         // parser.parseQuery();
 
-        parser = new XPathParser(holder.getRtx(), "/b instance of item()");
+        parser = new XPathParser(holder.getNRtx(), "/b instance of item()");
         parser.parseQuery();
 
     }

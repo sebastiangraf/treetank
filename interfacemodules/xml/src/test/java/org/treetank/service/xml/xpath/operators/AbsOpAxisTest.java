@@ -67,12 +67,12 @@ public class AbsOpAxisTest {
         AtomicValue item1 = new AtomicValue(1.0, Type.DOUBLE);
         AtomicValue item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-        final int key1 = AbsAxis.addAtomicToItemList(holder.getRtx(), item1);
-        final int key2 = AbsAxis.addAtomicToItemList(holder.getRtx(), item2);
+        final int key1 = AbsAxis.addAtomicToItemList(holder.getNRtx(), item1);
+        final int key2 = AbsAxis.addAtomicToItemList(holder.getNRtx(), item2);
 
-        AbsAxis op1 = new LiteralExpr(holder.getRtx(), key1);
-        AbsAxis op2 = new LiteralExpr(holder.getRtx(), key2);
-        AbsObAxis axis = new DivOpAxis(holder.getRtx(), op1, op2);
+        AbsAxis op1 = new LiteralExpr(holder.getNRtx(), key1);
+        AbsAxis op2 = new LiteralExpr(holder.getNRtx(), key2);
+        AbsObAxis axis = new DivOpAxis(holder.getNRtx(), op1, op2);
 
         assertEquals(true, axis.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode().getTypeKey());

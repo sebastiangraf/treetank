@@ -54,7 +54,7 @@ public class AncestorAxisTest {
 
     @Test
     public void testAxisConventions() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(12L);
         AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx), new long[] {
@@ -74,7 +74,7 @@ public class AncestorAxisTest {
 
     @Test
     public void testAxisConventionsIncludingSelf() throws AbsTTException {
-        final INodeReadTrx rtx = holder.getRtx();
+        final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(11L);
         AbsAxisTest.testIAxisConventions(new AncestorAxis(rtx, true),
