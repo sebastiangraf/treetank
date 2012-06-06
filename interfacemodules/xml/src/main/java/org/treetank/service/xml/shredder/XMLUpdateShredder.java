@@ -116,9 +116,6 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
      */
     private transient long mKeyMatches;
 
-    /** Maximum node key in revision. */
-    private transient long mMaxNodeKey;
-
     /** Determines if changes should be commited. */
     private transient EShredderCommit mCommit;
 
