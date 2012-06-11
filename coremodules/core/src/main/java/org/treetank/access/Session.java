@@ -115,23 +115,22 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction() throws AbsTTException {
-        assertAccess(mLastCommittedUberPage.getRevision());
 
-        final IPageWriteTrx trx =
-            beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber(), mLastCommittedUberPage
-                .getRevisionNumber());
-        mPageTrxs.add(trx);
-
-        return trx;
+        return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber(), mLastCommittedUberPage
+            .getRevisionNumber());
 
     }
 
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision, final long mStoreRevision)
         throws TTIOException {
+        assertAccess(mLastCommittedUberPage.getRevision());
         final IWriter writer = mFac.getWriter();
+        final IPageWriteTrx trx =
+            new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), writer,
+                mRepresentRevision, mStoreRevision);
+        mPageTrxs.add(trx);
 
-        return new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), writer,
-            mRepresentRevision, mStoreRevision);
+        return trx;
     }
 
     /**

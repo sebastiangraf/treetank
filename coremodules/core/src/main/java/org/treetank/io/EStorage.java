@@ -45,6 +45,7 @@ import org.treetank.io.file.FileKey;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Deprecated
 public enum EStorage {
 
     File(1, FileKey.class) {

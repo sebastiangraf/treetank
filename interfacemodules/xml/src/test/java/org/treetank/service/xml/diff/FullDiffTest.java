@@ -54,7 +54,8 @@ public class FullDiffTest {
 
     @Before
     public void setUp() throws AbsTTException {
-        DiffTestHelper.setUp();
+        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
         mHolder = Holder.generateWtx();
         mObserver = DiffTestHelper.createMock();
     }
@@ -62,6 +63,7 @@ public class FullDiffTest {
     @After
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test

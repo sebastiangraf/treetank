@@ -41,7 +41,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.mockito.InOrder;
 import org.treetank.Holder;
-import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
@@ -56,10 +55,6 @@ public final class DiffTestHelper {
 
     protected static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
     protected static final long TIMEOUT_S = 5;
-
-    static void setUp() throws AbsTTException {
-        TestHelper.deleteEverything();
-    }
 
     static void setUpFirst(final Holder paramHolder) throws AbsTTException {
         DocumentCreater.createVersioned(paramHolder.getNWtx());

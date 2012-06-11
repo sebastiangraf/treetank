@@ -31,7 +31,6 @@ import java.io.File;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -103,14 +102,6 @@ public final class FileFactory implements IStorage {
         final File file = getConcreteStorage();
         final boolean returnVal = file.length() > 0;
         return returnVal;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void truncate() throws TTIOException {
-        EStorage.recursiveDelete(mFile);
     }
 
 }
