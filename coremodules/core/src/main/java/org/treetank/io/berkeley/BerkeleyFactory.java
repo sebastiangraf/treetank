@@ -93,9 +93,6 @@ public final class BerkeleyFactory implements IStorage {
      */
     private final Database mDatabase;
 
-    /** Storage of DB. */
-    private final File mFile;
-
     /**
      * Private constructor.
      * 
@@ -109,8 +106,6 @@ public final class BerkeleyFactory implements IStorage {
      *             of something odd happens while database-connection
      */
     public BerkeleyFactory(final File paramFile) throws TTIOException {
-
-        mFile = paramFile;
 
         final File repoFile = new File(paramFile, ResourceConfiguration.Paths.Data.getFile().getName());
         if (!repoFile.exists()) {
@@ -190,24 +185,6 @@ public final class BerkeleyFactory implements IStorage {
             throw new TTIOException(exc);
         }
         return returnVal;
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void truncate() throws TTIOException {
-        try {
-            final Environment env =
-                new Environment(new File(mFile, ResourceConfiguration.Paths.Data.getFile().getName()),
-                    generateEnvConf());
-            if (env.getDatabaseNames().contains(NAME)) {
-                env.removeDatabase(null, NAME);
-            }
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
-        }
 
     }
 

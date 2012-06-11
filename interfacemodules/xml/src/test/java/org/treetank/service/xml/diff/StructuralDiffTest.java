@@ -55,7 +55,7 @@ public final class StructuralDiffTest {
 
     @Before
     public void setUp() throws AbsTTException {
-        DiffTestHelper.setUp();
+        TestHelper.deleteEverything();
         mHolder = Holder.generateWtx();
         mObserver = DiffTestHelper.createMock();
     }
@@ -63,6 +63,7 @@ public final class StructuralDiffTest {
     @After
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test

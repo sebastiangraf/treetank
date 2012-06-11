@@ -389,7 +389,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate.mSession.deregisterPageTrx(this);
         mDelegate.close();
         mLog.clear();
-        mPageWriter.close();
+//        mPageWriter.close();
     }
 
     public long getMaxNodeKey() {

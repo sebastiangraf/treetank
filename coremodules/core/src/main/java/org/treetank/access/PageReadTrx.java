@@ -56,9 +56,9 @@ import com.google.common.cache.CacheBuilder;
  * <h1>PageReadTrx</h1>
  * 
  * <p>
- * State of a reading transaction. The only thing shared amongst transactions is
- * the page cache. Everything else is exclusive to this transaction. It is
- * required that only a single thread has access to this transaction.
+ * State of a reading transaction. The only thing shared amongst transactions is the page cache. Everything
+ * else is exclusive to this transaction. It is required that only a single thread has access to this
+ * transaction.
  * </p>
  * 
  * <p>
@@ -101,8 +101,8 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected PageReadTrx(final ISession pSession, final UberPage pUberpage,
-            final long pRevision, final IReader pReader) throws TTIOException {
+    protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevision,
+        final IReader pReader) throws TTIOException {
         mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
         mSession = pSession;
         mPageReader = pReader;
@@ -143,8 +143,7 @@ public class PageReadTrx implements IPageReadTrx {
 
             // Build up the complete page.
             final ERevisioning revision = mSession.getConfig().mRevision;
-            final NodePage completePage = revision.combinePages(revs,
-                    mileStoneRevision);
+            final NodePage completePage = revision.combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
         }
@@ -161,8 +160,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @return the name
      */
     public String getName(final int mNameKey) {
-        return ((NamePage) mRootPage.getNamePageReference().getPage())
-                .getName(mNameKey);
+        return ((NamePage)mRootPage.getNamePageReference().getPage()).getName(mNameKey);
 
     }
 
@@ -174,8 +172,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @return a byte array containing the raw name
      */
     public final byte[] getRawName(final int mNameKey) {
-        return ((NamePage) mRootPage.getNamePageReference().getPage())
-                .getRawName(mNameKey);
+        return ((NamePage)mRootPage.getNamePageReference().getPage()).getRawName(mNameKey);
 
     }
 
@@ -209,9 +206,8 @@ public class PageReadTrx implements IPageReadTrx {
      */
     @Override
     public String toString() {
-        return new StringBuilder("PageReader: ").append(mPageReader)
-                .append("\nUberPage: ").append(mUberPage)
-                .append("\nRevRootPage: ").append(mRootPage).toString();
+        return new StringBuilder("PageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage)
+            .append("\nRevRootPage: ").append(mRootPage).toString();
     }
 
     /**
@@ -247,16 +243,14 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final RevisionRootPage loadRevRoot(final long revisionKey)
-            throws TTIOException {
+    protected final RevisionRootPage loadRevRoot(final long revisionKey) throws TTIOException {
 
-        final PageReference ref = dereferenceLeafOfTree(
-                mUberPage.getIndirectPageReference(), revisionKey);
-        RevisionRootPage page = (RevisionRootPage) ref.getPage();
+        final PageReference ref = dereferenceLeafOfTree(mUberPage.getIndirectPageReference(), revisionKey);
+        RevisionRootPage page = (RevisionRootPage)ref.getPage();
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            page = (RevisionRootPage) mPageReader.read(ref.getKey());
+            page = (RevisionRootPage)mPageReader.read(ref.getKey());
         }
 
         // Get revision root page which is the leaf of the indirect tree.
@@ -272,7 +266,7 @@ public class PageReadTrx implements IPageReadTrx {
     protected final void initializeNamePage() throws TTIOException {
         final PageReference ref = mRootPage.getNamePageReference();
         if (ref.getPage() == null) {
-            ref.setPage((NamePage) mPageReader.read(ref.getKey()));
+            ref.setPage((NamePage)mPageReader.read(ref.getKey()));
         }
     }
 
@@ -295,19 +289,17 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final NodePage[] getSnapshotPages(final long mNodePageKey)
-            throws TTIOException {
+    protected final NodePage[] getSnapshotPages(final long mNodePageKey) throws TTIOException {
 
         // ..and get all leaves of nodepages from the revision-trees.
         final List<PageReference> refs = new ArrayList<PageReference>();
         final Set<Long> keys = new HashSet<Long>();
 
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
-            final PageReference ref = dereferenceLeafOfTree(loadRevRoot(i)
-                    .getIndirectPageReference(), mNodePageKey);
+            final PageReference ref =
+                dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), mNodePageKey);
             if (ref != null && (ref.getPage() != null || ref.getKey() != null)) {
-                if (ref.getKey() == null
-                        || (!keys.contains(ref.getKey().getIdentifier()))) {
+                if (ref.getKey() == null || (!keys.contains(ref.getKey().getIdentifier()))) {
                     refs.add(ref);
                     if (ref.getKey() != null) {
                         keys.add(ref.getKey().getIdentifier());
@@ -326,9 +318,9 @@ public class PageReadTrx implements IPageReadTrx {
         final NodePage[] pages = new NodePage[refs.size()];
         for (int i = 0; i < pages.length; i++) {
             final PageReference ref = refs.get(i);
-            pages[i] = (NodePage) ref.getPage();
+            pages[i] = (NodePage)ref.getPage();
             if (pages[i] == null) {
-                pages[i] = (NodePage) mPageReader.read(ref.getKey());
+                pages[i] = (NodePage)mPageReader.read(ref.getKey());
             }
         }
         return pages;
@@ -345,14 +337,16 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final IndirectPage dereferenceIndirectPage(final PageReference ref)
-            throws TTIOException {
+    protected final IndirectPage dereferenceIndirectPage(final PageReference ref) throws TTIOException {
 
-        IndirectPage page = (IndirectPage) ref.getPage();
+        IndirectPage page = (IndirectPage)ref.getPage();
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            page = (IndirectPage) mPageReader.read(ref.getKey());
+            if (ref.getPage() == null && ref.getKey() == null) {
+                return null;
+            }
+            page = (IndirectPage)mPageReader.read(ref.getKey());
             ref.setPage(page);
         }
 
@@ -371,9 +365,8 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final PageReference dereferenceLeafOfTree(
-            final PageReference paramStartReference, final long paramKey)
-            throws TTIOException {
+    protected final PageReference dereferenceLeafOfTree(final PageReference paramStartReference,
+        final long paramKey) throws TTIOException {
 
         // Initial state pointing to the indirect page of level 0.
         PageReference reference = paramStartReference;
@@ -382,7 +375,7 @@ public class PageReadTrx implements IPageReadTrx {
 
         // Iterate through all levels.
         for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-            offset = (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+            offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final IPage page = dereferenceIndirectPage(reference);
             if (page == null) {
@@ -417,8 +410,9 @@ public class PageReadTrx implements IPageReadTrx {
      * @return Offset into node page.
      */
     protected static final int nodePageOffset(final long mNodeKey) {
-        final long nodePageOffset = (mNodeKey - ((mNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
-        return (int) nodePageOffset;
+        final long nodePageOffset =
+            (mNodeKey - ((mNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
+        return (int)nodePageOffset;
     }
 
 }
