@@ -34,10 +34,10 @@ import java.io.RandomAccessFile;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IKey;
 import org.treetank.io.IReader;
+import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 import org.treetank.utils.IConstants;
 
 /**

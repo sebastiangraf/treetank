@@ -35,7 +35,6 @@ import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.ENode;
 import org.treetank.page.delegates.PageDelegate;
-import org.treetank.page.interfaces.IPage;
 import org.treetank.utils.IConstants;
 
 /**

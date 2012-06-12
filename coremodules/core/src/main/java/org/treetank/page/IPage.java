@@ -24,57 +24,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/**
- * 
- */
-package org.treetank.page.delegates;
+package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
-import org.treetank.page.PageReference;
-import org.treetank.page.interfaces.IReferencePage;
 
-/**
- * @author Sebastian Graf, University of Konstanz
- * 
- */
-public class PageReferenceDelegate implements IReferencePage {
+public interface IPage {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(ITTSink paramOut) {
-        // TODO Auto-generated method stub
+    void serialize(final ITTSink paramOut);
 
-    }
+    long getRevision();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getRevision() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+    PageReference[] getReferences();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PageReference[] getReferences() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void commit(PageWriteTrx paramState) throws AbsTTException {
-        // TODO Auto-generated method stub
-
-    }
+    void commit(final PageWriteTrx paramState) throws AbsTTException;
 
 }

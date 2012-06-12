@@ -32,8 +32,8 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
+import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * <h1>Page</h1>
