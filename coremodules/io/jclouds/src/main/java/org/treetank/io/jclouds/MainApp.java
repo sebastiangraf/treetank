@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.io;
+package org.treetank.io.jclouds;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
