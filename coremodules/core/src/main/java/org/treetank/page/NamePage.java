@@ -34,7 +34,6 @@ import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
-import org.treetank.page.delegates.PageDelegate;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -49,16 +48,17 @@ public final class NamePage implements IPage {
     /** Map the hash of a name to its name. */
     private final Map<Integer, String> mNameMap;
 
-    private final PageDelegate mDelegate;
+    /** Revision of this page. */
+    private final long mRevision;
 
     /**
      * Create name page.
      * 
-     * @param paramRevision
+     * @param pRevision
      *            Revision number.
      */
-    public NamePage(final long paramRevision) {
-        mDelegate = new PageDelegate(0, paramRevision);
+    public NamePage(final long pRevision) {
+        mRevision = pRevision;
         mNameMap = new HashMap<Integer, String>();
     }
 
@@ -69,8 +69,7 @@ public final class NamePage implements IPage {
      *            Input bytes to read from.
      */
     protected NamePage(final ITTSource paramIn) {
-        mDelegate = new PageDelegate(0, paramIn.readLong());
-        mDelegate.initialize(paramIn);
+        mRevision = paramIn.readLong();
         final int mapSize = paramIn.readInt();
 
         mNameMap = new HashMap<Integer, String>(mapSize);
@@ -124,8 +123,7 @@ public final class NamePage implements IPage {
      */
     @Override
     public void serialize(final ITTSink paramOut) {
-        mDelegate.serialize(paramOut);
-
+        paramOut.writeLong(mRevision);
         paramOut.writeInt(mNameMap.size());
 
         for (final int key : mNameMap.keySet()) {
@@ -157,17 +155,16 @@ public final class NamePage implements IPage {
 
     @Override
     public void commit(PageWriteTrx paramState) throws AbsTTException {
-        mDelegate.commit(paramState);
     }
 
     @Override
     public PageReference[] getReferences() {
-        return mDelegate.getReferences();
+        return null;
     }
 
     @Override
     public long getRevision() {
-        return mDelegate.getRevision();
+        return mRevision;
     }
 
 }

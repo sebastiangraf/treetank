@@ -73,7 +73,6 @@ public class PageDelegate implements IPage {
             if (storage != null) {
                 getReferences()[offset].setKey(storage.deserialize(paramIn));
             }
-
         }
     }
 

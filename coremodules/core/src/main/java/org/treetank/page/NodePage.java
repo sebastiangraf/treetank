@@ -34,7 +34,6 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.ENode;
-import org.treetank.page.delegates.PageDelegate;
 import org.treetank.utils.IConstants;
 
 /**
@@ -52,7 +51,8 @@ public class NodePage implements IPage {
     /** Array of nodes. This can have null nodes that were removed. */
     private final INode[] mNodes;
 
-    private final PageDelegate mDelegate;
+    /** Revision of this page. */
+    private final long mRevision;
 
     /**
      * Create node page.
@@ -60,8 +60,8 @@ public class NodePage implements IPage {
      * @param nodePageKey
      *            Base key assigned to this node page.
      */
-    public NodePage(final long nodePageKey, final long mRevision) {
-        mDelegate = new PageDelegate(0, mRevision);
+    public NodePage(final long nodePageKey, final long pRevision) {
+        mRevision = pRevision;
         mNodePageKey = nodePageKey;
         mNodes = new INode[IConstants.NDP_NODE_COUNT];
     }
@@ -73,103 +73,11 @@ public class NodePage implements IPage {
      *            Input bytes to read page from.
      */
     protected NodePage(final ITTSource mIn) {
-        mDelegate = new PageDelegate(0, mIn.readLong());
-        mDelegate.initialize(mIn);
+        mRevision = mIn.readLong();
 
         mNodePageKey = mIn.readLong();
         mNodes = new INode[IConstants.NDP_NODE_COUNT];
 
-        // final EncryptionController enController = EncryptionController
-        // .getInstance();
-        //
-        // if (enController.checkEncryption()) {
-        // for (int i = 0; i < mNodes.length; i++) {
-        // final long mRightKey = getRightKey(mIn);
-        //
-        // final List<Long> mUserKeys = enController.getKeyCache().get(
-        // enController.getUser());
-        // byte[] mSecretKey = null;
-        //
-        // if (mUserKeys.contains(mRightKey) || mRightKey == -1) {
-        // final int mElementKind = mIn.readInt();
-        //
-        // if (mRightKey != -1) {
-        //
-        // // get secret key
-        // mSecretKey = enController.getSelDb()
-        // .getEntry(mRightKey).getSecretKey();
-        //
-        // final int mNodeBytes = mIn.readInt();
-        // final int mPointerBytes = mIn.readInt();
-        //
-        // final byte[] mDecryptedNode;
-        //
-        // if (mPointerBytes == 0) {
-        //
-        // final byte[] mEncryptedNode = new byte[mNodeBytes];
-        //
-        // for (int j = 0; j < mNodeBytes; j++) {
-        // mEncryptedNode[j] = mIn.readByte();
-        // }
-        //
-        // mDecryptedNode = NodeEncryption.decrypt(
-        // mEncryptedNode, mSecretKey);
-        //
-        // } else {
-        //
-        // final byte[] mEncryptedPointer = new byte[mPointerBytes];
-        // for (int j = 0; j < mPointerBytes; j++) {
-        // mEncryptedPointer[j] = mIn.readByte();
-        // }
-        //
-        // final int mDataBytes = mNodeBytes - mPointerBytes;
-        // final byte[] mEncryptedData = new byte[mDataBytes];
-        // for (int j = 0; j < mDataBytes; j++) {
-        // mEncryptedData[j] = mIn.readByte();
-        // }
-        //
-        // final byte[] mDecryptedPointer = NodeEncryption
-        // .decrypt(mEncryptedPointer, mSecretKey);
-        //
-        // final byte[] mDecryptedData = NodeEncryption
-        // .decrypt(mEncryptedData, mSecretKey);
-        //
-        // mDecryptedNode = new byte[mDecryptedPointer.length
-        // + mDecryptedData.length];
-        //
-        // int mCounter = 0;
-        // for (int j = 0; j < mDecryptedPointer.length; j++) {
-        // mDecryptedNode[mCounter] = mDecryptedPointer[j];
-        // mCounter++;
-        // }
-        // for (int j = 0; j < mDecryptedData.length; j++) {
-        // mDecryptedNode[mCounter] = mDecryptedData[j];
-        // mCounter++;
-        // }
-        //
-        // }
-        //
-        // final NodeInputSource mNodeInput = new NodeInputSource(
-        // mDecryptedNode);
-        //
-        // final ENode mEnumKind = ENode.getKind(mElementKind);
-        //
-        // if (mEnumKind != ENode.UNKOWN_KIND) {
-        // getNodes()[i] = mEnumKind.deserialize(mNodeInput);
-        // }
-        // }
-        //
-        // } else {
-        // try {
-        // throw new TTUsageException(
-        // "User has no permission to access the node");
-        //
-        // } catch (final TTUsageException mExp) {
-        // mExp.printStackTrace();
-        // }
-        // }
-        // }
-        // } else {
         final int[] kinds = new int[IConstants.NDP_NODE_COUNT];
         for (int i = 0; i < kinds.length; i++) {
             kinds[i] = mIn.readInt();
@@ -183,7 +91,6 @@ public class NodePage implements IPage {
             }
         }
 
-        // }
     }
 
     /**
@@ -224,12 +131,11 @@ public class NodePage implements IPage {
     @Override
     public void serialize(final ITTSink mOut) {
         // TODO respect new INode hierarchy, must rely on normal INodes only
-        mDelegate.serialize(mOut);
+        mOut.writeLong(mRevision);
         mOut.writeLong(mNodePageKey);
         for (int i = 0; i < getNodes().length; i++) {
             if (getNodes()[i] != null) {
-                final int kind = ((org.treetank.node.interfaces.INode) getNodes()[i])
-                        .getKind().getId();
+                final int kind = ((org.treetank.node.interfaces.INode)getNodes()[i]).getKind().getId();
                 mOut.writeInt(kind);
             } else {
                 mOut.writeInt(ENode.UNKOWN_KIND.getId());
@@ -238,7 +144,7 @@ public class NodePage implements IPage {
 
         for (final INode node : getNodes()) {
             if (node != null) {
-                org.treetank.node.interfaces.INode nodenode = (org.treetank.node.interfaces.INode) node;
+                org.treetank.node.interfaces.INode nodenode = (org.treetank.node.interfaces.INode)node;
                 ENode.getKind(nodenode.getClass()).serialize(mOut, nodenode);
             }
         }
@@ -273,7 +179,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -292,7 +198,7 @@ public class NodePage implements IPage {
             return false;
         }
 
-        final NodePage mOther = (NodePage) mObj;
+        final NodePage mOther = (NodePage)mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
             return false;
         }
@@ -306,18 +212,16 @@ public class NodePage implements IPage {
 
     @Override
     public void commit(PageWriteTrx paramState) throws AbsTTException {
-        mDelegate.commit(paramState);
-
     }
 
     @Override
     public PageReference[] getReferences() {
-        return mDelegate.getReferences();
+        return null;
     }
 
     @Override
     public long getRevision() {
-        return mDelegate.getRevision();
+        return mRevision;
     }
 
 }
