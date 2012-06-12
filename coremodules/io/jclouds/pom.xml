@@ -29,10 +29,10 @@
 		<relativePath>../../../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>io</artifactId>
+	<artifactId>jclouds</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>IO-Binding for the storage</name>
+	<name>jClouds-Binding</name>
 	<repositories>
 		<repository>
 			<id>disyInternal</id>
