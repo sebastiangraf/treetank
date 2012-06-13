@@ -102,7 +102,7 @@ public final class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public void write(final PageReference pageReference) throws TTIOException {
+    public IKey write(final PageReference pageReference) throws TTIOException {
         final IPage page = pageReference.getPage();
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -122,6 +122,7 @@ public final class BerkeleyWriter implements IWriter {
         }
 
         pageReference.setKey(key);
+        return key;
 
     }
 
