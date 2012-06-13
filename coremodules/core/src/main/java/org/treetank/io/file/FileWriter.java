@@ -114,7 +114,7 @@ public final class FileWriter implements IWriter {
             // Getting actual offset and appending to the end of the current
             // file
             final long fileSize = mFile.length();
-            final long offset = fileSize == 0 ? IConstants.BEACON_START + IConstants.BEACON_LENGTH : fileSize;
+            final long offset = fileSize == 0 ? IConstants.BEACON_LENGTH : fileSize;
             mFile.seek(offset);
             final byte[] tmp = new byte[outputLength - 12];
             mBuffer.get(tmp, 0, tmp.length);
