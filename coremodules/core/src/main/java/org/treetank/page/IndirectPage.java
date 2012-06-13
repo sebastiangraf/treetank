@@ -29,9 +29,9 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
+import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
-import org.treetank.page.delegates.PageDelegate;
 import org.treetank.utils.IConstants;
 
 /**
@@ -43,7 +43,8 @@ import org.treetank.utils.IConstants;
  */
 public final class IndirectPage implements IPage {
 
-    private final PageDelegate mDelegate;
+    /** Page references. */
+    private PageReference[] mReferences;
 
     /** revision of this page. */
     private final long mRevision;
@@ -56,7 +57,10 @@ public final class IndirectPage implements IPage {
      */
     public IndirectPage(final long paramRevision) {
         mRevision = paramRevision;
-        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, paramRevision);
+        mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
+        for (int i = 0; i < mReferences.length; i++) {
+            mReferences[i] = new PageReference();
+        }
     }
 
     /**
@@ -67,8 +71,14 @@ public final class IndirectPage implements IPage {
      */
     protected IndirectPage(final ITTSource paramIn) {
         mRevision = paramIn.readLong();
-        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, mRevision);
-        mDelegate.initialize(paramIn);
+        mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
+        for (int offset = 0; offset < mReferences.length; offset++) {
+            getReferences()[offset] = new PageReference();
+            final EStorage storage = EStorage.getInstance(paramIn.readInt());
+            if (storage != null) {
+                getReferences()[offset].setKey(storage.deserialize(paramIn));
+            }
+        }
     }
 
     /**
@@ -81,24 +91,32 @@ public final class IndirectPage implements IPage {
      */
     public IndirectPage(final IndirectPage page, final long revisionToUse) {
         mRevision = revisionToUse;
-        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, revisionToUse);
-        mDelegate.initialize(page);
+        mReferences = page.getReferences();
     }
 
     @Override
     public void commit(PageWriteTrx paramState) throws AbsTTException {
-        mDelegate.commit(paramState);
+        for (final PageReference reference : getReferences()) {
+            paramState.commit(reference);
+        }
     }
 
     @Override
     public void serialize(ITTSink paramOut) {
         paramOut.writeLong(mRevision);
-        mDelegate.serialize(paramOut);
+        for (final PageReference reference : getReferences()) {
+            if (reference.getKey() == null) {
+                paramOut.writeInt(0);
+            } else {
+                EStorage.getInstance(reference.getKey().getClass()).serialize(paramOut, reference.getKey());
+            }
+
+        }
     }
 
     @Override
     public PageReference[] getReferences() {
-        return mDelegate.getReferences();
+        return mReferences;
     }
 
     @Override
