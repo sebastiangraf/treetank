@@ -45,6 +45,9 @@ public final class IndirectPage implements IPage {
 
     private final PageDelegate mDelegate;
 
+    /** revision of this page. */
+    private final long mRevision;
+
     /**
      * Create indirect page.
      * 
@@ -52,6 +55,7 @@ public final class IndirectPage implements IPage {
      *            Revision Number
      */
     public IndirectPage(final long paramRevision) {
+        mRevision = paramRevision;
         mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, paramRevision);
     }
 
@@ -62,7 +66,8 @@ public final class IndirectPage implements IPage {
      *            Input bytes.
      */
     protected IndirectPage(final ITTSource paramIn) {
-        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, paramIn.readLong());
+        mRevision = paramIn.readLong();
+        mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, mRevision);
         mDelegate.initialize(paramIn);
     }
 
@@ -75,6 +80,7 @@ public final class IndirectPage implements IPage {
      *            Revision number to use
      */
     public IndirectPage(final IndirectPage page, final long revisionToUse) {
+        mRevision = revisionToUse;
         mDelegate = new PageDelegate(IConstants.INP_REFERENCE_COUNT, revisionToUse);
         mDelegate.initialize(page);
     }
@@ -86,6 +92,7 @@ public final class IndirectPage implements IPage {
 
     @Override
     public void serialize(ITTSink paramOut) {
+        paramOut.writeLong(mRevision);
         mDelegate.serialize(paramOut);
     }
 
@@ -96,7 +103,7 @@ public final class IndirectPage implements IPage {
 
     @Override
     public long getRevision() {
-        return mDelegate.getRevision();
+        return mRevision;
     }
 
 }

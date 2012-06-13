@@ -58,12 +58,16 @@ public final class RevisionRootPage implements IPage {
     /** Timestamp of revision. */
     private long mRevisionTimestamp;
 
+    /** Revision of this page. */
+    private final long mRevision;
+
     private final PageDelegate mDelegate;
 
     /**
      * Create revision root page.
      */
     public RevisionRootPage() {
+        mRevision = IConstants.UBP_ROOT_REVISION_NUMBER;
         mDelegate = new PageDelegate(2, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionSize = 0L;
         final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
@@ -78,7 +82,8 @@ public final class RevisionRootPage implements IPage {
      *            Input bytes.
      */
     protected RevisionRootPage(final ITTSource paramIn) {
-        mDelegate = new PageDelegate(2, paramIn.readLong());
+        mRevision = paramIn.readLong();
+        mDelegate = new PageDelegate(2, mRevision);
         mDelegate.initialize(paramIn);
         mRevisionSize = paramIn.readLong();
         mMaxNodeKey = paramIn.readLong();
@@ -90,12 +95,12 @@ public final class RevisionRootPage implements IPage {
      * 
      * @param paramCommittedRevisionRootPage
      *            Page to clone.
-     * @param paramRevisionToUse
+     * @param pRevToUse
      *            Revision number to use.
      */
-    public RevisionRootPage(final RevisionRootPage paramCommittedRevisionRootPage,
-        final long paramRevisionToUse) {
-        mDelegate = new PageDelegate(2, paramRevisionToUse);
+    public RevisionRootPage(final RevisionRootPage paramCommittedRevisionRootPage, final long pRevToUse) {
+        mRevision = pRevToUse;
+        mDelegate = new PageDelegate(2, pRevToUse);
         mDelegate.initialize(paramCommittedRevisionRootPage);
         mRevisionSize = paramCommittedRevisionRootPage.mRevisionSize;
         mMaxNodeKey = paramCommittedRevisionRootPage.mMaxNodeKey;
@@ -159,6 +164,7 @@ public final class RevisionRootPage implements IPage {
     @Override
     public void serialize(final ITTSink mOut) {
         mRevisionTimestamp = System.currentTimeMillis();
+        mOut.writeLong(mRevision);
         mDelegate.serialize(mOut);
         mOut.writeLong(mRevisionSize);
         mOut.writeLong(mMaxNodeKey);
@@ -187,7 +193,7 @@ public final class RevisionRootPage implements IPage {
 
     @Override
     public long getRevision() {
-        return mDelegate.getRevision();
+        return mRevision;
     }
 
 }

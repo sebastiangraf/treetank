@@ -58,12 +58,16 @@ public final class UberPage implements IPage {
     /** True if this uber page is the uber page of a fresh TreeTank file. */
     private boolean mBootstrap;
 
+    /** Revision of this page. */
+    private final long mRevision;
+
     private final PageDelegate mDelegate;
 
     /**
      * Create uber page.
      */
     public UberPage() {
+        mRevision = IConstants.UBP_ROOT_REVISION_NUMBER;
         mDelegate = new PageDelegate(1, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
         mBootstrap = true;
@@ -118,8 +122,8 @@ public final class UberPage implements IPage {
      *            Input bytes.
      */
     protected UberPage(final ITTSource paramIn) {
-
-        mDelegate = new PageDelegate(1, paramIn.readLong());
+        mRevision = paramIn.readLong();
+        mDelegate = new PageDelegate(1, mRevision);
         mDelegate.initialize(paramIn);
         mRevisionCount = paramIn.readLong();
         mBootstrap = false;
@@ -130,11 +134,12 @@ public final class UberPage implements IPage {
      * 
      * @param paramCommittedUberPage
      *            Page to clone.
-     * @param paramRevisionToUse
+     * @param pRevToUse
      *            Revision number to use.
      */
-    public UberPage(final UberPage paramCommittedUberPage, final long paramRevisionToUse) {
-        mDelegate = new PageDelegate(1, paramRevisionToUse);
+    public UberPage(final UberPage paramCommittedUberPage, final long pRevToUse) {
+        mRevision = pRevToUse;
+        mDelegate = new PageDelegate(1, pRevToUse);
         mDelegate.initialize(paramCommittedUberPage);
         if (paramCommittedUberPage.isBootstrap()) {
             mRevisionCount = paramCommittedUberPage.mRevisionCount;
@@ -196,6 +201,7 @@ public final class UberPage implements IPage {
     @Override
     public void serialize(final ITTSink paramOut) {
         mBootstrap = false;
+        paramOut.writeLong(mRevision);
         mDelegate.serialize(paramOut);
         paramOut.writeLong(mRevisionCount);
     }
@@ -221,7 +227,7 @@ public final class UberPage implements IPage {
 
     @Override
     public long getRevision() {
-        return mDelegate.getRevision();
+        return mRevision;
     }
 
 }

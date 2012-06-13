@@ -47,9 +47,6 @@ public class PageDelegate implements IPage {
     /** Page references. */
     private PageReference[] mReferences;
 
-    /** revision of this page. */
-    private final long mRevision;
-
     /**
      * Constructor to initialize instance.
      * 
@@ -60,7 +57,6 @@ public class PageDelegate implements IPage {
      */
     public PageDelegate(final int paramReferenceCount, final long paramRevision) {
         mReferences = new PageReference[paramReferenceCount];
-        mRevision = paramRevision;
         for (int i = 0; i < paramReferenceCount; i++) {
             mReferences[i] = new PageReference();
         }
@@ -116,8 +112,6 @@ public class PageDelegate implements IPage {
      *            Output stream.
      */
     public void serialize(final ITTSink paramOut) {
-        paramOut.writeLong(mRevision);
-
         for (final PageReference reference : getReferences()) {
             if (reference.getKey() == null) {
                 paramOut.writeInt(0);
@@ -139,7 +133,7 @@ public class PageDelegate implements IPage {
      * @return the mRevision
      */
     public final long getRevision() {
-        return mRevision;
+        return -1;
     }
 
 }
