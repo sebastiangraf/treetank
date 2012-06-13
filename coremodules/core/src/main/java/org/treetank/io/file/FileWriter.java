@@ -55,9 +55,6 @@ public final class FileWriter implements IWriter {
     /** Compressor to compress the page. */
     private transient final CryptoJavaImpl mCompressor;
 
-    /** Temporary data buffer. */
-    private final transient ByteBufferSinkAndSource mBuffer;
-
     /** Reader instance for this writer. */
     private transient final FileReader reader;
 
@@ -78,7 +75,6 @@ public final class FileWriter implements IWriter {
         }
 
         mCompressor = new CryptoJavaImpl();
-        mBuffer = new ByteBufferSinkAndSource();
 
         reader = new FileReader(paramStorage);
 
@@ -96,6 +92,9 @@ public final class FileWriter implements IWriter {
 
         // Serialise page.
         // mBuffer.position(24);
+
+        /** Temporary data buffer. */
+        final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
         mBuffer.position(12);
         final IPage page = pageReference.getPage();
         PagePersistenter.serializePage(mBuffer, page);
