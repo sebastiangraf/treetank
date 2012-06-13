@@ -32,12 +32,12 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
+import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.page.delegates.PageDelegate;
 import org.treetank.utils.IConstants;
 
 /**
@@ -58,13 +58,21 @@ public final class UberPage implements IPage {
     /** True if this uber page is the uber page of a fresh TreeTank file. */
     private boolean mBootstrap;
 
-    private final PageDelegate mDelegate;
+    /** Revision of this page. */
+    private final long mRevision;
+
+    /** Page references. */
+    private PageReference[] mReferences;
 
     /**
      * Create uber page.
      */
     public UberPage() {
-        mDelegate = new PageDelegate(1, IConstants.UBP_ROOT_REVISION_NUMBER);
+        mRevision = IConstants.UBP_ROOT_REVISION_NUMBER;
+        mReferences = new PageReference[1];
+        for (int i = 0; i < mReferences.length; i++) {
+            mReferences[i] = new PageReference();
+        }
         mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
         mBootstrap = true;
 
@@ -118,9 +126,15 @@ public final class UberPage implements IPage {
      *            Input bytes.
      */
     protected UberPage(final ITTSource paramIn) {
-
-        mDelegate = new PageDelegate(1, paramIn.readLong());
-        mDelegate.initialize(paramIn);
+        mRevision = paramIn.readLong();
+        mReferences = new PageReference[1];
+        for (int offset = 0; offset < mReferences.length; offset++) {
+            getReferences()[offset] = new PageReference();
+            final EStorage storage = EStorage.getInstance(paramIn.readInt());
+            if (storage != null) {
+                getReferences()[offset].setKey(storage.deserialize(paramIn));
+            }
+        }
         mRevisionCount = paramIn.readLong();
         mBootstrap = false;
     }
@@ -130,12 +144,12 @@ public final class UberPage implements IPage {
      * 
      * @param paramCommittedUberPage
      *            Page to clone.
-     * @param paramRevisionToUse
+     * @param pRevToUse
      *            Revision number to use.
      */
-    public UberPage(final UberPage paramCommittedUberPage, final long paramRevisionToUse) {
-        mDelegate = new PageDelegate(1, paramRevisionToUse);
-        mDelegate.initialize(paramCommittedUberPage);
+    public UberPage(final UberPage paramCommittedUberPage, final long pRevToUse) {
+        mRevision = pRevToUse;
+        mReferences = paramCommittedUberPage.getReferences();
         if (paramCommittedUberPage.isBootstrap()) {
             mRevisionCount = paramCommittedUberPage.mRevisionCount;
             mBootstrap = paramCommittedUberPage.mBootstrap;
@@ -196,7 +210,13 @@ public final class UberPage implements IPage {
     @Override
     public void serialize(final ITTSink paramOut) {
         mBootstrap = false;
-        mDelegate.serialize(paramOut);
+        for (final PageReference reference : getReferences()) {
+            if (reference.getKey() == null) {
+                paramOut.writeInt(0);
+            } else {
+                EStorage.getInstance(reference.getKey().getClass()).serialize(paramOut, reference.getKey());
+            }
+        }
         paramOut.writeLong(mRevisionCount);
     }
 
@@ -211,17 +231,19 @@ public final class UberPage implements IPage {
 
     @Override
     public void commit(PageWriteTrx paramState) throws AbsTTException {
-        mDelegate.commit(paramState);
+        for (final PageReference reference : getReferences()) {
+            paramState.commit(reference);
+        }
     }
 
     @Override
     public PageReference[] getReferences() {
-        return mDelegate.getReferences();
+        return mReferences;
     }
 
     @Override
     public long getRevision() {
-        return mDelegate.getRevision();
+        return mRevision;
     }
 
 }

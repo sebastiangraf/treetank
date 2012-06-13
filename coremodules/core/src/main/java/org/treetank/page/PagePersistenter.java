@@ -94,6 +94,7 @@ public final class PagePersistenter {
             throw new IllegalStateException(new StringBuilder("Page ").append(paramPage.getClass()).append(
                 " cannot be serialized").toString());
         }
+        paramSink.writeLong(paramPage.getRevision());
         paramPage.serialize(paramSink);
     }
 

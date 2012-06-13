@@ -31,14 +31,13 @@ import org.treetank.io.berkeley.TupleInputSource;
 import org.treetank.io.berkeley.TupleOutputSink;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
-import org.treetank.page.delegates.PageDelegate;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
- * Binding for storing {@link PageDelegate} objects within the Berkeley DB.
+ * Binding for storing {@link IPage} objects within the Berkeley DB.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 

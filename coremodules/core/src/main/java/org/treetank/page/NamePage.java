@@ -123,7 +123,6 @@ public final class NamePage implements IPage {
      */
     @Override
     public void serialize(final ITTSink paramOut) {
-        paramOut.writeLong(mRevision);
         paramOut.writeInt(mNameMap.size());
 
         for (final int key : mNameMap.keySet()) {

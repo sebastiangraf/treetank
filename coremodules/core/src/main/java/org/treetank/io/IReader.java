@@ -30,7 +30,6 @@ package org.treetank.io;
 import org.treetank.exception.TTIOException;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
-import org.treetank.page.delegates.PageDelegate;
 
 /**
  * Interface for reading the stored pages in every backend.
@@ -54,7 +53,7 @@ public interface IReader {
      * 
      * @param pKey
      *            the reference for the page to be determined
-     * @return a {@link PageDelegate} as the base for a page
+     * @return a {@link IPage} as the base for a page
      * @throws TTIOException
      *             if something bad happens during read
      */

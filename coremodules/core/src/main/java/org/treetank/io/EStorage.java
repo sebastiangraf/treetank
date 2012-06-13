@@ -56,7 +56,10 @@ public enum EStorage {
 
         @Override
         public void serialize(final ITTSink pSink, final IKey pKey) {
-            serializeKey(pKey, mIdent, pSink);
+            pSink.writeInt(mIdent);
+            for (final long val : pKey.getKeys()) {
+                pSink.writeLong(val);
+            }
         }
     },
 
@@ -69,7 +72,10 @@ public enum EStorage {
 
         @Override
         public void serialize(final ITTSink pSink, final IKey pKey) {
-            serializeKey(pKey, mIdent, pSink);
+            pSink.writeInt(mIdent);
+            for (final long val : pKey.getKeys()) {
+                pSink.writeLong(val);
+            }
         }
 
     };
@@ -188,20 +194,4 @@ public enum EStorage {
         return INSTANCEFORCLASS.get(paramKey);
     }
 
-    /**
-     * Serializing the keys.
-     * 
-     * @param pKey
-     *            to serialize
-     * @param pId
-     *            to serialize
-     * @param pSink
-     *            to be serialized to
-     */
-    private static void serializeKey(final IKey pKey, final int pId, final ITTSink pSink) {
-        pSink.writeInt(pId);
-        for (final long val : pKey.getKeys()) {
-            pSink.writeLong(val);
-        }
-    }
 }
