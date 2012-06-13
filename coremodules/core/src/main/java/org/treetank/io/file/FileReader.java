@@ -103,7 +103,7 @@ public final class FileReader implements IReader {
 
             // Prepare environment for read.
             final int inputLength = fileKey.getLength() + IConstants.BEACON_LENGTH;
-            mBuffer.position(12);
+            mBuffer.position(IConstants.BEACON_LENGTH);
 
             // Read page from file.
             final byte[] page = new byte[fileKey.getLength()];
