@@ -142,23 +142,4 @@ public class PageDelegate implements IPage {
         return mRevision;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        if (getReferences().length > 0) {
-            builder.append("References: ");
-            for (final PageReference ref : getReferences()) {
-                if (ref != null) {
-                    builder.append(ref.getKey().getIdentifier()).append(",");
-                }
-            }
-        } else {
-            builder.append("No references");
-        }
-        return builder.toString();
-    }
-
 }

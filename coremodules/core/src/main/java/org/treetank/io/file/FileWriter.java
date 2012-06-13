@@ -114,7 +114,7 @@ public final class FileWriter implements IWriter {
             // Getting actual offset and appending to the end of the current
             // file
             final long fileSize = mFile.length();
-            final long offset = fileSize == 0 ? IConstants.BEACON_START + IConstants.BEACON_LENGTH : fileSize;
+            final long offset = fileSize == 0 ? IConstants.BEACON_LENGTH : fileSize;
             mFile.seek(offset);
             final byte[] tmp = new byte[outputLength - 12];
             mBuffer.get(tmp, 0, tmp.length);
@@ -173,10 +173,8 @@ public final class FileWriter implements IWriter {
 
             mFile.seek(IConstants.BEACON_START);
             final FileKey key = (FileKey)pageReference.getKey();
-            mFile.writeLong(key.getOffset());
+            mFile.writeLong(key.getIdentifier());
             mFile.writeInt(key.getLength());
-            // pageReference.getChecksum(tmp);
-            // mFile.write(tmp);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
