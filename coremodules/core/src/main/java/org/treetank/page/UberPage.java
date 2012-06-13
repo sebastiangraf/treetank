@@ -210,7 +210,6 @@ public final class UberPage implements IPage {
     @Override
     public void serialize(final ITTSink paramOut) {
         mBootstrap = false;
-        paramOut.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             if (reference.getKey() == null) {
                 paramOut.writeInt(0);

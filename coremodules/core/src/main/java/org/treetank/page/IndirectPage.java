@@ -103,7 +103,6 @@ public final class IndirectPage implements IPage {
 
     @Override
     public void serialize(ITTSink paramOut) {
-        paramOut.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             if (reference.getKey() == null) {
                 paramOut.writeInt(0);

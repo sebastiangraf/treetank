@@ -173,7 +173,6 @@ public final class RevisionRootPage implements IPage {
     @Override
     public void serialize(final ITTSink mOut) {
         mRevisionTimestamp = System.currentTimeMillis();
-        mOut.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             if (reference.getKey() == null) {
                 mOut.writeInt(0);

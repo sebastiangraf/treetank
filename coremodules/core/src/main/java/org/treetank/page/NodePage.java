@@ -131,7 +131,6 @@ public class NodePage implements IPage {
     @Override
     public void serialize(final ITTSink mOut) {
         // TODO respect new INode hierarchy, must rely on normal INodes only
-        mOut.writeLong(mRevision);
         mOut.writeLong(mNodePageKey);
         for (int i = 0; i < getNodes().length; i++) {
             if (getNodes()[i] != null) {
