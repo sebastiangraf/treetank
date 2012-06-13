@@ -110,7 +110,6 @@ public final class IndirectPage implements IPage {
             } else {
                 EStorage.getInstance(reference.getKey().getClass()).serialize(paramOut, reference.getKey());
             }
-
         }
     }
 
