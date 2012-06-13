@@ -413,31 +413,31 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return page;
     }
 
-    protected NodePageContainer prepareNodePage(final long paramNodePageKey) throws TTIOException {
+    protected NodePageContainer prepareNodePage(final long pPageKey) throws TTIOException {
 
         // Last level points to node nodePageReference.
-        NodePageContainer cont = mLog.get(paramNodePageKey);
+        NodePageContainer cont = mLog.get(pPageKey);
         if (cont == null) {
 
             // Indirect reference.
             final PageReference reference =
-                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), paramNodePageKey);
+                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
             NodePage page = (NodePage)reference.getPage();
 
             if (page == null) {
                 if (reference.getKey() == null) {
                     cont =
-                        new NodePageContainer(new NodePage(paramNodePageKey,
+                        new NodePageContainer(new NodePage(pPageKey,
                             IConstants.UBP_ROOT_REVISION_NUMBER));
                 } else {
-                    cont = dereferenceNodePageForModification(paramNodePageKey);
+                    cont = dereferenceNodePageForModification(pPageKey);
                 }
             } else {
                 cont = new NodePageContainer(page);
             }
 
-            reference.setNodePageKey(paramNodePageKey);
-            mLog.put(paramNodePageKey, cont);
+            reference.setNodePageKey(pPageKey);
+            mLog.put(pPageKey, cont);
         }
         mNodePageCon = cont;
         return cont;
