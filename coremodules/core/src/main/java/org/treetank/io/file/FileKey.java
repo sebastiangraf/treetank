@@ -64,15 +64,6 @@ public final class FileKey implements IKey {
     }
 
     /**
-     * Getting the offset of the file fragment.
-     * 
-     * @return the offset
-     */
-    public long getOffset() {
-        return getKeys()[0];
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

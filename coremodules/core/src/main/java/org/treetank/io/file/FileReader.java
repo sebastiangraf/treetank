@@ -107,7 +107,7 @@ public final class FileReader implements IReader {
 
             // Read page from file.
             final byte[] page = new byte[fileKey.getLength()];
-            mFile.seek(fileKey.getOffset());
+            mFile.seek(fileKey.getIdentifier());
             mFile.read(page);
             for (final byte byteVal : page) {
                 mBuffer.writeByte(byteVal);

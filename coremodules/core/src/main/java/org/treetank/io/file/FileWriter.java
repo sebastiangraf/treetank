@@ -173,10 +173,8 @@ public final class FileWriter implements IWriter {
 
             mFile.seek(IConstants.BEACON_START);
             final FileKey key = (FileKey)pageReference.getKey();
-            mFile.writeLong(key.getOffset());
+            mFile.writeLong(key.getIdentifier());
             mFile.writeInt(key.getLength());
-            // pageReference.getChecksum(tmp);
-            // mFile.write(tmp);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
