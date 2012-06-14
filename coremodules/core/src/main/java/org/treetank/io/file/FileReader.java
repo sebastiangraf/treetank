@@ -30,6 +30,7 @@ package org.treetank.io.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.zip.DataFormatException;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IKey;
@@ -121,13 +122,12 @@ public final class FileReader implements IReader {
             }
 
             // Perform crypto operations.
-            final int outputLength = mDecompressor.decrypt(dataLength, mBuffer);
-            if (outputLength == 0) {
-                throw new TTIOException("Page decrypt error.");
-            }
+            mDecompressor.decrypt(dataLength, mBuffer);
 
         } catch (final IOException exc) {
             throw new TTIOException(exc);
+        } catch (final DataFormatException exc) {
+            throw new TTIOException("Page decrypt error.");
         }
 
         // Return reader required to instantiate and deserialize page.

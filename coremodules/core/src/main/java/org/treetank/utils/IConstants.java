@@ -40,9 +40,6 @@ public final class IConstants {
     // --- Varia
     // ------------------------------------------------------------------
 
-    /** Length of beacon in bytes. */
-    public static final int BEACON_LENGTH = 12;
-
     /** Default internal encoding. */
     public static final String DEFAULT_ENCODING = "UTF-8";
 
