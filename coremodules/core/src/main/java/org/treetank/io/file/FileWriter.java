@@ -101,9 +101,15 @@ public final class FileWriter implements IWriter {
         if (outputLength == 0) {
             throw new TTIOException("Page crypt error.");
         }
-
-        // Write page to file.
-        mBuffer.position(FileReader.OTHER_BEACON);
+        // normally, the first bytes until FileReader.OTHERBEACON are reserved and cut of resulting in
+        // final byte[] tmp = new byte[outputLength-FileReader.OTHER_BEACON];
+        final byte[] tmp = new byte[outputLength];
+        // mBuffer.position(FileReader.OTHER_BEACON);
+        mBuffer.position(0);
+        // Because of the missing offset, we can write the length directly at the front of the buffer to see
+        // it afterwards in the byte array as well.
+        mBuffer.writeInt(outputLength);
+        mBuffer.get(tmp, 0, tmp.length);
 
         try {
             // Getting actual offset and appending to the end of the current
@@ -111,8 +117,6 @@ public final class FileWriter implements IWriter {
             final long fileSize = mFile.length();
             final long offset = fileSize == 0 ? FileReader.FIRST_BEACON : fileSize;
             mFile.seek(offset);
-            final byte[] tmp = new byte[outputLength - FileReader.OTHER_BEACON];
-            mBuffer.get(tmp, 0, tmp.length);
             mFile.write(tmp);
             final FileKey key = new FileKey(offset, tmp.length);
 
@@ -122,7 +126,6 @@ public final class FileWriter implements IWriter {
         } catch (final IOException paramExc) {
             throw new TTIOException(paramExc);
         }
-
     }
 
     /**

@@ -111,8 +111,8 @@ public final class FileReader implements IReader {
 
             // Read page from file.
             mFile.seek(fileKey.getIdentifier());
-            // final int dataLength= mFile.readInt();
-            final int dataLength = fileKey.getLength() + OTHER_BEACON;
+//            final int dataLength = mFile.readInt();
+             final int dataLength = fileKey.getLength() + OTHER_BEACON;
 
             final byte[] page = new byte[dataLength];
 
