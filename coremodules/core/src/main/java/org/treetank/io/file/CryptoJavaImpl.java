@@ -81,7 +81,7 @@ public class CryptoJavaImpl {
             return 0;
         }
         final byte[] result = mOut.toByteArray();
-        paramBuffer.position(12);
+        paramBuffer.position(IConstants.BEACON_LENGTH);
         for (final byte byteVal : result) {
             paramBuffer.writeByte(byteVal);
         }

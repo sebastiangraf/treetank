@@ -51,6 +51,12 @@ import org.treetank.utils.IConstants;
  */
 public final class FileReader implements IReader {
 
+    /** Beacon of first references. */
+    protected final static int FIRST_BEACON = 12;
+
+    /** Beacon of the other references. */
+    protected final static int OTHER_BEACON = 4;
+
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;
 
@@ -100,12 +106,12 @@ public final class FileReader implements IReader {
             final FileKey fileKey = (FileKey)pKey;
 
             // Prepare environment for read.
-            mBuffer.position(0);
+            mBuffer.position(OTHER_BEACON);
 
             // Read page from file.
             mFile.seek(fileKey.getIdentifier());
             // final int dataLength= mFile.readInt();
-            final int dataLength = fileKey.getLength();
+            final int dataLength = fileKey.getLength() + OTHER_BEACON;
 
             final byte[] page = new byte[dataLength];
 
@@ -125,7 +131,7 @@ public final class FileReader implements IReader {
         }
 
         // Return reader required to instantiate and deserialize page.
-        mBuffer.position(0);
+        mBuffer.position(OTHER_BEACON);
         return PagePersistenter.createPage(mBuffer);
 
     }
@@ -134,15 +140,15 @@ public final class FileReader implements IReader {
         final PageReference uberPageReference = new PageReference();
         try {
             // Read primary beacon.
-            mFile.seek(IConstants.BEACON_START);
+            mFile.seek(0);
 
             final FileKey key = new FileKey(mFile.readLong(), mFile.readInt());
 
             uberPageReference.setKey(key);
 
             // Check to writer ensure writing after the Beacon_Start
-            if (mFile.getFilePointer() < IConstants.BEACON_START + IConstants.BEACON_LENGTH) {
-                mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
+            if (mFile.getFilePointer() < FIRST_BEACON) {
+                mFile.setLength(FIRST_BEACON);
             }
 
             final UberPage page = (UberPage)read(uberPageReference.getKey());
