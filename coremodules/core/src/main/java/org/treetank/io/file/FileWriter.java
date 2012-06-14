@@ -90,12 +90,9 @@ public final class FileWriter implements IWriter {
      */
     public IKey write(final PageReference pageReference) throws TTIOException {
 
-        // Serialise page.
-        // mBuffer.position(24);
-
-        /** Temporary data buffer. */
         final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
-        mBuffer.position(12);
+//        mBuffer.position(12);
+        mBuffer.position(0);
         final IPage page = pageReference.getPage();
         PagePersistenter.serializePage(mBuffer, page);
         final int inputLength = mBuffer.position();
@@ -107,7 +104,8 @@ public final class FileWriter implements IWriter {
         }
 
         // Write page to file.
-        mBuffer.position(12);
+//        mBuffer.position(12);
+        mBuffer.position(0);
 
         try {
             // Getting actual offset and appending to the end of the current
@@ -115,7 +113,7 @@ public final class FileWriter implements IWriter {
             final long fileSize = mFile.length();
             final long offset = fileSize == 0 ? IConstants.BEACON_LENGTH : fileSize;
             mFile.seek(offset);
-            final byte[] tmp = new byte[outputLength - 12];
+            final byte[] tmp = new byte[outputLength];
             mBuffer.get(tmp, 0, tmp.length);
             mFile.write(tmp);
             final FileKey key = new FileKey(offset, tmp.length);
