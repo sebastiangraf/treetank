@@ -57,9 +57,6 @@ public final class FileReader implements IReader {
     /** Inflater to decompress. */
     private transient final CryptoJavaImpl mDecompressor;
 
-    /** Temporary data buffer. */
-    private transient ByteBufferSinkAndSource mBuffer;
-
     /**
      * Constructor.
      * 
@@ -77,7 +74,6 @@ public final class FileReader implements IReader {
             mFile = new RandomAccessFile(mConcreteStorage, IConstants.READ_ONLY);
 
             mDecompressor = new CryptoJavaImpl();
-            mBuffer = new ByteBufferSinkAndSource();
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -93,6 +89,8 @@ public final class FileReader implements IReader {
      *             if there was an error during reading.
      */
     public IPage read(final IKey pKey) throws TTIOException {
+
+        final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
 
         if (pKey == null) {
             return null;
