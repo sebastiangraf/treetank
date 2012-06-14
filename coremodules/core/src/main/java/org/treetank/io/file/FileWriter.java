@@ -91,7 +91,6 @@ public final class FileWriter implements IWriter {
     public IKey write(final PageReference pageReference) throws TTIOException {
 
         final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
-//        mBuffer.position(12);
         mBuffer.position(0);
         final IPage page = pageReference.getPage();
         PagePersistenter.serializePage(mBuffer, page);
@@ -104,7 +103,6 @@ public final class FileWriter implements IWriter {
         }
 
         // Write page to file.
-//        mBuffer.position(12);
         mBuffer.position(0);
 
         try {

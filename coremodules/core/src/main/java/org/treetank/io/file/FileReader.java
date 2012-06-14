@@ -100,15 +100,12 @@ public final class FileReader implements IReader {
             final FileKey fileKey = (FileKey)pKey;
 
             // Prepare environment for read.
-            // mBuffer.position(IConstants.BEACON_LENGTH);
             mBuffer.position(0);
 
             // Read page from file.
             mFile.seek(fileKey.getIdentifier());
             // final int dataLength= mFile.readInt();
             final int dataLength = fileKey.getLength();
-            // final int inputLength = dataLength + IConstants.BEACON_LENGTH;
-            final int inputLength = dataLength;
 
             final byte[] page = new byte[dataLength];
 
@@ -118,7 +115,7 @@ public final class FileReader implements IReader {
             }
 
             // Perform crypto operations.
-            final int outputLength = mDecompressor.decrypt(inputLength, mBuffer);
+            final int outputLength = mDecompressor.decrypt(dataLength, mBuffer);
             if (outputLength == 0) {
                 throw new TTIOException("Page decrypt error.");
             }
@@ -128,7 +125,6 @@ public final class FileReader implements IReader {
         }
 
         // Return reader required to instantiate and deserialize page.
-//        mBuffer.position(12);
         mBuffer.position(0);
         return PagePersistenter.createPage(mBuffer);
 
