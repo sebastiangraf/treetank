@@ -169,13 +169,13 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;76</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> ElementNode(<span class="keyword">final</span> NodeDelegate pDel, <span class="keyword">final</span> StructNodeDelegate pStrucDel,</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;77</td>  <td class="nbHitsCovered">&nbsp;172237</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NameNodeDelegate pNameDel, <span class="keyword">final</span> List&lt;Long&gt; pAttributeKeys, <span class="keyword">final</span> List&lt;Long&gt; pNamespaceKeys) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;78</td>  <td class="nbHitsCovered">&nbsp;172237</td>  <td class="src"><pre class="src">&nbsp;        mDel = pDel;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;79</td>  <td class="nbHitsCovered">&nbsp;172237</td>  <td class="src"><pre class="src">&nbsp;        mStrucDel = pStrucDel;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;172237</td>  <td class="src"><pre class="src">&nbsp;        mNameDel = pNameDel;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;81</td>  <td class="nbHitsCovered">&nbsp;172237</td>  <td class="src"><pre class="src">&nbsp;        mAttributeKeys = pAttributeKeys;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;82</td>  <td class="nbHitsCovered">&nbsp;172237</td>  <td class="src"><pre class="src">&nbsp;        mNamespaceKeys = pNamespaceKeys;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;83</td>  <td class="nbHitsCovered">&nbsp;172237</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;77</td>  <td class="nbHitsCovered">&nbsp;172220</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NameNodeDelegate pNameDel, <span class="keyword">final</span> List&lt;Long&gt; pAttributeKeys, <span class="keyword">final</span> List&lt;Long&gt; pNamespaceKeys) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;78</td>  <td class="nbHitsCovered">&nbsp;172220</td>  <td class="src"><pre class="src">&nbsp;        mDel = pDel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;79</td>  <td class="nbHitsCovered">&nbsp;172220</td>  <td class="src"><pre class="src">&nbsp;        mStrucDel = pStrucDel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;172220</td>  <td class="src"><pre class="src">&nbsp;        mNameDel = pNameDel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;81</td>  <td class="nbHitsCovered">&nbsp;172220</td>  <td class="src"><pre class="src">&nbsp;        mAttributeKeys = pAttributeKeys;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;82</td>  <td class="nbHitsCovered">&nbsp;172220</td>  <td class="src"><pre class="src">&nbsp;        mNamespaceKeys = pNamespaceKeys;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;83</td>  <td class="nbHitsCovered">&nbsp;172220</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;84</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;85</td>  <td class="nbHits">&nbsp;</td>
@@ -835,7 +835,7 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;443</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> hashCode() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;444</td>  <td class="nbHitsCovered">&nbsp;69191</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> mNameDel.hashCode();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;444</td>  <td class="nbHitsCovered">&nbsp;69153</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> mNameDel.hashCode();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;445</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;446</td>  <td class="nbHits">&nbsp;</td>
@@ -850,7 +850,7 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;451</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">boolean</span> equals(Object obj) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;452</td>  <td class="nbHitsUncovered"><a title="Line 452: Conditional coverage 50% (1/2).">&nbsp;72</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 452: Conditional coverage 50% (1/2).">        <span class="keyword">return</span> hashCode() == obj.hashCode();</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;452</td>  <td class="nbHitsUncovered"><a title="Line 452: Conditional coverage 50% (1/2).">&nbsp;53</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 452: Conditional coverage 50% (1/2).">        <span class="keyword">return</span> hashCode() == obj.hashCode();</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;453</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;454</td>  <td class="nbHits">&nbsp;</td>
@@ -910,6 +910,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/15/12 1:37 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/15/12 6:27 PM.</div>
 </body>
 </html>

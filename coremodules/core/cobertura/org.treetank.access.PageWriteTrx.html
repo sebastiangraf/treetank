@@ -110,23 +110,23 @@
 <tr>  <td class="numLine">&nbsp;46</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.node.delegates.NodeDelegate;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;47</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.IPage;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.IConstants;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;48</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.IndirectPage;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.IPage;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;49</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.NamePage;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.IndirectPage;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;50</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.NodePage;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.NamePage;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;51</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.PageReference;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.NodePage;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;52</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.RevisionRootPage;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.PageReference;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;53</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.UberPage;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.RevisionRootPage;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;54</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.settings.ERevisioning;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.page.UberPage;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;55</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.utils.IConstants;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.settings.ERevisioning;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;56</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.utils.NamePageHash;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;57</td>  <td class="nbHits">&nbsp;</td>
@@ -709,7 +709,7 @@
 <tr>  <td class="numLineCover">&nbsp;390</td>  <td class="nbHitsCovered">&nbsp;170</td>  <td class="src"><pre class="src">&nbsp;        mDelegate.close();</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;391</td>  <td class="nbHitsCovered">&nbsp;170</td>  <td class="src"><pre class="src">&nbsp;        mLog.clear();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;392</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment">//        mPageWriter.close();</span></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;        <span class="comment">// mPageWriter.close();</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;393</td>  <td class="nbHitsCovered">&nbsp;170</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;394</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
@@ -726,7 +726,7 @@
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;401</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;        IndirectPage page = (IndirectPage)paramReference.getPage();</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;402</td>  <td class="nbHitsCovered"><a title="Line 402: Conditional coverage 100% (2/2).">&nbsp;5860</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 402: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (page == <span class="keyword">null</span>) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;403</td>  <td class="nbHitsCovered"><a title="Line 403: Conditional coverage 100% (2/2).">&nbsp;609</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 403: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (paramReference.getKey() == <span class="keyword">null</span>) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;403</td>  <td class="nbHitsCovered"><a title="Line 403: Conditional coverage 100% (2/2).">&nbsp;609</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 403: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (paramReference.getKey() == IConstants.NULL_ID) {</a></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;404</td>  <td class="nbHitsCovered">&nbsp;4</td>  <td class="src"><pre class="src">&nbsp;                page = <span class="keyword">new</span> IndirectPage(mDelegate.getUberPage().getRevision());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;405</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            } <span class="keyword">else</span> {</pre></td></tr>
@@ -759,265 +759,259 @@
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;422</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Indirect reference.</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;423</td>  <td class="nbHitsCovered">&nbsp;1027</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> PageReference reference =</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;424</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;425</td>  <td class="nbHitsCovered">&nbsp;1027</td>  <td class="src"><pre class="src">&nbsp;            NodePage page = (NodePage)reference.getPage();</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;426</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;423</td>  <td class="nbHitsCovered">&nbsp;1027</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;424</td>  <td class="nbHitsCovered">&nbsp;1027</td>  <td class="src"><pre class="src">&nbsp;            NodePage page = (NodePage)reference.getPage();</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;425</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;427</td>  <td class="nbHitsCovered"><a title="Line 427: Conditional coverage 100% (2/2).">&nbsp;1027</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 427: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (page == <span class="keyword">null</span>) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;428</td>  <td class="nbHitsCovered"><a title="Line 428: Conditional coverage 100% (2/2).">&nbsp;1009</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 428: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (reference.getKey() == <span class="keyword">null</span>) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;429</td>  <td class="nbHitsCovered">&nbsp;524</td>  <td class="src"><pre class="src">&nbsp;                    cont =</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;430</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                        <span class="keyword">new</span> NodePageContainer(<span class="keyword">new</span> NodePage(pPageKey,</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;431</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                            IConstants.UBP_ROOT_REVISION_NUMBER));</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;432</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;426</td>  <td class="nbHitsCovered"><a title="Line 426: Conditional coverage 100% (2/2).">&nbsp;1027</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 426: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (page == <span class="keyword">null</span>) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;427</td>  <td class="nbHitsCovered"><a title="Line 427: Conditional coverage 100% (2/2).">&nbsp;1009</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 427: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (reference.getKey() == IConstants.NULL_ID) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;428</td>  <td class="nbHitsCovered">&nbsp;524</td>  <td class="src"><pre class="src">&nbsp;                    cont = <span class="keyword">new</span> NodePageContainer(<span class="keyword">new</span> NodePage(pPageKey, IConstants.UBP_ROOT_REVISION_NUMBER));</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;429</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;433</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;                    cont = dereferenceNodePageForModification(pPageKey);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;434</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;430</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;                    cont = dereferenceNodePageForModification(pPageKey);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;431</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;435</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;432</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;436</td>  <td class="nbHitsCovered">&nbsp;18</td>  <td class="src"><pre class="src">&nbsp;                cont = <span class="keyword">new</span> NodePageContainer(page);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;437</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;433</td>  <td class="nbHitsCovered">&nbsp;18</td>  <td class="src"><pre class="src">&nbsp;                cont = <span class="keyword">new</span> NodePageContainer(page);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;434</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;438</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;435</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;439</td>  <td class="nbHitsCovered">&nbsp;1027</td>  <td class="src"><pre class="src">&nbsp;            reference.setNodePageKey(pPageKey);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;440</td>  <td class="nbHitsCovered">&nbsp;1027</td>  <td class="src"><pre class="src">&nbsp;            mLog.put(pPageKey, cont);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;441</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;436</td>  <td class="nbHitsCovered">&nbsp;1027</td>  <td class="src"><pre class="src">&nbsp;            reference.setNodePageKey(pPageKey);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;437</td>  <td class="nbHitsCovered">&nbsp;1027</td>  <td class="src"><pre class="src">&nbsp;            mLog.put(pPageKey, cont);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;438</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;442</td>  <td class="nbHitsCovered">&nbsp;348010</td>  <td class="src"><pre class="src">&nbsp;        mNodePageCon = cont;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;443</td>  <td class="nbHitsCovered">&nbsp;348010</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> cont;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;444</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;439</td>  <td class="nbHitsCovered">&nbsp;348010</td>  <td class="src"><pre class="src">&nbsp;        mNodePageCon = cont;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;440</td>  <td class="nbHitsCovered">&nbsp;348010</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> cont;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;441</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;442</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;443</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> RevisionRootPage preparePreviousRevisionRootPage(<span class="keyword">final</span> <span class="keyword">long</span> mBaseRevision,</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;444</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> representRevision) <span class="keyword">throws</span> TTIOException {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;445</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;446</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> RevisionRootPage preparePreviousRevisionRootPage(<span class="keyword">final</span> <span class="keyword">long</span> mBaseRevision,</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;447</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> representRevision) <span class="keyword">throws</span> TTIOException {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;446</td>  <td class="nbHitsCovered"><a title="Line 446: Conditional coverage 100% (2/2).">&nbsp;170</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 446: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (mDelegate.getUberPage().isBootstrap()) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;447</td>  <td class="nbHitsCovered">&nbsp;25</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> mDelegate.loadRevRoot(mBaseRevision);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;448</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;449</td>  <td class="nbHitsCovered"><a title="Line 449: Conditional coverage 100% (2/2).">&nbsp;170</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 449: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (mDelegate.getUberPage().isBootstrap()) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;450</td>  <td class="nbHitsCovered">&nbsp;25</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> mDelegate.loadRevRoot(mBaseRevision);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;451</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;452</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;449</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;453</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;450</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Prepare revision root nodePageReference.</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;454</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> RevisionRootPage revisionRootPage =</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;455</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;451</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> RevisionRootPage revisionRootPage =</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;452</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> RevisionRootPage(mDelegate.loadRevRoot(mBaseRevision), representRevision + 1);</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;456</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;453</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;457</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;454</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Prepare indirect tree to hold reference to prepared revision root</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;458</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;455</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// nodePageReference.</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;459</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> PageReference revisionRootPageReference =</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;460</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;456</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> PageReference revisionRootPageReference =</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;457</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                prepareLeafOfTree(mDelegate.getUberPage().getIndirectPageReference(), mDelegate.getUberPage()</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;461</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;458</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    .getRevisionNumber());</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;462</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;459</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;463</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;460</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Link the prepared revision root nodePageReference with the</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;464</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;461</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// prepared indirect tree.</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;465</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            revisionRootPageReference.setPage(revisionRootPage);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;462</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            revisionRootPageReference.setPage(revisionRootPage);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;463</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;464</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            revisionRootPage.getNamePageReference().setPage(</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;465</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;                (NamePage)mDelegate.getActualRevisionRootPage().getNamePageReference().getPage());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;466</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;467</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            revisionRootPage.getNamePageReference().setPage(</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;468</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;                (NamePage)mDelegate.getActualRevisionRootPage().getNamePageReference().getPage());</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;469</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;470</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;467</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Return prepared revision root nodePageReference.</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;471</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> revisionRootPage;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;472</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;468</td>  <td class="nbHitsCovered">&nbsp;145</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> revisionRootPage;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;469</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;473</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;470</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;471</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;472</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> PageReference prepareLeafOfTree(<span class="keyword">final</span> PageReference mStartReference, <span class="keyword">final</span> <span class="keyword">long</span> mKey)</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;473</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;        <span class="keyword">throws</span> TTIOException {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;474</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;475</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="keyword">protected</span> PageReference prepareLeafOfTree(<span class="keyword">final</span> PageReference mStartReference, <span class="keyword">final</span> <span class="keyword">long</span> mKey)</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;476</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;        <span class="keyword">throws</span> TTIOException {</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;477</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;478</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// Initial state pointing to the indirect nodePageReference of level 0.</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;479</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;476</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;480</td>  <td class="nbHitsCovered">&nbsp;1172</td>  <td class="src"><pre class="src">&nbsp;        PageReference reference = mStartReference;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;481</td>  <td class="nbHitsCovered">&nbsp;1172</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> offset = 0;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;482</td>  <td class="nbHitsCovered">&nbsp;1172</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">long</span> levelKey = mKey;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;483</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;477</td>  <td class="nbHitsCovered">&nbsp;1172</td>  <td class="src"><pre class="src">&nbsp;        PageReference reference = mStartReference;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;478</td>  <td class="nbHitsCovered">&nbsp;1172</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> offset = 0;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;479</td>  <td class="nbHitsCovered">&nbsp;1172</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">long</span> levelKey = mKey;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;480</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;484</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;481</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// Iterate through all levels.</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;485</td>  <td class="nbHitsCovered"><a title="Line 485: Conditional coverage 100% (2/2).">&nbsp;7032</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 485: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">int</span> level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level &lt; height; level++) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;486</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;            offset = (<span class="keyword">int</span>)(levelKey &gt;&gt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;487</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;            levelKey -= offset &lt;&lt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;488</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> IndirectPage page = prepareIndirectPage(reference);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;489</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;            reference = page.getReferences()[offset];</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;490</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;482</td>  <td class="nbHitsCovered"><a title="Line 482: Conditional coverage 100% (2/2).">&nbsp;7032</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 482: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">int</span> level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level &lt; height; level++) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;483</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;            offset = (<span class="keyword">int</span>)(levelKey &gt;&gt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;484</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;            levelKey -= offset &lt;&lt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;485</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> IndirectPage page = prepareIndirectPage(reference);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;486</td>  <td class="nbHitsCovered">&nbsp;5860</td>  <td class="src"><pre class="src">&nbsp;            reference = page.getReferences()[offset];</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;487</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;491</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;488</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;492</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;489</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;493</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;490</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// Return reference to leaf of indirect tree.</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;494</td>  <td class="nbHitsCovered">&nbsp;1172</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> reference;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;495</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;491</td>  <td class="nbHitsCovered">&nbsp;1172</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> reference;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;492</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;496</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;493</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;497</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;494</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;498</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;495</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * Dereference node page reference.</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;499</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;496</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * </span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;500</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;497</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * @param paramNodePageKey</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;501</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;498</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     *            key of node page</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;502</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;499</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * @return dereferenced page</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;503</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;500</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * @throws TTIOException</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;504</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;501</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     *             if something happened in the node</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;505</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;502</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;506</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;503</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> NodePageContainer dereferenceNodePageForModification(<span class="keyword">final</span> <span class="keyword">long</span> paramNodePageKey)</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;507</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;504</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">throws</span> TTIOException {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;508</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NodePage[] revs = mDelegate.getSnapshotPages(paramNodePageKey);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;509</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> ERevisioning revision = mDelegate.mSession.getConfig().mRevision;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;510</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> mileStoneRevision = mDelegate.mSession.getConfig().mRevisionsToRestore;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;505</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NodePage[] revs = mDelegate.getSnapshotPages(paramNodePageKey);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;506</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> ERevisioning revision = mDelegate.mSession.getConfig().mRevision;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;507</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> mileStoneRevision = mDelegate.mSession.getConfig().mRevisionsToRestore;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;508</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;509</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> revision.combinePagesForModification(revs, mileStoneRevision);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;510</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;511</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;512</td>  <td class="nbHitsCovered">&nbsp;485</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> revision.combinePagesForModification(revs, mileStoneRevision);</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;512</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;513</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;514</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;515</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;516</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * Current reference to actual rev-root page.</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;517</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;514</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * </span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;518</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;515</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * @return the current revision root page</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;519</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;516</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;520</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;517</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> RevisionRootPage getActualRevisionRootPage() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;521</td>  <td class="nbHitsCovered">&nbsp;134</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> mNewRoot;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;518</td>  <td class="nbHitsCovered">&nbsp;134</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> mNewRoot;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;519</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;520</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;521</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;522</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;523</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;524</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;525</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * Building name consisting out of prefix and name. NamespaceUri is not used</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;526</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;523</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * over here.</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;527</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;524</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * </span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;528</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;525</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * @param paramQname</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;529</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;526</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     *            the {@link QName} of an element</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;530</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;527</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * @return a string with [prefix:]localname</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;531</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;528</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;532</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;529</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">static</span> String buildName(<span class="keyword">final</span> QName paramQname) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;533</td>  <td class="nbHitsUncovered"><a title="Line 533: Conditional coverage 50% (1/2).">&nbsp;67192</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 533: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (paramQname == <span class="keyword">null</span>) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;534</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"mQName must not be null!"</span>);</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;535</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;530</td>  <td class="nbHitsUncovered"><a title="Line 530: Conditional coverage 50% (1/2).">&nbsp;67192</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 530: Conditional coverage 50% (1/2).">        <span class="keyword">if</span> (paramQname == <span class="keyword">null</span>) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;531</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"mQName must not be null!"</span>);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;532</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;536</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;533</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        String name;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;537</td>  <td class="nbHitsCovered"><a title="Line 537: Conditional coverage 100% (2/2).">&nbsp;67192</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 537: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (paramQname.getPrefix().isEmpty()) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;538</td>  <td class="nbHitsCovered">&nbsp;67174</td>  <td class="src"><pre class="src">&nbsp;            name = paramQname.getLocalPart();</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;539</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;534</td>  <td class="nbHitsCovered"><a title="Line 534: Conditional coverage 100% (2/2).">&nbsp;67192</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 534: Conditional coverage 100% (2/2).">        <span class="keyword">if</span> (paramQname.getPrefix().isEmpty()) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;535</td>  <td class="nbHitsCovered">&nbsp;67174</td>  <td class="src"><pre class="src">&nbsp;            name = paramQname.getLocalPart();</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;536</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        } <span class="keyword">else</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;540</td>  <td class="nbHitsCovered">&nbsp;18</td>  <td class="src"><pre class="src">&nbsp;            name =</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;541</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;537</td>  <td class="nbHitsCovered">&nbsp;18</td>  <td class="src"><pre class="src">&nbsp;            name =</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;538</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> StringBuilder(paramQname.getPrefix()).append(<span class="string">":"</span>).append(paramQname.getLocalPart())</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;542</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;539</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    .toString();</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;543</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;540</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;544</td>  <td class="nbHitsCovered">&nbsp;67192</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> name;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;541</td>  <td class="nbHitsCovered">&nbsp;67192</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> name;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;542</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;543</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;544</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;545</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * {@inheritDoc}</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;546</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;547</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;548</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment">     * {@inheritDoc}</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;549</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;550</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;551</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">byte</span>[] getRawName(<span class="keyword">int</span> pKey) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;552</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> mDelegate.getRawName(pKey);</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;549</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> mDelegate.getRawName(pKey);</span></pre></td></tr>
+<tr>  <td class="numLine">&nbsp;550</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;551</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;552</td>  <td class="nbHits">&nbsp;</td>
+  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;553</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     * {@inheritDoc}</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;554</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;555</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;556</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment">     * {@inheritDoc}</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;557</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;558</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;559</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> UberPage getUberPage() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;560</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> mDelegate.getUberPage();</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;561</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;557</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> mDelegate.getUberPage();</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;558</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;562</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;559</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;563</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;560</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="comment">/**</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;564</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;561</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     * {@inheritDoc}</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;565</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;562</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLine">&nbsp;566</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;563</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;567</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;564</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">boolean</span> isClosed() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;568</td>  <td class="nbHitsCovered">&nbsp;357151</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> mDelegate.isClosed();</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;569</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLineCover">&nbsp;565</td>  <td class="nbHitsCovered">&nbsp;357151</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> mDelegate.isClosed();</pre></td></tr>
+<tr>  <td class="numLine">&nbsp;566</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;570</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;567</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLine">&nbsp;571</td>  <td class="nbHits">&nbsp;</td>
+<tr>  <td class="numLine">&nbsp;568</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/15/12 1:37 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/15/12 6:27 PM.</div>
 </body>
 </html>

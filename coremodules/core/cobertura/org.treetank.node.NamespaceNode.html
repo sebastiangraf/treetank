@@ -131,10 +131,10 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     *            building int data</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;57</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;58</td>  <td class="nbHitsCovered">&nbsp;24846</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> NamespaceNode(<span class="keyword">final</span> NodeDelegate pDel, <span class="keyword">final</span> NameNodeDelegate pNameDel) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;59</td>  <td class="nbHitsCovered">&nbsp;24846</td>  <td class="src"><pre class="src">&nbsp;        mDel = pDel;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;60</td>  <td class="nbHitsCovered">&nbsp;24846</td>  <td class="src"><pre class="src">&nbsp;        mNameDel = pNameDel;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;24846</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;58</td>  <td class="nbHitsCovered">&nbsp;24869</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> NamespaceNode(<span class="keyword">final</span> NodeDelegate pDel, <span class="keyword">final</span> NameNodeDelegate pNameDel) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;59</td>  <td class="nbHitsCovered">&nbsp;24869</td>  <td class="src"><pre class="src">&nbsp;        mDel = pDel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;60</td>  <td class="nbHitsCovered">&nbsp;24869</td>  <td class="src"><pre class="src">&nbsp;        mNameDel = pNameDel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;24869</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;62</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;63</td>  <td class="nbHits">&nbsp;</td>
@@ -387,10 +387,10 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;197</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> hashCode() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;198</td>  <td class="nbHitsCovered">&nbsp;689</td>  <td class="src"><pre class="src">&nbsp;        Hasher hc = IConstants.HF.newHasher();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;199</td>  <td class="nbHitsCovered">&nbsp;689</td>  <td class="src"><pre class="src">&nbsp;        hc.putInt(mDel.hashCode());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;200</td>  <td class="nbHitsCovered">&nbsp;689</td>  <td class="src"><pre class="src">&nbsp;        hc.putInt(mNameDel.hashCode());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;201</td>  <td class="nbHitsCovered">&nbsp;689</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> hc.hash().asInt();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;198</td>  <td class="nbHitsCovered">&nbsp;713</td>  <td class="src"><pre class="src">&nbsp;        Hasher hc = IConstants.HF.newHasher();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;199</td>  <td class="nbHitsCovered">&nbsp;713</td>  <td class="src"><pre class="src">&nbsp;        hc.putInt(mDel.hashCode());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;200</td>  <td class="nbHitsCovered">&nbsp;713</td>  <td class="src"><pre class="src">&nbsp;        hc.putInt(mNameDel.hashCode());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;201</td>  <td class="nbHitsCovered">&nbsp;713</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> hc.hash().asInt();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;202</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;203</td>  <td class="nbHits">&nbsp;</td>
@@ -405,7 +405,7 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;208</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">boolean</span> equals(Object obj) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;209</td>  <td class="nbHitsUncovered"><a title="Line 209: Conditional coverage 50% (1/2).">&nbsp;56</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 209: Conditional coverage 50% (1/2).">        <span class="keyword">return</span> hashCode() == obj.hashCode();</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;209</td>  <td class="nbHitsUncovered"><a title="Line 209: Conditional coverage 50% (1/2).">&nbsp;68</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 209: Conditional coverage 50% (1/2).">        <span class="keyword">return</span> hashCode() == obj.hashCode();</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;210</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;211</td>  <td class="nbHits">&nbsp;</td>
@@ -461,6 +461,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/15/12 1:37 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/15/12 6:27 PM.</div>
 </body>
 </html>

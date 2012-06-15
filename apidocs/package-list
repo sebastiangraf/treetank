@@ -8,7 +8,6 @@ org.treetank.cache
 org.treetank.exception
 org.treetank.io
 org.treetank.io.berkeley
-org.treetank.io.berkeley.binding
 org.treetank.io.file
 org.treetank.io.jclouds
 org.treetank.node

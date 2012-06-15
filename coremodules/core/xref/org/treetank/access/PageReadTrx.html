@@ -49,15 +49,15 @@
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IReader;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.DeletedNode;
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IPage;
-<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IndirectPage;
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NamePage;
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NodePage;
-<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.PageReference;
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.RevisionRootPage;
-<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.UberPage;
-<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.settings.ERevisioning;
-<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.utils.IConstants;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IConstants;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IPage;
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IndirectPage;
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NamePage;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NodePage;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.PageReference;
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.RevisionRootPage;
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.UberPage;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.settings.ERevisioning;
 <a class="jxr_linenumber" name="51" href="#51">51</a>  
 <a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> com.google.common.cache.Cache;
 <a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> com.google.common.cache.CacheBuilder;
@@ -308,11 +308,11 @@
 <a class="jxr_linenumber" name="298" href="#298">298</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">long</strong> i = mRootPage.getRevision(); i &gt;= 0; i--) {
 <a class="jxr_linenumber" name="299" href="#299">299</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> ref =
 <a class="jxr_linenumber" name="300" href="#300">300</a>                 dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), mNodePageKey);
-<a class="jxr_linenumber" name="301" href="#301">301</a>             <strong class="jxr_keyword">if</strong> (ref != <strong class="jxr_keyword">null</strong> &amp;&amp; (ref.getPage() != <strong class="jxr_keyword">null</strong> || ref.getKey() != <strong class="jxr_keyword">null</strong>)) {
-<a class="jxr_linenumber" name="302" href="#302">302</a>                 <strong class="jxr_keyword">if</strong> (ref.getKey() == <strong class="jxr_keyword">null</strong> || (!keys.contains(ref.getKey().getIdentifier()))) {
+<a class="jxr_linenumber" name="301" href="#301">301</a>             <strong class="jxr_keyword">if</strong> (ref != <strong class="jxr_keyword">null</strong> &amp;&amp; (ref.getPage() != <strong class="jxr_keyword">null</strong> || ref.getKey() != IConstants.NULL_ID)) {
+<a class="jxr_linenumber" name="302" href="#302">302</a>                 <strong class="jxr_keyword">if</strong> (ref.getKey() == IConstants.NULL_ID || (!keys.contains(ref.getKey()))) {
 <a class="jxr_linenumber" name="303" href="#303">303</a>                     refs.add(ref);
-<a class="jxr_linenumber" name="304" href="#304">304</a>                     <strong class="jxr_keyword">if</strong> (ref.getKey() != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="305" href="#305">305</a>                         keys.add(ref.getKey().getIdentifier());
+<a class="jxr_linenumber" name="304" href="#304">304</a>                     <strong class="jxr_keyword">if</strong> (ref.getKey() != IConstants.NULL_ID) {
+<a class="jxr_linenumber" name="305" href="#305">305</a>                         keys.add(ref.getKey());
 <a class="jxr_linenumber" name="306" href="#306">306</a>                     }
 <a class="jxr_linenumber" name="307" href="#307">307</a>                 }
 <a class="jxr_linenumber" name="308" href="#308">308</a>                 <strong class="jxr_keyword">if</strong> (refs.size() == mSession.getConfig().mRevisionsToRestore) {
@@ -353,7 +353,7 @@
 <a class="jxr_linenumber" name="343" href="#343">343</a> 
 <a class="jxr_linenumber" name="344" href="#344">344</a>         <em class="jxr_comment">// If there is no page, get it from the storage and cache it.</em>
 <a class="jxr_linenumber" name="345" href="#345">345</a>         <strong class="jxr_keyword">if</strong> (page == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="346" href="#346">346</a>             <strong class="jxr_keyword">if</strong> (ref.getPage() == <strong class="jxr_keyword">null</strong> &amp;&amp; ref.getKey() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="346" href="#346">346</a>             <strong class="jxr_keyword">if</strong> (ref.getPage() == <strong class="jxr_keyword">null</strong> &amp;&amp; ref.getKey() == IConstants.NULL_ID) {
 <a class="jxr_linenumber" name="347" href="#347">347</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="348" href="#348">348</a>             }
 <a class="jxr_linenumber" name="349" href="#349">349</a>             page = (IndirectPage)mPageReader.read(ref.getKey());

@@ -153,11 +153,11 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment">     *            Delegate for {@link IStructNode} implementation.</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;68</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment">     */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;69</td>  <td class="nbHitsCovered">&nbsp;474</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> TextNode(<span class="keyword">final</span> NodeDelegate pDel, <span class="keyword">final</span> ValNodeDelegate pValDel, <span class="keyword">final</span> StructNodeDelegate pStrucDel) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered">&nbsp;474</td>  <td class="src"><pre class="src">&nbsp;        mDel = pDel;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;71</td>  <td class="nbHitsCovered">&nbsp;474</td>  <td class="src"><pre class="src">&nbsp;        mValDel = pValDel;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;72</td>  <td class="nbHitsCovered">&nbsp;474</td>  <td class="src"><pre class="src">&nbsp;        mStrucDel = pStrucDel;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;73</td>  <td class="nbHitsCovered">&nbsp;474</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;69</td>  <td class="nbHitsCovered">&nbsp;473</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> TextNode(<span class="keyword">final</span> NodeDelegate pDel, <span class="keyword">final</span> ValNodeDelegate pValDel, <span class="keyword">final</span> StructNodeDelegate pStrucDel) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered">&nbsp;473</td>  <td class="src"><pre class="src">&nbsp;        mDel = pDel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;71</td>  <td class="nbHitsCovered">&nbsp;473</td>  <td class="src"><pre class="src">&nbsp;        mValDel = pValDel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;72</td>  <td class="nbHitsCovered">&nbsp;473</td>  <td class="src"><pre class="src">&nbsp;        mStrucDel = pStrucDel;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;73</td>  <td class="nbHitsCovered">&nbsp;473</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;74</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;75</td>  <td class="nbHits">&nbsp;</td>
@@ -592,9 +592,9 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;307</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> hashCode() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;308</td>  <td class="nbHitsCovered">&nbsp;189</td>  <td class="src"><pre class="src">&nbsp;        Hasher hc = IConstants.HF.newHasher();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;309</td>  <td class="nbHitsCovered">&nbsp;189</td>  <td class="src"><pre class="src">&nbsp;        hc.putInt(mValDel.hashCode());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;310</td>  <td class="nbHitsCovered">&nbsp;189</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> hc.hash().asInt();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;308</td>  <td class="nbHitsCovered">&nbsp;195</td>  <td class="src"><pre class="src">&nbsp;        Hasher hc = IConstants.HF.newHasher();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;309</td>  <td class="nbHitsCovered">&nbsp;195</td>  <td class="src"><pre class="src">&nbsp;        hc.putInt(mValDel.hashCode());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;310</td>  <td class="nbHitsCovered">&nbsp;195</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> hc.hash().asInt();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;311</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;312</td>  <td class="nbHits">&nbsp;</td>
@@ -609,7 +609,7 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;317</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">boolean</span> equals(Object obj) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;318</td>  <td class="nbHitsUncovered"><a title="Line 318: Conditional coverage 50% (1/2).">&nbsp;65</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 318: Conditional coverage 50% (1/2).">        <span class="keyword">return</span> hashCode() == obj.hashCode();</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;318</td>  <td class="nbHitsUncovered"><a title="Line 318: Conditional coverage 50% (1/2).">&nbsp;68</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 318: Conditional coverage 50% (1/2).">        <span class="keyword">return</span> hashCode() == obj.hashCode();</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;319</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;320</td>  <td class="nbHits">&nbsp;</td>
@@ -685,6 +685,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/15/12 1:37 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/15/12 6:27 PM.</div>
 </body>
 </html>

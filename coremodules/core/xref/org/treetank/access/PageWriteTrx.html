@@ -54,15 +54,15 @@
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IWriter;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.DeletedNode;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.NodeDelegate;
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IPage;
-<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IndirectPage;
-<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NamePage;
-<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NodePage;
-<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.PageReference;
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.RevisionRootPage;
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.UberPage;
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.settings.ERevisioning;
-<a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.utils.IConstants;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IConstants;
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IPage;
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IndirectPage;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NamePage;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NodePage;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.PageReference;
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.RevisionRootPage;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.UberPage;
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.settings.ERevisioning;
 <a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.utils.NamePageHash;
 <a class="jxr_linenumber" name="57" href="#57">57</a>  
 <a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_javadoccomment">/**</em>
@@ -399,7 +399,7 @@
 <a class="jxr_linenumber" name="389" href="#389">389</a>         mDelegate.mSession.deregisterPageTrx(<strong class="jxr_keyword">this</strong>);
 <a class="jxr_linenumber" name="390" href="#390">390</a>         mDelegate.close();
 <a class="jxr_linenumber" name="391" href="#391">391</a>         mLog.clear();
-<a class="jxr_linenumber" name="392" href="#392">392</a> <em class="jxr_comment">//        mPageWriter.close();</em>
+<a class="jxr_linenumber" name="392" href="#392">392</a>         <em class="jxr_comment">// mPageWriter.close();</em>
 <a class="jxr_linenumber" name="393" href="#393">393</a>     }
 <a class="jxr_linenumber" name="394" href="#394">394</a> 
 <a class="jxr_linenumber" name="395" href="#395">395</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getMaxNodeKey() {
@@ -410,7 +410,7 @@
 <a class="jxr_linenumber" name="400" href="#400">400</a> 
 <a class="jxr_linenumber" name="401" href="#401">401</a>         <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a> page = (IndirectPage)paramReference.getPage();
 <a class="jxr_linenumber" name="402" href="#402">402</a>         <strong class="jxr_keyword">if</strong> (page == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="403" href="#403">403</a>             <strong class="jxr_keyword">if</strong> (paramReference.getKey() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="403" href="#403">403</a>             <strong class="jxr_keyword">if</strong> (paramReference.getKey() == IConstants.NULL_ID) {
 <a class="jxr_linenumber" name="404" href="#404">404</a>                 page = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a>(mDelegate.getUberPage().getRevision());
 <a class="jxr_linenumber" name="405" href="#405">405</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="406" href="#406">406</a>                 page =
@@ -430,155 +430,152 @@
 <a class="jxr_linenumber" name="420" href="#420">420</a>         <strong class="jxr_keyword">if</strong> (cont == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="421" href="#421">421</a> 
 <a class="jxr_linenumber" name="422" href="#422">422</a>             <em class="jxr_comment">// Indirect reference.</em>
-<a class="jxr_linenumber" name="423" href="#423">423</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> reference =
-<a class="jxr_linenumber" name="424" href="#424">424</a>                 prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
-<a class="jxr_linenumber" name="425" href="#425">425</a>             <a href="../../../org/treetank/page/NodePage.html">NodePage</a> page = (NodePage)reference.getPage();
-<a class="jxr_linenumber" name="426" href="#426">426</a> 
-<a class="jxr_linenumber" name="427" href="#427">427</a>             <strong class="jxr_keyword">if</strong> (page == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="428" href="#428">428</a>                 <strong class="jxr_keyword">if</strong> (reference.getKey() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="429" href="#429">429</a>                     cont =
-<a class="jxr_linenumber" name="430" href="#430">430</a>                         <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a>(<strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>(pPageKey,
-<a class="jxr_linenumber" name="431" href="#431">431</a>                             IConstants.UBP_ROOT_REVISION_NUMBER));
-<a class="jxr_linenumber" name="432" href="#432">432</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="433" href="#433">433</a>                     cont = dereferenceNodePageForModification(pPageKey);
-<a class="jxr_linenumber" name="434" href="#434">434</a>                 }
-<a class="jxr_linenumber" name="435" href="#435">435</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="436" href="#436">436</a>                 cont = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a>(page);
-<a class="jxr_linenumber" name="437" href="#437">437</a>             }
-<a class="jxr_linenumber" name="438" href="#438">438</a> 
-<a class="jxr_linenumber" name="439" href="#439">439</a>             reference.setNodePageKey(pPageKey);
-<a class="jxr_linenumber" name="440" href="#440">440</a>             mLog.put(pPageKey, cont);
-<a class="jxr_linenumber" name="441" href="#441">441</a>         }
-<a class="jxr_linenumber" name="442" href="#442">442</a>         mNodePageCon = cont;
-<a class="jxr_linenumber" name="443" href="#443">443</a>         <strong class="jxr_keyword">return</strong> cont;
-<a class="jxr_linenumber" name="444" href="#444">444</a>     }
+<a class="jxr_linenumber" name="423" href="#423">423</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
+<a class="jxr_linenumber" name="424" href="#424">424</a>             <a href="../../../org/treetank/page/NodePage.html">NodePage</a> page = (NodePage)reference.getPage();
+<a class="jxr_linenumber" name="425" href="#425">425</a> 
+<a class="jxr_linenumber" name="426" href="#426">426</a>             <strong class="jxr_keyword">if</strong> (page == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="427" href="#427">427</a>                 <strong class="jxr_keyword">if</strong> (reference.getKey() == IConstants.NULL_ID) {
+<a class="jxr_linenumber" name="428" href="#428">428</a>                     cont = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a>(<strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>(pPageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
+<a class="jxr_linenumber" name="429" href="#429">429</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="430" href="#430">430</a>                     cont = dereferenceNodePageForModification(pPageKey);
+<a class="jxr_linenumber" name="431" href="#431">431</a>                 }
+<a class="jxr_linenumber" name="432" href="#432">432</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="433" href="#433">433</a>                 cont = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a>(page);
+<a class="jxr_linenumber" name="434" href="#434">434</a>             }
+<a class="jxr_linenumber" name="435" href="#435">435</a> 
+<a class="jxr_linenumber" name="436" href="#436">436</a>             reference.setNodePageKey(pPageKey);
+<a class="jxr_linenumber" name="437" href="#437">437</a>             mLog.put(pPageKey, cont);
+<a class="jxr_linenumber" name="438" href="#438">438</a>         }
+<a class="jxr_linenumber" name="439" href="#439">439</a>         mNodePageCon = cont;
+<a class="jxr_linenumber" name="440" href="#440">440</a>         <strong class="jxr_keyword">return</strong> cont;
+<a class="jxr_linenumber" name="441" href="#441">441</a>     }
+<a class="jxr_linenumber" name="442" href="#442">442</a> 
+<a class="jxr_linenumber" name="443" href="#443">443</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a> preparePreviousRevisionRootPage(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> mBaseRevision,
+<a class="jxr_linenumber" name="444" href="#444">444</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> representRevision) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="445" href="#445">445</a> 
-<a class="jxr_linenumber" name="446" href="#446">446</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a> preparePreviousRevisionRootPage(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> mBaseRevision,
-<a class="jxr_linenumber" name="447" href="#447">447</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> representRevision) <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="448" href="#448">448</a> 
-<a class="jxr_linenumber" name="449" href="#449">449</a>         <strong class="jxr_keyword">if</strong> (mDelegate.getUberPage().isBootstrap()) {
-<a class="jxr_linenumber" name="450" href="#450">450</a>             <strong class="jxr_keyword">return</strong> mDelegate.loadRevRoot(mBaseRevision);
-<a class="jxr_linenumber" name="451" href="#451">451</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="452" href="#452">452</a> 
-<a class="jxr_linenumber" name="453" href="#453">453</a>             <em class="jxr_comment">// Prepare revision root nodePageReference.</em>
-<a class="jxr_linenumber" name="454" href="#454">454</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a> revisionRootPage =
-<a class="jxr_linenumber" name="455" href="#455">455</a>                 <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a>(mDelegate.loadRevRoot(mBaseRevision), representRevision + 1);
-<a class="jxr_linenumber" name="456" href="#456">456</a> 
-<a class="jxr_linenumber" name="457" href="#457">457</a>             <em class="jxr_comment">// Prepare indirect tree to hold reference to prepared revision root</em>
-<a class="jxr_linenumber" name="458" href="#458">458</a>             <em class="jxr_comment">// nodePageReference.</em>
-<a class="jxr_linenumber" name="459" href="#459">459</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> revisionRootPageReference =
-<a class="jxr_linenumber" name="460" href="#460">460</a>                 prepareLeafOfTree(mDelegate.getUberPage().getIndirectPageReference(), mDelegate.getUberPage()
-<a class="jxr_linenumber" name="461" href="#461">461</a>                     .getRevisionNumber());
-<a class="jxr_linenumber" name="462" href="#462">462</a> 
-<a class="jxr_linenumber" name="463" href="#463">463</a>             <em class="jxr_comment">// Link the prepared revision root nodePageReference with the</em>
-<a class="jxr_linenumber" name="464" href="#464">464</a>             <em class="jxr_comment">// prepared indirect tree.</em>
-<a class="jxr_linenumber" name="465" href="#465">465</a>             revisionRootPageReference.setPage(revisionRootPage);
+<a class="jxr_linenumber" name="446" href="#446">446</a>         <strong class="jxr_keyword">if</strong> (mDelegate.getUberPage().isBootstrap()) {
+<a class="jxr_linenumber" name="447" href="#447">447</a>             <strong class="jxr_keyword">return</strong> mDelegate.loadRevRoot(mBaseRevision);
+<a class="jxr_linenumber" name="448" href="#448">448</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="449" href="#449">449</a> 
+<a class="jxr_linenumber" name="450" href="#450">450</a>             <em class="jxr_comment">// Prepare revision root nodePageReference.</em>
+<a class="jxr_linenumber" name="451" href="#451">451</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a> revisionRootPage =
+<a class="jxr_linenumber" name="452" href="#452">452</a>                 <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a>(mDelegate.loadRevRoot(mBaseRevision), representRevision + 1);
+<a class="jxr_linenumber" name="453" href="#453">453</a> 
+<a class="jxr_linenumber" name="454" href="#454">454</a>             <em class="jxr_comment">// Prepare indirect tree to hold reference to prepared revision root</em>
+<a class="jxr_linenumber" name="455" href="#455">455</a>             <em class="jxr_comment">// nodePageReference.</em>
+<a class="jxr_linenumber" name="456" href="#456">456</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> revisionRootPageReference =
+<a class="jxr_linenumber" name="457" href="#457">457</a>                 prepareLeafOfTree(mDelegate.getUberPage().getIndirectPageReference(), mDelegate.getUberPage()
+<a class="jxr_linenumber" name="458" href="#458">458</a>                     .getRevisionNumber());
+<a class="jxr_linenumber" name="459" href="#459">459</a> 
+<a class="jxr_linenumber" name="460" href="#460">460</a>             <em class="jxr_comment">// Link the prepared revision root nodePageReference with the</em>
+<a class="jxr_linenumber" name="461" href="#461">461</a>             <em class="jxr_comment">// prepared indirect tree.</em>
+<a class="jxr_linenumber" name="462" href="#462">462</a>             revisionRootPageReference.setPage(revisionRootPage);
+<a class="jxr_linenumber" name="463" href="#463">463</a> 
+<a class="jxr_linenumber" name="464" href="#464">464</a>             revisionRootPage.getNamePageReference().setPage(
+<a class="jxr_linenumber" name="465" href="#465">465</a>                 (<a href="../../../org/treetank/page/NamePage.html">NamePage</a>)mDelegate.getActualRevisionRootPage().getNamePageReference().getPage());
 <a class="jxr_linenumber" name="466" href="#466">466</a> 
-<a class="jxr_linenumber" name="467" href="#467">467</a>             revisionRootPage.getNamePageReference().setPage(
-<a class="jxr_linenumber" name="468" href="#468">468</a>                 (<a href="../../../org/treetank/page/NamePage.html">NamePage</a>)mDelegate.getActualRevisionRootPage().getNamePageReference().getPage());
-<a class="jxr_linenumber" name="469" href="#469">469</a> 
-<a class="jxr_linenumber" name="470" href="#470">470</a>             <em class="jxr_comment">// Return prepared revision root nodePageReference.</em>
-<a class="jxr_linenumber" name="471" href="#471">471</a>             <strong class="jxr_keyword">return</strong> revisionRootPage;
-<a class="jxr_linenumber" name="472" href="#472">472</a>         }
-<a class="jxr_linenumber" name="473" href="#473">473</a>     }
+<a class="jxr_linenumber" name="467" href="#467">467</a>             <em class="jxr_comment">// Return prepared revision root nodePageReference.</em>
+<a class="jxr_linenumber" name="468" href="#468">468</a>             <strong class="jxr_keyword">return</strong> revisionRootPage;
+<a class="jxr_linenumber" name="469" href="#469">469</a>         }
+<a class="jxr_linenumber" name="470" href="#470">470</a>     }
+<a class="jxr_linenumber" name="471" href="#471">471</a> 
+<a class="jxr_linenumber" name="472" href="#472">472</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> prepareLeafOfTree(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> mStartReference, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> mKey)
+<a class="jxr_linenumber" name="473" href="#473">473</a>         <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="474" href="#474">474</a> 
-<a class="jxr_linenumber" name="475" href="#475">475</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> prepareLeafOfTree(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> mStartReference, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> mKey)
-<a class="jxr_linenumber" name="476" href="#476">476</a>         <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="477" href="#477">477</a> 
-<a class="jxr_linenumber" name="478" href="#478">478</a>         <em class="jxr_comment">// Initial state pointing to the indirect nodePageReference of level 0.</em>
-<a class="jxr_linenumber" name="479" href="#479">479</a> 
-<a class="jxr_linenumber" name="480" href="#480">480</a>         <a href="../../../org/treetank/page/PageReference.html">PageReference</a> reference = mStartReference;
-<a class="jxr_linenumber" name="481" href="#481">481</a>         <strong class="jxr_keyword">int</strong> offset = 0;
-<a class="jxr_linenumber" name="482" href="#482">482</a>         <strong class="jxr_keyword">long</strong> levelKey = mKey;
-<a class="jxr_linenumber" name="483" href="#483">483</a> 
-<a class="jxr_linenumber" name="484" href="#484">484</a>         <em class="jxr_comment">// Iterate through all levels.</em>
-<a class="jxr_linenumber" name="485" href="#485">485</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level &lt; height; level++) {
-<a class="jxr_linenumber" name="486" href="#486">486</a>             offset = (<strong class="jxr_keyword">int</strong>)(levelKey &gt;&gt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
-<a class="jxr_linenumber" name="487" href="#487">487</a>             levelKey -= offset &lt;&lt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-<a class="jxr_linenumber" name="488" href="#488">488</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a> page = prepareIndirectPage(reference);
-<a class="jxr_linenumber" name="489" href="#489">489</a>             reference = page.getReferences()[offset];
-<a class="jxr_linenumber" name="490" href="#490">490</a> 
-<a class="jxr_linenumber" name="491" href="#491">491</a>         }
-<a class="jxr_linenumber" name="492" href="#492">492</a> 
-<a class="jxr_linenumber" name="493" href="#493">493</a>         <em class="jxr_comment">// Return reference to leaf of indirect tree.</em>
-<a class="jxr_linenumber" name="494" href="#494">494</a>         <strong class="jxr_keyword">return</strong> reference;
-<a class="jxr_linenumber" name="495" href="#495">495</a>     }
-<a class="jxr_linenumber" name="496" href="#496">496</a> 
-<a class="jxr_linenumber" name="497" href="#497">497</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="498" href="#498">498</a> <em class="jxr_javadoccomment">     * Dereference node page reference.</em>
-<a class="jxr_linenumber" name="499" href="#499">499</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="500" href="#500">500</a> <em class="jxr_javadoccomment">     * @param paramNodePageKey</em>
-<a class="jxr_linenumber" name="501" href="#501">501</a> <em class="jxr_javadoccomment">     *            key of node page</em>
-<a class="jxr_linenumber" name="502" href="#502">502</a> <em class="jxr_javadoccomment">     * @return dereferenced page</em>
-<a class="jxr_linenumber" name="503" href="#503">503</a> <em class="jxr_javadoccomment">     * @throws TTIOException</em>
-<a class="jxr_linenumber" name="504" href="#504">504</a> <em class="jxr_javadoccomment">     *             if something happened in the node</em>
-<a class="jxr_linenumber" name="505" href="#505">505</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="506" href="#506">506</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a> dereferenceNodePageForModification(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramNodePageKey)
-<a class="jxr_linenumber" name="507" href="#507">507</a>         <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="508" href="#508">508</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>[] revs = mDelegate.getSnapshotPages(paramNodePageKey);
-<a class="jxr_linenumber" name="509" href="#509">509</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/settings/ERevisioning.html">ERevisioning</a> revision = mDelegate.mSession.getConfig().mRevision;
-<a class="jxr_linenumber" name="510" href="#510">510</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> mileStoneRevision = mDelegate.mSession.getConfig().mRevisionsToRestore;
+<a class="jxr_linenumber" name="475" href="#475">475</a>         <em class="jxr_comment">// Initial state pointing to the indirect nodePageReference of level 0.</em>
+<a class="jxr_linenumber" name="476" href="#476">476</a> 
+<a class="jxr_linenumber" name="477" href="#477">477</a>         <a href="../../../org/treetank/page/PageReference.html">PageReference</a> reference = mStartReference;
+<a class="jxr_linenumber" name="478" href="#478">478</a>         <strong class="jxr_keyword">int</strong> offset = 0;
+<a class="jxr_linenumber" name="479" href="#479">479</a>         <strong class="jxr_keyword">long</strong> levelKey = mKey;
+<a class="jxr_linenumber" name="480" href="#480">480</a> 
+<a class="jxr_linenumber" name="481" href="#481">481</a>         <em class="jxr_comment">// Iterate through all levels.</em>
+<a class="jxr_linenumber" name="482" href="#482">482</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level &lt; height; level++) {
+<a class="jxr_linenumber" name="483" href="#483">483</a>             offset = (<strong class="jxr_keyword">int</strong>)(levelKey &gt;&gt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+<a class="jxr_linenumber" name="484" href="#484">484</a>             levelKey -= offset &lt;&lt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+<a class="jxr_linenumber" name="485" href="#485">485</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a> page = prepareIndirectPage(reference);
+<a class="jxr_linenumber" name="486" href="#486">486</a>             reference = page.getReferences()[offset];
+<a class="jxr_linenumber" name="487" href="#487">487</a> 
+<a class="jxr_linenumber" name="488" href="#488">488</a>         }
+<a class="jxr_linenumber" name="489" href="#489">489</a> 
+<a class="jxr_linenumber" name="490" href="#490">490</a>         <em class="jxr_comment">// Return reference to leaf of indirect tree.</em>
+<a class="jxr_linenumber" name="491" href="#491">491</a>         <strong class="jxr_keyword">return</strong> reference;
+<a class="jxr_linenumber" name="492" href="#492">492</a>     }
+<a class="jxr_linenumber" name="493" href="#493">493</a> 
+<a class="jxr_linenumber" name="494" href="#494">494</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="495" href="#495">495</a> <em class="jxr_javadoccomment">     * Dereference node page reference.</em>
+<a class="jxr_linenumber" name="496" href="#496">496</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="497" href="#497">497</a> <em class="jxr_javadoccomment">     * @param paramNodePageKey</em>
+<a class="jxr_linenumber" name="498" href="#498">498</a> <em class="jxr_javadoccomment">     *            key of node page</em>
+<a class="jxr_linenumber" name="499" href="#499">499</a> <em class="jxr_javadoccomment">     * @return dereferenced page</em>
+<a class="jxr_linenumber" name="500" href="#500">500</a> <em class="jxr_javadoccomment">     * @throws TTIOException</em>
+<a class="jxr_linenumber" name="501" href="#501">501</a> <em class="jxr_javadoccomment">     *             if something happened in the node</em>
+<a class="jxr_linenumber" name="502" href="#502">502</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="503" href="#503">503</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a> dereferenceNodePageForModification(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramNodePageKey)
+<a class="jxr_linenumber" name="504" href="#504">504</a>         <strong class="jxr_keyword">throws</strong> TTIOException {
+<a class="jxr_linenumber" name="505" href="#505">505</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>[] revs = mDelegate.getSnapshotPages(paramNodePageKey);
+<a class="jxr_linenumber" name="506" href="#506">506</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/settings/ERevisioning.html">ERevisioning</a> revision = mDelegate.mSession.getConfig().mRevision;
+<a class="jxr_linenumber" name="507" href="#507">507</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> mileStoneRevision = mDelegate.mSession.getConfig().mRevisionsToRestore;
+<a class="jxr_linenumber" name="508" href="#508">508</a> 
+<a class="jxr_linenumber" name="509" href="#509">509</a>         <strong class="jxr_keyword">return</strong> revision.combinePagesForModification(revs, mileStoneRevision);
+<a class="jxr_linenumber" name="510" href="#510">510</a>     }
 <a class="jxr_linenumber" name="511" href="#511">511</a> 
-<a class="jxr_linenumber" name="512" href="#512">512</a>         <strong class="jxr_keyword">return</strong> revision.combinePagesForModification(revs, mileStoneRevision);
-<a class="jxr_linenumber" name="513" href="#513">513</a>     }
-<a class="jxr_linenumber" name="514" href="#514">514</a> 
-<a class="jxr_linenumber" name="515" href="#515">515</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="516" href="#516">516</a> <em class="jxr_javadoccomment">     * Current reference to actual rev-root page.</em>
-<a class="jxr_linenumber" name="517" href="#517">517</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="518" href="#518">518</a> <em class="jxr_javadoccomment">     * @return the current revision root page</em>
-<a class="jxr_linenumber" name="519" href="#519">519</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="520" href="#520">520</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a> getActualRevisionRootPage() {
-<a class="jxr_linenumber" name="521" href="#521">521</a>         <strong class="jxr_keyword">return</strong> mNewRoot;
-<a class="jxr_linenumber" name="522" href="#522">522</a>     }
-<a class="jxr_linenumber" name="523" href="#523">523</a> 
-<a class="jxr_linenumber" name="524" href="#524">524</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="525" href="#525">525</a> <em class="jxr_javadoccomment">     * Building name consisting out of prefix and name. NamespaceUri is not used</em>
-<a class="jxr_linenumber" name="526" href="#526">526</a> <em class="jxr_javadoccomment">     * over here.</em>
-<a class="jxr_linenumber" name="527" href="#527">527</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="528" href="#528">528</a> <em class="jxr_javadoccomment">     * @param paramQname</em>
-<a class="jxr_linenumber" name="529" href="#529">529</a> <em class="jxr_javadoccomment">     *            the {@link QName} of an element</em>
-<a class="jxr_linenumber" name="530" href="#530">530</a> <em class="jxr_javadoccomment">     * @return a string with [prefix:]localname</em>
-<a class="jxr_linenumber" name="531" href="#531">531</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="532" href="#532">532</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String buildName(<strong class="jxr_keyword">final</strong> QName paramQname) {
-<a class="jxr_linenumber" name="533" href="#533">533</a>         <strong class="jxr_keyword">if</strong> (paramQname == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="534" href="#534">534</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> NullPointerException(<span class="jxr_string">"mQName must not be null!"</span>);
-<a class="jxr_linenumber" name="535" href="#535">535</a>         }
-<a class="jxr_linenumber" name="536" href="#536">536</a>         String name;
-<a class="jxr_linenumber" name="537" href="#537">537</a>         <strong class="jxr_keyword">if</strong> (paramQname.getPrefix().isEmpty()) {
-<a class="jxr_linenumber" name="538" href="#538">538</a>             name = paramQname.getLocalPart();
-<a class="jxr_linenumber" name="539" href="#539">539</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="540" href="#540">540</a>             name =
-<a class="jxr_linenumber" name="541" href="#541">541</a>                 <strong class="jxr_keyword">new</strong> StringBuilder(paramQname.getPrefix()).append(<span class="jxr_string">":"</span>).append(paramQname.getLocalPart())
-<a class="jxr_linenumber" name="542" href="#542">542</a>                     .toString();
-<a class="jxr_linenumber" name="543" href="#543">543</a>         }
-<a class="jxr_linenumber" name="544" href="#544">544</a>         <strong class="jxr_keyword">return</strong> name;
-<a class="jxr_linenumber" name="545" href="#545">545</a>     }
-<a class="jxr_linenumber" name="546" href="#546">546</a> 
-<a class="jxr_linenumber" name="547" href="#547">547</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="548" href="#548">548</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="549" href="#549">549</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="550" href="#550">550</a>     @Override
-<a class="jxr_linenumber" name="551" href="#551">551</a>     <strong class="jxr_keyword">public</strong> byte[] getRawName(<strong class="jxr_keyword">int</strong> pKey) {
-<a class="jxr_linenumber" name="552" href="#552">552</a>         <strong class="jxr_keyword">return</strong> mDelegate.getRawName(pKey);
-<a class="jxr_linenumber" name="553" href="#553">553</a>     }
-<a class="jxr_linenumber" name="554" href="#554">554</a> 
-<a class="jxr_linenumber" name="555" href="#555">555</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="556" href="#556">556</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="557" href="#557">557</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="558" href="#558">558</a>     @Override
-<a class="jxr_linenumber" name="559" href="#559">559</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/page/UberPage.html">UberPage</a> getUberPage() {
-<a class="jxr_linenumber" name="560" href="#560">560</a>         <strong class="jxr_keyword">return</strong> mDelegate.getUberPage();
-<a class="jxr_linenumber" name="561" href="#561">561</a>     }
-<a class="jxr_linenumber" name="562" href="#562">562</a> 
-<a class="jxr_linenumber" name="563" href="#563">563</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="564" href="#564">564</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="565" href="#565">565</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="566" href="#566">566</a>     @Override
-<a class="jxr_linenumber" name="567" href="#567">567</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isClosed() {
-<a class="jxr_linenumber" name="568" href="#568">568</a>         <strong class="jxr_keyword">return</strong> mDelegate.isClosed();
-<a class="jxr_linenumber" name="569" href="#569">569</a>     }
-<a class="jxr_linenumber" name="570" href="#570">570</a> 
-<a class="jxr_linenumber" name="571" href="#571">571</a> }
+<a class="jxr_linenumber" name="512" href="#512">512</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="513" href="#513">513</a> <em class="jxr_javadoccomment">     * Current reference to actual rev-root page.</em>
+<a class="jxr_linenumber" name="514" href="#514">514</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="515" href="#515">515</a> <em class="jxr_javadoccomment">     * @return the current revision root page</em>
+<a class="jxr_linenumber" name="516" href="#516">516</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="517" href="#517">517</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a> getActualRevisionRootPage() {
+<a class="jxr_linenumber" name="518" href="#518">518</a>         <strong class="jxr_keyword">return</strong> mNewRoot;
+<a class="jxr_linenumber" name="519" href="#519">519</a>     }
+<a class="jxr_linenumber" name="520" href="#520">520</a> 
+<a class="jxr_linenumber" name="521" href="#521">521</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="522" href="#522">522</a> <em class="jxr_javadoccomment">     * Building name consisting out of prefix and name. NamespaceUri is not used</em>
+<a class="jxr_linenumber" name="523" href="#523">523</a> <em class="jxr_javadoccomment">     * over here.</em>
+<a class="jxr_linenumber" name="524" href="#524">524</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="525" href="#525">525</a> <em class="jxr_javadoccomment">     * @param paramQname</em>
+<a class="jxr_linenumber" name="526" href="#526">526</a> <em class="jxr_javadoccomment">     *            the {@link QName} of an element</em>
+<a class="jxr_linenumber" name="527" href="#527">527</a> <em class="jxr_javadoccomment">     * @return a string with [prefix:]localname</em>
+<a class="jxr_linenumber" name="528" href="#528">528</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="529" href="#529">529</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String buildName(<strong class="jxr_keyword">final</strong> QName paramQname) {
+<a class="jxr_linenumber" name="530" href="#530">530</a>         <strong class="jxr_keyword">if</strong> (paramQname == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="531" href="#531">531</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> NullPointerException(<span class="jxr_string">"mQName must not be null!"</span>);
+<a class="jxr_linenumber" name="532" href="#532">532</a>         }
+<a class="jxr_linenumber" name="533" href="#533">533</a>         String name;
+<a class="jxr_linenumber" name="534" href="#534">534</a>         <strong class="jxr_keyword">if</strong> (paramQname.getPrefix().isEmpty()) {
+<a class="jxr_linenumber" name="535" href="#535">535</a>             name = paramQname.getLocalPart();
+<a class="jxr_linenumber" name="536" href="#536">536</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="537" href="#537">537</a>             name =
+<a class="jxr_linenumber" name="538" href="#538">538</a>                 <strong class="jxr_keyword">new</strong> StringBuilder(paramQname.getPrefix()).append(<span class="jxr_string">":"</span>).append(paramQname.getLocalPart())
+<a class="jxr_linenumber" name="539" href="#539">539</a>                     .toString();
+<a class="jxr_linenumber" name="540" href="#540">540</a>         }
+<a class="jxr_linenumber" name="541" href="#541">541</a>         <strong class="jxr_keyword">return</strong> name;
+<a class="jxr_linenumber" name="542" href="#542">542</a>     }
+<a class="jxr_linenumber" name="543" href="#543">543</a> 
+<a class="jxr_linenumber" name="544" href="#544">544</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="545" href="#545">545</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="546" href="#546">546</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="547" href="#547">547</a>     @Override
+<a class="jxr_linenumber" name="548" href="#548">548</a>     <strong class="jxr_keyword">public</strong> byte[] getRawName(<strong class="jxr_keyword">int</strong> pKey) {
+<a class="jxr_linenumber" name="549" href="#549">549</a>         <strong class="jxr_keyword">return</strong> mDelegate.getRawName(pKey);
+<a class="jxr_linenumber" name="550" href="#550">550</a>     }
+<a class="jxr_linenumber" name="551" href="#551">551</a> 
+<a class="jxr_linenumber" name="552" href="#552">552</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="553" href="#553">553</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="554" href="#554">554</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="555" href="#555">555</a>     @Override
+<a class="jxr_linenumber" name="556" href="#556">556</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/page/UberPage.html">UberPage</a> getUberPage() {
+<a class="jxr_linenumber" name="557" href="#557">557</a>         <strong class="jxr_keyword">return</strong> mDelegate.getUberPage();
+<a class="jxr_linenumber" name="558" href="#558">558</a>     }
+<a class="jxr_linenumber" name="559" href="#559">559</a> 
+<a class="jxr_linenumber" name="560" href="#560">560</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="561" href="#561">561</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="562" href="#562">562</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="563" href="#563">563</a>     @Override
+<a class="jxr_linenumber" name="564" href="#564">564</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isClosed() {
+<a class="jxr_linenumber" name="565" href="#565">565</a>         <strong class="jxr_keyword">return</strong> mDelegate.isClosed();
+<a class="jxr_linenumber" name="566" href="#566">566</a>     }
+<a class="jxr_linenumber" name="567" href="#567">567</a> 
+<a class="jxr_linenumber" name="568" href="#568">568</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
