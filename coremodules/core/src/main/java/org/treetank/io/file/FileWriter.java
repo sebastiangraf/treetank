@@ -102,9 +102,7 @@ public final class FileWriter implements IWriter {
             throw new TTIOException("Page crypt error.");
         }
         // normally, the first bytes until FileReader.OTHERBEACON are reserved and cut of resulting in
-        // final byte[] tmp = new byte[outputLength - FileReader.OTHER_BEACON];
         final byte[] tmp = new byte[outputLength];
-        // mBuffer.position(FileReader.OTHER_BEACON);
         mBuffer.position(0);
         // Because of the missing offset, we can write the length directly at the front of the buffer to see
         // it afterwards in the byte array as well. Do not forget to reset the position before transition to

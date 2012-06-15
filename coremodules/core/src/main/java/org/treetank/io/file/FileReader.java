@@ -30,7 +30,6 @@ package org.treetank.io.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 import java.util.zip.DataFormatException;
 
 import org.treetank.exception.TTIOException;
@@ -113,8 +112,6 @@ public final class FileReader implements IReader {
             // Read page from file.
             mFile.seek(fileKey.getIdentifier());
             final int dataLength = mFile.readInt();
-            // final int dataLength = fileKey.getLength() + OTHER_BEACON;
-
             final byte[] page = new byte[dataLength];
 
             mFile.read(page);
