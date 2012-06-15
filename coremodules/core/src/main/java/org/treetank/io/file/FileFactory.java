@@ -46,6 +46,9 @@ public final class FileFactory implements IStorage {
     /** private constant for fileName. */
     private static final String FILENAME = "tt.tnk";
 
+    /** private constant for fileName. */
+    protected static final int BUFFERSIZE = 32767;
+
     /** Instance to storage. */
     private final File mFile;
 

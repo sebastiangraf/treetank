@@ -29,10 +29,8 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>RevisionRootPage</h1>
@@ -90,10 +88,7 @@ public final class RevisionRootPage implements IPage {
         mReferences = new PageReference[2];
         for (int offset = 0; offset < mReferences.length; offset++) {
             getReferences()[offset] = new PageReference();
-            final EStorage storage = EStorage.getInstance(paramIn.readInt());
-            if (storage != null) {
-                getReferences()[offset].setKey(storage.deserialize(paramIn));
-            }
+            getReferences()[offset].setKey(paramIn.readLong());
         }
         mRevisionSize = paramIn.readLong();
         mMaxNodeKey = paramIn.readLong();
@@ -174,11 +169,7 @@ public final class RevisionRootPage implements IPage {
     public void serialize(final ITTSink mOut) {
         mRevisionTimestamp = System.currentTimeMillis();
         for (final PageReference reference : getReferences()) {
-            if (reference.getKey() == null) {
-                mOut.writeInt(0);
-            } else {
-                EStorage.getInstance(reference.getKey().getClass()).serialize(mOut, reference.getKey());
-            }
+            mOut.writeLong(reference.getKey());
         }
         mOut.writeLong(mRevisionSize);
         mOut.writeLong(mMaxNodeKey);

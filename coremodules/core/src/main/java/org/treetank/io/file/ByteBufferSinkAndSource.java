@@ -31,7 +31,6 @@ import java.nio.ByteBuffer;
 
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
-import org.treetank.utils.IConstants;
 
 /**
  * This class represents the byte input/output mechanism for File-access. After
@@ -50,7 +49,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
      * Constructor.
      */
     public ByteBufferSinkAndSource() {
-        mBuffer = ByteBuffer.allocate(IConstants.BUFFER_SIZE);
+        mBuffer = ByteBuffer.allocate(FileFactory.BUFFERSIZE);
     }
 
     /**
@@ -149,7 +148,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
         final int position = mBuffer.position();
         if (mBuffer.position() + mLength >= mBuffer.capacity()) {
             mBuffer.position(0);
-            final ByteBuffer newBuffer = ByteBuffer.allocate(mBuffer.capacity() + IConstants.BUFFER_SIZE);
+            final ByteBuffer newBuffer = ByteBuffer.allocate(mBuffer.capacity() + FileFactory.BUFFERSIZE);
             newBuffer.put(mBuffer);
             mBuffer = newBuffer;
             mBuffer.position(position);

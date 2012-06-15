@@ -25,10 +25,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.treetank.io.berkeley;
+
+import org.treetank.page.IPage;
+import org.treetank.page.PagePersistenter;
+
+import com.sleepycat.bind.tuple.TupleBinding;
+import com.sleepycat.bind.tuple.TupleInput;
+import com.sleepycat.bind.tuple.TupleOutput;
+
 /**
- * Every Binding for storing Treetank data in the berkeley db is given over here.
+ * Binding for storing {@link IPage} objects within the Berkeley DB.
  * 
  * @author Sebastian Graf, University of Konstanz
+ * 
  */
-package org.treetank.io.berkeley.binding;
+public final class PageBinding extends TupleBinding<IPage> {
 
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPage entryToObject(final TupleInput arg0) {
+        return PagePersistenter.createPage(new TupleInputSource(arg0));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
+        PagePersistenter.serializePage(new TupleOutputSink(arg1), arg0);
+    }
+
+}

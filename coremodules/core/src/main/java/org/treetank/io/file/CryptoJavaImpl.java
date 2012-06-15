@@ -32,8 +32,6 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import org.treetank.utils.IConstants;
-
 public class CryptoJavaImpl {
 
     private final Deflater mCompressor;
@@ -50,7 +48,7 @@ public class CryptoJavaImpl {
     public CryptoJavaImpl() {
         mCompressor = new Deflater();
         mDecompressor = new Inflater();
-        mTmp = new byte[IConstants.BUFFER_SIZE];
+        mTmp = new byte[FileFactory.BUFFERSIZE];
         mOut = new ByteArrayOutputStream();
     }
 
@@ -112,7 +110,8 @@ public class CryptoJavaImpl {
         for (final byte byteVal : result) {
             paramBuffer.writeByte(byteVal);
         }
-        return result.length + FileReader.OTHER_BEACON;
+        // return result.length + FileReader.OTHER_BEACON;
+        return paramBuffer.position();
     }
 
 }

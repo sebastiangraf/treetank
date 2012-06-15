@@ -27,15 +27,11 @@
 package org.treetank.io;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyFactory;
-import org.treetank.io.berkeley.BerkeleyKey;
 import org.treetank.io.file.FileFactory;
-import org.treetank.io.file.FileKey;
 
 /**
  * Utility methods for the storage. Those methods included common deletion
@@ -47,85 +43,9 @@ import org.treetank.io.file.FileKey;
  */
 public enum EStorage {
 
-    File(1, FileKey.class) {
+    File,
 
-        @Override
-        public IKey deserialize(final ITTSource pSource) {
-            return new FileKey(pSource.readLong(), pSource.readLong());
-        }
-
-        @Override
-        public void serialize(final ITTSink pSink, final IKey pKey) {
-            pSink.writeInt(mIdent);
-            for (final long val : pKey.getKeys()) {
-                pSink.writeLong(val);
-            }
-        }
-    },
-
-    Berkeley(2, BerkeleyKey.class) {
-
-        @Override
-        public IKey deserialize(final ITTSource pSource) {
-            return new BerkeleyKey(pSource.readLong());
-        }
-
-        @Override
-        public void serialize(final ITTSink pSink, final IKey pKey) {
-            pSink.writeInt(mIdent);
-            for (final long val : pKey.getKeys()) {
-                pSink.writeLong(val);
-            }
-        }
-
-    };
-
-    /** Getting identifier mapping. */
-    private static final Map<Integer, EStorage> INSTANCEFORID = new HashMap<Integer, EStorage>();
-    private static final Map<Class<? extends IKey>, EStorage> INSTANCEFORCLASS =
-        new HashMap<Class<? extends IKey>, EStorage>();
-    static {
-        for (EStorage storage : values()) {
-            INSTANCEFORID.put(storage.mIdent, storage);
-            INSTANCEFORCLASS.put(storage.mClass, storage);
-        }
-    }
-
-    /** Identifier for the storage. */
-    final int mIdent;
-
-    /** Class for Key. */
-    final Class<? extends IKey> mClass;
-
-    /**
-     * Constructor.
-     * 
-     * @param paramIdent
-     *            identifier to be set.
-     */
-    EStorage(final int paramIdent, final Class<? extends IKey> paramClass) {
-        mIdent = paramIdent;
-        mClass = paramClass;
-    }
-
-    /**
-     * Deserialization of a key
-     * 
-     * @param paramSource
-     *            where the key should be serialized from.
-     * @return the {@link IKey} retrieved from the storage.
-     */
-    public abstract IKey deserialize(final ITTSource paramSource);
-
-    /**
-     * Serialization of a key
-     * 
-     * @param paramSink
-     *            where the key should be serialized to
-     * @param paramKey
-     *            which should be serialized.
-     */
-    public abstract void serialize(final ITTSink paramSink, final IKey paramKey);
+    Berkeley;
 
     /**
      * Deleting a storage recursive. Used for deleting a databases
@@ -170,28 +90,6 @@ public enum EStorage {
             throw new TTIOException("Type", storageType.toString(), "not valid!");
         }
         return fac;
-    }
-
-    /**
-     * Getting an instance of this enum for the identifier.
-     * 
-     * @param paramId
-     *            the identifier of the enum.
-     * @return a concrete enum
-     */
-    public static final EStorage getInstance(final Integer paramId) {
-        return INSTANCEFORID.get(paramId);
-    }
-
-    /**
-     * Getting an instance of this enum for the identifier.
-     * 
-     * @param paramKey
-     *            the identifier of the enum.
-     * @return a concrete enum
-     */
-    public static final EStorage getInstance(final Class<? extends IKey> paramKey) {
-        return INSTANCEFORCLASS.get(paramKey);
     }
 
 }

@@ -28,11 +28,11 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IKey;
 import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
+import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
@@ -102,7 +102,7 @@ public final class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public IKey write(final PageReference pageReference) throws TTIOException {
+    public long write(final PageReference pageReference) throws TTIOException {
         final IPage page = pageReference.getPage();
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -110,10 +110,9 @@ public final class BerkeleyWriter implements IWriter {
 
         // TODO make this better
         mNodepagekey++;
-        final BerkeleyKey key = new BerkeleyKey(mNodepagekey);
 
         BerkeleyFactory.PAGE_VAL_B.objectToEntry(page, valueEntry);
-        BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(mNodepagekey, keyEntry);
 
         final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
         if (status != OperationStatus.SUCCESS) {
@@ -121,8 +120,8 @@ public final class BerkeleyWriter implements IWriter {
                 " failed!").toString());
         }
 
-        pageReference.setKey(key);
-        return key;
+        pageReference.setKey(mNodepagekey);
+        return mNodepagekey;
 
     }
 
@@ -138,9 +137,8 @@ public final class BerkeleyWriter implements IWriter {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         final DatabaseEntry valueEntry = new DatabaseEntry();
 
-        final BerkeleyKey key = BerkeleyKey.getDataInfoKey();
-        BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
-        BerkeleyFactory.DATAINFO_VAL_B.objectToEntry(paramData, valueEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-2l, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(paramData, valueEntry);
         try {
             mDatabase.put(mTxn, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
@@ -159,14 +157,13 @@ public final class BerkeleyWriter implements IWriter {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         final DatabaseEntry valueEntry = new DatabaseEntry();
 
-        final BerkeleyKey key = BerkeleyKey.getDataInfoKey();
-        BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-2l, keyEntry);
 
         try {
             final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             Long val;
             if (status == OperationStatus.SUCCESS) {
-                val = BerkeleyFactory.DATAINFO_VAL_B.entryToObject(valueEntry);
+                val = TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry);
             } else {
                 val = 0L;
             }
@@ -185,10 +182,10 @@ public final class BerkeleyWriter implements IWriter {
         write(paramPageReference);
 
         final DatabaseEntry keyEntry = new DatabaseEntry();
-        BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(), keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
-        BerkeleyFactory.FIRST_REV_VAL_B.objectToEntry(paramPageReference, valueEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(paramPageReference.getKey(), valueEntry);
 
         try {
             mDatabase.put(mTxn, keyEntry, valueEntry);
@@ -202,7 +199,7 @@ public final class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(final IKey pKey) throws TTIOException {
+    public IPage read(final long pKey) throws TTIOException {
         return mReader.read(pKey);
     }
 

@@ -33,12 +33,10 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IKey;
 import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
-import org.treetank.utils.IConstants;
 
 /**
  * File Writer for providing read/write access for file as a treetank backend.
@@ -69,7 +67,7 @@ public final class FileWriter implements IWriter {
      */
     public FileWriter(final File paramStorage) throws TTIOException {
         try {
-            mFile = new RandomAccessFile(paramStorage, IConstants.READ_WRITE);
+            mFile = new RandomAccessFile(paramStorage, "rw");
         } catch (final FileNotFoundException fileExc) {
             throw new TTIOException(fileExc);
         }
@@ -88,7 +86,7 @@ public final class FileWriter implements IWriter {
      * @throws TTIOException
      *             due to errors during writing.
      */
-    public IKey write(final PageReference pageReference) throws TTIOException {
+    public long write(final PageReference pageReference) throws TTIOException {
 
         final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
         mBuffer.position(FileReader.OTHER_BEACON);
@@ -102,13 +100,13 @@ public final class FileWriter implements IWriter {
             throw new TTIOException("Page crypt error.");
         }
         // normally, the first bytes until FileReader.OTHERBEACON are reserved and cut of resulting in
-        // final byte[] tmp = new byte[outputLength-FileReader.OTHER_BEACON];
         final byte[] tmp = new byte[outputLength];
-        // mBuffer.position(FileReader.OTHER_BEACON);
         mBuffer.position(0);
         // Because of the missing offset, we can write the length directly at the front of the buffer to see
-        // it afterwards in the byte array as well.
+        // it afterwards in the byte array as well. Do not forget to reset the position before transition to
+        // the array
         mBuffer.writeInt(outputLength);
+        mBuffer.position(0);
         mBuffer.get(tmp, 0, tmp.length);
 
         try {
@@ -118,11 +116,10 @@ public final class FileWriter implements IWriter {
             final long offset = fileSize == 0 ? FileReader.FIRST_BEACON : fileSize;
             mFile.seek(offset);
             mFile.write(tmp);
-            final FileKey key = new FileKey(offset, tmp.length);
-
             // Remember page coordinates.
-            pageReference.setKey(key);
-            return key;
+            pageReference.setKey(offset);
+
+            return offset;
         } catch (final IOException paramExc) {
             throw new TTIOException(paramExc);
         }
@@ -162,17 +159,9 @@ public final class FileWriter implements IWriter {
      */
     public void writeFirstReference(final PageReference pageReference) throws TTIOException {
         try {
-            // Check to writer ensure writing after the Beacon_Start
-            if (mFile.getFilePointer() < FileReader.FIRST_BEACON) {
-                mFile.setLength(FileReader.FIRST_BEACON);
-            }
-
             write(pageReference);
-
             mFile.seek(0);
-            final FileKey key = (FileKey)pageReference.getKey();
-            mFile.writeLong(key.getIdentifier());
-            mFile.writeInt(key.getLength());
+            mFile.writeLong(pageReference.getKey());
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -181,7 +170,7 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public IPage read(final IKey pKey) throws TTIOException {
+    public IPage read(final long pKey) throws TTIOException {
         return reader.read(pKey);
     }
 

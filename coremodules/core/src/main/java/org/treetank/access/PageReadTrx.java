@@ -39,6 +39,7 @@ import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.node.DeletedNode;
+import org.treetank.page.IConstants;
 import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
@@ -47,7 +48,6 @@ import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.settings.ERevisioning;
-import org.treetank.utils.IConstants;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -298,11 +298,11 @@ public class PageReadTrx implements IPageReadTrx {
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
             final PageReference ref =
                 dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), mNodePageKey);
-            if (ref != null && (ref.getPage() != null || ref.getKey() != null)) {
-                if (ref.getKey() == null || (!keys.contains(ref.getKey().getIdentifier()))) {
+            if (ref != null && (ref.getPage() != null || ref.getKey() != IConstants.NULL_ID)) {
+                if (ref.getKey() == IConstants.NULL_ID || (!keys.contains(ref.getKey()))) {
                     refs.add(ref);
-                    if (ref.getKey() != null) {
-                        keys.add(ref.getKey().getIdentifier());
+                    if (ref.getKey() != IConstants.NULL_ID) {
+                        keys.add(ref.getKey());
                     }
                 }
                 if (refs.size() == mSession.getConfig().mRevisionsToRestore) {
@@ -343,7 +343,7 @@ public class PageReadTrx implements IPageReadTrx {
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            if (ref.getPage() == null && ref.getKey() == null) {
+            if (ref.getPage() == null && ref.getKey() == IConstants.NULL_ID) {
                 return null;
             }
             page = (IndirectPage)mPageReader.read(ref.getKey());

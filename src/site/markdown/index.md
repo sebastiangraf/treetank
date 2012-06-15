@@ -1,3 +1,5 @@
+<a href="https://github.com/disy/treetank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+
 #Treetank - Secure Treebased Storage
 
 Treetank stores data securely by applying different layers on the stored data. Flexible handling of flat as well as tree-based data is supported by a native encoding of the tree-structures ongoing with suitable paging supporting integrity and confidentiality to provide throughout security.
@@ -28,13 +30,14 @@ Treetank is:
 
 Treetank acted as a base in various thesis and papers namely:
 
-* A Secure Cloud Gateway based upon XML and Web Services; ECOWS'11, PhD Symposium: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-154112 
-* Treetank, Designing a Versioned XML Storage; XMLPrague'11: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-126912
-* Rolling Boles, Optimal XML Structure Integrity for Updating Operations; WWW'11, Poster: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-126226
-* Hecate, Managing Authorization with RESTful XML; WS-REST'11: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-126237 
-* Integrity Assurance for RESTful XML; WISM'10: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-123507
-* JAX-RX - Unified REST Access to XML Resources; TechReport'10: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-120511
-* Distributing XML with focus on parallel evaluation; DBISP2P'08: http://kops.ub.uni-konstanz.de/handle/urn:nbn:de:bsz:352-opus-84487
+* A legal and technical perspective on secure clouzd Storage; DFN Forum'12: http://nbn-resolving.de/urn:nbn:de:bsz:352-192389
+* A Secure Cloud Gateway based upon XML and Web Services; ECOWS'11, PhD Symposium: http://nbn-resolving.de/urn:nbn:de:bsz:352-154112
+* Treetank, Designing a Versioned XML Storage; XMLPrague'11: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-126912
+* Hecate, Managing Authorization with RESTful XML; WS-REST'11: http://nbn-resolving.de/urn:nbn:de:bsz:352-126237
+* Rolling Boles, Optimal XML Structure Integrity for Updating Operations; WWW'11, Poster: http://nbn-resolving.de/urn:nbn:de:bsz:352-126226
+* JAX-RX - Unified REST Access to XML Resources; TechReport'10: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-120511
+* Integrity Assurance for RESTful XML; WISM'10: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-123507
+* Distributing XML with focus on parallel evaluation; DBISP2P'08: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-84487
 
 ##License
 

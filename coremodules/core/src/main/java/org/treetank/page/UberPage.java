@@ -32,13 +32,11 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>UberPage</h1>
@@ -130,10 +128,7 @@ public final class UberPage implements IPage {
         mReferences = new PageReference[1];
         for (int offset = 0; offset < mReferences.length; offset++) {
             getReferences()[offset] = new PageReference();
-            final EStorage storage = EStorage.getInstance(paramIn.readInt());
-            if (storage != null) {
-                getReferences()[offset].setKey(storage.deserialize(paramIn));
-            }
+            getReferences()[offset].setKey(paramIn.readLong());
         }
         mRevisionCount = paramIn.readLong();
         mBootstrap = false;
@@ -211,11 +206,7 @@ public final class UberPage implements IPage {
     public void serialize(final ITTSink paramOut) {
         mBootstrap = false;
         for (final PageReference reference : getReferences()) {
-            if (reference.getKey() == null) {
-                paramOut.writeInt(0);
-            } else {
-                EStorage.getInstance(reference.getKey().getClass()).serialize(paramOut, reference.getKey());
-            }
+            paramOut.writeLong(reference.getKey());
         }
         paramOut.writeLong(mRevisionCount);
     }

@@ -25,66 +25,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.io.file;
-
-import org.treetank.io.IKey;
-import org.treetank.io.KeyDelegate;
+package org.treetank.page;
 
 /**
- * FileKey, storing the offset and the length. The key is used for the mapping
- * between PageReerence and Page.
+ * <h1>IConstants</h1>
  * 
- * @author Sebastian Graf, University of Konstnz
- * 
+ * <p>
+ * Interface to hold all constants of the pagelayer.
+ * </p>
  */
-public final class FileKey implements IKey {
+public final class IConstants {
 
-    /** Delegate for the key. */
-    private final KeyDelegate mKey;
+    // --- Reference
+    // ----------------------------------------------------------
+    /** Null-Id for the key within the reference. */
+    public static final long NULL_ID = -15;
 
-    /**
-     * Constructor for direct data.
-     * 
-     * @param paramOffset
-     *            Offset of data
-     * @param paramLength
-     *            Length of data
-     */
-    public FileKey(final long paramOffset, final long paramLength) {
-        mKey = new KeyDelegate(paramOffset, paramLength);
-    }
+    // --- Indirect Page
+    // ----------------------------------------------------------
 
-    /**
-     * Getting the length of the file fragment.
-     * 
-     * @return the length of the file fragment
-     */
-    public int getLength() {
-        return (int)getKeys()[1];
-    }
+    /** Count of indirect references in indirect page. */
+    public static final int INP_REFERENCE_COUNT = 128;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getIdentifier() {
-        return getKeys()[0];
-    }
+    /** Exponent of pages per level (root level = 0, leaf level = 5). */
+    public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = {
+        4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
+    };
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long[] getKeys() {
-        return mKey.getKeys();
-    }
+    // --- Uber Page
+    // -------------------------------------------------------------
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return mKey.toString();
-    }
+    /** Revision key of unitialized storage. */
+    public static final long UBP_ROOT_REVISION_COUNT = 1L;
+
+    /** Root revisionKey guaranteed to exist in empty storage. */
+    public static final long UBP_ROOT_REVISION_NUMBER = 0L;
+
+    // --- Node Page
+    // -------------------------------------------------------------
+
+    /** Maximum node count per node page. */
+    public static final int NDP_NODE_COUNT = 128;
+
+    /** 2^NDP_NODE_COUNT_EXPONENT = NDP_NODE_COUNT. */
+    public static final int NDP_NODE_COUNT_EXPONENT = 7;
 
 }

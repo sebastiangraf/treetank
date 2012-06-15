@@ -33,13 +33,11 @@ import java.io.RandomAccessFile;
 import java.util.zip.DataFormatException;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IKey;
 import org.treetank.io.IReader;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.utils.IConstants;
 
 /**
  * File Reader. Used for NodeReadTrx to provide read only access on a
@@ -78,7 +76,7 @@ public final class FileReader implements IReader {
                 mConcreteStorage.createNewFile();
             }
 
-            mFile = new RandomAccessFile(mConcreteStorage, IConstants.READ_ONLY);
+            mFile = new RandomAccessFile(mConcreteStorage, "r");
 
             mDecompressor = new CryptoJavaImpl();
         } catch (final IOException exc) {
@@ -95,25 +93,18 @@ public final class FileReader implements IReader {
      * @throws TTIOException
      *             if there was an error during reading.
      */
-    public IPage read(final IKey pKey) throws TTIOException {
+    public IPage read(final long pKey) throws TTIOException {
 
         final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
 
-        if (pKey == null) {
-            return null;
-        }
-
         try {
-            final FileKey fileKey = (FileKey)pKey;
 
             // Prepare environment for read.
             mBuffer.position(OTHER_BEACON);
 
             // Read page from file.
-            mFile.seek(fileKey.getIdentifier());
-//            final int dataLength = mFile.readInt();
-             final int dataLength = fileKey.getLength() + OTHER_BEACON;
-
+            mFile.seek(pKey);
+            final int dataLength = mFile.readInt();
             final byte[] page = new byte[dataLength];
 
             mFile.read(page);
@@ -132,6 +123,7 @@ public final class FileReader implements IReader {
 
         // Return reader required to instantiate and deserialize page.
         mBuffer.position(OTHER_BEACON);
+
         return PagePersistenter.createPage(mBuffer);
 
     }
@@ -141,19 +133,9 @@ public final class FileReader implements IReader {
         try {
             // Read primary beacon.
             mFile.seek(0);
-
-            final FileKey key = new FileKey(mFile.readLong(), mFile.readInt());
-
-            uberPageReference.setKey(key);
-
-            // Check to writer ensure writing after the Beacon_Start
-            if (mFile.getFilePointer() < FIRST_BEACON) {
-                mFile.setLength(FIRST_BEACON);
-            }
-
+            uberPageReference.setKey(mFile.readLong());
             final UberPage page = (UberPage)read(uberPageReference.getKey());
             uberPageReference.setPage(page);
-
             return uberPageReference;
         } catch (final IOException exc) {
             throw new TTIOException(exc);

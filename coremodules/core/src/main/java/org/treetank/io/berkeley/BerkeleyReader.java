@@ -28,12 +28,12 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IKey;
 import org.treetank.io.IReader;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
+import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
@@ -88,11 +88,11 @@ public final class BerkeleyReader implements IReader {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(final IKey pKey) throws TTIOException {
+    public IPage read(final long pKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
-        BerkeleyFactory.KEY.objectToEntry((BerkeleyKey)pKey, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pKey, keyEntry);
 
         IPage page = null;
         try {
@@ -114,13 +114,13 @@ public final class BerkeleyReader implements IReader {
     public PageReference readFirstReference() throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
-        BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(), keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
         try {
             final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
-            PageReference uberPageReference = null;
+            PageReference uberPageReference = new PageReference();
             if (status == OperationStatus.SUCCESS) {
-                uberPageReference = BerkeleyFactory.FIRST_REV_VAL_B.entryToObject(valueEntry);
+                uberPageReference.setKey(TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry));
             }
             final UberPage page = (UberPage)read(uberPageReference.getKey());
 

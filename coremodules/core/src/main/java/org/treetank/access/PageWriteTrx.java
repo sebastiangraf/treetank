@@ -44,6 +44,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.node.DeletedNode;
 import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.page.IConstants;
 import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
@@ -52,7 +53,6 @@ import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.settings.ERevisioning;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -389,7 +389,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate.mSession.deregisterPageTrx(this);
         mDelegate.close();
         mLog.clear();
-//        mPageWriter.close();
+        // mPageWriter.close();
     }
 
     public long getMaxNodeKey() {
@@ -400,7 +400,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         IndirectPage page = (IndirectPage)paramReference.getPage();
         if (page == null) {
-            if (paramReference.getKey() == null) {
+            if (paramReference.getKey() == IConstants.NULL_ID) {
                 page = new IndirectPage(mDelegate.getUberPage().getRevision());
             } else {
                 page =
@@ -420,15 +420,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
         if (cont == null) {
 
             // Indirect reference.
-            final PageReference reference =
-                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
+            final PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
             NodePage page = (NodePage)reference.getPage();
 
             if (page == null) {
-                if (reference.getKey() == null) {
-                    cont =
-                        new NodePageContainer(new NodePage(pPageKey,
-                            IConstants.UBP_ROOT_REVISION_NUMBER));
+                if (reference.getKey() == IConstants.NULL_ID) {
+                    cont = new NodePageContainer(new NodePage(pPageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
                 } else {
                     cont = dereferenceNodePageForModification(pPageKey);
                 }
