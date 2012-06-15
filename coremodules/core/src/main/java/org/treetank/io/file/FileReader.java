@@ -33,7 +33,6 @@ import java.io.RandomAccessFile;
 import java.util.zip.DataFormatException;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IKey;
 import org.treetank.io.IReader;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
@@ -94,22 +93,17 @@ public final class FileReader implements IReader {
      * @throws TTIOException
      *             if there was an error during reading.
      */
-    public IPage read(final IKey pKey) throws TTIOException {
+    public IPage read(final long pKey) throws TTIOException {
 
         final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
 
-        if (pKey == null) {
-            return null;
-        }
-
         try {
-            final FileKey fileKey = (FileKey)pKey;
 
             // Prepare environment for read.
             mBuffer.position(OTHER_BEACON);
 
             // Read page from file.
-            mFile.seek(fileKey.getIdentifier());
+            mFile.seek(pKey);
             final int dataLength = mFile.readInt();
             final byte[] page = new byte[dataLength];
 
@@ -139,8 +133,7 @@ public final class FileReader implements IReader {
         try {
             // Read primary beacon.
             mFile.seek(0);
-            final FileKey key = new FileKey(mFile.readLong(), 0);
-            uberPageReference.setKey(key);
+            uberPageReference.setKey(mFile.readLong());
             final UberPage page = (UberPage)read(uberPageReference.getKey());
             uberPageReference.setPage(page);
             return uberPageReference;

@@ -36,6 +36,11 @@ package org.treetank.page;
  */
 public final class IConstants {
 
+    // --- Reference
+    // ----------------------------------------------------------
+    /** Null-Id for the key within the reference. */
+    public static final long NULL_ID = -15;
+
     // --- Indirect Page
     // ----------------------------------------------------------
 

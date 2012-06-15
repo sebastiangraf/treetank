@@ -389,7 +389,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate.mSession.deregisterPageTrx(this);
         mDelegate.close();
         mLog.clear();
-//        mPageWriter.close();
+        // mPageWriter.close();
     }
 
     public long getMaxNodeKey() {
@@ -400,7 +400,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         IndirectPage page = (IndirectPage)paramReference.getPage();
         if (page == null) {
-            if (paramReference.getKey() == null) {
+            if (paramReference.getKey() == IConstants.NULL_ID) {
                 page = new IndirectPage(mDelegate.getUberPage().getRevision());
             } else {
                 page =
@@ -420,15 +420,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
         if (cont == null) {
 
             // Indirect reference.
-            final PageReference reference =
-                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
+            final PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
             NodePage page = (NodePage)reference.getPage();
 
             if (page == null) {
-                if (reference.getKey() == null) {
-                    cont =
-                        new NodePageContainer(new NodePage(pPageKey,
-                            IConstants.UBP_ROOT_REVISION_NUMBER));
+                if (reference.getKey() == IConstants.NULL_ID) {
+                    cont = new NodePageContainer(new NodePage(pPageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
                 } else {
                     cont = dereferenceNodePageForModification(pPageKey);
                 }

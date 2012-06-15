@@ -33,9 +33,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IKey;
 import org.treetank.io.IWriter;
-import org.treetank.page.IConstants;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
@@ -88,7 +86,7 @@ public final class FileWriter implements IWriter {
      * @throws TTIOException
      *             due to errors during writing.
      */
-    public IKey write(final PageReference pageReference) throws TTIOException {
+    public long write(final PageReference pageReference) throws TTIOException {
 
         final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
         mBuffer.position(FileReader.OTHER_BEACON);
@@ -118,11 +116,10 @@ public final class FileWriter implements IWriter {
             final long offset = fileSize == 0 ? FileReader.FIRST_BEACON : fileSize;
             mFile.seek(offset);
             mFile.write(tmp);
-            final FileKey key = new FileKey(offset, tmp.length);
             // Remember page coordinates.
-            pageReference.setKey(key);
+            pageReference.setKey(offset);
 
-            return key;
+            return offset;
         } catch (final IOException paramExc) {
             throw new TTIOException(paramExc);
         }
@@ -164,8 +161,7 @@ public final class FileWriter implements IWriter {
         try {
             write(pageReference);
             mFile.seek(0);
-            final FileKey key = (FileKey)pageReference.getKey();
-            mFile.writeLong(key.getIdentifier());
+            mFile.writeLong(pageReference.getKey());
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -174,7 +170,7 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public IPage read(final IKey pKey) throws TTIOException {
+    public IPage read(final long pKey) throws TTIOException {
         return reader.read(pKey);
     }
 

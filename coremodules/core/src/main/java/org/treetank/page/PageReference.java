@@ -27,8 +27,6 @@
 
 package org.treetank.page;
 
-import org.treetank.io.IKey;
-
 /**
  * <h1>PageReference</h1>
  * 
@@ -49,7 +47,7 @@ public final class PageReference {
     private long mNodePageKey = -1;
 
     /** Key in persistent storage. */
-    private IKey mKey;
+    private long mKey = IConstants.NULL_ID;
 
     /**
      * Default constructor setting up an uninitialized page reference.
@@ -81,7 +79,7 @@ public final class PageReference {
      * 
      * @return Start offset in file.
      */
-    public IKey getKey() {
+    public long getKey() {
         return mKey;
     }
 
@@ -91,7 +89,7 @@ public final class PageReference {
      * @param paramKey
      *            Key of this reference set by the persistent storage
      */
-    public void setKey(final IKey paramKey) {
+    public void setKey(final long paramKey) {
         mKey = paramKey;
     }
 
@@ -101,12 +99,8 @@ public final class PageReference {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder(super.toString());
-        if (this.mKey != null) {
-            builder.append(": key=");
-            builder.append(mKey.toString());
-        } else {
-            builder.append(": key=null");
-        }
+        builder.append(": key=");
+        builder.append(mKey);
         builder.append(", page=(");
         builder.append(mPage);
         builder.append(")");

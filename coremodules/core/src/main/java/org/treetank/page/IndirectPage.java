@@ -29,7 +29,6 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 
@@ -73,10 +72,7 @@ public final class IndirectPage implements IPage {
         mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
         for (int offset = 0; offset < mReferences.length; offset++) {
             getReferences()[offset] = new PageReference();
-            final EStorage storage = EStorage.getInstance(paramIn.readInt());
-            if (storage != null) {
-                getReferences()[offset].setKey(storage.deserialize(paramIn));
-            }
+            getReferences()[offset].setKey(paramIn.readLong());
         }
     }
 
@@ -103,11 +99,7 @@ public final class IndirectPage implements IPage {
     @Override
     public void serialize(ITTSink paramOut) {
         for (final PageReference reference : getReferences()) {
-            if (reference.getKey() == null) {
-                paramOut.writeInt(0);
-            } else {
-                EStorage.getInstance(reference.getKey().getClass()).serialize(paramOut, reference.getKey());
-            }
+            paramOut.writeLong(reference.getKey());
         }
     }
 
