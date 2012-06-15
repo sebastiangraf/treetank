@@ -32,11 +32,11 @@ import org.treetank.io.ITTSource;
 
 public final class PagePersistenter {
 
-    public final static int NODEPAGE = 1;
-    public final static int NAMEPAGE = 2;
-    public final static int UBERPAGE = 3;
-    public final static int INDIRCTPAGE = 4;
-    public final static int REVISIONROOTPAGE = 5;
+    private final static int NODEPAGE = 1;
+    private final static int NAMEPAGE = 2;
+    private final static int UBERPAGE = 3;
+    private final static int INDIRCTPAGE = 4;
+    private final static int REVISIONROOTPAGE = 5;
 
     /**
      * Create page.
