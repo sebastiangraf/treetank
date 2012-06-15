@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IKey;
@@ -102,13 +103,14 @@ public final class FileWriter implements IWriter {
             throw new TTIOException("Page crypt error.");
         }
         // normally, the first bytes until FileReader.OTHERBEACON are reserved and cut of resulting in
-        // final byte[] tmp = new byte[outputLength-FileReader.OTHER_BEACON];
+        // final byte[] tmp = new byte[outputLength - FileReader.OTHER_BEACON];
         final byte[] tmp = new byte[outputLength];
         // mBuffer.position(FileReader.OTHER_BEACON);
         mBuffer.position(0);
         // Because of the missing offset, we can write the length directly at the front of the buffer to see
-        // it afterwards in the byte array as well.
+        // it afterwards in the byte array as well. Do not forget to reset the position before transition to the array
         mBuffer.writeInt(outputLength);
+//        mBuffer.position(0);
         mBuffer.get(tmp, 0, tmp.length);
 
         try {
@@ -119,9 +121,9 @@ public final class FileWriter implements IWriter {
             mFile.seek(offset);
             mFile.write(tmp);
             final FileKey key = new FileKey(offset, tmp.length);
-
             // Remember page coordinates.
             pageReference.setKey(key);
+
             return key;
         } catch (final IOException paramExc) {
             throw new TTIOException(paramExc);
