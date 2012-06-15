@@ -43,6 +43,7 @@ import com.sleepycat.bind.tuple.TupleOutput;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Deprecated
 public final class KeyBinding extends TupleBinding<IKey> {
 
     /**

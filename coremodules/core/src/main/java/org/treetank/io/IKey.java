@@ -38,6 +38,7 @@ package org.treetank.io;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Deprecated
 public interface IKey {
 
     /**
