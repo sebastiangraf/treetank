@@ -27,6 +27,7 @@
 
 package org.treetank.utils;
 
+
 /**
  * <h1>UTF</h1>
  * 
@@ -258,7 +259,7 @@ public final class TypedValue {
                         builder.append(mValue.charAt(i));
                     }
                 }
-                bytes = builder.toString().getBytes(IConstants.DEFAULT_ENCODING);
+                bytes = builder.toString().getBytes("UTF-8");
 
                 // bytes = value.replace("&", "&amp;").replace("<", "&lt;")
                 // .getBytes(IConstants.DEFAULT_ENCODING);

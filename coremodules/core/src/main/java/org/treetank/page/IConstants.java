@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.utils;
+package org.treetank.page;
 
 /**
  * <h1>IConstants</h1>
@@ -39,9 +39,6 @@ public final class IConstants {
 
     // --- Varia
     // ------------------------------------------------------------------
-
-    /** Default internal encoding. */
-    public static final String DEFAULT_ENCODING = "UTF-8";
 
     /** Size of write buffer. */
     public static final int BUFFER_SIZE = 32767;

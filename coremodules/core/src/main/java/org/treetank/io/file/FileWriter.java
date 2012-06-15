@@ -35,10 +35,10 @@ import java.io.RandomAccessFile;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IKey;
 import org.treetank.io.IWriter;
+import org.treetank.page.IConstants;
 import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
-import org.treetank.utils.IConstants;
 
 /**
  * File Writer for providing read/write access for file as a treetank backend.

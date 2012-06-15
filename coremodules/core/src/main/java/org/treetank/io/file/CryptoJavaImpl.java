@@ -32,7 +32,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import org.treetank.utils.IConstants;
+import org.treetank.page.IConstants;
 
 public class CryptoJavaImpl {
 

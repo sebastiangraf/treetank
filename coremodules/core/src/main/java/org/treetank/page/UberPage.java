@@ -38,7 +38,6 @@ import org.treetank.io.ITTSource;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>UberPage</h1>

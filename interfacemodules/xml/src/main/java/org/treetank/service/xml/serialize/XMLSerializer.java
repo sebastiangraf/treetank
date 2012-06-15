@@ -52,7 +52,6 @@ import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.settings.ECharsForSerializing;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>XMLSerializer</h1>
@@ -296,7 +295,7 @@ public final class XMLSerializer extends AbsSerializer {
      *             if unsupport encoding
      */
     protected void write(final String mString) throws UnsupportedEncodingException, IOException {
-        mOut.write(mString.getBytes(IConstants.DEFAULT_ENCODING));
+        mOut.write(mString.getBytes("UTF-8"));
     }
 
     /**

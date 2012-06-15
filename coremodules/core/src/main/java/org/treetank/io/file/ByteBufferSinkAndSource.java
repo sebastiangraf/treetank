@@ -31,7 +31,7 @@ import java.nio.ByteBuffer;
 
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
-import org.treetank.utils.IConstants;
+import org.treetank.page.IConstants;
 
 /**
  * This class represents the byte input/output mechanism for File-access. After

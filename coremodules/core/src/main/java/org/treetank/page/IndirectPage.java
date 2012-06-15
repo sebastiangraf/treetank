@@ -32,7 +32,6 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.io.EStorage;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>IndirectPage</h1>
