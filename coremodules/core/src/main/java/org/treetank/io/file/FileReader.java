@@ -39,7 +39,6 @@ import org.treetank.page.IPage;
 import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-import org.treetank.utils.IConstants;
 
 /**
  * File Reader. Used for NodeReadTrx to provide read only access on a
@@ -78,7 +77,7 @@ public final class FileReader implements IReader {
                 mConcreteStorage.createNewFile();
             }
 
-            mFile = new RandomAccessFile(mConcreteStorage, IConstants.READ_ONLY);
+            mFile = new RandomAccessFile(mConcreteStorage, "r");
 
             mDecompressor = new CryptoJavaImpl();
         } catch (final IOException exc) {

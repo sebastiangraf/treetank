@@ -43,12 +43,6 @@ public final class IConstants {
     /** Default internal encoding. */
     public static final String DEFAULT_ENCODING = "UTF-8";
 
-    /** Read-only random access file. */
-    public static final String READ_ONLY = "r";
-
-    /** Read-write random access file. */
-    public static final String READ_WRITE = "rw";
-
     /** Size of write buffer. */
     public static final int BUFFER_SIZE = 32767;
 

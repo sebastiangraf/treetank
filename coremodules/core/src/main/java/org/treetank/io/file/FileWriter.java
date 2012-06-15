@@ -69,7 +69,7 @@ public final class FileWriter implements IWriter {
      */
     public FileWriter(final File paramStorage) throws TTIOException {
         try {
-            mFile = new RandomAccessFile(paramStorage, IConstants.READ_WRITE);
+            mFile = new RandomAccessFile(paramStorage, "rw");
         } catch (final FileNotFoundException fileExc) {
             throw new TTIOException(fileExc);
         }
