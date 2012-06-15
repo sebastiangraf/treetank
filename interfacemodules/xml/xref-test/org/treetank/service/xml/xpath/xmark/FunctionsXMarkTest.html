@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="82" href="#82">82</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testString() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="83" href="#83">83</a>          <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:string(/site/people/person[@id=\&quot;person3\&quot;]/name)"</span>;
 <a class="jxr_linenumber" name="84" href="#84">84</a>          <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"Limor Simone"</span>;
-<a class="jxr_linenumber" name="85" href="#85">85</a>          XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="85" href="#85">85</a>          XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="86" href="#86">86</a>              <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="87" href="#87">87</a>                  result
 <a class="jxr_linenumber" name="88" href="#88">88</a>              });
@@ -108,7 +108,7 @@
 <a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testComment() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="99" href="#99">99</a>          <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"2 (: this is a comment :)"</span>;
 <a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"2"</span>;
-<a class="jxr_linenumber" name="101" href="#101">101</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="101" href="#101">101</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="102" href="#102">102</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="103" href="#103">103</a>                 result
 <a class="jxr_linenumber" name="104" href="#104">104</a>             });
@@ -124,7 +124,7 @@
 <a class="jxr_linenumber" name="114" href="#114">114</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testNode() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"for $b in /site/people/person[@id=\&quot;person1\&quot;] return $b/name/node()"</span>;
 <a class="jxr_linenumber" name="116" href="#116">116</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"Keung Yetim"</span>;
-<a class="jxr_linenumber" name="117" href="#117">117</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="117" href="#117">117</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="118" href="#118">118</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="119" href="#119">119</a>                 result
 <a class="jxr_linenumber" name="120" href="#120">120</a>             });
@@ -140,7 +140,7 @@
 <a class="jxr_linenumber" name="130" href="#130">130</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testText() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="131" href="#131">131</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"for $b in /site/people/person[@id=\&quot;person0\&quot;] return $b/name/text()"</span>;
 <a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"Krishna Merle"</span>;
-<a class="jxr_linenumber" name="133" href="#133">133</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="133" href="#133">133</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="134" href="#134">134</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="135" href="#135">135</a>                 result
 <a class="jxr_linenumber" name="136" href="#136">136</a>             });
@@ -157,7 +157,7 @@
 <a class="jxr_linenumber" name="147" href="#147">147</a>         <strong class="jxr_keyword">final</strong> String query =
 <a class="jxr_linenumber" name="148" href="#148">148</a>             <span class="jxr_string">"fn:count(for $i in /site/closed_auctions/closed_auction[price/text() &gt;= 40] return $i/price)"</span>;
 <a class="jxr_linenumber" name="149" href="#149">149</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"670"</span>;
-<a class="jxr_linenumber" name="150" href="#150">150</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="150" href="#150">150</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="151" href="#151">151</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="152" href="#152">152</a>                 result
 <a class="jxr_linenumber" name="153" href="#153">153</a>             });
@@ -173,7 +173,7 @@
 <a class="jxr_linenumber" name="163" href="#163">163</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testPosition() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="164" href="#164">164</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"/site/open_auctions/open_auction/bidder/increase[position()=1]"</span>;
 <a class="jxr_linenumber" name="165" href="#165">165</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"&lt;increase&gt;10.50&lt;/increase&gt;"</span>;
-<a class="jxr_linenumber" name="166" href="#166">166</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="166" href="#166">166</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="167" href="#167">167</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="168" href="#168">168</a>                 result
 <a class="jxr_linenumber" name="169" href="#169">169</a>             });
@@ -189,7 +189,7 @@
 <a class="jxr_linenumber" name="179" href="#179">179</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testNot() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"/site/people/person[not(homepage)][@id=\&quot;person1\&quot;]/name/text()"</span>;
 <a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"&lt;name&gt;Keung Yetim&lt;/name&gt;"</span>;
-<a class="jxr_linenumber" name="182" href="#182">182</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="182" href="#182">182</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="183" href="#183">183</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="184" href="#184">184</a>                 result
 <a class="jxr_linenumber" name="185" href="#185">185</a>             });
@@ -205,7 +205,7 @@
 <a class="jxr_linenumber" name="195" href="#195">195</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testId() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:id(/site/people/person[@id=\&quot;person1\&quot;]/watches/watch/@open_auction)"</span>;
 <a class="jxr_linenumber" name="197" href="#197">197</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">""</span>;
-<a class="jxr_linenumber" name="198" href="#198">198</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="198" href="#198">198</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="199" href="#199">199</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="200" href="#200">200</a>                 result
 <a class="jxr_linenumber" name="201" href="#201">201</a>             });
@@ -221,7 +221,7 @@
 <a class="jxr_linenumber" name="211" href="#211">211</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testData() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="212" href="#212">212</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"for $b in /site/people/person[@id=\&quot;person0\&quot;] return fn:data($b/name)"</span>;
 <a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"Krishna Merle"</span>;
-<a class="jxr_linenumber" name="214" href="#214">214</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="214" href="#214">214</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="215" href="#215">215</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="216" href="#216">216</a>                 result
 <a class="jxr_linenumber" name="217" href="#217">217</a>             });
@@ -238,7 +238,7 @@
 <a class="jxr_linenumber" name="228" href="#228">228</a>         <strong class="jxr_keyword">final</strong> String query =
 <a class="jxr_linenumber" name="229" href="#229">229</a>             <span class="jxr_string">"/site/regions/*/item[contains(description,\&quot;gold\&quot;)]/location[text()=\&quot;El Salvador\&quot;]"</span>;
 <a class="jxr_linenumber" name="230" href="#230">230</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"&lt;location&gt;El Salvador&lt;/location&gt;"</span>;
-<a class="jxr_linenumber" name="231" href="#231">231</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="231" href="#231">231</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="232" href="#232">232</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="233" href="#233">233</a>                 result
 <a class="jxr_linenumber" name="234" href="#234">234</a>             });
@@ -255,7 +255,7 @@
 <a class="jxr_linenumber" name="245" href="#245">245</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testExactlyOne() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"exactly-one(/site/people/person[@id=\&quot;person0\&quot;]/name)"</span>;
 <a class="jxr_linenumber" name="247" href="#247">247</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"&lt;name&gt;Krishna Merle&lt;/name&gt;"</span>;
-<a class="jxr_linenumber" name="248" href="#248">248</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="248" href="#248">248</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="249" href="#249">249</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="250" href="#250">250</a>                 result
 <a class="jxr_linenumber" name="251" href="#251">251</a>             });
@@ -271,7 +271,7 @@
 <a class="jxr_linenumber" name="261" href="#261">261</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testSum() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="262" href="#262">262</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:sum(/site/open_auctions/open_auction/bidder/increase/text())"</span>;
 <a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"96496.5"</span>;
-<a class="jxr_linenumber" name="264" href="#264">264</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="264" href="#264">264</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="265" href="#265">265</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="266" href="#266">266</a>                 result
 <a class="jxr_linenumber" name="267" href="#267">267</a>             });
@@ -289,7 +289,7 @@
 <a class="jxr_linenumber" name="279" href="#279">279</a>         <strong class="jxr_keyword">final</strong> String query =
 <a class="jxr_linenumber" name="280" href="#280">280</a>             <span class="jxr_string">" for $i in /site/open_auctions/open_auction return zero-or-one($i/reserve[text()=\&quot;20.54\&quot;]/text())"</span>;
 <a class="jxr_linenumber" name="281" href="#281">281</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"20.54"</span>;
-<a class="jxr_linenumber" name="282" href="#282">282</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="282" href="#282">282</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="283" href="#283">283</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="284" href="#284">284</a>                 result
 <a class="jxr_linenumber" name="285" href="#285">285</a>             });
@@ -305,7 +305,7 @@
 <a class="jxr_linenumber" name="295" href="#295">295</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testMax() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="296" href="#296">296</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:max(for $i in /site/open_auctions/open_auction return $i/reserve/text())"</span>;
 <a class="jxr_linenumber" name="297" href="#297">297</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"4701.79"</span>;
-<a class="jxr_linenumber" name="298" href="#298">298</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="298" href="#298">298</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="299" href="#299">299</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="300" href="#300">300</a>                 result
 <a class="jxr_linenumber" name="301" href="#301">301</a>             });
@@ -321,7 +321,7 @@
 <a class="jxr_linenumber" name="311" href="#311">311</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testMin() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="312" href="#312">312</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:min(for $i in /site/open_auctions/open_auction return $i/reserve/text())"</span>;
 <a class="jxr_linenumber" name="313" href="#313">313</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"0.43"</span>;
-<a class="jxr_linenumber" name="314" href="#314">314</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="314" href="#314">314</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="315" href="#315">315</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="316" href="#316">316</a>                 result
 <a class="jxr_linenumber" name="317" href="#317">317</a>             });
@@ -337,7 +337,7 @@
 <a class="jxr_linenumber" name="327" href="#327">327</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testEmpty() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="328" href="#328">328</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:empty(for $i in /site/open_auctions/open_auction return $i/reserve/text())"</span>;
 <a class="jxr_linenumber" name="329" href="#329">329</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"false"</span>;
-<a class="jxr_linenumber" name="330" href="#330">330</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="330" href="#330">330</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="331" href="#331">331</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="332" href="#332">332</a>                 result
 <a class="jxr_linenumber" name="333" href="#333">333</a>             });
@@ -353,7 +353,7 @@
 <a class="jxr_linenumber" name="343" href="#343">343</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testOneOrMore() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="344" href="#344">344</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:one-or-more(\&quot;a\&quot;)"</span>;
 <a class="jxr_linenumber" name="345" href="#345">345</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"a"</span>;
-<a class="jxr_linenumber" name="346" href="#346">346</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="346" href="#346">346</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="347" href="#347">347</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="348" href="#348">348</a>                 result
 <a class="jxr_linenumber" name="349" href="#349">349</a>             });
@@ -369,7 +369,7 @@
 <a class="jxr_linenumber" name="359" href="#359">359</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testExists() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="360" href="#360">360</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:exists( ('a', 'b', 'c') )"</span>;
 <a class="jxr_linenumber" name="361" href="#361">361</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"true"</span>;
-<a class="jxr_linenumber" name="362" href="#362">362</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="362" href="#362">362</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="363" href="#363">363</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="364" href="#364">364</a>                 result
 <a class="jxr_linenumber" name="365" href="#365">365</a>             });
@@ -385,7 +385,7 @@
 <a class="jxr_linenumber" name="375" href="#375">375</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testSubstringAfter() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="376" href="#376">376</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:substring-after(\&quot;query\&quot;, \&quot;u\&quot;)"</span>;
 <a class="jxr_linenumber" name="377" href="#377">377</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"ery"</span>;
-<a class="jxr_linenumber" name="378" href="#378">378</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="378" href="#378">378</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="379" href="#379">379</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="380" href="#380">380</a>                 result
 <a class="jxr_linenumber" name="381" href="#381">381</a>             });
@@ -401,7 +401,7 @@
 <a class="jxr_linenumber" name="391" href="#391">391</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testSubstringBefore() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="392" href="#392">392</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:substring-before(\&quot;query\&quot;, \&quot;r\&quot;)"</span>;
 <a class="jxr_linenumber" name="393" href="#393">393</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"que"</span>;
-<a class="jxr_linenumber" name="394" href="#394">394</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="394" href="#394">394</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="395" href="#395">395</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="396" href="#396">396</a>                 result
 <a class="jxr_linenumber" name="397" href="#397">397</a>             });
@@ -417,7 +417,7 @@
 <a class="jxr_linenumber" name="407" href="#407">407</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testLast() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="408" href="#408">408</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"/site/open_auctions/open_auction/reserve[last()]"</span>;
 <a class="jxr_linenumber" name="409" href="#409">409</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"&lt;reserve&gt;539.66&lt;/reserve&gt;"</span>;
-<a class="jxr_linenumber" name="410" href="#410">410</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="410" href="#410">410</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="411" href="#411">411</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="412" href="#412">412</a>                 result
 <a class="jxr_linenumber" name="413" href="#413">413</a>             });
@@ -433,7 +433,7 @@
 <a class="jxr_linenumber" name="423" href="#423">423</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testBoolean() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="424" href="#424">424</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:boolean(0)"</span>;
 <a class="jxr_linenumber" name="425" href="#425">425</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"false"</span>;
-<a class="jxr_linenumber" name="426" href="#426">426</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="426" href="#426">426</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="427" href="#427">427</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="428" href="#428">428</a>                 result
 <a class="jxr_linenumber" name="429" href="#429">429</a>             });
@@ -450,7 +450,7 @@
 <a class="jxr_linenumber" name="440" href="#440">440</a>         <strong class="jxr_keyword">final</strong> String query =
 <a class="jxr_linenumber" name="441" href="#441">441</a>             <span class="jxr_string">"/site/open_auctions/open_auction/bidder[personref[@person=\&quot;person2436\&quot;]]/increase/number()"</span>;
 <a class="jxr_linenumber" name="442" href="#442">442</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"12 12"</span>;
-<a class="jxr_linenumber" name="443" href="#443">443</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="443" href="#443">443</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="444" href="#444">444</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="445" href="#445">445</a>                 result
 <a class="jxr_linenumber" name="446" href="#446">446</a>             });
@@ -467,7 +467,7 @@
 <a class="jxr_linenumber" name="457" href="#457">457</a>         <strong class="jxr_keyword">final</strong> String query =
 <a class="jxr_linenumber" name="458" href="#458">458</a>             <span class="jxr_string">"fn:distinct-values(/site/open_auctions/open_auction/bidder[personref[@person=\&quot;person2436\&quot;]]/increase)"</span>;
 <a class="jxr_linenumber" name="459" href="#459">459</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"12.00"</span>;
-<a class="jxr_linenumber" name="460" href="#460">460</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="460" href="#460">460</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="461" href="#461">461</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="462" href="#462">462</a>                 result
 <a class="jxr_linenumber" name="463" href="#463">463</a>             });
@@ -483,7 +483,7 @@
 <a class="jxr_linenumber" name="473" href="#473">473</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testRoot() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="474" href="#474">474</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:root()/site/people/person[@id=\&quot;person0\&quot;]/name/text()"</span>;
 <a class="jxr_linenumber" name="475" href="#475">475</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"Krishna Merle"</span>;
-<a class="jxr_linenumber" name="476" href="#476">476</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="476" href="#476">476</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="477" href="#477">477</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="478" href="#478">478</a>                 result
 <a class="jxr_linenumber" name="479" href="#479">479</a>             });
@@ -499,7 +499,7 @@
 <a class="jxr_linenumber" name="489" href="#489">489</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testFloor() <strong class="jxr_keyword">throws</strong> TTXPathException {
 <a class="jxr_linenumber" name="490" href="#490">490</a>         <strong class="jxr_keyword">final</strong> String query = <span class="jxr_string">"fn:floor(5.7)"</span>;
 <a class="jxr_linenumber" name="491" href="#491">491</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"5"</span>;
-<a class="jxr_linenumber" name="492" href="#492">492</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="492" href="#492">492</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="493" href="#493">493</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="494" href="#494">494</a>                 result
 <a class="jxr_linenumber" name="495" href="#495">495</a>             });
@@ -516,7 +516,7 @@
 <a class="jxr_linenumber" name="506" href="#506">506</a>         <strong class="jxr_keyword">final</strong> String query =
 <a class="jxr_linenumber" name="507" href="#507">507</a>             <span class="jxr_string">"for $b in /site/open_auctions/open_auction/bidder[personref[@person=\&quot;person2436\&quot;]]/increase return &lt;element attribute=\&quot;{$b/text()}\&quot;/&gt;"</span>;
 <a class="jxr_linenumber" name="508" href="#508">508</a>         <strong class="jxr_keyword">final</strong> String result = <span class="jxr_string">"&lt;element attribute=\&quot;12.00\&quot;/&gt;&lt;element attribute=\&quot;12.00\&quot;/&gt;"</span>;
-<a class="jxr_linenumber" name="509" href="#509">509</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), query),
+<a class="jxr_linenumber" name="509" href="#509">509</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), query),
 <a class="jxr_linenumber" name="510" href="#510">510</a>             <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="511" href="#511">511</a>                 result
 <a class="jxr_linenumber" name="512" href="#512">512</a>             });

@@ -82,7 +82,7 @@
 <a class="jxr_linenumber" name="72" href="#72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testQ1_10() <strong class="jxr_keyword">throws</strong> AbsTTException {
 <a class="jxr_linenumber" name="73" href="#73">73</a>          <em class="jxr_comment">// Verify.</em>
 <a class="jxr_linenumber" name="74" href="#74">74</a>  
-<a class="jxr_linenumber" name="75" href="#75">75</a>          XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(),
+<a class="jxr_linenumber" name="75" href="#75">75</a>          XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(),
 <a class="jxr_linenumber" name="76" href="#76">76</a>              <span class="jxr_string">"/site/people/person[@id=\&quot;person0\&quot;]/name/text()"</span>), <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="77" href="#77">77</a>              <span class="jxr_string">"Sinisa Farrel"</span>
 <a class="jxr_linenumber" name="78" href="#78">78</a>          });
@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="82" href="#82">82</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testQ1() <strong class="jxr_keyword">throws</strong> AbsTTException {
 <a class="jxr_linenumber" name="83" href="#83">83</a>  
 <a class="jxr_linenumber" name="84" href="#84">84</a>          <em class="jxr_comment">// Q1 The name of the person with ID 'person0' {projecting}</em>
-<a class="jxr_linenumber" name="85" href="#85">85</a>          XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(),
+<a class="jxr_linenumber" name="85" href="#85">85</a>          XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(),
 <a class="jxr_linenumber" name="86" href="#86">86</a>              <span class="jxr_string">"for $b in /site/people/person[@id=\&quot;person0\&quot;] "</span> + <span class="jxr_string">"return $b/name/text()"</span>), <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="87" href="#87">87</a>              <span class="jxr_string">"Sinisa Farrel"</span>
 <a class="jxr_linenumber" name="88" href="#88">88</a>          });
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="92" href="#92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testQ5() <strong class="jxr_keyword">throws</strong> AbsTTException {
 <a class="jxr_linenumber" name="93" href="#93">93</a>  
 <a class="jxr_linenumber" name="94" href="#94">94</a>          <em class="jxr_comment">// Q5 How many sold items cost more than 40?</em>
-<a class="jxr_linenumber" name="95" href="#95">95</a>          XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(),
+<a class="jxr_linenumber" name="95" href="#95">95</a>          XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(),
 <a class="jxr_linenumber" name="96" href="#96">96</a>              <span class="jxr_string">"fn:count(for $i in /site/closed_auctions/closed_auction[price/text() &gt;= 40] "</span>
 <a class="jxr_linenumber" name="97" href="#97">97</a>                  + <span class="jxr_string">"return $i/price)"</span>), <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="98" href="#98">98</a>              <span class="jxr_string">"75"</span>
@@ -113,7 +113,7 @@
 <a class="jxr_linenumber" name="103" href="#103">103</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testQ6() <strong class="jxr_keyword">throws</strong> AbsTTException {
 <a class="jxr_linenumber" name="104" href="#104">104</a> 
 <a class="jxr_linenumber" name="105" href="#105">105</a>         <em class="jxr_comment">// Q6 How many items are listed on all continents?</em>
-<a class="jxr_linenumber" name="106" href="#106">106</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(),
+<a class="jxr_linenumber" name="106" href="#106">106</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(),
 <a class="jxr_linenumber" name="107" href="#107">107</a>             <span class="jxr_string">"for $b in //site/regions return fn:count($b//item)"</span>), <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="108" href="#108">108</a>             <span class="jxr_string">"217"</span>
 <a class="jxr_linenumber" name="109" href="#109">109</a>         });
@@ -122,7 +122,7 @@
 <a class="jxr_linenumber" name="112" href="#112">112</a>     @Test
 <a class="jxr_linenumber" name="113" href="#113">113</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testQ7() <strong class="jxr_keyword">throws</strong> AbsTTException {
 <a class="jxr_linenumber" name="114" href="#114">114</a>         <em class="jxr_comment">// Q7 How many pieces of prose are in our database?</em>
-<a class="jxr_linenumber" name="115" href="#115">115</a>         XPathStringChecker.testIAxisConventions(holder.getRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(),
+<a class="jxr_linenumber" name="115" href="#115">115</a>         XPathStringChecker.testIAxisConventions(holder.getNRtx(), <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(),
 <a class="jxr_linenumber" name="116" href="#116">116</a>             <span class="jxr_string">"for $p in /site return fn:count($p//description) + "</span>
 <a class="jxr_linenumber" name="117" href="#117">117</a>                 + <span class="jxr_string">"fn:count($p//annotation) + fn:count($p//emailaddress)"</span>), <strong class="jxr_keyword">new</strong> String[] {
 <a class="jxr_linenumber" name="118" href="#118">118</a>             <span class="jxr_string">"916.0"</span>

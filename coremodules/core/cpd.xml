@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
 <duplication lines="97" tokens="129">
-<file line="184" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
-<file line="71" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
+<file line="184" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
+<file line="71" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -106,8 +106,8 @@
 </codefragment>
 </duplication>
 <duplication lines="64" tokens="120">
-<file line="58" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/DatabaseConfiguration.java"/>
-<file line="62" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
+<file line="58" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/DatabaseConfiguration.java"/>
+<file line="62" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
 <codefragment>
 <![CDATA[
         Data(new File("resources"), true);
@@ -178,8 +178,8 @@
 </codefragment>
 </duplication>
 <duplication lines="79" tokens="105">
-<file line="64" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/DeletedNode.java"/>
-<file line="169" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/ElementNode.java"/>
+<file line="64" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/DeletedNode.java"/>
+<file line="169" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/ElementNode.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -265,8 +265,8 @@
 </codefragment>
 </duplication>
 <duplication lines="79" tokens="104">
-<file line="101" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/NamespaceNode.java"/>
-<file line="103" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/TextNode.java"/>
+<file line="101" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/NamespaceNode.java"/>
+<file line="103" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/TextNode.java"/>
 <codefragment>
 <![CDATA[
     }

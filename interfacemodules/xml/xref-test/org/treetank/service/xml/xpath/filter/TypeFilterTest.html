@@ -68,21 +68,21 @@
 <a class="jxr_linenumber" name="58" href="#58">58</a>      @Test
 <a class="jxr_linenumber" name="59" href="#59">59</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIFilterConvetions() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="60" href="#60">60</a>  
-<a class="jxr_linenumber" name="61" href="#61">61</a>          <strong class="jxr_keyword">final</strong> AbsAxis axis = <strong class="jxr_keyword">new</strong> XPathAxis(holder.getRtx(), <span class="jxr_string">"a"</span>);
+<a class="jxr_linenumber" name="61" href="#61">61</a>          <strong class="jxr_keyword">final</strong> AbsAxis axis = <strong class="jxr_keyword">new</strong> XPathAxis(holder.getNRtx(), <span class="jxr_string">"a"</span>);
 <a class="jxr_linenumber" name="62" href="#62">62</a>  
 <a class="jxr_linenumber" name="63" href="#63">63</a>          axis.moveTo(9L);
-<a class="jxr_linenumber" name="64" href="#64">64</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getRtx(), <span class="jxr_string">"xs:untyped"</span>), <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="65" href="#65">65</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getRtx(), <span class="jxr_string">"xs:long"</span>), false);
+<a class="jxr_linenumber" name="64" href="#64">64</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getNRtx(), <span class="jxr_string">"xs:untyped"</span>), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="65" href="#65">65</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getNRtx(), <span class="jxr_string">"xs:long"</span>), false);
 <a class="jxr_linenumber" name="66" href="#66">66</a>  
-<a class="jxr_linenumber" name="67" href="#67">67</a>          holder.getRtx().moveTo(4L);
-<a class="jxr_linenumber" name="68" href="#68">68</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getRtx(), <span class="jxr_string">"xs:untyped"</span>), <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="69" href="#69">69</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getRtx(), <span class="jxr_string">"xs:double"</span>), false);
+<a class="jxr_linenumber" name="67" href="#67">67</a>          holder.getNRtx().moveTo(4L);
+<a class="jxr_linenumber" name="68" href="#68">68</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getNRtx(), <span class="jxr_string">"xs:untyped"</span>), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="69" href="#69">69</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getNRtx(), <span class="jxr_string">"xs:double"</span>), false);
 <a class="jxr_linenumber" name="70" href="#70">70</a>  
-<a class="jxr_linenumber" name="71" href="#71">71</a>          holder.getRtx().moveTo(1L);
-<a class="jxr_linenumber" name="72" href="#72">72</a>          holder.getRtx().moveToAttribute(0);
-<a class="jxr_linenumber" name="73" href="#73">73</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getRtx(), <span class="jxr_string">"xs:untyped"</span>), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="71" href="#71">71</a>          holder.getNRtx().moveTo(1L);
+<a class="jxr_linenumber" name="72" href="#72">72</a>          holder.getNRtx().moveToAttribute(0);
+<a class="jxr_linenumber" name="73" href="#73">73</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getNRtx(), <span class="jxr_string">"xs:untyped"</span>), <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="74" href="#74">74</a>  
-<a class="jxr_linenumber" name="75" href="#75">75</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getRtx(), <span class="jxr_string">"xs:anyType"</span>), false);
+<a class="jxr_linenumber" name="75" href="#75">75</a>          AbsFilterTest.testIFilterConventions(<strong class="jxr_keyword">new</strong> TypeFilter(holder.getNRtx(), <span class="jxr_string">"xs:anyType"</span>), false);
 <a class="jxr_linenumber" name="76" href="#76">76</a>  
 <a class="jxr_linenumber" name="77" href="#77">77</a>      }
 <a class="jxr_linenumber" name="78" href="#78">78</a>  }

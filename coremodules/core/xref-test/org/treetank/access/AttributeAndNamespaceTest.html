@@ -66,26 +66,26 @@
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
 <a class="jxr_linenumber" name="57" href="#57">57</a>      @Test
 <a class="jxr_linenumber" name="58" href="#58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testAttribute() <strong class="jxr_keyword">throws</strong> AbsTTException {
-<a class="jxr_linenumber" name="59" href="#59">59</a>          holder.getRtx().moveTo(1L);
-<a class="jxr_linenumber" name="60" href="#60">60</a>          assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getAttributeCount());
-<a class="jxr_linenumber" name="61" href="#61">61</a>          holder.getRtx().moveToAttribute(0);
-<a class="jxr_linenumber" name="62" href="#62">62</a>          assertEquals(<span class="jxr_string">"i"</span>, holder.getRtx().getQNameOfCurrentNode().getLocalPart());
+<a class="jxr_linenumber" name="59" href="#59">59</a>          holder.getNRtx().moveTo(1L);
+<a class="jxr_linenumber" name="60" href="#60">60</a>          assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
+<a class="jxr_linenumber" name="61" href="#61">61</a>          holder.getNRtx().moveToAttribute(0);
+<a class="jxr_linenumber" name="62" href="#62">62</a>          assertEquals(<span class="jxr_string">"i"</span>, holder.getNRtx().getQNameOfCurrentNode().getLocalPart());
 <a class="jxr_linenumber" name="63" href="#63">63</a>  
-<a class="jxr_linenumber" name="64" href="#64">64</a>          holder.getRtx().moveTo(9L);
-<a class="jxr_linenumber" name="65" href="#65">65</a>          assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getAttributeCount());
-<a class="jxr_linenumber" name="66" href="#66">66</a>          holder.getRtx().moveToAttribute(0);
-<a class="jxr_linenumber" name="67" href="#67">67</a>          assertEquals(<span class="jxr_string">"p:x"</span>, <strong class="jxr_keyword">new</strong> StringBuilder(holder.getRtx().getQNameOfCurrentNode().getPrefix())
-<a class="jxr_linenumber" name="68" href="#68">68</a>              .append(<span class="jxr_string">":"</span>).append(holder.getRtx().getQNameOfCurrentNode().getLocalPart()).toString());
-<a class="jxr_linenumber" name="69" href="#69">69</a>          assertEquals(<span class="jxr_string">"ns"</span>, holder.getRtx().getQNameOfCurrentNode().getNamespaceURI());
+<a class="jxr_linenumber" name="64" href="#64">64</a>          holder.getNRtx().moveTo(9L);
+<a class="jxr_linenumber" name="65" href="#65">65</a>          assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
+<a class="jxr_linenumber" name="66" href="#66">66</a>          holder.getNRtx().moveToAttribute(0);
+<a class="jxr_linenumber" name="67" href="#67">67</a>          assertEquals(<span class="jxr_string">"p:x"</span>, <strong class="jxr_keyword">new</strong> StringBuilder(holder.getNRtx().getQNameOfCurrentNode().getPrefix())
+<a class="jxr_linenumber" name="68" href="#68">68</a>              .append(<span class="jxr_string">":"</span>).append(holder.getNRtx().getQNameOfCurrentNode().getLocalPart()).toString());
+<a class="jxr_linenumber" name="69" href="#69">69</a>          assertEquals(<span class="jxr_string">"ns"</span>, holder.getNRtx().getQNameOfCurrentNode().getNamespaceURI());
 <a class="jxr_linenumber" name="70" href="#70">70</a>      }
 <a class="jxr_linenumber" name="71" href="#71">71</a>  
 <a class="jxr_linenumber" name="72" href="#72">72</a>      @Test
 <a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNamespace() <strong class="jxr_keyword">throws</strong> AbsTTException {
-<a class="jxr_linenumber" name="74" href="#74">74</a>          holder.getRtx().moveTo(1L);
-<a class="jxr_linenumber" name="75" href="#75">75</a>          assertEquals(1, ((ElementNode)holder.getRtx().getNode()).getNamespaceCount());
-<a class="jxr_linenumber" name="76" href="#76">76</a>          holder.getRtx().moveToNamespace(0);
-<a class="jxr_linenumber" name="77" href="#77">77</a>          assertEquals(<span class="jxr_string">"p"</span>, holder.getRtx().getQNameOfCurrentNode().getLocalPart());
-<a class="jxr_linenumber" name="78" href="#78">78</a>          assertEquals(<span class="jxr_string">"ns"</span>, holder.getRtx().getQNameOfCurrentNode().getNamespaceURI());
+<a class="jxr_linenumber" name="74" href="#74">74</a>          holder.getNRtx().moveTo(1L);
+<a class="jxr_linenumber" name="75" href="#75">75</a>          assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getNamespaceCount());
+<a class="jxr_linenumber" name="76" href="#76">76</a>          holder.getNRtx().moveToNamespace(0);
+<a class="jxr_linenumber" name="77" href="#77">77</a>          assertEquals(<span class="jxr_string">"p"</span>, holder.getNRtx().getQNameOfCurrentNode().getLocalPart());
+<a class="jxr_linenumber" name="78" href="#78">78</a>          assertEquals(<span class="jxr_string">"ns"</span>, holder.getNRtx().getQNameOfCurrentNode().getNamespaceURI());
 <a class="jxr_linenumber" name="79" href="#79">79</a>      }
 <a class="jxr_linenumber" name="80" href="#80">80</a>  }
 </pre>

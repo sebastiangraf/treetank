@@ -80,10 +80,10 @@
 <a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">final</strong> AtomicValue item1 = <strong class="jxr_keyword">new</strong> AtomicValue(false);
 <a class="jxr_linenumber" name="71" href="#71">71</a>          <strong class="jxr_keyword">final</strong> AtomicValue item2 = <strong class="jxr_keyword">new</strong> AtomicValue(14, Type.INTEGER);
 <a class="jxr_linenumber" name="72" href="#72">72</a>  
-<a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> key1 = AbsAxis.addAtomicToItemList(holder.getRtx(), item1);
-<a class="jxr_linenumber" name="74" href="#74">74</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> key2 = AbsAxis.addAtomicToItemList(holder.getRtx(), item2);
+<a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> key1 = AbsAxis.addAtomicToItemList(holder.getNRtx(), item1);
+<a class="jxr_linenumber" name="74" href="#74">74</a>          <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> key2 = AbsAxis.addAtomicToItemList(holder.getNRtx(), item2);
 <a class="jxr_linenumber" name="75" href="#75">75</a>  
-<a class="jxr_linenumber" name="76" href="#76">76</a>          <strong class="jxr_keyword">final</strong> AbsAxis axis1 = <strong class="jxr_keyword">new</strong> LiteralExpr(holder.getRtx(), key1);
+<a class="jxr_linenumber" name="76" href="#76">76</a>          <strong class="jxr_keyword">final</strong> AbsAxis axis1 = <strong class="jxr_keyword">new</strong> LiteralExpr(holder.getNRtx(), key1);
 <a class="jxr_linenumber" name="77" href="#77">77</a>  
 <a class="jxr_linenumber" name="78" href="#78">78</a>          assertEquals(<strong class="jxr_keyword">true</strong>, axis1.hasNext());
 <a class="jxr_linenumber" name="79" href="#79">79</a>          assertEquals(key1, axis1.getNode().getNodeKey());
@@ -91,7 +91,7 @@
 <a class="jxr_linenumber" name="81" href="#81">81</a>          assertEquals(false, Boolean.parseBoolean(<strong class="jxr_keyword">new</strong> String(((IValNode)axis1.getNode()).getRawValue())));
 <a class="jxr_linenumber" name="82" href="#82">82</a>          assertEquals(false, axis1.hasNext());
 <a class="jxr_linenumber" name="83" href="#83">83</a>  
-<a class="jxr_linenumber" name="84" href="#84">84</a>          <strong class="jxr_keyword">final</strong> AbsAxis axis2 = <strong class="jxr_keyword">new</strong> LiteralExpr(holder.getRtx(), key2);
+<a class="jxr_linenumber" name="84" href="#84">84</a>          <strong class="jxr_keyword">final</strong> AbsAxis axis2 = <strong class="jxr_keyword">new</strong> LiteralExpr(holder.getNRtx(), key2);
 <a class="jxr_linenumber" name="85" href="#85">85</a>          assertEquals(<strong class="jxr_keyword">true</strong>, axis2.hasNext());
 <a class="jxr_linenumber" name="86" href="#86">86</a>          assertEquals(key2, axis2.getNode().getNodeKey());
 <a class="jxr_linenumber" name="87" href="#87">87</a>          assertEquals(NamePageHash.generateHashForString(<span class="jxr_string">"xs:integer"</span>), axis2.getNode().getTypeKey());
