@@ -42,11 +42,6 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public final class PageBinding extends TupleBinding<IPage> {
 
-    private final static int NODEPAGE = 1;
-    private final static int NAMEPAGE = 2;
-    private final static int UBERPAGE = 3;
-    private final static int INDIRCTPAGE = 4;
-    private final static int REVISIONROOTPAGE = 5;
     
     /**
      * {@inheritDoc}
