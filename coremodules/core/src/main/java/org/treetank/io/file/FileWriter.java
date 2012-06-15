@@ -110,7 +110,7 @@ public final class FileWriter implements IWriter {
         // it afterwards in the byte array as well. Do not forget to reset the position before transition to
         // the array
         mBuffer.writeInt(outputLength);
-//        mBuffer.position(0);
+        mBuffer.position(0);
         mBuffer.get(tmp, 0, tmp.length);
 
         try {

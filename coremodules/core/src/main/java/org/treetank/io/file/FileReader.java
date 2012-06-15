@@ -112,8 +112,8 @@ public final class FileReader implements IReader {
 
             // Read page from file.
             mFile.seek(fileKey.getIdentifier());
-            // final int dataLength = mFile.readInt();
-            final int dataLength = fileKey.getLength() + OTHER_BEACON;
+            final int dataLength = mFile.readInt();
+            // final int dataLength = fileKey.getLength() + OTHER_BEACON;
 
             final byte[] page = new byte[dataLength];
 
@@ -124,13 +124,6 @@ public final class FileReader implements IReader {
 
             // Perform crypto operations.
             mDecompressor.decrypt(dataLength, mBuffer);
-
-            // start debugging code
-            if (pKey.getIdentifier() == 12) {
-                
-                
-                // System.out.println(mBuffer.get(new byte[mBuffer], mOffset, mLength));
-            }
 
         } catch (final IOException exc) {
             throw new TTIOException(exc);
