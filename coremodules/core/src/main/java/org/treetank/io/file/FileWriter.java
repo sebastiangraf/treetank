@@ -166,7 +166,6 @@ public final class FileWriter implements IWriter {
             mFile.seek(0);
             final FileKey key = (FileKey)pageReference.getKey();
             mFile.writeLong(key.getIdentifier());
-            mFile.writeInt(key.getLength());
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }

@@ -140,7 +140,7 @@ public final class FileReader implements IReader {
         try {
             // Read primary beacon.
             mFile.seek(0);
-            final FileKey key = new FileKey(mFile.readLong(), mFile.readInt());
+            final FileKey key = new FileKey(mFile.readLong(), 0);
             uberPageReference.setKey(key);
             final UberPage page = (UberPage)read(uberPageReference.getKey());
             uberPageReference.setPage(page);
