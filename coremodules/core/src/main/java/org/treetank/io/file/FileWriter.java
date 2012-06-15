@@ -162,13 +162,7 @@ public final class FileWriter implements IWriter {
      */
     public void writeFirstReference(final PageReference pageReference) throws TTIOException {
         try {
-            // Check to writer ensure writing after the Beacon_Start
-            if (mFile.getFilePointer() < FileReader.FIRST_BEACON) {
-                mFile.setLength(FileReader.FIRST_BEACON);
-            }
-
             write(pageReference);
-
             mFile.seek(0);
             final FileKey key = (FileKey)pageReference.getKey();
             mFile.writeLong(key.getIdentifier());

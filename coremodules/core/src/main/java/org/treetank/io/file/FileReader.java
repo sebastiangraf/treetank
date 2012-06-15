@@ -140,19 +140,10 @@ public final class FileReader implements IReader {
         try {
             // Read primary beacon.
             mFile.seek(0);
-
             final FileKey key = new FileKey(mFile.readLong(), mFile.readInt());
-
             uberPageReference.setKey(key);
-
-            // Check to writer ensure writing after the Beacon_Start
-            if (mFile.getFilePointer() < FIRST_BEACON) {
-                mFile.setLength(FIRST_BEACON);
-            }
-
             final UberPage page = (UberPage)read(uberPageReference.getKey());
             uberPageReference.setPage(page);
-
             return uberPageReference;
         } catch (final IOException exc) {
             throw new TTIOException(exc);
