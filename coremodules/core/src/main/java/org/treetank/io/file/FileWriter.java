@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IKey;
@@ -108,7 +107,8 @@ public final class FileWriter implements IWriter {
         // mBuffer.position(FileReader.OTHER_BEACON);
         mBuffer.position(0);
         // Because of the missing offset, we can write the length directly at the front of the buffer to see
-        // it afterwards in the byte array as well. Do not forget to reset the position before transition to the array
+        // it afterwards in the byte array as well. Do not forget to reset the position before transition to
+        // the array
         mBuffer.writeInt(outputLength);
 //        mBuffer.position(0);
         mBuffer.get(tmp, 0, tmp.length);

@@ -112,7 +112,8 @@ public class CryptoJavaImpl {
         for (final byte byteVal : result) {
             paramBuffer.writeByte(byteVal);
         }
-        return result.length + FileReader.OTHER_BEACON;
+        // return result.length + FileReader.OTHER_BEACON;
+        return paramBuffer.position();
     }
 
 }
