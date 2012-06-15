@@ -36,9 +36,7 @@ import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
 import org.treetank.io.berkeley.binding.AbstractPageBinding;
-import org.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
 import org.treetank.page.IPage;
-import org.treetank.page.PageReference;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
@@ -62,17 +60,8 @@ import com.sleepycat.je.OperationStatus;
  */
 public final class BerkeleyFactory implements IStorage {
 
-    /** Binding for {@link IKey}. */
-    public static final TupleBinding<Long> KEY = TupleBinding.getPrimitiveBinding(Long.class);
-
     /** Binding for {@link IPage}. */
     public static final TupleBinding<IPage> PAGE_VAL_B = new AbstractPageBinding();
-
-    /** Binding for {@link PageReference}. */
-    public static final TupleBinding<PageReference> FIRST_REV_VAL_B = new PageReferenceUberPageBinding();
-
-    /** Binding for {@link Long}. */
-    public static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding.getPrimitiveBinding(Long.class);
 
     /**
      * Name for the database.
@@ -170,7 +159,7 @@ public final class BerkeleyFactory implements IStorage {
         boolean returnVal = false;
         try {
             final IReader reader = new BerkeleyReader(mEnv, mDatabase);
-            BerkeleyFactory.KEY.objectToEntry(-1l, keyEntry);
+            TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
             if (status == OperationStatus.SUCCESS) {

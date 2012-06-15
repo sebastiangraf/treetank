@@ -33,6 +33,7 @@ import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
+import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
@@ -91,7 +92,7 @@ public final class BerkeleyReader implements IReader {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
-        BerkeleyFactory.KEY.objectToEntry(pKey, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pKey, keyEntry);
 
         IPage page = null;
         try {
@@ -113,13 +114,13 @@ public final class BerkeleyReader implements IReader {
     public PageReference readFirstReference() throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
-        BerkeleyFactory.KEY.objectToEntry(-1l, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
         try {
             final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
-            PageReference uberPageReference = null;
+            PageReference uberPageReference = new PageReference();
             if (status == OperationStatus.SUCCESS) {
-                uberPageReference = BerkeleyFactory.FIRST_REV_VAL_B.entryToObject(valueEntry);
+                uberPageReference.setKey(TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry));
             }
             final UberPage page = (UberPage)read(uberPageReference.getKey());
 

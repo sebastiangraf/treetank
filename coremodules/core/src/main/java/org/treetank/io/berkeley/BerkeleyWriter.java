@@ -32,6 +32,7 @@ import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
+import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
@@ -111,7 +112,7 @@ public final class BerkeleyWriter implements IWriter {
         mNodepagekey++;
 
         BerkeleyFactory.PAGE_VAL_B.objectToEntry(page, valueEntry);
-        BerkeleyFactory.KEY.objectToEntry(mNodepagekey, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(mNodepagekey, keyEntry);
 
         final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
         if (status != OperationStatus.SUCCESS) {
@@ -136,8 +137,8 @@ public final class BerkeleyWriter implements IWriter {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         final DatabaseEntry valueEntry = new DatabaseEntry();
 
-        BerkeleyFactory.KEY.objectToEntry(-2l, keyEntry);
-        BerkeleyFactory.DATAINFO_VAL_B.objectToEntry(paramData, valueEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-2l, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(paramData, valueEntry);
         try {
             mDatabase.put(mTxn, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
@@ -156,13 +157,13 @@ public final class BerkeleyWriter implements IWriter {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         final DatabaseEntry valueEntry = new DatabaseEntry();
 
-        BerkeleyFactory.KEY.objectToEntry(-2l, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-2l, keyEntry);
 
         try {
             final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             Long val;
             if (status == OperationStatus.SUCCESS) {
-                val = BerkeleyFactory.DATAINFO_VAL_B.entryToObject(valueEntry);
+                val = TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry);
             } else {
                 val = 0L;
             }
@@ -181,10 +182,10 @@ public final class BerkeleyWriter implements IWriter {
         write(paramPageReference);
 
         final DatabaseEntry keyEntry = new DatabaseEntry();
-        BerkeleyFactory.KEY.objectToEntry(-1l, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
-        BerkeleyFactory.FIRST_REV_VAL_B.objectToEntry(paramPageReference, valueEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(paramPageReference.getKey(), valueEntry);
 
         try {
             mDatabase.put(mTxn, keyEntry, valueEntry);
