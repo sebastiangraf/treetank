@@ -32,11 +32,15 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * <h1>RevisionRootPage</h1>
  * 
  * <p>
- * Revision root page holds a reference to the name page as well as the static node page tree.
+ * Revision root page holds a reference to the name page as well as the static
+ * node page tree.
  * </p>
  */
 public final class RevisionRootPage implements IPage {
@@ -103,7 +107,9 @@ public final class RevisionRootPage implements IPage {
      * @param pRevToUse
      *            Revision number to use.
      */
-    public RevisionRootPage(final RevisionRootPage paramCommittedRevisionRootPage, final long pRevToUse) {
+    public RevisionRootPage(
+            final RevisionRootPage paramCommittedRevisionRootPage,
+            final long pRevToUse) {
         mRevision = pRevToUse;
         mReferences = paramCommittedRevisionRootPage.getReferences();
         mRevisionSize = paramCommittedRevisionRootPage.mRevisionSize;
@@ -167,10 +173,11 @@ public final class RevisionRootPage implements IPage {
      */
     @Override
     public void serialize(final ITTSink mOut) {
-        mRevisionTimestamp = System.currentTimeMillis();
+
         for (final PageReference reference : getReferences()) {
             mOut.writeLong(reference.getKey());
         }
+        mRevisionTimestamp = System.currentTimeMillis();
         mOut.writeLong(mRevisionSize);
         mOut.writeLong(mMaxNodeKey);
         mOut.writeLong(mRevisionTimestamp);
@@ -181,9 +188,10 @@ public final class RevisionRootPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + " revisionSize=" + mRevisionSize + ", revisionTimestamp="
-            + mRevisionTimestamp + ", namePage=(" + getReferences()[NAME_REFERENCE_OFFSET]
-            + "), indirectPage=(" + getReferences()[INDIRECT_REFERENCE_OFFSET] + ")";
+        return super.toString() + " revisionSize=" + mRevisionSize
+                + ", revisionTimestamp=" + mRevisionTimestamp + ", namePage=("
+                + getReferences()[NAME_REFERENCE_OFFSET] + "), indirectPage=("
+                + getReferences()[INDIRECT_REFERENCE_OFFSET] + ")";
     }
 
     @Override
@@ -201,6 +209,24 @@ public final class RevisionRootPage implements IPage {
     @Override
     public long getRevision() {
         return mRevision;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(PagePersistenter.REVISIONROOTPAGE);
+        pOutput.writeLong(mRevision);
+        for (final PageReference reference : getReferences()) {
+            pOutput.writeLong(reference.getKey());
+        }
+        mRevisionTimestamp = System.currentTimeMillis();
+        pOutput.writeLong(mRevisionSize);
+        pOutput.writeLong(mMaxNodeKey);
+        pOutput.writeLong(mRevisionTimestamp);
+        return pOutput.toByteArray();
     }
 
 }

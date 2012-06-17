@@ -32,6 +32,9 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * <h1>IndirectPage</h1>
  * 
@@ -111,6 +114,20 @@ public final class IndirectPage implements IPage {
     @Override
     public long getRevision() {
         return mRevision;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(PagePersistenter.INDIRCTPAGE);
+        pOutput.writeLong(mRevision);
+        for (final PageReference reference : getReferences()) {
+            pOutput.writeLong(reference.getKey());
+        }
+        return pOutput.toByteArray();
     }
 
 }

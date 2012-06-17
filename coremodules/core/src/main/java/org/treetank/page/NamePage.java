@@ -36,6 +36,9 @@ import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.utils.TypedValue;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * <h1>NamePageBinding</h1>
  * 
@@ -73,7 +76,7 @@ public final class NamePage implements IPage {
         final int mapSize = paramIn.readInt();
 
         mNameMap = new HashMap<Integer, String>(mapSize);
-        for (int i = 0, l = (int)mapSize; i < l; i++) {
+        for (int i = 0, l = (int) mapSize; i < l; i++) {
             final int key = paramIn.readInt();
             final int valSize = paramIn.readInt();
             final byte[] bytes = new byte[valSize];
@@ -164,6 +167,28 @@ public final class NamePage implements IPage {
     @Override
     public long getRevision() {
         return mRevision;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(PagePersistenter.NAMEPAGE);
+        pOutput.writeLong(mRevision);
+        
+        pOutput.writeInt(mNameMap.size());
+
+        for (final int key : mNameMap.keySet()) {
+            pOutput.writeInt(key);
+            final byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
+            pOutput.writeInt(tmp.length);
+            for (final byte byteVal : tmp) {
+                pOutput.writeByte(byteVal);
+            }
+        }
+        return pOutput.toByteArray();
     }
 
 }
