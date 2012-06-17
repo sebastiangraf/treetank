@@ -34,6 +34,10 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.ENode;
+import org.treetank.utils.TypedValue;
+
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * <h1>NodePage</h1>
@@ -133,7 +137,8 @@ public class NodePage implements IPage {
         mOut.writeLong(mNodePageKey);
         for (int i = 0; i < getNodes().length; i++) {
             if (getNodes()[i] != null) {
-                final int kind = ((org.treetank.node.interfaces.INode)getNodes()[i]).getKind().getId();
+                final int kind = ((org.treetank.node.interfaces.INode) getNodes()[i])
+                        .getKind().getId();
                 mOut.writeInt(kind);
             } else {
                 mOut.writeInt(ENode.UNKOWN_KIND.getId());
@@ -142,7 +147,7 @@ public class NodePage implements IPage {
 
         for (final INode node : getNodes()) {
             if (node != null) {
-                org.treetank.node.interfaces.INode nodenode = (org.treetank.node.interfaces.INode)node;
+                org.treetank.node.interfaces.INode nodenode = (org.treetank.node.interfaces.INode) node;
                 ENode.getKind(nodenode.getClass()).serialize(mOut, nodenode);
             }
         }
@@ -177,7 +182,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -187,24 +192,19 @@ public class NodePage implements IPage {
         if (this == mObj) {
             return true;
         }
-
         if (mObj == null) {
             return false;
         }
-
         if (getClass() != mObj.getClass()) {
             return false;
         }
-
-        final NodePage mOther = (NodePage)mObj;
+        final NodePage mOther = (NodePage) mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
             return false;
         }
-
         if (!Arrays.equals(mNodes, mOther.mNodes)) {
             return false;
         }
-
         return true;
     }
 
@@ -220,6 +220,37 @@ public class NodePage implements IPage {
     @Override
     public long getRevision() {
         return mRevision;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(PagePersistenter.NAMEPAGE);
+        pOutput.writeLong(mRevision);
+
+        pOutput.writeLong(mNodePageKey);
+        for (int i = 0; i < getNodes().length; i++) {
+            if (getNodes()[i] != null) {
+                final int kind = ((org.treetank.node.interfaces.INode) getNodes()[i])
+                        .getKind().getId();
+                pOutput.writeInt(kind);
+            } else {
+                pOutput.writeInt(ENode.UNKOWN_KIND.getId());
+            }
+        }
+
+        // fix node-serialization first
+        // for (final INode node : getNodes()) {
+        // if (node != null) {
+        // org.treetank.node.interfaces.INode nodenode =
+        // (org.treetank.node.interfaces.INode) node;
+        // ENode.getKind(nodenode.getClass()).serialize(pOutput, nodenode);
+        // }
+        // }
+        return pOutput.toByteArray();
     }
 
 }

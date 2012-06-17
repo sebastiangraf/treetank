@@ -32,11 +32,11 @@ import org.treetank.io.ITTSource;
 
 public final class PagePersistenter {
 
-    private final static int NODEPAGE = 1;
-    private final static int NAMEPAGE = 2;
-    private final static int UBERPAGE = 3;
-    private final static int INDIRCTPAGE = 4;
-    private final static int REVISIONROOTPAGE = 5;
+    public final static int NODEPAGE = 1;
+    public final static int NAMEPAGE = 2;
+    public final static int UBERPAGE = 3;
+    public final static int INDIRCTPAGE = 4;
+    public final static int REVISIONROOTPAGE = 5;
 
     /**
      * Create page.
@@ -66,7 +66,7 @@ public final class PagePersistenter {
             break;
         default:
             throw new IllegalStateException(
-                "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
+                    "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
         }
         return returnVal;
     }
@@ -79,7 +79,8 @@ public final class PagePersistenter {
      * @param paramPage
      *            the page to serialize
      */
-    public static void serializePage(final ITTSink paramSink, final IPage paramPage) {
+    public static void serializePage(final ITTSink paramSink,
+            final IPage paramPage) {
         if (paramPage instanceof NodePage) {
             paramSink.writeInt(PagePersistenter.NODEPAGE);
         } else if (paramPage instanceof IndirectPage) {
@@ -91,8 +92,9 @@ public final class PagePersistenter {
         } else if (paramPage instanceof UberPage) {
             paramSink.writeInt(PagePersistenter.UBERPAGE);
         } else {
-            throw new IllegalStateException(new StringBuilder("Page ").append(paramPage.getClass()).append(
-                " cannot be serialized").toString());
+            throw new IllegalStateException(new StringBuilder("Page ")
+                    .append(paramPage.getClass())
+                    .append(" cannot be serialized").toString());
         }
         paramSink.writeLong(paramPage.getRevision());
         paramPage.serialize(paramSink);

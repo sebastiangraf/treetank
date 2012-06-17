@@ -38,6 +38,9 @@ import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * <h1>UberPage</h1>
  * 
@@ -107,12 +110,13 @@ public final class UberPage implements IPage {
             reference = page.getReferences()[0];
         }
 
-        final NodePage ndp = new NodePage(ROOT_NODE, IConstants.UBP_ROOT_REVISION_NUMBER);
+        final NodePage ndp = new NodePage(ROOT_NODE,
+                IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
         final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
-        final StructNodeDelegate strucDel =
-            new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0);
+        final StructNodeDelegate strucDel = new StructNodeDelegate(nodeDel,
+                NULL_NODE, NULL_NODE, NULL_NODE, 0);
         ndp.setNode(0, new DocumentRootNode(nodeDel, strucDel));
         rrp.incrementMaxNodeKey();
     }
@@ -216,8 +220,10 @@ public final class UberPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
-            + getReferences()[INDIRECT_REFERENCE_OFFSET] + "), isBootstrap=" + mBootstrap;
+        return super.toString() + ": revisionCount=" + mRevisionCount
+                + ", indirectPage=("
+                + getReferences()[INDIRECT_REFERENCE_OFFSET]
+                + "), isBootstrap=" + mBootstrap;
     }
 
     @Override
@@ -235,6 +241,22 @@ public final class UberPage implements IPage {
     @Override
     public long getRevision() {
         return mRevision;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(PagePersistenter.UBERPAGE);
+        pOutput.writeLong(mRevision);
+        mBootstrap = false;
+        for (final PageReference reference : getReferences()) {
+            pOutput.writeLong(reference.getKey());
+        }
+        pOutput.writeLong(mRevisionCount);
+        return pOutput.toByteArray();
     }
 
 }
