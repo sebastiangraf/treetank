@@ -31,11 +31,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
-import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
 
 /**
@@ -88,10 +88,12 @@ public final class FileWriter implements IWriter {
      */
     public long write(final PageReference pageReference) throws TTIOException {
 
-        final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
+        final ByteBuffer mBuffer = ByteBuffer.allocate(FileFactory.BUFFERSIZE);
         mBuffer.position(FileReader.OTHER_BEACON);
         final IPage page = pageReference.getPage();
-        PagePersistenter.serializePage(mBuffer, page);
+        final byte[] pagebytes = page.getByteRepresentation();
+        mBuffer.put(pagebytes);
+
         final int inputLength = mBuffer.position();
 
         // Perform crypto operations.
@@ -99,13 +101,16 @@ public final class FileWriter implements IWriter {
         if (outputLength == 0) {
             throw new TTIOException("Page crypt error.");
         }
-        // normally, the first bytes until FileReader.OTHERBEACON are reserved and cut of resulting in
+        // normally, the first bytes until FileReader.OTHERBEACON are reserved
+        // and cut of resulting in
         final byte[] tmp = new byte[outputLength];
         mBuffer.position(0);
-        // Because of the missing offset, we can write the length directly at the front of the buffer to see
-        // it afterwards in the byte array as well. Do not forget to reset the position before transition to
+        // Because of the missing offset, we can write the length directly at
+        // the front of the buffer to see
+        // it afterwards in the byte array as well. Do not forget to reset the
+        // position before transition to
         // the array
-        mBuffer.writeInt(outputLength);
+        mBuffer.putInt(outputLength);
         mBuffer.position(0);
         mBuffer.get(tmp, 0, tmp.length);
 

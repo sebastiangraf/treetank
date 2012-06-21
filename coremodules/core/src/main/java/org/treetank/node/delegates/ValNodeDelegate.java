@@ -31,6 +31,8 @@ import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IValNode;
 
 import com.google.common.hash.Hasher;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * Delegate method for all nodes containing \"value\"-data. That means that
@@ -203,5 +205,16 @@ public class ValNodeDelegate implements IValNode {
         builder.append("value: ");
         builder.append(new String(mVal));
         return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(getRawValue().length);
+        pOutput.write(getRawValue());
+        return pOutput.toByteArray();
     }
 }

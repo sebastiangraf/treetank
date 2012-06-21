@@ -30,6 +30,9 @@ package org.treetank.node;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INode;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * If a node is deleted, it will be encapsulated over this class.
  * 
@@ -180,4 +183,14 @@ public final class DeletedNode implements INode {
         return mDel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.write(mDel.getByteRepresentation());
+        return pOutput.toByteArray();
+    }
+    
 }

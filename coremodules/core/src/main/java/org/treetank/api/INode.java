@@ -4,13 +4,21 @@
 package org.treetank.api;
 
 /**
- * Overall Node-Interface for the Interaction with the page layer. All persistence functionality must be
- * handled over this interface while all nodeelayer interfaces interhit from this interface.
+ * Overall Node-Interface for the Interaction with the page layer. All
+ * persistence functionality must be handled over this interface while all
+ * nodeelayer interfaces interhit from this interface.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 public interface INode {
+
+    /**
+     * Getting the byte representation of the node.
+     * 
+     * @return the byte representation of this node
+     */
+    byte[] getByteRepresentation();
 
     /**
      * Sets unique node key.

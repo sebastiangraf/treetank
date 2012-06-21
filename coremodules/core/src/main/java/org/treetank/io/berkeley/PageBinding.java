@@ -42,7 +42,6 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public final class PageBinding extends TupleBinding<IPage> {
 
-    
     /**
      * {@inheritDoc}
      */
@@ -56,6 +55,7 @@ public final class PageBinding extends TupleBinding<IPage> {
      */
     @Override
     public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
+        // arg1.write(arg0.getByteRepresentation());
         PagePersistenter.serializePage(new TupleOutputSink(arg1), arg0);
     }
 

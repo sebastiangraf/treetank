@@ -33,6 +33,8 @@ import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.common.hash.Hasher;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * Delegate method for all nodes building up the structure. That means that all
@@ -312,5 +314,18 @@ public class StructNodeDelegate implements IStructNode {
         builder.append("\nchild count: ");
         builder.append(getChildCount());
         return builder.toString();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeLong(getFirstChildKey());
+        pOutput.writeLong(getRightSiblingKey());
+        pOutput.writeLong(getLeftSiblingKey());
+        pOutput.writeLong(getChildCount());
+        return pOutput.toByteArray();
     }
 }
