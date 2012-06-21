@@ -227,7 +227,7 @@ public class NodePage implements IPage {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PagePersistenter.NAMEPAGE);
+        pOutput.writeInt(PagePersistenter.NODEPAGE);
         pOutput.writeLong(mRevision);
 
         pOutput.writeLong(mNodePageKey);

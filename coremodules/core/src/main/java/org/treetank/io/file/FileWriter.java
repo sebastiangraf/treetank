@@ -91,13 +91,12 @@ public final class FileWriter implements IWriter {
         final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
         mBuffer.position(FileReader.OTHER_BEACON);
         final IPage page = pageReference.getPage();
-//        final byte[] pagebytes = page.getByteRepresentation();
-//        for (byte val : pagebytes) {
-//            mBuffer.writeByte(val);
-//        }
-        PagePersistenter.serializePage(mBuffer, page);
-        
-        
+        final byte[] pagebytes = page.getByteRepresentation();
+        for (byte val : pagebytes) {
+            mBuffer.writeByte(val);
+        }
+//        PagePersistenter.serializePage(mBuffer, page);
+
         final int inputLength = mBuffer.position();
 
         // Perform crypto operations.
@@ -122,8 +121,7 @@ public final class FileWriter implements IWriter {
             // Getting actual offset and appending to the end of the current
             // file
             final long fileSize = mFile.length();
-            final long offset = fileSize == 0 ? FileReader.FIRST_BEACON
-                    : fileSize;
+            final long offset = fileSize == 0 ? FileReader.FIRST_BEACON : fileSize;
             mFile.seek(offset);
             mFile.write(tmp);
             // Remember page coordinates.
@@ -167,8 +165,7 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void writeFirstReference(final PageReference pageReference)
-            throws TTIOException {
+    public void writeFirstReference(final PageReference pageReference) throws TTIOException {
         try {
             write(pageReference);
             mFile.seek(0);
