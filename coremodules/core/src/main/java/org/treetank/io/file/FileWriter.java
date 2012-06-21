@@ -35,7 +35,6 @@ import java.io.RandomAccessFile;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
-import org.treetank.page.PagePersistenter;
 import org.treetank.page.PageReference;
 
 /**
@@ -95,7 +94,6 @@ public final class FileWriter implements IWriter {
         for (byte val : pagebytes) {
             mBuffer.writeByte(val);
         }
-//        PagePersistenter.serializePage(mBuffer, page);
 
         final int inputLength = mBuffer.position();
 
