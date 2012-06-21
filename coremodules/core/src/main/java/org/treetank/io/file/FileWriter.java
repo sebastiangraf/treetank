@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
@@ -87,13 +88,11 @@ public final class FileWriter implements IWriter {
      */
     public long write(final PageReference pageReference) throws TTIOException {
 
-        final ByteBufferSinkAndSource mBuffer = new ByteBufferSinkAndSource();
+        final ByteBuffer mBuffer = ByteBuffer.allocate(FileFactory.BUFFERSIZE);
         mBuffer.position(FileReader.OTHER_BEACON);
         final IPage page = pageReference.getPage();
         final byte[] pagebytes = page.getByteRepresentation();
-        for (byte val : pagebytes) {
-            mBuffer.writeByte(val);
-        }
+        mBuffer.put(pagebytes);
 
         final int inputLength = mBuffer.position();
 
@@ -111,7 +110,7 @@ public final class FileWriter implements IWriter {
         // it afterwards in the byte array as well. Do not forget to reset the
         // position before transition to
         // the array
-        mBuffer.writeInt(outputLength);
+        mBuffer.putInt(outputLength);
         mBuffer.position(0);
         mBuffer.get(tmp, 0, tmp.length);
 

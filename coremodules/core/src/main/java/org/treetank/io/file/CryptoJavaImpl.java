@@ -28,6 +28,7 @@
 package org.treetank.io.file;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -61,7 +62,7 @@ public class CryptoJavaImpl {
      *            data that should be compressed
      * @return compressed data, null if failed
      */
-    public int crypt(final int paramLength, final ByteBufferSinkAndSource paramBuffer) {
+    public int crypt(final int paramLength, final ByteBuffer paramBuffer) {
         paramBuffer.position(FileReader.OTHER_BEACON);
         final byte[] tmp = new byte[paramLength - FileReader.OTHER_BEACON];
         paramBuffer.get(tmp, 0, tmp.length);
@@ -76,9 +77,7 @@ public class CryptoJavaImpl {
         }
         final byte[] result = mOut.toByteArray();
         paramBuffer.position(FileReader.OTHER_BEACON);
-        for (final byte byteVal : result) {
-            paramBuffer.writeByte(byteVal);
-        }
+        paramBuffer.put(result);
         return paramBuffer.position();
     }
 
