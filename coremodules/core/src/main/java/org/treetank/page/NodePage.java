@@ -128,32 +128,7 @@ public class NodePage implements IPage {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink mOut) {
-        // TODO respect new INode hierarchy, must rely on normal INodes only
-        mOut.writeLong(mNodePageKey);
-        for (int i = 0; i < getNodes().length; i++) {
-            if (getNodes()[i] != null) {
-                final int kind = ((org.treetank.node.interfaces.INode) getNodes()[i])
-                        .getKind().getId();
-                mOut.writeInt(kind);
-            } else {
-                mOut.writeInt(ENode.UNKOWN_KIND.getId());
-            }
-        }
-
-        for (final INode node : getNodes()) {
-            if (node != null) {
-                org.treetank.node.interfaces.INode nodenode = (org.treetank.node.interfaces.INode) node;
-                ENode.getKind(nodenode.getClass()).serialize(mOut, nodenode);
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
+     * /** {@inheritDoc}
      */
     @Override
     public final String toString() {
@@ -181,7 +156,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -197,7 +172,7 @@ public class NodePage implements IPage {
         if (getClass() != mObj.getClass()) {
             return false;
         }
-        final NodePage mOther = (NodePage) mObj;
+        final NodePage mOther = (NodePage)mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
             return false;
         }
@@ -225,6 +200,30 @@ public class NodePage implements IPage {
      * {@inheritDoc}
      */
     @Override
+    public void serialize(final ITTSink mOut) {
+        // TODO respect new INode hierarchy, must rely on normal INodes only
+        mOut.writeLong(mNodePageKey);
+        for (int i = 0; i < getNodes().length; i++) {
+            if (getNodes()[i] != null) {
+                final int kind = ((org.treetank.node.interfaces.INode)getNodes()[i]).getKind().getId();
+                mOut.writeInt(kind);
+            } else {
+                mOut.writeInt(ENode.UNKOWN_KIND.getId());
+            }
+        }
+
+        for (final INode node : getNodes()) {
+            if (node != null) {
+                org.treetank.node.interfaces.INode nodenode = (org.treetank.node.interfaces.INode)node;
+                ENode.getKind(nodenode.getClass()).serialize(mOut, nodenode);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(PagePersistenter.NODEPAGE);
@@ -233,8 +232,7 @@ public class NodePage implements IPage {
         pOutput.writeLong(mNodePageKey);
         for (int i = 0; i < getNodes().length; i++) {
             if (getNodes()[i] != null) {
-                final int kind = ((org.treetank.node.interfaces.INode) getNodes()[i])
-                        .getKind().getId();
+                final int kind = ((org.treetank.node.interfaces.INode)getNodes()[i]).getKind().getId();
                 pOutput.writeInt(kind);
             } else {
                 pOutput.writeInt(ENode.UNKOWN_KIND.getId());

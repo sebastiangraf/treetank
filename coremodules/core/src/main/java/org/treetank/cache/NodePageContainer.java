@@ -31,6 +31,8 @@ import org.treetank.io.berkeley.TupleOutputSink;
 import org.treetank.page.NodePage;
 import org.treetank.page.PagePersistenter;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
@@ -107,6 +109,16 @@ public final class NodePageContainer {
         final TupleOutputSink sink = new TupleOutputSink(paramOut);
         PagePersistenter.serializePage(sink, mComplete);
         PagePersistenter.serializePage(sink, mModified);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.write(mComplete.getByteRepresentation());
+        pOutput.write(mModified.getByteRepresentation());
+        return pOutput.toByteArray();
     }
 
     /**

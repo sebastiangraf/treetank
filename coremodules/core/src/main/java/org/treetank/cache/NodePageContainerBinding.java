@@ -51,6 +51,7 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
     @Override
     public void objectToEntry(final NodePageContainer arg0, final TupleOutput arg1) {
+        // arg1.write(arg0.getByteRepresentation());
         arg0.serialize(arg1);
     }
 }
