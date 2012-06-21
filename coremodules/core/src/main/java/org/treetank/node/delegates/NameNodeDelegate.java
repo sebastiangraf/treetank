@@ -34,6 +34,8 @@ import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
 
 import com.google.common.hash.Hasher;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * Delegate method for all nodes containing \"naming\"-data. That means that
@@ -228,5 +230,16 @@ public class NameNodeDelegate implements INameNode {
         builder.append("\nname key: ");
         builder.append(mNameKey);
         return builder.toString();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(getNameKey());
+        pOutput.writeInt(getURIKey());
+        return pOutput.toByteArray();
     }
 }

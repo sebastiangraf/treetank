@@ -34,7 +34,6 @@ import org.treetank.exception.AbsTTException;
 import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.node.ENode;
-import org.treetank.utils.TypedValue;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -242,15 +241,11 @@ public class NodePage implements IPage {
             }
         }
 
-        // fix node-serialization first
-        // for (final INode node : getNodes()) {
-        // if (node != null) {
-        // org.treetank.node.interfaces.INode nodenode =
-        // (org.treetank.node.interfaces.INode) node;
-        // ENode.getKind(nodenode.getClass()).serialize(pOutput, nodenode);
-        // }
-        // }
+        for (final INode node : getNodes()) {
+            if (node != null) {
+                pOutput.write(node.getByteRepresentation());
+            }
+        }
         return pOutput.toByteArray();
     }
-
 }

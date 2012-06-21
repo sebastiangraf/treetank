@@ -34,6 +34,8 @@ import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Hasher;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * Delegate method for all nodes. That means that all nodes stored in Treetank
@@ -191,6 +193,18 @@ public class NodeDelegate implements INode {
     @Override
     public boolean hasParent() {
         return mParentKey != NULL_NODE;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeLong(getNodeKey());
+        pOutput.writeLong(getParentKey());
+        pOutput.writeLong(getHash());
+        return pOutput.toByteArray();
     }
 
 }

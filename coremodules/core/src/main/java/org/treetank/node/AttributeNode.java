@@ -36,6 +36,8 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 
 import com.google.common.hash.Hasher;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * <h1>AttributeNode</h1>
@@ -285,6 +287,18 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      */
     ValNodeDelegate getValNodeDelegate() {
         return mValDel;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.write(mDel.getByteRepresentation());
+        pOutput.write(mNameDel.getByteRepresentation());
+        pOutput.write(mValDel.getByteRepresentation());
+        return pOutput.toByteArray();
     }
 
 }

@@ -34,6 +34,9 @@ import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * <h1>AtomicValue</h1>
  * <p>
@@ -236,7 +239,6 @@ public class AtomicValue implements INode, IValNode {
      * @return the value as a double
      */
     public double getDBL() {
-
         return Double.parseDouble(new String(mValue));
     }
 
@@ -291,4 +293,14 @@ public class AtomicValue implements INode, IValNode {
     public void setValue(byte[] paramVal) {
         mValue = paramVal;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        return pOutput.toByteArray();
+    }
+    
 }

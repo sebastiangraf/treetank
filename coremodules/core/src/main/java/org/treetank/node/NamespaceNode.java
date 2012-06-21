@@ -33,6 +33,8 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Hasher;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -235,5 +237,16 @@ public final class NamespaceNode implements INode, INameNode {
      */
     NameNodeDelegate getNameNodeDelegate() {
         return mNameDel;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.write(mDel.getByteRepresentation());
+        pOutput.write(mNameDel.getByteRepresentation());
+        return pOutput.toByteArray();
     }
 }

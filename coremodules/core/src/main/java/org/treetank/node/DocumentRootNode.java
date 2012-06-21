@@ -31,6 +31,9 @@ import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.IStructNode;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * <h1>DocumentNode</h1>
  * 
@@ -316,6 +319,17 @@ public final class DocumentRootNode implements IStructNode {
      */
     StructNodeDelegate getStrucNodeDelegate() {
         return mStrucDel;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.write(mDel.getByteRepresentation());
+        pOutput.write(mStrucDel.getByteRepresentation());
+        return pOutput.toByteArray();
     }
 
 }

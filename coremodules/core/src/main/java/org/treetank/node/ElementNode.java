@@ -37,6 +37,9 @@ import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * <h1>ElementNode</h1>
  * 
@@ -479,4 +482,24 @@ public final class ElementNode implements IStructNode, INameNode {
         return mNameDel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.write(mDel.getByteRepresentation());
+        pOutput.write(mStrucDel.getByteRepresentation());
+        pOutput.write(mNameDel.getByteRepresentation());
+        pOutput.writeInt(getAttributeCount());
+        for (int i = 0; i <getAttributeCount(); i++) {
+            pOutput.writeLong(getAttributeKey(i));
+        }
+        pOutput.writeInt(getNamespaceCount());
+        for (int i = 0; i < getNamespaceCount(); i++) {
+            pOutput.writeLong(getNamespaceKey(i));
+        }
+        return pOutput.toByteArray();
+    }
+    
 }
