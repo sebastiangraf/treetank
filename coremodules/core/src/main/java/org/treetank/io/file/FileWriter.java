@@ -88,12 +88,12 @@ public final class FileWriter implements IWriter {
      */
     public long write(final PageReference pageReference) throws TTIOException {
 
-        final ByteBuffer mBuffer = ByteBuffer.allocate(FileFactory.BUFFERSIZE);
-        mBuffer.position(FileReader.OTHER_BEACON);
         final IPage page = pageReference.getPage();
         final byte[] pagebytes = page.getByteRepresentation();
-        mBuffer.put(pagebytes);
 
+        final ByteBuffer mBuffer = ByteBuffer.allocate(FileReader.OTHER_BEACON + pagebytes.length);
+        mBuffer.position(FileReader.OTHER_BEACON);
+        mBuffer.put(pagebytes);
         final int inputLength = mBuffer.position();
 
         // Perform crypto operations.
