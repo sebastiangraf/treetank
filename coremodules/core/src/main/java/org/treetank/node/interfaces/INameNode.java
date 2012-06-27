@@ -26,7 +26,7 @@
  */
 package org.treetank.node.interfaces;
 
-public interface INameNode extends INode {
+public interface INameNode extends org.treetank.api.INode {
     /**
      * Gets key of qualified name.
      * 

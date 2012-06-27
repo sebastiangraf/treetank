@@ -29,9 +29,9 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -49,6 +49,30 @@ public final class IndirectPage implements IPage {
 
     /** revision of this page. */
     private final long mRevision;
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pData
+     *            data within the page
+     */
+    public IndirectPage(final byte[] pData) {
+
+        final ByteArrayDataInput data = ByteStreams.newDataInput(pData);
+        mRevision = data.readLong();
+        mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
+
+        // Check if IndirectPage is new (pData contains only 1 longs) or is
+        // serialized(pData contains entire
+        // page)
+        if (pData.length > 8) {
+            for (int offset = 0; offset < mReferences.length; offset++) {
+                getReferences()[offset] = new PageReference();
+                getReferences()[offset].setKey(data.readLong());
+            }
+        }
+    }
 
     /**
      * Create indirect page.
@@ -100,13 +124,6 @@ public final class IndirectPage implements IPage {
     }
 
     @Override
-    public void serialize(ITTSink paramOut) {
-        for (final PageReference reference : getReferences()) {
-            paramOut.writeLong(reference.getKey());
-        }
-    }
-
-    @Override
     public PageReference[] getReferences() {
         return mReferences;
     }
@@ -122,7 +139,7 @@ public final class IndirectPage implements IPage {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PagePersistenter.INDIRCTPAGE);
+        pOutput.writeInt(PageFactory.INDIRCTPAGE);
         pOutput.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());

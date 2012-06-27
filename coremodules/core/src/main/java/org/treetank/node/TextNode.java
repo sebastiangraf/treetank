@@ -68,7 +68,7 @@ public final class TextNode implements IStructNode, IValNode, INode {
      * @param pStrucDel
      *            Delegate for {@link IStructNode} implementation.
      */
-    public TextNode(final NodeDelegate pDel, final ValNodeDelegate pValDel, final StructNodeDelegate pStrucDel) {
+    public TextNode(final NodeDelegate pDel, final StructNodeDelegate pStrucDel, final ValNodeDelegate pValDel) {
         mDel = pDel;
         mValDel = pValDel;
         mStrucDel = pStrucDel;
@@ -369,5 +369,5 @@ public final class TextNode implements IStructNode, IValNode, INode {
         pOutput.write(mStrucDel.getByteRepresentation());
         return pOutput.toByteArray();
     }
-    
+
 }

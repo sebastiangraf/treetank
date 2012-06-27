@@ -29,6 +29,7 @@ package org.treetank.node;
 
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -42,7 +43,7 @@ import com.google.common.io.ByteStreams;
  * removed.
  * </p>
  */
-public final class DocumentRootNode implements IStructNode {
+public final class DocumentRootNode implements INode, IStructNode {
 
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
@@ -320,7 +321,7 @@ public final class DocumentRootNode implements IStructNode {
     StructNodeDelegate getStrucNodeDelegate() {
         return mStrucDel;
     }
-    
+
     /**
      * {@inheritDoc}
      */

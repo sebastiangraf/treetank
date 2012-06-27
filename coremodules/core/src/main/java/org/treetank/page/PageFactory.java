@@ -27,10 +27,12 @@
 
 package org.treetank.page;
 
-import org.treetank.io.ITTSink;
-import org.treetank.io.ITTSource;
+import java.nio.ByteBuffer;
 
-public final class PagePersistenter {
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
+public final class PageFactory {
 
     public final static int NODEPAGE = 1;
     public final static int NAMEPAGE = 2;
@@ -45,24 +47,24 @@ public final class PagePersistenter {
      *            source to read from
      * @return the created page
      */
-    public static IPage createPage(final ITTSource paramSource) {
-        final int kind = paramSource.readInt();
+    public static IPage createPage(final byte[] pSource) {
+        final int kind = ByteBuffer.wrap(pSource).getInt();
         IPage returnVal = null;
         switch (kind) {
         case NODEPAGE:
-            returnVal = new NodePage(paramSource);
+            returnVal = new NodePage(pSource);
             break;
         case NAMEPAGE:
-            returnVal = new NamePage(paramSource);
+            returnVal = new NamePage(pSource);
             break;
         case UBERPAGE:
-            returnVal = new UberPage(paramSource);
+            returnVal = new UberPage(pSource);
             break;
         case INDIRCTPAGE:
-            returnVal = new IndirectPage(paramSource);
+            returnVal = new IndirectPage(pSource);
             break;
         case REVISIONROOTPAGE:
-            returnVal = new RevisionRootPage(paramSource);
+            returnVal = new RevisionRootPage(pSource);
             break;
         default:
             throw new IllegalStateException(
@@ -79,25 +81,26 @@ public final class PagePersistenter {
      * @param paramPage
      *            the page to serialize
      */
-    public static void serializePage(final ITTSink paramSink,
-            final IPage paramPage) {
+    public static byte[] serializePage(final IPage paramPage) {
+        final ByteArrayDataOutput data = ByteStreams.newDataOutput();
+
         if (paramPage instanceof NodePage) {
-            paramSink.writeInt(PagePersistenter.NODEPAGE);
+            data.writeInt(PageFactory.NODEPAGE);
         } else if (paramPage instanceof IndirectPage) {
-            paramSink.writeInt(PagePersistenter.INDIRCTPAGE);
+            data.writeInt(PageFactory.INDIRCTPAGE);
         } else if (paramPage instanceof NamePage) {
-            paramSink.writeInt(PagePersistenter.NAMEPAGE);
+            data.writeInt(PageFactory.NAMEPAGE);
         } else if (paramPage instanceof RevisionRootPage) {
-            paramSink.writeInt(PagePersistenter.REVISIONROOTPAGE);
+            data.writeInt(PageFactory.REVISIONROOTPAGE);
         } else if (paramPage instanceof UberPage) {
-            paramSink.writeInt(PagePersistenter.UBERPAGE);
+            data.writeInt(PageFactory.UBERPAGE);
         } else {
             throw new IllegalStateException(new StringBuilder("Page ")
                     .append(paramPage.getClass())
                     .append(" cannot be serialized").toString());
         }
-        paramSink.writeLong(paramPage.getRevision());
-        paramPage.serialize(paramSink);
+        data.write(paramPage.getByteRepresentation());
+        return data.toByteArray();
     }
 
 }

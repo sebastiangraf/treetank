@@ -32,10 +32,10 @@ import java.util.Map;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSink;
 import org.treetank.io.ITTSource;
 import org.treetank.utils.TypedValue;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -53,6 +53,35 @@ public final class NamePage implements IPage {
 
     /** Revision of this page. */
     private final long mRevision;
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pData
+     *            data within the page
+     */
+    public NamePage(final byte[] pData) {
+        mNameMap = new HashMap<Integer, String>();
+
+        final ByteArrayDataInput data = ByteStreams.newDataInput(pData);
+        mRevision = data.readLong();
+
+        // Check if NamePage is new (pData contains only 1 longs) or is
+        // serialized(pData contains entire page)
+        if (pData.length > 8) {
+            final int mapSize = data.readInt();
+            for (int i = 0, l = (int) mapSize; i < l; i++) {
+                final int key = data.readInt();
+                final int valSize = data.readInt();
+                final byte[] bytes = new byte[valSize];
+                for (int j = 0; j < bytes.length; j++) {
+                    bytes[j] = data.readByte();
+                }
+                mNameMap.put(key, new String(bytes));
+            }
+        }
+    }
 
     /**
      * Create name page.
@@ -125,23 +154,6 @@ public final class NamePage implements IPage {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink paramOut) {
-        paramOut.writeInt(mNameMap.size());
-
-        for (final int key : mNameMap.keySet()) {
-            paramOut.writeInt(key);
-            final byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-            paramOut.writeInt(tmp.length);
-            for (final byte byteVal : tmp) {
-                paramOut.writeByte(byteVal);
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         return super.toString() + ": nameCount=" + mNameMap.size();
     }
@@ -175,9 +187,9 @@ public final class NamePage implements IPage {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PagePersistenter.NAMEPAGE);
+        pOutput.writeInt(PageFactory.NAMEPAGE);
         pOutput.writeLong(mRevision);
-        
+
         pOutput.writeInt(mNameMap.size());
 
         for (final int key : mNameMap.keySet()) {

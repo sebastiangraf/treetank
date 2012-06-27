@@ -49,7 +49,7 @@ public class TextNodeTest {
         final NodeDelegate del = new NodeDelegate(13, 14, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(del, value);
         final StructNodeDelegate strucDel = new StructNodeDelegate(del, NULL_NODE, 16l, 15l, 0l);
-        final TextNode node1 = new TextNode(del, valDel, strucDel);
+        final TextNode node1 = new TextNode(del, strucDel, valDel);
         check(node1);
 
         // Serialize and deserialize node.

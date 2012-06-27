@@ -28,8 +28,10 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.page.IPage;
-import org.treetank.page.PagePersistenter;
+import org.treetank.page.PageFactory;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -47,7 +49,14 @@ public final class PageBinding extends TupleBinding<IPage> {
      */
     @Override
     public IPage entryToObject(final TupleInput arg0) {
-        return PagePersistenter.createPage(new TupleInputSource(arg0));
+        final ByteArrayDataOutput data = ByteStreams.newDataOutput();
+        int result = arg0.read();
+        while (result != -1) {
+            byte b = (byte) result;
+            data.write(b);
+            result = arg0.read();
+        }
+        return PageFactory.createPage(data.toByteArray());
     }
 
     /**
@@ -55,8 +64,8 @@ public final class PageBinding extends TupleBinding<IPage> {
      */
     @Override
     public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
-        // arg1.write(arg0.getByteRepresentation());
-        PagePersistenter.serializePage(new TupleOutputSink(arg1), arg0);
+        final byte[] pagebytes = PageFactory.serializePage(arg0);
+        arg1.write(pagebytes);
     }
 
 }

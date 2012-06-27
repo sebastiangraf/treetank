@@ -27,11 +27,13 @@
 
 package org.treetank.cache;
 
-import org.treetank.io.ITTSource;
-import org.treetank.io.berkeley.TupleInputSource;
-import org.treetank.page.NodePage;
-import org.treetank.page.PagePersistenter;
+import java.util.Arrays;
 
+import org.treetank.page.NodePage;
+import org.treetank.page.PageFactory;
+
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -43,15 +45,34 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
     @Override
     public NodePageContainer entryToObject(final TupleInput arg0) {
-        final ITTSource source = new TupleInputSource(arg0);
-        final NodePage current = (NodePage)PagePersistenter.createPage(source);
-        final NodePage modified = (NodePage)PagePersistenter.createPage(source);
+        final int completeLength = arg0.readInt();
+        final int modifiedLength = arg0.readInt();
+
+        final ByteArrayDataOutput data = ByteStreams.newDataOutput();
+
+        int result = arg0.read();
+        while (result != -1) {
+            byte b = (byte)result;
+            data.write(b);
+            result = arg0.read();
+        }
+        final byte[] dataAsByte = data.toByteArray();
+
+        final NodePage current =
+            (NodePage)PageFactory.createPage(Arrays.copyOfRange(dataAsByte, 0, completeLength));
+        final NodePage modified =
+            (NodePage)PageFactory.createPage(Arrays.copyOfRange(dataAsByte, completeLength, modifiedLength));
         return new NodePageContainer(current, modified);
     }
 
     @Override
     public void objectToEntry(final NodePageContainer arg0, final TupleOutput arg1) {
-        // arg1.write(arg0.getByteRepresentation());
-        arg0.serialize(arg1);
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        final byte[] completeData = arg0.getComplete().getByteRepresentation();
+        final byte[] modifiedData = arg0.getModified().getByteRepresentation();
+        pOutput.write(completeData.length);
+        pOutput.write(modifiedData.length);
+        pOutput.write(arg0.getComplete().getByteRepresentation());
+        pOutput.write(arg0.getModified().getByteRepresentation());
     }
 }

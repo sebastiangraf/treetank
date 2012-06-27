@@ -336,7 +336,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
 
-        return getPageTransaction().createNode(new TextNode(nodeDel, valDel, structDel));
+        return getPageTransaction().createNode(new TextNode(nodeDel, structDel, valDel));
     }
 
     /**
@@ -404,7 +404,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             node.setNameKey(getPageTransaction().createNameKey(PageWriteTrx.buildName(paramName)));
             getPageTransaction().finishNodeModification(node);
 
-            mDelegate.setCurrentNode(node);
+            mDelegate.setCurrentNode((INode)node);
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
@@ -427,7 +427,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             node.setURIKey(getPageTransaction().createNameKey(paramUri));
             getPageTransaction().finishNodeModification(node);
 
-            mDelegate.setCurrentNode(node);
+            mDelegate.setCurrentNode((INode)node);
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
@@ -451,7 +451,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             node.setValue(TypedValue.getBytes(paramValue));
             getPageTransaction().finishNodeModification(node);
 
-            mDelegate.setCurrentNode(node);
+            mDelegate.setCurrentNode((INode)node);
             adaptHashedWithUpdate(oldHash);
         } else {
             throw new TTUsageException(
