@@ -23,14 +23,14 @@ The documentation so far is accessible under http://treetank.org (pointing to ht
 
 The framework was presented at various conferences and acted as base for multiple publications and reports:
 
-* A legal and technical perspective on secure clouzd Storage; DFN Forum'12: http://nbn-resolving.de/urn:nbn:de:bsz:352-192389
-* A Secure Cloud Gateway based upon XML and Web Services; ECOWS'11, PhD Symposium: http://nbn-resolving.de/urn:nbn:de:bsz:352-154112
-* Treetank, Designing a Versioned XML Storage; XMLPrague'11: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-126912
-* Hecate, Managing Authorization with RESTful XML; WS-REST'11: http://nbn-resolving.de/urn:nbn:de:bsz:352-126237
-* Rolling Boles, Optimal XML Structure Integrity for Updating Operations; WWW'11, Poster: http://nbn-resolving.de/urn:nbn:de:bsz:352-126226
-* JAX-RX - Unified REST Access to XML Resources; TechReport'10: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-120511
-* Integrity Assurance for RESTful XML; WISM'10: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-123507
-* Distributing XML with focus on parallel evaluation; DBISP2P'08: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-84487
+* A legal and technical perspective on secure clouzd Storage; DFN Forum'12: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-192389)
+* A Secure Cloud Gateway based upon XML and Web Services; ECOWS'11, PhD Symposium: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-154112)
+* Treetank, Designing a Versioned XML Storage; XMLPrague'11: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-126912)
+* Hecate, Managing Authorization with RESTful XML; WS-REST'11: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-126237)
+* Rolling Boles, Optimal XML Structure Integrity for Updating Operations; WWW'11, Poster: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-126226)
+* JAX-RX - Unified REST Access to XML Resources; TechReport'10: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-120511)
+* Integrity Assurance for RESTful XML; WISM'10: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-123507)
+* Distributing XML with focus on parallel evaluation; DBISP2P'08: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-84487)
 
 Any questions, just contact sebastian.graf AT uni-konstanz.de
 
