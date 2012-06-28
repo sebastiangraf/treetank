@@ -74,18 +74,13 @@ public final class PageFactory {
         switch (kind) {
         case IConstants.NODEPAGE:
             NodePage nodePage = new NodePage(input.readLong(), input.readLong());
-            // LastIndex is set to node-start: kind(int)+nodepagekey(long) +
-            // revision(long)=20bytes
-            int lastIndex = 20;
             for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
                 int length = input.readInt();
-                if (length != -1) {
+                if (length != IConstants.NULL_NODE) {
+                    byte[] toread = new byte[length];
+                    input.readFully(toread);
                     nodePage.getNodes()[offset] = mNodeFac
-                            .deserializeNode(Arrays.copyOfRange(pSource,
-                                    lastIndex, length+lastIndex));
-                    lastIndex = lastIndex + length;
-                } else {
-                    lastIndex++;
+                            .deserializeNode(toread);
                 }
             }
             return nodePage;

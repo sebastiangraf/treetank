@@ -28,7 +28,7 @@ public class NodePageTest {
     public void testNodePageByteArray() {
         final NodePage freshPage = new NodePage(0, 0);
         List<INode> nodes = new ArrayList<INode>();
-        for (int i = 0; i < /*IConstants.NDP_NODE_COUNT*/2 - 1; i++) {
+        for (int i = 0; i < IConstants.NDP_NODE_COUNT - 1; i++) {
             nodes.add(FactoriesForTest.generateOne());
             freshPage.setNode(i, nodes.get(i));
         }
