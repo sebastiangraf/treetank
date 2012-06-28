@@ -27,6 +27,7 @@
 
 package org.treetank.io.berkeley;
 
+import org.treetank.node.NodeFactory;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 
@@ -44,6 +45,10 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public final class PageBinding extends TupleBinding<IPage> {
 
+    // TODO Care about this one via injection
+    private final PageFactory mFac = PageFactory.getInstance(NodeFactory
+            .getInstance());
+
     /**
      * {@inheritDoc}
      */
@@ -56,7 +61,7 @@ public final class PageBinding extends TupleBinding<IPage> {
             data.write(b);
             result = arg0.read();
         }
-        return PageFactory.createPage(data.toByteArray());
+        return mFac.deserializePage(data.toByteArray());
     }
 
     /**
@@ -64,7 +69,7 @@ public final class PageBinding extends TupleBinding<IPage> {
      */
     @Override
     public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
-        final byte[] pagebytes = PageFactory.serializePage(arg0);
+        final byte[] pagebytes = arg0.getByteRepresentation();
         arg1.write(pagebytes);
     }
 

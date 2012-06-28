@@ -234,7 +234,7 @@ public final class UberPage implements IPage {
     public byte[] getByteRepresentation() {
         mBootstrap = false;
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PageFactory.UBERPAGE);
+        pOutput.writeInt(IConstants.UBERPAGE);
         pOutput.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());

@@ -229,7 +229,7 @@ public final class RevisionRootPage implements IPage {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PageFactory.REVISIONROOTPAGE);
+        pOutput.writeInt(IConstants.REVISIONROOTPAGE);
         pOutput.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());

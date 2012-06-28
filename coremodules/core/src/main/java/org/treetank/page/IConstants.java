@@ -34,12 +34,21 @@ package org.treetank.page;
  * Interface to hold all constants of the pagelayer.
  * </p>
  */
-public final class IConstants {
+public interface IConstants {
 
-    // --- Reference
+    // --- Page Kinds
     // ----------------------------------------------------------
+    public final static int NODEPAGE = 1;
+    public final static int NAMEPAGE = 2;
+    public final static int UBERPAGE = 3;
+    public final static int INDIRCTPAGE = 4;
+    public final static int REVISIONROOTPAGE = 5;
+
     /** Null-Id for the key within the reference. */
     public static final long NULL_ID = -15;
+
+    /** ID for not existing nodes. */
+    public final static int NULL_NODE = -22;
 
     // --- Indirect Page
     // ----------------------------------------------------------
@@ -48,9 +57,8 @@ public final class IConstants {
     public static final int INP_REFERENCE_COUNT = 128;
 
     /** Exponent of pages per level (root level = 0, leaf level = 5). */
-    public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = {
-        4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
-    };
+    public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = { 4 * 7, 3 * 7,
+            2 * 7, 1 * 7, 0 * 7 };
 
     // --- Uber Page
     // -------------------------------------------------------------

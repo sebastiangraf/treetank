@@ -31,10 +31,7 @@ import java.util.Arrays;
 import org.treetank.access.PageWriteTrx;
 import org.treetank.api.INode;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
-import org.treetank.node.NodeFactory;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -55,32 +52,6 @@ public class NodePage implements IPage {
 
     /** Revision of this page. */
     private final long mRevision;
-
-    /**
-     * 
-     * Constructor.
-     * 
-     * @param pData
-     *            data within the page
-     */
-    public NodePage(final byte[] pData) {
-        final ByteArrayDataInput data = ByteStreams.newDataInput(pData);
-        mRevision = data.readLong();
-        mNodePageKey = data.readLong();
-        mNodes = new INode[IConstants.NDP_NODE_COUNT];
-
-        int lastIndex = 0;
-        for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-            int length = data.readInt();
-            if (length != -1) {
-                getNodes()[offset] = NodeFactory.createNode(Arrays.copyOfRange(
-                        pData, lastIndex, length));
-                lastIndex = lastIndex + length;
-            } else {
-                lastIndex++;
-            }
-        }
-    }
 
     /**
      * Create node page.
@@ -201,19 +172,18 @@ public class NodePage implements IPage {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PageFactory.NODEPAGE);
+        pOutput.writeInt(IConstants.NODEPAGE);
         pOutput.writeLong(mRevision);
         pOutput.writeLong(mNodePageKey);
 
         for (final INode node : getNodes()) {
             if (node == null) {
-                pOutput.writeInt(ENode.UNKOWN_KIND.getId());
+                pOutput.writeInt(IConstants.NULL_NODE);
             } else {
                 byte[] nodeBytes = node.getByteRepresentation();
                 pOutput.writeInt(nodeBytes.length);
                 pOutput.write(nodeBytes);
             }
-
         }
         return pOutput.toByteArray();
     }

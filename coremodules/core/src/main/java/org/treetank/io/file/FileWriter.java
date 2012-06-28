@@ -36,7 +36,6 @@ import java.nio.ByteBuffer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
-import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
 
 /**
@@ -90,7 +89,7 @@ public final class FileWriter implements IWriter {
     public long write(final PageReference pageReference) throws TTIOException {
 
         final IPage page = pageReference.getPage();
-        final byte[] pagebytes = PageFactory.serializePage(page);
+        final byte[] pagebytes = page.getByteRepresentation();
 
         final ByteBuffer mBuffer = ByteBuffer.allocate(FileReader.OTHER_BEACON
                 + pagebytes.length);

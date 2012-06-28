@@ -29,6 +29,7 @@ package org.treetank.cache;
 
 import java.util.Arrays;
 
+import org.treetank.node.NodeFactory;
 import org.treetank.page.NodePage;
 import org.treetank.page.PageFactory;
 
@@ -40,8 +41,9 @@ import com.sleepycat.bind.tuple.TupleOutput;
 
 public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
-    public NodePageContainerBinding() {
-    }
+    // TODO Care about this one via injection
+    private final PageFactory mFac = PageFactory.getInstance(NodeFactory
+            .getInstance());
 
     @Override
     public NodePageContainer entryToObject(final TupleInput arg0) {
@@ -52,21 +54,22 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
         int result = arg0.read();
         while (result != -1) {
-            byte b = (byte)result;
+            byte b = (byte) result;
             data.write(b);
             result = arg0.read();
         }
         final byte[] dataAsByte = data.toByteArray();
 
-        final NodePage current =
-            (NodePage)PageFactory.createPage(Arrays.copyOfRange(dataAsByte, 0, completeLength));
-        final NodePage modified =
-            (NodePage)PageFactory.createPage(Arrays.copyOfRange(dataAsByte, completeLength, modifiedLength));
+        final NodePage current = (NodePage) mFac.deserializePage(Arrays
+                .copyOfRange(dataAsByte, 0, completeLength));
+        final NodePage modified = (NodePage) mFac.deserializePage(Arrays
+                .copyOfRange(dataAsByte, completeLength, modifiedLength));
         return new NodePageContainer(current, modified);
     }
 
     @Override
-    public void objectToEntry(final NodePageContainer arg0, final TupleOutput arg1) {
+    public void objectToEntry(final NodePageContainer arg0,
+            final TupleOutput arg1) {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         final byte[] completeData = arg0.getComplete().getByteRepresentation();
         final byte[] modifiedData = arg0.getModified().getByteRepresentation();

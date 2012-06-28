@@ -27,18 +27,38 @@
 
 package org.treetank.page;
 
-import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.google.common.io.ByteArrayDataOutput;
+import org.treetank.api.INodeFactory;
+
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 public final class PageFactory {
 
-    public final static int NODEPAGE = 1;
-    public final static int NAMEPAGE = 2;
-    public final static int UBERPAGE = 3;
-    public final static int INDIRCTPAGE = 4;
-    public final static int REVISIONROOTPAGE = 5;
+    private INodeFactory mNodeFac;
+
+    private static final Map<INodeFactory, PageFactory> INSTANCES = new HashMap<INodeFactory, PageFactory>();
+
+    /**
+     * Private constructor, just for singletons only.
+     * 
+     * @param pFac
+     */
+    private PageFactory(final INodeFactory pFac) {
+        mNodeFac = pFac;
+    }
+
+    public static final PageFactory getInstance(INodeFactory mNodeFactory) {
+        PageFactory fac = INSTANCES.get(mNodeFactory);
+        if (fac == null) {
+            fac = new PageFactory(mNodeFactory);
+            INSTANCES.put(mNodeFactory, fac);
+        }
+        return fac;
+    }
 
     /**
      * Create page.
@@ -47,60 +67,54 @@ public final class PageFactory {
      *            source to read from
      * @return the created page
      */
-    public static IPage createPage(final byte[] pSource) {
-        final int kind = ByteBuffer.wrap(pSource).getInt();
-        IPage returnVal = null;
+    public IPage deserializePage(final byte[] pSource) {
+        final ByteArrayDataInput input = ByteStreams.newDataInput(pSource);
+        final int kind = input.readInt();
+        byte[] param = Arrays.copyOfRange(pSource, 4, pSource.length);
         switch (kind) {
-        case NODEPAGE:
-            returnVal = new NodePage(pSource);
-            break;
-        case NAMEPAGE:
-            returnVal = new NamePage(pSource);
-            break;
-        case UBERPAGE:
-            returnVal = new UberPage(pSource);
-            break;
-        case INDIRCTPAGE:
-            returnVal = new IndirectPage(pSource);
-            break;
-        case REVISIONROOTPAGE:
-            returnVal = new RevisionRootPage(pSource);
-            break;
+        case IConstants.NODEPAGE:
+            NodePage nodePage = new NodePage(input.readLong(), input.readLong());
+            // LastIndex is set to node-start: kind(int)+nodepagekey(long) +
+            // revision(long)=20bytes
+            int lastIndex = 20;
+            for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
+                int length = input.readInt();
+                if (length != -1) {
+                    nodePage.getNodes()[offset] = mNodeFac
+                            .deserializeNode(Arrays.copyOfRange(pSource,
+                                    lastIndex, length+lastIndex));
+                    lastIndex = lastIndex + length;
+                } else {
+                    lastIndex++;
+                }
+            }
+            return nodePage;
+        case IConstants.NAMEPAGE:
+            NamePage namePage = new NamePage(input.readLong());
+            final int mapSize = input.readInt();
+            for (int i = 0; i < mapSize; i++) {
+                final int key = input.readInt();
+                final int valSize = input.readInt();
+                final byte[] bytes = new byte[valSize];
+                input.readFully(bytes);
+                namePage.setName(key, new String(bytes));
+            }
+            return namePage;
+        case IConstants.UBERPAGE:
+            return new UberPage(param);
+        case IConstants.INDIRCTPAGE:
+            IndirectPage indirectPage = new IndirectPage(input.readLong());
+            for (int offset = 0; offset < indirectPage.getReferences().length; offset++) {
+                indirectPage.getReferences()[offset] = new PageReference();
+                indirectPage.getReferences()[offset].setKey(input.readLong());
+            }
+            return indirectPage;
+        case IConstants.REVISIONROOTPAGE:
+            RevisionRootPage revRootPage = new RevisionRootPage(param);
+            return revRootPage;
         default:
             throw new IllegalStateException(
                     "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
         }
-        return returnVal;
     }
-
-    /**
-     * Serialize page.
-     * 
-     * @param paramSink
-     *            output sink
-     * @param paramPage
-     *            the page to serialize
-     */
-    public static byte[] serializePage(final IPage paramPage) {
-        final ByteArrayDataOutput data = ByteStreams.newDataOutput();
-
-        if (paramPage instanceof NodePage) {
-            data.writeInt(PageFactory.NODEPAGE);
-        } else if (paramPage instanceof IndirectPage) {
-            data.writeInt(PageFactory.INDIRCTPAGE);
-        } else if (paramPage instanceof NamePage) {
-            data.writeInt(PageFactory.NAMEPAGE);
-        } else if (paramPage instanceof RevisionRootPage) {
-            data.writeInt(PageFactory.REVISIONROOTPAGE);
-        } else if (paramPage instanceof UberPage) {
-            data.writeInt(PageFactory.UBERPAGE);
-        } else {
-            throw new IllegalStateException(new StringBuilder("Page ")
-                    .append(paramPage.getClass())
-                    .append(" cannot be serialized").toString());
-        }
-        data.write(paramPage.getByteRepresentation());
-        return data.toByteArray();
-    }
-
 }

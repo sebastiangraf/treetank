@@ -29,9 +29,7 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSource;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -51,30 +49,6 @@ public final class IndirectPage implements IPage {
     private final long mRevision;
 
     /**
-     * 
-     * Constructor.
-     * 
-     * @param pData
-     *            data within the page
-     */
-    public IndirectPage(final byte[] pData) {
-
-        final ByteArrayDataInput data = ByteStreams.newDataInput(pData);
-        mRevision = data.readLong();
-        mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
-
-        // Check if IndirectPage is new (pData contains only 1 longs) or is
-        // serialized(pData contains entire
-        // page)
-        if (pData.length > 8) {
-            for (int offset = 0; offset < mReferences.length; offset++) {
-                getReferences()[offset] = new PageReference();
-                getReferences()[offset].setKey(data.readLong());
-            }
-        }
-    }
-
-    /**
      * Create indirect page.
      * 
      * @param paramRevision
@@ -85,21 +59,6 @@ public final class IndirectPage implements IPage {
         mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
-        }
-    }
-
-    /**
-     * Read indirect page.
-     * 
-     * @param paramIn
-     *            Input bytes.
-     */
-    protected IndirectPage(final ITTSource paramIn) {
-        mRevision = paramIn.readLong();
-        mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
-        for (int offset = 0; offset < mReferences.length; offset++) {
-            getReferences()[offset] = new PageReference();
-            getReferences()[offset].setKey(paramIn.readLong());
         }
     }
 
@@ -139,7 +98,7 @@ public final class IndirectPage implements IPage {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PageFactory.INDIRCTPAGE);
+        pOutput.writeInt(IConstants.INDIRCTPAGE);
         pOutput.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
