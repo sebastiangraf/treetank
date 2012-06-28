@@ -27,12 +27,11 @@
 
 package org.treetank.cache;
 
-import java.util.Arrays;
-
 import org.treetank.node.NodeFactory;
 import org.treetank.page.NodePage;
 import org.treetank.page.PageFactory;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -47,23 +46,19 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
     @Override
     public NodePageContainer entryToObject(final TupleInput arg0) {
-        final int completeLength = arg0.readInt();
-        final int modifiedLength = arg0.readInt();
+        final ByteArrayDataInput data = ByteStreams.newDataInput(arg0
+                .getBufferBytes());
 
-        final ByteArrayDataOutput data = ByteStreams.newDataOutput();
+        final int completeLength = data.readInt();
+        final int modifiedLength = data.readInt();
+        byte[] completeBytes = new byte[completeLength];
+        byte[] modifiedBytes = new byte[modifiedLength];
+        data.readFully(completeBytes);
+        data.readFully(modifiedBytes);
 
-        int result = arg0.read();
-        while (result != -1) {
-            byte b = (byte) result;
-            data.write(b);
-            result = arg0.read();
-        }
-        final byte[] dataAsByte = data.toByteArray();
-
-        final NodePage current = (NodePage) mFac.deserializePage(Arrays
-                .copyOfRange(dataAsByte, 0, completeLength));
-        final NodePage modified = (NodePage) mFac.deserializePage(Arrays
-                .copyOfRange(dataAsByte, completeLength, modifiedLength));
+        final NodePage current = (NodePage) mFac.deserializePage(completeBytes);
+        final NodePage modified = (NodePage) mFac
+                .deserializePage(modifiedBytes);
         return new NodePageContainer(current, modified);
     }
 
@@ -73,9 +68,10 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         final byte[] completeData = arg0.getComplete().getByteRepresentation();
         final byte[] modifiedData = arg0.getModified().getByteRepresentation();
-        pOutput.write(completeData.length);
-        pOutput.write(modifiedData.length);
+        pOutput.writeInt(completeData.length);
+        pOutput.writeInt(modifiedData.length);
         pOutput.write(arg0.getComplete().getByteRepresentation());
         pOutput.write(arg0.getModified().getByteRepresentation());
+        arg1.write(pOutput.toByteArray());
     }
 }

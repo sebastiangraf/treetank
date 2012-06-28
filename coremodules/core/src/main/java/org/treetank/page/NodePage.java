@@ -56,12 +56,14 @@ public class NodePage implements IPage {
     /**
      * Create node page.
      * 
-     * @param nodePageKey
+     * @param pNodePageKey
      *            Base key assigned to this node page.
+     * @param pRevision
+     *            Revision of the page
      */
-    public NodePage(final long nodePageKey, final long pRevision) {
+    public NodePage(final long pNodePageKey, final long pRevision) {
+        mNodePageKey = pNodePageKey;
         mRevision = pRevision;
-        mNodePageKey = nodePageKey;
         mNodes = new INode[IConstants.NDP_NODE_COUNT];
     }
 
@@ -173,8 +175,8 @@ public class NodePage implements IPage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.NODEPAGE);
-        pOutput.writeLong(mRevision);
         pOutput.writeLong(mNodePageKey);
+        pOutput.writeLong(mRevision);
 
         for (final INode node : getNodes()) {
             if (node == null) {
