@@ -101,7 +101,7 @@ public final class FileReader implements IReader {
      */
     public IPage read(final long pKey) throws TTIOException {
 
-        final ByteBuffer mBuffer = ByteBuffer.allocate(FileFactory.BUFFERSIZE);
+        ByteBuffer mBuffer = ByteBuffer.allocate(FileFactory.BUFFERSIZE);
 
         try {
 
@@ -117,7 +117,8 @@ public final class FileReader implements IReader {
             mBuffer.put(page);
 
             // Perform crypto operations.
-            int decryptedLength = mDecompressor.decrypt(dataLength, mBuffer);
+            mBuffer = mDecompressor.decrypt(dataLength, mBuffer);
+            int decryptedLength = mBuffer.position();
 
             // Return reader required to instantiate and deserialize page.
             byte[] returnVal = new byte[decryptedLength - OTHER_BEACON];
