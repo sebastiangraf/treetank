@@ -366,8 +366,8 @@ public final class TextNode implements IStructNode, IValNode, INode {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.TEXT);
         pOutput.write(mDel.getByteRepresentation());
-        pOutput.write(mValDel.getByteRepresentation());
         pOutput.write(mStrucDel.getByteRepresentation());
+        pOutput.write(mValDel.getByteRepresentation());
         return pOutput.toByteArray();
     }
 
