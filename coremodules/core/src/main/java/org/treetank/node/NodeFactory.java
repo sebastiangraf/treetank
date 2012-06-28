@@ -4,7 +4,6 @@
 package org.treetank.node;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.treetank.api.INode;
@@ -77,8 +76,9 @@ public class NodeFactory implements INodeFactory {
             strucDel = new StructNodeDelegate(nodeDel, input.readLong(),
                     input.readLong(), input.readLong(), input.readLong());
             // Val is the rest
-            valDel = new ValNodeDelegate(nodeDel, Arrays.copyOfRange(pSource,
-                    60, pSource.length));
+            byte[] rawValText = new byte[input.readInt()];
+            input.readFully(rawValText);
+            valDel = new ValNodeDelegate(nodeDel, rawValText);
             returnVal = new TextNode(nodeDel, strucDel, valDel);
             break;
         case IConstants.ROOT:
@@ -92,8 +92,9 @@ public class NodeFactory implements INodeFactory {
             nameDel = new NameNodeDelegate(nodeDel, input.readInt(),
                     input.readInt());
             // Val is the rest
-            valDel = new ValNodeDelegate(nodeDel, Arrays.copyOfRange(pSource,
-                    34, pSource.length));
+            byte[] rawValAttr = new byte[input.readInt()];
+            input.readFully(rawValAttr);
+            valDel = new ValNodeDelegate(nodeDel, rawValAttr);
             returnVal = new AttributeNode(nodeDel, nameDel, valDel);
             break;
         case IConstants.NAMESPACE:
