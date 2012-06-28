@@ -29,7 +29,6 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSource;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -106,24 +105,6 @@ public final class RevisionRootPage implements IPage {
         final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
         ref.setPage(new NamePage(IConstants.UBP_ROOT_REVISION_NUMBER));
         mMaxNodeKey = -1L;
-    }
-
-    /**
-     * Read revision root page.
-     * 
-     * @param paramIn
-     *            Input bytes.
-     */
-    protected RevisionRootPage(final ITTSource paramIn) {
-        mRevision = paramIn.readLong();
-        mReferences = new PageReference[2];
-        for (int offset = 0; offset < mReferences.length; offset++) {
-            getReferences()[offset] = new PageReference();
-            getReferences()[offset].setKey(paramIn.readLong());
-        }
-        mRevisionSize = paramIn.readLong();
-        mMaxNodeKey = paramIn.readLong();
-        mRevisionTimestamp = paramIn.readLong();
     }
 
     /**

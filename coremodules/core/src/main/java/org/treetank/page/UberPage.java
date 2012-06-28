@@ -32,7 +32,6 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSource;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -143,23 +142,6 @@ public final class UberPage implements IPage {
                 NULL_NODE, NULL_NODE, NULL_NODE, 0);
         ndp.setNode(0, new DocumentRootNode(nodeDel, strucDel));
         rrp.incrementMaxNodeKey();
-    }
-
-    /**
-     * Read uber page.
-     * 
-     * @param paramIn
-     *            Input bytes.
-     */
-    protected UberPage(final ITTSource paramIn) {
-        mRevision = paramIn.readLong();
-        mReferences = new PageReference[1];
-        for (int offset = 0; offset < mReferences.length; offset++) {
-            getReferences()[offset] = new PageReference();
-            getReferences()[offset].setKey(paramIn.readLong());
-        }
-        mRevisionCount = paramIn.readLong();
-        mBootstrap = false;
     }
 
     /**
