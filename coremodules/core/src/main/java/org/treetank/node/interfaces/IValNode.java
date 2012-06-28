@@ -33,7 +33,7 @@ package org.treetank.node.interfaces;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IValNode extends INode {
+public interface IValNode extends org.treetank.api.INode {
 
     /**
      * Return a byte array representation of the item's value.

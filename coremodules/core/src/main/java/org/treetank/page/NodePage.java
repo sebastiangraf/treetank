@@ -31,9 +31,6 @@ import java.util.Arrays;
 import org.treetank.access.PageWriteTrx;
 import org.treetank.api.INode;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSink;
-import org.treetank.io.ITTSource;
-import org.treetank.node.ENode;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -59,40 +56,15 @@ public class NodePage implements IPage {
     /**
      * Create node page.
      * 
-     * @param nodePageKey
+     * @param pNodePageKey
      *            Base key assigned to this node page.
+     * @param pRevision
+     *            Revision of the page
      */
-    public NodePage(final long nodePageKey, final long pRevision) {
+    public NodePage(final long pNodePageKey, final long pRevision) {
+        mNodePageKey = pNodePageKey;
         mRevision = pRevision;
-        mNodePageKey = nodePageKey;
         mNodes = new INode[IConstants.NDP_NODE_COUNT];
-    }
-
-    /**
-     * Read node page.
-     * 
-     * @param mIn
-     *            Input bytes to read page from.
-     */
-    protected NodePage(final ITTSource mIn) {
-        mRevision = mIn.readLong();
-
-        mNodePageKey = mIn.readLong();
-        mNodes = new INode[IConstants.NDP_NODE_COUNT];
-
-        final int[] kinds = new int[IConstants.NDP_NODE_COUNT];
-        for (int i = 0; i < kinds.length; i++) {
-            kinds[i] = mIn.readInt();
-        }
-
-        for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-            final int kind = kinds[offset];
-            final ENode enumKind = ENode.getKind(kind);
-            if (enumKind != ENode.UNKOWN_KIND) {
-                getNodes()[offset] = enumKind.deserialize(mIn);
-            }
-        }
-
     }
 
     /**
@@ -156,7 +128,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -172,7 +144,7 @@ public class NodePage implements IPage {
         if (getClass() != mObj.getClass()) {
             return false;
         }
-        final NodePage mOther = (NodePage)mObj;
+        final NodePage mOther = (NodePage) mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
             return false;
         }
@@ -200,48 +172,19 @@ public class NodePage implements IPage {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink mOut) {
-        // TODO respect new INode hierarchy, must rely on normal INodes only
-        mOut.writeLong(mNodePageKey);
-        for (int i = 0; i < getNodes().length; i++) {
-            if (getNodes()[i] != null) {
-                final int kind = ((org.treetank.node.interfaces.INode)getNodes()[i]).getKind().getId();
-                mOut.writeInt(kind);
-            } else {
-                mOut.writeInt(ENode.UNKOWN_KIND.getId());
-            }
-        }
-
-        for (final INode node : getNodes()) {
-            if (node != null) {
-                org.treetank.node.interfaces.INode nodenode = (org.treetank.node.interfaces.INode)node;
-                ENode.getKind(nodenode.getClass()).serialize(mOut, nodenode);
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PagePersistenter.NODEPAGE);
+        pOutput.writeInt(IConstants.NODEPAGE);
+        pOutput.writeLong(mNodePageKey);
         pOutput.writeLong(mRevision);
 
-        pOutput.writeLong(mNodePageKey);
-        for (int i = 0; i < getNodes().length; i++) {
-            if (getNodes()[i] != null) {
-                final int kind = ((org.treetank.node.interfaces.INode)getNodes()[i]).getKind().getId();
-                pOutput.writeInt(kind);
-            } else {
-                pOutput.writeInt(ENode.UNKOWN_KIND.getId());
-            }
-        }
-
         for (final INode node : getNodes()) {
-            if (node != null) {
-                pOutput.write(node.getByteRepresentation());
+            if (node == null) {
+                pOutput.writeInt(IConstants.NULL_NODE);
+            } else {
+                byte[] nodeBytes = node.getByteRepresentation();
+                pOutput.writeInt(nodeBytes.length);
+                pOutput.write(nodeBytes);
             }
         }
         return pOutput.toByteArray();

@@ -32,8 +32,6 @@ import java.util.Map;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSink;
-import org.treetank.io.ITTSource;
 import org.treetank.utils.TypedValue;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -63,28 +61,6 @@ public final class NamePage implements IPage {
     public NamePage(final long pRevision) {
         mRevision = pRevision;
         mNameMap = new HashMap<Integer, String>();
-    }
-
-    /**
-     * Read name page.
-     * 
-     * @param paramIn
-     *            Input bytes to read from.
-     */
-    protected NamePage(final ITTSource paramIn) {
-        mRevision = paramIn.readLong();
-        final int mapSize = paramIn.readInt();
-
-        mNameMap = new HashMap<Integer, String>(mapSize);
-        for (int i = 0, l = (int) mapSize; i < l; i++) {
-            final int key = paramIn.readInt();
-            final int valSize = paramIn.readInt();
-            final byte[] bytes = new byte[valSize];
-            for (int j = 0; j < bytes.length; j++) {
-                bytes[j] = paramIn.readByte();
-            }
-            mNameMap.put(key, new String(bytes));
-        }
     }
 
     /**
@@ -125,23 +101,6 @@ public final class NamePage implements IPage {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink paramOut) {
-        paramOut.writeInt(mNameMap.size());
-
-        for (final int key : mNameMap.keySet()) {
-            paramOut.writeInt(key);
-            final byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-            paramOut.writeInt(tmp.length);
-            for (final byte byteVal : tmp) {
-                paramOut.writeByte(byteVal);
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         return super.toString() + ": nameCount=" + mNameMap.size();
     }
@@ -175,9 +134,9 @@ public final class NamePage implements IPage {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PagePersistenter.NAMEPAGE);
+        pOutput.writeInt(IConstants.NAMEPAGE);
         pOutput.writeLong(mRevision);
-        
+
         pOutput.writeInt(mNameMap.size());
 
         for (final int key : mNameMap.keySet()) {

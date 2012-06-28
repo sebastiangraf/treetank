@@ -32,12 +32,11 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSink;
-import org.treetank.io.ITTSource;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -64,6 +63,30 @@ public final class UberPage implements IPage {
 
     /** Page references. */
     private PageReference[] mReferences;
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pData
+     *            data within the page
+     */
+    public UberPage(final byte[] pData) {
+        final ByteArrayDataInput data = ByteStreams.newDataInput(pData);
+        mRevision = data.readLong();
+        mReferences = new PageReference[1];
+        mReferences[0] = new PageReference();
+
+        // Check if UberPage is new (pData contains only 1 longs) or is
+        // serialized(pData contains entire page)
+        if (pData.length > 8) {
+            mReferences[0].setKey(data.readLong());
+            mRevisionCount = data.readLong();
+            mBootstrap = false;
+        } else {
+            mRevisionCount = 0;
+        }
+    }
 
     /**
      * Create uber page.
@@ -110,31 +133,15 @@ public final class UberPage implements IPage {
             reference = page.getReferences()[0];
         }
 
-        final NodePage ndp = new NodePage(ROOT_NODE, IConstants.UBP_ROOT_REVISION_NUMBER);
+        final NodePage ndp = new NodePage(ROOT_NODE,
+                IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
         final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
-        final StructNodeDelegate strucDel =
-            new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0);
+        final StructNodeDelegate strucDel = new StructNodeDelegate(nodeDel,
+                NULL_NODE, NULL_NODE, NULL_NODE, 0);
         ndp.setNode(0, new DocumentRootNode(nodeDel, strucDel));
         rrp.incrementMaxNodeKey();
-    }
-
-    /**
-     * Read uber page.
-     * 
-     * @param paramIn
-     *            Input bytes.
-     */
-    protected UberPage(final ITTSource paramIn) {
-        mRevision = paramIn.readLong();
-        mReferences = new PageReference[1];
-        for (int offset = 0; offset < mReferences.length; offset++) {
-            getReferences()[offset] = new PageReference();
-            getReferences()[offset].setKey(paramIn.readLong());
-        }
-        mRevisionCount = paramIn.readLong();
-        mBootstrap = false;
     }
 
     /**
@@ -206,22 +213,10 @@ public final class UberPage implements IPage {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink paramOut) {
-        mBootstrap = false;
-        for (final PageReference reference : getReferences()) {
-            paramOut.writeLong(reference.getKey());
-        }
-        paramOut.writeLong(mRevisionCount);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public byte[] getByteRepresentation() {
         mBootstrap = false;
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PagePersistenter.UBERPAGE);
+        pOutput.writeInt(IConstants.UBERPAGE);
         pOutput.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
@@ -235,8 +230,10 @@ public final class UberPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
-            + getReferences()[INDIRECT_REFERENCE_OFFSET] + "), isBootstrap=" + mBootstrap;
+        return super.toString() + ": revisionCount=" + mRevisionCount
+                + ", indirectPage=("
+                + getReferences()[INDIRECT_REFERENCE_OFFSET]
+                + "), isBootstrap=" + mBootstrap;
     }
 
     @Override

@@ -32,6 +32,7 @@ package org.treetank.node.delegates;
 import org.treetank.node.ENode;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
+import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Hasher;
 import com.google.common.io.ByteArrayDataOutput;
@@ -46,7 +47,7 @@ import com.google.common.io.ByteStreams;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class NameNodeDelegate implements INameNode {
+public class NameNodeDelegate implements INode, INameNode {
 
     /** Node delegate, containing basic node information. */
     private final NodeDelegate mDelegate;
@@ -231,7 +232,7 @@ public class NameNodeDelegate implements INameNode {
         builder.append(mNameKey);
         return builder.toString();
     }
-    
+
     /**
      * {@inheritDoc}
      */

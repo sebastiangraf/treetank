@@ -28,12 +28,8 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSink;
 
 public interface IPage {
-
-    @Deprecated
-    void serialize(final ITTSink paramOut);
 
     byte[] getByteRepresentation();
 

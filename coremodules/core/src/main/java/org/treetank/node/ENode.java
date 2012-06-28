@@ -48,7 +48,7 @@ import org.treetank.node.interfaces.INode;
 public enum ENode {
 
     /** Unknown kind. */
-    UNKOWN_KIND(0, null) {
+    UNKOWN_KIND(-1, null) {
         @Override
         public INode deserialize(final ITTSource pSource) {
             throw new UnsupportedOperationException();
@@ -65,9 +65,6 @@ public enum ENode {
         @Override
         public INode deserialize(final ITTSource pSource) {
 
-            final List<Long> attrKeys = new ArrayList<Long>();
-            final List<Long> namespKeys = new ArrayList<Long>();
-
             // node delegate
             final NodeDelegate nodeDel =
                 new NodeDelegate(pSource.readLong(), pSource.readLong(), pSource.readLong());
@@ -80,6 +77,9 @@ public enum ENode {
             // name delegate
             final NameNodeDelegate nameDel =
                 new NameNodeDelegate(nodeDel, pSource.readInt(), pSource.readInt());
+
+            final List<Long> attrKeys = new ArrayList<Long>();
+            final List<Long> namespKeys = new ArrayList<Long>();
 
             // Attributes getting
             int attrCount = pSource.readInt();
@@ -149,26 +149,27 @@ public enum ENode {
             // node delegate
             final NodeDelegate nodeDel =
                 new NodeDelegate(pSource.readLong(), pSource.readLong(), pSource.readLong());
+            // struct delegate
+            final StructNodeDelegate structDel =
+                new StructNodeDelegate(nodeDel, pSource.readLong(), pSource.readLong(), pSource.readLong(),
+                    pSource.readLong());
             // val delegate
             final byte[] vals = new byte[pSource.readInt()];
             for (int i = 0; i < vals.length; i++) {
                 vals[i] = pSource.readByte();
             }
             final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, vals);
-            // struct delegate
-            final StructNodeDelegate structDel =
-                new StructNodeDelegate(nodeDel, pSource.readLong(), pSource.readLong(), pSource.readLong(),
-                    pSource.readLong());
+
             // returning the data
-            return new TextNode(nodeDel, valDel, structDel);
+            return new TextNode(nodeDel, structDel, valDel);
         }
 
         @Override
         public void serialize(final ITTSink pSink, final INode pToSerialize) {
             TextNode node = (TextNode)pToSerialize;
             serializeDelegate(node.getNodeDelegate(), pSink);
-            serializeValDelegate(node.getValNodeDelegate(), pSink);
             serializeStrucDelegate(node.getStrucNodeDelegate(), pSink);
+            serializeValDelegate(node.getValNodeDelegate(), pSink);
         }
 
     },

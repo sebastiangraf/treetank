@@ -35,6 +35,7 @@ import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
+import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -47,7 +48,7 @@ import com.google.common.io.ByteStreams;
  * Node representing an XML element.
  * </p>
  */
-public final class ElementNode implements IStructNode, INameNode {
+public final class ElementNode implements INode, IStructNode, INameNode {
 
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
@@ -488,11 +489,12 @@ public final class ElementNode implements IStructNode, INameNode {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(IConstants.ELEMENT);
         pOutput.write(mDel.getByteRepresentation());
         pOutput.write(mStrucDel.getByteRepresentation());
         pOutput.write(mNameDel.getByteRepresentation());
         pOutput.writeInt(getAttributeCount());
-        for (int i = 0; i <getAttributeCount(); i++) {
+        for (int i = 0; i < getAttributeCount(); i++) {
             pOutput.writeLong(getAttributeKey(i));
         }
         pOutput.writeInt(getNamespaceCount());
@@ -501,5 +503,5 @@ public final class ElementNode implements IStructNode, INameNode {
         }
         return pOutput.toByteArray();
     }
-    
+
 }

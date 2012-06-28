@@ -231,7 +231,7 @@ public final class TestHelper {
                 strucDel =
                     new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
                         random.nextLong());
-                page.setNode(i, new TextNode(nodeDel, valDel, strucDel));
+                page.setNode(i, new TextNode(nodeDel, strucDel, valDel));
                 break;
             }
 

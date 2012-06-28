@@ -56,16 +56,16 @@ public class CryptoJavaImpl {
     /**
      * Compress data.
      * 
-     * @param paramLength
+     * @param pLength
      *            of the data to be compressed
-     * @param paramBuffer
+     * @param pBuffer
      *            data that should be compressed
      * @return compressed data, null if failed
      */
-    public int crypt(final int paramLength, final ByteBuffer paramBuffer) {
-        paramBuffer.position(FileReader.OTHER_BEACON);
-        final byte[] tmp = new byte[paramLength - FileReader.OTHER_BEACON];
-        paramBuffer.get(tmp, 0, tmp.length);
+    public int crypt(final int pLength, final ByteBuffer pBuffer) {
+        pBuffer.position(FileReader.OTHER_BEACON);
+        final byte[] tmp = new byte[pLength - FileReader.OTHER_BEACON];
+        pBuffer.get(tmp, 0, tmp.length);
         mCompressor.reset();
         mOut.reset();
         mCompressor.setInput(tmp);
@@ -76,26 +76,26 @@ public class CryptoJavaImpl {
             mOut.write(mTmp, 0, count);
         }
         final byte[] result = mOut.toByteArray();
-        paramBuffer.position(FileReader.OTHER_BEACON);
-        paramBuffer.put(result);
-        return paramBuffer.position();
+        pBuffer.position(FileReader.OTHER_BEACON);
+        pBuffer.put(result);
+        return pBuffer.position();
     }
 
     /**
      * Decompress data.
      * 
-     * @param paramBuffer
+     * @param pBuffer
      *            data that should be decompressed
-     * @param paramLength
+     * @param pLength
      *            of the data to be decompressed
      * @return Decompressed data, null if failed
      * @throws DataFormatException
      */
-    public int decrypt(final int paramLength, final ByteBufferSinkAndSource paramBuffer)
-        throws DataFormatException {
-        paramBuffer.position(FileReader.OTHER_BEACON);
-        final byte[] tmp = new byte[paramLength - FileReader.OTHER_BEACON];
-        paramBuffer.get(tmp, 0, tmp.length);
+    public ByteBuffer decrypt(final int pLength, ByteBuffer pBuffer)
+            throws DataFormatException {
+        pBuffer.position(FileReader.OTHER_BEACON);
+        final byte[] tmp = new byte[pLength - FileReader.OTHER_BEACON];
+        pBuffer.get(tmp, 0, tmp.length);
         mDecompressor.reset();
         mOut.reset();
         mDecompressor.setInput(tmp);
@@ -105,12 +105,31 @@ public class CryptoJavaImpl {
             mOut.write(mTmp, 0, count);
         }
         final byte[] result = mOut.toByteArray();
-        paramBuffer.position(FileReader.OTHER_BEACON);
-        for (final byte byteVal : result) {
-            paramBuffer.writeByte(byteVal);
-        }
+        pBuffer.position(FileReader.OTHER_BEACON);
+        pBuffer = checkAndIncrease(result.length, pBuffer);
+        pBuffer.put(result);
         // return result.length + FileReader.OTHER_BEACON;
-        return paramBuffer.position();
+        return pBuffer;
+    }
+
+    /**
+     * Checking of length is sufficient, if not, increase the bytebuffer.
+     * 
+     * @param mLength
+     *            for the bytes which have to be inserted
+     */
+    private ByteBuffer checkAndIncrease(final int mLength, ByteBuffer mBuffer) {
+        if (mBuffer.position() + mLength > mBuffer.capacity()) {
+            final int position = mBuffer.position();
+            mBuffer.position(0);
+            final ByteBuffer newBuffer = ByteBuffer
+                    .allocate(position + mLength);
+            newBuffer.put(mBuffer);
+            newBuffer.position(position);
+            return newBuffer;
+        } else {
+            return mBuffer;
+        }
     }
 
 }

@@ -29,8 +29,6 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.io.ITTSink;
-import org.treetank.io.ITTSource;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -65,21 +63,6 @@ public final class IndirectPage implements IPage {
     }
 
     /**
-     * Read indirect page.
-     * 
-     * @param paramIn
-     *            Input bytes.
-     */
-    protected IndirectPage(final ITTSource paramIn) {
-        mRevision = paramIn.readLong();
-        mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
-        for (int offset = 0; offset < mReferences.length; offset++) {
-            getReferences()[offset] = new PageReference();
-            getReferences()[offset].setKey(paramIn.readLong());
-        }
-    }
-
-    /**
      * Clone indirect page.
      * 
      * @param page
@@ -100,13 +83,6 @@ public final class IndirectPage implements IPage {
     }
 
     @Override
-    public void serialize(ITTSink paramOut) {
-        for (final PageReference reference : getReferences()) {
-            paramOut.writeLong(reference.getKey());
-        }
-    }
-
-    @Override
     public PageReference[] getReferences() {
         return mReferences;
     }
@@ -122,7 +98,7 @@ public final class IndirectPage implements IPage {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(PagePersistenter.INDIRCTPAGE);
+        pOutput.writeInt(IConstants.INDIRCTPAGE);
         pOutput.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
