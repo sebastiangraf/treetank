@@ -71,6 +71,7 @@ public class NodeFactory implements INodeFactory {
 
             returnVal = new ElementNode(nodeDel, strucDel, nameDel, attrKeys,
                     namespKeys);
+            break;
         case IConstants.TEXT:
             // Struct Node are 4*8 bytes
             strucDel = new StructNodeDelegate(nodeDel, input.readLong(),
@@ -79,11 +80,13 @@ public class NodeFactory implements INodeFactory {
             valDel = new ValNodeDelegate(nodeDel, Arrays.copyOfRange(pSource,
                     24, pSource.length));
             returnVal = new TextNode(nodeDel, strucDel, valDel);
+            break;
         case IConstants.ROOT:
             // Struct Node are 4*8 bytes
             strucDel = new StructNodeDelegate(nodeDel, input.readLong(),
                     input.readLong(), input.readLong(), input.readLong());
             returnVal = new DocumentRootNode(nodeDel, strucDel);
+            break;
         case IConstants.ATTRIBUTE:
             // Name Node are 2*4 bytes
             nameDel = new NameNodeDelegate(nodeDel, input.readInt(),
@@ -92,6 +95,7 @@ public class NodeFactory implements INodeFactory {
             valDel = new ValNodeDelegate(nodeDel, Arrays.copyOfRange(pSource,
                     8, pSource.length));
             returnVal = new AttributeNode(nodeDel, nameDel, valDel);
+            break;
         case IConstants.NAMESPACE:
             // Name Node are 2*4 bytes
             nameDel = new NameNodeDelegate(nodeDel, input.readInt(),

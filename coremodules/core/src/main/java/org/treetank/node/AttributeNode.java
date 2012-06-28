@@ -295,6 +295,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(IConstants.ATTRIBUTE);
         pOutput.write(mDel.getByteRepresentation());
         pOutput.write(mNameDel.getByteRepresentation());
         pOutput.write(mValDel.getByteRepresentation());

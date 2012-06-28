@@ -189,6 +189,7 @@ public final class DeletedNode implements INode {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(IConstants.DELETE);
         pOutput.write(mDel.getByteRepresentation());
         return pOutput.toByteArray();
     }

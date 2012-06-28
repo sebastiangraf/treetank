@@ -328,6 +328,7 @@ public final class DocumentRootNode implements INode, IStructNode {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(IConstants.ROOT);
         pOutput.write(mDel.getByteRepresentation());
         pOutput.write(mStrucDel.getByteRepresentation());
         return pOutput.toByteArray();

@@ -245,6 +245,7 @@ public final class NamespaceNode implements INode, INameNode {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(IConstants.NAMESPACE);
         pOutput.write(mDel.getByteRepresentation());
         pOutput.write(mNameDel.getByteRepresentation());
         return pOutput.toByteArray();

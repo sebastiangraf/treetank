@@ -489,6 +489,7 @@ public final class ElementNode implements INode, IStructNode, INameNode {
     @Override
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        pOutput.writeInt(IConstants.ELEMENT);
         pOutput.write(mDel.getByteRepresentation());
         pOutput.write(mStrucDel.getByteRepresentation());
         pOutput.write(mNameDel.getByteRepresentation());
