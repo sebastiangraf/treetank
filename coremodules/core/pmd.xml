@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-06-15T18:27:21.960">
+<pmd version="4.3" timestamp="2012-06-28T18:08:50.526">
 <file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/Database.java">
 <violation beginline="151" endline="154" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.access" class="Database" method="truncateDatabase" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
@@ -34,13 +34,18 @@ Avoid unused constructor parameters such as 'paramRevision'.
 </violation>
 </file>
 <file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/DeletedNode.java">
-<violation beginline="160" endline="160" begincolumn="16" endcolumn="25" rule="OverrideBothEqualsAndHashcode" ruleset="Basic Rules" package="org.treetank.node" class="DeletedNode" method="hashCode" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#OverrideBothEqualsAndHashcode" priority="3">
+<violation beginline="163" endline="163" begincolumn="16" endcolumn="25" rule="OverrideBothEqualsAndHashcode" ruleset="Basic Rules" package="org.treetank.node" class="DeletedNode" method="hashCode" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#OverrideBothEqualsAndHashcode" priority="3">
 Ensure you override both equals() and hashCode()
 </violation>
 </file>
 <file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/Type.java">
 <violation beginline="1024" endline="1027" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.node" method="isCastableTo" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/page/PageFactory.java">
+<violation beginline="54" endline="61" begincolumn="25" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.page" class="PageFactory" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
+Unnecessary final modifier in final class
 </violation>
 </file>
 </pmd>

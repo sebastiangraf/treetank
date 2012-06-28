@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">     * Constructor.</em>
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/treetank/io/file/ByteBufferSinkAndSource.html">ByteBufferSinkAndSource</a>() {
-<a class="jxr_linenumber" name="52" href="#52">52</a>          mBuffer = ByteBuffer.allocate(FileFactory.BUFFERSIZE);
+<a class="jxr_linenumber" name="52" href="#52">52</a>          mBuffer = ByteBuffer.allocate(31678);
 <a class="jxr_linenumber" name="53" href="#53">53</a>      }
 <a class="jxr_linenumber" name="54" href="#54">54</a>  
 <a class="jxr_linenumber" name="55" href="#55">55</a>      <em class="jxr_javadoccomment">/**</em>
@@ -158,7 +158,7 @@
 <a class="jxr_linenumber" name="148" href="#148">148</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> position = mBuffer.position();
 <a class="jxr_linenumber" name="149" href="#149">149</a>         <strong class="jxr_keyword">if</strong> (mBuffer.position() + mLength &gt;= mBuffer.capacity()) {
 <a class="jxr_linenumber" name="150" href="#150">150</a>             mBuffer.position(0);
-<a class="jxr_linenumber" name="151" href="#151">151</a>             <strong class="jxr_keyword">final</strong> ByteBuffer newBuffer = ByteBuffer.allocate(mBuffer.capacity() + FileFactory.BUFFERSIZE);
+<a class="jxr_linenumber" name="151" href="#151">151</a>             <strong class="jxr_keyword">final</strong> ByteBuffer newBuffer = ByteBuffer.allocate(mBuffer.capacity() + 3);
 <a class="jxr_linenumber" name="152" href="#152">152</a>             newBuffer.put(mBuffer);
 <a class="jxr_linenumber" name="153" href="#153">153</a>             mBuffer = newBuffer;
 <a class="jxr_linenumber" name="154" href="#154">154</a>             mBuffer.position(position);

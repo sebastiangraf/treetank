@@ -9,7 +9,7 @@
     <copyright>&#169;2012 Distributed Systems Group</copyright>
     <item>
       <title>File: 86,
-             Errors: 2188,
+             Errors: 2082,
              Warnings: 0,
              Infos: 0
       </title>
@@ -94,7 +94,7 @@
                   0
                 </td>
                 <td>
-                  32
+                  33
                 </td>
               </tr>
                           <tr>
@@ -169,20 +169,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.PagePersistenter.java">org/treetank/page/PagePersistenter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  20
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.node.ElementNode.java">org/treetank/node/ElementNode.java</a>
                 </td>
                 <td>
@@ -206,7 +192,21 @@
                   0
                 </td>
                 <td>
-                  22
+                  24
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.node.NodeFactory.java">org/treetank/node/NodeFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  9
                 </td>
               </tr>
                           <tr>
@@ -248,7 +248,7 @@
                   0
                 </td>
                 <td>
-                  40
+                  41
                 </td>
               </tr>
                           <tr>
@@ -290,7 +290,7 @@
                   0
                 </td>
                 <td>
-                  18
+                  17
                 </td>
               </tr>
                           <tr>
@@ -346,7 +346,7 @@
                   0
                 </td>
                 <td>
-                  18
+                  19
                 </td>
               </tr>
                           <tr>
@@ -360,7 +360,7 @@
                   0
                 </td>
                 <td>
-                  50
+                  53
                 </td>
               </tr>
                           <tr>
@@ -374,7 +374,7 @@
                   0
                 </td>
                 <td>
-                  23
+                  15
                 </td>
               </tr>
                           <tr>
@@ -388,7 +388,7 @@
                   0
                 </td>
                 <td>
-                  47
+                  48
                 </td>
               </tr>
                           <tr>
@@ -449,20 +449,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.berkeley.TupleInputSource.java">org/treetank/io/berkeley/TupleInputSource.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.node.IConstants.java">org/treetank/node/IConstants.java</a>
                 </td>
                 <td>
@@ -472,7 +458,7 @@
                   0
                 </td>
                 <td>
-                  10
+                  39
                 </td>
               </tr>
                           <tr>
@@ -542,7 +528,7 @@
                   0
                 </td>
                 <td>
-                  12
+                  14
                 </td>
               </tr>
                           <tr>
@@ -556,7 +542,7 @@
                   0
                 </td>
                 <td>
-                  19
+                  14
                 </td>
               </tr>
                           <tr>
@@ -570,7 +556,7 @@
                   0
                 </td>
                 <td>
-                  31
+                  32
                 </td>
               </tr>
                           <tr>
@@ -682,7 +668,7 @@
                   0
                 </td>
                 <td>
-                  5
+                  30
                 </td>
               </tr>
                           <tr>
@@ -710,7 +696,7 @@
                   0
                 </td>
                 <td>
-                  15
+                  18
                 </td>
               </tr>
                           <tr>
@@ -766,7 +752,7 @@
                   0
                 </td>
                 <td>
-                  10
+                  7
                 </td>
               </tr>
                           <tr>
@@ -780,7 +766,7 @@
                   0
                 </td>
                 <td>
-                  25
+                  17
                 </td>
               </tr>
                           <tr>
@@ -808,7 +794,7 @@
                   0
                 </td>
                 <td>
-                  176
+                  28
                 </td>
               </tr>
                           <tr>
@@ -823,6 +809,20 @@
                 </td>
                 <td>
                   8
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.api.INodeFactory.java">org/treetank/api/INodeFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
                 </td>
               </tr>
                           <tr>
@@ -850,7 +850,7 @@
                   0
                 </td>
                 <td>
-                  41
+                  42
                 </td>
               </tr>
                           <tr>
@@ -920,7 +920,21 @@
                   0
                 </td>
                 <td>
-                  190
+                  193
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.PageFactory.java">org/treetank/page/PageFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  19
                 </td>
               </tr>
                           <tr>
@@ -935,20 +949,6 @@
                 </td>
                 <td>
                   8
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.berkeley.TupleOutputSink.java">org/treetank/io/berkeley/TupleOutputSink.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  7
                 </td>
               </tr>
                           <tr>
@@ -990,7 +990,7 @@
                   0
                 </td>
                 <td>
-                  11
+                  10
                 </td>
               </tr>
                           <tr>
@@ -1004,7 +1004,7 @@
                   0
                 </td>
                 <td>
-                  9
+                  7
                 </td>
               </tr>
                           <tr>
@@ -1032,7 +1032,7 @@
                   0
                 </td>
                 <td>
-                  17
+                  14
                 </td>
               </tr>
                           <tr>
@@ -1046,7 +1046,7 @@
                   0
                 </td>
                 <td>
-                  51
+                  53
                 </td>
               </tr>
                           <tr>
@@ -1158,7 +1158,7 @@
                   0
                 </td>
                 <td>
-                  12
+                  10
                 </td>
               </tr>
                           <tr>

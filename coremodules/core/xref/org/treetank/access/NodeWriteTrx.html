@@ -346,7 +346,7 @@
 <a class="jxr_linenumber" name="336" href="#336">336</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/node/delegates/StructNodeDelegate.html">StructNodeDelegate</a> structDel =
 <a class="jxr_linenumber" name="337" href="#337">337</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/node/delegates/StructNodeDelegate.html">StructNodeDelegate</a>(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
 <a class="jxr_linenumber" name="338" href="#338">338</a> 
-<a class="jxr_linenumber" name="339" href="#339">339</a>         <strong class="jxr_keyword">return</strong> getPageTransaction().createNode(<strong class="jxr_keyword">new</strong> TextNode(nodeDel, valDel, structDel));
+<a class="jxr_linenumber" name="339" href="#339">339</a>         <strong class="jxr_keyword">return</strong> getPageTransaction().createNode(<strong class="jxr_keyword">new</strong> TextNode(nodeDel, structDel, valDel));
 <a class="jxr_linenumber" name="340" href="#340">340</a>     }
 <a class="jxr_linenumber" name="341" href="#341">341</a> 
 <a class="jxr_linenumber" name="342" href="#342">342</a>     <em class="jxr_javadoccomment">/**</em>
@@ -414,7 +414,7 @@
 <a class="jxr_linenumber" name="404" href="#404">404</a>             node.setNameKey(getPageTransaction().createNameKey(PageWriteTrx.buildName(paramName)));
 <a class="jxr_linenumber" name="405" href="#405">405</a>             getPageTransaction().finishNodeModification(node);
 <a class="jxr_linenumber" name="406" href="#406">406</a> 
-<a class="jxr_linenumber" name="407" href="#407">407</a>             mDelegate.setCurrentNode(node);
+<a class="jxr_linenumber" name="407" href="#407">407</a>             mDelegate.setCurrentNode((INode)node);
 <a class="jxr_linenumber" name="408" href="#408">408</a>             adaptHashedWithUpdate(oldHash);
 <a class="jxr_linenumber" name="409" href="#409">409</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="410" href="#410">410</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> TTUsageException(
@@ -437,7 +437,7 @@
 <a class="jxr_linenumber" name="427" href="#427">427</a>             node.setURIKey(getPageTransaction().createNameKey(paramUri));
 <a class="jxr_linenumber" name="428" href="#428">428</a>             getPageTransaction().finishNodeModification(node);
 <a class="jxr_linenumber" name="429" href="#429">429</a> 
-<a class="jxr_linenumber" name="430" href="#430">430</a>             mDelegate.setCurrentNode(node);
+<a class="jxr_linenumber" name="430" href="#430">430</a>             mDelegate.setCurrentNode((INode)node);
 <a class="jxr_linenumber" name="431" href="#431">431</a>             adaptHashedWithUpdate(oldHash);
 <a class="jxr_linenumber" name="432" href="#432">432</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="433" href="#433">433</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> TTUsageException(
@@ -461,7 +461,7 @@
 <a class="jxr_linenumber" name="451" href="#451">451</a>             node.setValue(TypedValue.getBytes(paramValue));
 <a class="jxr_linenumber" name="452" href="#452">452</a>             getPageTransaction().finishNodeModification(node);
 <a class="jxr_linenumber" name="453" href="#453">453</a> 
-<a class="jxr_linenumber" name="454" href="#454">454</a>             mDelegate.setCurrentNode(node);
+<a class="jxr_linenumber" name="454" href="#454">454</a>             mDelegate.setCurrentNode((INode)node);
 <a class="jxr_linenumber" name="455" href="#455">455</a>             adaptHashedWithUpdate(oldHash);
 <a class="jxr_linenumber" name="456" href="#456">456</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="457" href="#457">457</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> TTUsageException(
