@@ -80,8 +80,8 @@ import org.treetank.axis.PrecedingAxis;
 import org.treetank.axis.PrecedingSiblingAxis;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -693,7 +693,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
             switch (axisNumber) {
             case Axis.ANCESTOR:
-                if (getNodeKind() == ENode.ROOT_KIND.getId()) {
+                if (getNodeKind() == IConstants.ROOT) {
                     returnVal = EmptyIterator.getInstance();
                 } else {
                     returnVal =
@@ -701,7 +701,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 }
                 break;
             case Axis.ANCESTOR_OR_SELF:
-                if (getNodeKind() == ENode.ROOT_KIND.getId()) {
+                if (getNodeKind() == IConstants.ROOT) {
                     returnVal = Navigator.filteredSingleton(this, nodeTest);
                 } else {
                     returnVal =
@@ -709,7 +709,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 }
                 break;
             case Axis.ATTRIBUTE:
-                if (getNodeKind() != ENode.ELEMENT_KIND.getId()) {
+                if (getNodeKind() != IConstants.ELEMENT) {
                     returnVal = EmptyIterator.getInstance();
                 } else {
                     returnVal =
@@ -753,14 +753,14 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 }
 
             case Axis.NAMESPACE:
-                if (getNodeKind() != ENode.ELEMENT_KIND.getId()) {
+                if (getNodeKind() != IConstants.ELEMENT) {
                     returnVal = EmptyIterator.getInstance();
                 } else {
                     returnVal = NamespaceIterator.makeIterator(this, nodeTest);
                 }
                 break;
             case Axis.PARENT:
-                if (rtx.getNode().getParentKey() == ENode.ROOT_KIND.getId()) {
+                if (rtx.getNode().getParentKey() == IConstants.ROOT) {
                     returnVal = EmptyIterator.getInstance();
                 } else {
                     returnVal = new Navigator.AxisFilter(new SaxonEnumeration(new ParentAxis(rtx)), nodeTest);
