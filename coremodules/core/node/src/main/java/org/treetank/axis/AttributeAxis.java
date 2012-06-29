@@ -28,8 +28,8 @@
 package org.treetank.axis;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 
 /**
  * <h1>AttributeAxis</h1>
@@ -74,9 +74,9 @@ public class AttributeAxis extends AbsAxis {
         if (mNextIndex > 0) {
             moveTo(getNode().getParentKey());
         }
-        if (getNode().getKind() == ENode.ELEMENT_KIND
-                && mNextIndex < ((ElementNode) getNode()).getAttributeCount()) {
-            moveTo(((ElementNode) getNode()).getAttributeKey(mNextIndex));
+        if (getNode().getKind() == IConstants.ELEMENT
+            && mNextIndex < ((ElementNode)getNode()).getAttributeCount()) {
+            moveTo(((ElementNode)getNode()).getAttributeKey(mNextIndex));
             mNextIndex += 1;
             return true;
         }

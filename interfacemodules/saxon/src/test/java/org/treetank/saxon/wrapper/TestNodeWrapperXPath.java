@@ -56,7 +56,7 @@ import org.treetank.TestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 
 /**
@@ -162,9 +162,9 @@ public final class TestNodeWrapperXPath {
 
                     final QName qName = mHolder.getNRtx().getQNameOfCurrentNode();
 
-                    if (mHolder.getNRtx().getNode().getKind() == ENode.ELEMENT_KIND) {
+                    if (mHolder.getNRtx().getNode().getKind() == IConstants.ELEMENT) {
                         assertEquals(expRes[j], qName.getPrefix() + ":" + qName.getLocalPart());
-                    } else if (mHolder.getNRtx().getNode().getKind() == ENode.TEXT_KIND) {
+                    } else if (mHolder.getNRtx().getNode().getKind() == IConstants.TEXT) {
                         assertEquals(expRes[j], mHolder.getNRtx().getValueOfCurrentNode());
                     }
 

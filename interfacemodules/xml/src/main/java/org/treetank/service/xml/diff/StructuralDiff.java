@@ -29,6 +29,7 @@ package org.treetank.service.xml.diff;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
+import org.treetank.node.IConstants;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
 
 /**
@@ -58,12 +59,12 @@ final class StructuralDiff extends AbsDiff {
         if (paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey()) {
             if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
                 switch (paramNewRtx.getNode().getKind()) {
-                case ELEMENT_KIND:
+                case IConstants.ELEMENT:
                     if (paramNewRtx.getQNameOfCurrentNode().equals(paramOldRtx.getQNameOfCurrentNode())) {
                         found = true;
                     }
                     break;
-                case TEXT_KIND:
+                case IConstants.TEXT:
                     if (paramNewRtx.getValueOfCurrentNode().equals(paramOldRtx.getValueOfCurrentNode())) {
                         found = true;
                     }

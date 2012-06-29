@@ -54,8 +54,8 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.util.DocumentCreater;
 
@@ -112,7 +112,7 @@ public class XMLShredderTest extends XMLTestCase {
             assertEquals(expDesc.getLeftSiblingKey(), desc.getLeftSiblingKey());
             assertEquals(expDesc.getRightSiblingKey(), desc.getRightSiblingKey());
             assertEquals(expDesc.getChildCount(), desc.getChildCount());
-            if (expDesc.getKind() == ENode.ELEMENT_KIND || desc.getKind() == ENode.ELEMENT_KIND) {
+            if (expDesc.getKind() == IConstants.ELEMENT || desc.getKind() == IConstants.ELEMENT) {
 
                 assertEquals(((ElementNode)expDesc).getAttributeCount(), ((ElementNode)desc)
                     .getAttributeCount());
@@ -210,8 +210,8 @@ public class XMLShredderTest extends XMLTestCase {
         final Iterator<Long> attributes = new DescendantAxis(rtx);
 
         while (expectedAttributes.hasNext() && attributes.hasNext()) {
-            if (expectedTrx2.getNode().getKind() == ENode.ELEMENT_KIND
-                || rtx.getNode().getKind() == ENode.ELEMENT_KIND) {
+            if (expectedTrx2.getNode().getKind() == IConstants.ELEMENT
+                || rtx.getNode().getKind() == IConstants.ELEMENT) {
                 assertEquals(((ElementNode)expectedTrx2.getNode()).getNamespaceCount(), ((ElementNode)rtx
                     .getNode()).getNamespaceCount());
                 assertEquals(((ElementNode)expectedTrx2.getNode()).getAttributeCount(), ((ElementNode)rtx

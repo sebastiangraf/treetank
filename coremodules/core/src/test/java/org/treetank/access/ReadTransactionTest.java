@@ -36,7 +36,7 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 public class ReadTransactionTest {
@@ -56,12 +56,10 @@ public class ReadTransactionTest {
         TestHelper.closeEverything();
     }
 
-
-
     @Test
     public void testDocumentRoot() throws AbsTTException {
         assertEquals(true, holder.getNRtx().moveTo(ROOT_NODE));
-        assertEquals(ENode.ROOT_KIND, holder.getNRtx().getNode().getKind());
+        assertEquals(IConstants.ROOT, holder.getNRtx().getNode().getKind());
         assertEquals(false, holder.getNRtx().getNode().hasParent());
         assertEquals(false, ((IStructNode)holder.getNRtx().getNode()).hasLeftSibling());
         assertEquals(false, ((IStructNode)holder.getNRtx().getNode()).hasRightSibling());

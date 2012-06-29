@@ -26,7 +26,6 @@
  */
 package org.treetank.node.delegates;
 
-import org.treetank.node.ENode;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IValNode;
 
@@ -68,7 +67,7 @@ public class ValNodeDelegate implements IValNode {
      * @return the kind of the node
      * @see org.treetank.node.delegates.NodeDelegate#getKind()
      */
-    public ENode getKind() {
+    public int getKind() {
         return mDelegate.getKind();
     }
 

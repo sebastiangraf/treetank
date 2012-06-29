@@ -58,8 +58,8 @@ import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.TypedValue;
@@ -287,7 +287,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
             // // executed.
             // insertNewContent();
             // } else {
-            if (mWtx.getNode().getKind() == ENode.ROOT_KIND) {
+            if (mWtx.getNode().getKind() == IConstants.ROOT) {
                 // Find the start key for the update operation.
                 long startkey = ROOT_NODE + 1;
                 while (!mWtx.moveTo(startkey)) {
@@ -511,10 +511,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
                  * must have been an empty element at the end of a subtree, thus
                  * move this time to parent node.
                  */
-                assert mWtx.getNode().hasParent() && mWtx.getNode().getKind() == ENode.ELEMENT_KIND;
+                assert mWtx.getNode().hasParent() && mWtx.getNode().getKind() == IConstants.ELEMENT;
                 mWtx.moveTo(mWtx.getNode().getParentKey());
             } else {
-                if (mWtx.getNode().getKind() == ENode.ELEMENT_KIND) {
+                if (mWtx.getNode().getKind() == IConstants.ELEMENT) {
                     final ElementNode element = (ElementNode)mWtx.getNode();
                     if (element.hasFirstChild() && element.hasParent()) {
                         // It's not an empty element, thus move to parent.
@@ -629,7 +629,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
     private boolean checkText(final Characters paramEvent) {
         assert paramEvent != null;
         final String text = paramEvent.getData().trim();
-        return mWtx.getNode().getKind() == ENode.TEXT_KIND && mWtx.getValueOfCurrentNode().equals(text);
+        return mWtx.getNode().getKind() == IConstants.TEXT && mWtx.getValueOfCurrentNode().equals(text);
     }
 
     /**
@@ -857,7 +857,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
 
             // Make sure if transaction is on a text node the node is inserted
             // as a right sibling.
-            if (mWtx.getNode().getKind() == ENode.TEXT_KIND) {
+            if (mWtx.getNode().getKind() == IConstants.TEXT) {
                 insertNode = EAdd.ASRIGHTSIBLING;
             }
 
@@ -1310,7 +1310,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         boolean retVal = false;
 
         // Matching element names?
-        if (mWtx.getNode().getKind() == ENode.ELEMENT_KIND
+        if (mWtx.getNode().getKind() == IConstants.ELEMENT
             && mWtx.getQNameOfCurrentNode().equals(mEvent.getName())) {
             // Check if atts and namespaces are the same.
             final long nodeKey = mWtx.getNode().getNodeKey();

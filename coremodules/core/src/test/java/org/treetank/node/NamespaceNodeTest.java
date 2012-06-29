@@ -60,7 +60,7 @@ public class NamespaceNodeTest {
 
         assertEquals(14, node.getURIKey());
         assertEquals(15, node.getNameKey());
-        assertEquals(ENode.NAMESPACE_KIND, node.getKind());
+        assertEquals(IConstants.NAMESPACE, node.getKind());
         assertEquals(true, node.hasParent());
     }
 

@@ -35,7 +35,6 @@ import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.interfaces.INode;
@@ -52,10 +51,10 @@ public final class LabelFMESVisitor {
     private final INodeReadTrx mRtx;
 
     /** For each node type: list of inner nodes. */
-    private final Map<ENode, List<INode>> mLabels;
+    private final Map<Integer, List<INode>> mLabels;
 
     /** For each node type: list of leaf nodes. */
-    private final Map<ENode, List<INode>> mLeafLabels;
+    private final Map<Integer, List<INode>> mLeafLabels;
 
     /**
      * Constructor.
@@ -67,8 +66,8 @@ public final class LabelFMESVisitor {
      */
     public LabelFMESVisitor(final ISession paramSession) throws AbsTTException {
         mRtx = new NodeReadTrx(paramSession.beginPageReadTransaction(paramSession.getMostRecentVersion()));
-        mLabels = new HashMap<ENode, List<INode>>();
-        mLeafLabels = new HashMap<ENode, List<INode>>();
+        mLabels = new HashMap<Integer, List<INode>>();
+        mLeafLabels = new HashMap<Integer, List<INode>>();
     }
 
     /** {@inheritDoc} */
@@ -104,7 +103,7 @@ public final class LabelFMESVisitor {
      * Add leaf node label.
      */
     private void addLeafLabel() {
-        final ENode nodeKind = mRtx.getNode().getKind();
+        final int nodeKind = mRtx.getNode().getKind();
         if (!mLeafLabels.containsKey(nodeKind)) {
             mLeafLabels.put(nodeKind, new ArrayList<INode>());
         }
@@ -116,7 +115,7 @@ public final class LabelFMESVisitor {
      * 
      * @return the Labels
      */
-    public Map<ENode, List<INode>> getLabels() {
+    public Map<Integer, List<INode>> getLabels() {
         return mLabels;
     }
 
@@ -125,7 +124,7 @@ public final class LabelFMESVisitor {
      * 
      * @return the leaf labels
      */
-    public Map<ENode, List<INode>> getLeafLabels() {
+    public Map<Integer, List<INode>> getLeafLabels() {
         return mLeafLabels;
     }
 }

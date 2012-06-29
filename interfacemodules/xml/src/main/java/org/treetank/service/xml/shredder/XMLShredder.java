@@ -63,8 +63,8 @@ import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -245,7 +245,7 @@ public class XMLShredder implements Callable<Void> {
         final QName name = paramEvent.getName();
 
         if (mFirstChildAppend == EShredderInsert.ADDASRIGHTSIBLING) {
-            if (mWtx.getNode().getKind() == ENode.ROOT_KIND) {
+            if (mWtx.getNode().getKind() == IConstants.ROOT) {
                 throw new TTUsageException("Subtree can not be inserted as sibling of Root");
             }
             key = mWtx.insertElementAsRightSibling(name);

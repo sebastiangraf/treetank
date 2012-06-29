@@ -28,7 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 
 /**
  * <h1>NodeAxisTest</h1>
@@ -54,8 +54,7 @@ public class NodeFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return (getNode().getKind() == ENode.ELEMENT_KIND || getNode()
-                .getKind() == ENode.TEXT_KIND);
+        return (getNode().getKind() == IConstants.ELEMENT || getNode().getKind() == IConstants.TEXT);
     }
 
 }

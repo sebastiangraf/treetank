@@ -3,8 +3,10 @@
  */
 package org.treetank.page;
 
-import java.util.Arrays;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+
 import org.junit.Test;
 
 /**

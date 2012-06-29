@@ -65,7 +65,7 @@ public class DocumentRootNodeTest {
         assertEquals(NULL_NODE, node.getLeftSiblingKey());
         assertEquals(NULL_NODE, node.getRightSiblingKey());
         assertEquals(0L, node.getChildCount());
-        assertEquals(ENode.ROOT_KIND, node.getKind());
+        assertEquals(IConstants.ROOT, node.getKind());
 
     }
 

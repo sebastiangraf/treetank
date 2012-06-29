@@ -27,6 +27,11 @@
 
 package org.treetank.access;
 
+import static org.treetank.node.IConstants.ATTRIBUTE;
+import static org.treetank.node.IConstants.ELEMENT;
+import static org.treetank.node.IConstants.NAMESPACE;
+import static org.treetank.node.IConstants.TEXT;
+
 import java.util.Random;
 
 import javax.xml.namespace.QName;
@@ -37,8 +42,8 @@ import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 
 public final class OverallTest {
 
@@ -63,20 +68,20 @@ public final class OverallTest {
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
                 switch (holder.getNWtx().getNode().getKind()) {
-                case ELEMENT_KIND:
+                case ELEMENT:
                     holder.getNWtx().setQName(new QName(getString()));
                     holder.getNWtx().setURI(getString());
                     break;
-                case ATTRIBUTE_KIND:
+                case ATTRIBUTE:
                     holder.getNWtx().setQName(new QName(getString()));
                     holder.getNWtx().setURI(getString());
                     holder.getNWtx().setValue(getString());
                     break;
-                case NAMESPACE_KIND:
+                case NAMESPACE:
                     holder.getNWtx().setQName(new QName(getString()));
                     holder.getNWtx().setURI(getString());
                     break;
-                case TEXT_KIND:
+                case TEXT:
                     holder.getNWtx().setValue(getString());
                     break;
                 default:
@@ -84,17 +89,23 @@ public final class OverallTest {
             } else {
                 if (holder.getNWtx().getNode() instanceof ElementNode) {
                     if (ran.nextBoolean()) {
-                        holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
+                        holder.getNWtx().insertElementAsFirstChild(
+                                new QName(getString()));
                     } else {
-                        holder.getNWtx().insertElementAsRightSibling(new QName(getString()));
+                        holder.getNWtx().insertElementAsRightSibling(
+                                new QName(getString()));
                     }
                     while (ran.nextBoolean()) {
-                        holder.getNWtx().insertAttribute(new QName(getString()), getString());
-                        holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
+                        holder.getNWtx().insertAttribute(
+                                new QName(getString()), getString());
+                        holder.getNWtx().moveTo(
+                                holder.getNWtx().getNode().getParentKey());
                     }
                     while (ran.nextBoolean()) {
-                        holder.getNWtx().insertNamespace(new QName(getString(), getString()));
-                        holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
+                        holder.getNWtx().insertNamespace(
+                                new QName(getString(), getString()));
+                        holder.getNWtx().moveTo(
+                                holder.getNWtx().getNode().getParentKey());
                     }
                 }
 
@@ -110,8 +121,9 @@ public final class OverallTest {
                     holder.getNWtx().moveTo(newKey);
                 } while (holder.getNWtx().getNode() == null);
                 // TODO Check if reference check can occur on "=="
-                if (holder.getNWtx().getNode().getKind() != ENode.ELEMENT_KIND) {
-                    holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
+                if (holder.getNWtx().getNode().getKind() != IConstants.ELEMENT) {
+                    holder.getNWtx().moveTo(
+                            holder.getNWtx().getNode().getParentKey());
                 }
             }
         }

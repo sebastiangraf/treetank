@@ -78,7 +78,7 @@ public class ElementNodeTest {
         assertEquals(18, node.getNameKey());
         assertEquals(19, node.getURIKey());
         assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
-        assertEquals(ENode.ELEMENT_KIND, node.getKind());
+        assertEquals(IConstants.ELEMENT, node.getKind());
         assertEquals(true, node.hasFirstChild());
         assertEquals(true, node.hasParent());
         assertEquals(true, node.hasLeftSibling());

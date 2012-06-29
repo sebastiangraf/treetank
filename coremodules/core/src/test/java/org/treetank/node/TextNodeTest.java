@@ -43,12 +43,11 @@ public class TextNodeTest {
     public void testTextRootNode() {
 
         // Create empty node.
-        final byte[] value = {
-            (byte)17, (byte)18
-        };
+        final byte[] value = { (byte) 17, (byte) 18 };
         final NodeDelegate del = new NodeDelegate(13, 14, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(del, value);
-        final StructNodeDelegate strucDel = new StructNodeDelegate(del, NULL_NODE, 16l, 15l, 0l);
+        final StructNodeDelegate strucDel = new StructNodeDelegate(del,
+                NULL_NODE, 16l, 15l, 0l);
         final TextNode node1 = new TextNode(del, strucDel, valDel);
         check(node1);
 
@@ -56,7 +55,7 @@ public class TextNodeTest {
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
         ENode.getKind(node1.getClass()).serialize(out, node1);
         out.position(0);
-        final TextNode node2 = (TextNode)ENode.TEXT_KIND.deserialize(out);
+        final TextNode node2 = (TextNode) ENode.TEXT_KIND.deserialize(out);
         check(node2);
 
     }
@@ -69,9 +68,10 @@ public class TextNodeTest {
         assertEquals(NULL_NODE, node.getFirstChildKey());
         assertEquals(15L, node.getLeftSiblingKey());
         assertEquals(16L, node.getRightSiblingKey());
-        assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
+        assertEquals(NamePageHash.generateHashForString("xs:untyped"),
+                node.getTypeKey());
         assertEquals(2, node.getRawValue().length);
-        assertEquals(ENode.TEXT_KIND, node.getKind());
+        assertEquals(IConstants.TEXT, node.getKind());
         assertEquals(false, node.hasFirstChild());
         assertEquals(true, node.hasParent());
         assertEquals(true, node.hasLeftSibling());

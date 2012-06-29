@@ -42,8 +42,8 @@ import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DocumentRootNode;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 import org.treetank.node.NamespaceNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.delegates.NameNodeDelegate;
@@ -213,7 +213,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             throw new NullPointerException("paramValueAsString may not be null!");
         }
 
-        if (mDelegate.getCurrentNode().getKind() == ENode.ELEMENT_KIND) {
+        if (mDelegate.getCurrentNode().getKind() == IConstants.ELEMENT) {
             checkAccessAndCommit();
 
             final byte[] value = TypedValue.getBytes(paramValueAsString);
@@ -345,7 +345,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public void remove() throws AbsTTException {
         checkAccessAndCommit();
-        if (mDelegate.getCurrentNode().getKind() == ENode.ROOT_KIND) {
+        if (mDelegate.getCurrentNode().getKind() == IConstants.ROOT) {
             throw new TTUsageException("Document root can not be removed.");
         } else if (mDelegate.getCurrentNode() instanceof IStructNode) {
             final IStructNode node = (IStructNode)mDelegate.getCurrentNode();
@@ -368,7 +368,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             } else {
                 moveTo(node.getParentKey());
             }
-        } else if (mDelegate.getCurrentNode().getKind() == ENode.ATTRIBUTE_KIND) {
+        } else if (mDelegate.getCurrentNode().getKind() == IConstants.ATTRIBUTE) {
             final INode node = mDelegate.getCurrentNode();
 
             final ElementNode parent =
@@ -377,7 +377,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             getPageTransaction().finishNodeModification(parent);
             adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
-        } else if (mDelegate.getCurrentNode().getKind() == ENode.NAMESPACE_KIND) {
+        } else if (mDelegate.getCurrentNode().getKind() == IConstants.NAMESPACE) {
             final INode node = mDelegate.getCurrentNode();
 
             final ElementNode parent =
@@ -635,7 +635,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         parent.decrementChildCount();
         getPageTransaction().finishNodeModification(parent);
 
-        if (paramOldNode.getKind() == ENode.ELEMENT_KIND) {
+        if (paramOldNode.getKind() == IConstants.ELEMENT) {
             // removing attributes
             for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
                 moveTo(((ElementNode)paramOldNode).getAttributeKey(i));
@@ -762,7 +762,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                         mDelegate.getCurrentNode().getNodeKey());
                 hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
-                if (cursorToRoot.getKind() == ENode.ELEMENT_KIND) {
+                if (cursorToRoot.getKind() == IConstants.ELEMENT) {
                     final ElementNode currentElement = (ElementNode)cursorToRoot;
                     // setting the attributes and namespaces
                     for (int i = 0; i < ((ElementNode)cursorToRoot).getAttributeCount(); i++) {

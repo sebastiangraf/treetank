@@ -27,6 +27,14 @@
 
 package org.treetank.saxon.wrapper;
 
+import static org.treetank.node.IConstants.ATTRIBUTE;
+import static org.treetank.node.IConstants.COMMENT;
+import static org.treetank.node.IConstants.ELEMENT;
+import static org.treetank.node.IConstants.NAMESPACE;
+import static org.treetank.node.IConstants.PROCESSING;
+import static org.treetank.node.IConstants.ROOT;
+import static org.treetank.node.IConstants.TEXT;
+
 import javax.xml.namespace.QName;
 
 import net.sf.saxon.Configuration;
@@ -103,7 +111,7 @@ import org.treetank.node.interfaces.IStructNode;
 public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     /** Kind of current node. */
-    protected transient final ENode nodeKind;
+    protected transient final int nodeKind;
 
     /** Document wrapper. */
     protected transient DocumentWrapper mDocWrapper;
@@ -144,7 +152,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         this.mKey = rtx.getNode().getNodeKey();
         this.node = rtx.getNode();
 
-        if (nodeKind == ENode.ELEMENT_KIND || nodeKind == ENode.ATTRIBUTE_KIND) {
+        if (nodeKind == ELEMENT || nodeKind == ATTRIBUTE) {
             this.qName = rtx.getQNameOfCurrentNode();
         } else {
             this.qName = null;
@@ -160,8 +168,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         Value value = null;
 
         switch (nodeKind) {
-        case COMMENT_KIND:
-        case PROCESSING_KIND:
+        case COMMENT:
+        case PROCESSING:
             // The content as an instance of the xs:string data type.
             value = new StringValue(getStringValueCS());
             break;
@@ -282,7 +290,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     @Override
     public int[] getDeclaredNamespaces(final int[] buffer) {
         int[] retVal = null;
-        if (nodeKind == ENode.ELEMENT_KIND) {
+        if (nodeKind == ELEMENT) {
             final int count = ((ElementNode)node).getNamespaceCount();
 
             if (count == 0) {
@@ -326,12 +334,12 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         String dName = "";
 
         switch (nodeKind) {
-        case ELEMENT_KIND:
-        case ATTRIBUTE_KIND:
+        case ELEMENT:
+        case ATTRIBUTE:
             dName = getPrefix() + ":" + getLocalPart();
             break;
-        case NAMESPACE_KIND:
-        case PROCESSING_KIND:
+        case NAMESPACE:
+        case PROCESSING:
             dName = getLocalPart();
             break;
         default:
@@ -390,8 +398,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         String localPart = "";
 
         switch (nodeKind) {
-        case ELEMENT_KIND:
-        case ATTRIBUTE_KIND:
+        case ELEMENT:
+        case ATTRIBUTE:
             localPart = qName.getLocalPart();
             break;
         default:
@@ -409,9 +417,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         int nameCode = -1;
 
         switch (nodeKind) {
-        case ELEMENT_KIND:
-        case ATTRIBUTE_KIND:
-        case PROCESSING_KIND:
+        case ELEMENT:
+        case ATTRIBUTE:
+        case PROCESSING:
             // case NAMESPACE_KIND:
             nameCode = mDocWrapper.getNamePool().allocate(getPrefix(), getURI(), getLocalPart());
             break;
@@ -435,7 +443,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
     @Override
     public int getNodeKind() {
-        return nodeKind.getId();
+        return nodeKind;
     }
 
     /**
@@ -467,8 +475,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         String prefix = "";
 
         switch (nodeKind) {
-        case ELEMENT_KIND:
-        case ATTRIBUTE_KIND:
+        case ELEMENT:
+        case ATTRIBUTE:
             prefix = qName.getPrefix();
             break;
         default:
@@ -508,18 +516,18 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             final INodeReadTrx rtx = createRtxAndMove();
 
             switch (nodeKind) {
-            case ROOT_KIND:
-            case ELEMENT_KIND:
+            case ROOT:
+            case ELEMENT:
                 mValue = expandString();
                 break;
-            case ATTRIBUTE_KIND:
+            case ATTRIBUTE:
                 mValue = emptyIfNull(rtx.getValueOfCurrentNode());
                 break;
-            case TEXT_KIND:
+            case TEXT:
                 mValue = rtx.getValueOfCurrentNode();
                 break;
-            case COMMENT_KIND:
-            case PROCESSING_KIND:
+            case COMMENT:
+            case PROCESSING:
                 mValue = emptyIfNull(rtx.getValueOfCurrentNode());
                 break;
             default:
@@ -544,7 +552,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             final FilterAxis axis = new FilterAxis(new DescendantAxis(rtx), rtx, new TextFilter(rtx));
 
             while (axis.hasNext()) {
-                if (rtx.getNode().getKind() == ENode.TEXT_KIND) {
+                if (rtx.getNode().getKind() == TEXT) {
                     fsb.append(rtx.getValueOfCurrentNode());
                 }
                 axis.next();
@@ -571,7 +579,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
     public int getTypeAnnotation() {
         int type = 0;
-        if (nodeKind == ENode.ATTRIBUTE_KIND) {
+        if (nodeKind == ATTRIBUTE) {
             type = StandardNames.XS_UNTYPED_ATOMIC;
         } else {
             type = StandardNames.XS_UNTYPED;
@@ -587,9 +595,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         String URI = "";
 
         switch (nodeKind) {
-        case ELEMENT_KIND:
-        case ATTRIBUTE_KIND:
-        case NAMESPACE_KIND:
+        case ELEMENT:
+        case ATTRIBUTE:
+        case NAMESPACE:
             if (!"".equals(qName.getPrefix())) {
                 URI = qName.getNamespaceURI();
             }
@@ -732,9 +740,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 break;
             case Axis.FOLLOWING_SIBLING:
                 switch (nodeKind) {
-                case ROOT_KIND:
-                case ATTRIBUTE_KIND:
-                case NAMESPACE_KIND:
+                case ROOT:
+                case ATTRIBUTE:
+                case NAMESPACE:
                     returnVal = EmptyIterator.getInstance();
                     break;
                 default:
@@ -762,9 +770,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 break;
             case Axis.PRECEDING_SIBLING:
                 switch (nodeKind) {
-                case ROOT_KIND:
-                case ATTRIBUTE_KIND:
-                case NAMESPACE_KIND:
+                case ROOT:
+                case ATTRIBUTE:
+                case NAMESPACE:
                     returnVal = EmptyIterator.getInstance();
                     break;
                 default:

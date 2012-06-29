@@ -30,14 +30,13 @@ package org.treetank.axis;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 
 /**
  * <h1>AncestorAxis</h1>
  * 
  * <p>
- * Iterate over all descendants of kind ELEMENT or TEXT starting at a given
- * node. Self is not included.
+ * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
 public class AncestorAxis extends AbsAxis {
@@ -91,8 +90,8 @@ public class AncestorAxis extends AbsAxis {
             return true;
         }
 
-        if (getNode().getKind() != ENode.ROOT_KIND && getNode().hasParent()
-                && getNode().getParentKey() != ROOT_NODE) {
+        if (getNode().getKind() != IConstants.ROOT && getNode().hasParent()
+            && getNode().getParentKey() != ROOT_NODE) {
             moveTo(getNode().getParentKey());
             return true;
         }

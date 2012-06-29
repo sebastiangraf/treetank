@@ -71,9 +71,8 @@ public class AttributeNodeTest {
         assertEquals(15, node.getURIKey());
         assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
         assertEquals(2, node.getRawValue().length);
-        assertEquals(ENode.ATTRIBUTE_KIND, node.getKind());
         assertEquals(true, node.hasParent());
-        assertEquals(ENode.ATTRIBUTE_KIND, node.getKind());
+        assertEquals(IConstants.ATTRIBUTE, node.getKind());
     }
 
 }

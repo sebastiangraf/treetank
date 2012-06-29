@@ -3,10 +3,11 @@
  */
 package org.treetank.page;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Random;
 
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
