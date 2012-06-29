@@ -30,7 +30,6 @@ package org.treetank.node;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 
@@ -45,10 +44,8 @@ public class NamespaceNodeTest {
         final NamespaceNode node1 = new NamespaceNode(nodeDel, nameDel);
 
         // Serialize and deserialize node.
-        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        ENode.getKind(node1.getClass()).serialize(out, node1);
-        out.position(0);
-        final NamespaceNode node2 = (NamespaceNode)ENode.NAMESPACE_KIND.deserialize(out);
+        final byte[] data = node1.getByteRepresentation();
+        final NamespaceNode node2 = (NamespaceNode)NodeFactory.getInstance().deserializeNode(data);
         check(node2);
 
     }
