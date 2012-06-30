@@ -27,14 +27,13 @@
 
 package org.treetank.service.xml.xpath;
 
-import static org.testng.AssertJUnit.assertArrayEquals;
 import static org.testng.AssertJUnit.assertEquals;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
-import org.testng.Assert;
+import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
