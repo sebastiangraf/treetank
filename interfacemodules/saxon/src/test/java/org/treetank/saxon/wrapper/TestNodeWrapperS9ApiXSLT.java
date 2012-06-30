@@ -27,6 +27,10 @@
 
 package org.treetank.saxon.wrapper;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.AssertJUnit;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -49,10 +53,6 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
@@ -86,8 +86,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
 
     private Holder mHolder;
 
-    @Override
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
@@ -111,8 +110,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         XMLUnit.setIgnoreWhitespace(true);
     }
 
-    @Override
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -128,7 +126,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         final Diff diff = new Diff(sBuilder.toString(), out.toString());
         diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
 
-        assertTrue(diff.toString(), diff.similar());
+        AssertJUnit.assertTrue(diff.toString(), diff.similar());
     }
 
     @Test
@@ -146,7 +144,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         final Diff diff = new Diff(sBuilder.toString(), out.toString());
         diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
 
-        assertTrue(diff.toString(), diff.similar());
+        AssertJUnit.assertTrue(diff.toString(), diff.similar());
     }
 
     /**
@@ -159,7 +157,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
      * @throws SaxonApiException
      *             Exception from Saxon in case anything goes wrong.
      */
-    @Ignore("Not a test, utility method only")
+    @Test(enabled = false)
     public void saxonTransform(final File xml, final File stylesheet) throws SaxonApiException {
         final Processor proc = new Processor(false);
         final XsltCompiler comp = proc.newXsltCompiler();
@@ -183,7 +181,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
      * @throws IOException
      *             throws an IOException if any I/O operation fails.
      */
-    @Ignore("Not a test, utility method only")
+    @Test(enabled = false)
     public StringBuilder readFile() throws IOException {
         final BufferedReader in =
             new BufferedReader(new FileReader(new File(TestHelper.PATHS.PATH1.getFile(), "books1.html")));

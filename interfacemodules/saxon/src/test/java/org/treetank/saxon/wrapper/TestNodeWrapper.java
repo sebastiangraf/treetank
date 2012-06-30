@@ -27,11 +27,13 @@
 
 package org.treetank.saxon.wrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.Assert;
 import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
@@ -48,9 +50,6 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
@@ -80,7 +79,7 @@ public class TestNodeWrapper {
     /** Document node. */
     private transient NodeWrapper node;
 
-    @Before
+    @BeforeMethod
     public void beforeMethod() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -93,7 +92,7 @@ public class TestNodeWrapper {
         node = new DocumentWrapper(mHolder.getSession(), config).getNodeWrapper();
     }
 
-    @After
+    @AfterMethod
     public void afterMethod() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -246,7 +245,7 @@ public class TestNodeWrapper {
         }
 
         if (namespace == null) {
-            fail("namespace is null!");
+            Assert.fail("namespace is null!");
         } else {
             assertEquals("ns", namespace.getStringValueCS());
         }
