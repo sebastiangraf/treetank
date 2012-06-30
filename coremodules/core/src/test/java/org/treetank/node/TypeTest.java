@@ -27,10 +27,9 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.exception.TTXPathException;
 
 public class TypeTest {
@@ -40,7 +39,7 @@ public class TypeTest {
     integerT, longT, intT, qName, pDecimal, decimal, shortT, byteT, nPosInt, posInt, unsignedLong, name,
     token, language;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
 
         anyType = Type.ANY_TYPE;

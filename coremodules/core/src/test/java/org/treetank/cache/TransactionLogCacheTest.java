@@ -27,11 +27,10 @@
 
 package org.treetank.cache;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.page.NodePage;
@@ -39,7 +38,7 @@ import org.treetank.page.NodePage;
 public class TransactionLogCacheTest {
     private ICache cache;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
@@ -58,7 +57,7 @@ public class TransactionLogCacheTest {
         cache.clear();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }

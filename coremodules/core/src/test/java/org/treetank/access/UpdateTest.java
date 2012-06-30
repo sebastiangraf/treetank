@@ -27,16 +27,16 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
@@ -50,13 +50,13 @@ public class UpdateTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         holder = Holder.generateWtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
@@ -90,6 +90,7 @@ public class UpdateTest {
      *            to test with
      * @throws AbsTTException
      */
+    @Test(enabled = false)
     private final static void testNodeTransactionIsolation(final INodeReadTrx pRtx) throws AbsTTException {
         assertTrue(pRtx.moveTo(ROOT_NODE));
         assertEquals(0, pRtx.getNode().getNodeKey());
@@ -198,12 +199,13 @@ public class UpdateTest {
      *            to test with
      * @throws AbsTTException
      */
+    @Test(enabled = false)
     private final static void testPageBoundary(final INodeReadTrx pRtx) throws AbsTTException {
         assertTrue(pRtx.moveTo(2L));
         assertEquals(2L, pRtx.getNode().getNodeKey());
     }
 
-    @Test(expected = TTUsageException.class)
+    @Test(expectedExceptions = TTUsageException.class)
     public void testRemoveDocument() throws AbsTTException {
         final INodeWriteTrx wtx = holder.getNWtx();
         DocumentCreater.create(wtx);
@@ -243,6 +245,7 @@ public class UpdateTest {
      *            to test with
      * @throws AbsTTException
      */
+    @Test(enabled = false)
     private final static void testRemoveDescendant(final INodeReadTrx pRtx) throws AbsTTException {
         assertTrue(pRtx.moveTo(ROOT_NODE));
         assertEquals(0, pRtx.getNode().getNodeKey());

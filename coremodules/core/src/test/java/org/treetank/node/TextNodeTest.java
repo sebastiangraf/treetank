@@ -27,10 +27,10 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
 import static org.treetank.node.IConstants.NULL_NODE;
 
-import org.junit.Test;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;

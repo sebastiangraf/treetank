@@ -3,13 +3,12 @@
  */
 package org.treetank.page;
 
-import static org.junit.Assert.assertTrue;
-
+import static org.testng.AssertJUnit.assertTrue;
+import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
 import org.treetank.api.INode;
 
 /**

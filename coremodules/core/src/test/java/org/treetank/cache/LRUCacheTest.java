@@ -27,11 +27,10 @@
 
 package org.treetank.cache;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.exception.AbsTTException;
 import org.treetank.page.NodePage;
 
@@ -43,7 +42,7 @@ public class LRUCacheTest {
 
     private ICache cache;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         cache = new LRUCache();
         CacheTestHelper.setUp(cache);

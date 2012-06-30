@@ -27,9 +27,9 @@
 
 package org.treetank.io;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -39,7 +39,7 @@ import org.treetank.io.EStorage;
 public class FileTest {
     private ResourceConfiguration resourceConf;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         Holder.generateSession().close();
@@ -51,7 +51,7 @@ public class FileTest {
         IOTestHelper.testReadWriteFirstRef(resourceConf);
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         IOTestHelper.clean();
     }

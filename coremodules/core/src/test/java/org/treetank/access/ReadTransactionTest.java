@@ -27,12 +27,12 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
@@ -43,14 +43,14 @@ public class ReadTransactionTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();

@@ -27,15 +27,15 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -53,7 +53,7 @@ public class HashTest {
     private final static String NAME1 = "a";
     private final static String NAME2 = "b";
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
 
@@ -113,6 +113,7 @@ public class HashTest {
      * @param wtx
      * @throws AbsTTException
      */
+    @Test(enabled = false)
     private void testHashTreeWithInsertAndRemove(final INodeWriteTrx wtx) throws AbsTTException {
 
         // inserting a element as root
@@ -164,6 +165,7 @@ public class HashTest {
         assertEquals(firstRootHash, wtx.getNode().getHash());
     }
 
+    @Test(enabled = false)
     private void testDeepTree(final INodeWriteTrx wtx) throws AbsTTException {
 
         wtx.insertElementAsFirstChild(new QName(NAME1));
@@ -185,6 +187,7 @@ public class HashTest {
         assertEquals(oldHash, wtx.getNode().getHash());
     }
 
+    @Test(enabled = false)
     private void testSetter(final INodeWriteTrx wtx) throws AbsTTException {
 
         // Testing node inheritance
@@ -238,7 +241,7 @@ public class HashTest {
         return wTrx;
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
