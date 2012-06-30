@@ -30,15 +30,13 @@
  */
 package org.treetank.service.jaxrx.util;
 
-import static org.junit.Assert.assertNotNull;
-
+import static org.testng.AssertJUnit.assertNotNull;
+import org.testng.annotations.Test;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-
-import org.junit.Test;
 
 /**
  * This class tests the class {@link RESTXMLShredder}.
