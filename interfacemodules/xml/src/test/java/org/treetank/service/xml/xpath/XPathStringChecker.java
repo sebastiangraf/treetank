@@ -27,13 +27,14 @@
 
 package org.treetank.service.xml.xpath;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.testng.AssertJUnit.assertArrayEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.Assert;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
-import org.junit.After;
-import org.junit.Before;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
@@ -42,12 +43,12 @@ import org.treetank.node.interfaces.IValNode;
 
 public class XPathStringChecker {
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
@@ -64,7 +65,7 @@ public class XPathStringChecker {
             axis.next();
             // IAxis results.
             if (offset >= expectedValues.length) {
-                fail("More nodes found than expected.");
+                Assert.fail("More nodes found than expected.");
             }
             if (axis.getNode() instanceof IValNode
                 && !("".equals(new String(((IValNode)axis.getNode()).getRawValue())))) {
@@ -76,7 +77,7 @@ public class XPathStringChecker {
             // IAxis Convention 2.
             try {
                 axis.next();
-                fail("Should only allow to call next() once.");
+                Assert.fail("Should only allow to call next() once.");
             } catch (Exception e) {
                 // Must throw exception.
             }

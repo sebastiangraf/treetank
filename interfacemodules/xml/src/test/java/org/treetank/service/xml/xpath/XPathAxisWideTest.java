@@ -27,14 +27,14 @@
 
 package org.treetank.service.xml.xpath;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -48,7 +48,7 @@ public class XPathAxisWideTest {
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "factbook.xml";
 
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Setup parsed session.
@@ -56,7 +56,7 @@ public class XPathAxisWideTest {
 
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }

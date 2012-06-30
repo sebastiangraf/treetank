@@ -27,6 +27,10 @@
 
 package org.treetank.service.xml.shredder;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.AssertJUnit;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
@@ -38,9 +42,6 @@ import java.util.List;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
@@ -103,14 +104,12 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         XMLUnit.setIgnoreWhitespace(true);
     }
 
-    @Override
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
-    @Override
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
@@ -205,6 +204,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     // test(XMLLINGUISTICS);
     // }
 
+    @Test(enabled = false)
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
@@ -276,8 +276,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 // // System.out.println("***********************");
                 // }
 
-                assertTrue("pieces of XML are similar " + diff, diff.similar());
-                assertTrue("but are they identical? " + diff, diff.identical());
+                AssertJUnit.assertTrue("pieces of XML are similar " + diff, diff.similar());
+                AssertJUnit.assertTrue("but are they identical? " + diff, diff.identical());
                 wtx.close();
             }
         }

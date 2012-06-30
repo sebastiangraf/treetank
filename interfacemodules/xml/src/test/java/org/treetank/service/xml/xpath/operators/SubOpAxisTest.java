@@ -27,14 +27,12 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.testng.AssertJUnit.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
@@ -51,13 +49,13 @@ public class SubOpAxisTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.deleteEverything();
@@ -77,7 +75,7 @@ public class SubOpAxisTest {
         AbsObAxis axis = new SubOpAxis(holder.getNRtx(), op1, op2);
 
         assertEquals(true, axis.hasNext());
-        assertThat(-1.0, is(Double.parseDouble(new String(((IValNode)axis.getNode()).getRawValue()))));
+        assertEquals(-1.0, Double.parseDouble(new String(((IValNode)axis.getNode()).getRawValue())));
         assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
@@ -127,42 +125,41 @@ public class SubOpAxisTest {
 
             axis.getReturnType(NamePageHash.generateHashForString("xs:string"), NamePageHash
                 .generateHashForString("xs:yearMonthDuration"));
-            fail("Expected an XPathError-Exception.");
+            Assert.fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
-                + "typedoes not match a required type as specified by the matching rules."));
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate the expression or the "
+                + "typedoes not match a required type as specified by the matching rules.");
         }
 
         try {
 
             axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash
                 .generateHashForString("xs:double"));
-            fail("Expected an XPathError-Exception.");
+            Assert.fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
-                + "typedoes not match a required type as specified by the matching rules."));
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate the expression or the "
+                + "typedoes not match a required type as specified by the matching rules.");
         }
 
         try {
 
             axis.getReturnType(NamePageHash.generateHashForString("xs:string"), NamePageHash
                 .generateHashForString("xs:yearMonthDuration"));
-            fail("Expected an XPathError-Exception.");
+            Assert.fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
-                + "typedoes not match a required type as specified by the matching rules."));
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate the expression or the "
+                + "typedoes not match a required type as specified by the matching rules.");
         }
 
         try {
 
             axis.getReturnType(NamePageHash.generateHashForString("xs:dateTime"), NamePageHash
                 .generateHashForString("xs:IDREF"));
-            fail("Expected an XPathError-Exception.");
+            Assert.fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
-                + "typedoes not match a required type as specified by the matching rules."));
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate the expression or the "
+                + "typedoes not match a required type as specified by the matching rules.");
         }
 
     }
-
 }

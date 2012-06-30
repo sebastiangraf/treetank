@@ -27,11 +27,11 @@
 
 package org.treetank.service.xml.xpath;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.File;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.perfidix.annotation.BenchClass;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
@@ -53,7 +53,7 @@ public class XMarkTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Build simple test tree.
@@ -62,7 +62,7 @@ public class XMarkTest {
 
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();

@@ -27,14 +27,14 @@
 
 package org.treetank.service.xml.xpath;
 
-import static org.junit.Assert.fail;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.Assert;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
@@ -66,7 +66,7 @@ public final class XPathWriteTransactionTest {
 
     private IDatabase database;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Build simple test tree.
@@ -88,12 +88,12 @@ public final class XPathWriteTransactionTest {
         // + "']");
         final XPathAxis xpa = new XPathAxis(wtx, "//revision");
         if (!xpa.hasNext()) {
-            fail();
+            Assert.fail();
         }
 
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         // wtx.abort();
         wtx.close();

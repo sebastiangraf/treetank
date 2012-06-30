@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.xpath.xmark;
 
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import org.perfidix.annotation.AfterEachRun;
 import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
@@ -37,11 +39,13 @@ public class XMarkBenchTestPerfidix {
 
     private final static XMarkBenchTest xmbt = new XMarkBenchTest();;
 
+    @BeforeMethod
     @BeforeEachRun
     public static void setUp() throws Exception {
         XMarkBenchTest.setUp();
     }
 
+    @Test
     @Bench
     public void testXMark_Q1() {
         try {
@@ -52,6 +56,7 @@ public class XMarkBenchTestPerfidix {
         }
     }
 
+    @Test
     @Bench
     public void testXMark_Q5() {
         try {
@@ -62,6 +67,7 @@ public class XMarkBenchTestPerfidix {
         }
     }
 
+    @Test
     @Bench
     public void testXMark_Q6() {
         try {
@@ -72,6 +78,7 @@ public class XMarkBenchTestPerfidix {
         }
     }
 
+    @Test
     @Bench
     public void testXMark_Q7() {
         try {

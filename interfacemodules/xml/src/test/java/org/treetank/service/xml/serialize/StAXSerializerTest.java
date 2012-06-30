@@ -27,8 +27,11 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.Assert;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.ByteArrayOutputStream;
@@ -44,10 +47,6 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeReadTrx;
@@ -64,14 +63,14 @@ import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 public class StAXSerializerTest {
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();
@@ -199,11 +198,11 @@ public class StAXSerializerTest {
             checkForException(serializer);
             rtx.close();
         } catch (final XMLStreamException e) {
-            fail("XML error while parsing: " + e.getMessage());
+            Assert.fail("XML error while parsing: " + e.getMessage());
         } catch (final AbsTTException e) {
-            fail("Treetank exception occured: " + e.getMessage());
+            Assert.fail("Treetank exception occured: " + e.getMessage());
         } catch (final Exception e) {
-            fail("Any exception occured: " + e.getMessage());
+            Assert.fail("Any exception occured: " + e.getMessage());
         }
     }
 
@@ -221,7 +220,7 @@ public class StAXSerializerTest {
                 serializer.next();
                 elemText = serializer.getElementText();
             }
-            fail("");
+            Assert.fail("");
         } catch (final XMLStreamException e) {
             assertEquals("", elemText);
         }
@@ -235,7 +234,7 @@ public class StAXSerializerTest {
      * @param strBuilder
      *            String builder to build the string representation.
      */
-    @Ignore
+    @Test(enabled = false)
     private void emitElement(final XMLEvent event, final StringBuilder strBuilder) {
         emitQName(true, event, strBuilder);
 
@@ -272,7 +271,7 @@ public class StAXSerializerTest {
      * @param isElem
      *            Determines if it is an element or an attribute.
      */
-    @Ignore
+    @Test(enabled = false)
     private void emitQName(final boolean isElem, final XMLEvent event, final StringBuilder strBuilder) {
         QName qName;
         if (isElem) {

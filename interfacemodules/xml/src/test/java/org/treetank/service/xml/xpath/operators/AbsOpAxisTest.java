@@ -27,13 +27,11 @@
 
 package org.treetank.service.xml.xpath.operators;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.testng.AssertJUnit.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
@@ -48,14 +46,14 @@ public class AbsOpAxisTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.deleteEverything();
@@ -76,7 +74,7 @@ public class AbsOpAxisTest {
 
         assertEquals(true, axis.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode().getTypeKey());
-        assertThat(Double.parseDouble(new String(((IValNode)axis.getNode()).getRawValue())), is(0.5));
+        assertEquals(Double.parseDouble(new String(((IValNode)axis.getNode()).getRawValue())), 0.5);
         assertEquals(false, axis.hasNext());
 
     }

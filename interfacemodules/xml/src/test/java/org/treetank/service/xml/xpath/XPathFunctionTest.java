@@ -27,12 +27,11 @@
 
 package org.treetank.service.xml.xpath;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.File;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -55,14 +54,14 @@ public class XPathFunctionTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();
@@ -225,8 +224,7 @@ public class XPathFunctionTest {
         });
     }
 
-    @Test
-    @Ignore
+    @Test(enabled = false)
     public void testQ_Operators() throws AbsTTException {
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//*[preceding::Q]"), new long[] {
@@ -243,15 +241,15 @@ public class XPathFunctionTest {
             87L, 92L, 101L, 106L, 115L, 120L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//*[preceding::L or following::L]"),
-            new long[] {
+        AbsAxisTest.testIAxisConventions(
+            new XPathAxis(holder.getNRtx(), "//*[preceding::L or following::L]"), new long[] {
                 6L, 111L, 10L, 15L, 24L, 39L, 83L, 97L, 28L, 33L, 43L, 48L, 87L, 92L, 101L, 106L, 115L, 120L
             });
 
-        AbsAxisTest.testIAxisConventions(
-            new XPathAxis(holder.getNRtx(), "//L/ancestor::* | //L/descendant::*"), new long[] {
-                20L, 1L, 58L, 63L, 67L, 72L, 77L
-            });
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+            "//L/ancestor::* | //L/descendant::*"), new long[] {
+            20L, 1L, 58L, 63L, 67L, 72L, 77L
+        });
 
         // AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
         // "//*[.=\"happy-go-lucky man\"]"), new long[] { 38L });

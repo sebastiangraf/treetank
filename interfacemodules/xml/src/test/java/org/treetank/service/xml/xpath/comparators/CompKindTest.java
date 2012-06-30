@@ -27,12 +27,10 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.testng.AssertJUnit.assertEquals;
 
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.Type;
 
@@ -89,25 +87,25 @@ public class CompKindTest {
 
         try {
             assertEquals(CompKind.EQ.compare("2.0", "2", Type.DATE), true);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.EQ.compare("2.0", "4.0", Type.G_MONTH), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.EQ.compare("2.0", "2.01", Type.YEAR_MONTH_DURATION), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (TTXPathException e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules. "));
+                + " specified by the matching rules. ");
         }
 
     }
@@ -163,25 +161,25 @@ public class CompKindTest {
 
         try {
             assertEquals(CompKind.NE.compare("2.0", "2", Type.DATE), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.NE.compare("2.0", "4.0", Type.G_MONTH), true);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.NE.compare("2.0", "2.01", Type.YEAR_MONTH_DURATION), true);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (TTXPathException e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules. "));
+                + " specified by the matching rules. ");
         }
     }
 
@@ -236,25 +234,25 @@ public class CompKindTest {
 
         try {
             assertEquals(CompKind.LT.compare("2.0", "2", Type.DATE), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.LT.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION), true);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.LT.compare("2.0", "2.01", Type.G_MONTH), true);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (TTXPathException e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules. "));
+                + " specified by the matching rules. ");
         }
     }
 
@@ -309,25 +307,25 @@ public class CompKindTest {
 
         try {
             assertEquals(CompKind.LE.compare("2.0", "2", Type.DATE), true);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.LE.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION), true);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.LE.compare("2.0", "2.01", Type.G_MONTH), true);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (TTXPathException e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules. "));
+                + " specified by the matching rules. ");
         }
 
     }
@@ -383,25 +381,25 @@ public class CompKindTest {
 
         try {
             assertEquals(CompKind.GT.compare("2.0", "2", Type.DATE), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.GT.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.GT.compare("2.0", "2.01", Type.G_MONTH), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (TTXPathException e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules. "));
+                + " specified by the matching rules. ");
         }
     }
 
@@ -456,25 +454,25 @@ public class CompKindTest {
 
         try {
             assertEquals(CompKind.GE.compare("2.0", "2", Type.DATE), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.GE.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Not implemented for this type yet"));
+            assertEquals(e.getMessage(), "Not implemented for this type yet");
         }
 
         try {
             assertEquals(CompKind.GE.compare("2.0", "2.01", Type.G_MONTH), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (TTXPathException e) {
-            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
+            assertEquals(e.getMessage(), "err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules. "));
+                + " specified by the matching rules. ");
         }
     }
 
@@ -483,9 +481,9 @@ public class CompKindTest {
 
         try {
             assertEquals(CompKind.FO.compare("2.0", "2", Type.DATE), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Evaluation of node comparisons not possible"));
+            assertEquals(e.getMessage(), "Evaluation of node comparisons not possible");
         }
     }
 
@@ -494,9 +492,9 @@ public class CompKindTest {
 
         try {
             assertEquals(CompKind.PRE.compare("2.0", "2", Type.DATE), false);
-            fail("Expected exception");
+            Assert.fail("Expected exception");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Evaluation of node comparisons not possible"));
+            assertEquals(e.getMessage(), "Evaluation of node comparisons not possible");
         }
     }
 
