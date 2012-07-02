@@ -79,8 +79,7 @@ public final class PageFactory {
                 if (length != IConstants.NULL_NODE) {
                     byte[] toread = new byte[length];
                     input.readFully(toread);
-                    nodePage.getNodes()[offset] = mNodeFac
-                            .deserializeNode(toread);
+                    nodePage.getNodes()[offset] = mNodeFac.deserializeNode(toread);
                 }
             }
             return nodePage;
@@ -105,11 +104,18 @@ public final class PageFactory {
             }
             return indirectPage;
         case IConstants.REVISIONROOTPAGE:
-            RevisionRootPage revRootPage = new RevisionRootPage(param);
+            RevisionRootPage revRootPage = new RevisionRootPage(input.readLong());
+            for (int offset = 0; offset < revRootPage.getReferences().length; offset++) {
+                revRootPage.getReferences()[offset] = new PageReference();
+                revRootPage.getReferences()[offset].setKey(input.readLong());
+            }
+            revRootPage.setRevisionSize(input.readLong());
+            revRootPage.setMaxNodeKey(input.readLong());
+            revRootPage.setRevisionTimestamp(input.readLong());
             return revRootPage;
         default:
             throw new IllegalStateException(
-                    "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
+                "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
         }
     }
 }
