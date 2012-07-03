@@ -115,7 +115,7 @@ public final class UberPage implements IPage {
             reference = page.getReferences()[0];
         }
 
-        final RevisionRootPage rrp = new RevisionRootPage();
+        final RevisionRootPage rrp = new RevisionRootPage(IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(rrp);
 
         // --- Create node tree
@@ -133,13 +133,12 @@ public final class UberPage implements IPage {
             reference = page.getReferences()[0];
         }
 
-        final NodePage ndp = new NodePage(ROOT_NODE,
-                IConstants.UBP_ROOT_REVISION_NUMBER);
+        final NodePage ndp = new NodePage(ROOT_NODE, IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
         final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
-        final StructNodeDelegate strucDel = new StructNodeDelegate(nodeDel,
-                NULL_NODE, NULL_NODE, NULL_NODE, 0);
+        final StructNodeDelegate strucDel =
+            new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0);
         ndp.setNode(0, new DocumentRootNode(nodeDel, strucDel));
         rrp.incrementMaxNodeKey();
     }
@@ -230,10 +229,8 @@ public final class UberPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": revisionCount=" + mRevisionCount
-                + ", indirectPage=("
-                + getReferences()[INDIRECT_REFERENCE_OFFSET]
-                + "), isBootstrap=" + mBootstrap;
+        return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
+            + getReferences()[INDIRECT_REFERENCE_OFFSET] + "), isBootstrap=" + mBootstrap;
     }
 
     @Override

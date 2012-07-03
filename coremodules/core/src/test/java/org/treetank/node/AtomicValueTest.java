@@ -27,7 +27,6 @@
 
 package org.treetank.node;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.BeforeMethod;
