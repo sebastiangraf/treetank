@@ -30,7 +30,6 @@ package org.treetank.page;
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.AbsTTException;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -73,13 +72,6 @@ public final class RevisionRootPage implements IPage {
     public RevisionRootPage(final long pRevision) {
         mRevision = pRevision;
         mReferences = new PageReference[2];
-    }
-
-    /**
-     * Create revision root page.
-     */
-    public RevisionRootPage() {
-        this(IConstants.UBP_ROOT_REVISION_NUMBER);
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
         }
@@ -88,6 +80,7 @@ public final class RevisionRootPage implements IPage {
         ref.setPage(new NamePage(IConstants.UBP_ROOT_REVISION_NUMBER));
         mMaxNodeKey = -1L;
     }
+
 
     /**
      * Clone revision root page.
