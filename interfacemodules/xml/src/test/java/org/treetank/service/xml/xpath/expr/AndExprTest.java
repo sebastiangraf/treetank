@@ -27,12 +27,11 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.Assert;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
@@ -52,14 +51,14 @@ public class AndExprTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();
@@ -132,7 +131,7 @@ public class AndExprTest {
         final AbsAxis axis6 = new XPathAxis(holder.getNRtx(), "1 eq 1 and 3 idiv 0 = 1");
         try {
             assertEquals(true, axis6.hasNext());
-            fail("Expected XPath exception, because of division by zero");
+            Assert.fail("Expected XPath exception, because of division by zero");
         } catch (XPathError e) {
             assertEquals("err:FOAR0001: Division by zero.", e.getMessage());
         }

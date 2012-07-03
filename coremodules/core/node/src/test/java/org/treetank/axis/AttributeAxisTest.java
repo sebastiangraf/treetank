@@ -27,15 +27,14 @@
 
 package org.treetank.axis;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.AssertJUnit;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
@@ -46,7 +45,7 @@ public class AttributeAxisTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
@@ -54,7 +53,7 @@ public class AttributeAxisTest {
 
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();
@@ -84,8 +83,7 @@ public class AttributeAxisTest {
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
     }
 
-    @Test
-    @Ignore
+    @Test(enabled=false)
     public void testMultipleAttributes() throws AbsTTException {
         final INodeWriteTrx wtx = holder.getNWtx();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
@@ -95,42 +93,42 @@ public class AttributeAxisTest {
         wtx.moveTo(nodeKey);
         wtx.insertAttribute(new QName("foo2"), "2");
 
-        Assert.assertEquals(true, wtx.moveTo(nodeKey));
+        AssertJUnit.assertEquals(true, wtx.moveTo(nodeKey));
 
-        Assert.assertEquals(true, wtx.moveToAttribute(0));
-        Assert.assertEquals("0", wtx.getValueOfCurrentNode());
-        Assert.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
+        AssertJUnit.assertEquals(true, wtx.moveToAttribute(0));
+        AssertJUnit.assertEquals("0", wtx.getValueOfCurrentNode());
+        AssertJUnit.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
 
-        Assert.assertEquals(true, wtx.moveTo(wtx.getNode().getParentKey()));
-        Assert.assertEquals(true, wtx.moveToAttribute(1));
-        Assert.assertEquals("1", wtx.getValueOfCurrentNode());
-        Assert.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
+        AssertJUnit.assertEquals(true, wtx.moveTo(wtx.getNode().getParentKey()));
+        AssertJUnit.assertEquals(true, wtx.moveToAttribute(1));
+        AssertJUnit.assertEquals("1", wtx.getValueOfCurrentNode());
+        AssertJUnit.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
 
-        Assert.assertEquals(true, wtx.moveTo(wtx.getNode().getParentKey()));
-        Assert.assertEquals(true, wtx.moveToAttribute(2));
-        Assert.assertEquals("2", wtx.getValueOfCurrentNode());
-        Assert.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());
+        AssertJUnit.assertEquals(true, wtx.moveTo(wtx.getNode().getParentKey()));
+        AssertJUnit.assertEquals(true, wtx.moveToAttribute(2));
+        AssertJUnit.assertEquals("2", wtx.getValueOfCurrentNode());
+        AssertJUnit.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());
 
-        Assert.assertEquals(true, wtx.moveTo(nodeKey));
+        AssertJUnit.assertEquals(true, wtx.moveTo(nodeKey));
         final AbsAxis axis = new AttributeAxis(wtx);
 
-        Assert.assertEquals(true, axis.hasNext());
+        AssertJUnit.assertEquals(true, axis.hasNext());
         axis.next();
-        Assert.assertEquals(nodeKey + 1, wtx.getNode().getNodeKey());
-        Assert.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
-        Assert.assertEquals("0", wtx.getValueOfCurrentNode());
+        AssertJUnit.assertEquals(nodeKey + 1, wtx.getNode().getNodeKey());
+        AssertJUnit.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
+        AssertJUnit.assertEquals("0", wtx.getValueOfCurrentNode());
 
-        Assert.assertEquals(true, axis.hasNext());
+        AssertJUnit.assertEquals(true, axis.hasNext());
         axis.next();
-        Assert.assertEquals(nodeKey + 2, wtx.getNode().getNodeKey());
-        Assert.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
-        Assert.assertEquals("1", wtx.getValueOfCurrentNode());
+        AssertJUnit.assertEquals(nodeKey + 2, wtx.getNode().getNodeKey());
+        AssertJUnit.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
+        AssertJUnit.assertEquals("1", wtx.getValueOfCurrentNode());
 
-        Assert.assertEquals(true, axis.hasNext());
+        AssertJUnit.assertEquals(true, axis.hasNext());
         axis.next();
-        Assert.assertEquals(nodeKey + 3, wtx.getNode().getNodeKey());
-        Assert.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());
-        Assert.assertEquals("2", wtx.getValueOfCurrentNode());
+        AssertJUnit.assertEquals(nodeKey + 3, wtx.getNode().getNodeKey());
+        AssertJUnit.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());
+        AssertJUnit.assertEquals("2", wtx.getValueOfCurrentNode());
 
         wtx.abort();
         wtx.close();

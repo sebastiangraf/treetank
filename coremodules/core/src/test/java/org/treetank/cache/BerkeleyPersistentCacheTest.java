@@ -27,13 +27,12 @@
 
 package org.treetank.cache;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.File;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.exception.AbsTTException;
@@ -43,7 +42,7 @@ public class BerkeleyPersistentCacheTest {
 
     private ICache cache;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
@@ -64,7 +63,7 @@ public class BerkeleyPersistentCacheTest {
         cache.clear();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }

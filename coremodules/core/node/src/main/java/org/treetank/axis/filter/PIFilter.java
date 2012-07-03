@@ -54,7 +54,7 @@ public class PIFilter extends AbsFilter {
     @Override
     public final boolean filter() {
 
-        return getNode().getKind().getId() == 7;
+        return getNode().getKind() == 7;
 
         // TODO: As soon as an PI-node is implemented, use the second version,
         // because this is much cleaner and more consistent to the other

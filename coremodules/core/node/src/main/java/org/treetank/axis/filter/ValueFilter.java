@@ -27,8 +27,10 @@
 
 package org.treetank.axis.filter;
 
+import java.util.Arrays;
+
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.TypedValue;
 
@@ -70,38 +72,11 @@ public class ValueFilter extends AbsFilter {
     }
 
     /**
-     * Constructor initializing internal state.
-     * 
-     * @param rtx
-     *            Transaction to bind filter to.
-     * @param mValue
-     *            Value to find.
-     */
-    public ValueFilter(final INodeReadTrx rtx, final int mValue) {
-        this(rtx, TypedValue.getBytes(mValue));
-    }
-
-    /**
-     * Constructor initializing internal state.
-     * 
-     * @param rtx
-     *            Transaction to bind filter to.
-     * @param mValue
-     *            Value to find.
-     */
-    public ValueFilter(final INodeReadTrx rtx, final long mValue) {
-        this(rtx, TypedValue.getBytes(mValue));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public final boolean filter() {
-        return (getNode().getKind() == ENode.TEXT_KIND || getNode().getKind() == ENode.ATTRIBUTE_KIND)
-                && (TypedValue.equals(
-                        new String(((IValNode) getNode()).getRawValue()),
-                        mValue));
+        return (getNode().getKind() == IConstants.TEXT || getNode().getKind() == IConstants.ATTRIBUTE)
+            && (Arrays.equals(((IValNode)getNode()).getRawValue(), mValue));
     }
-
 }

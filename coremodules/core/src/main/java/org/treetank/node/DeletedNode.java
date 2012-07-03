@@ -62,8 +62,8 @@ public final class DeletedNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public ENode getKind() {
-        return ENode.DELETE_KIND;
+    public int getKind() {
+        return IConstants.DELETE;
     }
 
     /**
@@ -193,5 +193,5 @@ public final class DeletedNode implements INode {
         pOutput.write(mDel.getByteRepresentation());
         return pOutput.toByteArray();
     }
-    
+
 }

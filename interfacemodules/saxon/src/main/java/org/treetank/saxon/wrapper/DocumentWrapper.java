@@ -50,8 +50,8 @@ import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 
 /**
  * <h1>DocumentWrapper</h1>
@@ -135,7 +135,7 @@ public final class DocumentWrapper implements DocumentInfo {
                 new NodeReadTrx(mSession.beginPageReadTransaction(mSession.getMostRecentVersion()));
             final AbsAxis axis = new DescendantAxis(rtx, true);
             while (axis.hasNext()) {
-                if (rtx.getNode().getKind() == ENode.ELEMENT_KIND) {
+                if (rtx.getNode().getKind() == IConstants.ELEMENT) {
                     final int attCount = ((ElementNode)rtx.getNode()).getAttributeCount();
 
                     if (attCount > 0) {

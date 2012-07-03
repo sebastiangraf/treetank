@@ -27,12 +27,10 @@
 
 package org.treetank.service.xml.xpath.parser;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.IOException;
-
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * JUnit test class to test the functionality of the XPathScanner.
@@ -57,7 +55,7 @@ public class XPathScannerTest {
      * 
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeMethod
     public void setUp() {
 
         scanner = new XPathScanner(mQUERY);

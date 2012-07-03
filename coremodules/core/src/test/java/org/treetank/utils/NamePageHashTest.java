@@ -27,10 +27,9 @@
 
 package org.treetank.utils;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+import static org.testng.AssertJUnit.assertArrayEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
 
 public class NamePageHashTest {
 

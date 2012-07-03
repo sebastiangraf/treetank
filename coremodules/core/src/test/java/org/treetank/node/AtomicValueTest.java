@@ -28,11 +28,10 @@
 package org.treetank.node;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.testng.AssertJUnit.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class AtomicValueTest {
 
@@ -48,7 +47,7 @@ public class AtomicValueTest {
 
     private boolean eVal = true;
 
-    @Before
+    @BeforeMethod
     public void setUp() {
 
         a = new AtomicValue(aVal, Type.INTEGER);
@@ -66,27 +65,27 @@ public class AtomicValueTest {
     @Test
     public final void testGetInt() {
 
-        assertThat(a.getInt(), is(aVal));
-        assertThat(zero.getInt(), is(+0));
-        assertThat(n_zero.getInt(), is(-0));
+        assertEquals(a.getInt(), aVal);
+        assertEquals(zero.getInt(), +0);
+        assertEquals(n_zero.getInt(), -0);
     }
 
     @Test
     public final void testGetDBL() {
-        assertThat(d.getDBL(), is(dVal));
-        assertThat(f.getDBL(), is(2.0d));
+        assertEquals(d.getDBL(), dVal);
+        assertEquals(f.getDBL(), 2.0d);
     }
 
     @Test
     public final void testGetFLT() {
-        assertThat(c.getFLT(), is((float)cVal));
+        assertEquals(c.getFLT(), (float)cVal);
 
     }
 
     @Test
     public final void testGetString() {
 
-        assertThat(new String(b.getRawValue()), is(bVal));
+        assertEquals(new String(b.getRawValue()), bVal);
     }
 
     @Test

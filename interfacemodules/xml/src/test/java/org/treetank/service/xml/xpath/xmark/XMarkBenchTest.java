@@ -29,9 +29,9 @@ package org.treetank.service.xml.xpath.xmark;
 
 import java.io.File;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -58,7 +58,7 @@ public class XMarkBenchTest {
 
     private static Holder holder;
 
-    @BeforeClass
+    @BeforeMethod
     public static void setUp() throws Exception {
         TestHelper.deleteEverything();
         // EncryptionHelper.start();
@@ -123,7 +123,7 @@ public class XMarkBenchTest {
      * new String[] { result }); }
      */
 
-    @AfterClass
+    @AfterMethod
     public static void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();

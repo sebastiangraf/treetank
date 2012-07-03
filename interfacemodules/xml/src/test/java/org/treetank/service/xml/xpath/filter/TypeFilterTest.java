@@ -27,9 +27,9 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
@@ -42,14 +42,14 @@ public class TypeFilterTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.deleteEverything();

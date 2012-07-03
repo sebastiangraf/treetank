@@ -27,9 +27,8 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertSame;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
@@ -39,20 +38,20 @@ import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDE
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 
 public class XMLSerializerPropertiesTest {
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }
@@ -70,15 +69,15 @@ public class XMLSerializerPropertiesTest {
             final String key = keys.nextElement();
 
             if (key.equals(S_ID[0])) {
-                assertEquals(false, (Boolean)map.get(S_ID[0]));
+                assertSame(false, (Boolean)map.get(S_ID[0]));
             } else if (key.equals(S_REST[0])) {
-                assertEquals(false, (Boolean)map.get(S_REST[0]));
+                assertSame(false, (Boolean)map.get(S_REST[0]));
             } else if (key.equals(S_INDENT[0])) {
-                assertEquals(true, (Boolean)map.get(S_INDENT[0]));
+                assertSame(true, (Boolean)map.get(S_INDENT[0]));
             } else if (key.equals(S_INDENT_SPACES[0])) {
                 assertSame(2, (Integer)map.get(S_INDENT_SPACES[0]));
             } else if (key.equals(S_XMLDECL[0])) {
-                assertEquals(true, (Boolean)map.get(S_XMLDECL[0]));
+                assertSame(true, (Boolean)map.get(S_XMLDECL[0]));
             }
         }
     }

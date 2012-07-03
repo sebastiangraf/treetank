@@ -29,7 +29,6 @@ package org.treetank.node.delegates;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.TYPE_KEY;
 
-import org.treetank.node.ENode;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 
@@ -70,7 +69,8 @@ public class NodeDelegate implements INode {
      * @param pHash
      *            to be represented by this delegate
      */
-    public NodeDelegate(final long pNodeKey, final long pParentKey, final long pHash) {
+    public NodeDelegate(final long pNodeKey, final long pParentKey,
+            final long pHash) {
         mNodeKey = pNodeKey;
         mParentKey = pParentKey;
         mHash = pHash;
@@ -81,8 +81,8 @@ public class NodeDelegate implements INode {
      * {@inheritDoc}
      */
     @Override
-    public ENode getKind() {
-        return ENode.UNKOWN_KIND;
+    public int getKind() {
+        return IConstants.UNKNOWN;
     }
 
     /**
@@ -194,7 +194,7 @@ public class NodeDelegate implements INode {
     public boolean hasParent() {
         return mParentKey != NULL_NODE;
     }
-    
+
     /**
      * {@inheritDoc}
      */

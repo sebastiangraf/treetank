@@ -27,8 +27,7 @@
 
 package org.treetank.io;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.testng.AssertJUnit.assertEquals;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;

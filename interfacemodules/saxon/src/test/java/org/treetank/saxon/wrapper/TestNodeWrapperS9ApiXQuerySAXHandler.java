@@ -27,11 +27,10 @@
 
 package org.treetank.saxon.wrapper;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
@@ -57,13 +56,13 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
     /** Treetank database on books document. */
     private transient Holder mHolder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         SaxonHelper.createBookDB();
         mHolder = Holder.generateSession();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();

@@ -27,8 +27,8 @@
 
 package org.treetank.access;
 
-import org.junit.After;
-import org.junit.Before;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
@@ -39,14 +39,14 @@ public class ThreadTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateSession();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();

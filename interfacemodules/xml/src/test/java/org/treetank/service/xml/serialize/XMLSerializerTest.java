@@ -27,13 +27,12 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.ByteArrayOutputStream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
@@ -47,12 +46,12 @@ import org.treetank.service.xml.util.DocumentCreater;
 
 public class XMLSerializerTest {
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }

@@ -27,17 +27,16 @@
 
 package org.treetank.utils;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.nio.ByteBuffer;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 public class ByteBufferJavaImplTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testBasics() throws IllegalArgumentException {
         final ByteBuffer buffer = ByteBuffer.allocate(100);
-        Assert.assertEquals(0, buffer.position());
+        AssertJUnit.assertEquals(0, buffer.position());
         final IllegalArgumentException[] excsToFire = new IllegalArgumentException[2];
         try {
             buffer.position(101);
@@ -62,26 +61,26 @@ public class ByteBufferJavaImplTest {
         buffer.position(0);
         buffer.put((byte)13);
         buffer.put(Byte.MAX_VALUE);
-        Assert.assertEquals(2, buffer.position());
+        AssertJUnit.assertEquals(2, buffer.position());
         buffer.position(0);
-        Assert.assertEquals(13, buffer.get());
-        Assert.assertEquals(Byte.MAX_VALUE, buffer.get());
+        AssertJUnit.assertEquals(13, buffer.get());
+        AssertJUnit.assertEquals(Byte.MAX_VALUE, buffer.get());
         // Int.
         buffer.position(0);
         buffer.putInt(8192);
         buffer.putInt(Integer.MAX_VALUE);
-        Assert.assertEquals(8, buffer.position());
+        AssertJUnit.assertEquals(8, buffer.position());
         buffer.position(0);
-        Assert.assertEquals(8192, buffer.getInt());
-        Assert.assertEquals(Integer.MAX_VALUE, buffer.getInt());
+        AssertJUnit.assertEquals(8192, buffer.getInt());
+        AssertJUnit.assertEquals(Integer.MAX_VALUE, buffer.getInt());
         // Long.
         buffer.position(0);
         buffer.putLong(819281928192L);
         buffer.putLong(Long.MAX_VALUE);
-        Assert.assertEquals(16, buffer.position());
+        AssertJUnit.assertEquals(16, buffer.position());
         buffer.position(0);
-        Assert.assertEquals(819281928192L, buffer.getLong());
-        Assert.assertEquals(Long.MAX_VALUE, buffer.getLong());
+        AssertJUnit.assertEquals(819281928192L, buffer.getLong());
+        AssertJUnit.assertEquals(Long.MAX_VALUE, buffer.getLong());
     }
 
     @Test
@@ -95,14 +94,14 @@ public class ByteBufferJavaImplTest {
         for (final byte byteVal : reference) {
             buffer.put(byteVal);
         }
-        Assert.assertEquals(8, buffer.position());
+        AssertJUnit.assertEquals(8, buffer.position());
 
         buffer.position(0);
         final byte[] result = new byte[8];
         for (int i = 0; i < result.length; i++) {
             result[i] = buffer.get();
         }
-        Assert.assertEquals(8, buffer.position());
-        Assert.assertArrayEquals(reference, result);
+        AssertJUnit.assertEquals(8, buffer.position());
+        AssertJUnit.assertArrayEquals(reference, result);
     }
 }

@@ -3,11 +3,10 @@
  */
 package org.treetank.page;
 
+import static org.testng.AssertJUnit.assertTrue;
+import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.Random;
-
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  * Test Case for NamePage.

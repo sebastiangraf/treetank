@@ -30,10 +30,12 @@
  */
 package org.treetank.service.jaxrx.implementation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,9 +49,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
@@ -133,7 +132,7 @@ public class NodeIdRepresentationTest {
      * 
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -150,7 +149,7 @@ public class NodeIdRepresentationTest {
      * 
      * @throws java.lang.Exception
      */
-    @After
+    @AfterMethod
     public void tearDown() throws Exception {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();

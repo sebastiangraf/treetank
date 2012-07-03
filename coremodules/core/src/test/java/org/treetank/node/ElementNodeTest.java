@@ -27,12 +27,10 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
 import java.util.ArrayList;
 
-import org.junit.Test;
-import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -58,10 +56,8 @@ public class ElementNodeTest {
         check(node1);
 
         // Serialize and deserialize node.
-        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        ENode.getKind(node1.getClass()).serialize(out, node1);
-        out.position(0);
-        final ElementNode node2 = (ElementNode)ENode.ELEMENT_KIND.deserialize(out);
+        final byte[] data = node1.getByteRepresentation();
+        final ElementNode node2 = (ElementNode)NodeFactory.getInstance().deserializeNode(data);
         check(node2);
     }
 
@@ -78,7 +74,7 @@ public class ElementNodeTest {
         assertEquals(18, node.getNameKey());
         assertEquals(19, node.getURIKey());
         assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
-        assertEquals(ENode.ELEMENT_KIND, node.getKind());
+        assertEquals(IConstants.ELEMENT, node.getKind());
         assertEquals(true, node.hasFirstChild());
         assertEquals(true, node.hasParent());
         assertEquals(true, node.hasLeftSibling());

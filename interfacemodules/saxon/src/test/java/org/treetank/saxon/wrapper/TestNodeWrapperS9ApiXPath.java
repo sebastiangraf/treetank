@@ -27,14 +27,15 @@
 
 package org.treetank.saxon.wrapper;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.AssertJUnit;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
@@ -63,8 +64,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
      */
     private transient Holder mHolder;
 
-    @Override
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -83,7 +83,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
         mHolder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -113,7 +113,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
             strBuilder.append(item.toString());
         }
 
-        assertEquals("foo", strBuilder.toString());
+        AssertJUnit.assertEquals("foo", strBuilder.toString());
     }
 
     @Test
@@ -140,7 +140,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
             strBuilder.append(item.toString());
         }
 
-        assertEquals("bar", strBuilder.toString());
+        AssertJUnit.assertEquals("bar", strBuilder.toString());
     }
 
     @Test
@@ -170,7 +170,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
             sb.append(item.getStringValue());
         }
 
-        assertEquals("2", sb.toString());
+        AssertJUnit.assertEquals("2", sb.toString());
     }
 
 }

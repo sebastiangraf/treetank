@@ -28,15 +28,14 @@
 package org.treetank.axis;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>FollowingSiblingAxis</h1>
  * 
  * <p>
- * Iterate over all following siblings of kind ELEMENT or TEXT starting at a
- * given node. Self is not included.
+ * Iterate over all following siblings of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
 public class FollowingSiblingAxis extends AbsAxis {
@@ -76,7 +75,7 @@ public class FollowingSiblingAxis extends AbsAxis {
             mIsFirst = false;
             // if the context node is an attribute or namespace node,
             // the following-sibling axis is empty
-            if (getNode().getKind() == ENode.ATTRIBUTE_KIND
+            if (getNode().getKind() == IConstants.ATTRIBUTE
             // || getTransaction().isNamespaceKind()
             ) {
                 resetToStartKey();
@@ -86,8 +85,8 @@ public class FollowingSiblingAxis extends AbsAxis {
 
         resetToLastKey();
 
-        if (((IStructNode) getNode()).hasRightSibling()) {
-            moveTo(((IStructNode) getNode()).getRightSiblingKey());
+        if (((IStructNode)getNode()).hasRightSibling()) {
+            moveTo(((IStructNode)getNode()).getRightSiblingKey());
             return true;
         }
         resetToStartKey();

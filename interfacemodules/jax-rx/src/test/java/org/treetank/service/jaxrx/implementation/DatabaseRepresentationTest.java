@@ -27,11 +27,13 @@
 
 package org.treetank.service.jaxrx.implementation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,9 +49,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.util.DOMHelper;
@@ -117,7 +116,7 @@ public class DatabaseRepresentationTest {
      * 
      * @throws AbsTTException
      */
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -132,7 +131,7 @@ public class DatabaseRepresentationTest {
      * 
      * @throws AbsTTException
      */
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -151,7 +150,7 @@ public class DatabaseRepresentationTest {
     /**
      * This method tests {@link DatabaseRepresentation#createResource(java.io.InputStream,String)}
      */
-    @Test(expected = JaxRxException.class)
+    @Test(expectedExceptions = JaxRxException.class)
     public void createResourceExc() {
         treetank.createResource(null, RESOURCENAME);
     }

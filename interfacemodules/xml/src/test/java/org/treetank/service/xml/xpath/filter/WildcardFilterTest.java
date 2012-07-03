@@ -27,13 +27,11 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.filter.AbsFilterTest;
@@ -44,14 +42,14 @@ public class WildcardFilterTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.deleteEverything();
@@ -64,9 +62,9 @@ public class WildcardFilterTest {
         holder.getNRtx().moveToAttribute(0);
         try {
             AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
-            fail("Expected an Exception, because attributes are not supported.");
+            Assert.fail("Expected an Exception, because attributes are not supported.");
         } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
+            assertEquals(e.getMessage(), "Wildcards are not supported in attribute names yet.");
 
         }
         // IFilterTest.testIFilterConventions(new

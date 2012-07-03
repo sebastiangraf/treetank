@@ -26,7 +26,6 @@
  */
 package org.treetank.cache;
 
-import org.junit.Test;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.AbsTTException;
 import org.treetank.page.NodePage;
@@ -42,7 +41,7 @@ public class CacheTestHelper {
     protected static NodePage[][] PAGES;
 
     public static void setUp(final ICache cache) throws AbsTTException {
-        //Be sure to store more pages as defined in the RAMCache and to be reproduced by the versions
+        // Be sure to store more pages as defined in the RAMCache and to be reproduced by the versions
         PAGES = new NodePage[LRUCache.CACHE_CAPACITY + 1][ResourceConfiguration.VERSIONSTORESTORE + 1];
         for (int i = 0; i < PAGES.length; i++) {
             final NodePage page = new NodePage(i, 0);
@@ -55,11 +54,6 @@ public class CacheTestHelper {
             PAGES[i][0] = page;
             cache.put(i, new NodePageContainer(page));
         }
-    }
-
-    @Test
-    public void dummy() {
-        // Only for dummy purposes.
     }
 
 }

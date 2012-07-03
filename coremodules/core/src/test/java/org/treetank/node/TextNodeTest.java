@@ -27,11 +27,10 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
 import static org.treetank.node.IConstants.NULL_NODE;
 
-import org.junit.Test;
-import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
@@ -53,10 +52,8 @@ public class TextNodeTest {
         check(node1);
 
         // Serialize and deserialize node.
-        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        ENode.getKind(node1.getClass()).serialize(out, node1);
-        out.position(0);
-        final TextNode node2 = (TextNode)ENode.TEXT_KIND.deserialize(out);
+        final byte[] data = node1.getByteRepresentation();
+        final TextNode node2 = (TextNode)NodeFactory.getInstance().deserializeNode(data);
         check(node2);
 
     }
@@ -71,7 +68,7 @@ public class TextNodeTest {
         assertEquals(16L, node.getRightSiblingKey());
         assertEquals(NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
         assertEquals(2, node.getRawValue().length);
-        assertEquals(ENode.TEXT_KIND, node.getKind());
+        assertEquals(IConstants.TEXT, node.getKind());
         assertEquals(false, node.hasFirstChild());
         assertEquals(true, node.hasParent());
         assertEquals(true, node.hasLeftSibling());

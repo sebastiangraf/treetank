@@ -27,10 +27,9 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
@@ -53,7 +52,7 @@ public class FunctionsTest {
      * @throws Exception
      *             of any kind
      */
-    @Before
+    @BeforeMethod
     public final void setUp() throws Exception {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
@@ -260,8 +259,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Test
-    @Ignore
+    @Test(enabled = false)
     public final void testPosition() throws TTXPathException {
         final String query = "//b[position()=2]";
         final String result = "{ns}b";
@@ -276,8 +274,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testId() throws TTXPathException {
         final String query = "//b/fn:id()";
         final String result = "";
@@ -292,8 +289,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testData() throws TTXPathException {
         final String query = "fn:data(//b)";
         final String result = "foo bar";
@@ -308,8 +304,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testContains() throws TTXPathException {
         final String query = "fn:contains(/p:a/b, \"\")";
         final String result = "true";
@@ -324,8 +319,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testExactlyOne() throws TTXPathException {
         final String query = "fn:exactly-one(\"a\")";
         final String result = "a";
@@ -340,8 +334,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testZeroOrOne() throws TTXPathException {
         final String query = "fn:zero-or-one(\"a\")";
         final String result = "a";
@@ -356,8 +349,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testMax() throws TTXPathException {
         final String query = "fn:max((2, 1, 5, 4, 3))";
         final String result = "5";
@@ -372,8 +364,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testMin() throws TTXPathException {
         final String query = "fn:min((2, 1, 5, 4, 3))";
         final String result = "1";
@@ -388,8 +379,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testEmpty() throws TTXPathException {
         final String query = "fn:empty(/p:a)";
         final String result = "true";
@@ -404,8 +394,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testOneOrMore() throws TTXPathException {
         final String query = "fn:one-or-more(//b/c)";
         final String result = "<c xmlns:p=\"ns\"/><c xmlns:p=\"ns\"/>";
@@ -420,8 +409,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testExists() throws TTXPathException {
         final String query = "fn:exists(('a', 'b', 'c'))";
         final String result = "true";
@@ -436,8 +424,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testSubstringAfter() throws TTXPathException {
         final String query = "fn:substring-after(\"query\", \"u\")";
         final String result = "ery";
@@ -452,8 +439,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testSubstringBefore() throws TTXPathException {
         final String query = "fn:substring-before(\"query\", \"r\")";
         final String result = "que";
@@ -468,8 +454,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testLast() throws TTXPathException {
         final String query = "//b[last()]";
         final String result = "<b xmlns:p=\"ns\" p:x=\"y\"><c/>bar</b>";
@@ -484,8 +469,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testNumber() throws TTXPathException {
         final String query = "fn:number('29.99')";
         final String result = "29.99";
@@ -500,8 +484,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testDistinctValues() throws TTXPathException {
         final String query = "fn:distinct-values(('a', 'a'))";
         final String result = "a";
@@ -516,8 +499,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testRoot() throws TTXPathException {
         final String query = "fn:root()//c";
         final String result = "<c xmlns:p=\"ns\"/><c xmlns:p=\"ns\"/>";
@@ -532,8 +514,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testFloor() throws TTXPathException {
         final String query = "fn:floor(5.7)";
         final String result = "5";
@@ -548,8 +529,7 @@ public class FunctionsTest {
      * 
      * @throws TTXPathException
      */
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public final void testElementAttributeInReturn() throws TTXPathException {
         final String query = "for $x in //b/text() return <element attr=\"{$x}\"/>";
         final String result = "<element attr=\"foo\"/><element attr=\"bar\"/>";
@@ -564,7 +544,7 @@ public class FunctionsTest {
      * 
      * @throws AbsTTException
      */
-    @After
+    @AfterMethod
     public final void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();

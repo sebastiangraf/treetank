@@ -28,7 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 
 /**
  * <h1>FullTextLeafAxisTest</h1>
@@ -54,7 +54,7 @@ public class TextFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
-        return getNode().getKind() == ENode.TEXT_KIND;
+        return getNode().getKind() == IConstants.TEXT;
     }
 
 }

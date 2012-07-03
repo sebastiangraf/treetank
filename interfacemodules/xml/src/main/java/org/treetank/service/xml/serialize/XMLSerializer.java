@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.serialize;
 
+import static org.treetank.node.IConstants.*;
+
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
@@ -123,12 +125,12 @@ public final class XMLSerializer extends AbsSerializer {
     protected void emitStartElement(final INodeReadTrx paramRTX) {
         try {
             switch (paramRTX.getNode().getKind()) {
-            case ROOT_KIND:
+            case ROOT:
                 if (mIndent) {
                     mOut.write(ECharsForSerializing.NEWLINE.getBytes());
                 }
                 break;
-            case ELEMENT_KIND:
+            case ELEMENT:
                 // Emit start element.
                 indent();
                 final INameNode namenode = (INameNode)paramRTX.getNode();
@@ -184,7 +186,7 @@ public final class XMLSerializer extends AbsSerializer {
                     mOut.write(ECharsForSerializing.NEWLINE.getBytes());
                 }
                 break;
-            case TEXT_KIND:
+            case TEXT:
                 indent();
                 mOut.write(paramRTX.getValueOfCurrentNode().getBytes());
                 if (mIndent) {

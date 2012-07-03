@@ -78,8 +78,8 @@ public final class TextNode implements IStructNode, IValNode, INode {
      * {@inheritDoc}
      */
     @Override
-    public ENode getKind() {
-        return ENode.TEXT_KIND;
+    public int getKind() {
+        return IConstants.TEXT;
     }
 
     /**

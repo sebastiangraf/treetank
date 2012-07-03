@@ -424,8 +424,8 @@ public final class ElementNode implements INode, IStructNode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public ENode getKind() {
-        return ENode.ELEMENT_KIND;
+    public int getKind() {
+        return IConstants.ELEMENT;
     }
 
     @Override

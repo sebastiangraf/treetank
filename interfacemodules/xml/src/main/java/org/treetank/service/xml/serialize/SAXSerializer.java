@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.serialize;
 
+import static org.treetank.node.IConstants.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -88,12 +89,12 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     @Override
     protected void emitStartElement(final INodeReadTrx rtx) {
         switch (rtx.getNode().getKind()) {
-        case ROOT_KIND:
+        case ROOT:
             break;
-        case ELEMENT_KIND:
+        case ELEMENT:
             generateElement(rtx);
             break;
-        case TEXT_KIND:
+        case TEXT:
             generateText(rtx);
             break;
         default:

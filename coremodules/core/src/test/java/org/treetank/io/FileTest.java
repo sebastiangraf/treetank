@@ -27,39 +27,32 @@
 
 package org.treetank.io;
 
-/**
- * Interface for providing byteAccess to the write-process in the storage. That
- * means that every serialization process in TreeTank is using this interface
- * and that the related concrete storage implementation is implementing this
- * interface.
- * 
- * @author Sebastian Graf, University of Konstanz
- * 
- */
-public interface ITTSink {
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.treetank.Holder;
+import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.exception.AbsTTException;
+import org.treetank.io.EStorage;
 
-    /**
-     * Writing a long to the storage.
-     * 
-     * @param mLongVal
-     *            to be written
-     */
-    void writeLong(final long mLongVal);
+public class FileTest {
+    private ResourceConfiguration resourceConf;
 
-    /**
-     * Writing an int to the storage.
-     * 
-     * @param mIntVal
-     *            to be written
-     */
-    void writeInt(final int mIntVal);
+    @BeforeMethod
+    public void setUp() throws AbsTTException {
+        TestHelper.deleteEverything();
+        Holder.generateSession().close();
+        resourceConf = IOTestHelper.registerIO(EStorage.File);
+    }
 
-    /**
-     * Writing a byte to the storage.
-     * 
-     * @param mByteVal
-     *            to be written
-     */
-    void writeByte(final byte mByteVal);
+    @Test
+    public void testFirstRef() throws AbsTTException {
+        IOTestHelper.testReadWriteFirstRef(resourceConf);
+    }
 
+    @AfterMethod
+    public void tearDown() throws AbsTTException {
+        IOTestHelper.clean();
+    }
 }

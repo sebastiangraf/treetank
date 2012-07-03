@@ -27,12 +27,11 @@
 
 package org.treetank.service.xml.xpath.comparators;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.Assert;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
@@ -46,7 +45,7 @@ public class NodeCompTest {
     private AbsComparator comparator;
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
@@ -56,7 +55,7 @@ public class NodeCompTest {
                 .getNRtx(), -1), CompKind.IS);
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();
@@ -83,7 +82,7 @@ public class NodeCompTest {
                 new NodeComp(holder.getNRtx(), new LiteralExpr(holder.getNRtx(), -2), new LiteralExpr(holder
                     .getNRtx(), -1), CompKind.PRE);
             comparator.compare(op1, op2);
-            fail("Expexcted not yet implemented exception.");
+            Assert.fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
             assertEquals("Evaluation of node comparisons not possible", e.getMessage());
         }
@@ -93,7 +92,7 @@ public class NodeCompTest {
                 new NodeComp(holder.getNRtx(), new LiteralExpr(holder.getNRtx(), -2), new LiteralExpr(holder
                     .getNRtx(), -1), CompKind.FO);
             comparator.compare(op1, op2);
-            fail("Expexcted not yet implemented exception.");
+            Assert.fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
             assertEquals("Evaluation of node comparisons not possible", e.getMessage());
         }

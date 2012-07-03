@@ -27,7 +27,14 @@
 
 package org.treetank.utils;
 
+import static org.treetank.node.IConstants.ATTRIBUTE;
+import static org.treetank.node.IConstants.COMMENT;
+import static org.treetank.node.IConstants.ELEMENT;
+import static org.treetank.node.IConstants.NAMESPACE;
+import static org.treetank.node.IConstants.PROCESSING;
+import static org.treetank.node.IConstants.ROOT;
 import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.node.IConstants.TEXT;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -245,31 +252,31 @@ public final class TreeTankCommandoLineExplorer {
             String executeCommand(final INodeReadTrx mCurrentRtx, final String mParameter) {
                 final StringBuilder builder = new StringBuilder("Kind: ");
                 switch (mCurrentRtx.getNode().getKind()) {
-                case ELEMENT_KIND:
+                case ELEMENT:
                     builder.append("Element\n");
                     builder.append(mCurrentRtx.getQNameOfCurrentNode());
                     break;
-                case ATTRIBUTE_KIND:
+                case ATTRIBUTE:
                     builder.append("Attribute\n");
                     builder.append(mCurrentRtx.getQNameOfCurrentNode());
                     builder.append("=");
                     builder.append(mCurrentRtx.getValueOfCurrentNode());
                     break;
-                case TEXT_KIND:
+                case TEXT:
                     builder.append("Text\n");
                     builder.append(mCurrentRtx.getValueOfCurrentNode());
                     break;
-                case NAMESPACE_KIND:
+                case NAMESPACE:
                     builder.append("Namespace\n");
                     builder.append(mCurrentRtx.getQNameOfCurrentNode());
                     break;
-                case PROCESSING_KIND:
+                case PROCESSING:
                     builder.append("Processing instruction\n");
                     break;
-                case COMMENT_KIND:
+                case COMMENT:
                     builder.append("Comment\n");
                     break;
-                case ROOT_KIND:
+                case ROOT:
                     builder.append("Document Root\n");
                     break;
                 default:

@@ -27,6 +27,12 @@
 
 package org.treetank.service.xml.serialize;
 
+import static org.treetank.node.IConstants.ATTRIBUTE;
+import static org.treetank.node.IConstants.ELEMENT;
+import static org.treetank.node.IConstants.NAMESPACE;
+import static org.treetank.node.IConstants.ROOT;
+import static org.treetank.node.IConstants.TEXT;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Stack;
@@ -46,7 +52,6 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -141,8 +146,7 @@ public final class StAXSerializer implements XMLEventReader {
      * @param paramCloseRtx
      *            Determines if rtx should be closed afterwards.
      */
-    public StAXSerializer(final AbsAxis paramAxis, final INodeReadTrx pRtx,
-        final boolean paramCloseRtx) {
+    public StAXSerializer(final AbsAxis paramAxis, final INodeReadTrx pRtx, final boolean paramCloseRtx) {
         mNextTag = false;
         mAxis = paramAxis;
         mCloseRtx = paramCloseRtx;
@@ -170,16 +174,16 @@ public final class StAXSerializer implements XMLEventReader {
      */
     private void emitNode() {
         switch (mRtx.getNode().getKind()) {
-        case ROOT_KIND:
+        case ROOT:
             mEvent = mFac.createStartDocument();
             break;
-        case ELEMENT_KIND:
+        case ELEMENT:
             final long key = mRtx.getNode().getNodeKey();
             final QName qName = mRtx.getQNameOfCurrentNode();
             mEvent = mFac.createStartElement(qName, new AttributeIterator(mRtx), new NamespaceIterator(mRtx));
             mRtx.moveTo(key);
             break;
-        case TEXT_KIND:
+        case TEXT:
             mEvent = mFac.createCharacters(mRtx.getValueOfCurrentNode());
             break;
         default:
@@ -270,7 +274,7 @@ public final class StAXSerializer implements XMLEventReader {
                 mKey = mAxis.next();
 
                 if (mNextTag) {
-                    if (mAxis.getNode().getKind() != ENode.ELEMENT_KIND) {
+                    if (mAxis.getNode().getKind() != ELEMENT) {
                         throw new XMLStreamException("The next tag isn't a start- or end-tag!");
                     }
                     mNextTag = false;
@@ -300,7 +304,7 @@ public final class StAXSerializer implements XMLEventReader {
                 mRtx.moveTo(mStack.peek());
                 emitEndTag();
             } else {
-                final ENode nodeKind = mRtx.getNode().getKind();
+                final int nodeKind = mRtx.getNode().getKind();
                 if (((IStructNode)mRtx.getNode()).hasFirstChild()) {
                     mRtx.moveTo(((IStructNode)mRtx.getNode()).getFirstChildKey());
                     emitNode();
@@ -350,12 +354,12 @@ public final class StAXSerializer implements XMLEventReader {
      * @throws IOException
      *             In case of any I/O error.
      */
-    private void processNode(final ENode paramNodeKind) throws IOException {
+    private void processNode(final int paramNodeKind) throws IOException {
         switch (paramNodeKind) {
-        case ELEMENT_KIND:
+        case ELEMENT:
             emitEndTag();
             break;
-        case TEXT_KIND:
+        case TEXT:
             emitNode();
             break;
         default:
@@ -393,7 +397,7 @@ public final class StAXSerializer implements XMLEventReader {
             mLastKey = nodeKey;
 
             // Push end element to stack if we are a start element.
-            if (mRtx.getNode().getKind() == ENode.ELEMENT_KIND) {
+            if (mRtx.getNode().getKind() == ELEMENT) {
                 mStack.push(nodeKey);
             }
 
@@ -403,7 +407,7 @@ public final class StAXSerializer implements XMLEventReader {
                 && !((IStructNode)mRtx.getNode()).hasRightSibling()) {
                 mGoUp = true;
                 moveToNextNode();
-            } else if (mRtx.getNode().getKind() == ENode.ELEMENT_KIND
+            } else if (mRtx.getNode().getKind() == ELEMENT
                 && !((ElementNode)mRtx.getNode()).hasFirstChild()) {
                 // Case: Empty elements with right siblings.
                 mGoBack = true;
@@ -457,7 +461,7 @@ public final class StAXSerializer implements XMLEventReader {
             mNodeKey = mRTX.getNode().getNodeKey();
             mIndex = 0;
 
-            if (mRTX.getNode().getKind() == ENode.ELEMENT_KIND) {
+            if (mRTX.getNode().getKind() == ELEMENT) {
                 mAttCount = ((ElementNode)mRTX.getNode()).getAttributeCount();
             } else {
                 mAttCount = 0;
@@ -479,7 +483,7 @@ public final class StAXSerializer implements XMLEventReader {
         public Attribute next() {
             mRTX.moveTo(mNodeKey);
             mRTX.moveToAttribute(mIndex++);
-            assert mRTX.getNode().getKind() == ENode.ATTRIBUTE_KIND;
+            assert mRTX.getNode().getKind() == ATTRIBUTE;
             final QName qName = mRTX.getQNameOfCurrentNode();
             final String value = mRTX.getValueOfCurrentNode();
             mRTX.moveTo(mNodeKey);
@@ -529,7 +533,7 @@ public final class StAXSerializer implements XMLEventReader {
             mNodeKey = mRTX.getNode().getNodeKey();
             mIndex = 0;
 
-            if (mRTX.getNode().getKind() == ENode.ELEMENT_KIND) {
+            if (mRTX.getNode().getKind() == ELEMENT) {
                 mNamespCount = ((ElementNode)mRTX.getNode()).getNamespaceCount();
             } else {
                 mNamespCount = 0;
@@ -551,7 +555,7 @@ public final class StAXSerializer implements XMLEventReader {
         public Namespace next() {
             mRTX.moveTo(mNodeKey);
             mRTX.moveToNamespace(mIndex++);
-            assert mRTX.getNode().getKind() == ENode.NAMESPACE_KIND;
+            assert mRTX.getNode().getKind() == NAMESPACE;
             final QName qName = mRTX.getQNameOfCurrentNode();
             mRTX.moveTo(mNodeKey);
             return mFac.createNamespace(qName.getLocalPart(), qName.getNamespaceURI());

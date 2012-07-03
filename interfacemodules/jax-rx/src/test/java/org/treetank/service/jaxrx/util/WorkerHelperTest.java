@@ -27,9 +27,11 @@
 
 package org.treetank.service.jaxrx.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,9 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
@@ -79,27 +78,22 @@ public class WorkerHelperTest {
     private final static File DBFILE = new File(TestHelper.PATHS.PATH1.getFile(), RESOURCENAME);
 
     /**
-     * The test file that has to be saved on the server.
-     */
-    private final transient InputStream INPUTFILE = WorkerHelperTest.class.getClass().getResourceAsStream(
-        "/factbook.xml");
-
-    /**
      * A simple set up.
      * 
      * @throws FileNotFoundException
      */
-    @Before
+    @BeforeMethod
     public void setUp() throws FileNotFoundException, AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         workerHelper = WorkerHelper.getInstance();
         treeTank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
-        treeTank.shred(INPUTFILE, RESOURCENAME);
+        InputStream inputfile = WorkerHelperTest.class.getClass().getResourceAsStream("/factbook.xml");
+        treeTank.shred(inputfile, RESOURCENAME);
     }
 
-    @After
+    @AfterMethod
     public void after() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -165,7 +159,7 @@ public class WorkerHelperTest {
     /**
      * This method tests {@link WorkerHelper#closeWTX(boolean, INodeWriteTrx, ISession, IDatabase)}
      */
-    @Test(expected = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void testClose() throws AbsTTException {
         IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         ISession session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());

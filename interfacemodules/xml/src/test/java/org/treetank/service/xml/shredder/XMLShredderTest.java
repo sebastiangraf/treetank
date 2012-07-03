@@ -27,6 +27,10 @@
 
 package org.treetank.service.xml.shredder;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.AssertJUnit;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
@@ -38,9 +42,6 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -54,8 +55,8 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
 import org.treetank.node.ElementNode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.util.DocumentCreater;
 
@@ -72,13 +73,13 @@ public class XMLShredderTest extends XMLTestCase {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         holder = Holder.generateWtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();
@@ -106,22 +107,22 @@ public class XMLShredderTest extends XMLTestCase {
         while (expectedDescendants.hasNext() && descendants.hasNext()) {
             final IStructNode expDesc = ((IStructNode)expectedTrx.getNode());
             final IStructNode desc = ((IStructNode)rtx.getNode());
-            assertEquals(expDesc.getNodeKey(), desc.getNodeKey());
-            assertEquals(expDesc.getParentKey(), desc.getParentKey());
-            assertEquals(expDesc.getFirstChildKey(), desc.getFirstChildKey());
-            assertEquals(expDesc.getLeftSiblingKey(), desc.getLeftSiblingKey());
-            assertEquals(expDesc.getRightSiblingKey(), desc.getRightSiblingKey());
-            assertEquals(expDesc.getChildCount(), desc.getChildCount());
-            if (expDesc.getKind() == ENode.ELEMENT_KIND || desc.getKind() == ENode.ELEMENT_KIND) {
+            AssertJUnit.assertEquals(expDesc.getNodeKey(), desc.getNodeKey());
+            AssertJUnit.assertEquals(expDesc.getParentKey(), desc.getParentKey());
+            AssertJUnit.assertEquals(expDesc.getFirstChildKey(), desc.getFirstChildKey());
+            AssertJUnit.assertEquals(expDesc.getLeftSiblingKey(), desc.getLeftSiblingKey());
+            AssertJUnit.assertEquals(expDesc.getRightSiblingKey(), desc.getRightSiblingKey());
+            AssertJUnit.assertEquals(expDesc.getChildCount(), desc.getChildCount());
+            if (expDesc.getKind() == IConstants.ELEMENT || desc.getKind() == IConstants.ELEMENT) {
 
-                assertEquals(((ElementNode)expDesc).getAttributeCount(), ((ElementNode)desc)
+                AssertJUnit.assertEquals(((ElementNode)expDesc).getAttributeCount(), ((ElementNode)desc)
                     .getAttributeCount());
-                assertEquals(((ElementNode)expDesc).getNamespaceCount(), ((ElementNode)desc)
+                AssertJUnit.assertEquals(((ElementNode)expDesc).getNamespaceCount(), ((ElementNode)desc)
                     .getNamespaceCount());
             }
-            assertEquals(expDesc.getKind(), desc.getKind());
-            assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
-            assertEquals(expectedTrx.getValueOfCurrentNode(), expectedTrx.getValueOfCurrentNode());
+            AssertJUnit.assertEquals(expDesc.getKind(), desc.getKind());
+            AssertJUnit.assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
+            AssertJUnit.assertEquals(expectedTrx.getValueOfCurrentNode(), expectedTrx.getValueOfCurrentNode());
         }
 
         rtx.close();
@@ -166,7 +167,7 @@ public class XMLShredderTest extends XMLTestCase {
             expectedDescendants.next();
             descendants.hasNext();
             descendants.next();
-            assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
+            AssertJUnit.assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
         }
 
         expectedTrx.moveTo(ROOT_NODE);
@@ -175,7 +176,7 @@ public class XMLShredderTest extends XMLTestCase {
             expectedDescendants2.next();
             descendants.hasNext();
             descendants.next();
-            assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
+            AssertJUnit.assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
         }
 
     }
@@ -210,19 +211,19 @@ public class XMLShredderTest extends XMLTestCase {
         final Iterator<Long> attributes = new DescendantAxis(rtx);
 
         while (expectedAttributes.hasNext() && attributes.hasNext()) {
-            if (expectedTrx2.getNode().getKind() == ENode.ELEMENT_KIND
-                || rtx.getNode().getKind() == ENode.ELEMENT_KIND) {
-                assertEquals(((ElementNode)expectedTrx2.getNode()).getNamespaceCount(), ((ElementNode)rtx
+            if (expectedTrx2.getNode().getKind() == IConstants.ELEMENT
+                || rtx.getNode().getKind() == IConstants.ELEMENT) {
+                AssertJUnit.assertEquals(((ElementNode)expectedTrx2.getNode()).getNamespaceCount(), ((ElementNode)rtx
                     .getNode()).getNamespaceCount());
-                assertEquals(((ElementNode)expectedTrx2.getNode()).getAttributeCount(), ((ElementNode)rtx
+                AssertJUnit.assertEquals(((ElementNode)expectedTrx2.getNode()).getAttributeCount(), ((ElementNode)rtx
                     .getNode()).getAttributeCount());
                 for (int i = 0; i < ((ElementNode)expectedTrx2.getNode()).getAttributeCount(); i++) {
-                    assertEquals(expectedTrx2.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
+                    AssertJUnit.assertEquals(expectedTrx2.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
                 }
             }
         }
 
-        assertEquals(expectedAttributes.hasNext(), attributes.hasNext());
+        AssertJUnit.assertEquals(expectedAttributes.hasNext(), attributes.hasNext());
     }
 
     @Test
@@ -239,8 +240,8 @@ public class XMLShredderTest extends XMLTestCase {
 
         final INodeReadTrx rtx =
             new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
-        assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
-        assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
+        AssertJUnit.assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
+        AssertJUnit.assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
 
         final StringBuilder tnkBuilder = new StringBuilder();
         do {
@@ -266,6 +267,6 @@ public class XMLShredderTest extends XMLTestCase {
             }
         }
 
-        assertEquals(xmlBuilder.toString(), tnkString);
+        AssertJUnit.assertEquals(xmlBuilder.toString(), tnkString);
     }
 }

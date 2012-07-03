@@ -27,13 +27,11 @@
 
 package org.treetank.service.xml.xpath.expr;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.testng.AssertJUnit.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
@@ -52,14 +50,14 @@ public class CastableExprTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();
@@ -78,9 +76,9 @@ public class CastableExprTest {
         try {
             assertEquals(true, axis2.hasNext());
         } catch (XPathError e) {
-            assertThat(e.getMessage(), is("err:XPST0080 "
+            assertEquals(e.getMessage(), "err:XPST0080 "
                 + "Target type of a cast or castable expression must not be "
-                + "xs:NOTATION or xs:anyAtomicType."));
+                + "xs:NOTATION or xs:anyAtomicType.");
         }
 
         // Token is not implemented yet.

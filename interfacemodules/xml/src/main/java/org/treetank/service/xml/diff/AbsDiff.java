@@ -27,7 +27,10 @@
 
 package org.treetank.service.xml.diff;
 
+import static org.treetank.node.IConstants.ELEMENT;
+import static org.treetank.node.IConstants.ROOT;
 import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.node.IConstants.TEXT;
 
 import javax.xml.namespace.QName;
 
@@ -35,7 +38,6 @@ import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
@@ -139,7 +141,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         assert mDiffKind != null;
 
         // Check first nodes.
-        if (mNewRtx.getNode().getKind() != ENode.ROOT_KIND) {
+        if (mNewRtx.getNode().getKind() != ROOT) {
             if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                 mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
             } else {
@@ -148,14 +150,13 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         // Iterate over new revision.
-        while ((mOldRtx.getNode().getKind() != ENode.ROOT_KIND && mDiff == EDiff.DELETED)
+        while ((mOldRtx.getNode().getKind() != ROOT && mDiff == EDiff.DELETED)
             || moveCursor(mNewRtx, ERevision.NEW)) {
             if (mDiff != EDiff.INSERTED) {
                 moveCursor(mOldRtx, ERevision.OLD);
             }
 
-            if (mNewRtx.getNode().getKind() != ENode.ROOT_KIND
-                || mOldRtx.getNode().getKind() != ENode.ROOT_KIND) {
+            if (mNewRtx.getNode().getKind() != ROOT || mOldRtx.getNode().getKind() != ROOT) {
                 if (mHashKind == HashKind.None || mDiffKind == EDiffOptimized.NO) {
                     mDiff = diff(mNewRtx, mOldRtx, mDepth, EFireDiff.TRUE);
                 } else {
@@ -165,7 +166,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         // Nodes deleted in old rev at the end of the tree.
-        if (mOldRtx.getNode().getKind() != ENode.ROOT_KIND) {
+        if (mOldRtx.getNode().getKind() != ROOT) {
             // First time it might be EDiff.INSERTED where the cursor doesn't
             // move.
             while (mDiff == EDiff.INSERTED || moveCursor(mOldRtx, ERevision.OLD)) {
@@ -196,7 +197,7 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         final IStructNode node = ((IStructNode)paramRtx.getNode());
         if (node.hasFirstChild()) {
-            if (node.getKind() != ENode.ROOT_KIND && mDiffKind == EDiffOptimized.HASHED
+            if (node.getKind() != ROOT && mDiffKind == EDiffOptimized.HASHED
                 && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
                 moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());
 
@@ -287,9 +288,9 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         // Check for modifications.
         switch (paramNewRtx.getNode().getKind()) {
-        case ROOT_KIND:
-        case TEXT_KIND:
-        case ELEMENT_KIND:
+        case ROOT:
+        case TEXT:
+        case ELEMENT:
             if (!checkNodes(paramNewRtx, paramOldRtx)) {
                 diff = diffAlgorithm(paramNewRtx, paramOldRtx, paramDepth);
             }
@@ -329,22 +330,9 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         // Check for modifications.
         switch (paramNewRtx.getNode().getKind()) {
-        case ROOT_KIND:
-        case TEXT_KIND:
-        case ELEMENT_KIND:
-            // // ///DEBUG CODE STARTS HERE!!!!!!!
-            // mNewRtx.moveToFirstChild();
-            // mOldRtx.moveToFirstChild();
-            // mNewRtx.moveToFirstChild();
-            // mOldRtx.moveToFirstChild();
-            //
-            // mNewRtx.moveToParent();
-            // mNewRtx.moveToParent();
-            // mOldRtx.moveToParent();
-            // mOldRtx.moveToParent();
-            //
-            // // ///DEBUG CODE ENDS HERE!!!!!!!
-
+        case ROOT:
+        case TEXT:
+        case ELEMENT:
             if (paramNewRtx.getNode().getNodeKey() != paramOldRtx.getNode().getNodeKey()
                 || paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
                 // Check if nodes are the same (even if subtrees may vary).
@@ -430,12 +418,12 @@ abstract class AbsDiff extends AbsDiffObservable {
         boolean found = false;
         if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
             switch (paramNewRtx.getNode().getKind()) {
-            case ELEMENT_KIND:
+            case ELEMENT:
                 if (paramNewRtx.getQNameOfCurrentNode().equals(paramOldRtx.getQNameOfCurrentNode())) {
                     found = true;
                 }
                 break;
-            case TEXT_KIND:
+            case TEXT:
                 if (paramNewRtx.getValueOfCurrentNode().equals(paramOldRtx.getValueOfCurrentNode())) {
                     found = true;
                 }

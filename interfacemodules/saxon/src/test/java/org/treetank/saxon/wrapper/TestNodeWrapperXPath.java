@@ -27,9 +27,11 @@
 
 package org.treetank.saxon.wrapper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -47,16 +49,12 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 
 /**
@@ -76,7 +74,7 @@ public final class TestNodeWrapperXPath {
     /** Saxon configuration. */
     private static transient Configuration config;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException, XPathFactoryConfigurationException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
@@ -91,7 +89,7 @@ public final class TestNodeWrapperXPath {
         config = ((XPathFactoryImpl)xpf).getConfiguration();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws Exception {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -118,8 +116,8 @@ public final class TestNodeWrapperXPath {
      * @throws Exception
      *             Any Exception which maybe occurs.
      */
+    @Test(enabled = false)
     @SuppressWarnings("unchecked")
-    @Ignore("Not a test, utility method only")
     private void test(final String[] expressions, final Object doc, final Object[] expectedResults,
         Object[] result, final QName[] xpathConstants, final boolean[] namespaces, final Object namespace)
         throws Exception {
@@ -162,9 +160,9 @@ public final class TestNodeWrapperXPath {
 
                     final QName qName = mHolder.getNRtx().getQNameOfCurrentNode();
 
-                    if (mHolder.getNRtx().getNode().getKind() == ENode.ELEMENT_KIND) {
+                    if (mHolder.getNRtx().getNode().getKind() == IConstants.ELEMENT) {
                         assertEquals(expRes[j], qName.getPrefix() + ":" + qName.getLocalPart());
-                    } else if (mHolder.getNRtx().getNode().getKind() == ENode.TEXT_KIND) {
+                    } else if (mHolder.getNRtx().getNode().getKind() == IConstants.TEXT) {
                         assertEquals(expRes[j], mHolder.getNRtx().getValueOfCurrentNode());
                     }
 

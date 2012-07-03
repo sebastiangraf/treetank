@@ -27,17 +27,16 @@
 
 package org.treetank.axis.filter;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 
 public class AbsFilterTest {
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
     }
@@ -54,12 +53,7 @@ public class AbsFilterTest {
 
     }
 
-    @Test
-    public void testIFilterExample() {
-        // Do nothing. This class is only used with other test cases.
-    }
-
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
     }

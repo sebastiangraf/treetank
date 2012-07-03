@@ -27,12 +27,11 @@
 
 package org.treetank.node;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
-import org.junit.Test;
-import org.treetank.io.file.ByteBufferSinkAndSource;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 
@@ -49,10 +48,8 @@ public class DocumentRootNodeTest {
         check(node1);
 
         // Serialize and deserialize node.
-        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        ENode.getKind(node1.getClass()).serialize(out, node1);
-        out.position(0);
-        final DocumentRootNode node2 = (DocumentRootNode)ENode.ROOT_KIND.deserialize(out);
+        final byte[] data = node1.getByteRepresentation();
+        final DocumentRootNode node2 = (DocumentRootNode)NodeFactory.getInstance().deserializeNode(data);
         check(node2);
 
     }
@@ -65,7 +62,7 @@ public class DocumentRootNodeTest {
         assertEquals(NULL_NODE, node.getLeftSiblingKey());
         assertEquals(NULL_NODE, node.getRightSiblingKey());
         assertEquals(0L, node.getChildCount());
-        assertEquals(ENode.ROOT_KIND, node.getKind());
+        assertEquals(IConstants.ROOT, node.getKind());
 
     }
 

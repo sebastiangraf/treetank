@@ -27,13 +27,13 @@
 
 package org.treetank.service.xml.diff;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
@@ -52,7 +52,7 @@ public class FullDiffTest {
 
     private IDiffObserver mObserver;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
@@ -60,7 +60,7 @@ public class FullDiffTest {
         mObserver = DiffTestHelper.createMock();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();

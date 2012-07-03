@@ -38,8 +38,7 @@ import com.google.common.io.ByteStreams;
  * <h1>RevisionRootPage</h1>
  * 
  * <p>
- * Revision root page holds a reference to the name page as well as the static
- * node page tree.
+ * Revision root page holds a reference to the name page as well as the static node page tree.
  * </p>
  */
 public final class RevisionRootPage implements IPage {
@@ -66,38 +65,21 @@ public final class RevisionRootPage implements IPage {
     private PageReference[] mReferences;
 
     /**
+     * Constructor of RevisionRootPages.
      * 
-     * Constructor.
-     * 
-     * @param pData
-     *            data within the page
+     * @param pRevision
+     *            to be created
      */
-    public RevisionRootPage(final byte[] pData) {
-
-        final ByteArrayDataInput data = ByteStreams.newDataInput(pData);
-        mRevision = data.readLong();
+    public RevisionRootPage(final long pRevision) {
+        mRevision = pRevision;
         mReferences = new PageReference[2];
-
-        // Check if RevisionRootPage is new (pData contains only 1 longs) or is
-        // serialized(pData contains entire
-        // page)
-        if (pData.length > 8) {
-            for (int offset = 0; offset < mReferences.length; offset++) {
-                getReferences()[offset] = new PageReference();
-                getReferences()[offset].setKey(data.readLong());
-            }
-            mRevisionSize = data.readLong();
-            mMaxNodeKey = data.readLong();
-            mRevisionTimestamp = data.readLong();
-        }
     }
 
     /**
      * Create revision root page.
      */
     public RevisionRootPage() {
-        mRevision = IConstants.UBP_ROOT_REVISION_NUMBER;
-        mReferences = new PageReference[2];
+        this(IConstants.UBP_ROOT_REVISION_NUMBER);
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
         }
@@ -115,10 +97,8 @@ public final class RevisionRootPage implements IPage {
      * @param pRevToUse
      *            Revision number to use.
      */
-    public RevisionRootPage(
-            final RevisionRootPage paramCommittedRevisionRootPage,
-            final long pRevToUse) {
-        mRevision = pRevToUse;
+    public RevisionRootPage(final RevisionRootPage paramCommittedRevisionRootPage, final long pRevToUse) {
+        this(pRevToUse);
         mReferences = paramCommittedRevisionRootPage.getReferences();
         mRevisionSize = paramCommittedRevisionRootPage.mRevisionSize;
         mMaxNodeKey = paramCommittedRevisionRootPage.mMaxNodeKey;
@@ -152,6 +132,16 @@ public final class RevisionRootPage implements IPage {
     }
 
     /**
+     * Setter for revision size
+     * 
+     * @param pRevSize
+     *            to be set
+     */
+    protected void setRevisionSize(final long pRevSize) {
+        mRevisionSize = pRevSize;
+    }
+
+    /**
      * Get timestamp of revision.
      * 
      * @return Revision timestamp.
@@ -161,12 +151,32 @@ public final class RevisionRootPage implements IPage {
     }
 
     /**
+     * Setter for mRevisionTimestamp
+     * 
+     * @param pRevisionTimestamp
+     *            to be set
+     */
+    protected void setRevisionTimestamp(final long pRevisionTimestamp) {
+        mRevisionTimestamp = pRevisionTimestamp;
+    }
+
+    /**
      * Get last allocated node key.
      * 
      * @return Last allocated node key.
      */
     public long getMaxNodeKey() {
         return mMaxNodeKey;
+    }
+
+    /**
+     * Setter for max node key.
+     * 
+     * @param pMaxNodeKey
+     *            to be set
+     */
+    protected void setMaxNodeKey(final long pMaxNodeKey) {
+        mMaxNodeKey = pMaxNodeKey;
     }
 
     /**
@@ -181,10 +191,9 @@ public final class RevisionRootPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + " revisionSize=" + mRevisionSize
-                + ", revisionTimestamp=" + mRevisionTimestamp + ", namePage=("
-                + getReferences()[NAME_REFERENCE_OFFSET] + "), indirectPage=("
-                + getReferences()[INDIRECT_REFERENCE_OFFSET] + ")";
+        return super.toString() + " revisionSize=" + mRevisionSize + ", revisionTimestamp="
+            + mRevisionTimestamp + ", namePage=(" + getReferences()[NAME_REFERENCE_OFFSET]
+            + "), indirectPage=(" + getReferences()[INDIRECT_REFERENCE_OFFSET] + ")";
     }
 
     @Override

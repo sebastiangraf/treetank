@@ -68,8 +68,8 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      *            {@link ValNodeDelegate} to be set
      * 
      */
-    public AttributeNode(final NodeDelegate pDel, final NameNodeDelegate pNameDel,
-        final ValNodeDelegate pValDel) {
+    public AttributeNode(final NodeDelegate pDel,
+            final NameNodeDelegate pNameDel, final ValNodeDelegate pValDel) {
         mDel = pDel;
         mNameDel = pNameDel;
         mValDel = pValDel;
@@ -77,8 +77,8 @@ public final class AttributeNode implements INode, IValNode, INameNode {
 
     /** {@inheritDoc} */
     @Override
-    public ENode getKind() {
-        return ENode.ATTRIBUTE_KIND;
+    public int getKind() {
+        return IConstants.ATTRIBUTE;
     }
 
     /**
@@ -288,7 +288,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     ValNodeDelegate getValNodeDelegate() {
         return mValDel;
     }
-    
+
     /**
      * {@inheritDoc}
      */

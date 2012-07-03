@@ -30,9 +30,11 @@
  */
 package org.treetank.service.jaxrx.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,9 +45,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
@@ -94,14 +93,14 @@ public class RESTResponseHelperTest {
      */
     private static final String RESPATH = "/factbook.xml";
 
-    @Before
+    @BeforeMethod
     public void before() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
-    @After
+    @AfterMethod
     public void after() throws AbsTTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();

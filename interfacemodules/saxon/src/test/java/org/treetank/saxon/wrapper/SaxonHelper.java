@@ -30,7 +30,6 @@ import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
 
-import org.junit.Test;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
@@ -38,8 +37,8 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.ISession;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.ISession;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -73,10 +72,6 @@ public final class SaxonHelper {
         wtx.close();
         session.close();
         database.close();
-    }
-
-    @Test
-    public void fakeTest() {
     }
 
 }

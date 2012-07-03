@@ -27,41 +27,39 @@
 
 package org.treetank.access;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.AbsTTException;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 public class ReadTransactionTest {
 
     private Holder holder;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws AbsTTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws AbsTTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
-
-
     @Test
     public void testDocumentRoot() throws AbsTTException {
         assertEquals(true, holder.getNRtx().moveTo(ROOT_NODE));
-        assertEquals(ENode.ROOT_KIND, holder.getNRtx().getNode().getKind());
+        assertEquals(IConstants.ROOT, holder.getNRtx().getNode().getKind());
         assertEquals(false, holder.getNRtx().getNode().hasParent());
         assertEquals(false, ((IStructNode)holder.getNRtx().getNode()).hasLeftSibling());
         assertEquals(false, ((IStructNode)holder.getNRtx().getNode()).hasRightSibling());

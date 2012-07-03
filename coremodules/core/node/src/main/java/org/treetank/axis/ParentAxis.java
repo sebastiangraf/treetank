@@ -30,7 +30,7 @@ package org.treetank.axis;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.ENode;
+import org.treetank.node.IConstants;
 
 /**
  * <h1>ParentAxis</h1>
@@ -69,9 +69,8 @@ public class ParentAxis extends AbsAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (getNode().getKind() != ENode.ROOT_KIND && mFirst
-                && getNode().hasParent()
-                && getNode().getParentKey() != ROOT_NODE) {
+        if (getNode().getKind() != IConstants.ROOT && mFirst && getNode().hasParent()
+            && getNode().getParentKey() != ROOT_NODE) {
             mFirst = false;
             moveTo(getNode().getParentKey());
             return true;
