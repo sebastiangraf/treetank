@@ -51,11 +51,15 @@ public final class PageFactory {
     @Inject
     public PageFactory(final INodeFactory pFac) {
         mNodeFac = pFac;
-        INSTANCE = this;
     }
 
+    /** Singleton method. */
     public static final PageFactory getInstance() {
         return INSTANCE;
+    }
+
+    public static void registerNewInstance(final INodeFactory pFac) {
+        INSTANCE = new PageFactory(pFac);
     }
 
     /**

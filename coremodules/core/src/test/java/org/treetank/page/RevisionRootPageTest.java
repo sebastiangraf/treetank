@@ -22,12 +22,12 @@ public class RevisionRootPageTest {
 
     @BeforeMethod
     public void setUp() {
-        new PageFactory(FactoriesForTest.INSTANCE);
+        PageFactory.registerNewInstance(FactoriesForTest.INSTANCE);
     }
 
     @AfterMethod
     public void tearDown() {
-        new PageFactory(new NodeFactory());
+        PageFactory.registerNewInstance(new NodeFactory());
     }
 
     /**
