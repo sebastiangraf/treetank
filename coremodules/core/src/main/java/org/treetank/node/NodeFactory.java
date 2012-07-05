@@ -23,15 +23,6 @@ import com.google.common.io.ByteStreams;
  */
 public class NodeFactory implements INodeFactory {
 
-    private final static NodeFactory INSTANCE = new NodeFactory();
-
-    private NodeFactory() {
-    }
-
-    public static final NodeFactory getInstance() {
-        return INSTANCE;
-    }
-
     /**
      * {@inheritDoc}
      */

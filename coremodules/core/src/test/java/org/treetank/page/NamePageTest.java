@@ -4,7 +4,12 @@
 package org.treetank.page;
 
 import static org.testng.AssertJUnit.assertTrue;
+
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.treetank.node.NodeFactory;
+
 import java.util.Arrays;
 import java.util.Random;
 
@@ -18,6 +23,16 @@ public class NamePageTest {
 
     private final static Random mRan = new Random();
 
+    @BeforeMethod
+    public void setUp() {
+        new PageFactory(FactoriesForTest.INSTANCE);
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        new PageFactory(new NodeFactory());
+    }
+
     /**
      * Test method for {@link org.treetank.page.NamePage#NamePage(long)} and
      * {@link org.treetank.page.NamePage#getByteRepresentation()}.
@@ -29,9 +44,8 @@ public class NamePageTest {
         freshPage.setName(mRan.nextInt(), "blubb");
         final byte[] pageBytes = freshPage.getByteRepresentation();
 
-        final NamePage serializedPage = (NamePage) PageFactory.getInstance(
-                FactoriesForTest.INSTANCE).deserializePage(pageBytes);
-        assertTrue(Arrays.equals(pageBytes,
-                serializedPage.getByteRepresentation()));
+        final NamePage serializedPage = (NamePage)PageFactory.getInstance().deserializePage(pageBytes);
+
+        assertTrue(Arrays.equals(pageBytes, serializedPage.getByteRepresentation()));
     }
 }
