@@ -47,6 +47,7 @@ import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -150,7 +151,7 @@ public class XMLShredderTest extends XMLTestCase {
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
 
         final INodeWriteTrx expectedTrx =
-            new NodeWriteTrx(expectedSession, expectedSession.beginPageWriteTransaction());
+            new NodeWriteTrx(expectedSession, expectedSession.beginPageWriteTransaction(),HashKind.Rolling);
         org.treetank.utils.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
         expectedTrx.moveTo(ROOT_NODE);
@@ -188,7 +189,7 @@ public class XMLShredderTest extends XMLTestCase {
         final ISession expectedSession2 =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx expectedTrx2 =
-            new NodeWriteTrx(expectedSession2, expectedSession2.beginPageWriteTransaction());
+            new NodeWriteTrx(expectedSession2, expectedSession2.beginPageWriteTransaction(),HashKind.Rolling);
         DocumentCreater.createWithoutNamespace(expectedTrx2);
         expectedTrx2.commit();
 
@@ -196,7 +197,7 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session2 =
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = new NodeWriteTrx(session2, session2.beginPageWriteTransaction());
+        final INodeWriteTrx wtx = new NodeWriteTrx(session2, session2.beginPageWriteTransaction(),HashKind.Rolling);
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML2)),
                 EShredderInsert.ADDASFIRSTCHILD);
@@ -231,7 +232,7 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML3)),
                 EShredderInsert.ADDASFIRSTCHILD);

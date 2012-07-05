@@ -51,6 +51,7 @@ import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -310,7 +311,7 @@ public class DatabaseRepresentation {
             database.createResource(resConf);
             session = database.getSession(new SessionConfiguration.Builder(resource).build());
             pWtx = session.beginPageWriteTransaction();
-            wtx = new NodeWriteTrx(session, pWtx);
+            wtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
             wtx.moveTo(ROOT_NODE);
             final XMLShredder shredder =
                 new XMLShredder(wtx, RESTXMLShredder.createReader(xmlInput), EShredderInsert.ADDASFIRSTCHILD);
@@ -621,7 +622,7 @@ public class DatabaseRepresentation {
         try {
             database = Database.openDatabase(mStoragePath);
             session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
-            wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
+            wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
             wtx.revertTo(backToRevision);
             wtx.commit();
         } catch (final AbsTTException exce) {

@@ -42,6 +42,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -52,7 +53,6 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.AbsTTException;
 import org.treetank.node.AttributeNode;
-import org.treetank.node.DeletedNode;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.NamespaceNode;
@@ -62,6 +62,7 @@ import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
 import org.treetank.page.NodePage;
+import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.settings.ECharsForSerializing;
 import org.treetank.utils.DocumentCreater;
 
@@ -199,8 +200,7 @@ public final class TestHelper {
                 page.setNode(i, new AttributeNode(nodeDel, nameDel, valDel));
                 break;
             case 1:
-                page.setNode(i, new DeletedNode(new NodeDelegate(random.nextLong(), random.nextLong(), random
-                    .nextLong())));
+                page.setNode(i, new DeletedNode(random.nextLong()));
                 break;
             case 2:
                 nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
@@ -283,7 +283,7 @@ public final class TestHelper {
         database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.config).build());
         final ISession session = database.getSession(new SessionConfiguration.Builder(RESOURCE).build());
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
-        final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx);
+        final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
         DocumentCreater.create(nWtx);
         nWtx.commit();
         nWtx.close();

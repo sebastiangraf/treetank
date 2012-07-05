@@ -42,13 +42,12 @@ import org.treetank.cache.TransactionLogCache;
 import org.treetank.exception.AbsTTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
-import org.treetank.node.DeletedNode;
-import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.page.IConstants;
 import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
+import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
@@ -196,8 +195,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         assert paramNode != null;
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         prepareNodePage(nodePageKey);
-        final INode delNode =
-            new DeletedNode(new NodeDelegate(paramNode.getNodeKey(), 0, paramNode.getHash()));
+        final INode delNode = new DeletedNode(paramNode.getNodeKey());
         mNodePageCon.getModified().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         mNodePageCon.getComplete().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
         finishNodeModification(paramNode);

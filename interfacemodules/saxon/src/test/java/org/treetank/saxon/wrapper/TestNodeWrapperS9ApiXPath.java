@@ -40,6 +40,7 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -74,7 +75,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();

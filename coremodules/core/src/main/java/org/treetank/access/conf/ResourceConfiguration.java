@@ -28,7 +28,6 @@ package org.treetank.access.conf;
 
 import java.io.File;
 
-import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Session;
 import org.treetank.io.EStorage;
 import org.treetank.settings.ERevisioning;
@@ -124,8 +123,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     public static final EStorage STORAGE = EStorage.File;
     /** Standard Versioning Approach. */
     public static final ERevisioning VERSIONING = ERevisioning.INCREMENTAL;
-    /** Type of hashing. */
-    public static final HashKind HASHKIND = HashKind.Rolling;
     /** Versions to restore. */
     public static final int VERSIONSTORESTORE = 4;
     /** Folder for tmp-database. */
@@ -138,9 +135,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
 
     /** Kind of revisioning (Incremental, Differential). */
     public final ERevisioning mRevision;
-
-    /** Kind of integrity hash (rolling, postorder). */
-    public final HashKind mHashKind;
 
     /** Number of revisions to restore a complete set of data. */
     public final int mRevisionsToRestore;
@@ -161,7 +155,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     private ResourceConfiguration(final ResourceConfiguration.Builder pBuilder) {
         mType = pBuilder.mType;
         mRevision = pBuilder.mRevision;
-        mHashKind = pBuilder.mHashKind;
         mRevisionsToRestore = pBuilder.mRevisionsToRestore;
         mDBConfig = pBuilder.mDBConfig;
         mPath =
@@ -178,7 +171,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         int result = 13;
         result = prime * result + mType.hashCode();
         result = prime * result + mRevision.hashCode();
-        result = prime * result + mHashKind.hashCode();
         result = prime * result + mPath.hashCode();
         result = prime * result + mDBConfig.hashCode();
         return result;
@@ -204,8 +196,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         builder.append(this.mType);
         builder.append("\nRevision: ");
         builder.append(this.mRevision);
-        builder.append("\nHashKind: ");
-        builder.append(this.mHashKind);
         return builder.toString();
     }
 
@@ -228,9 +218,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
 
         /** Kind of revisioning (Incremental, Differential). */
         private ERevisioning mRevision = VERSIONING;
-
-        /** Kind of integrity hash (rolling, postorder). */
-        private HashKind mHashKind = HASHKIND;
 
         /** Number of revisions to restore a complete set of data. */
         private int mRevisionsToRestore = VERSIONSTORESTORE;
@@ -288,21 +275,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         }
 
         /**
-         * Setter for mHashKind.
-         * 
-         * @param pHash
-         *            to be set
-         * @return reference to the builder object
-         */
-        public Builder setHashKind(final HashKind pHash) {
-            if (pHash == null) {
-                throw new NullPointerException("paramType may not be null!");
-            }
-            mHashKind = pHash;
-            return this;
-        }
-
-        /**
          * Setter for mRevisionsToRestore.
          * 
          * @param pRevToRestore
@@ -329,8 +301,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
             builder.append(this.mType);
             builder.append("\nRevision: ");
             builder.append(this.mRevision);
-            builder.append("\nHashKind: ");
-            builder.append(this.mHashKind);
             return builder.toString();
         }
 

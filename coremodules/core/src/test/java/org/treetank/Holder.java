@@ -29,6 +29,7 @@ package org.treetank;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -72,7 +73,7 @@ public class Holder {
         final Holder holder = generateSession();
         final IPageWriteTrx pRtx = holder.mSession.beginPageWriteTransaction();
         holder.mPRtx = pRtx;
-        holder.mNRtx = new NodeWriteTrx(holder.mSession, pRtx);
+        holder.mNRtx = new NodeWriteTrx(holder.mSession, pRtx,HashKind.Rolling);
         return holder;
     }
 

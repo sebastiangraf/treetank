@@ -12,6 +12,7 @@ import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
+import org.treetank.page.NodePage.DeletedNode;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -39,8 +40,7 @@ public class NodeFactory implements INodeFactory {
         final ByteArrayDataInput input = ByteStreams.newDataInput(pSource);
         final int kind = input.readInt();
 
-        final NodeDelegate nodeDel = new NodeDelegate(input.readLong(),
-                input.readLong(), input.readLong());
+        NodeDelegate nodeDel;
         StructNodeDelegate strucDel;
         NameNodeDelegate nameDel;
         ValNodeDelegate valDel;
@@ -48,10 +48,11 @@ public class NodeFactory implements INodeFactory {
         INode returnVal = null;
         switch (kind) {
         case IConstants.ELEMENT:
-            strucDel = new StructNodeDelegate(nodeDel, input.readLong(),
-                    input.readLong(), input.readLong(), input.readLong());
-            nameDel = new NameNodeDelegate(nodeDel, input.readInt(),
-                    input.readInt());
+            nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
+            strucDel =
+                new StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(), input
+                    .readLong());
+            nameDel = new NameNodeDelegate(nodeDel, input.readInt(), input.readInt());
 
             final List<Long> attrKeys = new ArrayList<Long>();
             final List<Long> namespKeys = new ArrayList<Long>();
@@ -68,13 +69,14 @@ public class NodeFactory implements INodeFactory {
                 namespKeys.add(input.readLong());
             }
 
-            returnVal = new ElementNode(nodeDel, strucDel, nameDel, attrKeys,
-                    namespKeys);
+            returnVal = new ElementNode(nodeDel, strucDel, nameDel, attrKeys, namespKeys);
             break;
         case IConstants.TEXT:
+            nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
             // Struct Node are 4*8 bytes (+4 (kind) + 24 (nodedel))
-            strucDel = new StructNodeDelegate(nodeDel, input.readLong(),
-                    input.readLong(), input.readLong(), input.readLong());
+            strucDel =
+                new StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(), input
+                    .readLong());
             // Val is the rest
             byte[] rawValText = new byte[input.readInt()];
             input.readFully(rawValText);
@@ -82,15 +84,17 @@ public class NodeFactory implements INodeFactory {
             returnVal = new TextNode(nodeDel, strucDel, valDel);
             break;
         case IConstants.ROOT:
+            nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
             // Struct Node are 4*8 bytes
-            strucDel = new StructNodeDelegate(nodeDel, input.readLong(),
-                    input.readLong(), input.readLong(), input.readLong());
+            strucDel =
+                new StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(), input
+                    .readLong());
             returnVal = new DocumentRootNode(nodeDel, strucDel);
             break;
         case IConstants.ATTRIBUTE:
+            nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
             // Name Node are 2*4 bytes (+4 (kind) + 24 (nodedel))
-            nameDel = new NameNodeDelegate(nodeDel, input.readInt(),
-                    input.readInt());
+            nameDel = new NameNodeDelegate(nodeDel, input.readInt(), input.readInt());
             // Val is the rest
             byte[] rawValAttr = new byte[input.readInt()];
             input.readFully(rawValAttr);
@@ -98,17 +102,17 @@ public class NodeFactory implements INodeFactory {
             returnVal = new AttributeNode(nodeDel, nameDel, valDel);
             break;
         case IConstants.NAMESPACE:
+            nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
             // Name Node are 2*4 bytes
-            nameDel = new NameNodeDelegate(nodeDel, input.readInt(),
-                    input.readInt());
+            nameDel = new NameNodeDelegate(nodeDel, input.readInt(), input.readInt());
             returnVal = new NamespaceNode(nodeDel, nameDel);
             break;
-        case IConstants.DELETE:
-            returnVal = new DeletedNode(nodeDel);
+        case org.treetank.page.IConstants.NULL_NODE:
+            returnVal = new DeletedNode(input.readLong());
             break;
         default:
             throw new IllegalStateException(
-                    "Invalid Kind of Node. Something went wrong in the serialization/deserialization");
+                "Invalid Kind of Node. Something went wrong in the serialization/deserialization");
         }
         return returnVal;
     }
