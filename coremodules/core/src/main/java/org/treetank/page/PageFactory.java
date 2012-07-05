@@ -58,8 +58,14 @@ public final class PageFactory {
         return INSTANCE;
     }
 
-    public static void registerNewInstance(final INodeFactory pFac) {
-        INSTANCE = new PageFactory(pFac);
+    /**
+     * Set new singleton.
+     * 
+     * @param pFac
+     *            to be set
+     */
+    public static void registerNewInstance(final PageFactory pFac) {
+        INSTANCE = pFac;
     }
 
     /**

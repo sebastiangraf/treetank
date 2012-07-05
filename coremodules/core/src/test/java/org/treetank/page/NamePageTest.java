@@ -25,12 +25,12 @@ public class NamePageTest {
 
     @BeforeMethod
     public void setUp() {
-        PageFactory.registerNewInstance(FactoriesForTest.INSTANCE);
+        PageFactory.registerNewInstance(new PageFactory(FactoriesForTest.INSTANCE));
     }
 
     @AfterMethod
     public void tearDown() {
-        PageFactory.registerNewInstance(new NodeFactory());
+        PageFactory.registerNewInstance(new PageFactory(new NodeFactory()));
     }
 
     /**
