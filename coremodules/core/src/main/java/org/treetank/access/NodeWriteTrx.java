@@ -111,10 +111,10 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTUsageException
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
-    public NodeWriteTrx(final ISession pSession, final IPageWriteTrx pPageWriteTrx) throws TTIOException,
-        TTUsageException {
+    public NodeWriteTrx(final ISession pSession, final IPageWriteTrx pPageWriteTrx, final HashKind kind)
+        throws TTIOException, TTUsageException {
 
-        mHashKind = pSession.getConfig().mHashKind;
+        mHashKind = kind;
         mDelegate = new NodeReadTrx(pPageWriteTrx);
         mSession = pSession;
     }

@@ -128,7 +128,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -144,7 +144,7 @@ public class NodePage implements IPage {
         if (getClass() != mObj.getClass()) {
             return false;
         }
-        final NodePage mOther = (NodePage) mObj;
+        final NodePage mOther = (NodePage)mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
             return false;
         }
@@ -188,5 +188,75 @@ public class NodePage implements IPage {
             }
         }
         return pOutput.toByteArray();
+    }
+
+    public static class DeletedNode implements INode {
+        /** Hash for this node. */
+        private long mHash;
+
+        /**
+         * Node key of the deleted node.
+         */
+        private long mNodeKey;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramNode
+         *            nodekey to be replaced with a deletednode
+         * @param paramParent
+         *            parent of this key.
+         */
+        public DeletedNode(final long pNodeKey) {
+            mNodeKey = pNodeKey;
+        }
+
+        /**
+         * Delegate method for getNodeKey.
+         * 
+         * @return
+         * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+         */
+        public long getNodeKey() {
+            return mNodeKey;
+        }
+
+        /**
+         * Delegate method for setNodeKey.
+         * 
+         * @param pNodeKey
+         * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
+         */
+        public void setNodeKey(final long pNodeKey) {
+            mNodeKey = pNodeKey;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public byte[] getByteRepresentation() {
+            final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+            pOutput.writeInt(IConstants.NULL_NODE);
+            pOutput.writeLong(mNodeKey);
+            return pOutput.toByteArray();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setHash(long pHash) {
+            mHash = pHash;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public long getHash() {
+            return mHash;
+        }
+
     }
 }

@@ -28,36 +28,44 @@
 package org.treetank.page;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.treetank.api.INodeFactory;
+import org.treetank.node.NodeFactory;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
 
 public final class PageFactory {
 
+    /** Node Factory to be initialized. */
     private INodeFactory mNodeFac;
 
-    private static final Map<INodeFactory, PageFactory> INSTANCES = new HashMap<INodeFactory, PageFactory>();
+    private static PageFactory INSTANCE = new PageFactory(new NodeFactory());
 
     /**
-     * Private constructor, just for singletons only.
+     * Constructor.
      * 
      * @param pFac
      */
-    private PageFactory(final INodeFactory pFac) {
+    @Inject
+    public PageFactory(final INodeFactory pFac) {
         mNodeFac = pFac;
     }
 
-    public static final PageFactory getInstance(INodeFactory mNodeFactory) {
-        PageFactory fac = INSTANCES.get(mNodeFactory);
-        if (fac == null) {
-            fac = new PageFactory(mNodeFactory);
-            INSTANCES.put(mNodeFactory, fac);
-        }
-        return fac;
+    /** Singleton method. */
+    public static final PageFactory getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * Set new singleton.
+     * 
+     * @param pFac
+     *            to be set
+     */
+    public static void registerNewInstance(final PageFactory pFac) {
+        INSTANCE = pFac;
     }
 
     /**

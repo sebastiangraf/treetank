@@ -40,6 +40,7 @@ import org.jaxrx.core.QueryParameter;
 import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
@@ -234,7 +235,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
+                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
                     // move to node with given rest id and deletes it
                     if (wtx.moveTo(nodeId)) {
                         wtx.remove();
@@ -285,7 +286,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
+                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
 
                     if (wtx.moveTo(nodeId)) {
                         final long parentKey = wtx.getNode().getParentKey();
@@ -346,7 +347,7 @@ public class NodeIdRepresentation {
                     // Creating a new session
                     session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
                     // Creating a write transaction
-                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
+                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
                     final boolean exist = wtx.moveTo(nodeId);
                     if (exist) {
                         if (type == EIdAccessType.FIRSTCHILD) {

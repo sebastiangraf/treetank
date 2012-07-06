@@ -35,7 +35,6 @@ import java.util.zip.DataFormatException;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.node.NodeFactory;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
@@ -52,9 +51,8 @@ import org.treetank.page.UberPage;
  */
 public final class FileReader implements IReader {
 
-    // TODO Care about this one via injection
-    private final PageFactory mFac = PageFactory.getInstance(NodeFactory
-            .getInstance());
+    /** Factory for building Pages. */
+    private final PageFactory mFac = PageFactory.getInstance();
 
     /** Beacon of first references. */
     protected final static int FIRST_BEACON = 12;
@@ -140,7 +138,7 @@ public final class FileReader implements IReader {
             // Read primary beacon.
             mFile.seek(0);
             uberPageReference.setKey(mFile.readLong());
-            final UberPage page = (UberPage) read(uberPageReference.getKey());
+            final UberPage page = (UberPage)read(uberPageReference.getKey());
             uberPageReference.setPage(page);
             return uberPageReference;
         } catch (final IOException exc) {

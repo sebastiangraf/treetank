@@ -53,7 +53,7 @@ public class AttributeNodeTest {
 
         // Serialize and deserialize node.
         final byte[] data = node1.getByteRepresentation();
-        final AttributeNode node2 = (AttributeNode)NodeFactory.getInstance().deserializeNode(data);
+        final AttributeNode node2 = (AttributeNode)new NodeFactory().deserializeNode(data);
         check(node2);
 
     }

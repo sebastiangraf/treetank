@@ -39,6 +39,7 @@ import javax.xml.namespace.QName;
 
 import org.treetank.Holder;
 import org.treetank.TestHelper;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.AbsTTException;
@@ -117,7 +118,9 @@ public class UpdateTest {
 
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
-            wtx = new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction());
+            wtx =
+                new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                    HashKind.Rolling);
             wtx.moveTo(ROOT_NODE);
             wtx.insertTextAsFirstChild(Integer.toString(i));
             wtx.commit();
@@ -150,7 +153,9 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        wtx = new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction());
+        wtx =
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
         wtx.moveTo(ROOT_NODE);
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
@@ -160,7 +165,9 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        wtx = new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction());
+        wtx =
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
         assertTrue(wtx.moveTo(ROOT_NODE));
         assertEquals(5L, wtx.insertElementAsFirstChild(new QName("")));
         wtx.commit();

@@ -4,12 +4,16 @@
 package org.treetank.page;
 
 import static org.testng.AssertJUnit.assertTrue;
+
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.treetank.api.INode;
+import org.treetank.node.NodeFactory;
 
 /**
  * Test Case for NodePage.
@@ -18,6 +22,16 @@ import org.treetank.api.INode;
  * 
  */
 public class NodePageTest {
+
+    @BeforeMethod
+    public void setUp() {
+        PageFactory.registerNewInstance(new PageFactory(FactoriesForTest.INSTANCE));
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        PageFactory.registerNewInstance(new PageFactory(new NodeFactory()));
+    }
 
     /**
      * Test method for {@link org.treetank.page.NodePage#NodePage(byte[])} and
@@ -33,10 +47,9 @@ public class NodePageTest {
         }
 
         final byte[] pageBytes = freshPage.getByteRepresentation();
-        final NodePage serializedPage = (NodePage) PageFactory.getInstance(
-                FactoriesForTest.INSTANCE).deserializePage(pageBytes);
-        assertTrue(Arrays.equals(pageBytes,
-                serializedPage.getByteRepresentation()));
+        final NodePage serializedPage = (NodePage)PageFactory.getInstance().deserializePage(pageBytes);
+
+        assertTrue(Arrays.equals(pageBytes, serializedPage.getByteRepresentation()));
     }
 
 }

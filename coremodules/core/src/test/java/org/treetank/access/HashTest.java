@@ -233,11 +233,11 @@ public class HashTest {
     private INodeWriteTrx createWtx(final HashKind kind) throws AbsTTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).setHashKind(kind).build());
+            .getConfig()).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final IPageWriteTrx pTrx = session.beginPageWriteTransaction();
-        final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx);
+        final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx, kind);
         return wTrx;
     }
 

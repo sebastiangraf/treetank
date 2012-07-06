@@ -45,6 +45,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
+import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -245,7 +246,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
-                final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction());
+                final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
                 if (first) {
                     final XMLShredder shredder =
                         new XMLShredder(wtx, XMLShredder.createFileReader(file),
