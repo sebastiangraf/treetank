@@ -27,8 +27,6 @@
 
 package org.treetank;
 
-import static org.junit.Assert.fail;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -38,8 +36,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
-import org.junit.Ignore;
-import org.junit.Test;
 import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -118,11 +114,6 @@ public final class TestHelper {
 
     private final static Map<File, IDatabase> INSTANCES = new Hashtable<File, IDatabase>();
 
-    @Test
-    public void testDummy() {
-        // Just empty to ensure maven running
-    }
-
     /**
      * Getting a database and create one of not existing. This includes the
      * creation of a resource with the settings in the builder as standard.
@@ -130,25 +121,20 @@ public final class TestHelper {
      * @param file
      *            to be created
      * @return a database-obj
+     * @throws AbsTTException
      */
-    @Ignore
-    public static final IDatabase getDatabase(final File file) {
+    public static final IDatabase getDatabase(final File file) throws AbsTTException {
         if (INSTANCES.containsKey(file)) {
             return INSTANCES.get(file);
         } else {
-            try {
-                final DatabaseConfiguration config = new DatabaseConfiguration(file);
-                if (!file.exists()) {
-                    Database.createDatabase(config);
-                }
-                final IDatabase database = Database.openDatabase(file);
-                database.createResource(new ResourceConfiguration.Builder(RESOURCE, config).build());
-                INSTANCES.put(file, database);
-                return database;
-            } catch (final AbsTTException exc) {
-                fail(exc.toString());
-                return null;
+            final DatabaseConfiguration config = new DatabaseConfiguration(file);
+            if (!file.exists()) {
+                Database.createDatabase(config);
             }
+            final IDatabase database = Database.openDatabase(file);
+            database.createResource(new ResourceConfiguration.Builder(RESOURCE, config).build());
+            INSTANCES.put(file, database);
+            return database;
         }
     }
 
@@ -157,7 +143,6 @@ public final class TestHelper {
      * 
      * @throws AbsTTException
      */
-    @Ignore
     public static final void deleteEverything() throws AbsTTException {
         closeEverything();
         Database.truncateDatabase(PATHS.PATH1.config);
@@ -169,7 +154,6 @@ public final class TestHelper {
      * 
      * @throws AbsTTException
      */
-    @Ignore
     public static final void closeEverything() throws AbsTTException {
         if (INSTANCES.containsKey(PATHS.PATH1.getFile())) {
             final IDatabase database = INSTANCES.remove(PATHS.PATH1.getFile());
@@ -181,7 +165,6 @@ public final class TestHelper {
         }
     }
 
-    @Ignore
     public static NodePage getNodePage(final long revision, final int offset, final int length,
         final long nodePageKey) {
         final NodePage page = new NodePage(nodePageKey, revision);
@@ -251,7 +234,6 @@ public final class TestHelper {
      * @throws IOException
      *             throws an IOException if any I/O operation fails.
      */
-    @Ignore("Not a test, utility method only")
     public static StringBuilder readFile(final File paramFile, final boolean paramWhitespaces)
         throws IOException {
         final BufferedReader in = new BufferedReader(new FileReader(paramFile));

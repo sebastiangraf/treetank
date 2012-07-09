@@ -28,7 +28,6 @@
 package org.treetank.io.file;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -58,17 +57,15 @@ public class CryptoJavaImpl {
      * 
      * @param pLength
      *            of the data to be compressed
-     * @param pBuffer
+     * @param pData
      *            data that should be compressed
      * @return compressed data, null if failed
      */
-    public int crypt(final int pLength, final ByteBuffer pBuffer) {
-        pBuffer.position(FileReader.OTHER_BEACON);
-        final byte[] tmp = new byte[pLength - FileReader.OTHER_BEACON];
-        pBuffer.get(tmp, 0, tmp.length);
+    public byte[] crypt(final byte[] pData) {
+
         mCompressor.reset();
         mOut.reset();
-        mCompressor.setInput(tmp);
+        mCompressor.setInput(pData);
         mCompressor.finish();
         int count;
         while (!mCompressor.finished()) {
@@ -76,9 +73,7 @@ public class CryptoJavaImpl {
             mOut.write(mTmp, 0, count);
         }
         final byte[] result = mOut.toByteArray();
-        pBuffer.position(FileReader.OTHER_BEACON);
-        pBuffer.put(result);
-        return pBuffer.position();
+        return result;
     }
 
     /**
@@ -91,45 +86,36 @@ public class CryptoJavaImpl {
      * @return Decompressed data, null if failed
      * @throws DataFormatException
      */
-    public ByteBuffer decrypt(final int pLength, ByteBuffer pBuffer)
-            throws DataFormatException {
-        pBuffer.position(FileReader.OTHER_BEACON);
-        final byte[] tmp = new byte[pLength - FileReader.OTHER_BEACON];
-        pBuffer.get(tmp, 0, tmp.length);
+    public byte[] decrypt(byte[] pBuffer) throws DataFormatException {
         mDecompressor.reset();
         mOut.reset();
-        mDecompressor.setInput(tmp);
+        mDecompressor.setInput(pBuffer);
         int count;
         while (!mDecompressor.finished()) {
             count = mDecompressor.inflate(mTmp);
             mOut.write(mTmp, 0, count);
         }
         final byte[] result = mOut.toByteArray();
-        pBuffer.position(FileReader.OTHER_BEACON);
-        pBuffer = checkAndIncrease(result.length, pBuffer);
-        pBuffer.put(result);
-        // return result.length + FileReader.OTHER_BEACON;
-        return pBuffer;
+        return result;
     }
 
-    /**
-     * Checking of length is sufficient, if not, increase the bytebuffer.
-     * 
-     * @param mLength
-     *            for the bytes which have to be inserted
-     */
-    private ByteBuffer checkAndIncrease(final int mLength, ByteBuffer mBuffer) {
-        if (mBuffer.position() + mLength > mBuffer.capacity()) {
-            final int position = mBuffer.position();
-            mBuffer.position(0);
-            final ByteBuffer newBuffer = ByteBuffer
-                    .allocate(position + mLength);
-            newBuffer.put(mBuffer);
-            newBuffer.position(position);
-            return newBuffer;
-        } else {
-            return mBuffer;
-        }
-    }
+    // /**
+    // * Checking of length is sufficient, if not, increase the bytebuffer.
+    // *
+    // * @param mLength
+    // * for the bytes which have to be inserted
+    // */
+    // private ByteBuffer checkAndIncrease(final int mLength, ByteBuffer mBuffer) {
+    // if (mBuffer.position() + mLength > mBuffer.capacity()) {
+    // final int position = mBuffer.position();
+    // mBuffer.position(0);
+    // final ByteBuffer newBuffer = ByteBuffer.allocate(position + mLength);
+    // newBuffer.put(mBuffer);
+    // newBuffer.position(position);
+    // return newBuffer;
+    // } else {
+    // return mBuffer;
+    // }
+    // }
 
 }
