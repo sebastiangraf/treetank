@@ -73,7 +73,6 @@ public final class FileWriter implements IWriter {
         }
 
         mCompressor = new CryptoJavaImpl();
-
         reader = new FileReader(paramStorage);
 
     }
@@ -89,40 +88,25 @@ public final class FileWriter implements IWriter {
     public long write(final PageReference pageReference) throws TTIOException {
 
         final IPage page = pageReference.getPage();
-        final byte[] pagebytes = page.getByteRepresentation();
-
-        final ByteBuffer mBuffer = ByteBuffer.allocate(FileReader.OTHER_BEACON
-                + pagebytes.length);
-        mBuffer.position(FileReader.OTHER_BEACON);
-        mBuffer.put(pagebytes);
-        final int inputLength = mBuffer.position();
+        final byte[] rawPage = page.getByteRepresentation();
 
         // Perform crypto operations.
-        final int outputLength = mCompressor.crypt(inputLength, mBuffer);
-        if (outputLength == 0) {
-            throw new TTIOException("Page crypt error.");
-        }
-        // normally, the first bytes until FileReader.OTHERBEACON are reserved
-        // and cut of resulting in
-        final byte[] tmp = new byte[outputLength];
-        mBuffer.position(0);
-        // Because of the missing offset, we can write the length directly at
-        // the front of the buffer to see
-        // it afterwards in the byte array as well. Do not forget to reset the
-        // position before transition to
-        // the array
-        mBuffer.putInt(outputLength);
-        mBuffer.position(0);
-        mBuffer.get(tmp, 0, tmp.length);
+        final byte[] decryptedPage = mCompressor.crypt(rawPage);
+
+        final byte[] writtenPage = new byte[decryptedPage.length + FileReader.OTHER_BEACON];
+        ByteBuffer buffer = ByteBuffer.allocate(writtenPage.length);
+        buffer.putInt(decryptedPage.length);
+        buffer.put(decryptedPage);
+        buffer.position(0);
+        buffer.get(writtenPage, 0, writtenPage.length);
 
         try {
             // Getting actual offset and appending to the end of the current
             // file
             final long fileSize = mFile.length();
-            final long offset = fileSize == 0 ? FileReader.FIRST_BEACON
-                    : fileSize;
+            final long offset = fileSize == 0 ? FileReader.FIRST_BEACON : fileSize;
             mFile.seek(offset);
-            mFile.write(tmp);
+            mFile.write(writtenPage);
             // Remember page coordinates.
             pageReference.setKey(offset);
             return offset;
@@ -163,8 +147,7 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void writeFirstReference(final PageReference pageReference)
-            throws TTIOException {
+    public void writeFirstReference(final PageReference pageReference) throws TTIOException {
         try {
             write(pageReference);
             mFile.seek(0);

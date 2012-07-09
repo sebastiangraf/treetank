@@ -30,7 +30,6 @@ package org.treetank.io.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.util.zip.DataFormatException;
 
 import org.treetank.exception.TTIOException;
@@ -99,31 +98,19 @@ public final class FileReader implements IReader {
      */
     public IPage read(final long pKey) throws TTIOException {
 
-        ByteBuffer mBuffer = ByteBuffer.allocate(FileFactory.BUFFERSIZE);
-
         try {
-
-            // Prepare environment for read.
-            mBuffer.position(OTHER_BEACON);
 
             // Read page from file.
             mFile.seek(pKey);
             final int dataLength = mFile.readInt();
-            final byte[] page = new byte[dataLength - 4];
-
-            mFile.read(page);
-            mBuffer.put(page);
+            final byte[] rawPage = new byte[dataLength];
+            mFile.read(rawPage);
 
             // Perform crypto operations.
-            mBuffer = mDecompressor.decrypt(dataLength, mBuffer);
-            int decryptedLength = mBuffer.position();
+            byte[] decryptedPage = mDecompressor.decrypt(rawPage);
 
             // Return reader required to instantiate and deserialize page.
-            byte[] returnVal = new byte[decryptedLength - OTHER_BEACON];
-            mBuffer.position(OTHER_BEACON);
-            mBuffer.get(returnVal);
-
-            return mFac.deserializePage(returnVal);
+            return mFac.deserializePage(decryptedPage);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         } catch (final DataFormatException exc) {
