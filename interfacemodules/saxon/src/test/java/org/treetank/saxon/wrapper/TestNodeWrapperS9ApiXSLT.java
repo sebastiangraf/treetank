@@ -27,10 +27,6 @@
 
 package org.treetank.saxon.wrapper;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
-import org.testng.AssertJUnit;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -53,6 +49,10 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
+import org.testng.AssertJUnit;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
@@ -64,7 +64,7 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XSLTEvaluator;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
@@ -112,7 +112,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }

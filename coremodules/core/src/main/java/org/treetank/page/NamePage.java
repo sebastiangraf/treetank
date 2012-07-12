@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.utils.TypedValue;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -115,7 +115,7 @@ public final class NamePage implements IPage {
     }
 
     @Override
-    public void commit(PageWriteTrx paramState) throws AbsTTException {
+    public void commit(PageWriteTrx paramState) throws TTException {
     }
 
     @Override

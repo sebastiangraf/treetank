@@ -30,12 +30,10 @@
  */
 package org.treetank.service.jaxrx.implementation;
 
-import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
+import static org.testng.AssertJUnit.assertNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,8 +47,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.DOMHelper;
 import org.w3c.dom.Attr;
@@ -438,11 +439,11 @@ public class NodeIdRepresentationTest {
      * {@link org.treetank.service.jaxrx.implementation.NodeIdRepresentation#modifyResource(java.lang.String, long, java.io.InputStream)}
      * .
      * 
-     * @throws AbsTTException
+     * @throws TTException
      * @throws JaxRxException
      */
     @Test
-    public final void testModifyResource() throws JaxRxException, AbsTTException {
+    public final void testModifyResource() throws JaxRxException, TTException {
         final InputStream inputStream = new ByteArrayInputStream("<testNode/>".getBytes());
         long lastRevision = treeTank.getLastRevision(RESOURCENAME);
         ridWorker.modifyResource(RESOURCENAME, NODEIDTOMODIFY, inputStream);

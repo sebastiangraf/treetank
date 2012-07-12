@@ -64,7 +64,7 @@ public class NameFilter extends AbsFilter {
 
         boolean returnVal = false;
         if (getNode() instanceof INameNode) {
-            final INameNode node = (INameNode) getNode();
+            final INameNode node = (INameNode)getNode();
             returnVal = (node.getNameKey() == mLocalPartKey);
         }
         return returnVal;

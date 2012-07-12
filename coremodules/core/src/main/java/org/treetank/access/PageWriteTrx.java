@@ -39,7 +39,7 @@ import org.treetank.api.ISession;
 import org.treetank.cache.ICache;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.TransactionLogCache;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.IConstants;
@@ -271,10 +271,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * 
      * @param reference
      *            to be commited
-     * @throws AbsTTException
+     * @throws TTException
      *             if the write fails
      */
-    public void commit(final PageReference reference) throws AbsTTException {
+    public void commit(final PageReference reference) throws TTException {
         IPage page = null;
 
         // if reference is not null, get one from the persistent storage.
@@ -303,7 +303,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         }
     }
 
-    protected UberPage commit() throws AbsTTException {
+    protected UberPage commit() throws TTException {
 
         final PageReference uberPageReference = new PageReference();
         final UberPage uberPage = mDelegate.getUberPage();

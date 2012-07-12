@@ -28,15 +28,15 @@
 package org.treetank.access;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotSame;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNotSame;
 import static org.testng.AssertJUnit.assertTrue;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
-import org.testng.Assert;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
@@ -45,7 +45,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
@@ -56,19 +56,19 @@ public class SessionTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         holder = Holder.generateWtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testSingleton() throws AbsTTException {
+    public void testSingleton() throws TTException {
         final IDatabase database = Holder.generateSession().getDatabase();
         assertEquals(database, holder.getDatabase());
         final ISession session =
@@ -83,7 +83,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testClosed() throws AbsTTException {
+    public void testClosed() throws TTException {
         INodeReadTrx rtx = holder.getNRtx();
         rtx.close();
 
@@ -99,14 +99,14 @@ public class SessionTest {
     }
 
     @Test
-    public void testNonExisting() throws AbsTTException, InterruptedException {
+    public void testNonExisting() throws TTException, InterruptedException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
         assertTrue(database == database2);
     }
 
     @Test
-    public void testInsertChild() throws AbsTTException {
+    public void testInsertChild() throws TTException {
         final INodeWriteTrx wtx = holder.getNWtx();
         DocumentCreater.create(wtx);
         assertNotNull(wtx.moveTo(ROOT_NODE));
@@ -122,7 +122,7 @@ public class SessionTest {
     }
 
     // @Test
-    // public void testRevision() throws AbsTTException {
+    // public void testRevision() throws TTException {
     //
     // final INodeWriteTrx wtx = holder.getNWtx();
     // assertEquals(0L, holder.getSession().getMostRecentVersion());
@@ -142,7 +142,7 @@ public class SessionTest {
     // }
     //
     // @Test
-    // public void testShreddedRevision() throws AbsTTException {
+    // public void testShreddedRevision() throws TTException {
     //
     // final INodeWriteTrx wtx1 = holder.getSession().beginNodeWriteTransaction();
     // DocumentCreater.create(wtx1);
@@ -174,7 +174,7 @@ public class SessionTest {
     // }
     //
     // @Test
-    // public void testExisting() throws AbsTTException {
+    // public void testExisting() throws TTException {
     // final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
     // final ISession session1 =
     // database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
@@ -220,7 +220,7 @@ public class SessionTest {
     // }
     //
     // @Test
-    // public void testIdempotentClose() throws AbsTTException {
+    // public void testIdempotentClose() throws TTException {
     // final INodeWriteTrx wtx = holder.getSession().beginNodeWriteTransaction();
     // DocumentCreater.create(wtx);
     // wtx.commit();
@@ -236,14 +236,14 @@ public class SessionTest {
     // }
     //
     // @Test
-    // public void testAutoCommit() throws AbsTTException {
+    // public void testAutoCommit() throws TTException {
     // final INodeWriteTrx wtx = holder.getSession().beginNodeWriteTransaction();
     //
     // DocumentCreater.create(wtx);
     // }
     //
     // @Test
-    // public void testAutoClose() throws AbsTTException {
+    // public void testAutoClose() throws TTException {
     //
     // final INodeWriteTrx wtx = holder.getSession().beginNodeWriteTransaction();
     // DocumentCreater.create(wtx);

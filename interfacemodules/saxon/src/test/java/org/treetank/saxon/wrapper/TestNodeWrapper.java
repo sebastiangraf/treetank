@@ -27,13 +27,10 @@
 
 package org.treetank.saxon.wrapper;
 
-import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
-import org.testng.Assert;
+
 import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
@@ -50,6 +47,10 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
@@ -61,7 +62,7 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -81,7 +82,7 @@ public class TestNodeWrapper {
     private transient NodeWrapper node;
 
     @BeforeMethod
-    public void beforeMethod() throws AbsTTException {
+    public void beforeMethod() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
@@ -94,7 +95,7 @@ public class TestNodeWrapper {
     }
 
     @AfterMethod
-    public void afterMethod() throws AbsTTException {
+    public void afterMethod() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
@@ -107,7 +108,7 @@ public class TestNodeWrapper {
     }
 
     @Test
-    public void testCompareOrder() throws XPathException, AbsTTException {
+    public void testCompareOrder() throws XPathException, TTException {
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 
@@ -138,7 +139,7 @@ public class TestNodeWrapper {
     }
 
     @Test
-    public void testGetAttributeValue() throws AbsTTException {
+    public void testGetAttributeValue() throws TTException {
         final Processor proc = new Processor(false);
         node =
             new NodeWrapper(new DocumentWrapper(mHolder.getSession(), proc.getUnderlyingConfiguration()), 1);

@@ -49,7 +49,7 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 
@@ -97,10 +97,10 @@ public final class DocumentWrapper implements DocumentInfo {
      *            Treetank database.
      * @param paramConfig
      *            Configuration used.
-     * @throws AbsTTException
+     * @throws TTException
      */
     public DocumentWrapper(final ISession paramSession, final Configuration paramConfig)
-        throws AbsTTException {
+        throws TTException {
         this.mSession = paramSession;
         mBaseURI = paramSession.toString();
         setConfiguration(paramConfig);
@@ -158,7 +158,7 @@ public final class DocumentWrapper implements DocumentInfo {
                 axis.next();
             }
             rtx.close();
-        } catch (final AbsTTException exc) {
+        } catch (final TTException exc) {
             LOGGER.error(exc.toString());
         }
         return null;

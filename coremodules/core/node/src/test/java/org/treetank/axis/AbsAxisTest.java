@@ -27,32 +27,32 @@
 
 package org.treetank.axis;
 
-import static org.testng.AssertJUnit.assertArrayEquals;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
-import org.testng.Assert;
+import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class AbsAxisTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
@@ -92,7 +92,7 @@ public class AbsAxisTest {
     }
 
     @Test
-    public void testIAxisUserExample() throws AbsTTException {
+    public void testIAxisUserExample() throws TTException {
 
         final AbsAxis axis = new DescendantAxis(holder.getNRtx());
         long count = 0L;

@@ -60,7 +60,7 @@ public class XPathTestQueries {
     // rtx.close();
     // session.close();
     //
-    // } catch (AbsTTException e) {
+    // } catch (TTException e) {
     // e.printStackTrace();
     // }
     //

@@ -28,7 +28,7 @@
 package org.treetank.service.xml.diff;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
@@ -47,10 +47,10 @@ final class FullDiff extends AbsDiff {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
-     * @throws AbsTTException
+     * @throws TTException
      *             if anything goes wrong while setting up Treetank transactions
      */
-    FullDiff(final Builder paramBuilder) throws AbsTTException {
+    FullDiff(final Builder paramBuilder) throws TTException {
         super(paramBuilder);
     }
 

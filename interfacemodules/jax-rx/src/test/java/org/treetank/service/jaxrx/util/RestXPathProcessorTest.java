@@ -32,8 +32,7 @@ package org.treetank.service.jaxrx.util;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,8 +43,10 @@ import java.io.OutputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -88,7 +89,7 @@ public class RestXPathProcessorTest {
     public static final transient String PARAMJRESTSEQ = "rest:sequence";
 
     @BeforeClass
-    public static void setUpGlobal() throws AbsTTException {
+    public static void setUpGlobal() throws TTException {
         deleteDirectory(TestHelper.PATHS.PATH1.getFile());
         final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
         new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile()).shred(xmlInput, RESOURCENAME);
@@ -115,7 +116,7 @@ public class RestXPathProcessorTest {
      */
     @Test
     public final void testGetXpathResourceStringStringBooleanLongOutputStreamBoolean() throws IOException,
-        SAXException, ParserConfigurationException, AbsTTException {
+        SAXException, ParserConfigurationException, TTException {
         String xPath = "//book";
         boolean withNodeIds = true;
         OutputStream output = new ByteArrayOutputStream();
@@ -159,7 +160,7 @@ public class RestXPathProcessorTest {
      */
     @Test
     public final void testGetXpathResourceFileLongStringBooleanLongOutputStreamBoolean() throws SAXException,
-        IOException, ParserConfigurationException, AbsTTException {
+        IOException, ParserConfigurationException, TTException {
         String xPath = "//author";
         boolean withNodeIds = true;
         OutputStream output = new ByteArrayOutputStream();

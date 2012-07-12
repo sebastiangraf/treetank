@@ -42,17 +42,17 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class XMLSerializerPropertiesTest {
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 

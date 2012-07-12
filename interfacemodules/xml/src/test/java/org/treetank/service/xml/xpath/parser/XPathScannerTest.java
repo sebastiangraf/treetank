@@ -28,9 +28,11 @@
 package org.treetank.service.xml.xpath.parser;
 
 import static org.testng.AssertJUnit.assertEquals;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
+
 import java.io.IOException;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * JUnit test class to test the functionality of the XPathScanner.

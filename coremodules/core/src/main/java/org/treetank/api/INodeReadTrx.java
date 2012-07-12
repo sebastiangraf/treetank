@@ -29,7 +29,7 @@ package org.treetank.api;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.INode;
 
 /**
@@ -123,10 +123,10 @@ public interface INodeReadTrx {
      * This is an idempotent operation and does nothing if the transaction is
      * already closed.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             If can't close Read Transaction.
      */
-    void close() throws AbsTTException;
+    void close() throws TTException;
 
     /**
      * Is this transaction closed?

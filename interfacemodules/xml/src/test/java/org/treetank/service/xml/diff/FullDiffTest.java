@@ -27,16 +27,16 @@
 
 package org.treetank.service.xml.diff;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
 
 /**
@@ -53,7 +53,7 @@ public class FullDiffTest {
     private IDiffObserver mObserver;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         mHolder = Holder.generateWtx();
@@ -61,27 +61,27 @@ public class FullDiffTest {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testFullDiffFirst() throws AbsTTException, InterruptedException {
+    public void testFullDiffFirst() throws TTException, InterruptedException {
         DiffTestHelper.setUpFirst(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFirst(mObserver);
     }
 
     @Test
-    public void testOptimizedFirst() throws InterruptedException, AbsTTException {
+    public void testOptimizedFirst() throws InterruptedException, TTException {
         DiffTestHelper.setUpFirst(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFirst(mObserver);
     }
 
     @Test
-    public void testFullDiffSecond() throws AbsTTException, InterruptedException, IOException,
+    public void testFullDiffSecond() throws TTException, InterruptedException, IOException,
         XMLStreamException {
         DiffTestHelper.setUpSecond(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
@@ -89,7 +89,7 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testFullDiffThird() throws AbsTTException, IOException, XMLStreamException,
+    public void testFullDiffThird() throws TTException, IOException, XMLStreamException,
         InterruptedException {
         DiffTestHelper.setUpThird(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);

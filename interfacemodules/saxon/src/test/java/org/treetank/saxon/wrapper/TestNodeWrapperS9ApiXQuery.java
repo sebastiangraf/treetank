@@ -28,15 +28,15 @@
 package org.treetank.saxon.wrapper;
 
 import static org.testng.AssertJUnit.assertEquals;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XQueryEvaluator;
 
 /**
@@ -57,7 +57,7 @@ public final class TestNodeWrapperS9ApiXQuery {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }

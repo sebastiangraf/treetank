@@ -34,7 +34,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 
 public class AttributeAndNamespaceTest {
@@ -42,20 +42,20 @@ public class AttributeAndNamespaceTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testAttribute() throws AbsTTException {
+    public void testAttribute() throws TTException {
         holder.getNRtx().moveTo(1L);
         assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
         holder.getNRtx().moveToAttribute(0);
@@ -70,7 +70,7 @@ public class AttributeAndNamespaceTest {
     }
 
     @Test
-    public void testNamespace() throws AbsTTException {
+    public void testNamespace() throws TTException {
         holder.getNRtx().moveTo(1L);
         assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getNamespaceCount());
         holder.getNRtx().moveToNamespace(0);

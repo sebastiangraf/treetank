@@ -46,7 +46,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.RestXPathProcessor;
@@ -203,7 +203,7 @@ public class NodeIdRepresentation {
                 final RestXPathProcessor xpathProcessor = new RestXPathProcessor(mStoragePath);
                 try {
                     xpathProcessor.getXpathResource(dbFile, nodeId, query, nodeid, rev, output, wrapResult);
-                } catch (final AbsTTException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -244,13 +244,13 @@ public class NodeIdRepresentation {
                         // workerHelper.closeWTX(abort, wtx, session, database);
                         throw new JaxRxException(404, NOTFOUND);
                     }
-                } catch (final AbsTTException exce) {
+                } catch (final TTException exce) {
                     abort = true;
                     throw new JaxRxException(exce);
                 } finally {
                     try {
                         WorkerHelper.closeWTX(abort, wtx, session, database);
-                    } catch (final AbsTTException exce) {
+                    } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
                 }
@@ -299,13 +299,13 @@ public class NodeIdRepresentation {
                         throw new JaxRxException(404, NOTFOUND);
                     }
 
-                } catch (final AbsTTException exc) {
+                } catch (final TTException exc) {
                     abort = true;
                     throw new JaxRxException(exc);
                 } finally {
                     try {
                         WorkerHelper.closeWTX(abort, wtx, session, database);
-                    } catch (final AbsTTException exce) {
+                    } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
                 }
@@ -389,7 +389,7 @@ public class NodeIdRepresentation {
                 } finally {
                     try {
                         WorkerHelper.closeWTX(abort, wtx, session, database);
-                    } catch (final AbsTTException exce) {
+                    } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
                 }
@@ -445,7 +445,7 @@ public class NodeIdRepresentation {
                     serializer.call();
 
                 }
-            } catch (final AbsTTException ttExcep) {
+            } catch (final TTException ttExcep) {
                 throw new JaxRxException(ttExcep);
             } catch (final IOException ioExcep) {
                 throw new JaxRxException(ioExcep);
@@ -462,7 +462,7 @@ public class NodeIdRepresentation {
             } finally {
                 try {
                     WorkerHelper.closeRTX(null, session, database);
-                } catch (final AbsTTException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -565,7 +565,7 @@ public class NodeIdRepresentation {
                 } else {
                     throw new JaxRxException(404, NOTFOUND);
                 }
-            } catch (final AbsTTException ttExcep) {
+            } catch (final TTException ttExcep) {
                 throw new JaxRxException(ttExcep);
             } catch (final IOException ioExcep) {
                 throw new JaxRxException(ioExcep);
@@ -582,7 +582,7 @@ public class NodeIdRepresentation {
             } finally {
                 try {
                     WorkerHelper.closeRTX(rtx, session, database);
-                } catch (final AbsTTException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }

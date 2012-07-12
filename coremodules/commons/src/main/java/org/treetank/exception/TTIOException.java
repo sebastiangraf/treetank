@@ -40,7 +40,7 @@ import com.sleepycat.je.DatabaseException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TTIOException extends AbsTTException {
+public final class TTIOException extends TTException {
 
     /**
      * serializable id.

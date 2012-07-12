@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathError;
@@ -51,20 +51,20 @@ public class CastableExprTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testCastableExpr() throws AbsTTException {
+    public void testCastableExpr() throws TTException {
 
         final AbsAxis axis1 = new XPathAxis(holder.getNRtx(), "1 castable as xs:decimal");
         assertEquals(true, axis1.hasNext());

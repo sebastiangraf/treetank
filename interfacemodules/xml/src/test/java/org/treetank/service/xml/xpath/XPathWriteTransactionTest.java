@@ -27,14 +27,14 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
-import org.testng.Assert;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
@@ -44,7 +44,7 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -95,7 +95,7 @@ public final class XPathWriteTransactionTest {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         // wtx.abort();
         wtx.close();
         session.close();

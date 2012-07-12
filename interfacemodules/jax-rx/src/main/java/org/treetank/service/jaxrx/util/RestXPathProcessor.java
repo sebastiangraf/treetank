@@ -46,7 +46,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.xml.xpath.XPathAxis;
 
 /**
@@ -102,11 +102,11 @@ public class RestXPathProcessor {
      * @return the queried XML fragment
      * @throws IOException
      *             The exception occurred.
-     * @throws AbsTTException
+     * @throws TTException
      */
     public OutputStream getXpathResource(final String resourceName, final String xpath, final boolean nodeid,
         final Long revision, final OutputStream output, final boolean wrapResult) throws IOException,
-        AbsTTException {
+        TTException {
 
         // work around because of query root char '/'
         String qQuery = xpath;
@@ -148,11 +148,11 @@ public class RestXPathProcessor {
      *            specifies whether node id should be shown
      * @param doWrap
      *            output of result elements
-     * @throws AbsTTException
+     * @throws TTException
      */
     public void getXpathResource(final File dbFile, final long rId, final String query,
         final boolean doNodeId, final Long doRevision, final OutputStream output, final boolean doWrap)
-        throws AbsTTException {
+        throws TTException {
 
         // work around because of query root char '/'
         String qQuery = query;
@@ -214,10 +214,10 @@ public class RestXPathProcessor {
      *            <code>true</code> if node id's have to be delivered. <code>false</code> otherwise.
      * @param xpath
      *            The XPath expression.
-     * @throws AbsTTException
+     * @throws TTException
      */
     private void doXPathRes(final String resource, final Long revision, final OutputStream output,
-        final boolean nodeid, final String xpath) throws AbsTTException {
+        final boolean nodeid, final String xpath) throws TTException {
         // Database connection to treetank
         IDatabase database = null;
         ISession session = null;

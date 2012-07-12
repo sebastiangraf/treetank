@@ -27,79 +27,69 @@
 
 package org.treetank.axis.filter;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class DocumentRootNodeFilterTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testIFilterConvetions() throws AbsTTException {
+    public void testIFilterConvetions() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(0L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                true);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), true);
 
         rtx.moveTo(1L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(1L);
         rtx.moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(3L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(5L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(9L);
         rtx.moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(12L);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                false);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), false);
 
         rtx.moveTo(13L);
         rtx.moveTo(ROOT_NODE);
-        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx),
-                true);
+        AbsFilterTest.testIFilterConventions(new DocumentRootNodeFilter(rtx), true);
     }
 
 }

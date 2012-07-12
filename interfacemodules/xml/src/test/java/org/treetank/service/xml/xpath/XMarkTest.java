@@ -27,16 +27,16 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import java.io.File;
 
 import org.perfidix.annotation.BenchClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.xml.shredder.XMLShredder;
 
 /**
@@ -63,13 +63,13 @@ public class XMarkTest {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testQ1_10() throws AbsTTException {
+    public void testQ1_10() throws TTException {
         // Verify.
 
         XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
@@ -79,7 +79,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ1() throws AbsTTException {
+    public void testQ1() throws TTException {
 
         // Q1 The name of the person with ID 'person0' {projecting}
         XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
@@ -89,7 +89,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ5() throws AbsTTException {
+    public void testQ5() throws TTException {
 
         // Q5 How many sold items cost more than 40?
         XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
@@ -100,7 +100,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ6() throws AbsTTException {
+    public void testQ6() throws TTException {
 
         // Q6 How many items are listed on all continents?
         XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
@@ -110,7 +110,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ7() throws AbsTTException {
+    public void testQ7() throws TTException {
         // Q7 How many pieces of prose are in our database?
         XPathStringChecker.testIAxisConventions(holder.getNRtx(), new XPathAxis(holder.getNRtx(),
             "for $p in /site return fn:count($p//description) + "

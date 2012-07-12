@@ -27,73 +27,78 @@
 
 package org.treetank.axis;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class DescendantAxisTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testIterate() throws AbsTTException {
+    public void testIterate() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(ROOT_NODE);
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
-                1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
+            1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+        });
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
-                4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
+            4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+        });
 
         rtx.moveTo(9L);
         AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {
-                11L, 12L });
+            11L, 12L
+        });
 
         rtx.moveTo(13L);
-        AbsAxisTest
-                .testIAxisConventions(new DescendantAxis(rtx), new long[] {});
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx), new long[] {});
     }
 
     @Test
-    public void testIterateIncludingSelf() throws AbsTTException {
+    public void testIterateIncludingSelf() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
         rtx.moveTo(ROOT_NODE);
-        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true),
-                new long[] { ROOT_NODE, 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L,
-                        13L });
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
+            ROOT_NODE, 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+        });
 
         rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true),
-                new long[] { 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
+            1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
+        });
 
         rtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true),
-                new long[] { 9L, 11L, 12L });
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
+            9L, 11L, 12L
+        });
 
         rtx.moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true),
-                new long[] { 13L });
+        AbsAxisTest.testIAxisConventions(new DescendantAxis(rtx, true), new long[] {
+            13L
+        });
 
     }
 

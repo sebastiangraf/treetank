@@ -28,7 +28,7 @@
 package org.treetank.api;
 
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 /**
  * <h1>ISession</h1>
@@ -81,9 +81,9 @@ public interface ISession {
      * 
      * 
      * @return a {@link IPageReadTrx} instance
-     * @throws AbsTTException
+     * @throws TTException
      */
-    IPageWriteTrx beginPageWriteTransaction() throws AbsTTException;
+    IPageWriteTrx beginPageWriteTransaction() throws TTException;
 
     /**
      * Begin exclusive write transaction on the page layer with fixed revisions.
@@ -91,10 +91,10 @@ public interface ISession {
      * @param pRevToRepresent
      * @param pRevToStore
      * @return a {@link IPageReadTrx} instance
-     * @throws AbsTTException
+     * @throws TTException
      */
     IPageWriteTrx beginPageWriteTransaction(final long pRevToRepresent, final long pRevToStore)
-        throws AbsTTException;
+        throws TTException;
 
     /**
      * Begin exclusive read transaction on the page layer
@@ -102,9 +102,9 @@ public interface ISession {
      * @param pRevKey
      *            revision key for the revision ask
      * @return a {@link IPageReadTrx} instance
-     * @throws AbsTTException
+     * @throws TTException
      */
-    IPageReadTrx beginPageReadTransaction(final long pRevKey) throws AbsTTException;
+    IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException;
 
     /**
      * Safely close session and immediately release all resources. If there are
@@ -113,9 +113,9 @@ public interface ISession {
      * This is an idempotent operation and does nothing if the session is
      * already closed.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             If can't close session.
      */
-    void close() throws AbsTTException;
+    void close() throws TTException;
 
 }

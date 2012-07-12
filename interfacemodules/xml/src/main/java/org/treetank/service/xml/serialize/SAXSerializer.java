@@ -27,7 +27,10 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.treetank.node.IConstants.*;
+import static org.treetank.node.IConstants.ELEMENT;
+import static org.treetank.node.IConstants.ROOT;
+import static org.treetank.node.IConstants.TEXT;
+
 import java.io.File;
 import java.io.IOException;
 

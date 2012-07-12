@@ -44,7 +44,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.EStorage;
@@ -71,10 +71,10 @@ public final class Database implements IDatabase {
      * 
      * @param paramDBConf
      *            {@link ResourceConfiguration} reference to configure the {@link IDatabase}
-     * @throws AbsTTException
+     * @throws TTException
      *             Exception if something weird happens
      */
-    private Database(final DatabaseConfiguration paramDBConf) throws AbsTTException {
+    private Database(final DatabaseConfiguration paramDBConf) throws TTException {
         mDBConfig = paramDBConf;
         mSessions = new HashMap<File, Session>();
 
@@ -141,10 +141,10 @@ public final class Database implements IDatabase {
      * 
      * @param pConf
      *            the database at this path should be deleted.
-     * @throws AbsTTException
+     * @throws TTException
      *             any kind of false Treetank behaviour
      */
-    public static synchronized void truncateDatabase(final DatabaseConfiguration pConf) throws AbsTTException {
+    public static synchronized void truncateDatabase(final DatabaseConfiguration pConf) throws TTException {
         // check that database must be closed beforehand
         if (!DATABASEMAP.containsKey(pConf.mFile)) {
             // if file is existing and folder is a tt-dataplace, delete it
@@ -245,10 +245,10 @@ public final class Database implements IDatabase {
      *            where the database is located sessionConf a {@link SessionConfiguration} object to set up
      *            the session
      * @return {@link IDatabase} instance.
-     * @throws AbsTTException
+     * @throws TTException
      *             if something odd happens
      */
-    public static synchronized IDatabase openDatabase(final File pFile) throws AbsTTException {
+    public static synchronized IDatabase openDatabase(final File pFile) throws TTException {
         if (!pFile.exists()) {
             throw new TTUsageException("DB could not be opened (since it was not created?) at location",
                 pFile.toString());
@@ -289,7 +289,7 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public synchronized ISession getSession(final SessionConfiguration pSessionConf) throws AbsTTException {
+    public synchronized ISession getSession(final SessionConfiguration pSessionConf) throws TTException {
 
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
@@ -329,7 +329,7 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void close() throws AbsTTException {
+    public synchronized void close() throws TTException {
         for (final ISession session : mSessions.values()) {
             session.close();
         }

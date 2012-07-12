@@ -28,14 +28,14 @@
 package org.treetank.access;
 
 import static org.testng.AssertJUnit.assertEquals;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -44,20 +44,20 @@ public class ReadTransactionTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testDocumentRoot() throws AbsTTException {
+    public void testDocumentRoot() throws TTException {
         assertEquals(true, holder.getNRtx().moveTo(ROOT_NODE));
         assertEquals(IConstants.ROOT, holder.getNRtx().getNode().getKind());
         assertEquals(false, holder.getNRtx().getNode().hasParent());
@@ -68,7 +68,7 @@ public class ReadTransactionTest {
     }
 
     @Test
-    public void testConventions() throws AbsTTException {
+    public void testConventions() throws TTException {
 
         // INodeReadTrx Convention 1.
         assertEquals(true, holder.getNRtx().moveTo(ROOT_NODE));

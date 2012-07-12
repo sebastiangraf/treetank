@@ -29,9 +29,7 @@ package org.treetank.service.jaxrx.util;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,6 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
@@ -50,7 +51,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.xml.shredder.EShredderInsert;
 
@@ -84,7 +85,7 @@ public class WorkerHelperTest {
      * @throws FileNotFoundException
      */
     @BeforeMethod
-    public void setUp() throws FileNotFoundException, AbsTTException {
+    public void setUp() throws FileNotFoundException, TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -95,7 +96,7 @@ public class WorkerHelperTest {
     }
 
     @AfterMethod
-    public void after() throws AbsTTException {
+    public void after() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
@@ -121,7 +122,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#serializeXML(ISession, OutputStream, boolean, boolean,Long)}
      */
     @Test
-    public void testSerializeXML() throws AbsTTException, IOException {
+    public void testSerializeXML() throws TTException, IOException {
         final IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
@@ -137,7 +138,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#shredInputStream(INodeWriteTrx, InputStream, EShredderInsert)}
      */
     @Test
-    public void testShredInputStream() throws AbsTTException, IOException {
+    public void testShredInputStream() throws TTException, IOException {
 
         long lastRevision = treeTank.getLastRevision(RESOURCENAME);
 
@@ -162,7 +163,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#closeWTX(boolean, INodeWriteTrx, ISession, IDatabase)}
      */
     @Test(expectedExceptions = IllegalStateException.class)
-    public void testClose() throws AbsTTException {
+    public void testClose() throws TTException {
         IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         ISession session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
         final INodeWriteTrx wtx =

@@ -28,9 +28,9 @@
 package org.treetank.exception;
 
 /**
- * Static class for handling the Enum as an {@link AbsTTException}.
+ * Static class for handling the Enum as an {@link TTException}.
  */
-public class TTXPathException extends AbsTTException {
+public class TTXPathException extends TTException {
 
     /**
      * Serial because of Serializable

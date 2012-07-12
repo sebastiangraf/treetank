@@ -38,7 +38,7 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 /**
  * Generating a standard resource within the {@link PATHS#PATH1} path. It also
@@ -57,7 +57,7 @@ public class Holder {
 
     private INodeReadTrx mNRtx;
 
-    public static Holder generateSession() throws AbsTTException {
+    public static Holder generateSession() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
             .getConfig()).build());
@@ -69,7 +69,7 @@ public class Holder {
         return holder;
     }
 
-    public static Holder generateWtx() throws AbsTTException {
+    public static Holder generateWtx() throws TTException {
         final Holder holder = generateSession();
         final IPageWriteTrx pRtx = holder.mSession.beginPageWriteTransaction();
         holder.mPRtx = pRtx;
@@ -77,7 +77,7 @@ public class Holder {
         return holder;
     }
 
-    public static Holder generateRtx() throws AbsTTException {
+    public static Holder generateRtx() throws TTException {
         final Holder holder = generateSession();
         final IPageReadTrx pRtx =
             holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
@@ -85,7 +85,7 @@ public class Holder {
         return holder;
     }
 
-    public void close() throws AbsTTException {
+    public void close() throws TTException {
         if (mNRtx != null && !mNRtx.isClosed()) {
             mNRtx.close();
         }

@@ -34,7 +34,7 @@ import java.util.Map;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.interfaces.INode;
@@ -61,10 +61,10 @@ public final class LabelFMESVisitor {
      * 
      * @param paramSession
      *            {@link ISession} implementation
-     * @throws AbsTTException
+     * @throws TTException
      *             if setting up treetank fails
      */
-    public LabelFMESVisitor(final ISession paramSession) throws AbsTTException {
+    public LabelFMESVisitor(final ISession paramSession) throws TTException {
         mRtx = new NodeReadTrx(paramSession.beginPageReadTransaction(paramSession.getMostRecentVersion()));
         mLabels = new HashMap<Integer, List<INode>>();
         mLeafLabels = new HashMap<Integer, List<INode>>();

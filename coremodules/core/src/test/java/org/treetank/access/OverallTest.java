@@ -27,9 +27,6 @@
 
 package org.treetank.access;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ATTRIBUTE;
 import static org.treetank.node.IConstants.ELEMENT;
 import static org.treetank.node.IConstants.NAMESPACE;
@@ -39,9 +36,12 @@ import java.util.Random;
 
 import javax.xml.namespace.QName;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 
@@ -57,13 +57,13 @@ public final class OverallTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         holder = Holder.generateWtx();
     }
 
     @Test
-    public void testJustEverything() throws AbsTTException {
+    public void testJustEverything() throws TTException {
         holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
@@ -136,7 +136,7 @@ public final class OverallTest {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }

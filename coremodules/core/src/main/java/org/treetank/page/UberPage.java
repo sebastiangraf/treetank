@@ -31,7 +31,7 @@ import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -234,7 +234,7 @@ public final class UberPage implements IPage {
     }
 
     @Override
-    public void commit(PageWriteTrx paramState) throws AbsTTException {
+    public void commit(PageWriteTrx paramState) throws TTException {
         for (final PageReference reference : getReferences()) {
             paramState.commit(reference);
         }

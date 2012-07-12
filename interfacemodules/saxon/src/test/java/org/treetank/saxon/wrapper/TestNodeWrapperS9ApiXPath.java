@@ -27,15 +27,15 @@
 
 package org.treetank.saxon.wrapper;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
-import org.testng.AssertJUnit;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.testng.AssertJUnit;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
@@ -47,7 +47,7 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
 import org.treetank.utils.DocumentCreater;
 
@@ -66,7 +66,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     private transient Holder mHolder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         final DatabaseConfiguration db = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
@@ -85,7 +85,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }

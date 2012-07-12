@@ -28,13 +28,14 @@
 package org.treetank.service.xml.xpath.expr;
 
 import static org.testng.AssertJUnit.assertEquals;
+
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.utils.NamePageHash;
@@ -49,20 +50,20 @@ public class InstanceOfExprTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testInstanceOfExpr() throws AbsTTException {
+    public void testInstanceOfExpr() throws TTException {
 
         final AbsAxis axis1 = new XPathAxis(holder.getNRtx(), "1 instance of xs:integer");
         assertEquals(true, axis1.hasNext());

@@ -5,13 +5,13 @@ package org.treetank.page;
 
 import static org.testng.AssertJUnit.assertTrue;
 
+import java.util.Arrays;
+import java.util.Random;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.node.NodeFactory;
-
-import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Test Case for NamePage.

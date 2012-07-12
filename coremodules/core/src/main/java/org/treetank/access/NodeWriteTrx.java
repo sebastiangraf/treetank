@@ -37,7 +37,7 @@ import javax.xml.namespace.QName;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.AttributeNode;
@@ -123,7 +123,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public long insertElementAsFirstChild(final QName mQName) throws AbsTTException, NullPointerException {
+    public long insertElementAsFirstChild(final QName mQName) throws TTException, NullPointerException {
         if (mQName == null) {
             throw new NullPointerException("mQName may not be null!");
         }
@@ -151,7 +151,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public long insertElementAsRightSibling(final QName paramQName) throws AbsTTException {
+    public long insertElementAsRightSibling(final QName paramQName) throws TTException {
         if (paramQName == null) {
             throw new NullPointerException("paramQName may not be null!");
         }
@@ -179,7 +179,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public long insertTextAsFirstChild(final String paramValueAsString) throws AbsTTException {
+    public long insertTextAsFirstChild(final String paramValueAsString) throws TTException {
         if (paramValueAsString == null) {
             throw new NullPointerException("paramValueAsString may not be null!");
         }
@@ -208,7 +208,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public long insertTextAsRightSibling(final String paramValueAsString) throws AbsTTException {
+    public long insertTextAsRightSibling(final String paramValueAsString) throws TTException {
         if (paramValueAsString == null) {
             throw new NullPointerException("paramValueAsString may not be null!");
         }
@@ -238,7 +238,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public long insertAttribute(final QName paramQName, final String paramValueAsString)
-        throws AbsTTException {
+        throws TTException {
         if (mDelegate.getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
@@ -277,7 +277,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public long insertNamespace(final QName paramQName) throws AbsTTException {
+    public long insertNamespace(final QName paramQName) throws TTException {
         if (paramQName == null) {
             throw new NullPointerException("QName may not be null!");
         }
@@ -343,7 +343,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void remove() throws AbsTTException {
+    public void remove() throws TTException {
         checkAccessAndCommit();
         if (mDelegate.getCurrentNode().getKind() == IConstants.ROOT) {
             throw new TTUsageException("Document root can not be removed.");
@@ -393,7 +393,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void setQName(final QName paramName) throws AbsTTException {
+    public void setQName(final QName paramName) throws TTException {
         if (mDelegate.getCurrentNode() instanceof INameNode) {
             mDelegate.assertNotClosed();
             final long oldHash = mDelegate.getCurrentNode().hashCode();
@@ -416,7 +416,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void setURI(final String paramUri) throws AbsTTException {
+    public void setURI(final String paramUri) throws TTException {
         if (mDelegate.getCurrentNode() instanceof INameNode) {
             mDelegate.assertNotClosed();
             final long oldHash = mDelegate.getCurrentNode().hashCode();
@@ -440,7 +440,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void setValue(final String paramValue) throws AbsTTException {
+    public void setValue(final String paramValue) throws TTException {
         if (mDelegate.getCurrentNode() instanceof IValNode) {
             mDelegate.assertNotClosed();
             final long oldHash = mDelegate.getCurrentNode().hashCode();
@@ -468,7 +468,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      *             if an I/O operation fails
      */
     @Override
-    public void revertTo(final long paramRevision) throws AbsTTException {
+    public void revertTo(final long paramRevision) throws TTException {
         if (paramRevision < 0) {
             throw new IllegalArgumentException("paramRevision parameter must be >= 0");
         }
@@ -486,7 +486,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void commit() throws AbsTTException {
+    public void commit() throws TTException {
 
         mDelegate.assertNotClosed();
 
@@ -509,7 +509,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void abort() throws AbsTTException {
+    public void abort() throws TTException {
 
         mDelegate.assertNotClosed();
 
@@ -528,7 +528,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws AbsTTException {
+    public void close() throws TTException {
         if (!isClosed()) {
             mDelegate.close();
         }
@@ -537,10 +537,10 @@ public class NodeWriteTrx implements INodeWriteTrx {
     /**
      * Checking write access and intermediate commit.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if anything weird happens
      */
-    private void checkAccessAndCommit() throws AbsTTException {
+    private void checkAccessAndCommit() throws TTException {
         mDelegate.assertNotClosed();
     }
 

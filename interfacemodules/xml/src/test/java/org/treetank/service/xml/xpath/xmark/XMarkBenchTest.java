@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
@@ -124,7 +124,7 @@ public class XMarkBenchTest {
      */
 
     @AfterMethod
-    public static void tearDown() throws AbsTTException {
+    public static void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
 

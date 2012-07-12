@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
@@ -487,11 +487,11 @@ public class FunctionsXMarkTest {
     /**
      * Close all connections.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
     @AfterMethod
     @AfterClass
-    public static final void tearDown() throws AbsTTException {
+    public static final void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
 

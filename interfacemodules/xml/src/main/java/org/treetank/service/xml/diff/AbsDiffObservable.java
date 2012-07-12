@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 
@@ -77,7 +77,7 @@ abstract class AbsDiffObservable implements IDiffObservable {
      * 
      */
     @Override
-    public final void done() throws AbsTTException {
+    public final void done() throws TTException {
         mNewRtx.close();
         mOldRtx.close();
 

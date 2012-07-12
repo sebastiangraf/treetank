@@ -30,7 +30,7 @@ package org.treetank.service.xml.diff;
 import java.util.Set;
 
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 /**
  * Wrapper for public access.
@@ -81,7 +81,7 @@ public final class DiffFactory {
         /** Full diff. */
         FULL {
             @Override
-            void invoke(final Builder paramBuilder) throws AbsTTException {
+            void invoke(final Builder paramBuilder) throws TTException {
                 final FullDiff diff = new FullDiff(paramBuilder);
                 diff.diffMovement();
             }
@@ -93,7 +93,7 @@ public final class DiffFactory {
          */
         STRUCTURAL {
             @Override
-            void invoke(final Builder paramBuilder) throws AbsTTException {
+            void invoke(final Builder paramBuilder) throws TTException {
                 final StructuralDiff diff = new StructuralDiff(paramBuilder);
                 diff.diffMovement();
             }
@@ -104,10 +104,10 @@ public final class DiffFactory {
          * 
          * @param paramBuilder
          *            {@link Builder} reference
-         * @throws AbsTTException
+         * @throws TTException
          *             if anything while diffing goes wrong related to Treetank
          */
-        abstract void invoke(final Builder paramBuilder) throws AbsTTException;
+        abstract void invoke(final Builder paramBuilder) throws TTException;
     }
 
     /** Builder to simplify static methods. */
@@ -179,9 +179,9 @@ public final class DiffFactory {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public static synchronized void invokeFullDiff(final Builder paramBuilder) throws AbsTTException {
+    public static synchronized void invokeFullDiff(final Builder paramBuilder) throws TTException {
         checkParams(paramBuilder);
         DiffKind.FULL.invoke(paramBuilder);
     }
@@ -191,9 +191,9 @@ public final class DiffFactory {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public static synchronized void invokeStructuralDiff(final Builder paramBuilder) throws AbsTTException {
+    public static synchronized void invokeStructuralDiff(final Builder paramBuilder) throws TTException {
         checkParams(paramBuilder);
         DiffKind.STRUCTURAL.invoke(paramBuilder);
     }

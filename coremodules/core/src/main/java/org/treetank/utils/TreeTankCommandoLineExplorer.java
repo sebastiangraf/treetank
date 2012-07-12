@@ -50,7 +50,7 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
@@ -370,7 +370,7 @@ public final class TreeTankCommandoLineExplorer {
                         builder.append(" not succeed, Please login with write-right "
                             + "(that means without revision parameter");
                     }
-                } catch (final AbsTTException exc) {
+                } catch (final TTException exc) {
                     builder.append(" throws exception: ").append(exc);
                 }
                 return builder.toString();

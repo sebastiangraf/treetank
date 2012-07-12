@@ -61,7 +61,7 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.ElementNode;
@@ -154,12 +154,12 @@ public class XMLShredder implements Callable<Void> {
     /**
      * Invoking the shredder.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if any kind of Treetank exception which has occured
      * @return revision of file
      */
     @Override
-    public Void call() throws AbsTTException {
+    public Void call() throws TTException {
         insertNewContent();
 
         if (mCommit == EShredderCommit.COMMIT) {
@@ -171,10 +171,10 @@ public class XMLShredder implements Callable<Void> {
     /**
      * Insert new content based on a StAX parser {@link XMLStreamReader}.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if something went wrong while inserting
      */
-    protected final void insertNewContent() throws AbsTTException {
+    protected final void insertNewContent() throws TTException {
         try {
             Stack<Long> leftSiblingKeyStack = new Stack<Long>();
 
@@ -235,11 +235,11 @@ public class XMLShredder implements Callable<Void> {
      * @param paramEvent
      *            the current event from the StAX parser
      * @return the modified stack
-     * @throws AbsTTException
+     * @throws TTException
      *             if adding {@link ElementNode} fails
      */
     protected final Stack<Long> addNewElement(final Stack<Long> paramLeftSiblingKeyStack,
-        final StartElement paramEvent) throws AbsTTException {
+        final StartElement paramEvent) throws TTException {
         assert paramLeftSiblingKeyStack != null && paramEvent != null;
         long key;
 
@@ -289,11 +289,11 @@ public class XMLShredder implements Callable<Void> {
      * @param paramText
      *            the text string to add
      * @return the modified stack
-     * @throws AbsTTException
+     * @throws TTException
      *             if adding text fails
      */
     protected final Stack<Long>
-        addNewText(final Stack<Long> paramLeftSiblingKeyStack, final String paramText) throws AbsTTException {
+        addNewText(final Stack<Long> paramLeftSiblingKeyStack, final String paramText) throws TTException {
         assert paramLeftSiblingKeyStack != null;
         final String text = paramText;
         long key;

@@ -28,10 +28,11 @@
 package org.treetank.io;
 
 import static org.testng.AssertJUnit.assertEquals;
+
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
@@ -55,7 +56,7 @@ public final class IOTestHelper {
      * @return a suitable {@link ResourceConfiguration}
      * @throws TTUsageException
      */
-    public static ResourceConfiguration registerIO(final EStorage type) throws AbsTTException {
+    public static ResourceConfiguration registerIO(final EStorage type) throws TTException {
         final ResourceConfiguration.Builder resourceConfig =
             new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1.getConfig());
         resourceConfig.setType(type);
@@ -65,12 +66,12 @@ public final class IOTestHelper {
     /**
      * Tear down for all tests related to the io layer.
      */
-    public static void clean() throws AbsTTException {
+    public static void clean() throws TTException {
         TestHelper.deleteEverything();
 
     }
 
-    public static void testReadWriteFirstRef(final ResourceConfiguration resourceConf) throws AbsTTException {
+    public static void testReadWriteFirstRef(final ResourceConfiguration resourceConf) throws TTException {
         final IStorage fac = EStorage.getStorage(resourceConf);
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();

@@ -27,9 +27,10 @@
 
 package org.treetank.utils;
 
-import org.testng.annotations.Test;
-import org.testng.AssertJUnit;
 import java.nio.ByteBuffer;
+
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 public class ByteBufferJavaImplTest {
 

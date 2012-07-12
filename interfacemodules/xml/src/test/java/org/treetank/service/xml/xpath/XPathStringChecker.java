@@ -37,18 +37,18 @@ import org.testng.annotations.BeforeMethod;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IValNode;
 
 public class XPathStringChecker {
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
