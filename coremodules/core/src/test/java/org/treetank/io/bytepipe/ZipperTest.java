@@ -10,7 +10,7 @@ import java.util.Arrays;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTByteHandleException;
-import org.treetank.io.bytepipe.IPipePart;
+import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.Zipper;
 
 /**
@@ -30,7 +30,7 @@ public class ZipperTest {
     @Test
     public void testSerializeAndDeserialize() throws TTByteHandleException {
         final byte[] bytes = TestHelper.generateRandomBytes(10000);
-        IPipePart represent = new Zipper();
+        IByteHandler represent = new Zipper();
         byte[] serialized = represent.serialize(bytes);
         assertFalse(Arrays.equals(bytes, serialized));
         byte[] deserialized = represent.deserialize(serialized);

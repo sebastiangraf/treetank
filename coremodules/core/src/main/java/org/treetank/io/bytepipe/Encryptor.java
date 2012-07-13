@@ -20,7 +20,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class Encryptor implements IPipePart {
+public class Encryptor implements IByteHandler {
 
     private static final String ALGORITHM = "AES";
     private static final int ITERATIONS = 2;

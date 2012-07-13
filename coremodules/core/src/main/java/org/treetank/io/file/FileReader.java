@@ -35,7 +35,9 @@ import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.bytepipe.IPipePart;
+import org.treetank.io.bytepipe.ByteHandlePipeline;
+import org.treetank.io.bytepipe.Encryptor;
+import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
@@ -66,7 +68,7 @@ public final class FileReader implements IReader {
     protected transient final RandomAccessFile mFile;
 
     /** Inflater to decompress. */
-    protected transient final IPipePart mByteHandler;
+    protected transient final IByteHandler mByteHandler;
 
     /**
      * Constructor.
@@ -84,8 +86,7 @@ public final class FileReader implements IReader {
             }
 
             mFile = new RandomAccessFile(mConcreteStorage, "r");
-
-            mByteHandler = /* new Encryptor( */new Zipper();
+            mByteHandler = new ByteHandlePipeline(new Encryptor(), new Zipper());
 
         } catch (final IOException exc) {
             throw new TTIOException(exc);

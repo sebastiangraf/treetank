@@ -28,7 +28,9 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTByteHandleException;
-import org.treetank.io.bytepipe.IPipePart;
+import org.treetank.io.bytepipe.ByteHandlePipeline;
+import org.treetank.io.bytepipe.Encryptor;
+import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
@@ -50,14 +52,14 @@ public final class PageBinding extends TupleBinding<IPage> {
     /** Factory for Pages. */
     private final PageFactory mFac = PageFactory.getInstance();
 
-    private final IPipePart mByteHandler;
+    private final IByteHandler mByteHandler;
 
     public PageBinding() {
-        // try {
-        mByteHandler = new Zipper();
-        // } catch (TTByteHandleException e) {
-        // throw new RuntimeException(e);
-        // }
+        try {
+            mByteHandler = new ByteHandlePipeline(new Encryptor(), new Zipper());
+        } catch (TTByteHandleException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

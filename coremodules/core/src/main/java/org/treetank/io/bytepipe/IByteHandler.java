@@ -9,7 +9,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IPipePart {
+public interface IByteHandler {
 
     /**
      * Method to serialize any byte-chunk.

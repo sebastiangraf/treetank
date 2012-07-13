@@ -16,7 +16,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class Zipper implements IPipePart {
+public class Zipper implements IByteHandler {
 
     private final Deflater mCompressor;
 
