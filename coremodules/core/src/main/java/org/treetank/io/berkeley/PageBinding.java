@@ -29,6 +29,7 @@ package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.decorators.ByteRepresentation;
+import org.treetank.io.decorators.EncryptionDecorator;
 import org.treetank.io.decorators.IByteRepresentation;
 import org.treetank.io.decorators.ZipperDecorator;
 import org.treetank.page.IPage;
@@ -51,7 +52,15 @@ public final class PageBinding extends TupleBinding<IPage> {
     /** Factory for Pages. */
     private final PageFactory mFac = PageFactory.getInstance();
 
-    final IByteRepresentation mByteHandler = new ZipperDecorator(new ByteRepresentation());
+    private final IByteRepresentation mByteHandler;
+
+    public PageBinding() {
+        // try {
+        mByteHandler = new ZipperDecorator(new ByteRepresentation());
+        // } catch (TTByteHandleException e) {
+        // throw new RuntimeException(e);
+        // }
+    }
 
     /**
      * {@inheritDoc}

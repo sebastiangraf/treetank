@@ -26,6 +26,7 @@
  */
 package org.treetank.io;
 
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
 /**
@@ -45,7 +46,7 @@ public interface IStorage {
      * @throws TTIOException
      *             if the initalisation fails
      */
-    IWriter getWriter() throws TTIOException;
+    IWriter getWriter() throws TTException;
 
     /**
      * Getting a reader.
@@ -54,7 +55,7 @@ public interface IStorage {
      * @throws TTIOException
      *             if the initalisation fails
      */
-    IReader getReader() throws TTIOException;
+    IReader getReader() throws TTException;
 
     /**
      * Closing this storage.
@@ -62,7 +63,7 @@ public interface IStorage {
      * @throws TTIOException
      *             exception to be throwns
      */
-    void close() throws TTIOException;
+    void close() throws TTException;
 
     /**
      * Check if storage exists.
@@ -71,6 +72,6 @@ public interface IStorage {
      * @throws TTIOException
      *             if storage is not accessible
      */
-    boolean exists() throws TTIOException;
+    boolean exists() throws TTException;
 
 }

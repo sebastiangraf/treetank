@@ -34,6 +34,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 
 import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
@@ -63,7 +64,7 @@ public final class FileWriter implements IWriter {
      * @throws TTIOException
      *             if FileWriter IO error
      */
-    public FileWriter(final File paramStorage) throws TTIOException {
+    public FileWriter(final File paramStorage) throws TTException {
         try {
             mFile = new RandomAccessFile(paramStorage, "rw");
         } catch (final FileNotFoundException fileExc) {
