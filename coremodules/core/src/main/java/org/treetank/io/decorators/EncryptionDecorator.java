@@ -20,13 +20,13 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class EncryptionDecorator extends ByteRepresentationDecorator {
+public class EncryptionDecorator implements IByteRepresentation {
 
     private static final String ALGORITHM = "AES";
     private static final int ITERATIONS = 2;
-    //128bit key
+    // 128bit key
     private static final byte[] keyValue = new byte[] {
-        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k','k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
+        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
     private final Cipher mCipher;
 
@@ -38,8 +38,7 @@ public class EncryptionDecorator extends ByteRepresentationDecorator {
      * @param pComponent
      * @throws TTByteHandleException
      */
-    public EncryptionDecorator(final IByteRepresentation pComponent) throws TTByteHandleException {
-        super(pComponent);
+    public EncryptionDecorator() throws TTByteHandleException {
         try {
             mCipher = Cipher.getInstance(ALGORITHM);
             key = new SecretKeySpec(keyValue, ALGORITHM);
@@ -56,11 +55,10 @@ public class EncryptionDecorator extends ByteRepresentationDecorator {
      * @throws TTByteHandleException
      */
     public byte[] serialize(final byte[] pToSerialize) throws TTByteHandleException {
-        final byte[] superSerialized = super.serialize(pToSerialize);
         try {
             mCipher.init(Cipher.ENCRYPT_MODE, key);
 
-            byte[] toEncrypt = superSerialized;
+            byte[] toEncrypt = pToSerialize;
             for (int i = 0; i < ITERATIONS; i++) {
                 byte[] encValue = mCipher.doFinal(toEncrypt);
                 toEncrypt = encValue;
@@ -75,11 +73,10 @@ public class EncryptionDecorator extends ByteRepresentationDecorator {
      * {@inheritDoc}
      */
     public byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException {
-        final byte[] superDeserialized = super.serialize(pToDeserialize);
         try {
             mCipher.init(Cipher.DECRYPT_MODE, key);
 
-            byte[] toDecrypt = superDeserialized;
+            byte[] toDecrypt = pToDeserialize;
             for (int i = 0; i < ITERATIONS; i++) {
                 byte[] decValue = mCipher.doFinal(toDecrypt);
                 toDecrypt = decValue;

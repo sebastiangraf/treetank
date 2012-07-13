@@ -28,7 +28,7 @@ public class ZipperDecoratorTest {
     @Test
     public void testSerializeAndDeserialize() throws TTByteHandleException {
         final byte[] bytes = TestHelper.generateRandomBytes(10000);
-        IByteRepresentation represent = new ZipperDecorator(new ByteRepresentation());
+        IByteRepresentation represent = new ZipperDecorator();
         byte[] serialized = represent.serialize(bytes);
         assertFalse(Arrays.equals(bytes, serialized));
         byte[] deserialized = represent.deserialize(serialized);

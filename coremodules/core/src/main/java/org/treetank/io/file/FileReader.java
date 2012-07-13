@@ -35,8 +35,6 @@ import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.decorators.ByteRepresentation;
-import org.treetank.io.decorators.EncryptionDecorator;
 import org.treetank.io.decorators.IByteRepresentation;
 import org.treetank.io.decorators.ZipperDecorator;
 import org.treetank.page.IPage;
@@ -87,7 +85,7 @@ public final class FileReader implements IReader {
 
             mFile = new RandomAccessFile(mConcreteStorage, "r");
 
-            mByteHandler = /* new EncryptionDecorator( */new ZipperDecorator(new ByteRepresentation());
+            mByteHandler = /* new EncryptionDecorator( */new ZipperDecorator();
 
         } catch (final IOException exc) {
             throw new TTIOException(exc);

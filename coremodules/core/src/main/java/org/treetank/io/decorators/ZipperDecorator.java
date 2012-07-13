@@ -16,7 +16,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class ZipperDecorator extends ByteRepresentationDecorator {
+public class ZipperDecorator implements IByteRepresentation {
 
     private final Deflater mCompressor;
 
@@ -31,8 +31,7 @@ public class ZipperDecorator extends ByteRepresentationDecorator {
      * 
      * @param pComponent
      */
-    public ZipperDecorator(final IByteRepresentation pComponent) {
-        super(pComponent);
+    public ZipperDecorator() {
         mCompressor = new Deflater();
         mDecompressor = new Inflater();
         mTmp = new byte[32767];
@@ -43,10 +42,9 @@ public class ZipperDecorator extends ByteRepresentationDecorator {
      * {@inheritDoc}
      */
     public byte[] serialize(final byte[] pToSerialize) throws TTByteHandleException {
-        final byte[] superSerialized = super.serialize(pToSerialize);
         mCompressor.reset();
         mOut.reset();
-        mCompressor.setInput(superSerialized);
+        mCompressor.setInput(pToSerialize);
         mCompressor.finish();
         int count;
         while (!mCompressor.finished()) {
@@ -61,10 +59,9 @@ public class ZipperDecorator extends ByteRepresentationDecorator {
      * {@inheritDoc}
      */
     public byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException {
-        final byte[] superDeserialized = super.deserialize(pToDeserialize);
         mDecompressor.reset();
         mOut.reset();
-        mDecompressor.setInput(superDeserialized);
+        mDecompressor.setInput(pToDeserialize);
         int count;
         while (!mDecompressor.finished()) {
             try {
