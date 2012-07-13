@@ -3,7 +3,12 @@
  */
 package org.treetank.exception;
 
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.DataFormatException;
+
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * Exception type for handle everything related to the handling of bytes especially within the io-layer.
@@ -24,6 +29,50 @@ public class TTByteHandleException extends TTException {
      *            to be encapsulated
      */
     public TTByteHandleException(final DataFormatException pExc) {
+        super(pExc);
+    }
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pExc
+     *            to be encapsulated
+     */
+    public TTByteHandleException(final NoSuchAlgorithmException pExc) {
+        super(pExc);
+    }
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pExc
+     *            to be encapsulated
+     */
+    public TTByteHandleException(final NoSuchPaddingException pExc) {
+        super(pExc);
+    }
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pExc
+     *            to be encapsulated
+     */
+    public TTByteHandleException(final InvalidKeyException pExc) {
+        super(pExc);
+    }
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pExc
+     *            to be encapsulated
+     */
+    public TTByteHandleException(final GeneralSecurityException pExc) {
         super(pExc);
     }
 

@@ -17,8 +17,10 @@ public interface IByteRepresentation {
      * @param pToSerialize
      *            byte to be serialized
      * @return result of the serialization
+     * @throws TTByteHandleException
+     *             to be capsulated.
      */
-    byte[] serialize(byte[] pToSerialize);
+    byte[] serialize(byte[] pToSerialize) throws TTByteHandleException;
 
     /**
      * Method to deserialize any byte-chunk.

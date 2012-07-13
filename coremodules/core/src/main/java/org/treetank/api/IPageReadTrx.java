@@ -3,6 +3,7 @@
  */
 package org.treetank.api;
 
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.page.RevisionRootPage;
 
@@ -12,7 +13,7 @@ import org.treetank.page.RevisionRootPage;
  */
 public interface IPageReadTrx {
 
-    INode getNode(final long pKey) throws TTIOException;
+    INode getNode(final long pKey) throws TTException;
 
     RevisionRootPage getActualRevisionRootPage() throws TTIOException;
 

@@ -97,7 +97,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if IO Error
      */
     protected PageWriteTrx(final ISession pSession, final UberPage paramUberPage, final IWriter paramWriter,
-        final long paramRepresentRev, final long paramStoreRev) throws TTIOException {
+        final long paramRepresentRev, final long paramStoreRev) throws TTException {
         mDelegate = new PageReadTrx(pSession, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mLog = new TransactionLogCache(pSession.getConfig().mPath, paramStoreRev);
@@ -116,7 +116,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if IO Error
      */
-    protected INode prepareNodeForModification(final long paramNodeKey) throws TTIOException {
+    protected INode prepareNodeForModification(final long paramNodeKey) throws TTException {
         if (paramNodeKey < 0) {
             throw new IllegalArgumentException("paramNodeKey must be >= 0!");
         }
@@ -170,7 +170,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if IO Error
      */
-    public <T extends INode> T createNode(final T paramNode) throws TTIOException {
+    public <T extends INode> T createNode(final T paramNode) throws TTException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         final long nodeKey = mNewRoot.getMaxNodeKey();
@@ -191,7 +191,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if the removal fails
      */
-    protected void removeNode(final INode paramNode) throws TTIOException {
+    protected void removeNode(final INode paramNode) throws TTException {
         assert paramNode != null;
         final long nodePageKey = nodePageKey(paramNode.getNodeKey());
         prepareNodePage(nodePageKey);
@@ -204,7 +204,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /**
      * {@inheritDoc}
      */
-    public INode getNode(final long pNodeKey) throws TTIOException {
+    public INode getNode(final long pNodeKey) throws TTException {
 
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = nodePageKey(pNodeKey);
@@ -394,7 +394,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return mNewRoot.getMaxNodeKey();
     }
 
-    protected IndirectPage prepareIndirectPage(final PageReference paramReference) throws TTIOException {
+    protected IndirectPage prepareIndirectPage(final PageReference paramReference) throws TTException {
 
         IndirectPage page = (IndirectPage)paramReference.getPage();
         if (page == null) {
@@ -411,7 +411,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return page;
     }
 
-    protected NodePageContainer prepareNodePage(final long pPageKey) throws TTIOException {
+    protected NodePageContainer prepareNodePage(final long pPageKey) throws TTException {
 
         // Last level points to node nodePageReference.
         NodePageContainer cont = mLog.get(pPageKey);
@@ -439,7 +439,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     private RevisionRootPage preparePreviousRevisionRootPage(final long mBaseRevision,
-        final long representRevision) throws TTIOException {
+        final long representRevision) throws TTException {
 
         if (mDelegate.getUberPage().isBootstrap()) {
             return mDelegate.loadRevRoot(mBaseRevision);
@@ -468,7 +468,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     protected PageReference prepareLeafOfTree(final PageReference mStartReference, final long mKey)
-        throws TTIOException {
+        throws TTException {
 
         // Initial state pointing to the indirect nodePageReference of level 0.
 
@@ -499,7 +499,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if something happened in the node
      */
     private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
-        throws TTIOException {
+        throws TTException {
         final NodePage[] revs = mDelegate.getSnapshotPages(paramNodePageKey);
         final ERevisioning revision = mDelegate.mSession.getConfig().mRevision;
         final int mileStoneRevision = mDelegate.mSession.getConfig().mRevisionsToRestore;

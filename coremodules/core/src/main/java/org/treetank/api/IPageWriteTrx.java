@@ -3,7 +3,7 @@
  */
 package org.treetank.api;
 
-import org.treetank.exception.TTIOException;
+import org.treetank.exception.TTException;
 import org.treetank.page.UberPage;
 
 /**
@@ -15,8 +15,6 @@ public interface IPageWriteTrx extends IPageReadTrx {
 
     long getMaxNodeKey();
 
-    <T extends INode> T createNode(T pnode) throws TTIOException;
+    <T extends INode> T createNode(T pnode) throws TTException;
 
-    
-    
 }

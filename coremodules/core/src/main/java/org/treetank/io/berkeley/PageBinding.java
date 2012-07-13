@@ -48,41 +48,44 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public final class PageBinding extends TupleBinding<IPage> {
 
-	/** Factory for Pages. */
-	private final PageFactory mFac = PageFactory.getInstance();
+    /** Factory for Pages. */
+    private final PageFactory mFac = PageFactory.getInstance();
 
-	final IByteRepresentation mByteHandler = new ZipperDecorator(
-			new ByteRepresentation());
+    final IByteRepresentation mByteHandler = new ZipperDecorator(new ByteRepresentation());
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IPage entryToObject(final TupleInput arg0) {
-		final ByteArrayDataOutput data = ByteStreams.newDataOutput();
-		int result = arg0.read();
-		while (result != -1) {
-			byte b = (byte) result;
-			data.write(b);
-			result = arg0.read();
-		}
-		byte[] resultBytes;
-		try {
-			resultBytes = mByteHandler.deserialize(data.toByteArray());
-			return mFac.deserializePage(resultBytes);
-		} catch (TTByteHandleException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPage entryToObject(final TupleInput arg0) {
+        final ByteArrayDataOutput data = ByteStreams.newDataOutput();
+        int result = arg0.read();
+        while (result != -1) {
+            byte b = (byte)result;
+            data.write(b);
+            result = arg0.read();
+        }
+        byte[] resultBytes;
+        try {
+            resultBytes = mByteHandler.deserialize(data.toByteArray());
+            return mFac.deserializePage(resultBytes);
+        } catch (TTByteHandleException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
-		final byte[] pagebytes = arg0.getByteRepresentation();
-		arg1.write(mByteHandler.serialize(pagebytes));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
+        final byte[] pagebytes = arg0.getByteRepresentation();
+        try {
+            arg1.write(mByteHandler.serialize(pagebytes));
+        } catch (TTByteHandleException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

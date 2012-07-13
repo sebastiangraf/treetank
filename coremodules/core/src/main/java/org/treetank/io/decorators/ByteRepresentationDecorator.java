@@ -26,7 +26,7 @@ public abstract class ByteRepresentationDecorator implements IByteRepresentation
     /**
      * {@inheritDoc}
      */
-    public byte[] serialize(byte[] pToSerialize) {
+    public byte[] serialize(byte[] pToSerialize) throws TTByteHandleException {
         return mComponent.serialize(pToSerialize);
     }
 
