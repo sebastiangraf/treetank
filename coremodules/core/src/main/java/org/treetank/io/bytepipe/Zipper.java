@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.io.decorators;
+package org.treetank.io.bytepipe;
 
 import java.io.ByteArrayOutputStream;
 import java.util.zip.DataFormatException;
@@ -16,7 +16,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class ZipperDecorator implements IByteRepresentation {
+public class Zipper implements IPipePart {
 
     private final Deflater mCompressor;
 
@@ -31,7 +31,7 @@ public class ZipperDecorator implements IByteRepresentation {
      * 
      * @param pComponent
      */
-    public ZipperDecorator() {
+    public Zipper() {
         mCompressor = new Deflater();
         mDecompressor = new Inflater();
         mTmp = new byte[32767];

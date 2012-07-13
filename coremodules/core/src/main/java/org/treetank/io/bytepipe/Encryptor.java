@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.io.decorators;
+package org.treetank.io.bytepipe;
 
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -20,7 +20,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class EncryptionDecorator implements IByteRepresentation {
+public class Encryptor implements IPipePart {
 
     private static final String ALGORITHM = "AES";
     private static final int ITERATIONS = 2;
@@ -38,7 +38,7 @@ public class EncryptionDecorator implements IByteRepresentation {
      * @param pComponent
      * @throws TTByteHandleException
      */
-    public EncryptionDecorator() throws TTByteHandleException {
+    public Encryptor() throws TTByteHandleException {
         try {
             mCipher = Cipher.getInstance(ALGORITHM);
             key = new SecretKeySpec(keyValue, ALGORITHM);
