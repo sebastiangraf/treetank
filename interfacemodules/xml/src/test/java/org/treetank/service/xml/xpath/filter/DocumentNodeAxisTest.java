@@ -27,35 +27,35 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class DocumentNodeAxisTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testIterate() throws AbsTTException {
+    public void testIterate() throws TTException {
 
         holder.getNRtx().moveTo(1L);
         AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {

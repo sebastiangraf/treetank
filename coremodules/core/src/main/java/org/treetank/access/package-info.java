@@ -80,7 +80,7 @@
  *           wtx.insertElementAsFirstChild("foo", "", "");
  *           ...
  *           wtx.commit();
- *         } catch (final AbsTTException exc) {
+ *         } catch (final TTException exc) {
  *           wtx.abort();
  *           throw new RuntimeException(exc);
  *         } finally {

@@ -35,7 +35,7 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -92,10 +92,10 @@ abstract class AbsSerializer implements Callable<Void> {
      * Serialize the storage.
      * 
      * @return null.
-     * @throws AbsTTException
+     * @throws TTException
      *             if can't call serailzer
      */
-    public Void call() throws AbsTTException {
+    public Void call() throws TTException {
         emitStartDocument();
 
         long[] versionsToUse;

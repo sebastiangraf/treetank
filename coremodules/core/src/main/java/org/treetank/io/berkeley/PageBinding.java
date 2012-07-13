@@ -27,6 +27,10 @@
 
 package org.treetank.io.berkeley;
 
+import org.treetank.exception.TTByteHandleException;
+import org.treetank.io.decorators.ByteRepresentation;
+import org.treetank.io.decorators.IByteRepresentation;
+import org.treetank.io.decorators.ZipperDecorator;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 
@@ -44,31 +48,41 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public final class PageBinding extends TupleBinding<IPage> {
 
-    /** Factory for Pages. */
-    private final PageFactory mFac = PageFactory.getInstance();
+	/** Factory for Pages. */
+	private final PageFactory mFac = PageFactory.getInstance();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IPage entryToObject(final TupleInput arg0) {
-        final ByteArrayDataOutput data = ByteStreams.newDataOutput();
-        int result = arg0.read();
-        while (result != -1) {
-            byte b = (byte)result;
-            data.write(b);
-            result = arg0.read();
-        }
-        return mFac.deserializePage(data.toByteArray());
-    }
+	final IByteRepresentation mByteHandler = new ZipperDecorator(
+			new ByteRepresentation());
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
-        final byte[] pagebytes = arg0.getByteRepresentation();
-        arg1.write(pagebytes);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IPage entryToObject(final TupleInput arg0) {
+		final ByteArrayDataOutput data = ByteStreams.newDataOutput();
+		int result = arg0.read();
+		while (result != -1) {
+			byte b = (byte) result;
+			data.write(b);
+			result = arg0.read();
+		}
+		byte[] resultBytes;
+		try {
+			resultBytes = mByteHandler.deserialize(data.toByteArray());
+			return mFac.deserializePage(resultBytes);
+		} catch (TTByteHandleException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
+		final byte[] pagebytes = arg0.getByteRepresentation();
+		arg1.write(mByteHandler.serialize(pagebytes));
+	}
 
 }

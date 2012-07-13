@@ -27,11 +27,11 @@
 
 package org.treetank.axis.filter;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
@@ -39,61 +39,63 @@ import org.treetank.axis.AbsAxisTest;
 import org.treetank.axis.AttributeAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class FilterAxisTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testNameAxisTest() throws AbsTTException {
+    public void testNameAxisTest() throws TTException {
         // Build simple test tree.
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(ROOT_NODE);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(
-                new DescendantAxis(rtx), rtx, new NameFilter(rtx, "b")),
-                new long[] { 5L, 9L });
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), rtx,
+            new NameFilter(rtx, "b")), new long[] {
+            5L, 9L
+        });
     }
 
     @Test
-    public void testValueAxisTest() throws AbsTTException {
+    public void testValueAxisTest() throws TTException {
         // Build simple test tree.
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(ROOT_NODE);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(
-                new DescendantAxis(rtx), rtx, new ValueFilter(rtx, "foo")),
-                new long[] { 6L });
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(rtx), rtx, new ValueFilter(rtx,
+            "foo")), new long[] {
+            6L
+        });
     }
 
     @Test
-    public void testValueAndNameAxisTest() throws AbsTTException {
+    public void testValueAndNameAxisTest() throws TTException {
         // Build simple test tree.
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx),
-                rtx, new NameFilter(rtx, "i"), new ValueFilter(rtx, "j")),
-                new long[] { 2L });
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx), rtx,
+            new NameFilter(rtx, "i"), new ValueFilter(rtx, "j")), new long[] {
+            2L
+        });
 
         rtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx),
-                rtx, new NameFilter(rtx, "y"), new ValueFilter(rtx, "y")),
-                new long[] {});
+        AbsAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(rtx), rtx,
+            new NameFilter(rtx, "y"), new ValueFilter(rtx, "y")), new long[] {});
 
     }
 

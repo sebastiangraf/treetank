@@ -79,18 +79,17 @@ public class PostOrderAxis extends AbsAxis {
         long key = mNextKey;
         if (key != NULL_NODE) {
             moveTo(mNextKey);
-            while (((IStructNode) getNode()).hasFirstChild()
-                    && key != mLastParent.peek()) {
+            while (((IStructNode)getNode()).hasFirstChild() && key != mLastParent.peek()) {
                 mLastParent.push(key);
-                key = ((IStructNode) getNode()).getFirstChildKey();
-                moveTo(((IStructNode) getNode()).getFirstChildKey());
+                key = ((IStructNode)getNode()).getFirstChildKey();
+                moveTo(((IStructNode)getNode()).getFirstChildKey());
             }
             if (key == mLastParent.peek()) {
                 mLastParent.pop();
             }
 
-            if (((IStructNode) getNode()).hasRightSibling()) {
-                mNextKey = ((IStructNode) getNode()).getRightSiblingKey();
+            if (((IStructNode)getNode()).hasRightSibling()) {
+                mNextKey = ((IStructNode)getNode()).getRightSiblingKey();
 
             } else {
                 mNextKey = mLastParent.peek();

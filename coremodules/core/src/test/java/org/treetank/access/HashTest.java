@@ -27,15 +27,15 @@
 
 package org.treetank.access;
 
-import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertEquals;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
+import static org.testng.AssertJUnit.assertFalse;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -45,7 +45,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 
 public class HashTest {
@@ -54,43 +54,43 @@ public class HashTest {
     private final static String NAME2 = "b";
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
 
     }
 
     @Test
-    public void testPostorderInsertRemove() throws AbsTTException {
+    public void testPostorderInsertRemove() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
-    public void testPostorderDeep() throws AbsTTException {
+    public void testPostorderDeep() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testDeepTree(wtx);
     }
 
     @Test
-    public void testPostorderSetter() throws AbsTTException {
+    public void testPostorderSetter() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testSetter(wtx);
     }
 
     @Test
-    public void testRollingInsertRemove() throws AbsTTException {
+    public void testRollingInsertRemove() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Rolling);
         testHashTreeWithInsertAndRemove(wtx);
     }
 
     @Test
-    public void testRollingDeep() throws AbsTTException {
+    public void testRollingDeep() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Rolling);
         testDeepTree(wtx);
     }
 
     @Test
-    public void testRollingSetter() throws AbsTTException {
+    public void testRollingSetter() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Rolling);
         testSetter(wtx);
     }
@@ -111,10 +111,10 @@ public class HashTest {
      * </pre>
      * 
      * @param wtx
-     * @throws AbsTTException
+     * @throws TTException
      */
     @Test(enabled = false)
-    private void testHashTreeWithInsertAndRemove(final INodeWriteTrx wtx) throws AbsTTException {
+    private void testHashTreeWithInsertAndRemove(final INodeWriteTrx wtx) throws TTException {
 
         // inserting a element as root
         wtx.insertElementAsFirstChild(new QName(NAME1));
@@ -166,7 +166,7 @@ public class HashTest {
     }
 
     @Test(enabled = false)
-    private void testDeepTree(final INodeWriteTrx wtx) throws AbsTTException {
+    private void testDeepTree(final INodeWriteTrx wtx) throws TTException {
 
         wtx.insertElementAsFirstChild(new QName(NAME1));
         final long oldHash = wtx.getNode().getHash();
@@ -188,7 +188,7 @@ public class HashTest {
     }
 
     @Test(enabled = false)
-    private void testSetter(final INodeWriteTrx wtx) throws AbsTTException {
+    private void testSetter(final INodeWriteTrx wtx) throws TTException {
 
         // Testing node inheritance
         wtx.insertElementAsFirstChild(new QName(NAME1));
@@ -230,7 +230,7 @@ public class HashTest {
         assertFalse(hashRoot4 == hashLeaf3);
     }
 
-    private INodeWriteTrx createWtx(final HashKind kind) throws AbsTTException {
+    private INodeWriteTrx createWtx(final HashKind kind) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
             .getConfig()).build());
@@ -242,7 +242,7 @@ public class HashTest {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 

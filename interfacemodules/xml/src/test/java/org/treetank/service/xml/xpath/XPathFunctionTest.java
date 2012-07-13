@@ -27,16 +27,16 @@
 
 package org.treetank.service.xml.xpath;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import java.io.File;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.xml.shredder.XMLShredder;
 
 /**
@@ -62,13 +62,13 @@ public class XPathFunctionTest {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testA_Axes() throws AbsTTException {
+    public void testA_Axes() throws TTException {
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//L/*"), new long[] {
             58L, 63L, 77L
@@ -125,7 +125,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testP_Filters() throws AbsTTException {
+    public void testP_Filters() throws TTException {
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//*[L]"), new long[] {
             20L
@@ -194,7 +194,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testT_NodeTests() throws AbsTTException {
+    public void testT_NodeTests() throws TTException {
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//L/text()"), new long[] {
             57L, 62L
@@ -225,7 +225,7 @@ public class XPathFunctionTest {
     }
 
     @Test(enabled = false)
-    public void testQ_Operators() throws AbsTTException {
+    public void testQ_Operators() throws TTException {
 
         AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//*[preceding::Q]"), new long[] {
             111L, 83L, 97L, 87L, 92L, 101L, 106L, 115L, 120L

@@ -46,7 +46,7 @@ import net.sf.saxon.s9api.XsltTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.saxon.wrapper.DocumentWrapper;
 
 /**
@@ -147,7 +147,7 @@ public final class XSLTEvaluator implements Callable<OutputStream> {
             trans.transform();
         } catch (final SaxonApiException e) {
             LOGGER.error("Saxon exception: " + e.getMessage(), e);
-        } catch (final AbsTTException e) {
+        } catch (final TTException e) {
             LOGGER.error("TT exception: " + e.getMessage(), e);
         }
 

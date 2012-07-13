@@ -28,12 +28,13 @@
 package org.treetank.saxon.wrapper;
 
 import static org.testng.AssertJUnit.assertEquals;
+
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorSAXHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -63,7 +64,7 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }

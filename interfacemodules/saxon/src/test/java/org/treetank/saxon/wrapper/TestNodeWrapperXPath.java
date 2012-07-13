@@ -29,9 +29,7 @@ package org.treetank.saxon.wrapper;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -49,11 +47,14 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 
@@ -75,7 +76,7 @@ public final class TestNodeWrapperXPath {
     private static transient Configuration config;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException, XPathFactoryConfigurationException {
+    public void setUp() throws TTException, XPathFactoryConfigurationException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         mHolder = Holder.generateRtx();

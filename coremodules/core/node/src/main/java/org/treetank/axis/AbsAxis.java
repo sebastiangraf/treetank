@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.interfaces.INode;
 
@@ -73,8 +73,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
         new ConcurrentHashMap<INodeReadTrx, ItemList>();
 
     /** Map with ItemList to each transaction. */
-    private final static Map<INodeReadTrx, Long> lastPointer =
-        new ConcurrentHashMap<INodeReadTrx, Long>();
+    private final static Map<INodeReadTrx, Long> lastPointer = new ConcurrentHashMap<INodeReadTrx, Long>();
 
     /**
      * Bind axis step to transaction.
@@ -170,9 +169,9 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
     /**
      * Closing the Transaction
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public void close() throws AbsTTException {
+    public void close() throws TTException {
         atomics.remove(mRTX);
         lastPointer.remove(mRTX);
         mRTX.close();

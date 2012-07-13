@@ -45,7 +45,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -105,11 +105,11 @@ public final class RESTResponseHelper {
      * @param document
      *            The XML {@link Document} instance.
      * @return A list of XML {@link Element} as the collection.
-     * @throws AbsTTException
+     * @throws TTException
      * @throws WebApplicationException
      */
     private static List<Element> createCollectionElementDBs(final File pStoragePath,
-        final List<String> resources, final Document document) throws WebApplicationException, AbsTTException {
+        final List<String> resources, final Document document) throws WebApplicationException, TTException {
         final List<Element> collectionsEls = new ArrayList<Element>();
         for (final String res : resources) {
             final Element elRes = document.createElement("resource");
@@ -154,7 +154,7 @@ public final class RESTResponseHelper {
                         collections =
                             RESTResponseHelper.createCollectionElementDBs(pStoragePath, availableRes,
                                 document);
-                    } catch (final AbsTTException exce) {
+                    } catch (final TTException exce) {
                         throw new WebApplicationException(exce);
                     }
                     for (final Element resource : collections) {

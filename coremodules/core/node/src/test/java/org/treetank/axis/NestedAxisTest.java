@@ -27,38 +27,38 @@
 
 package org.treetank.axis;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.filter.NameFilter;
 import org.treetank.axis.filter.NodeFilter;
 import org.treetank.axis.filter.TextFilter;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class NestedAxisTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testNestedAxisTest() throws AbsTTException {
+    public void testNestedAxisTest() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
 
         // Find descendants starting from nodeKey 0L (root).
@@ -66,23 +66,21 @@ public class NestedAxisTest {
 
         // XPath expression /p:a/b/text()
         // Part: /p:a
-        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx,
-                new NameFilter(rtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "p:a"));
         // Part: /b
-        final AbsAxis childB = new FilterAxis(new ChildAxis(rtx), rtx,
-                new NameFilter(rtx, "b"));
+        final AbsAxis childB = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "b"));
         // Part: /text()
-        final AbsAxis text = new FilterAxis(new ChildAxis(rtx), rtx,
-                new TextFilter(rtx));
+        final AbsAxis text = new FilterAxis(new ChildAxis(rtx), rtx, new TextFilter(rtx));
         // Part: /p:a/b/text()
-        final AbsAxis axis = new NestedAxis(
-                new NestedAxis(childA, childB, rtx), text, rtx);
+        final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB, rtx), text, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis, new long[] { 6L, 12L });
+        AbsAxisTest.testIAxisConventions(axis, new long[] {
+            6L, 12L
+        });
     }
 
     @Test
-    public void testNestedAxisTest2() throws AbsTTException {
+    public void testNestedAxisTest2() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
 
         // Find descendants starting from nodeKey 0L (root).
@@ -90,24 +88,22 @@ public class NestedAxisTest {
 
         // XPath expression /[:a/b/@p:x]
         // Part: /p:a
-        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx,
-                new NameFilter(rtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "p:a"));
         // Part: /b
-        final AbsAxis childB = new FilterAxis(new ChildAxis(rtx), rtx,
-                new NameFilter(rtx, "b"));
+        final AbsAxis childB = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "b"));
         // Part: /@x
-        final AbsAxis attributeX = new FilterAxis(new AttributeAxis(rtx), rtx,
-                new NameFilter(rtx, "p:x"));
+        final AbsAxis attributeX = new FilterAxis(new AttributeAxis(rtx), rtx, new NameFilter(rtx, "p:x"));
         // Part: /p:a/b/@p:x
-        final AbsAxis axis = new NestedAxis(
-                new NestedAxis(childA, childB, rtx), attributeX, rtx);
+        final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB, rtx), attributeX, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis, new long[] { 10L });
+        AbsAxisTest.testIAxisConventions(axis, new long[] {
+            10L
+        });
 
     }
 
     @Test
-    public void testNestedAxisTest3() throws AbsTTException {
+    public void testNestedAxisTest3() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
 
         // Find desceFndants starting from nodeKey 0L (root).
@@ -115,18 +111,17 @@ public class NestedAxisTest {
 
         // XPath expression p:a/node():
         // Part: /p:a
-        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx,
-                new NameFilter(rtx, "p:a"));
+        final AbsAxis childA = new FilterAxis(new ChildAxis(rtx), rtx, new NameFilter(rtx, "p:a"));
 
         // Part: /node()
-        final AbsAxis childNode = new FilterAxis(new ChildAxis(rtx), rtx,
-                new NodeFilter(rtx));
+        final AbsAxis childNode = new FilterAxis(new ChildAxis(rtx), rtx, new NodeFilter(rtx));
 
         // Part: /p:a/node():
         final AbsAxis axis = new NestedAxis(childA, childNode, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis,
-                new long[] { 4L, 5L, 8L, 9L, 13L });
+        AbsAxisTest.testIAxisConventions(axis, new long[] {
+            4L, 5L, 8L, 9L, 13L
+        });
 
     }
 }

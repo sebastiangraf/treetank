@@ -32,9 +32,7 @@ package org.treetank.service.jaxrx.util;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,8 +43,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.jaxrx.implementation.NodeIdRepresentationTest;
 import org.w3c.dom.Attr;
@@ -94,14 +95,14 @@ public class RESTResponseHelperTest {
     private static final String RESPATH = "/factbook.xml";
 
     @BeforeMethod
-    public void before() throws AbsTTException {
+    public void before() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @AfterMethod
-    public void after() throws AbsTTException {
+    public void after() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
@@ -114,12 +115,12 @@ public class RESTResponseHelperTest {
      * @throws WebApplicationException
      * @throws SAXException
      * @throws ParserConfigurationException
-     * @throws AbsTTException
+     * @throws TTException
      * @throws InterruptedException
      */
     @Test
     public final void testBuildResponseOfDomLR() throws WebApplicationException, IOException,
-        ParserConfigurationException, SAXException, AbsTTException, InterruptedException {
+        ParserConfigurationException, SAXException, TTException, InterruptedException {
 
         final List<String> availResources = new ArrayList<String>();
         availResources.add(FACT);

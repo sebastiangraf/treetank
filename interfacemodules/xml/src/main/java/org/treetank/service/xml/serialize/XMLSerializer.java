@@ -27,8 +27,9 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.treetank.node.IConstants.*;
-
+import static org.treetank.node.IConstants.ELEMENT;
+import static org.treetank.node.IConstants.ROOT;
+import static org.treetank.node.IConstants.TEXT;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;

@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.diff;
 
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 
@@ -58,10 +58,10 @@ interface IDiffObservable {
     /**
      * Diff computation done, thus inform listeners.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if closing transactions failes
      */
-    void done() throws AbsTTException;
+    void done() throws TTException;
 
     /**
      * Add an observer. This means add an instance of a class which implements

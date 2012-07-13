@@ -28,6 +28,7 @@
 package org.treetank.service.xml.xpath.filter;
 
 import static org.testng.AssertJUnit.assertEquals;
+
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -36,27 +37,27 @@ import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.filter.AbsFilterTest;
 import org.treetank.axis.filter.WildcardFilter;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class WildcardFilterTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testIFilterConvetions() throws AbsTTException {
+    public void testIFilterConvetions() throws TTException {
         holder.getNRtx().moveTo(9L);
         AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "b", true), true);
         holder.getNRtx().moveToAttribute(0);

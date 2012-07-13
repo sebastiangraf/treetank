@@ -28,13 +28,14 @@
 package org.treetank.service.xml.xpath.parser;
 
 import static org.testng.AssertJUnit.assertEquals;
+
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.utils.NamePageHash;
@@ -44,20 +45,20 @@ public class XPathParserTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testLiterals() throws AbsTTException {
+    public void testLiterals() throws TTException {
 
         holder.getNRtx().moveTo(2L);
 
@@ -102,7 +103,7 @@ public class XPathParserTest {
     }
 
     @Test
-    public void testEBNF() throws AbsTTException {
+    public void testEBNF() throws TTException {
 
         XPathParser parser = new XPathParser(holder.getNRtx(), "/p:a");
         parser.parseQuery();

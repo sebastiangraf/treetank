@@ -38,8 +38,7 @@ import org.treetank.node.interfaces.IStructNode;
  * <h1>DescendantAxis</h1>
  * 
  * <p>
- * Iterate over all descendants of kind ELEMENT or TEXT starting at a given
- * node. Self is not included.
+ * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
 public final class DescendantAxis extends AbsAxis {
@@ -82,7 +81,7 @@ public final class DescendantAxis extends AbsAxis {
         if (isSelfIncluded()) {
             mNextKey = getNode().getNodeKey();
         } else {
-            mNextKey = ((IStructNode) getNode()).getFirstChildKey();
+            mNextKey = ((IStructNode)getNode()).getFirstChildKey();
         }
     }
 
@@ -102,24 +101,23 @@ public final class DescendantAxis extends AbsAxis {
         moveTo(mNextKey);
 
         // Fail if the subtree is finished.
-        if (((IStructNode) getNode()).getLeftSiblingKey() == getStartKey()) {
+        if (((IStructNode)getNode()).getLeftSiblingKey() == getStartKey()) {
             resetToStartKey();
             return false;
         }
 
         // Always follow first child if there is one.
-        if (((IStructNode) getNode()).hasFirstChild()) {
-            mNextKey = ((IStructNode) getNode()).getFirstChildKey();
-            if (((IStructNode) getNode()).hasRightSibling()) {
-                mRightSiblingKeyStack.push(((IStructNode) getNode())
-                        .getRightSiblingKey());
+        if (((IStructNode)getNode()).hasFirstChild()) {
+            mNextKey = ((IStructNode)getNode()).getFirstChildKey();
+            if (((IStructNode)getNode()).hasRightSibling()) {
+                mRightSiblingKeyStack.push(((IStructNode)getNode()).getRightSiblingKey());
             }
             return true;
         }
 
         // Then follow right sibling if there is one.
-        if (((IStructNode) getNode()).hasRightSibling()) {
-            mNextKey = ((IStructNode) getNode()).getRightSiblingKey();
+        if (((IStructNode)getNode()).hasRightSibling()) {
+            mNextKey = ((IStructNode)getNode()).getRightSiblingKey();
             return true;
         }
 

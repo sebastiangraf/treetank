@@ -34,7 +34,7 @@ import javax.xml.namespace.QName;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.IPageReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
@@ -191,7 +191,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws AbsTTException {
+    public void close() throws TTException {
         if (!mPageReadTrx.isClosed()) {
             // Close own state.
             mPageReadTrx.close();

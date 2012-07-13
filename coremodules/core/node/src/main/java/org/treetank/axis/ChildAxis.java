@@ -34,8 +34,7 @@ import org.treetank.node.interfaces.IStructNode;
  * <h1>ChildAxis</h1>
  * 
  * <p>
- * Iterate over all children of kind ELEMENT or TEXT starting at a given node.
- * Self is not included.
+ * Iterate over all children of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
 public class ChildAxis extends AbsAxis {
@@ -68,12 +67,12 @@ public class ChildAxis extends AbsAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (!mFirst && ((IStructNode) getNode()).hasRightSibling()) {
-            moveTo(((IStructNode) getNode()).getRightSiblingKey());
+        if (!mFirst && ((IStructNode)getNode()).hasRightSibling()) {
+            moveTo(((IStructNode)getNode()).getRightSiblingKey());
             return true;
-        } else if (mFirst && (((IStructNode) getNode()).hasFirstChild())) {
+        } else if (mFirst && (((IStructNode)getNode()).hasFirstChild())) {
             mFirst = false;
-            moveTo(((IStructNode) getNode()).getFirstChildKey());
+            moveTo(((IStructNode)getNode()).getFirstChildKey());
             return true;
         } else {
             resetToStartKey();

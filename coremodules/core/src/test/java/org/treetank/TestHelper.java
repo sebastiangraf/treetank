@@ -47,7 +47,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
@@ -121,9 +121,9 @@ public final class TestHelper {
      * @param file
      *            to be created
      * @return a database-obj
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public static final IDatabase getDatabase(final File file) throws AbsTTException {
+    public static final IDatabase getDatabase(final File file) throws TTException {
         if (INSTANCES.containsKey(file)) {
             return INSTANCES.get(file);
         } else {
@@ -141,9 +141,9 @@ public final class TestHelper {
     /**
      * Deleting all resources as defined in the enum {@link PATHS}.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public static final void deleteEverything() throws AbsTTException {
+    public static final void deleteEverything() throws TTException {
         closeEverything();
         Database.truncateDatabase(PATHS.PATH1.config);
         Database.truncateDatabase(PATHS.PATH2.config);
@@ -152,9 +152,9 @@ public final class TestHelper {
     /**
      * Closing all resources as defined in the enum {@link PATHS}.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public static final void closeEverything() throws AbsTTException {
+    public static final void closeEverything() throws TTException {
         if (INSTANCES.containsKey(PATHS.PATH1.getFile())) {
             final IDatabase database = INSTANCES.remove(PATHS.PATH1.getFile());
             database.close();
@@ -258,9 +258,9 @@ public final class TestHelper {
     /**
      * Creating a test document at {@link PATHS#PATH1}.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public static void createTestDocument() throws AbsTTException {
+    public static void createTestDocument() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.config).build());
         final ISession session = database.getSession(new SessionConfiguration.Builder(RESOURCE).build());

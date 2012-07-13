@@ -27,12 +27,12 @@
 
 package org.treetank.service.xml.xpath.xmark;
 
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import org.perfidix.annotation.AfterEachRun;
 import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
-import org.treetank.exception.AbsTTException;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
 
 public class XMarkBenchTestPerfidix {
@@ -105,7 +105,7 @@ public class XMarkBenchTestPerfidix {
     // }
 
     @AfterEachRun
-    public static void tearDownTest() throws AbsTTException {
+    public static void tearDownTest() throws TTException {
         XMarkBenchTest.tearDown();
 
     }

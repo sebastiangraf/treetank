@@ -28,15 +28,16 @@
 package org.treetank.service.xml.xpath.expr;
 
 import static org.testng.AssertJUnit.assertEquals;
+
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 
@@ -51,20 +52,20 @@ public class ForAxisTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testFor() throws AbsTTException {
+    public void testFor() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(1L);

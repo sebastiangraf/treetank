@@ -37,7 +37,7 @@ import javax.xml.namespace.QName;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
@@ -98,10 +98,10 @@ abstract class AbsDiff extends AbsDiffObservable {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
-     * @throws AbsTTException
+     * @throws TTException
      *             if setting up transactions failes
      */
-    AbsDiff(final Builder paramBuilder) throws AbsTTException {
+    AbsDiff(final Builder paramBuilder) throws TTException {
         assert paramBuilder != null;
 
         mDiffKind = paramBuilder.mKind;
@@ -130,10 +130,10 @@ abstract class AbsDiff extends AbsDiffObservable {
     /**
      * Do the diff.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if setting up transactions failes
      */
-    void diffMovement() throws AbsTTException {
+    void diffMovement() throws TTException {
         assert mHashKind != null;
         assert mNewRtx != null;
         assert mOldRtx != null;

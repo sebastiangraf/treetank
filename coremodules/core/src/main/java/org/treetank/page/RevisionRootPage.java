@@ -28,7 +28,7 @@
 package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -190,7 +190,7 @@ public final class RevisionRootPage implements IPage {
     }
 
     @Override
-    public void commit(PageWriteTrx paramState) throws AbsTTException {
+    public void commit(PageWriteTrx paramState) throws TTException {
         for (final PageReference reference : getReferences()) {
             paramState.commit(reference);
         }

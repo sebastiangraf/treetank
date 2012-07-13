@@ -27,13 +27,11 @@
 
 package org.treetank.service.jaxrx.implementation;
 
-import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,8 +47,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.util.DOMHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -114,10 +115,10 @@ public class DatabaseRepresentationTest {
     /**
      * This a simple setUp.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -129,10 +130,10 @@ public class DatabaseRepresentationTest {
     /**
      * This is a simple tear down.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
@@ -158,14 +159,14 @@ public class DatabaseRepresentationTest {
     /**
      * This method tests {@link DatabaseRepresentation#getResource(String, java.util.Map)}
      * 
-     * @throws AbsTTException
+     * @throws TTException
      * @throws IOException
      * @throws WebApplicationException
      * @throws SAXException
      * @throws ParserConfigurationException
      */
     @Test
-    public void getResource() throws AbsTTException, WebApplicationException, IOException,
+    public void getResource() throws TTException, WebApplicationException, IOException,
         ParserConfigurationException, SAXException {
         final Map<QueryParameter, String> queryParams = new HashMap<QueryParameter, String>();
         Document doc;
@@ -233,7 +234,7 @@ public class DatabaseRepresentationTest {
      * @throws ParserConfigurationException
      */
     @Test
-    public void getResourcesNames() throws AbsTTException, ParserConfigurationException, SAXException,
+    public void getResourcesNames() throws TTException, ParserConfigurationException, SAXException,
         IOException {
 
         final StreamingOutput sOutput = treetank.getResourcesNames();
@@ -261,12 +262,12 @@ public class DatabaseRepresentationTest {
      * @throws WebApplicationException
      * @throws SAXException
      * @throws ParserConfigurationException
-     * @throws AbsTTException
+     * @throws TTException
      * 
      */
     @Test
     public void addResource() throws WebApplicationException, IOException, ParserConfigurationException,
-        SAXException, AbsTTException {
+        SAXException, TTException {
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream("/books.xml");
         treetank.add(input, RESOURCENAME);
         final Map<QueryParameter, String> params = new HashMap<QueryParameter, String>();
@@ -285,14 +286,14 @@ public class DatabaseRepresentationTest {
     /**
      * This method tests {@link DatabaseRepresentation#deleteResource(String)}
      * 
-     * @throws AbsTTException
+     * @throws TTException
      * @throws IOException
      * @throws WebApplicationException
      * @throws SAXException
      * @throws ParserConfigurationException
      */
     @Test
-    public void deleteResource() throws AbsTTException, WebApplicationException, IOException,
+    public void deleteResource() throws TTException, WebApplicationException, IOException,
         ParserConfigurationException, SAXException {
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         treetank.shred(input, RESOURCENAME + "99");
@@ -317,10 +318,10 @@ public class DatabaseRepresentationTest {
     /**
      * This method tests {@link DatabaseRepresentation#shred(java.io.InputStream, String)}
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
     @Test
-    public void shred() throws AbsTTException {
+    public void shred() throws TTException {
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         assertTrue(ASSTRUE, treetank.shred(input, RESOURCENAME + "88"));
         treetank.deleteResource(RESOURCENAME + "88");
@@ -355,10 +356,10 @@ public class DatabaseRepresentationTest {
     /**
      * This method tests {@link DatabaseRepresentation#getLastRevision(String)}
      * 
-     * @throws AbsTTException
+     * @throws TTException
      */
     @Test
-    public void getLastRevision() throws AbsTTException {
+    public void getLastRevision() throws TTException {
         assertEquals(ASSEQUALS, 0, treetank.getLastRevision(RESOURCENAME));
         final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
         rid.deleteResource(RESOURCENAME, 8);
@@ -369,14 +370,14 @@ public class DatabaseRepresentationTest {
      * This method tests
      * {@link DatabaseRepresentation#getModificHistory(String, String, boolean, java.io.OutputStream, boolean)}
      * 
-     * @throws AbsTTException
+     * @throws TTException
      * @throws WebApplicationException
      * @throws ParserConfigurationException
      * @throws IOException
      * @throws SAXException
      */
     @Test
-    public void getModificHistory() throws WebApplicationException, AbsTTException, SAXException,
+    public void getModificHistory() throws WebApplicationException, TTException, SAXException,
         IOException, ParserConfigurationException {
         final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
         rid.deleteResource(RESOURCENAME, 8);
@@ -392,7 +393,7 @@ public class DatabaseRepresentationTest {
     /**
      * This method tests {@link DatabaseRepresentation#revertToRevision(String, long)}
      * 
-     * @throws AbsTTException
+     * @throws TTException
      * @throws IOException
      * @throws WebApplicationException
      * @throws SAXException
@@ -400,7 +401,7 @@ public class DatabaseRepresentationTest {
      * @throws InterruptedException
      */
     @Test
-    public void revertToRevision() throws AbsTTException, WebApplicationException, IOException,
+    public void revertToRevision() throws TTException, WebApplicationException, IOException,
         ParserConfigurationException, SAXException, InterruptedException {
         final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
         rid.deleteResource(RESOURCENAME, 8);

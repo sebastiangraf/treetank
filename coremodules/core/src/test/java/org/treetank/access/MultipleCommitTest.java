@@ -31,26 +31,26 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class MultipleCommitTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         holder = Holder.generateWtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     // @Test
-    // public void test() throws AbsTTException {
+    // public void test() throws TTException {
     // Assert.assertEquals(0L, holder.getSession().getMostRecentVersion());
     //
     // holder.getNWtx().commit();
@@ -65,7 +65,7 @@ public class MultipleCommitTest {
     // }
     //
     // @Test
-    // public void testAutoCommit() throws AbsTTException {
+    // public void testAutoCommit() throws TTException {
     // DocumentCreater.create(holder.getNWtx());
     // holder.getNWtx().commit();
     //
@@ -74,7 +74,7 @@ public class MultipleCommitTest {
     // }
     //
     // @Test
-    // public void testRemove() throws AbsTTException {
+    // public void testRemove() throws TTException {
     // DocumentCreater.create(holder.getNWtx());
     // holder.getNWtx().commit();
     // assertEquals(1L, holder.getSession().getMostRecentVersion());

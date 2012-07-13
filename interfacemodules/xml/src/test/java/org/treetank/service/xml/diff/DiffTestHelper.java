@@ -41,7 +41,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.mockito.InOrder;
 import org.treetank.Holder;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
@@ -56,38 +56,38 @@ public final class DiffTestHelper {
     protected static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
     protected static final long TIMEOUT_S = 5;
 
-    static void setUpFirst(final Holder paramHolder) throws AbsTTException {
+    static void setUpFirst(final Holder paramHolder) throws TTException {
         DocumentCreater.createVersioned(paramHolder.getNWtx());
     }
 
-    static void setUpSecond(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
+    static void setUpSecond(final Holder paramHolder) throws TTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll4" + File.separator + "2.xml"));
     }
 
-    static void setUpThird(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
+    static void setUpThird(final Holder paramHolder) throws TTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsDelete1" + File.separator + "2.xml"));
     }
 
-    static void setUpFourth(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
+    static void setUpFourth(final Holder paramHolder) throws TTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll3" + File.separator + "2.xml"));
     }
 
-    static void setUpFifth(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
+    static void setUpFifth(final Holder paramHolder) throws TTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsAll2" + File.separator + "2.xml"));
     }
 
-    static void setUpSixth(final Holder paramHolder) throws AbsTTException, IOException, XMLStreamException {
+    static void setUpSixth(final Holder paramHolder) throws TTException, IOException, XMLStreamException {
         initializeData(paramHolder, new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator
             + "1.xml"), new File(RESOURCES + File.separator + "revXMLsDelete2" + File.separator + "2.xml"));
 
     }
 
     private static void initializeData(final Holder paramHolder, final File... paramFile)
-        throws AbsTTException, IOException, XMLStreamException {
+        throws TTException, IOException, XMLStreamException {
 
         int i = 0;
         for (final File file : paramFile) {
@@ -212,7 +212,7 @@ public final class DiffTestHelper {
     }
 
     static void check(final Holder paramHolder, final IDiffObserver paramObserver,
-        final EDiffOptimized paramOptimized) throws AbsTTException, InterruptedException {
+        final EDiffOptimized paramOptimized) throws TTException, InterruptedException {
         final Set<IDiffObserver> observers = new HashSet<IDiffObserver>();
         observers.add(paramObserver);
         DiffFactory.invokeFullDiff(new DiffFactory.Builder(paramHolder.getSession(), 0, 1, 0, paramOptimized,

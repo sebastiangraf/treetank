@@ -44,7 +44,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
@@ -220,7 +220,7 @@ public final class WorkerHelper {
      * @throws TreetankException
      */
     public static void closeWTX(final boolean abortTransaction, final INodeWriteTrx wtx, final ISession ses,
-        final IDatabase dbase) throws AbsTTException {
+        final IDatabase dbase) throws TTException {
         synchronized (dbase) {
             if (abortTransaction) {
                 wtx.abort();
@@ -239,10 +239,10 @@ public final class WorkerHelper {
      *            ISession to be closed
      * @param dbase
      *            IDatabase to be closed
-     * @throws AbsTTException
+     * @throws TTException
      */
     public static void closeRTX(final INodeReadTrx rtx, final ISession ses, final IDatabase dbase)
-        throws AbsTTException {
+        throws TTException {
         synchronized (dbase) {
             dbase.close();
         }

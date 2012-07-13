@@ -55,8 +55,7 @@ public class NestedAxis extends AbsAxis {
      * @param mChildAxis
      *            Outer nested axis.
      */
-    public NestedAxis(final AbsAxis parentAxis, final AbsAxis mChildAxis,
-            final INodeReadTrx pRtx) {
+    public NestedAxis(final AbsAxis parentAxis, final AbsAxis mChildAxis, final INodeReadTrx pRtx) {
         super(pRtx);
         this.mParentAxis = parentAxis;
         this.mChildAxis = mChildAxis;

@@ -29,7 +29,7 @@ package org.treetank.api;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
 /**
@@ -122,11 +122,11 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * 
      * @param pName
      *            {@link QName} of node to insert
-     * @throws AbsTTException
+     * @throws TTException
      *             if element node couldn't be inserted as first child
      * @return key of inserted node
      */
-    long insertElementAsFirstChild(final QName pName) throws AbsTTException;
+    long insertElementAsFirstChild(final QName pName) throws TTException;
 
     /**
      * Insert new text node as first child of currently selected node. The
@@ -134,11 +134,11 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * 
      * @param pValue
      *            value of node to insert
-     * @throws AbsTTException
+     * @throws TTException
      *             if text node couldn't be inserted as first child.
      * @return Key of inserted node. Already has a first child.
      */
-    long insertTextAsFirstChild(final String pValue) throws AbsTTException;
+    long insertTextAsFirstChild(final String pValue) throws TTException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
@@ -146,11 +146,11 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * 
      * @param pFromKey
      *            {@link QName} of the new node
-     * @throws AbsTTException
+     * @throws TTException
      *             if element node couldn't be inserted as right sibling
      * @return Key of inserted node. Already has a first child.
      */
-    long insertElementAsRightSibling(final QName pFromKey) throws AbsTTException;
+    long insertElementAsRightSibling(final QName pFromKey) throws TTException;
 
     /**
      * Insert new text node as right sibling of currently selected node. The
@@ -158,12 +158,12 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * 
      * @param pValue
      *            value of node to insert
-     * @throws AbsTTException
+     * @throws TTException
      *             if text node couldn't be inserted as right sibling
      * @return Key of inserted node. the root node which is not allowed to have
      *         right siblings.
      */
-    long insertTextAsRightSibling(final String pValue) throws AbsTTException;
+    long insertTextAsRightSibling(final String pValue) throws TTException;
 
     /**
      * Insert attribute in currently selected node. The cursor is moved to the
@@ -173,11 +173,11 @@ public interface INodeWriteTrx extends INodeReadTrx {
      *            {@link QName} reference
      * @param paramValue
      *            value of inserted node
-     * @throws AbsTTException
+     * @throws TTException
      *             if attribute couldn't be inserted.
      * @return key of inserted node
      */
-    long insertAttribute(final QName pName, final String pValue) throws AbsTTException;
+    long insertAttribute(final QName pName, final String pValue) throws TTException;
 
     /**
      * Insert namespace declaration in currently selected node. The cursor is
@@ -185,11 +185,11 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * 
      * @param pName
      *            {@link QName} reference
-     * @throws AbsTTException
+     * @throws TTException
      *             if attribute couldn't be inserted.
      * @return key of inserted node
      */
-    long insertNamespace(final QName pName) throws AbsTTException;
+    long insertNamespace(final QName pName) throws TTException;
 
     /**
      * Remove currently selected node. This does automatically remove
@@ -199,10 +199,10 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * sibling, it is located at the former left sibling. If there was no left
      * sibling, it is located at the former parent.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if node couldn't be removed
      */
-    void remove() throws AbsTTException;
+    void remove() throws TTException;
 
     // --- Node Setters
     // -----------------------------------------------------------
@@ -215,7 +215,7 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * @throws TTIOException
      *             If can't set Name in node.
      */
-    void setQName(final QName pName) throws AbsTTException;
+    void setQName(final QName pName) throws TTException;
 
     /**
      * Set URI of node.
@@ -225,7 +225,7 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * @throws TTIOException
      *             if URI of node couldn't be set
      */
-    void setURI(final String pUri) throws AbsTTException;
+    void setURI(final String pUri) throws TTException;
 
     /**
      * Set value of node.
@@ -235,16 +235,16 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * @throws TTIOException
      *             if value couldn't be set
      */
-    void setValue(final String pValue) throws AbsTTException;
+    void setValue(final String pValue) throws TTException;
 
     /**
      * Commit all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if this revision couldn't be commited
      */
-    void commit() throws AbsTTException;
+    void commit() throws TTException;
 
     /**
      * Abort all modifications of the exclusive write transaction.
@@ -252,7 +252,7 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * @throws TTIOException
      *             if this revision couldn't be aborted
      */
-    void abort() throws AbsTTException;
+    void abort() throws TTException;
 
     /**
      * Reverting all changes to the revision defined. This command has to be
@@ -260,17 +260,17 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * 
      * @param pRev
      *            revert to the revision
-     * @throws AbsTTException
+     * @throws TTException
      *             if couldn't revert to revision
      */
-    void revertTo(final long pRev) throws AbsTTException;
+    void revertTo(final long pRev) throws TTException;
 
     /**
      * Closing current NodeWriteTrx.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if write transaction couldn't be closed
      */
     @Override
-    void close() throws AbsTTException;
+    void close() throws TTException;
 }

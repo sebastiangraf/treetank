@@ -28,7 +28,7 @@
 package org.treetank.service.xml.diff;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.IConstants;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
 
@@ -46,9 +46,9 @@ final class StructuralDiff extends AbsDiff {
      * 
      * @param paramBuilder
      *            {@link Builder} reference
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public StructuralDiff(final Builder paramBuilder) throws AbsTTException {
+    public StructuralDiff(final Builder paramBuilder) throws TTException {
         super(paramBuilder);
     }
 

@@ -29,7 +29,7 @@ package org.treetank.api;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
 /**
@@ -88,11 +88,11 @@ public interface IDatabase {
      * 
      * @param pSessionConf
      *            {@link SessionConfiguration.Builder} reference
-     * @throws AbsTTException
+     * @throws TTException
      *             if can't get session
      * @return the session
      */
-    ISession getSession(final SessionConfiguration pSessionConf) throws AbsTTException;
+    ISession getSession(final SessionConfiguration pSessionConf) throws TTException;
 
     /**
      * Truncating a resource. This includes the removal of all data stored
@@ -107,9 +107,9 @@ public interface IDatabase {
     /**
      * Closing the database for further access.
      * 
-     * @throws AbsTTException
+     * @throws TTException
      *             if anything happens within treetank.
      */
-    void close() throws AbsTTException;
+    void close() throws TTException;
 
 }

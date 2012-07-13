@@ -30,7 +30,7 @@ import java.util.Arrays;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.api.INode;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -155,7 +155,7 @@ public class NodePage implements IPage {
     }
 
     @Override
-    public void commit(PageWriteTrx paramState) throws AbsTTException {
+    public void commit(PageWriteTrx paramState) throws TTException {
     }
 
     @Override

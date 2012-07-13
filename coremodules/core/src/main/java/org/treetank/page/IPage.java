@@ -27,7 +27,7 @@
 package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public interface IPage {
 
@@ -37,6 +37,6 @@ public interface IPage {
 
     PageReference[] getReferences();
 
-    void commit(final PageWriteTrx paramState) throws AbsTTException;
+    void commit(final PageWriteTrx paramState) throws TTException;
 
 }

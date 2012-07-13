@@ -35,7 +35,7 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
@@ -83,11 +83,11 @@ public final class Session implements ISession {
      *            DatabaseConfiguration for general setting about the storage
      * @param paramSessionConf
      *            SessionConfiguration for handling this specific session
-     * @throws AbsTTException
+     * @throws TTException
      *             Exception if something weird happens
      */
     protected Session(final Database paramDatabase, final ResourceConfiguration paramResourceConf,
-        final SessionConfiguration paramSessionConf) throws AbsTTException {
+        final SessionConfiguration paramSessionConf) throws TTException {
         mDatabase = paramDatabase;
         mResourceConfig = paramResourceConf;
         mSessionConfig = paramSessionConf;
@@ -107,14 +107,14 @@ public final class Session implements ISession {
         mClosed = false;
     }
 
-    public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws AbsTTException {
+    public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
         assertAccess(pRevKey);
         final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mFac.getReader());
         mPageTrxs.add(trx);
         return trx;
     }
 
-    public IPageWriteTrx beginPageWriteTransaction() throws AbsTTException {
+    public IPageWriteTrx beginPageWriteTransaction() throws TTException {
 
         return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber(), mLastCommittedUberPage
             .getRevisionNumber());
@@ -136,7 +136,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public synchronized void close() throws AbsTTException {
+    public synchronized void close() throws TTException {
         if (!mClosed) {
             // Forcibly close all open transactions.
             for (final IPageReadTrx rtx : mPageTrxs) {

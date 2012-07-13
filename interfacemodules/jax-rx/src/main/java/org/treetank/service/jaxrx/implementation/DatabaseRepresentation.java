@@ -61,7 +61,7 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.util.RESTResponseHelper;
 import org.treetank.service.jaxrx.util.RESTXMLShredder;
 import org.treetank.service.jaxrx.util.RestXPathProcessor;
@@ -124,7 +124,7 @@ public class DatabaseRepresentation {
             } else {
                 try {
                     shred(inputStream, resourceName);
-                } catch (final AbsTTException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -171,7 +171,7 @@ public class DatabaseRepresentation {
                     }
                 } catch (final NumberFormatException exce) {
                     throw new JaxRxException(400, exce.getMessage());
-                } catch (final AbsTTException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -206,7 +206,7 @@ public class DatabaseRepresentation {
                 final RestXPathProcessor xpathProcessor = new RestXPathProcessor(mStoragePath);
                 try {
                     xpathProcessor.getXpathResource(resource, query, nodeid, rev, output, wrapResult);
-                } catch (final AbsTTException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -253,7 +253,7 @@ public class DatabaseRepresentation {
         synchronized (resource) {
             try {
                 shred(input, resource);
-            } catch (final AbsTTException exce) {
+            } catch (final TTException exce) {
                 throw new JaxRxException(exce);
             }
         }
@@ -274,7 +274,7 @@ public class DatabaseRepresentation {
                 final DatabaseConfiguration dbConfig = new DatabaseConfiguration(mStoragePath);
                 final IDatabase database = Database.openDatabase(mStoragePath);
                 database.truncateResource(new ResourceConfiguration.Builder(resourceName, dbConfig).build());
-            } catch (final AbsTTException exc) {
+            } catch (final TTException exc) {
                 throw new JaxRxException(500, "Deletion could not be performed");
             }
         }
@@ -289,9 +289,9 @@ public class DatabaseRepresentation {
      * @param resource
      *            The name of the resource.
      * @return <code>true</code> when the shredding process has been successful. <code>false</code> otherwise.
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public final boolean shred(final InputStream xmlInput, final String resource) throws AbsTTException {
+    public final boolean shred(final InputStream xmlInput, final String resource) throws TTException {
         boolean allOk;
         INodeWriteTrx wtx = null;
         IPageWriteTrx pWtx = null;
@@ -340,12 +340,12 @@ public class DatabaseRepresentation {
      *            than response the latest revision.
      * @return The {@link OutputStream} containing the serialized XML file.
      * @throws IOException
-     * @throws AbsTTException
+     * @throws TTException
      * @throws WebApplicationException
      */
     private final OutputStream serialize(final String resource, final Long revision, final boolean nodeid,
         final OutputStream output, final boolean wrapResult) throws IOException, JaxRxException,
-        AbsTTException {
+        TTException {
 
         if (WorkerHelper.checkExistingResource(mStoragePath, resource)) {
             try {
@@ -375,9 +375,9 @@ public class DatabaseRepresentation {
      * @return The {@link OutputStream} containing the result
      * @throws WebApplicationException
      *             The Exception occurred.
-     * @throws AbsTTException
+     * @throws TTException
      */
-    public long getLastRevision(final String resourceName) throws JaxRxException, AbsTTException {
+    public long getLastRevision(final String resourceName) throws JaxRxException, TTException {
 
         long lastRevision;
         if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
@@ -416,14 +416,14 @@ public class DatabaseRepresentation {
      * @param wrap
      *            <code>true</code> if the results have to be wrapped. <code>false</code> otherwise.
      * @return The {@link OutputStream} containing the result
-     * @throws AbsTTException
+     * @throws TTException
      * @throws WebApplicationException
      *             The Exception occurred.
      */
     public OutputStream getModificHistory(final String resourceName, // NOPMD this method needs alls these
         // functions
         final String revisionRange, final boolean nodeid, final OutputStream output, final boolean wrap)
-        throws JaxRxException, AbsTTException {
+        throws JaxRxException, TTException {
 
         // extract both revision from given String value
         final StringTokenizer tokenizer = new StringTokenizer(revisionRange, "-");
@@ -568,10 +568,10 @@ public class DatabaseRepresentation {
      *            id's. <code>false</code> otherwise.
      * @throws WebApplicationException
      *             The exception occurred.
-     * @throws AbsTTException
+     * @throws TTException
      */
     private void serializIt(final String resource, final Long revision, final OutputStream output,
-        final boolean nodeid) throws JaxRxException, AbsTTException {
+        final boolean nodeid) throws JaxRxException, TTException {
         // Connection to treetank, creating a session
         IDatabase database = null;
         ISession session = null;
@@ -611,10 +611,10 @@ public class DatabaseRepresentation {
      * @param backToRevision
      *            The revision value, which has to be set as the latest.
      * @throws WebApplicationException
-     * @throws AbsTTException
+     * @throws TTException
      */
     public void revertToRevision(final String resourceName, final long backToRevision) throws JaxRxException,
-        AbsTTException {
+        TTException {
         IDatabase database = null;
         ISession session = null;
         INodeWriteTrx wtx = null;
@@ -625,7 +625,7 @@ public class DatabaseRepresentation {
             wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
             wtx.revertTo(backToRevision);
             wtx.commit();
-        } catch (final AbsTTException exce) {
+        } catch (final TTException exce) {
             abort = true;
             throw new JaxRxException(exce);
         } finally {

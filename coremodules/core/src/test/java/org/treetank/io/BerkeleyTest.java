@@ -28,32 +28,31 @@
 package org.treetank.io;
 
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.exception.AbsTTException;
-import org.treetank.io.EStorage;
+import org.treetank.exception.TTException;
 
 public class BerkeleyTest {
 
     private ResourceConfiguration resourceConf;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         Holder.generateSession().close();
         resourceConf = IOTestHelper.registerIO(EStorage.Berkeley);
     }
 
     @Test
-    public void testFirstRef() throws AbsTTException {
+    public void testFirstRef() throws TTException {
         IOTestHelper.testReadWriteFirstRef(resourceConf);
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         IOTestHelper.clean();
     }
 

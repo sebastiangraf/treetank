@@ -29,9 +29,10 @@ package org.treetank.service.xml.xpath;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
+
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
@@ -41,7 +42,7 @@ import org.treetank.axis.FollowingSiblingAxis;
 import org.treetank.axis.NestedAxis;
 import org.treetank.axis.ParentAxis;
 import org.treetank.axis.SelfAxis;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.xml.xpath.axis.UnionAxis;
 import org.treetank.service.xml.xpath.filter.DupFilterAxis;
 
@@ -50,20 +51,20 @@ public class ExpressionSingleTest {
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testAdd() throws AbsTTException {
+    public void testAdd() throws TTException {
         // Verify.
         final ExpressionSingle builder = new ExpressionSingle(holder.getNRtx());
 
@@ -82,7 +83,7 @@ public class ExpressionSingleTest {
     }
 
     @Test
-    public void testDup() throws AbsTTException {
+    public void testDup() throws TTException {
         ExpressionSingle builder = new ExpressionSingle(holder.getNRtx());
         builder.add(new ChildAxis(holder.getNRtx()));
         builder.add(new DescendantAxis(holder.getNRtx()));

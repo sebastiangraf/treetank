@@ -28,45 +28,48 @@
 package org.treetank.axis;
 
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class PrecedingAxisTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testAxisConventions() throws AbsTTException {
+    public void testAxisConventions() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(12L);
         AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
-                11L, 8L, 7L, 6L, 5L, 4L });
+            11L, 8L, 7L, 6L, 5L, 4L
+        });
 
         rtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx),
-                new long[] { 4L });
+        AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
+            4L
+        });
 
         rtx.moveTo(13L);
         AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {
-                12L, 11L, 9L, 8L, 7L, 6L, 5L, 4L });
+            12L, 11L, 9L, 8L, 7L, 6L, 5L, 4L
+        });
 
         rtx.moveTo(1L);
         AbsAxisTest.testIAxisConventions(new PrecedingAxis(rtx), new long[] {});

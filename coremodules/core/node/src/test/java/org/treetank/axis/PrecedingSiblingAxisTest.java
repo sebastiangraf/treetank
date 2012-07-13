@@ -28,54 +28,55 @@
 package org.treetank.axis;
 
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class PrecedingSiblingAxisTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testAxisConventions() throws AbsTTException {
+    public void testAxisConventions() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(12L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
-                new long[] { 11L });
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
+            11L
+        });
 
         rtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
-                new long[] { 4L });
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
+            4L
+        });
 
         rtx.moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
-                new long[] { 9L, 8L, 5L, 4L });
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
+            9L, 8L, 5L, 4L
+        });
 
         rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
-                new long[] {});
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {});
 
         rtx.moveTo(9L);
         rtx.moveToAttribute(0);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx),
-                new long[] {});
+        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {});
     }
 
 }

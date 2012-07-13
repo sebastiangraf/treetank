@@ -33,7 +33,7 @@ package org.treetank.exception;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class TTUsageException extends AbsTTException {
+public class TTUsageException extends TTException {
 
     /**
      * Serial because of Serializable

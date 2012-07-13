@@ -79,7 +79,7 @@ import org.treetank.axis.ParentAxis;
 import org.treetank.axis.PrecedingAxis;
 import org.treetank.axis.PrecedingSiblingAxis;
 import org.treetank.axis.filter.TextFilter;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
@@ -137,10 +137,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      *            Treetank database.
      * @param nodekeyToStart
      *            NodeKey to move to.
-     * @throws AbsTTException
+     * @throws TTException
      */
     protected NodeWrapper(final DocumentWrapper paramDocWrapper, final long nodekeyToStart)
-        throws AbsTTException {
+        throws TTException {
 
         this.mDocWrapper = paramDocWrapper;
 
@@ -310,7 +310,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                         retVal[n++] = pool.allocateNamespaceCode(prefix, uri);
                     }
                     rtx.close();
-                } catch (final AbsTTException exc) {
+                } catch (final TTException exc) {
                     LOGGER.error(exc.toString());
                 }
                 /*
@@ -460,7 +460,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             }
             rtx.close();
             return parent;
-        } catch (final AbsTTException exc) {
+        } catch (final TTException exc) {
             LOGGER.error(exc.toString());
             return null;
         }
@@ -533,7 +533,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             default:
                 mValue = "";
             }
-        } catch (final AbsTTException exc) {
+        } catch (final TTException exc) {
             LOGGER.error(exc.toString());
         }
 
@@ -558,7 +558,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 axis.next();
             }
             rtx.close();
-        } catch (final AbsTTException exc) {
+        } catch (final TTException exc) {
             LOGGER.error(exc.toString());
         }
         return fsb.condense().toString();
@@ -622,7 +622,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 hasChildNodes = true;
             }
             rtx.close();
-        } catch (final AbsTTException exc) {
+        } catch (final TTException exc) {
             LOGGER.error(exc.toString());
         }
         return hasChildNodes;
@@ -793,7 +793,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             default:
                 throw new IllegalArgumentException("Unknown axis number " + axisNumber);
             }
-        } catch (final AbsTTException exc) {
+        } catch (final TTException exc) {
             LOGGER.error(exc.toString());
         }
         return returnVal;
@@ -844,13 +844,13 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 index++;
             }
             rtx.close();
-        } catch (final AbsTTException exc) {
+        } catch (final TTException exc) {
             LOGGER.error(exc.toString());
         }
         return index;
     }
 
-    private final INodeReadTrx createRtxAndMove() throws AbsTTException {
+    private final INodeReadTrx createRtxAndMove() throws TTException {
         final INodeReadTrx rtx =
             new NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
                 .getMostRecentVersion()));
@@ -900,13 +900,13 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 final long nextKey = mAxis.next();
                 try {
                     current = new NodeWrapper(mDocWrapper, nextKey);
-                } catch (final AbsTTException exc) {
+                } catch (final TTException exc) {
                     current = null;
                 }
             } else {
                 try {
                     mAxis.close();
-                } catch (AbsTTException exc) {
+                } catch (TTException exc) {
                     LOGGER.error(exc.toString());
                 }
                 current = null;

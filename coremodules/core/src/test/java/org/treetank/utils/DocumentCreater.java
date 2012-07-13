@@ -34,7 +34,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 import javax.xml.namespace.QName;
 
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 /**
  * <h1>TestDocument</h1>
@@ -90,10 +90,10 @@ public final class DocumentCreater {
      * 
      * @param paramWtx
      *            {@link INodeWriteTrx} to write to
-     * @throws AbsTTException
+     * @throws TTException
      *             if anything weird happens
      */
-    public static void create(final INodeWriteTrx paramWtx) throws AbsTTException {
+    public static void create(final INodeWriteTrx paramWtx) throws TTException {
         assertNotNull(paramWtx);
         assertTrue(paramWtx.moveTo(ROOT_NODE));
 

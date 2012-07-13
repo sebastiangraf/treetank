@@ -31,7 +31,7 @@ import java.util.Map;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.interfaces.INode;
@@ -63,11 +63,11 @@ public final class FMESVisitor {
      *            {@link Map} reference to track ordered nodes
      * @param paramDescendants
      *            {@link Map} reference to track descendants per node
-     * @throws AbsTTException
+     * @throws TTException
      *             if setting up treetank fails
      */
     public FMESVisitor(final ISession paramSession, final Map<INode, Boolean> paramInOrder,
-        final Map<INode, Long> paramDescendants) throws AbsTTException {
+        final Map<INode, Long> paramDescendants) throws TTException {
         assert paramSession != null;
         assert paramInOrder != null;
         assert paramDescendants != null;

@@ -27,26 +27,26 @@
 
 package org.treetank.axis;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
-import org.testng.AssertJUnit;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
+import org.testng.AssertJUnit;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 
 public class AttributeAxisTest {
 
     private Holder holder;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.createTestDocument();
         holder = Holder.generateRtx();
@@ -54,13 +54,13 @@ public class AttributeAxisTest {
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         holder.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testIterate() throws AbsTTException {
+    public void testIterate() throws TTException {
         final INodeReadTrx wtx = holder.getNRtx();
 
         wtx.moveTo(ROOT_NODE);
@@ -83,8 +83,8 @@ public class AttributeAxisTest {
         AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
     }
 
-    @Test(enabled=false)
-    public void testMultipleAttributes() throws AbsTTException {
+    @Test(enabled = false)
+    public void testMultipleAttributes() throws TTException {
         final INodeWriteTrx wtx = holder.getNWtx();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");

@@ -27,16 +27,16 @@
 
 package org.treetank.service.xml.diff;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.exception.AbsTTException;
+import org.treetank.exception.TTException;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
 
 /**
@@ -53,14 +53,14 @@ public final class StructuralDiffTest {
     private IDiffObserver mObserver;
 
     @BeforeMethod
-    public void setUp() throws AbsTTException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         mHolder = Holder.generateWtx();
         mObserver = DiffTestHelper.createMock();
     }
 
     @AfterMethod
-    public void tearDown() throws AbsTTException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
@@ -80,7 +80,7 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    public void testStructuralDiffSecond() throws AbsTTException, InterruptedException, IOException,
+    public void testStructuralDiffSecond() throws TTException, InterruptedException, IOException,
         XMLStreamException {
         DiffTestHelper.setUpSecond(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
@@ -88,7 +88,7 @@ public final class StructuralDiffTest {
     }
 
     @Test(enabled = false)
-    public void testStructuralDiffOptimizedSecond() throws AbsTTException, IOException, XMLStreamException,
+    public void testStructuralDiffOptimizedSecond() throws TTException, IOException, XMLStreamException,
         InterruptedException {
         DiffTestHelper.setUpSecond(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);
@@ -96,7 +96,7 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    public void testStructuralDiffThird() throws AbsTTException, IOException, XMLStreamException,
+    public void testStructuralDiffThird() throws TTException, IOException, XMLStreamException,
         InterruptedException {
         DiffTestHelper.setUpThird(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
@@ -104,7 +104,7 @@ public final class StructuralDiffTest {
     }
 
     @Test
-    public void testStructuralDiffOptimizedThird() throws AbsTTException, IOException, XMLStreamException,
+    public void testStructuralDiffOptimizedThird() throws TTException, IOException, XMLStreamException,
         InterruptedException {
         DiffTestHelper.setUpThird(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.HASHED);

@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TTThreadedException extends AbsTTException {
+public final class TTThreadedException extends TTException {
 
     /** Generated ID. */
     private static final long serialVersionUID = -2891221683798924769L;
