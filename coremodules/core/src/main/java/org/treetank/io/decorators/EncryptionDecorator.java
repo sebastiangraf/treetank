@@ -24,8 +24,9 @@ public class EncryptionDecorator extends ByteRepresentationDecorator {
 
     private static final String ALGORITHM = "AES";
     private static final int ITERATIONS = 2;
+    //128bit key
     private static final byte[] keyValue = new byte[] {
-        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
+        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k','k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
     private final Cipher mCipher;
 

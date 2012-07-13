@@ -177,9 +177,7 @@ public final class TestHelper {
             case 0:
                 nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
                 nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
-                valDel = new ValNodeDelegate(nodeDel, new byte[] {
-                    0, 1, 2, 3, 4
-                });
+                valDel = new ValNodeDelegate(nodeDel, generateRandomBytes(1000));
                 page.setNode(i, new AttributeNode(nodeDel, nameDel, valDel));
                 break;
             case 1:
@@ -208,9 +206,7 @@ public final class TestHelper {
                 break;
             case 5:
                 nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
-                valDel = new ValNodeDelegate(nodeDel, new byte[] {
-                    0, 1
-                });
+                valDel = new ValNodeDelegate(nodeDel, generateRandomBytes(1000));
                 strucDel =
                     new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
                         random.nextLong());
@@ -271,4 +267,16 @@ public final class TestHelper {
         nWtx.close();
         session.close();
     }
+
+    /**
+     * Generating random bytes.
+     * 
+     * @return the random bytes
+     */
+    public static final byte[] generateRandomBytes(final int pSize) {
+        final byte[] returnVal = new byte[pSize];
+        random.nextBytes(returnVal);
+        return returnVal;
+    }
+
 }
