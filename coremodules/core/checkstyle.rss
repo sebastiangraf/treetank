@@ -8,8 +8,8 @@
     <language>en-us</language>
     <copyright>&#169;2012 Distributed Systems Group</copyright>
     <item>
-      <title>File: 86,
-             Errors: 2082,
+      <title>File: 84,
+             Errors: 2238,
              Warnings: 0,
              Infos: 0
       </title>
@@ -53,20 +53,6 @@
                 </td>
                 <td>
                   9
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.ITTSink.java">org/treetank/io/ITTSink.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  8
                 </td>
               </tr>
                           <tr>
@@ -192,7 +178,7 @@
                   0
                 </td>
                 <td>
-                  24
+                  22
                 </td>
               </tr>
                           <tr>
@@ -206,7 +192,7 @@
                   0
                 </td>
                 <td>
-                  9
+                  17
                 </td>
               </tr>
                           <tr>
@@ -290,7 +276,7 @@
                   0
                 </td>
                 <td>
-                  17
+                  21
                 </td>
               </tr>
                           <tr>
@@ -304,7 +290,7 @@
                   0
                 </td>
                 <td>
-                  68
+                  82
                 </td>
               </tr>
                           <tr>
@@ -318,7 +304,7 @@
                   0
                 </td>
                 <td>
-                  72
+                  81
                 </td>
               </tr>
                           <tr>
@@ -332,7 +318,7 @@
                   0
                 </td>
                 <td>
-                  6
+                  9
                 </td>
               </tr>
                           <tr>
@@ -346,7 +332,7 @@
                   0
                 </td>
                 <td>
-                  19
+                  23
                 </td>
               </tr>
                           <tr>
@@ -360,7 +346,7 @@
                   0
                 </td>
                 <td>
-                  53
+                  48
                 </td>
               </tr>
                           <tr>
@@ -379,6 +365,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.bytepipe.IByteHandler.java">org/treetank/io/bytepipe/IByteHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.node.AttributeNode.java">org/treetank/node/AttributeNode.java</a>
                 </td>
                 <td>
@@ -388,7 +388,7 @@
                   0
                 </td>
                 <td>
-                  48
+                  46
                 </td>
               </tr>
                           <tr>
@@ -444,7 +444,7 @@
                   0
                 </td>
                 <td>
-                  29
+                  32
                 </td>
               </tr>
                           <tr>
@@ -519,20 +519,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.file.ByteBufferSinkAndSource.java">org/treetank/io/file/ByteBufferSinkAndSource.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  14
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.file.FileWriter.java">org/treetank/io/file/FileWriter.java</a>
                 </td>
                 <td>
@@ -542,21 +528,7 @@
                   0
                 </td>
                 <td>
-                  14
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.node.DeletedNode.java">org/treetank/node/DeletedNode.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  32
+                  21
                 </td>
               </tr>
                           <tr>
@@ -570,7 +542,7 @@
                   0
                 </td>
                 <td>
-                  11
+                  20
                 </td>
               </tr>
                           <tr>
@@ -584,7 +556,7 @@
                   0
                 </td>
                 <td>
-                  34
+                  32
                 </td>
               </tr>
                           <tr>
@@ -626,7 +598,7 @@
                   0
                 </td>
                 <td>
-                  8
+                  11
                 </td>
               </tr>
                           <tr>
@@ -687,7 +659,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.file.CryptoJavaImpl.java">org/treetank/io/file/CryptoJavaImpl.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.bytepipe.Encryptor.java">org/treetank/io/bytepipe/Encryptor.java</a>
                 </td>
                 <td>
                   0
@@ -752,7 +724,7 @@
                   0
                 </td>
                 <td>
-                  7
+                  11
                 </td>
               </tr>
                           <tr>
@@ -766,7 +738,7 @@
                   0
                 </td>
                 <td>
-                  17
+                  34
                 </td>
               </tr>
                           <tr>
@@ -780,7 +752,7 @@
                   0
                 </td>
                 <td>
-                  21
+                  148
                 </td>
               </tr>
                           <tr>
@@ -837,6 +809,20 @@
                 </td>
                 <td>
                   25
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.bytepipe.ByteHandlePipeline.java">org/treetank/io/bytepipe/ByteHandlePipeline.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  11
                 </td>
               </tr>
                           <tr>
@@ -920,7 +906,7 @@
                   0
                 </td>
                 <td>
-                  193
+                  218
                 </td>
               </tr>
                           <tr>
@@ -934,7 +920,7 @@
                   0
                 </td>
                 <td>
-                  19
+                  23
                 </td>
               </tr>
                           <tr>
@@ -962,7 +948,7 @@
                   0
                 </td>
                 <td>
-                  55
+                  57
                 </td>
               </tr>
                           <tr>
@@ -1032,7 +1018,7 @@
                   0
                 </td>
                 <td>
-                  14
+                  22
                 </td>
               </tr>
                           <tr>
@@ -1093,7 +1079,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.ITTSource.java">org/treetank/io/ITTSource.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.bytepipe.Zipper.java">org/treetank/io/bytepipe/Zipper.java</a>
                 </td>
                 <td>
                   0
@@ -1102,7 +1088,7 @@
                   0
                 </td>
                 <td>
-                  8
+                  14
                 </td>
               </tr>
                           <tr>
@@ -1121,20 +1107,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.node.ENode.java">org/treetank/node/ENode.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  52
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.IWriter.java">org/treetank/io/IWriter.java</a>
                 </td>
                 <td>
@@ -1144,7 +1116,7 @@
                   0
                 </td>
                 <td>
-                  10
+                  13
                 </td>
               </tr>
                           <tr>
@@ -1172,7 +1144,7 @@
                   0
                 </td>
                 <td>
-                  7
+                  5
                 </td>
               </tr>
                           <tr>

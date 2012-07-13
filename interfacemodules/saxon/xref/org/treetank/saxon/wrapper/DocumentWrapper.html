@@ -59,9 +59,9 @@
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.AbsAxis;
 <a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.DescendantAxis;
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.ENode;
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.ElementNode;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.ElementNode;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.IConstants;
 <a class="jxr_linenumber" name="55" href="#55">55</a>  
 <a class="jxr_linenumber" name="56" href="#56">56</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_javadoccomment"> * &lt;h1&gt;DocumentWrapper&lt;/h1&gt;</em>
@@ -107,10 +107,10 @@
 <a class="jxr_linenumber" name="97" href="#97">97</a>  <em class="jxr_javadoccomment">     *            Treetank database.</em>
 <a class="jxr_linenumber" name="98" href="#98">98</a>  <em class="jxr_javadoccomment">     * @param paramConfig</em>
 <a class="jxr_linenumber" name="99" href="#99">99</a>  <em class="jxr_javadoccomment">     *            Configuration used.</em>
-<a class="jxr_linenumber" name="100" href="#100">100</a> <em class="jxr_javadoccomment">     * @throws AbsTTException</em>
+<a class="jxr_linenumber" name="100" href="#100">100</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="101" href="#101">101</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="102" href="#102">102</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../org/treetank/saxon/wrapper/DocumentWrapper.html">DocumentWrapper</a>(<strong class="jxr_keyword">final</strong> ISession paramSession, <strong class="jxr_keyword">final</strong> Configuration paramConfig)
-<a class="jxr_linenumber" name="103" href="#103">103</a>         <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="103" href="#103">103</a>         <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">this</strong>.mSession = paramSession;
 <a class="jxr_linenumber" name="105" href="#105">105</a>         mBaseURI = paramSession.toString();
 <a class="jxr_linenumber" name="106" href="#106">106</a>         setConfiguration(paramConfig);
@@ -145,7 +145,7 @@
 <a class="jxr_linenumber" name="135" href="#135">135</a>                 <strong class="jxr_keyword">new</strong> NodeReadTrx(mSession.beginPageReadTransaction(mSession.getMostRecentVersion()));
 <a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">final</strong> AbsAxis axis = <strong class="jxr_keyword">new</strong> DescendantAxis(rtx, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="137" href="#137">137</a>             <strong class="jxr_keyword">while</strong> (axis.hasNext()) {
-<a class="jxr_linenumber" name="138" href="#138">138</a>                 <strong class="jxr_keyword">if</strong> (rtx.getNode().getKind() == ENode.ELEMENT_KIND) {
+<a class="jxr_linenumber" name="138" href="#138">138</a>                 <strong class="jxr_keyword">if</strong> (rtx.getNode().getKind() == IConstants.ELEMENT) {
 <a class="jxr_linenumber" name="139" href="#139">139</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> attCount = ((ElementNode)rtx.getNode()).getAttributeCount();
 <a class="jxr_linenumber" name="140" href="#140">140</a> 
 <a class="jxr_linenumber" name="141" href="#141">141</a>                     <strong class="jxr_keyword">if</strong> (attCount &gt; 0) {
@@ -168,7 +168,7 @@
 <a class="jxr_linenumber" name="158" href="#158">158</a>                 axis.next();
 <a class="jxr_linenumber" name="159" href="#159">159</a>             }
 <a class="jxr_linenumber" name="160" href="#160">160</a>             rtx.close();
-<a class="jxr_linenumber" name="161" href="#161">161</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AbsTTException exc) {
+<a class="jxr_linenumber" name="161" href="#161">161</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exc) {
 <a class="jxr_linenumber" name="162" href="#162">162</a>             LOGGER.error(exc.toString());
 <a class="jxr_linenumber" name="163" href="#163">163</a>         }
 <a class="jxr_linenumber" name="164" href="#164">164</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;

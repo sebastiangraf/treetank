@@ -37,16 +37,16 @@
 <a class="jxr_linenumber" name="27" href="#27">27</a>  
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">package</strong> org.treetank.service.xml.xpath.expr;
 <a class="jxr_linenumber" name="29" href="#29">29</a>  
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.fail;
-<a class="jxr_linenumber" name="32" href="#32">32</a>  
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.junit.After;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertEquals;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.testng.Assert;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.AfterMethod;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.AbsAxis;
-<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.AtomicValue;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.interfaces.IValNode;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.xml.xpath.XPathAxis;
@@ -61,21 +61,21 @@
 <a class="jxr_linenumber" name="51" href="#51">51</a>  
 <a class="jxr_linenumber" name="52" href="#52">52</a>      <strong class="jxr_keyword">private</strong> Holder holder;
 <a class="jxr_linenumber" name="53" href="#53">53</a>  
-<a class="jxr_linenumber" name="54" href="#54">54</a>      @Before
-<a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="54" href="#54">54</a>      @BeforeMethod
+<a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="56" href="#56">56</a>          TestHelper.deleteEverything();
 <a class="jxr_linenumber" name="57" href="#57">57</a>          TestHelper.createTestDocument();
 <a class="jxr_linenumber" name="58" href="#58">58</a>          holder = Holder.generateRtx();
 <a class="jxr_linenumber" name="59" href="#59">59</a>      }
 <a class="jxr_linenumber" name="60" href="#60">60</a>  
-<a class="jxr_linenumber" name="61" href="#61">61</a>      @After
-<a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="61" href="#61">61</a>      @AfterMethod
+<a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="63" href="#63">63</a>          holder.close();
 <a class="jxr_linenumber" name="64" href="#64">64</a>          TestHelper.closeEverything();
 <a class="jxr_linenumber" name="65" href="#65">65</a>      }
 <a class="jxr_linenumber" name="66" href="#66">66</a>  
 <a class="jxr_linenumber" name="67" href="#67">67</a>      @Test
-<a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOr() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOr() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="69" href="#69">69</a>  
 <a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">long</strong> iTrue = AbsAxis.addAtomicToItemList(holder.getNRtx(), <strong class="jxr_keyword">new</strong> AtomicValue(<strong class="jxr_keyword">true</strong>));
 <a class="jxr_linenumber" name="71" href="#71">71</a>          <strong class="jxr_keyword">long</strong> iFalse = AbsAxis.addAtomicToItemList(holder.getNRtx(), <strong class="jxr_keyword">new</strong> AtomicValue(false));
@@ -107,7 +107,7 @@
 <a class="jxr_linenumber" name="97" href="#97">97</a>      }
 <a class="jxr_linenumber" name="98" href="#98">98</a>  
 <a class="jxr_linenumber" name="99" href="#99">99</a>      @Test
-<a class="jxr_linenumber" name="100" href="#100">100</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOrQuery() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="100" href="#100">100</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOrQuery() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="101" href="#101">101</a> 
 <a class="jxr_linenumber" name="102" href="#102">102</a>         holder.getNRtx().moveTo(1L);
 <a class="jxr_linenumber" name="103" href="#103">103</a> 
@@ -136,7 +136,7 @@
 <a class="jxr_linenumber" name="126" href="#126">126</a>             assertEquals(<strong class="jxr_keyword">true</strong>, axis5.hasNext());
 <a class="jxr_linenumber" name="127" href="#127">127</a>             assertEquals(false, Boolean.parseBoolean(<strong class="jxr_keyword">new</strong> String(((IValNode)axis5.getNode()).getRawValue())));
 <a class="jxr_linenumber" name="128" href="#128">128</a>             assertEquals(false, axis5.hasNext());
-<a class="jxr_linenumber" name="129" href="#129">129</a>             fail(<span class="jxr_string">"Exprected XPathError"</span>);
+<a class="jxr_linenumber" name="129" href="#129">129</a>             Assert.fail(<span class="jxr_string">"Exprected XPathError"</span>);
 <a class="jxr_linenumber" name="130" href="#130">130</a>         } <strong class="jxr_keyword">catch</strong> (XPathError e) {
 <a class="jxr_linenumber" name="131" href="#131">131</a>             assertEquals(<span class="jxr_string">"err:FOAR0001: Division by zero."</span>, e.getMessage());
 <a class="jxr_linenumber" name="132" href="#132">132</a>         }

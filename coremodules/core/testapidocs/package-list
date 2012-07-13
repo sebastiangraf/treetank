@@ -2,8 +2,7 @@ org.treetank
 org.treetank.access
 org.treetank.cache
 org.treetank.io
-org.treetank.io.berkeley
-org.treetank.io.file
+org.treetank.io.bytepipe
 org.treetank.node
 org.treetank.page
 org.treetank.settings

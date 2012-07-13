@@ -37,15 +37,15 @@
 <a class="jxr_linenumber" name="27" href="#27">27</a>  
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">package</strong> org.treetank.service.xml.xpath.comparators;
 <a class="jxr_linenumber" name="29" href="#29">29</a>  
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
-<a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.fail;
-<a class="jxr_linenumber" name="32" href="#32">32</a>  
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.junit.After;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertEquals;
+<a class="jxr_linenumber" name="31" href="#31">31</a>  
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.testng.Assert;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.AfterMethod;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTXPathException;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.AtomicValue;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.Type;
@@ -56,8 +56,8 @@
 <a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">private</strong> AbsComparator comparator;
 <a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">private</strong> Holder holder;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  
-<a class="jxr_linenumber" name="49" href="#49">49</a>      @Before
-<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="49" href="#49">49</a>      @BeforeMethod
+<a class="jxr_linenumber" name="50" href="#50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="51" href="#51">51</a>          TestHelper.deleteEverything();
 <a class="jxr_linenumber" name="52" href="#52">52</a>          TestHelper.createTestDocument();
 <a class="jxr_linenumber" name="53" href="#53">53</a>          holder = Holder.generateRtx();
@@ -66,8 +66,8 @@
 <a class="jxr_linenumber" name="56" href="#56">56</a>                  .getNRtx(), -1), CompKind.IS);
 <a class="jxr_linenumber" name="57" href="#57">57</a>      }
 <a class="jxr_linenumber" name="58" href="#58">58</a>  
-<a class="jxr_linenumber" name="59" href="#59">59</a>      @After
-<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="59" href="#59">59</a>      @AfterMethod
+<a class="jxr_linenumber" name="60" href="#60">60</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="61" href="#61">61</a>          holder.close();
 <a class="jxr_linenumber" name="62" href="#62">62</a>          TestHelper.closeEverything();
 <a class="jxr_linenumber" name="63" href="#63">63</a>      }
@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="83" href="#83">83</a>                  <strong class="jxr_keyword">new</strong> NodeComp(holder.getNRtx(), <strong class="jxr_keyword">new</strong> LiteralExpr(holder.getNRtx(), -2), <strong class="jxr_keyword">new</strong> LiteralExpr(holder
 <a class="jxr_linenumber" name="84" href="#84">84</a>                      .getNRtx(), -1), CompKind.PRE);
 <a class="jxr_linenumber" name="85" href="#85">85</a>              comparator.compare(op1, op2);
-<a class="jxr_linenumber" name="86" href="#86">86</a>              fail(<span class="jxr_string">"Expexcted not yet implemented exception."</span>);
+<a class="jxr_linenumber" name="86" href="#86">86</a>              Assert.fail(<span class="jxr_string">"Expexcted not yet implemented exception."</span>);
 <a class="jxr_linenumber" name="87" href="#87">87</a>          } <strong class="jxr_keyword">catch</strong> (IllegalStateException e) {
 <a class="jxr_linenumber" name="88" href="#88">88</a>              assertEquals(<span class="jxr_string">"Evaluation of node comparisons not possible"</span>, e.getMessage());
 <a class="jxr_linenumber" name="89" href="#89">89</a>          }
@@ -103,7 +103,7 @@
 <a class="jxr_linenumber" name="93" href="#93">93</a>                  <strong class="jxr_keyword">new</strong> NodeComp(holder.getNRtx(), <strong class="jxr_keyword">new</strong> LiteralExpr(holder.getNRtx(), -2), <strong class="jxr_keyword">new</strong> LiteralExpr(holder
 <a class="jxr_linenumber" name="94" href="#94">94</a>                      .getNRtx(), -1), CompKind.FO);
 <a class="jxr_linenumber" name="95" href="#95">95</a>              comparator.compare(op1, op2);
-<a class="jxr_linenumber" name="96" href="#96">96</a>              fail(<span class="jxr_string">"Expexcted not yet implemented exception."</span>);
+<a class="jxr_linenumber" name="96" href="#96">96</a>              Assert.fail(<span class="jxr_string">"Expexcted not yet implemented exception."</span>);
 <a class="jxr_linenumber" name="97" href="#97">97</a>          } <strong class="jxr_keyword">catch</strong> (IllegalStateException e) {
 <a class="jxr_linenumber" name="98" href="#98">98</a>              assertEquals(<span class="jxr_string">"Evaluation of node comparisons not possible"</span>, e.getMessage());
 <a class="jxr_linenumber" name="99" href="#99">99</a>          }

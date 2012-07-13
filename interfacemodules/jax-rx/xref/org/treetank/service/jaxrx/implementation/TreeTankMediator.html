@@ -48,7 +48,7 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.jaxrx.core.JaxRxException;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.jaxrx.core.QueryParameter;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.jaxrx.core.ResourcePath;
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.enums.EIdAccessType;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.util.WorkerHelper;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  
@@ -120,7 +120,7 @@
 <a class="jxr_linenumber" name="110" href="#110">110</a>                     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="111" href="#111">111</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NumberFormatException exce) {
 <a class="jxr_linenumber" name="112" href="#112">112</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(400, <span class="jxr_string">"False value for REVISION paramter: "</span> + exce.getMessage());
-<a class="jxr_linenumber" name="113" href="#113">113</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AbsTTException exce) {
+<a class="jxr_linenumber" name="113" href="#113">113</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exce) {
 <a class="jxr_linenumber" name="114" href="#114">114</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
 <a class="jxr_linenumber" name="115" href="#115">115</a>                 }
 <a class="jxr_linenumber" name="116" href="#116">116</a>             }

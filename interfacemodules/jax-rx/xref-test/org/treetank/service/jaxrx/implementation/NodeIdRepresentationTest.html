@@ -40,9 +40,9 @@
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">package</strong> org.treetank.service.jaxrx.implementation;
 <a class="jxr_linenumber" name="32" href="#32">32</a>  
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertNotNull;
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertNull;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertEquals;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertNotNull;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertNull;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> java.io.ByteArrayInputStream;
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> java.io.ByteArrayOutputStream;
@@ -57,11 +57,11 @@
 <a class="jxr_linenumber" name="47" href="#47">47</a>  
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.jaxrx.core.JaxRxException;
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.jaxrx.core.QueryParameter;
-<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.junit.After;
-<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.AfterMethod;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.enums.EIdAccessType;
 <a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.util.DOMHelper;
 <a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Attr;
@@ -143,7 +143,7 @@
 <a class="jxr_linenumber" name="133" href="#133">133</a> <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="134" href="#134">134</a> <em class="jxr_javadoccomment">     * @throws java.lang.Exception</em>
 <a class="jxr_linenumber" name="135" href="#135">135</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="136" href="#136">136</a>     @Before
+<a class="jxr_linenumber" name="136" href="#136">136</a>     @BeforeMethod
 <a class="jxr_linenumber" name="137" href="#137">137</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="138" href="#138">138</a>         TestHelper.closeEverything();
 <a class="jxr_linenumber" name="139" href="#139">139</a>         TestHelper.deleteEverything();
@@ -160,7 +160,7 @@
 <a class="jxr_linenumber" name="150" href="#150">150</a> <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="151" href="#151">151</a> <em class="jxr_javadoccomment">     * @throws java.lang.Exception</em>
 <a class="jxr_linenumber" name="152" href="#152">152</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="153" href="#153">153</a>     @After
+<a class="jxr_linenumber" name="153" href="#153">153</a>     @AfterMethod
 <a class="jxr_linenumber" name="154" href="#154">154</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="155" href="#155">155</a>         TestHelper.closeEverything();
 <a class="jxr_linenumber" name="156" href="#156">156</a>         TestHelper.deleteEverything();
@@ -449,11 +449,11 @@
 <a class="jxr_linenumber" name="439" href="#439">439</a> <em class="jxr_javadoccomment">     * {@link org.treetank.service.jaxrx.implementation.NodeIdRepresentation#modifyResource(java.lang.String, long, java.io.InputStream)}</em>
 <a class="jxr_linenumber" name="440" href="#440">440</a> <em class="jxr_javadoccomment">     * .</em>
 <a class="jxr_linenumber" name="441" href="#441">441</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="442" href="#442">442</a> <em class="jxr_javadoccomment">     * @throws AbsTTException</em>
+<a class="jxr_linenumber" name="442" href="#442">442</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="443" href="#443">443</a> <em class="jxr_javadoccomment">     * @throws JaxRxException</em>
 <a class="jxr_linenumber" name="444" href="#444">444</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="445" href="#445">445</a>     @Test
-<a class="jxr_linenumber" name="446" href="#446">446</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testModifyResource() <strong class="jxr_keyword">throws</strong> JaxRxException, AbsTTException {
+<a class="jxr_linenumber" name="446" href="#446">446</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testModifyResource() <strong class="jxr_keyword">throws</strong> JaxRxException, TTException {
 <a class="jxr_linenumber" name="447" href="#447">447</a>         <strong class="jxr_keyword">final</strong> InputStream inputStream = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(<span class="jxr_string">"&lt;testNode/&gt;"</span>.getBytes());
 <a class="jxr_linenumber" name="448" href="#448">448</a>         <strong class="jxr_keyword">long</strong> lastRevision = treeTank.getLastRevision(RESOURCENAME);
 <a class="jxr_linenumber" name="449" href="#449">449</a>         ridWorker.modifyResource(RESOURCENAME, NODEIDTOMODIFY, inputStream);

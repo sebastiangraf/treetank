@@ -13,39 +13,52 @@
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">package</strong> org.treetank.page;
 <a class="jxr_linenumber" name="5" href="#5">5</a>   
-<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> java.util.Arrays;
-<a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> java.util.Random;
-<a class="jxr_linenumber" name="8" href="#8">8</a>   
-<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertTrue;
-<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
-<a class="jxr_linenumber" name="11" href="#11">11</a>  
-<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * Test Case for NamePage.</em>
-<a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * @author Sebastian Graf, University of Konstanz</em>
-<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/treetank/page/NamePageTest.html">NamePageTest</a> {
-<a class="jxr_linenumber" name="19" href="#19">19</a>  
-<a class="jxr_linenumber" name="20" href="#20">20</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> Random mRan = <strong class="jxr_keyword">new</strong> Random();
-<a class="jxr_linenumber" name="21" href="#21">21</a>  
-<a class="jxr_linenumber" name="22" href="#22">22</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment">     * Test method for {@link org.treetank.page.NamePage#NamePage(long)} and</em>
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment">     * {@link org.treetank.page.NamePage#getByteRepresentation()}.</em>
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="26" href="#26">26</a>      @Test
-<a class="jxr_linenumber" name="27" href="#27">27</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNamePageByteArray() {
-<a class="jxr_linenumber" name="28" href="#28">28</a>          <strong class="jxr_keyword">final</strong> NamePage freshPage = <strong class="jxr_keyword">new</strong> NamePage(0);
-<a class="jxr_linenumber" name="29" href="#29">29</a>          freshPage.setName(mRan.nextInt(), <span class="jxr_string">"bla"</span>);
-<a class="jxr_linenumber" name="30" href="#30">30</a>          freshPage.setName(mRan.nextInt(), <span class="jxr_string">"blubb"</span>);
-<a class="jxr_linenumber" name="31" href="#31">31</a>          <strong class="jxr_keyword">final</strong> byte[] pageBytes = freshPage.getByteRepresentation();
-<a class="jxr_linenumber" name="32" href="#32">32</a>  
-<a class="jxr_linenumber" name="33" href="#33">33</a>          <strong class="jxr_keyword">final</strong> NamePage serializedPage = (NamePage) PageFactory.getInstance(
-<a class="jxr_linenumber" name="34" href="#34">34</a>                  FactoriesForTest.INSTANCE).deserializePage(pageBytes);
-<a class="jxr_linenumber" name="35" href="#35">35</a>          assertTrue(Arrays.equals(pageBytes,
-<a class="jxr_linenumber" name="36" href="#36">36</a>                  serializedPage.getByteRepresentation()));
-<a class="jxr_linenumber" name="37" href="#37">37</a>      }
-<a class="jxr_linenumber" name="38" href="#38">38</a>  }
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertTrue;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> java.util.Random;
+<a class="jxr_linenumber" name="10" href="#10">10</a>  
+<a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.AfterMethod;
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.NodeFactory;
+<a class="jxr_linenumber" name="15" href="#15">15</a>  
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_javadoccomment"> * Test Case for NamePage.</em>
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_javadoccomment"> * @author Sebastian Graf, University of Konstanz</em>
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/treetank/page/NamePageTest.html">NamePageTest</a> {
+<a class="jxr_linenumber" name="23" href="#23">23</a>  
+<a class="jxr_linenumber" name="24" href="#24">24</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> Random mRan = <strong class="jxr_keyword">new</strong> Random();
+<a class="jxr_linenumber" name="25" href="#25">25</a>  
+<a class="jxr_linenumber" name="26" href="#26">26</a>      @BeforeMethod
+<a class="jxr_linenumber" name="27" href="#27">27</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() {
+<a class="jxr_linenumber" name="28" href="#28">28</a>          PageFactory.registerNewInstance(<strong class="jxr_keyword">new</strong> PageFactory(FactoriesForTest.INSTANCE));
+<a class="jxr_linenumber" name="29" href="#29">29</a>      }
+<a class="jxr_linenumber" name="30" href="#30">30</a>  
+<a class="jxr_linenumber" name="31" href="#31">31</a>      @AfterMethod
+<a class="jxr_linenumber" name="32" href="#32">32</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() {
+<a class="jxr_linenumber" name="33" href="#33">33</a>          PageFactory.registerNewInstance(<strong class="jxr_keyword">new</strong> PageFactory(<strong class="jxr_keyword">new</strong> NodeFactory()));
+<a class="jxr_linenumber" name="34" href="#34">34</a>      }
+<a class="jxr_linenumber" name="35" href="#35">35</a>  
+<a class="jxr_linenumber" name="36" href="#36">36</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment">     * Test method for {@link org.treetank.page.NamePage#NamePage(long)} and</em>
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * {@link org.treetank.page.NamePage#getByteRepresentation()}.</em>
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="40" href="#40">40</a>      @Test
+<a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNamePageByteArray() {
+<a class="jxr_linenumber" name="42" href="#42">42</a>          <strong class="jxr_keyword">final</strong> NamePage freshPage = <strong class="jxr_keyword">new</strong> NamePage(0);
+<a class="jxr_linenumber" name="43" href="#43">43</a>          freshPage.setName(mRan.nextInt(), <span class="jxr_string">"bla"</span>);
+<a class="jxr_linenumber" name="44" href="#44">44</a>          freshPage.setName(mRan.nextInt(), <span class="jxr_string">"blubb"</span>);
+<a class="jxr_linenumber" name="45" href="#45">45</a>          <strong class="jxr_keyword">final</strong> byte[] pageBytes = freshPage.getByteRepresentation();
+<a class="jxr_linenumber" name="46" href="#46">46</a>  
+<a class="jxr_linenumber" name="47" href="#47">47</a>          <strong class="jxr_keyword">final</strong> NamePage serializedPage = (NamePage)PageFactory.getInstance().deserializePage(pageBytes);
+<a class="jxr_linenumber" name="48" href="#48">48</a>  
+<a class="jxr_linenumber" name="49" href="#49">49</a>          assertTrue(Arrays.equals(pageBytes, serializedPage.getByteRepresentation()));
+<a class="jxr_linenumber" name="50" href="#50">50</a>      }
+<a class="jxr_linenumber" name="51" href="#51">51</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

@@ -37,12 +37,12 @@
 <a class="jxr_linenumber" name="27" href="#27">27</a>  
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">package</strong> org.treetank.service.xml.xpath.parser;
 <a class="jxr_linenumber" name="29" href="#29">29</a>  
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertEquals;
 <a class="jxr_linenumber" name="31" href="#31">31</a>  
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
 <a class="jxr_linenumber" name="33" href="#33">33</a>  
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment"> * JUnit test class to test the functionality of the XPathScanner.</em>
@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_javadoccomment">     * @throws java.lang.Exception</em>
 <a class="jxr_linenumber" name="59" href="#59">59</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="60" href="#60">60</a>      @Before
+<a class="jxr_linenumber" name="60" href="#60">60</a>      @BeforeMethod
 <a class="jxr_linenumber" name="61" href="#61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() {
 <a class="jxr_linenumber" name="62" href="#62">62</a>  
 <a class="jxr_linenumber" name="63" href="#63">63</a>          scanner = <strong class="jxr_keyword">new</strong> XPathScanner(mQUERY);

@@ -4,10 +4,13 @@ org.treetank.access.conf
 org.treetank.annotations
 org.treetank.api
 org.treetank.aspects.logging
+org.treetank.axis
+org.treetank.axis.filter
 org.treetank.cache
 org.treetank.exception
 org.treetank.io
 org.treetank.io.berkeley
+org.treetank.io.bytepipe
 org.treetank.io.file
 org.treetank.io.jclouds
 org.treetank.node

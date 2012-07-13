@@ -45,7 +45,7 @@
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.FilterAxis;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.filter.TextFilter;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTXPathException;
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.ENode;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.IConstants;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.interfaces.IValNode;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.utils.TypedValue;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  
@@ -134,9 +134,9 @@
 <a class="jxr_linenumber" name="124" href="#124">124</a>         <strong class="jxr_keyword">final</strong> StringBuilder value = <strong class="jxr_keyword">new</strong> StringBuilder();
 <a class="jxr_linenumber" name="125" href="#125">125</a> 
 <a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">if</strong> (getNode().getNodeKey() &gt;= 0) { <em class="jxr_comment">// is node</em>
-<a class="jxr_linenumber" name="127" href="#127">127</a>             <strong class="jxr_keyword">if</strong> (getNode().getKind() == ENode.ATTRIBUTE_KIND || getNode().getKind() == ENode.TEXT_KIND) {
+<a class="jxr_linenumber" name="127" href="#127">127</a>             <strong class="jxr_keyword">if</strong> (getNode().getKind() == IConstants.ATTRIBUTE || getNode().getKind() == IConstants.TEXT) {
 <a class="jxr_linenumber" name="128" href="#128">128</a>                 value.append(<strong class="jxr_keyword">new</strong> String(((IValNode)getNode()).getRawValue()));
-<a class="jxr_linenumber" name="129" href="#129">129</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (getNode().getKind() == ENode.ROOT_KIND || getNode().getKind() == ENode.ELEMENT_KIND) {
+<a class="jxr_linenumber" name="129" href="#129">129</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (getNode().getKind() == IConstants.ROOT || getNode().getKind() == IConstants.ELEMENT) {
 <a class="jxr_linenumber" name="130" href="#130">130</a>                 <strong class="jxr_keyword">final</strong> AbsAxis axis = <strong class="jxr_keyword">new</strong> FilterAxis(<strong class="jxr_keyword">new</strong> DescendantAxis(pRtx), pRtx, <strong class="jxr_keyword">new</strong> TextFilter(pRtx));
 <a class="jxr_linenumber" name="131" href="#131">131</a>                 <strong class="jxr_keyword">while</strong> (axis.hasNext()) {
 <a class="jxr_linenumber" name="132" href="#132">132</a>                     <strong class="jxr_keyword">if</strong> (value.length() &gt; 0) {

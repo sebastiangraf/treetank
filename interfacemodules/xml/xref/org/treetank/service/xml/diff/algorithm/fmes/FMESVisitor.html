@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeReadTrx;
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeReadTrx;
 <a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.ElementNode;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.TextNode;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.interfaces.INode;
@@ -73,11 +73,11 @@
 <a class="jxr_linenumber" name="63" href="#63">63</a>  <em class="jxr_javadoccomment">     *            {@link Map} reference to track ordered nodes</em>
 <a class="jxr_linenumber" name="64" href="#64">64</a>  <em class="jxr_javadoccomment">     * @param paramDescendants</em>
 <a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     *            {@link Map} reference to track descendants per node</em>
-<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * @throws AbsTTException</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     *             if setting up treetank fails</em>
 <a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="69" href="#69">69</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/treetank/service/xml/diff/algorithm/fmes/FMESVisitor.html">FMESVisitor</a>(<strong class="jxr_keyword">final</strong> ISession paramSession, <strong class="jxr_keyword">final</strong> Map&lt;INode, Boolean&gt; paramInOrder,
-<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">final</strong> Map&lt;INode, Long&gt; paramDescendants) <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="70" href="#70">70</a>          <strong class="jxr_keyword">final</strong> Map&lt;INode, Long&gt; paramDescendants) <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="71" href="#71">71</a>          assert paramSession != <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="72" href="#72">72</a>          assert paramInOrder != <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="73" href="#73">73</a>          assert paramDescendants != <strong class="jxr_keyword">null</strong>;

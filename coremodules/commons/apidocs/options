@@ -21,6 +21,8 @@
 -linkoffline
 'http://disy.github.com/treetank/coremodules/core/apidocs' '/Users/sebi/Documents/workspace/treetank/coremodules/core/target/site/apidocs'
 -linkoffline
+'http://disy.github.com/treetank/coremodules/core/node/apidocs' '/Users/sebi/Documents/workspace/treetank/coremodules/core/node/target/site/apidocs'
+-linkoffline
 'http://disy.github.com/treetank/jclouds/apidocs' '/Users/sebi/Documents/workspace/treetank/coremodules/io/jclouds/target/site/apidocs'
 -linkoffline
 'http://disy.github.com/treetank/interfacemodules/xml/apidocs' '/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/target/site/apidocs'

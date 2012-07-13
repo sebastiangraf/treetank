@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
 <duplication lines="97" tokens="129">
-<file line="186" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
-<file line="73" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
+<file line="185" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
+<file line="72" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -107,7 +107,7 @@
 </duplication>
 <duplication lines="64" tokens="120">
 <file line="58" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/DatabaseConfiguration.java"/>
-<file line="62" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
+<file line="61" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
 <codefragment>
 <![CDATA[
         Data(new File("resources"), true);
@@ -174,93 +174,6 @@
     // STATIC STANDARD FIELDS
     /** Identification for string. */
     public static final String BINARY = "5.4.0";
-]]>
-</codefragment>
-</duplication>
-<duplication lines="79" tokens="105">
-<file line="67" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/DeletedNode.java"/>
-<file line="173" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/ElementNode.java"/>
-<codefragment>
-<![CDATA[
-    }
-
-    /**
-     * Delegate method for getNodeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
-     */
-    public long getNodeKey() {
-        return mDel.getNodeKey();
-    }
-
-    /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-     */
-    public void setNodeKey(final long pNodeKey) {
-        mDel.setNodeKey(pNodeKey);
-    }
-
-    /**
-     * Delegate method for getParentKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
-     */
-    public long getParentKey() {
-        return mDel.getParentKey();
-    }
-
-    /**
-     * Delegate method for setParentKey.
-     * 
-     * @param pParentKey
-     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
-     */
-    public void setParentKey(final long pParentKey) {
-        mDel.setParentKey(pParentKey);
-    }
-
-    /**
-     * Delegate method for getHash.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
-     */
-    public long getHash() {
-        return mDel.getHash();
-    }
-
-    /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
-     */
-    public void setHash(final long pHash) {
-        mDel.setHash(pHash);
-    }
-
-    /**
-     * Delegate method for getTypeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
-     */
-    public int getTypeKey() {
-        return mDel.getTypeKey();
-    }
-
-    /**
-     * Delegate method for setTypeKey.
-     * 
-     * @param pTypeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
-     */
-    public void setTypeKey(final int pTypeKey) {
 ]]>
 </codefragment>
 </duplication>

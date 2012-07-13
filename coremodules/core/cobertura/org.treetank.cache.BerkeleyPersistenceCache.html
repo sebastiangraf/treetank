@@ -291,20 +291,20 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;153</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> NodePageContainer getPersistent(<span class="keyword">final</span> <span class="keyword">long</span> mKey) <span class="keyword">throws</span> TTIOException {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;154</td>  <td class="nbHitsCovered">&nbsp;172223</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> DatabaseEntry valueEntry = <span class="keyword">new</span> DatabaseEntry();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;155</td>  <td class="nbHitsCovered">&nbsp;172223</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> DatabaseEntry keyEntry = <span class="keyword">new</span> DatabaseEntry();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;156</td>  <td class="nbHitsCovered">&nbsp;172223</td>  <td class="src"><pre class="src">&nbsp;        mKeyBinding.objectToEntry(mKey, keyEntry);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;154</td>  <td class="nbHitsCovered">&nbsp;172213</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> DatabaseEntry valueEntry = <span class="keyword">new</span> DatabaseEntry();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;155</td>  <td class="nbHitsCovered">&nbsp;172213</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> DatabaseEntry keyEntry = <span class="keyword">new</span> DatabaseEntry();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;156</td>  <td class="nbHitsCovered">&nbsp;172213</td>  <td class="src"><pre class="src">&nbsp;        mKeyBinding.objectToEntry(mKey, keyEntry);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;157</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">try</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;158</td>  <td class="nbHitsCovered">&nbsp;172223</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> OperationStatus status = mDatabase.get(<span class="keyword">null</span>, keyEntry, valueEntry, LockMode.DEFAULT);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;159</td>  <td class="nbHitsCovered">&nbsp;172223</td>  <td class="src"><pre class="src">&nbsp;            NodePageContainer val = <span class="keyword">null</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;160</td>  <td class="nbHitsCovered"><a title="Line 160: Conditional coverage 100% (2/2).">&nbsp;172223</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 160: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (status == OperationStatus.SUCCESS) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;158</td>  <td class="nbHitsCovered">&nbsp;172213</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> OperationStatus status = mDatabase.get(<span class="keyword">null</span>, keyEntry, valueEntry, LockMode.DEFAULT);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;159</td>  <td class="nbHitsCovered">&nbsp;172213</td>  <td class="src"><pre class="src">&nbsp;            NodePageContainer val = <span class="keyword">null</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;160</td>  <td class="nbHitsCovered"><a title="Line 160: Conditional coverage 100% (2/2).">&nbsp;172213</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 160: Conditional coverage 100% (2/2).">            <span class="keyword">if</span> (status == OperationStatus.SUCCESS) {</a></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;161</td>  <td class="nbHitsCovered">&nbsp;617</td>  <td class="src"><pre class="src">&nbsp;                val = mValueBinding.entryToObject(valueEntry);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;162</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;163</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;164</td>  <td class="nbHitsCovered">&nbsp;172223</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> val;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;164</td>  <td class="nbHitsCovered">&nbsp;172213</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> val;</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;165</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        } <span class="keyword">catch</span> (<span class="keyword">final</span> DatabaseException exc) {</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;166</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> TTIOException(exc);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;167</td>  <td class="nbHits">&nbsp;</td>
@@ -317,6 +317,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/28/12 6:08 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 7/13/12 6:06 PM.</div>
 </body>
 </html>

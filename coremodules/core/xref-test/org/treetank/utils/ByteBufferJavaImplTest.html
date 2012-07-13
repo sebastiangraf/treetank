@@ -39,15 +39,15 @@
 <a class="jxr_linenumber" name="29" href="#29">29</a>  
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> java.nio.ByteBuffer;
 <a class="jxr_linenumber" name="31" href="#31">31</a>  
-<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.junit.Assert;
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.testng.AssertJUnit;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="34" href="#34">34</a>  
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/treetank/utils/ByteBufferJavaImplTest.html">ByteBufferJavaImplTest</a> {
 <a class="jxr_linenumber" name="36" href="#36">36</a>  
-<a class="jxr_linenumber" name="37" href="#37">37</a>      @Test(expected = IllegalArgumentException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="37" href="#37">37</a>      @Test(expectedExceptions = IllegalArgumentException.<strong class="jxr_keyword">class</strong>)
 <a class="jxr_linenumber" name="38" href="#38">38</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testBasics() <strong class="jxr_keyword">throws</strong> IllegalArgumentException {
 <a class="jxr_linenumber" name="39" href="#39">39</a>          <strong class="jxr_keyword">final</strong> ByteBuffer buffer = ByteBuffer.allocate(100);
-<a class="jxr_linenumber" name="40" href="#40">40</a>          Assert.assertEquals(0, buffer.position());
+<a class="jxr_linenumber" name="40" href="#40">40</a>          AssertJUnit.assertEquals(0, buffer.position());
 <a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">final</strong> IllegalArgumentException[] excsToFire = <strong class="jxr_keyword">new</strong> IllegalArgumentException[2];
 <a class="jxr_linenumber" name="42" href="#42">42</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="43" href="#43">43</a>              buffer.position(101);
@@ -72,26 +72,26 @@
 <a class="jxr_linenumber" name="62" href="#62">62</a>          buffer.position(0);
 <a class="jxr_linenumber" name="63" href="#63">63</a>          buffer.put((byte)13);
 <a class="jxr_linenumber" name="64" href="#64">64</a>          buffer.put(Byte.MAX_VALUE);
-<a class="jxr_linenumber" name="65" href="#65">65</a>          Assert.assertEquals(2, buffer.position());
+<a class="jxr_linenumber" name="65" href="#65">65</a>          AssertJUnit.assertEquals(2, buffer.position());
 <a class="jxr_linenumber" name="66" href="#66">66</a>          buffer.position(0);
-<a class="jxr_linenumber" name="67" href="#67">67</a>          Assert.assertEquals(13, buffer.get());
-<a class="jxr_linenumber" name="68" href="#68">68</a>          Assert.assertEquals(Byte.MAX_VALUE, buffer.get());
+<a class="jxr_linenumber" name="67" href="#67">67</a>          AssertJUnit.assertEquals(13, buffer.get());
+<a class="jxr_linenumber" name="68" href="#68">68</a>          AssertJUnit.assertEquals(Byte.MAX_VALUE, buffer.get());
 <a class="jxr_linenumber" name="69" href="#69">69</a>          <em class="jxr_comment">// Int.</em>
 <a class="jxr_linenumber" name="70" href="#70">70</a>          buffer.position(0);
 <a class="jxr_linenumber" name="71" href="#71">71</a>          buffer.putInt(8192);
 <a class="jxr_linenumber" name="72" href="#72">72</a>          buffer.putInt(Integer.MAX_VALUE);
-<a class="jxr_linenumber" name="73" href="#73">73</a>          Assert.assertEquals(8, buffer.position());
+<a class="jxr_linenumber" name="73" href="#73">73</a>          AssertJUnit.assertEquals(8, buffer.position());
 <a class="jxr_linenumber" name="74" href="#74">74</a>          buffer.position(0);
-<a class="jxr_linenumber" name="75" href="#75">75</a>          Assert.assertEquals(8192, buffer.getInt());
-<a class="jxr_linenumber" name="76" href="#76">76</a>          Assert.assertEquals(Integer.MAX_VALUE, buffer.getInt());
+<a class="jxr_linenumber" name="75" href="#75">75</a>          AssertJUnit.assertEquals(8192, buffer.getInt());
+<a class="jxr_linenumber" name="76" href="#76">76</a>          AssertJUnit.assertEquals(Integer.MAX_VALUE, buffer.getInt());
 <a class="jxr_linenumber" name="77" href="#77">77</a>          <em class="jxr_comment">// Long.</em>
 <a class="jxr_linenumber" name="78" href="#78">78</a>          buffer.position(0);
 <a class="jxr_linenumber" name="79" href="#79">79</a>          buffer.putLong(819281928192L);
 <a class="jxr_linenumber" name="80" href="#80">80</a>          buffer.putLong(Long.MAX_VALUE);
-<a class="jxr_linenumber" name="81" href="#81">81</a>          Assert.assertEquals(16, buffer.position());
+<a class="jxr_linenumber" name="81" href="#81">81</a>          AssertJUnit.assertEquals(16, buffer.position());
 <a class="jxr_linenumber" name="82" href="#82">82</a>          buffer.position(0);
-<a class="jxr_linenumber" name="83" href="#83">83</a>          Assert.assertEquals(819281928192L, buffer.getLong());
-<a class="jxr_linenumber" name="84" href="#84">84</a>          Assert.assertEquals(Long.MAX_VALUE, buffer.getLong());
+<a class="jxr_linenumber" name="83" href="#83">83</a>          AssertJUnit.assertEquals(819281928192L, buffer.getLong());
+<a class="jxr_linenumber" name="84" href="#84">84</a>          AssertJUnit.assertEquals(Long.MAX_VALUE, buffer.getLong());
 <a class="jxr_linenumber" name="85" href="#85">85</a>      }
 <a class="jxr_linenumber" name="86" href="#86">86</a>  
 <a class="jxr_linenumber" name="87" href="#87">87</a>      @Test
@@ -105,15 +105,15 @@
 <a class="jxr_linenumber" name="95" href="#95">95</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> byte byteVal : reference) {
 <a class="jxr_linenumber" name="96" href="#96">96</a>              buffer.put(byteVal);
 <a class="jxr_linenumber" name="97" href="#97">97</a>          }
-<a class="jxr_linenumber" name="98" href="#98">98</a>          Assert.assertEquals(8, buffer.position());
+<a class="jxr_linenumber" name="98" href="#98">98</a>          AssertJUnit.assertEquals(8, buffer.position());
 <a class="jxr_linenumber" name="99" href="#99">99</a>  
 <a class="jxr_linenumber" name="100" href="#100">100</a>         buffer.position(0);
 <a class="jxr_linenumber" name="101" href="#101">101</a>         <strong class="jxr_keyword">final</strong> byte[] result = <strong class="jxr_keyword">new</strong> byte[8];
 <a class="jxr_linenumber" name="102" href="#102">102</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; result.length; i++) {
 <a class="jxr_linenumber" name="103" href="#103">103</a>             result[i] = buffer.get();
 <a class="jxr_linenumber" name="104" href="#104">104</a>         }
-<a class="jxr_linenumber" name="105" href="#105">105</a>         Assert.assertEquals(8, buffer.position());
-<a class="jxr_linenumber" name="106" href="#106">106</a>         Assert.assertArrayEquals(reference, result);
+<a class="jxr_linenumber" name="105" href="#105">105</a>         AssertJUnit.assertEquals(8, buffer.position());
+<a class="jxr_linenumber" name="106" href="#106">106</a>         AssertJUnit.assertArrayEquals(reference, result);
 <a class="jxr_linenumber" name="107" href="#107">107</a>     }
 <a class="jxr_linenumber" name="108" href="#108">108</a> }
 </pre>

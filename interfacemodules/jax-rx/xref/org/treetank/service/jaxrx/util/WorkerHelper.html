@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeReadTrx;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeWriteTrx;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.enums.EIdAccessType;
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.xml.serialize.XMLSerializer;
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
@@ -230,7 +230,7 @@
 <a class="jxr_linenumber" name="220" href="#220">220</a> <em class="jxr_javadoccomment">     * @throws TreetankException</em>
 <a class="jxr_linenumber" name="221" href="#221">221</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="222" href="#222">222</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> closeWTX(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> abortTransaction, <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx, <strong class="jxr_keyword">final</strong> ISession ses,
-<a class="jxr_linenumber" name="223" href="#223">223</a>         <strong class="jxr_keyword">final</strong> IDatabase dbase) <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="223" href="#223">223</a>         <strong class="jxr_keyword">final</strong> IDatabase dbase) <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="224" href="#224">224</a>         <strong class="jxr_keyword">synchronized</strong> (dbase) {
 <a class="jxr_linenumber" name="225" href="#225">225</a>             <strong class="jxr_keyword">if</strong> (abortTransaction) {
 <a class="jxr_linenumber" name="226" href="#226">226</a>                 wtx.abort();
@@ -249,10 +249,10 @@
 <a class="jxr_linenumber" name="239" href="#239">239</a> <em class="jxr_javadoccomment">     *            ISession to be closed</em>
 <a class="jxr_linenumber" name="240" href="#240">240</a> <em class="jxr_javadoccomment">     * @param dbase</em>
 <a class="jxr_linenumber" name="241" href="#241">241</a> <em class="jxr_javadoccomment">     *            IDatabase to be closed</em>
-<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">     * @throws AbsTTException</em>
+<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="243" href="#243">243</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="244" href="#244">244</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> closeRTX(<strong class="jxr_keyword">final</strong> INodeReadTrx rtx, <strong class="jxr_keyword">final</strong> ISession ses, <strong class="jxr_keyword">final</strong> IDatabase dbase)
-<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="245" href="#245">245</a>         <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">synchronized</strong> (dbase) {
 <a class="jxr_linenumber" name="247" href="#247">247</a>             dbase.close();
 <a class="jxr_linenumber" name="248" href="#248">248</a>         }

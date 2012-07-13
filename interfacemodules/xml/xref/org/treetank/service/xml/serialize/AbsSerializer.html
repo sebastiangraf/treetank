@@ -45,8 +45,8 @@
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.AbsAxis;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.DescendantAxis;
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
-<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.ENode;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.IConstants;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.interfaces.IStructNode;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">/**</em>
@@ -102,10 +102,10 @@
 <a class="jxr_linenumber" name="92" href="#92">92</a>  <em class="jxr_javadoccomment">     * Serialize the storage.</em>
 <a class="jxr_linenumber" name="93" href="#93">93</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="94" href="#94">94</a>  <em class="jxr_javadoccomment">     * @return null.</em>
-<a class="jxr_linenumber" name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     * @throws AbsTTException</em>
+<a class="jxr_linenumber" name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="96" href="#96">96</a>  <em class="jxr_javadoccomment">     *             if can't call serailzer</em>
 <a class="jxr_linenumber" name="97" href="#97">97</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">public</strong> Void call() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">public</strong> Void call() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="99" href="#99">99</a>          emitStartDocument();
 <a class="jxr_linenumber" name="100" href="#100">100</a> 
 <a class="jxr_linenumber" name="101" href="#101">101</a>         <strong class="jxr_keyword">long</strong>[] versionsToUse;
@@ -167,7 +167,7 @@
 <a class="jxr_linenumber" name="157" href="#157">157</a> 
 <a class="jxr_linenumber" name="158" href="#158">158</a>                 <em class="jxr_comment">// Push end element to stack if we are a start element with</em>
 <a class="jxr_linenumber" name="159" href="#159">159</a>                 <em class="jxr_comment">// children.</em>
-<a class="jxr_linenumber" name="160" href="#160">160</a>                 <strong class="jxr_keyword">if</strong> (currentStruc.getKind() == ENode.ELEMENT_KIND &amp;&amp; currentStruc.hasFirstChild()) {
+<a class="jxr_linenumber" name="160" href="#160">160</a>                 <strong class="jxr_keyword">if</strong> (currentStruc.getKind() == IConstants.ELEMENT &amp;&amp; currentStruc.hasFirstChild()) {
 <a class="jxr_linenumber" name="161" href="#161">161</a>                     mStack.push(rtx.getNode().getNodeKey());
 <a class="jxr_linenumber" name="162" href="#162">162</a>                 }
 <a class="jxr_linenumber" name="163" href="#163">163</a> 

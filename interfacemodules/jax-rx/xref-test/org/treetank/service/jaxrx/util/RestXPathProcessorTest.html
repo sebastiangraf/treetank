@@ -40,8 +40,8 @@
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <strong class="jxr_keyword">package</strong> org.treetank.service.jaxrx.util;
 <a class="jxr_linenumber" name="32" href="#32">32</a>  
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertNotNull;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertEquals;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.testng.AssertJUnit.assertNotNull;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> java.io.ByteArrayInputStream;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> java.io.ByteArrayOutputStream;
@@ -53,10 +53,10 @@
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> javax.xml.parsers.DocumentBuilderFactory;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> javax.xml.parsers.ParserConfigurationException;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  
-<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.junit.BeforeClass;
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeClass;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
-<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 <a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Document;
 <a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.NodeList;
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="89" href="#89">89</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">transient</strong> String PARAMJRESTSEQ = <span class="jxr_string">"rest:sequence"</span>;
 <a class="jxr_linenumber" name="90" href="#90">90</a>  
 <a class="jxr_linenumber" name="91" href="#91">91</a>      @BeforeClass
-<a class="jxr_linenumber" name="92" href="#92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setUpGlobal() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="92" href="#92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setUpGlobal() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="93" href="#93">93</a>          deleteDirectory(TestHelper.PATHS.PATH1.getFile());
 <a class="jxr_linenumber" name="94" href="#94">94</a>          <strong class="jxr_keyword">final</strong> InputStream xmlInput = RestXPathProcessorTest.<strong class="jxr_keyword">class</strong>.getResourceAsStream(<span class="jxr_string">"/books.xml"</span>);
 <a class="jxr_linenumber" name="95" href="#95">95</a>          <strong class="jxr_keyword">new</strong> DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile()).shred(xmlInput, RESOURCENAME);
@@ -126,7 +126,7 @@
 <a class="jxr_linenumber" name="116" href="#116">116</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="117" href="#117">117</a>     @Test
 <a class="jxr_linenumber" name="118" href="#118">118</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testGetXpathResourceStringStringBooleanLongOutputStreamBoolean() <strong class="jxr_keyword">throws</strong> IOException,
-<a class="jxr_linenumber" name="119" href="#119">119</a>         SAXException, ParserConfigurationException, AbsTTException {
+<a class="jxr_linenumber" name="119" href="#119">119</a>         SAXException, ParserConfigurationException, TTException {
 <a class="jxr_linenumber" name="120" href="#120">120</a>         String xPath = <span class="jxr_string">"//book"</span>;
 <a class="jxr_linenumber" name="121" href="#121">121</a>         <strong class="jxr_keyword">boolean</strong> withNodeIds = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="122" href="#122">122</a>         OutputStream output = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
@@ -170,7 +170,7 @@
 <a class="jxr_linenumber" name="160" href="#160">160</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="161" href="#161">161</a>     @Test
 <a class="jxr_linenumber" name="162" href="#162">162</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testGetXpathResourceFileLongStringBooleanLongOutputStreamBoolean() <strong class="jxr_keyword">throws</strong> SAXException,
-<a class="jxr_linenumber" name="163" href="#163">163</a>         IOException, ParserConfigurationException, AbsTTException {
+<a class="jxr_linenumber" name="163" href="#163">163</a>         IOException, ParserConfigurationException, TTException {
 <a class="jxr_linenumber" name="164" href="#164">164</a>         String xPath = <span class="jxr_string">"//author"</span>;
 <a class="jxr_linenumber" name="165" href="#165">165</a>         <strong class="jxr_keyword">boolean</strong> withNodeIds = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="166" href="#166">166</a>         OutputStream output = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();

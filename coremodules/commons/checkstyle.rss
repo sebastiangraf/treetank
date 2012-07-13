@@ -9,7 +9,7 @@
     <copyright>&#169;2012 Distributed Systems Group</copyright>
     <item>
       <title>File: 11,
-             Errors: 77,
+             Errors: 86,
              Warnings: 0,
              Infos: 0
       </title>
@@ -57,6 +57,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.exception.TTByteHandleException.java">org/treetank/exception/TTByteHandleException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  14
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.aspects.logging.LoggerAspect.java">org/treetank/aspects/logging/LoggerAspect.java</a>
                 </td>
                 <td>
@@ -81,6 +95,20 @@
                 </td>
                 <td>
                   8
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.exception.TTException.java">org/treetank/exception/TTException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  9
                 </td>
               </tr>
                           <tr>
@@ -127,20 +155,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.exception.TTEncryptionException.java">org/treetank/exception/TTEncryptionException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.exception.TTIOException.java">org/treetank/exception/TTIOException.java</a>
                 </td>
                 <td>
@@ -150,7 +164,7 @@
                   0
                 </td>
                 <td>
-                  9
+                  10
                 </td>
               </tr>
                           <tr>
@@ -165,20 +179,6 @@
                 </td>
                 <td>
                   7
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.exception.AbsTTException.java">org/treetank/exception/AbsTTException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  9
                 </td>
               </tr>
                       </tbody>

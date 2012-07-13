@@ -39,13 +39,13 @@
 <a class="jxr_linenumber" name="29" href="#29">29</a>  
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> java.io.File;
 <a class="jxr_linenumber" name="31" href="#31">31</a>  
-<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.junit.AfterClass;
-<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.junit.BeforeClass;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.AfterMethod;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper.PATHS;
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.AbsTTException;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTXPathException;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.xml.shredder.XMLShredder;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.xml.xpath.XPathAxis;
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="58" href="#58">58</a>  
 <a class="jxr_linenumber" name="59" href="#59">59</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Holder holder;
 <a class="jxr_linenumber" name="60" href="#60">60</a>  
-<a class="jxr_linenumber" name="61" href="#61">61</a>      @BeforeClass
+<a class="jxr_linenumber" name="61" href="#61">61</a>      @BeforeMethod
 <a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="63" href="#63">63</a>          TestHelper.deleteEverything();
 <a class="jxr_linenumber" name="64" href="#64">64</a>          <em class="jxr_comment">// EncryptionHelper.start();</em>
@@ -133,8 +133,8 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_comment">     * new String[] { result }); }</em>
 <a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_comment">     */</em>
 <a class="jxr_linenumber" name="125" href="#125">125</a> 
-<a class="jxr_linenumber" name="126" href="#126">126</a>     @AfterClass
-<a class="jxr_linenumber" name="127" href="#127">127</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> AbsTTException {
+<a class="jxr_linenumber" name="126" href="#126">126</a>     @AfterMethod
+<a class="jxr_linenumber" name="127" href="#127">127</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="128" href="#128">128</a>         holder.close();
 <a class="jxr_linenumber" name="129" href="#129">129</a>         TestHelper.closeEverything();
 <a class="jxr_linenumber" name="130" href="#130">130</a> 
