@@ -96,7 +96,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
     /** Hash kind of Structure. */
     private final HashKind mHashKind;
 
+    /** Delegate for the read access. */
     private NodeReadTrx mDelegate;
+
+    /** Access to the page transaction. */
+    private IPageWriteTrx mPageWtx;
 
     /**
      * Constructor.
@@ -117,6 +121,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         mHashKind = kind;
         mDelegate = new NodeReadTrx(pPageWriteTrx);
         mSession = pSession;
+        mPageWtx = pPageWriteTrx;
     }
 
     /**
@@ -982,5 +987,13 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public boolean isClosed() {
         return mDelegate.isClosed();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPageWriteTrx getPageWtx() throws TTException {
+        return mPageWtx;
     }
 }

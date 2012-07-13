@@ -91,7 +91,8 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Setup parsed session.
         XMLShredder.main(XML, PATHS.PATH2.getFile().getAbsolutePath());
-        final INodeReadTrx expectedTrx = holder.getNWtx();
+        final INodeWriteTrx expectedTrx = holder.getNWtx();
+        TestHelper.createDocumentRootNode(expectedTrx);
 
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
@@ -123,7 +124,8 @@ public class XMLShredderTest extends XMLTestCase {
             }
             AssertJUnit.assertEquals(expDesc.getKind(), desc.getKind());
             AssertJUnit.assertEquals(expectedTrx.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
-            AssertJUnit.assertEquals(expectedTrx.getValueOfCurrentNode(), expectedTrx.getValueOfCurrentNode());
+            AssertJUnit
+                .assertEquals(expectedTrx.getValueOfCurrentNode(), expectedTrx.getValueOfCurrentNode());
         }
 
         rtx.close();
@@ -151,7 +153,7 @@ public class XMLShredderTest extends XMLTestCase {
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
 
         final INodeWriteTrx expectedTrx =
-            new NodeWriteTrx(expectedSession, expectedSession.beginPageWriteTransaction(),HashKind.Rolling);
+            new NodeWriteTrx(expectedSession, expectedSession.beginPageWriteTransaction(), HashKind.Rolling);
         org.treetank.utils.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
         expectedTrx.moveTo(ROOT_NODE);
@@ -189,7 +191,7 @@ public class XMLShredderTest extends XMLTestCase {
         final ISession expectedSession2 =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx expectedTrx2 =
-            new NodeWriteTrx(expectedSession2, expectedSession2.beginPageWriteTransaction(),HashKind.Rolling);
+            new NodeWriteTrx(expectedSession2, expectedSession2.beginPageWriteTransaction(), HashKind.Rolling);
         DocumentCreater.createWithoutNamespace(expectedTrx2);
         expectedTrx2.commit();
 
@@ -197,7 +199,8 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session2 =
             database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = new NodeWriteTrx(session2, session2.beginPageWriteTransaction(),HashKind.Rolling);
+        final INodeWriteTrx wtx =
+            new NodeWriteTrx(session2, session2.beginPageWriteTransaction(), HashKind.Rolling);
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML2)),
                 EShredderInsert.ADDASFIRSTCHILD);
@@ -214,12 +217,13 @@ public class XMLShredderTest extends XMLTestCase {
         while (expectedAttributes.hasNext() && attributes.hasNext()) {
             if (expectedTrx2.getNode().getKind() == IConstants.ELEMENT
                 || rtx.getNode().getKind() == IConstants.ELEMENT) {
-                AssertJUnit.assertEquals(((ElementNode)expectedTrx2.getNode()).getNamespaceCount(), ((ElementNode)rtx
-                    .getNode()).getNamespaceCount());
-                AssertJUnit.assertEquals(((ElementNode)expectedTrx2.getNode()).getAttributeCount(), ((ElementNode)rtx
-                    .getNode()).getAttributeCount());
+                AssertJUnit.assertEquals(((ElementNode)expectedTrx2.getNode()).getNamespaceCount(),
+                    ((ElementNode)rtx.getNode()).getNamespaceCount());
+                AssertJUnit.assertEquals(((ElementNode)expectedTrx2.getNode()).getAttributeCount(),
+                    ((ElementNode)rtx.getNode()).getAttributeCount());
                 for (int i = 0; i < ((ElementNode)expectedTrx2.getNode()).getAttributeCount(); i++) {
-                    AssertJUnit.assertEquals(expectedTrx2.getQNameOfCurrentNode(), rtx.getQNameOfCurrentNode());
+                    AssertJUnit.assertEquals(expectedTrx2.getQNameOfCurrentNode(), rtx
+                        .getQNameOfCurrentNode());
                 }
             }
         }
@@ -232,7 +236,8 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
+        final INodeWriteTrx wtx =
+            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML3)),
                 EShredderInsert.ADDASFIRSTCHILD);

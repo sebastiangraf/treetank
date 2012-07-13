@@ -33,6 +33,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.TestHelper;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -95,6 +96,9 @@ public final class DocumentCreater {
      */
     public static void create(final INodeWriteTrx paramWtx) throws TTException {
         assertNotNull(paramWtx);
+
+        TestHelper.createDocumentRootNode(paramWtx);
+
         assertTrue(paramWtx.moveTo(ROOT_NODE));
 
         paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
@@ -125,5 +129,4 @@ public final class DocumentCreater {
 
         assertTrue(paramWtx.moveTo(ROOT_NODE));
     }
-
 }

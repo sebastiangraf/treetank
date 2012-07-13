@@ -97,7 +97,9 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
             .createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
         final ISession session =
             databaseBooks.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
+        final INodeWriteTrx wtx =
+            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+        SaxonHelper.createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

@@ -27,6 +27,9 @@
 
 package org.treetank;
 
+import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -279,4 +282,19 @@ public final class TestHelper {
         return returnVal;
     }
 
+    /**
+     * Generating a Document Root node.
+     * 
+     * @param pWtx
+     *            where the docroot should be generated.
+     * @throws TTException
+     */
+    public static final void createDocumentRootNode(final INodeWriteTrx pWtx) throws TTException {
+        final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
+        pWtx.getPageWtx()
+            .createNode(
+                new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
+                    NULL_NODE, 0)));
+        pWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
+    }
 }

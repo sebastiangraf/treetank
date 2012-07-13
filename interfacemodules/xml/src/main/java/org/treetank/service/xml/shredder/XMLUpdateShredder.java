@@ -236,7 +236,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
     @SuppressWarnings("unchecked")
     public XMLUpdateShredder(final INodeWriteTrx paramWtx, final XMLEventReader paramReader,
         final EShredderInsert paramAddAsFirstChild, final Object paramData, final EShredderCommit paramCommit)
-        throws TTUsageException, TTIOException {
+        throws TTException {
         super(paramWtx, paramReader, paramAddAsFirstChild);
         if (paramData == null || paramCommit == null) {
             throw new IllegalArgumentException("None of the constructor parameters may be null!");

@@ -273,4 +273,13 @@ public interface INodeWriteTrx extends INodeReadTrx {
      */
     @Override
     void close() throws TTException;
+
+    /**
+     * Getting the Page Transaction
+     * 
+     * @return the stored {@link IPageWriteTrx}.
+     * @throws TTException
+     */
+    IPageWriteTrx getPageWtx() throws TTException;
+
 }

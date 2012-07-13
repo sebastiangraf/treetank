@@ -26,6 +26,9 @@
  */
 package org.treetank.saxon.wrapper;
 
+import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
@@ -40,6 +43,10 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.exception.TTException;
+import org.treetank.node.DocumentRootNode;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -66,13 +73,31 @@ public final class SaxonHelper {
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
+        final INodeWriteTrx wtx =
+            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+        createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKSXML);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.close();
         session.close();
         database.close();
+    }
+
+    /**
+     * Generating a Document Root node.
+     * 
+     * @param pWtx
+     *            where the docroot should be generated.
+     * @throws TTException
+     */
+    public static final void createDocumentRootNode(final INodeWriteTrx pWtx) throws TTException {
+        final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
+        pWtx.getPageWtx()
+            .createNode(
+                new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
+                    NULL_NODE, 0)));
+        pWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
     }
 
 }
