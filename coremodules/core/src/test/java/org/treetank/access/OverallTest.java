@@ -64,6 +64,7 @@ public final class OverallTest {
 
     @Test
     public void testJustEverything() throws TTException {
+        TestHelper.createDocumentRootNode(holder.getNWtx());
         holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
@@ -89,23 +90,17 @@ public final class OverallTest {
             } else {
                 if (holder.getNWtx().getNode() instanceof ElementNode) {
                     if (ran.nextBoolean()) {
-                        holder.getNWtx().insertElementAsFirstChild(
-                                new QName(getString()));
+                        holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
                     } else {
-                        holder.getNWtx().insertElementAsRightSibling(
-                                new QName(getString()));
+                        holder.getNWtx().insertElementAsRightSibling(new QName(getString()));
                     }
                     while (ran.nextBoolean()) {
-                        holder.getNWtx().insertAttribute(
-                                new QName(getString()), getString());
-                        holder.getNWtx().moveTo(
-                                holder.getNWtx().getNode().getParentKey());
+                        holder.getNWtx().insertAttribute(new QName(getString()), getString());
+                        holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
                     }
                     while (ran.nextBoolean()) {
-                        holder.getNWtx().insertNamespace(
-                                new QName(getString(), getString()));
-                        holder.getNWtx().moveTo(
-                                holder.getNWtx().getNode().getParentKey());
+                        holder.getNWtx().insertNamespace(new QName(getString(), getString()));
+                        holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
                     }
                 }
 
@@ -122,8 +117,7 @@ public final class OverallTest {
                 } while (holder.getNWtx().getNode() == null);
                 // TODO Check if reference check can occur on "=="
                 if (holder.getNWtx().getNode().getKind() != IConstants.ELEMENT) {
-                    holder.getNWtx().moveTo(
-                            holder.getNWtx().getNode().getParentKey());
+                    holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
                 }
             }
         }

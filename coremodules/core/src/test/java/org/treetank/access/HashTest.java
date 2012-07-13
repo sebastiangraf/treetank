@@ -238,6 +238,7 @@ public class HashTest {
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final IPageWriteTrx pTrx = session.beginPageWriteTransaction();
         final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx, kind);
+        TestHelper.createDocumentRootNode(wTrx);
         return wTrx;
     }
 

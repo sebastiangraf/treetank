@@ -27,6 +27,7 @@
 
 package org.treetank.io;
 
+import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
 import org.treetank.page.PageReference;
 
@@ -47,7 +48,7 @@ public interface IWriter extends IReader {
      * @throws TTIOException
      *             execption to be thrown if something bad happens
      */
-    long write(final PageReference pageReference) throws TTIOException;
+    long write(final PageReference pageReference) throws TTIOException, TTByteHandleException;
 
     /**
      * Write Beacon for the first reference.
@@ -57,7 +58,7 @@ public interface IWriter extends IReader {
      * @throws TTIOException
      *             exception if something bad happens
      */
-    void writeFirstReference(final PageReference pageReference) throws TTIOException;
+    void writeFirstReference(final PageReference pageReference) throws TTIOException, TTByteHandleException;
 
     /**
      * Closing the write access.

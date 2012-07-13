@@ -46,8 +46,8 @@ import org.treetank.node.interfaces.IValNode;
  * <h1>NodeReadTrx</h1>
  * 
  * <p>
- * Read-only transaction wiht single-threaded cursor semantics. Each read-only
- * transaction works on a given revision key.
+ * Read-only transaction wiht single-threaded cursor semantics. Each read-only transaction works on a given
+ * revision key.
  * </p>
  */
 public class NodeReadTrx implements INodeReadTrx {
@@ -67,10 +67,9 @@ public class NodeReadTrx implements INodeReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    public NodeReadTrx(final IPageReadTrx pPageTrx) throws TTIOException {
+    public NodeReadTrx(final IPageReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
-        mCurrentNode = (org.treetank.node.interfaces.INode) mPageReadTrx
-                .getNode(ROOT_NODE);
+        mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(ROOT_NODE);
     }
 
     /**
@@ -87,9 +86,8 @@ public class NodeReadTrx implements INodeReadTrx {
             // Remember old node and fetch new one.
             final INode oldNode = mCurrentNode;
             try {
-                mCurrentNode = (org.treetank.node.interfaces.INode) mPageReadTrx
-                        .getNode(paramNodeKey);
-            } catch (final TTIOException exc) {
+                mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(paramNodeKey);
+            } catch (final TTException exc) {
                 mCurrentNode = null;
             }
 
@@ -109,7 +107,7 @@ public class NodeReadTrx implements INodeReadTrx {
     public final boolean moveToAttribute(final int mIndex) {
         assertNotClosed();
         if (mCurrentNode.getKind() == IConstants.ELEMENT) {
-            return moveTo(((ElementNode) mCurrentNode).getAttributeKey(mIndex));
+            return moveTo(((ElementNode)mCurrentNode).getAttributeKey(mIndex));
         } else {
             return false;
         }
@@ -122,7 +120,7 @@ public class NodeReadTrx implements INodeReadTrx {
     public final boolean moveToNamespace(final int mIndex) {
         assertNotClosed();
         if (mCurrentNode.getKind() == IConstants.ELEMENT) {
-            return moveTo(((ElementNode) mCurrentNode).getNamespaceKey(mIndex));
+            return moveTo(((ElementNode)mCurrentNode).getNamespaceKey(mIndex));
         } else {
             return false;
         }
@@ -137,7 +135,7 @@ public class NodeReadTrx implements INodeReadTrx {
         assertNotClosed();
         String returnVal;
         if (mCurrentNode instanceof IValNode) {
-            returnVal = new String(((IValNode) mCurrentNode).getRawValue());
+            returnVal = new String(((IValNode)mCurrentNode).getRawValue());
         } else {
             returnVal = "";
         }
@@ -153,9 +151,8 @@ public class NodeReadTrx implements INodeReadTrx {
         String name = "";
         String uri = "";
         if (mCurrentNode instanceof INameNode) {
-            name = mPageReadTrx
-                    .getName(((INameNode) mCurrentNode).getNameKey());
-            uri = mPageReadTrx.getName(((INameNode) mCurrentNode).getURIKey());
+            name = mPageReadTrx.getName(((INameNode)mCurrentNode).getNameKey());
+            uri = mPageReadTrx.getName(((INameNode)mCurrentNode).getURIKey());
         }
         return buildQName(uri, name);
     }
@@ -205,14 +202,12 @@ public class NodeReadTrx implements INodeReadTrx {
     public final String toString() {
         assertNotClosed();
         final StringBuilder builder = new StringBuilder();
-        if (getNode().getKind() == IConstants.ATTRIBUTE
-                || getNode().getKind() == IConstants.ELEMENT) {
+        if (getNode().getKind() == IConstants.ATTRIBUTE || getNode().getKind() == IConstants.ELEMENT) {
             builder.append("Name of Node: ");
             builder.append(getQNameOfCurrentNode().toString());
             builder.append("\n");
         }
-        if (getNode().getKind() == IConstants.ATTRIBUTE
-                || getNode().getKind() == IConstants.TEXT) {
+        if (getNode().getKind() == IConstants.ATTRIBUTE || getNode().getKind() == IConstants.TEXT) {
             builder.append("Value of Node: ");
             builder.append(getValueOfCurrentNode());
             builder.append("\n");
@@ -250,8 +245,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setPageTransaction(
-            final IPageReadTrx paramTransactionState) {
+    protected final void setPageTransaction(final IPageReadTrx paramTransactionState) {
         mPageReadTrx = paramTransactionState;
     }
 
@@ -294,12 +288,10 @@ public class NodeReadTrx implements INodeReadTrx {
      *            the name including a possible prefix
      * @return the QName obj
      */
-    public static final QName buildQName(final String paramUri,
-            final String paramName) {
+    public static final QName buildQName(final String paramUri, final String paramName) {
         QName qname;
         if (paramName.contains(":")) {
-            qname = new QName(paramUri, paramName.split(":")[1],
-                    paramName.split(":")[0]);
+            qname = new QName(paramUri, paramName.split(":")[1], paramName.split(":")[0]);
         } else {
             qname = new QName(paramUri, paramName);
         }

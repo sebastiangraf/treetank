@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 
+import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
@@ -47,127 +49,128 @@ import org.treetank.page.PageReference;
  */
 public final class FileWriter implements IWriter {
 
-	/** Random access mFile to work on. */
-	private transient final RandomAccessFile mFile;
+    /** Random access mFile to work on. */
+    private transient final RandomAccessFile mFile;
 
-	/** Reader instance for this writer. */
-	private transient final FileReader reader;
+    /** Reader instance for this writer. */
+    private transient final FileReader reader;
 
-	/**
-	 * Constructor.
-	 * 
-	 * 
-	 * @param paramStorage
-	 *            the Concrete Storage
-	 * @throws TTIOException
-	 *             if FileWriter IO error
-	 */
-	public FileWriter(final File paramStorage) throws TTIOException {
-		try {
-			mFile = new RandomAccessFile(paramStorage, "rw");
-		} catch (final FileNotFoundException fileExc) {
-			throw new TTIOException(fileExc);
-		}
+    /**
+     * Constructor.
+     * 
+     * 
+     * @param paramStorage
+     *            the Concrete Storage
+     * @throws TTIOException
+     *             if FileWriter IO error
+     */
+    public FileWriter(final File paramStorage) throws TTException {
+        try {
+            mFile = new RandomAccessFile(paramStorage, "rw");
+        } catch (final FileNotFoundException fileExc) {
+            throw new TTIOException(fileExc);
+        }
 
-		reader = new FileReader(paramStorage);
+        reader = new FileReader(paramStorage);
 
-	}
+    }
 
-	/**
-	 * Write page contained in page reference to storage.
-	 * 
-	 * @param pageReference
-	 *            Page reference to write.
-	 * @throws TTIOException
-	 *             due to errors during writing.
-	 */
-	public long write(final PageReference pageReference) throws TTIOException {
+    /**
+     * Write page contained in page reference to storage.
+     * 
+     * @param pageReference
+     *            Page reference to write.
+     * @throws TTIOException
+     *             due to errors during writing.
+     * @throws TTByteHandleException
+     */
+    public long write(final PageReference pageReference) throws TTIOException, TTByteHandleException {
 
-		final IPage page = pageReference.getPage();
-		final byte[] rawPage = page.getByteRepresentation();
+        final IPage page = pageReference.getPage();
+        final byte[] rawPage = page.getByteRepresentation();
 
-		// Perform crypto operations.
-		final byte[] decryptedPage = reader.mByteHandler.serialize(rawPage);
+        // Perform crypto operations.
+        final byte[] decryptedPage = reader.mByteHandler.serialize(rawPage);
 
-		final byte[] writtenPage = new byte[decryptedPage.length
-				+ FileReader.OTHER_BEACON];
-		ByteBuffer buffer = ByteBuffer.allocate(writtenPage.length);
-		buffer.putInt(decryptedPage.length);
-		buffer.put(decryptedPage);
-		buffer.position(0);
-		buffer.get(writtenPage, 0, writtenPage.length);
+        final byte[] writtenPage = new byte[decryptedPage.length + FileReader.OTHER_BEACON];
+        ByteBuffer buffer = ByteBuffer.allocate(writtenPage.length);
+        buffer.putInt(decryptedPage.length);
+        buffer.put(decryptedPage);
+        buffer.position(0);
+        buffer.get(writtenPage, 0, writtenPage.length);
 
-		try {
-			// Getting actual offset and appending to the end of the current
-			// file
-			final long fileSize = mFile.length();
-			final long offset = fileSize == 0 ? FileReader.FIRST_BEACON
-					: fileSize;
-			mFile.seek(offset);
-			mFile.write(writtenPage);
-			// Remember page coordinates.
-			pageReference.setKey(offset);
-			return offset;
-		} catch (final IOException paramExc) {
-			throw new TTIOException(paramExc);
-		}
-	}
+        try {
+            // Getting actual offset and appending to the end of the current
+            // file
+            final long fileSize = mFile.length();
+            final long offset = fileSize == 0 ? FileReader.FIRST_BEACON : fileSize;
+            mFile.seek(offset);
+            mFile.write(writtenPage);
+            // Remember page coordinates.
+            pageReference.setKey(offset);
+            return offset;
+        } catch (final IOException paramExc) {
+            throw new TTIOException(paramExc);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void close() throws TTIOException {
-		try {
-			if (mFile != null) {
-				reader.close();
-				mFile.close();
-			}
-		} catch (final IOException e) {
-			throw new TTIOException(e);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void close() throws TTIOException {
+        try {
+            if (mFile != null) {
+                reader.close();
+                mFile.close();
+            }
+        } catch (final IOException e) {
+            throw new TTIOException(e);
+        }
+    }
 
-	/**
-	 * Close file handle in case it is not properly closed by the application.
-	 * 
-	 * @throws Throwable
-	 *             if the finalization of the superclass does not work.
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			close();
-		} finally {
-			super.finalize();
-		}
-	}
+    /**
+     * Close file handle in case it is not properly closed by the application.
+     * 
+     * @throws Throwable
+     *             if the finalization of the superclass does not work.
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            close();
+        } finally {
+            super.finalize();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void writeFirstReference(final PageReference pageReference)
-			throws TTIOException {
-		try {
-			write(pageReference);
-			mFile.seek(0);
-			mFile.writeLong(pageReference.getKey());
-		} catch (final IOException exc) {
-			throw new TTIOException(exc);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws TTByteHandleException
+     */
+    public void writeFirstReference(final PageReference pageReference) throws TTIOException,
+        TTByteHandleException {
+        try {
+            write(pageReference);
+            mFile.seek(0);
+            mFile.writeLong(pageReference.getKey());
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public IPage read(final long pKey) throws TTIOException {
-		return reader.read(pKey);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public IPage read(final long pKey) throws TTIOException {
+        return reader.read(pKey);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public PageReference readFirstReference() throws TTIOException {
-		return reader.readFirstReference();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public PageReference readFirstReference() throws TTIOException {
+        return reader.readFirstReference();
+    }
 
 }

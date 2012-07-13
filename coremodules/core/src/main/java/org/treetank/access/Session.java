@@ -36,7 +36,6 @@ import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
 import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
@@ -122,7 +121,7 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision, final long mStoreRevision)
-        throws TTIOException {
+        throws TTException {
         assertAccess(mLastCommittedUberPage.getRevision());
         final IWriter writer = mFac.getWriter();
         final IPageWriteTrx trx =

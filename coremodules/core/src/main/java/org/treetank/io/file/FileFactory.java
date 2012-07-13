@@ -30,6 +30,7 @@ package org.treetank.io.file;
 import java.io.File;
 
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
@@ -67,7 +68,7 @@ public final class FileFactory implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public IReader getReader() throws TTIOException {
+    public IReader getReader() throws TTException {
         return new FileReader(getConcreteStorage());
     }
 
@@ -75,7 +76,7 @@ public final class FileFactory implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public IWriter getWriter() throws TTIOException {
+    public IWriter getWriter() throws TTException {
         return new FileWriter(getConcreteStorage());
     }
 

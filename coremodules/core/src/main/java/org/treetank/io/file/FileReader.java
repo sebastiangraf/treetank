@@ -32,11 +32,13 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.decorators.ByteRepresentation;
-import org.treetank.io.decorators.IByteRepresentation;
-import org.treetank.io.decorators.ZipperDecorator;
+import org.treetank.io.bytepipe.ByteHandlePipeline;
+import org.treetank.io.bytepipe.Encryptor;
+import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.io.bytepipe.Zipper;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
@@ -53,96 +55,96 @@ import org.treetank.page.UberPage;
  */
 public final class FileReader implements IReader {
 
-	/** Factory for building Pages. */
-	private final PageFactory mFac = PageFactory.getInstance();
+    /** Factory for building Pages. */
+    private final PageFactory mFac = PageFactory.getInstance();
 
-	/** Beacon of first references. */
-	protected final static int FIRST_BEACON = 12;
+    /** Beacon of first references. */
+    protected final static int FIRST_BEACON = 12;
 
-	/** Beacon of the other references. */
-	protected final static int OTHER_BEACON = 4;
+    /** Beacon of the other references. */
+    protected final static int OTHER_BEACON = 4;
 
-	/** Random access mFile to work on. */
-	protected transient final RandomAccessFile mFile;
+    /** Random access mFile to work on. */
+    protected transient final RandomAccessFile mFile;
 
-	/** Inflater to decompress. */
-	protected transient final IByteRepresentation mByteHandler;
+    /** Inflater to decompress. */
+    protected transient final IByteHandler mByteHandler;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @throws TTIOException
-	 *             if something bad happens
-	 */
-	public FileReader(final File mConcreteStorage) throws TTIOException {
+    /**
+     * Constructor.
+     * 
+     * @throws TTIOException
+     *             if something bad happens
+     * @throws TTByteHandleException
+     */
+    public FileReader(final File mConcreteStorage) throws TTException {
 
-		try {
-			if (!mConcreteStorage.exists()) {
-				mConcreteStorage.getParentFile().mkdirs();
-				mConcreteStorage.createNewFile();
-			}
+        try {
+            if (!mConcreteStorage.exists()) {
+                mConcreteStorage.getParentFile().mkdirs();
+                mConcreteStorage.createNewFile();
+            }
 
-			mFile = new RandomAccessFile(mConcreteStorage, "r");
+            mFile = new RandomAccessFile(mConcreteStorage, "r");
+            mByteHandler = new ByteHandlePipeline(new Encryptor(), new Zipper());
 
-			mByteHandler = new ZipperDecorator(new ByteRepresentation());
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
+    }
 
-		} catch (final IOException exc) {
-			throw new TTIOException(exc);
-		}
-	}
+    /**
+     * Read page from storage.
+     * 
+     * @param pageReference
+     *            to read.
+     * @return Byte array reader to read bytes from.o
+     * @throws TTIOException
+     *             if there was an error during reading.
+     */
+    public IPage read(final long pKey) throws TTIOException {
 
-	/**
-	 * Read page from storage.
-	 * 
-	 * @param pageReference
-	 *            to read.
-	 * @return Byte array reader to read bytes from.o
-	 * @throws TTIOException
-	 *             if there was an error during reading.
-	 */
-	public IPage read(final long pKey) throws TTIOException {
+        try {
 
-		try {
+            // Read page from file.
+            mFile.seek(pKey);
+            final int dataLength = mFile.readInt();
+            final byte[] rawPage = new byte[dataLength];
+            mFile.read(rawPage);
 
-			// Read page from file.
-			mFile.seek(pKey);
-			final int dataLength = mFile.readInt();
-			final byte[] rawPage = new byte[dataLength];
-			mFile.read(rawPage);
+            // Perform crypto operations.
+            byte[] decryptedPage = mByteHandler.deserialize(rawPage);
 
-			// Perform crypto operations.
-			byte[] decryptedPage = mByteHandler.deserialize(rawPage);
+            // Return reader required to instantiate and deserialize page.
+            return mFac.deserializePage(decryptedPage);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        } catch (final TTByteHandleException e) {
+            throw new TTIOException(e);
+        }
+    }
 
-			// Return reader required to instantiate and deserialize page.
-			return mFac.deserializePage(decryptedPage);
-		} catch (final IOException exc) {
-			throw new TTIOException(exc);
-		} catch (final TTByteHandleException e) {
-			throw new TTIOException(e);
-		}
-	}
+    public PageReference readFirstReference() throws TTIOException {
+        final PageReference uberPageReference = new PageReference();
+        try {
+            // Read primary beacon.
+            mFile.seek(0);
+            uberPageReference.setKey(mFile.readLong());
+            final UberPage page = (UberPage)read(uberPageReference.getKey());
+            uberPageReference.setPage(page);
+            return uberPageReference;
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
+    }
 
-	public PageReference readFirstReference() throws TTIOException {
-		final PageReference uberPageReference = new PageReference();
-		try {
-			// Read primary beacon.
-			mFile.seek(0);
-			uberPageReference.setKey(mFile.readLong());
-			final UberPage page = (UberPage) read(uberPageReference.getKey());
-			uberPageReference.setPage(page);
-			return uberPageReference;
-		} catch (final IOException exc) {
-			throw new TTIOException(exc);
-		}
-	}
+    public void close() throws TTIOException {
+        try {
+            mFile.close();
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
 
-	public void close() throws TTIOException {
-		try {
-			mFile.close();
-		} catch (final IOException exc) {
-			throw new TTIOException(exc);
-
-		}
-	}
+        }
+    }
 
 }

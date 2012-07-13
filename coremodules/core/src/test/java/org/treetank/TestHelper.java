@@ -27,6 +27,9 @@
 
 package org.treetank;
 
+import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.node.IConstants.ROOT_NODE;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -177,9 +180,7 @@ public final class TestHelper {
             case 0:
                 nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
                 nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
-                valDel = new ValNodeDelegate(nodeDel, new byte[] {
-                    0, 1, 2, 3, 4
-                });
+                valDel = new ValNodeDelegate(nodeDel, generateRandomBytes(1000));
                 page.setNode(i, new AttributeNode(nodeDel, nameDel, valDel));
                 break;
             case 1:
@@ -208,9 +209,7 @@ public final class TestHelper {
                 break;
             case 5:
                 nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
-                valDel = new ValNodeDelegate(nodeDel, new byte[] {
-                    0, 1
-                });
+                valDel = new ValNodeDelegate(nodeDel, generateRandomBytes(1000));
                 strucDel =
                     new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
                         random.nextLong());
@@ -270,5 +269,32 @@ public final class TestHelper {
         nWtx.commit();
         nWtx.close();
         session.close();
+    }
+
+    /**
+     * Generating random bytes.
+     * 
+     * @return the random bytes
+     */
+    public static final byte[] generateRandomBytes(final int pSize) {
+        final byte[] returnVal = new byte[pSize];
+        random.nextBytes(returnVal);
+        return returnVal;
+    }
+
+    /**
+     * Generating a Document Root node.
+     * 
+     * @param pWtx
+     *            where the docroot should be generated.
+     * @throws TTException
+     */
+    public static final void createDocumentRootNode(final INodeWriteTrx pWtx) throws TTException {
+        final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
+        pWtx.getPageWtx()
+            .createNode(
+                new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
+                    NULL_NODE, 0)));
+        pWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
     }
 }

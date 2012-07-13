@@ -66,6 +66,7 @@ public class UpdateTest {
     public void testNodeTransactionIsolation() throws TTException {
 
         INodeWriteTrx wtx = holder.getNWtx();
+        TestHelper.createDocumentRootNode(wtx);
         wtx.insertElementAsFirstChild(new QName(""));
         testNodeTransactionIsolation(wtx);
         wtx.commit();
@@ -107,6 +108,7 @@ public class UpdateTest {
     public void testInsertChild() throws TTException {
 
         INodeWriteTrx wtx = holder.getNWtx();
+        TestHelper.createDocumentRootNode(wtx);
         wtx.commit();
         wtx.close();
 
@@ -121,6 +123,7 @@ public class UpdateTest {
             wtx =
                 new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                     HashKind.Rolling);
+
             wtx.moveTo(ROOT_NODE);
             wtx.insertTextAsFirstChild(Integer.toString(i));
             wtx.commit();
@@ -156,6 +159,7 @@ public class UpdateTest {
         wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                 HashKind.Rolling);
+        TestHelper.createDocumentRootNode(wtx);
         wtx.moveTo(ROOT_NODE);
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
@@ -178,6 +182,7 @@ public class UpdateTest {
     @Test
     public void testPageBoundary() throws TTException {
         INodeWriteTrx wtx = holder.getNWtx();
+        TestHelper.createDocumentRootNode(wtx);
 
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));

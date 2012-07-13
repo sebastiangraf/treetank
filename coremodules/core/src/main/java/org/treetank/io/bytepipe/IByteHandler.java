@@ -1,4 +1,4 @@
-package org.treetank.io.decorators;
+package org.treetank.io.bytepipe;
 
 import org.treetank.exception.TTByteHandleException;
 
@@ -9,7 +9,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IByteRepresentation {
+public interface IByteHandler {
 
     /**
      * Method to serialize any byte-chunk.
@@ -17,8 +17,10 @@ public interface IByteRepresentation {
      * @param pToSerialize
      *            byte to be serialized
      * @return result of the serialization
+     * @throws TTByteHandleException
+     *             to be capsulated.
      */
-    byte[] serialize(byte[] pToSerialize);
+    byte[] serialize(byte[] pToSerialize) throws TTByteHandleException;
 
     /**
      * Method to deserialize any byte-chunk.

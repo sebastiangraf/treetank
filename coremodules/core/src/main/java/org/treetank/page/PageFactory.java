@@ -54,7 +54,7 @@ public final class PageFactory {
     }
 
     /** Singleton method. */
-    public static final PageFactory getInstance() {
+    public static synchronized final PageFactory getInstance() {
         return INSTANCE;
     }
 
@@ -64,7 +64,7 @@ public final class PageFactory {
      * @param pFac
      *            to be set
      */
-    public static void registerNewInstance(final PageFactory pFac) {
+    public static synchronized void registerNewInstance(final PageFactory pFac) {
         INSTANCE = pFac;
     }
 

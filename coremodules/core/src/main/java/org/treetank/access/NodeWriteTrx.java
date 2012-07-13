@@ -96,7 +96,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
     /** Hash kind of Structure. */
     private final HashKind mHashKind;
 
+    /** Delegate for the read access. */
     private NodeReadTrx mDelegate;
+
+    /** Access to the page transaction. */
+    private IPageWriteTrx mPageWtx;
 
     /**
      * Constructor.
@@ -112,11 +116,12 @@ public class NodeWriteTrx implements INodeWriteTrx {
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
     public NodeWriteTrx(final ISession pSession, final IPageWriteTrx pPageWriteTrx, final HashKind kind)
-        throws TTIOException, TTUsageException {
+        throws TTException {
 
         mHashKind = kind;
         mDelegate = new NodeReadTrx(pPageWriteTrx);
         mSession = pSession;
+        mPageWtx = pPageWriteTrx;
     }
 
     /**
@@ -237,8 +242,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public long insertAttribute(final QName paramQName, final String paramValueAsString)
-        throws TTException {
+    public long insertAttribute(final QName paramQName, final String paramValueAsString) throws TTException {
         if (mDelegate.getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
@@ -314,7 +318,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
     }
 
     private ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
-        final long rightSibKey, final long hash, final QName mName) throws TTIOException {
+        final long rightSibKey, final long hash, final QName mName) throws TTException {
 
         final int nameKey = getPageTransaction().createNameKey(PageWriteTrx.buildName(mName));
         final int namespaceKey = getPageTransaction().createNameKey(mName.getNamespaceURI());
@@ -329,7 +333,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
     }
 
     private TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
-        final byte[] mValue) throws TTIOException {
+        final byte[] mValue) throws TTException {
         final NodeDelegate nodeDel =
             new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, mParentKey, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
@@ -558,7 +562,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForInsert(final INode paramNewNode, final boolean addAsFirstChild) throws TTIOException {
+    private void adaptForInsert(final INode paramNewNode, final boolean addAsFirstChild) throws TTException {
         assert paramNewNode != null;
 
         if (paramNewNode instanceof IStructNode) {
@@ -605,7 +609,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForRemove(final IStructNode paramOldNode) throws TTIOException {
+    private void adaptForRemove(final IStructNode paramOldNode) throws TTException {
         assert paramOldNode != null;
 
         // Adapt left sibling node if there is one.
@@ -672,7 +676,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             of anything weird happened.
      */
-    private void adaptHashesWithAdd() throws TTIOException {
+    private void adaptHashesWithAdd() throws TTException {
         switch (mHashKind) {
         case Rolling:
             rollingAdd();
@@ -691,7 +695,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             of anything weird happened.
      */
-    private void adaptHashesWithRemove() throws TTIOException {
+    private void adaptHashesWithRemove() throws TTException {
         switch (mHashKind) {
         case Rolling:
             rollingRemove();
@@ -711,7 +715,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             of anything weird happened.
      */
-    private void adaptHashedWithUpdate(final long paramOldHash) throws TTIOException {
+    private void adaptHashedWithUpdate(final long paramOldHash) throws TTException {
         switch (mHashKind) {
         case Rolling:
             rollingUpdate(paramOldHash);
@@ -729,7 +733,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void postorderRemove() throws TTIOException {
+    private void postorderRemove() throws TTException {
         moveTo(mDelegate.getCurrentNode().getParentKey());
         postorderAdd();
     }
@@ -741,7 +745,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happened
      */
-    private void postorderAdd() throws TTIOException {
+    private void postorderAdd() throws TTException {
         // start with hash to add
         final INode startNode = mDelegate.getCurrentNode();
         // long for adapting the hash of the parent
@@ -803,7 +807,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happened
      */
-    private void rollingUpdate(final long paramOldHash) throws TTIOException {
+    private void rollingUpdate(final long paramOldHash) throws TTException {
         final INode newNode = mDelegate.getCurrentNode();
         final long newNodeHash = newNode.hashCode();
         long resultNew = newNode.hashCode();
@@ -834,7 +838,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happened
      */
-    private void rollingRemove() throws TTIOException {
+    private void rollingRemove() throws TTException {
         final INode startNode = mDelegate.getCurrentNode();
         long hashToRemove = startNode.getHash();
         long hashToAdd = 0;
@@ -872,7 +876,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happened
      */
-    private void rollingAdd() throws TTIOException {
+    private void rollingAdd() throws TTException {
         // start with hash to add
         final INode startNode = mDelegate.getCurrentNode();
         long hashToAdd = startNode.hashCode();
@@ -983,5 +987,13 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public boolean isClosed() {
         return mDelegate.isClosed();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPageWriteTrx getPageWtx() throws TTException {
+        return mPageWtx;
     }
 }

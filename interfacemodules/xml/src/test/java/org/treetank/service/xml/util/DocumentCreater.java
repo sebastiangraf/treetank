@@ -8,6 +8,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.TestHelper;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -69,6 +70,7 @@ public class DocumentCreater {
      */
     public static void createWithoutNamespace(final INodeWriteTrx paramWtx) throws TTException {
         assertNotNull(paramWtx);
+        TestHelper.createDocumentRootNode(paramWtx);
         paramWtx.moveTo(ROOT_NODE);
 
         paramWtx.insertElementAsFirstChild(new QName("a"));

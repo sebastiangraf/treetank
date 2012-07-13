@@ -27,6 +27,7 @@
 
 package org.treetank.io;
 
+import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
@@ -46,7 +47,7 @@ public interface IReader {
      * @throws TTIOException
      *             if something bad happens
      */
-    PageReference readFirstReference() throws TTIOException;
+    PageReference readFirstReference() throws TTIOException, TTByteHandleException;
 
     /**
      * Getting a reference for the given pointer.
@@ -57,7 +58,7 @@ public interface IReader {
      * @throws TTIOException
      *             if something bad happens during read
      */
-    IPage read(final long pKey) throws TTIOException;
+    IPage read(final long pKey) throws TTIOException, TTByteHandleException;
 
     /**
      * Closing the storage.

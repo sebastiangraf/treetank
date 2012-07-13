@@ -40,61 +40,61 @@ import com.sleepycat.je.DatabaseException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TTIOException extends TTException {
+public class TTIOException extends TTException {
 
-	/**
-	 * serializable id.
-	 */
-	private static final long serialVersionUID = 4099242625448155216L;
+    /**
+     * serializable id.
+     */
+    private static final long serialVersionUID = 4099242625448155216L;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param paramExc
-	 *            exception to be wrapped
-	 */
-	public TTIOException(final XMLStreamException paramExc) {
-		super(paramExc);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param paramExc
+     *            exception to be wrapped
+     */
+    public TTIOException(final XMLStreamException paramExc) {
+        super(paramExc);
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param paramExc
-	 *            exception to be wrapped
-	 */
-	public TTIOException(final IOException paramExc) {
-		super(paramExc);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param paramExc
+     *            exception to be wrapped
+     */
+    public TTIOException(final IOException paramExc) {
+        super(paramExc);
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param paramExc
-	 *            exception to be wrapped
-	 */
-	public TTIOException(final DatabaseException paramExc) {
-		super(paramExc);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param paramExc
+     *            exception to be wrapped
+     */
+    public TTIOException(final DatabaseException paramExc) {
+        super(paramExc);
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            for the overlaying {@link IOException}
-	 */
-	public TTIOException(final String... message) {
-		super(message);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            for the overlaying {@link IOException}
+     */
+    public TTIOException(final String... message) {
+        super(message);
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param paramExc
-	 *            for handling bytes in the wrong way.
-	 */
-	public TTIOException(final TTByteHandleException paramExc) {
-		super(paramExc);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param paramExc
+     *            for handling bytes in the wrong way.
+     */
+    public TTIOException(final TTByteHandleException paramExc) {
+        super(paramExc);
+    }
 
 }

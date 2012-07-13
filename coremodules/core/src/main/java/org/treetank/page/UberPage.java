@@ -27,14 +27,8 @@
 
 package org.treetank.page;
 
-import static org.treetank.node.IConstants.NULL_NODE;
-import static org.treetank.node.IConstants.ROOT_NODE;
-
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
-import org.treetank.node.DocumentRootNode;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -133,14 +127,9 @@ public final class UberPage implements IPage {
             reference = page.getReferences()[0];
         }
 
-        final NodePage ndp = new NodePage(ROOT_NODE, IConstants.UBP_ROOT_REVISION_NUMBER);
+        final NodePage ndp = new NodePage(0, IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
-        final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
-        final StructNodeDelegate strucDel =
-            new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0);
-        ndp.setNode(0, new DocumentRootNode(nodeDel, strucDel));
-        rrp.incrementMaxNodeKey();
     }
 
     /**

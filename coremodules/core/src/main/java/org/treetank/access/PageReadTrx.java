@@ -36,6 +36,7 @@ import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.cache.NodePageContainer;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.page.IConstants;
@@ -102,7 +103,7 @@ public class PageReadTrx implements IPageReadTrx {
      *             if the read of the persistent storage fails
      */
     protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevision,
-        final IReader pReader) throws TTIOException {
+        final IReader pReader) throws TTException {
         mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
         mSession = pSession;
         mPageReader = pReader;
@@ -121,7 +122,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if the read to the persistent storage fails
      */
-    public INode getNode(final long paramNodeKey) throws TTIOException {
+    public INode getNode(final long paramNodeKey) throws TTException {
 
         // Immediately return node from item list if node key negative.
         if (paramNodeKey < 0) {
@@ -243,7 +244,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final RevisionRootPage loadRevRoot(final long revisionKey) throws TTIOException {
+    protected final RevisionRootPage loadRevRoot(final long revisionKey) throws TTException {
 
         final PageReference ref = dereferenceLeafOfTree(mUberPage.getIndirectPageReference(), revisionKey);
         RevisionRootPage page = (RevisionRootPage)ref.getPage();
@@ -263,7 +264,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens during initialization
      */
-    protected final void initializeNamePage() throws TTIOException {
+    protected final void initializeNamePage() throws TTException {
         final PageReference ref = mRootPage.getNamePageReference();
         if (ref.getPage() == null) {
             ref.setPage((NamePage)mPageReader.read(ref.getKey()));
@@ -289,7 +290,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final NodePage[] getSnapshotPages(final long mNodePageKey) throws TTIOException {
+    protected final NodePage[] getSnapshotPages(final long mNodePageKey) throws TTException {
 
         // ..and get all leaves of nodepages from the revision-trees.
         final List<PageReference> refs = new ArrayList<PageReference>();
@@ -337,7 +338,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final IndirectPage dereferenceIndirectPage(final PageReference ref) throws TTIOException {
+    protected final IndirectPage dereferenceIndirectPage(final PageReference ref) throws TTException {
 
         IndirectPage page = (IndirectPage)ref.getPage();
 
@@ -366,7 +367,7 @@ public class PageReadTrx implements IPageReadTrx {
      *             if something odd happens within the creation process.
      */
     protected final PageReference dereferenceLeafOfTree(final PageReference paramStartReference,
-        final long paramKey) throws TTIOException {
+        final long paramKey) throws TTException {
 
         // Initial state pointing to the indirect page of level 0.
         PageReference reference = paramStartReference;

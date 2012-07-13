@@ -1492,7 +1492,7 @@ public enum FuncDef {
          * $arg2 are identical based on the Unicode code point collation
          * (http://www.w3.org/2005/xpath-functions/collation/codepoint). Otherwise, returns false. Two
          * namespace URIs are considered equal if they are either both absent or both present and identical
-         * based on the Unicode code point collation. The prefix parts of $arg1 and $arg2, if any, are
+         * based on the Unicode code point collation. The prefix mParts of $arg1 and $arg2, if any, are
          * ignored.
          * </p>
          */
@@ -1563,7 +1563,7 @@ public enum FuncDef {
          * $arg2 are identical based on the Unicode code point collation:
          * http://www.w3.org/2005/xpath-functions/collation/codepoint. Otherwise, returns false. Two namespace
          * URIs are considered equal if they are either both absent or both present and identical based on the
-         * Unicode code point collation. The prefix parts of $arg1 and $arg2, if any, are ignored.
+         * Unicode code point collation. The prefix mParts of $arg1 and $arg2, if any, are ignored.
          * </p>
          */
         NOTATION_EQ(AbsFunction.class, 2, 2, "xs:boolean", "op:NOTATION-equal"),

@@ -64,8 +64,11 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
+import org.treetank.node.delegates.NodeDelegate;
+import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -114,7 +117,7 @@ public class XMLShredder implements Callable<Void> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final INodeWriteTrx paramWtx, final XMLEventReader paramReader,
-        final EShredderInsert paramAddAsFirstChild) throws TTUsageException {
+        final EShredderInsert paramAddAsFirstChild) throws TTException {
         this(paramWtx, paramReader, paramAddAsFirstChild, EShredderCommit.COMMIT);
     }
 
@@ -139,8 +142,7 @@ public class XMLShredder implements Callable<Void> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final INodeWriteTrx paramWtx, final XMLEventReader paramReader,
-        final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit)
-        throws TTUsageException {
+        final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit) throws TTException {
         if (paramWtx == null || paramReader == null || paramAddAsFirstChild == null || paramCommit == null) {
             throw new IllegalArgumentException("None of the constructor parameters may be null!");
         }
@@ -149,6 +151,13 @@ public class XMLShredder implements Callable<Void> {
         mFirstChildAppend = paramAddAsFirstChild;
         mCommit = paramCommit;
         mLatch = new CountDownLatch(1);
+        if (mWtx.getNode()  == null) {
+            final NodeDelegate nodeDel = new NodeDelegate(0, NULL_NODE, 0);
+            mWtx.getPageWtx().createNode(
+                new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
+                    NULL_NODE, 0)));
+            mWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
+        }
     }
 
     /**
@@ -337,6 +346,14 @@ public class XMLShredder implements Callable<Void> {
         final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+        // generating root node
+        final NodeDelegate nodeDel = new NodeDelegate(0, NULL_NODE, 0);
+        wtx.getPageWtx()
+            .createNode(
+                new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
+                    NULL_NODE, 0)));
+        wtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
+
         final XMLEventReader reader = createFileReader(new File(paramArgs[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
