@@ -30,13 +30,11 @@ package org.treetank.api;
 import javax.xml.namespace.QName;
 
 import org.treetank.exception.TTException;
-import org.treetank.node.interfaces.INode;
 
 /**
 
  */
 public interface INodeReadTrx {
-
 
     // --- Node Selectors
     // --------------------------------------------------------
@@ -115,7 +113,7 @@ public interface INodeReadTrx {
      * 
      * @return the node
      */
-    INode getNode();
+    org.treetank.node.interfaces.INode getNode();
 
     /**
      * Close shared read transaction and immediately release all resources.

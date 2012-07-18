@@ -42,88 +42,91 @@ import org.treetank.exception.TTException;
 
 /**
  * Generating a standard resource within the {@link PATHS#PATH1} path. It also
- * generates a standard resource defined within {@link TestHelper#RESOURCE}.
+ * generates a standard resource defined within {@link NodeHelper#RESOURCE}.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 public class Holder {
 
-    private IDatabase mDatabase;
+	private IDatabase mDatabase;
 
-    private ISession mSession;
+	private ISession mSession;
 
-    private IPageReadTrx mPRtx;
+	private IPageReadTrx mPRtx;
 
-    private INodeReadTrx mNRtx;
+	private INodeReadTrx mNRtx;
 
-    public static Holder generateSession() throws TTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).build());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final Holder holder = new Holder();
-        holder.mDatabase = database;
-        holder.mSession = session;
-        return holder;
-    }
+	public static Holder generateSession() throws TTException {
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		database.createResource(new ResourceConfiguration.Builder(
+				TestHelper.RESOURCE, PATHS.PATH1.getConfig()).build());
+		final ISession session = database
+				.getSession(new SessionConfiguration.Builder(
+						TestHelper.RESOURCE).build());
+		final Holder holder = new Holder();
+		holder.mDatabase = database;
+		holder.mSession = session;
+		return holder;
+	}
 
-    public static Holder generateWtx() throws TTException {
-        final Holder holder = generateSession();
-        final IPageWriteTrx pRtx = holder.mSession.beginPageWriteTransaction();
-        holder.mPRtx = pRtx;
-        holder.mNRtx = new NodeWriteTrx(holder.mSession, pRtx,HashKind.Rolling);
-        return holder;
-    }
+	public static Holder generateWtx() throws TTException {
+		final Holder holder = generateSession();
+		final IPageWriteTrx pRtx = holder.mSession.beginPageWriteTransaction();
+		holder.mPRtx = pRtx;
+		holder.mNRtx = new NodeWriteTrx(holder.mSession, pRtx, HashKind.Rolling);
+		return holder;
+	}
 
-    public static Holder generateRtx() throws TTException {
-        final Holder holder = generateSession();
-        final IPageReadTrx pRtx =
-            holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
-        holder.mNRtx = new NodeReadTrx(pRtx);
-        return holder;
-    }
+	public static Holder generateRtx() throws TTException {
+		final Holder holder = generateSession();
+		final IPageReadTrx pRtx = holder.mSession
+				.beginPageReadTransaction(holder.mSession
+						.getMostRecentVersion());
+		holder.mNRtx = new NodeReadTrx(pRtx);
+		return holder;
+	}
 
-    public void close() throws TTException {
-        if (mNRtx != null && !mNRtx.isClosed()) {
-            mNRtx.close();
-        }
-        mSession.close();
-    }
+	public void close() throws TTException {
+		if (mNRtx != null && !mNRtx.isClosed()) {
+			mNRtx.close();
+		}
+		mSession.close();
+	}
 
-    public IDatabase getDatabase() {
-        return mDatabase;
-    }
+	public IDatabase getDatabase() {
+		return mDatabase;
+	}
 
-    public ISession getSession() {
-        return mSession;
-    }
+	public ISession getSession() {
+		return mSession;
+	}
 
-    public IPageReadTrx getPRtx() {
-        return mPRtx;
-    }
+	public IPageReadTrx getPRtx() {
+		return mPRtx;
+	}
 
-    public IPageWriteTrx getPWtx() {
-        if (mPRtx instanceof IPageWriteTrx) {
-            return (IPageWriteTrx)mPRtx;
-        } else {
-            throw new IllegalStateException();
-        }
+	public IPageWriteTrx getPWtx() {
+		if (mPRtx instanceof IPageWriteTrx) {
+			return (IPageWriteTrx) mPRtx;
+		} else {
+			throw new IllegalStateException();
+		}
 
-    }
+	}
 
-    public INodeReadTrx getNRtx() {
-        return mNRtx;
-    }
+	public INodeReadTrx getNRtx() {
+		return mNRtx;
+	}
 
-    public INodeWriteTrx getNWtx() {
-        if (mNRtx instanceof INodeWriteTrx) {
-            return (INodeWriteTrx)mNRtx;
-        } else {
-            throw new IllegalStateException();
-        }
+	public INodeWriteTrx getNWtx() {
+		if (mNRtx instanceof INodeWriteTrx) {
+			return (INodeWriteTrx) mNRtx;
+		} else {
+			throw new IllegalStateException();
+		}
 
-    }
+	}
 
 }

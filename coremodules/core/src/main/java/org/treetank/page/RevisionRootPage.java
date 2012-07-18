@@ -81,7 +81,6 @@ public final class RevisionRootPage implements IPage {
         mMaxNodeKey = -1L;
     }
 
-
     /**
      * Clone revision root page.
      * 

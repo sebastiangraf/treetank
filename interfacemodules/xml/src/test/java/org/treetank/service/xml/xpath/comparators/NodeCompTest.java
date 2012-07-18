@@ -34,6 +34,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
@@ -49,7 +50,7 @@ public class NodeCompTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
+        NodeHelper.createTestDocument();
         holder = Holder.generateRtx();
         comparator =
             new NodeComp(holder.getNRtx(), new LiteralExpr(holder.getNRtx(), -2), new LiteralExpr(holder

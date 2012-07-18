@@ -46,14 +46,13 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
     private static final long serialVersionUID = -5005030622296323912L;
 
     /**
-     * Paths for a {@link org.treetank.access.Database}. Each {@link org.treetank.access.Database} has the same folder.layout.
+     * Paths for a {@link org.treetank.access.Database}. Each {@link org.treetank.access.Database} has the
+     * same folder.layout.
      */
     public enum Paths {
 
         /** File to store db settings. */
         ConfigBinary(new File("dbsetting.obj"), false),
-        /** File to store encryption db settings. */
-        KEYSELECTOR(new File("keyselector"), true),
         /** File to store the data. */
         Data(new File("resources"), true);
 
@@ -114,15 +113,25 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
             return existing - values().length;
         }
 
+        /**
+         * Deleting a storage recursive. Used for deleting a databases
+         * 
+         * @param pFile
+         *            which should be deleted included descendants
+         * @return true if delete is valid
+         */
+        public static boolean recursiveDelete(final File pFile) {
+            if (pFile.isDirectory()) {
+                for (final File child : pFile.listFiles()) {
+                    if (!recursiveDelete(child)) {
+                        return false;
+                    }
+                }
+            }
+            return pFile.delete();
+        }
+
     }
-
-    // STATIC STANDARD FIELDS
-    /** Identification for string. */
-    public static final String BINARY = "5.4.0";
-    // END STATIC STANDARD FIELDS
-
-    /** Binary version of storage. */
-    public final String mBinaryVersion;
 
     /** Path to file. */
     public final File mFile;
@@ -134,7 +143,6 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
      *            file to be set
      */
     public DatabaseConfiguration(final File paramFile) {
-        mBinaryVersion = BINARY;
         mFile = paramFile;
     }
 
@@ -166,7 +174,6 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
         final int prime = 72277;
         int result = 13;
         result = prime * result + mFile.hashCode();
-        result = prime * result + mBinaryVersion.hashCode();
         return result;
     }
 

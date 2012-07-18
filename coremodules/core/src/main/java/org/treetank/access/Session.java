@@ -36,7 +36,6 @@ import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -92,7 +91,8 @@ public final class Session implements ISession {
         mSessionConfig = paramSessionConf;
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
 
-        mFac = EStorage.getStorage(mResourceConfig);
+        mFac = paramResourceConf.mStorage;
+
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.

@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.DumpFactoryModule;
+import org.treetank.FactoriesForTest;
 import org.treetank.api.INode;
-import org.treetank.node.NodeFactory;
+
+import com.google.inject.Inject;
 
 /**
  * Test Case for NodePage.
@@ -21,17 +23,11 @@ import org.treetank.node.NodeFactory;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(modules = DumpFactoryModule.class)
 public class NodePageTest {
 
-    @BeforeMethod
-    public void setUp() {
-        PageFactory.registerNewInstance(new PageFactory(FactoriesForTest.INSTANCE));
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        PageFactory.registerNewInstance(new PageFactory(new NodeFactory()));
-    }
+    @Inject
+    private PageFactory mFac;
 
     /**
      * Test method for {@link org.treetank.page.NodePage#NodePage(byte[])} and
@@ -47,7 +43,7 @@ public class NodePageTest {
         }
 
         final byte[] pageBytes = freshPage.getByteRepresentation();
-        final NodePage serializedPage = (NodePage)PageFactory.getInstance().deserializePage(pageBytes);
+        final NodePage serializedPage = (NodePage)mFac.deserializePage(pageBytes);
 
         assertTrue(Arrays.equals(pageBytes, serializedPage.getByteRepresentation()));
     }

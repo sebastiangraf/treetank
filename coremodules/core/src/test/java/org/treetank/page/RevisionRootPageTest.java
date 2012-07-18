@@ -7,10 +7,11 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.Arrays;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.node.NodeFactory;
+import org.treetank.DumpFactoryModule;
+
+import com.google.inject.Inject;
 
 /**
  * Test Case for RevisionRootPage.
@@ -18,17 +19,11 @@ import org.treetank.node.NodeFactory;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(modules = DumpFactoryModule.class)
 public class RevisionRootPageTest {
 
-    @BeforeMethod
-    public void setUp() {
-        PageFactory.registerNewInstance(new PageFactory(FactoriesForTest.INSTANCE));
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        PageFactory.registerNewInstance(new PageFactory(new NodeFactory()));
-    }
+    @Inject
+    private PageFactory mFac;
 
     /**
      * Test method for {@link org.treetank.page.RevisionRootPage#RevisionRootPage(byte[])} and
@@ -39,8 +34,7 @@ public class RevisionRootPageTest {
         final RevisionRootPage freshPage = new RevisionRootPage(IConstants.UBP_ROOT_REVISION_NUMBER);
         final byte[] pageBytes = freshPage.getByteRepresentation();
 
-        final RevisionRootPage serializedPage =
-            (RevisionRootPage)PageFactory.getInstance().deserializePage(pageBytes);
+        final RevisionRootPage serializedPage = (RevisionRootPage)mFac.deserializePage(pageBytes);
         assertTrue(Arrays.equals(pageBytes, serializedPage.getByteRepresentation()));
     }
 }

@@ -27,25 +27,20 @@
 
 package org.treetank.access;
 
-import static org.testng.AssertJUnit.assertEquals;
-
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
-import org.treetank.node.ElementNode;
 
-public class AttributeAndNamespaceTest {
+public class MinimumCommitTest {
 
     private Holder holder;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        holder = Holder.generateWtx();
     }
 
     @AfterMethod
@@ -54,27 +49,26 @@ public class AttributeAndNamespaceTest {
         TestHelper.closeEverything();
     }
 
-    @Test
-    public void testAttribute() throws TTException {
-        holder.getNRtx().moveTo(1L);
-        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
-        holder.getNRtx().moveToAttribute(0);
-        assertEquals("i", holder.getNRtx().getQNameOfCurrentNode().getLocalPart());
+    // @Test
+    // public void test() throws TTException {
+    // assertEquals(0L, holder.getWtx().getRevisionNumber());
+    // holder.getWtx().commit();
+    // holder.close();
+    //
+    // holder = Holder.generateWtx();
+    // assertEquals(1L, holder.getWtx().getRevisionNumber());
+    // DocumentCreater.create(holder.getWtx());
+    // holder.getWtx().commit();
+    // holder.close();
+    //
+    // holder = Holder.generateWtx();
+    // assertEquals(2L, holder.getWtx().getRevisionNumber());
+    // holder.getWtx().commit();
+    // holder.close();
+    //
+    // holder = Holder.generateRtx();
+    // assertEquals(2L, holder.getRtx().getRevisionNumber());
+    //
+    // }
 
-        holder.getNRtx().moveTo(9L);
-        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
-        holder.getNRtx().moveToAttribute(0);
-        assertEquals("p:x", new StringBuilder(holder.getNRtx().getQNameOfCurrentNode().getPrefix())
-            .append(":").append(holder.getNRtx().getQNameOfCurrentNode().getLocalPart()).toString());
-        assertEquals("ns", holder.getNRtx().getQNameOfCurrentNode().getNamespaceURI());
-    }
-
-    @Test
-    public void testNamespace() throws TTException {
-        holder.getNRtx().moveTo(1L);
-        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getNamespaceCount());
-        holder.getNRtx().moveToNamespace(0);
-        assertEquals("p", holder.getNRtx().getQNameOfCurrentNode().getLocalPart());
-        assertEquals("ns", holder.getNRtx().getQNameOfCurrentNode().getNamespaceURI());
-    }
 }

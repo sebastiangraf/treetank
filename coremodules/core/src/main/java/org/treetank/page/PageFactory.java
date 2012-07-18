@@ -30,18 +30,17 @@ package org.treetank.page;
 import java.util.Arrays;
 
 import org.treetank.api.INodeFactory;
-import org.treetank.node.NodeFactory;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public final class PageFactory {
 
     /** Node Factory to be initialized. */
     private INodeFactory mNodeFac;
-
-    private static PageFactory INSTANCE = new PageFactory(new NodeFactory());
 
     /**
      * Constructor.
@@ -51,21 +50,6 @@ public final class PageFactory {
     @Inject
     public PageFactory(final INodeFactory pFac) {
         mNodeFac = pFac;
-    }
-
-    /** Singleton method. */
-    public static synchronized final PageFactory getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Set new singleton.
-     * 
-     * @param pFac
-     *            to be set
-     */
-    public static synchronized void registerNewInstance(final PageFactory pFac) {
-        INSTANCE = pFac;
     }
 
     /**

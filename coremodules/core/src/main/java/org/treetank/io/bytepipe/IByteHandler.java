@@ -2,6 +2,8 @@ package org.treetank.io.bytepipe;
 
 import org.treetank.exception.TTByteHandleException;
 
+import com.google.inject.ImplementedBy;
+
 /**
  * Interface for the decorator, representing any byte representation to be
  * serialized or to serialize.
@@ -9,6 +11,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@ImplementedBy(ByteHandlePipeline.class)
 public interface IByteHandler {
 
     /**

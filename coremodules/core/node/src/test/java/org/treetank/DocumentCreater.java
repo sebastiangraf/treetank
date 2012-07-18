@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.utils;
+package org.treetank;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +33,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.TestHelper;
+import org.treetank.NodeHelper;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -97,7 +97,7 @@ public final class DocumentCreater {
     public static void create(final INodeWriteTrx paramWtx) throws TTException {
         assertNotNull(paramWtx);
 
-        TestHelper.createDocumentRootNode(paramWtx);
+        NodeHelper.createDocumentRootNode(paramWtx);
 
         assertTrue(paramWtx.moveTo(ROOT_NODE));
 

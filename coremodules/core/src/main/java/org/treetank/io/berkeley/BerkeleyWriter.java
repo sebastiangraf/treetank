@@ -111,7 +111,7 @@ public final class BerkeleyWriter implements IWriter {
         // TODO make this better
         mNodepagekey++;
 
-        BerkeleyFactory.PAGE_VAL_B.objectToEntry(page, valueEntry);
+        mReader.mPageBinding.objectToEntry(page, valueEntry);
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(mNodepagekey, keyEntry);
 
         final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);

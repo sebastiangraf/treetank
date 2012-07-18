@@ -6,12 +6,13 @@ package org.treetank.page;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.Arrays;
-import java.util.Random;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.node.NodeFactory;
+import org.treetank.DumpFactoryModule;
+import org.treetank.TestHelper;
+
+import com.google.inject.Inject;
 
 /**
  * Test Case for NamePage.
@@ -19,19 +20,11 @@ import org.treetank.node.NodeFactory;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(modules = DumpFactoryModule.class)
 public class NamePageTest {
 
-    private final static Random mRan = new Random();
-
-    @BeforeMethod
-    public void setUp() {
-        PageFactory.registerNewInstance(new PageFactory(FactoriesForTest.INSTANCE));
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        PageFactory.registerNewInstance(new PageFactory(new NodeFactory()));
-    }
+    @Inject
+    private PageFactory mFac;
 
     /**
      * Test method for {@link org.treetank.page.NamePage#NamePage(long)} and
@@ -40,11 +33,11 @@ public class NamePageTest {
     @Test
     public void testNamePageByteArray() {
         final NamePage freshPage = new NamePage(0);
-        freshPage.setName(mRan.nextInt(), "bla");
-        freshPage.setName(mRan.nextInt(), "blubb");
+        freshPage.setName(TestHelper.random.nextInt(), "bla");
+        freshPage.setName(TestHelper.random.nextInt(), "blubb");
         final byte[] pageBytes = freshPage.getByteRepresentation();
 
-        final NamePage serializedPage = (NamePage)PageFactory.getInstance().deserializePage(pageBytes);
+        final NamePage serializedPage = (NamePage)mFac.deserializePage(pageBytes);
 
         assertTrue(Arrays.equals(pageBytes, serializedPage.getByteRepresentation()));
     }

@@ -51,7 +51,7 @@ import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
-import org.treetank.settings.ERevisioning;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -501,10 +501,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
         throws TTException {
         final NodePage[] revs = mDelegate.getSnapshotPages(paramNodePageKey);
-        final ERevisioning revision = mDelegate.mSession.getConfig().mRevision;
-        final int mileStoneRevision = mDelegate.mSession.getConfig().mRevisionsToRestore;
+        final IRevisioning revision = mDelegate.mSession.getConfig().mRevision;
 
-        return revision.combinePagesForModification(revs, mileStoneRevision);
+        return revision.combinePagesForModification(revs);
     }
 
     /**

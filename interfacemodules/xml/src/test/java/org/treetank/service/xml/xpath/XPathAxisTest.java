@@ -31,6 +31,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.TTException;
@@ -47,7 +48,7 @@ public class XPathAxisTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
+        NodeHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
@@ -79,8 +80,8 @@ public class XPathAxisTest {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::p:" + "a/child::b/child::c"),
-            new long[] {
+        AbsAxisTest.testIAxisConventions(
+            new XPathAxis(holder.getNRtx(), "child::p:" + "a/child::b/child::c"), new long[] {
                 7L, 11L
             });
 
@@ -227,8 +228,8 @@ public class XPathAxisTest {
             5L, 9L
         });
 
-        AbsAxisTest
-            .testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/descendant::p:a"), new long[] {});
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/descendant::p:a"),
+            new long[] {});
 
     }
 
@@ -397,14 +398,15 @@ public class XPathAxisTest {
             5L, 9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::*[text() or c]"), new long[] {
-            5l, 9L
-        });
-
-        AbsAxisTest.testIAxisConventions(
-            new XPathAxis(holder.getNRtx(), "child::*[text() or c], /node(), //c"), new long[] {
-                5l, 9L, 1L, 7L, 11L
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::*[text() or c]"),
+            new long[] {
+                5l, 9L
             });
+
+        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+            "child::*[text() or c], /node(), //c"), new long[] {
+            5l, 9L, 1L, 7L, 11L
+        });
     }
 
     @Test

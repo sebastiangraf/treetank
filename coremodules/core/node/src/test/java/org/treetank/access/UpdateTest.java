@@ -37,7 +37,9 @@ import javax.xml.namespace.QName;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.treetank.DocumentCreater;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeReadTrx;
@@ -45,7 +47,6 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.utils.DocumentCreater;
 
 public class UpdateTest {
 
@@ -66,7 +67,7 @@ public class UpdateTest {
     public void testNodeTransactionIsolation() throws TTException {
 
         INodeWriteTrx wtx = holder.getNWtx();
-        TestHelper.createDocumentRootNode(wtx);
+        NodeHelper.createDocumentRootNode(wtx);
         wtx.insertElementAsFirstChild(new QName(""));
         testNodeTransactionIsolation(wtx);
         wtx.commit();
@@ -108,7 +109,7 @@ public class UpdateTest {
     public void testInsertChild() throws TTException {
 
         INodeWriteTrx wtx = holder.getNWtx();
-        TestHelper.createDocumentRootNode(wtx);
+        NodeHelper.createDocumentRootNode(wtx);
         wtx.commit();
         wtx.close();
 
@@ -159,7 +160,7 @@ public class UpdateTest {
         wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                 HashKind.Rolling);
-        TestHelper.createDocumentRootNode(wtx);
+        NodeHelper.createDocumentRootNode(wtx);
         wtx.moveTo(ROOT_NODE);
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
@@ -182,7 +183,7 @@ public class UpdateTest {
     @Test
     public void testPageBoundary() throws TTException {
         INodeWriteTrx wtx = holder.getNWtx();
-        TestHelper.createDocumentRootNode(wtx);
+        NodeHelper.createDocumentRootNode(wtx);
 
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));

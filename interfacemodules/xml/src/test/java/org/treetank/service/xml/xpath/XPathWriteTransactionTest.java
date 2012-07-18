@@ -71,7 +71,7 @@ public final class XPathWriteTransactionTest {
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Build simple test tree.
-        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
+        XMLShredder.main(XML, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
 
         // Verify.
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());

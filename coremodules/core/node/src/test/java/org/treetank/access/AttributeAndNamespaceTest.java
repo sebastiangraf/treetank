@@ -27,23 +27,26 @@
 
 package org.treetank.access;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
+import org.treetank.node.ElementNode;
 
-public class ThreadTest {
-
-    public static final int WORKER_COUNT = 50;
+public class AttributeAndNamespaceTest {
 
     private Holder holder;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = Holder.generateSession();
+        NodeHelper.createTestDocument();
+        holder = Holder.generateRtx();
     }
 
     @AfterMethod
@@ -52,43 +55,27 @@ public class ThreadTest {
         TestHelper.closeEverything();
     }
 
-    // @Test
-    // public void testThreads() throws Exception {
-    // final ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
-    // long newKey = 10L;
-    // for (int i = 0; i < WORKER_COUNT; i++) {
-    // taskExecutor.submit(new Task(holder.getSession().beginReadTransaction(i)));
-    // final INodeWriteTrx wtx = holder.getSession().beginWriteTransaction();
-    // wtx.moveTo(newKey);
-    // wtx.setValue("value" + i);
-    // newKey = wtx.getNode().getNodeKey();
-    // wtx.commit();
-    // wtx.close();
-    // }
-    // taskExecutor.shutdown();
-    // taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
-    //
-    // }
+    @Test
+    public void testAttribute() throws TTException {
+        holder.getNRtx().moveTo(1L);
+        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
+        holder.getNRtx().moveToAttribute(0);
+        assertEquals("i", holder.getNRtx().getQNameOfCurrentNode().getLocalPart());
 
-    // private class Task implements Callable<Void> {
-    //
-    // private INodeReadTrx mRTX;
-    //
-    // public Task(final INodeReadTrx rtx) {
-    // mRTX = rtx;
-    // }
-    //
-    // public Void call() throws Exception {
-    // final AbsAxis axis = new DescendantAxis(mRTX);
-    // while (axis.hasNext()) {
-    // axis.next();
-    // }
-    //
-    // mRTX.moveTo(12L);
-    // assertEquals("bar", mRTX.getValueOfCurrentNode());
-    // mRTX.close();
-    // return null;
-    // }
-    // }
+        holder.getNRtx().moveTo(9L);
+        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getAttributeCount());
+        holder.getNRtx().moveToAttribute(0);
+        assertEquals("p:x", new StringBuilder(holder.getNRtx().getQNameOfCurrentNode().getPrefix()).append(
+            ":").append(holder.getNRtx().getQNameOfCurrentNode().getLocalPart()).toString());
+        assertEquals("ns", holder.getNRtx().getQNameOfCurrentNode().getNamespaceURI());
+    }
 
+    @Test
+    public void testNamespace() throws TTException {
+        holder.getNRtx().moveTo(1L);
+        assertEquals(1, ((ElementNode)holder.getNRtx().getNode()).getNamespaceCount());
+        holder.getNRtx().moveToNamespace(0);
+        assertEquals("p", holder.getNRtx().getQNameOfCurrentNode().getLocalPart());
+        assertEquals("ns", holder.getNRtx().getQNameOfCurrentNode().getNamespaceURI());
+    }
 }

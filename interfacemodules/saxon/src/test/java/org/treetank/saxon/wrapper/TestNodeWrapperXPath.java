@@ -51,6 +51,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
@@ -78,7 +79,7 @@ public final class TestNodeWrapperXPath {
     @BeforeMethod
     public void setUp() throws TTException, XPathFactoryConfigurationException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
+        NodeHelper.createTestDocument();
         mHolder = Holder.generateRtx();
 
         // Saxon setup.

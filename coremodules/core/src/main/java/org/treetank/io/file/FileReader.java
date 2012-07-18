@@ -44,6 +44,9 @@ import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 /**
  * File Reader. Used for NodeReadTrx to provide read only access on a
  * RandomAccessFile.
@@ -55,14 +58,14 @@ import org.treetank.page.UberPage;
  */
 public final class FileReader implements IReader {
 
-    /** Factory for building Pages. */
-    private final PageFactory mFac = PageFactory.getInstance();
-
     /** Beacon of first references. */
     protected final static int FIRST_BEACON = 12;
 
     /** Beacon of the other references. */
     protected final static int OTHER_BEACON = 4;
+
+    /** Factory for building Pages. */
+    private final PageFactory mFac;
 
     /** Random access mFile to work on. */
     protected transient final RandomAccessFile mFile;

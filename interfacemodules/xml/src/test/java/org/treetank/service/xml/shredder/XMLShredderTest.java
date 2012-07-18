@@ -43,6 +43,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
@@ -59,7 +60,7 @@ import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.service.xml.util.DocumentCreater;
+import org.treetank.service.xml.DocumentCreater;
 
 public class XMLShredderTest extends XMLTestCase {
 
@@ -92,7 +93,7 @@ public class XMLShredderTest extends XMLTestCase {
         // Setup parsed session.
         XMLShredder.main(XML, PATHS.PATH2.getFile().getAbsolutePath());
         final INodeWriteTrx expectedTrx = holder.getNWtx();
-        TestHelper.createDocumentRootNode(expectedTrx);
+        NodeHelper.createDocumentRootNode(expectedTrx);
 
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
@@ -154,7 +155,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         final INodeWriteTrx expectedTrx =
             new NodeWriteTrx(expectedSession, expectedSession.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.utils.DocumentCreater.create(expectedTrx);
+        org.treetank.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
         expectedTrx.moveTo(ROOT_NODE);
 

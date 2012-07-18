@@ -31,6 +31,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
 
@@ -47,7 +48,7 @@ public class RangeAxisTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
+        NodeHelper.createTestDocument();
         holder = Holder.generateRtx();
     }
 
@@ -61,7 +62,7 @@ public class RangeAxisTest {
     public void testRangeExpr() throws TTException {
         // // Build simple test tree.
         // final IDatabase database =
-        // TestHelper.getDatabase(PATHS.PATH1.getFile());
+        // NodeHelper.getDatabase(PATHS.PATH1.getFile());
         // final ISession session = database.getSession();
         // final INodeWriteTrx wtx = session.beginWriteTransaction();
         // DocumentCreater.create(wtx);

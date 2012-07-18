@@ -37,7 +37,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AbsAxisTest;
 import org.treetank.exception.TTException;
@@ -52,7 +51,7 @@ public class XPathAxisWideTest {
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Setup parsed session.
-        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
+        XMLShredder.main(XML, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
 
     }
 
@@ -77,8 +76,8 @@ public class XPathAxisWideTest {
                 2L, 5L, 8L, 11L, 14L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "mondial/continent[@id=\"f0_119\"]"),
-            new long[] {
+        AbsAxisTest.testIAxisConventions(
+            new XPathAxis(holder.getNRtx(), "mondial/continent[@id=\"f0_119\"]"), new long[] {
                 2L
             });
 

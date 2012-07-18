@@ -34,7 +34,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
@@ -62,7 +61,7 @@ public class XMarkBenchTest {
     public static void setUp() throws Exception {
         TestHelper.deleteEverything();
         // EncryptionHelper.start();
-        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
+        XMLShredder.main(XML, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         holder = Holder.generateRtx();
     }
 

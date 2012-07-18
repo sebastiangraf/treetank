@@ -52,6 +52,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
@@ -85,7 +86,7 @@ public class TestNodeWrapper {
     public void beforeMethod() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
+        NodeHelper.createTestDocument();
         mHolder = Holder.generateSession();
 
         final Processor proc = new Processor(false);

@@ -37,9 +37,9 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.treetank.DocumentCreater;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
@@ -49,7 +49,6 @@ import org.treetank.exception.TTException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.utils.DocumentCreater;
 
 public class SessionTest {
 
@@ -100,8 +99,8 @@ public class SessionTest {
 
     @Test
     public void testNonExisting() throws TTException, InterruptedException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IDatabase database2 = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         assertTrue(database == database2);
     }
 
@@ -175,9 +174,9 @@ public class SessionTest {
     //
     // @Test
     // public void testExisting() throws TTException {
-    // final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+    // final IDatabase database = NodeHelper.getDatabase(PATHS.PATH1.getFile());
     // final ISession session1 =
-    // database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+    // database.getSession(new SessionConfiguration.Builder(NodeHelper.RESOURCE).build());
     //
     // final INodeWriteTrx wtx1 = session1.beginNodeWriteTransaction();
     // DocumentCreater.create(wtx1);
@@ -187,7 +186,7 @@ public class SessionTest {
     // session1.close();
     //
     // final ISession session2 =
-    // database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+    // database.getSession(new SessionConfiguration.Builder(NodeHelper.RESOURCE).build());
     // final INodeReadTrx rtx1 = session2.beginNodeReadTransaction();
     // assertEquals(0L, rtx1.getRevisionNumber());
     // rtx1.moveTo(12L);
@@ -206,9 +205,9 @@ public class SessionTest {
     // wtx2.close();
     // session2.close();
     //
-    // final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
+    // final IDatabase database2 = NodeHelper.getDatabase(PATHS.PATH1.getFile());
     // final ISession session3 =
-    // database2.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+    // database2.getSession(new SessionConfiguration.Builder(NodeHelper.RESOURCE).build());
     // final INodeReadTrx rtx2 = session3.beginNodeReadTransaction();
     // assertEquals(1L, rtx2.getRevisionNumber());
     // rtx2.moveTo(12L);

@@ -52,7 +52,7 @@ public final class ByteHandlePipeline implements IByteHandler {
     @Override
     public byte[] deserialize(final byte[] pToDeserialize) throws TTByteHandleException {
         byte[] pipeData = pToDeserialize;
-        for (int i = mParts.size()-1; i >= 0; i--) {
+        for (int i = mParts.size() - 1; i >= 0; i--) {
             pipeData = mParts.get(i).deserialize(pipeData);
         }
         return pipeData;

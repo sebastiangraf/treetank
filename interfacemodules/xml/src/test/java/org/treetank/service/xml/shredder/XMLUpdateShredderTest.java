@@ -43,7 +43,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -52,6 +51,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.service.xml.XMLTestHelper;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
@@ -207,8 +207,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     @Test(enabled = false)
     private void test(final String FOLDER) throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, TestHelper.PATHS.PATH1
             .getConfig()).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
@@ -246,7 +246,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
-                final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
+                final INodeWriteTrx wtx =
+                    new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
                 if (first) {
                     final XMLShredder shredder =
                         new XMLShredder(wtx, XMLShredder.createFileReader(file),
@@ -263,7 +264,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 final OutputStream out = new ByteArrayOutputStream();
                 final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();
                 serializer.call();
-                final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
+                final StringBuilder sBuilder = XMLTestHelper.readFile(file.getAbsoluteFile(), false);
 
                 // System.out.println(out.toString());
                 final Diff diff = new Diff(sBuilder.toString(), out.toString());

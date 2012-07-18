@@ -1,14 +1,14 @@
 /**
  * 
  */
-package org.treetank.service.xml.util;
+package org.treetank.service.xml;
 
 import static org.junit.Assert.assertNotNull;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.TestHelper;
+import org.treetank.NodeHelper;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -48,7 +48,7 @@ public class DocumentCreater {
      */
     public static void createVersioned(final INodeWriteTrx paramWtx) throws TTException {
         assertNotNull(paramWtx);
-        org.treetank.utils.DocumentCreater.create(paramWtx);
+        org.treetank.DocumentCreater.create(paramWtx);
         paramWtx.commit();
         for (int i = 0; i <= 1; i++) {
             paramWtx.moveTo(ROOT_NODE);
@@ -70,7 +70,7 @@ public class DocumentCreater {
      */
     public static void createWithoutNamespace(final INodeWriteTrx paramWtx) throws TTException {
         assertNotNull(paramWtx);
-        TestHelper.createDocumentRootNode(paramWtx);
+        NodeHelper.createDocumentRootNode(paramWtx);
         paramWtx.moveTo(ROOT_NODE);
 
         paramWtx.insertElementAsFirstChild(new QName("a"));

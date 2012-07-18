@@ -89,8 +89,7 @@ public class FullDiffTest {
     }
 
     @Test
-    public void testFullDiffThird() throws TTException, IOException, XMLStreamException,
-        InterruptedException {
+    public void testFullDiffThird() throws TTException, IOException, XMLStreamException, InterruptedException {
         DiffTestHelper.setUpThird(mHolder);
         DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffThird(mObserver);

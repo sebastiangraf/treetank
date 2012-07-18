@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.settings;
+package org.treetank.revisioning;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.treetank.TestHelper.getNodePage;
@@ -50,20 +50,6 @@ public class ERevisioningTest {
         TestHelper.closeEverything();
     }
 
-    @Test
-    public void testFulldumpCombinePages() {
-        final NodePage[] pages = new NodePage[2];
-        pages[0] = getNodePage(1, 0, 128, 0);
-        pages[1] = getNodePage(0, 0, 128, 0);
-
-        final NodePage page =
-            ERevisioning.FULLDUMP.combinePages(pages, ResourceConfiguration.VERSIONSTORESTORE);
-
-        for (int j = 0; j < page.getNodes().length; j++) {
-            assertEquals(pages[0].getNode(j), page.getNode(j));
-        }
-
-    }
 
     @Test
     public void testDifferentialCombinePages() {

@@ -27,6 +27,7 @@
 
 package org.treetank.io.berkeley;
 
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.bytepipe.ByteHandlePipeline;
 import org.treetank.io.bytepipe.Encryptor;
@@ -50,11 +51,13 @@ import com.sleepycat.bind.tuple.TupleOutput;
 public final class PageBinding extends TupleBinding<IPage> {
 
     /** Factory for Pages. */
-    private final PageFactory mFac = PageFactory.getInstance();
+    private final PageFactory mFac;
 
+    /** Handling the byte-representation before serialization. */
     private final IByteHandler mByteHandler;
 
-    public PageBinding() {
+    public PageBinding(final ResourceConfiguration pConf) {
+        mFac = new PageFactory(pConf.mNodeFac);
         try {
             mByteHandler = new ByteHandlePipeline(new Encryptor(), new Zipper());
         } catch (TTByteHandleException e) {

@@ -57,8 +57,9 @@ public interface IConstants {
     public static final int INP_REFERENCE_COUNT = 128;
 
     /** Exponent of pages per level (root level = 0, leaf level = 5). */
-    public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = { 4 * 7, 3 * 7,
-            2 * 7, 1 * 7, 0 * 7 };
+    public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = {
+        4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
+    };
 
     // --- Uber Page
     // -------------------------------------------------------------

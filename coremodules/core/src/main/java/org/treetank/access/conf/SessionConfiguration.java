@@ -34,21 +34,16 @@ import org.treetank.access.Session;
  * <h1>SessionConfiguration</h1>
  * 
  * <p>
- * Holds the {@link Session}-wide settings that can not change within the
- * runtime of a {@link Session}. This included stuff like commit-threshold and
- * number of usable write/read transactions. Each {@link SessionConfiguration}
- * is only bound through the location to a {@link Database} and related
+ * Holds the {@link Session}-wide settings that can not change within the runtime of a {@link Session}. This
+ * included stuff like commit-threshold and number of usable write/read transactions. Each
+ * {@link SessionConfiguration} is only bound through the location to a {@link Database} and related
  * resources.
  * </p>
  */
 public final class SessionConfiguration {
 
-    /** Default User. */
-    public static final String DEFAULT_USER = "ALL";
-    // END STATIC STANDARD FIELDS
-
     /** User for this session. */
-    public final String mUser;
+    private final String mUser;
     // END MEMBERS FOR FIXED FIELDS
 
     /** ResourceConfiguration for this ResourceConfig. */
@@ -110,7 +105,7 @@ public final class SessionConfiguration {
     public static final class Builder {
 
         /** User for this session. */
-        private String mUser = SessionConfiguration.DEFAULT_USER;
+        private String mUser;
 
         /** Resource for the this session. */
         private String mResource;
@@ -123,8 +118,7 @@ public final class SessionConfiguration {
          */
         public Builder(final String pRes) {
             if (pRes == null) {
-                throw new IllegalArgumentException(
-                        "Parameter must not be null!");
+                throw new IllegalArgumentException("Parameter must not be null!");
             }
             this.mResource = pRes;
         }

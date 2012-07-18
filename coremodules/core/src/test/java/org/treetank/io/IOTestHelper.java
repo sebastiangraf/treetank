@@ -30,10 +30,7 @@ package org.treetank.io;
 import static org.testng.AssertJUnit.assertEquals;
 
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
-import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
@@ -49,21 +46,6 @@ public final class IOTestHelper {
     }
 
     /**
-     * Static method to get {@link ResourceConfiguration}
-     * 
-     * @param type
-     *            for the the {@link ResourceConfiguration} should be generated
-     * @return a suitable {@link ResourceConfiguration}
-     * @throws TTUsageException
-     */
-    public static ResourceConfiguration registerIO(final EStorage type) throws TTException {
-        final ResourceConfiguration.Builder resourceConfig =
-            new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1.getConfig());
-        resourceConfig.setType(type);
-        return resourceConfig.build();
-    }
-
-    /**
      * Tear down for all tests related to the io layer.
      */
     public static void clean() throws TTException {
@@ -71,14 +53,14 @@ public final class IOTestHelper {
 
     }
 
-    public static void testReadWriteFirstRef(final ResourceConfiguration resourceConf) throws TTException {
-        final IStorage fac = EStorage.getStorage(resourceConf);
+    public static void testReadWriteFirstRef(final IStorage storage) throws TTException {
+
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();
         pageRef1.setPage(page1);
 
         // same instance check
-        final IWriter writer = fac.getWriter();
+        final IWriter writer = storage.getWriter();
         writer.writeFirstReference(pageRef1);
         final PageReference pageRef2 = writer.readFirstReference();
         assertEquals(pageRef1.getNodePageKey(), pageRef2.getNodePageKey());
@@ -87,14 +69,13 @@ public final class IOTestHelper {
         writer.close();
 
         // new instance check
-        final IReader reader = fac.getReader();
+        final IReader reader = storage.getReader();
         final PageReference pageRef3 = reader.readFirstReference();
         assertEquals(pageRef1.getNodePageKey(), pageRef3.getNodePageKey());
         assertEquals(((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef3.getPage())
             .getRevisionCount());
         reader.close();
-        fac.close();
+        storage.close();
 
     }
-
 }

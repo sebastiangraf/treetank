@@ -35,7 +35,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
-import org.treetank.page.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
@@ -59,17 +58,10 @@ import com.sleepycat.je.OperationStatus;
  */
 public final class BerkeleyFactory implements IStorage {
 
-    /** Binding for {@link IPage}. */
-    public static final TupleBinding<IPage> PAGE_VAL_B = new PageBinding();
-
-    /**
-     * Name for the database.
-     */
+    /** Name for the database. */
     private static final String NAME = "berkeleyDatabase";
 
-    /**
-     * Berkeley Environment for the database.
-     */
+    /** Berkeley Environment for the database. */
     private final Environment mEnv;
 
     /**

@@ -35,7 +35,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.SessionConfiguration;
@@ -43,8 +42,8 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.service.xml.DocumentCreater;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-import org.treetank.service.xml.util.DocumentCreater;
 
 public class XMLSerializerTest {
 
@@ -60,12 +59,12 @@ public class XMLSerializerTest {
 
     @Test
     public void testXMLSerializer() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.utils.DocumentCreater.create(wtx);
+        org.treetank.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
@@ -73,18 +72,18 @@ public class XMLSerializerTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();
         serializer.call();
-        assertEquals(org.treetank.utils.DocumentCreater.XML, out.toString());
+        assertEquals(org.treetank.DocumentCreater.XML, out.toString());
         session.close();
     }
 
     @Test
     public void testRestSerializer() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.utils.DocumentCreater.create(wtx);
+        org.treetank.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
@@ -103,12 +102,12 @@ public class XMLSerializerTest {
 
     @Test
     public void testIDSerializer() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.utils.DocumentCreater.create(wtx);
+        org.treetank.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
@@ -125,7 +124,7 @@ public class XMLSerializerTest {
 
     @Test
     public void testSampleCompleteSerializer() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =
@@ -156,7 +155,7 @@ public class XMLSerializerTest {
     @Test
     public void testKeyStart() throws Exception {
 
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =

@@ -33,13 +33,17 @@ import org.treetank.page.PageFactory;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
+@Singleton
 public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
-    private final PageFactory mFac = PageFactory.getInstance();
+    @Inject
+    private PageFactory mFac;
 
     @Override
     public NodePageContainer entryToObject(final TupleInput arg0) {

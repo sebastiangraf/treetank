@@ -48,7 +48,7 @@ import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
-import org.treetank.settings.ERevisioning;
+import org.treetank.revisioning.IRevisioning;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -140,11 +140,10 @@ public class PageReadTrx implements IPageReadTrx {
             if (revs.length == 0) {
                 return null;
             }
-            final int mileStoneRevision = mSession.getConfig().mRevisionsToRestore;
 
             // Build up the complete page.
-            final ERevisioning revision = mSession.getConfig().mRevision;
-            final NodePage completePage = revision.combinePages(revs, mileStoneRevision);
+            final IRevisioning revision = mSession.getConfig().mRevision;
+            final NodePage completePage = revision.combinePages(revs);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
         }

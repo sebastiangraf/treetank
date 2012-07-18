@@ -30,24 +30,25 @@ package org.treetank.io;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
 import org.treetank.TestHelper;
-import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTException;
+import org.treetank.io.file.FileFactory;
 
 public class FileTest {
-    private ResourceConfiguration resourceConf;
+
+    private IStorage storage;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Holder.generateSession().close();
-        resourceConf = IOTestHelper.registerIO(EStorage.File);
+        TestHelper.closeEverything();
+        TestHelper.PATHS.PATH1.getFile().mkdirs();
+        storage = new FileFactory(TestHelper.PATHS.PATH1.getFile());
     }
 
     @Test
     public void testFirstRef() throws TTException {
-        IOTestHelper.testReadWriteFirstRef(resourceConf);
+        IOTestHelper.testReadWriteFirstRef(storage);
     }
 
     @AfterMethod

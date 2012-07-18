@@ -30,17 +30,21 @@ package org.treetank.access;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
 
-public class MinimumCommitTest {
+public class ThreadTest {
+
+    public static final int WORKER_COUNT = 50;
 
     private Holder holder;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        holder = Holder.generateWtx();
+        NodeHelper.createTestDocument();
+        holder = Holder.generateSession();
     }
 
     @AfterMethod
@@ -49,26 +53,43 @@ public class MinimumCommitTest {
         TestHelper.closeEverything();
     }
 
-//    @Test
-//    public void test() throws TTException {
-//        assertEquals(0L, holder.getWtx().getRevisionNumber());
-//        holder.getWtx().commit();
-//        holder.close();
-//
-//        holder = Holder.generateWtx();
-//        assertEquals(1L, holder.getWtx().getRevisionNumber());
-//        DocumentCreater.create(holder.getWtx());
-//        holder.getWtx().commit();
-//        holder.close();
-//
-//        holder = Holder.generateWtx();
-//        assertEquals(2L, holder.getWtx().getRevisionNumber());
-//        holder.getWtx().commit();
-//        holder.close();
-//
-//        holder = Holder.generateRtx();
-//        assertEquals(2L, holder.getRtx().getRevisionNumber());
-//
-//    }
+    // @Test
+    // public void testThreads() throws Exception {
+    // final ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
+    // long newKey = 10L;
+    // for (int i = 0; i < WORKER_COUNT; i++) {
+    // taskExecutor.submit(new Task(holder.getSession().beginReadTransaction(i)));
+    // final INodeWriteTrx wtx = holder.getSession().beginWriteTransaction();
+    // wtx.moveTo(newKey);
+    // wtx.setValue("value" + i);
+    // newKey = wtx.getNode().getNodeKey();
+    // wtx.commit();
+    // wtx.close();
+    // }
+    // taskExecutor.shutdown();
+    // taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
+    //
+    // }
+
+    // private class Task implements Callable<Void> {
+    //
+    // private INodeReadTrx mRTX;
+    //
+    // public Task(final INodeReadTrx rtx) {
+    // mRTX = rtx;
+    // }
+    //
+    // public Void call() throws Exception {
+    // final AbsAxis axis = new DescendantAxis(mRTX);
+    // while (axis.hasNext()) {
+    // axis.next();
+    // }
+    //
+    // mRTX.moveTo(12L);
+    // assertEquals("bar", mRTX.getValueOfCurrentNode());
+    // mRTX.close();
+    // return null;
+    // }
+    // }
 
 }

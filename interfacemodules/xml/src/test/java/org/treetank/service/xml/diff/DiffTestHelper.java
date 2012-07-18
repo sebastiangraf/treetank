@@ -43,13 +43,13 @@ import org.mockito.InOrder;
 import org.treetank.Holder;
 import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
+import org.treetank.service.xml.DocumentCreater;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
 import org.treetank.service.xml.shredder.EShredderCommit;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.shredder.XMLUpdateShredder;
-import org.treetank.service.xml.util.DocumentCreater;
 
 public final class DiffTestHelper {
 

@@ -62,6 +62,10 @@ public final class FileFactory implements IStorage {
      */
     public FileFactory(final File paramFile) {
         mFile = paramFile;
+        final File repoFile = new File(paramFile, ResourceConfiguration.Paths.Data.getFile().getName());
+        if (!repoFile.exists()) {
+            repoFile.mkdirs();
+        }
     }
 
     /**

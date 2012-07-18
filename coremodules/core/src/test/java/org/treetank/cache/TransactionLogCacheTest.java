@@ -42,7 +42,7 @@ public class TransactionLogCacheTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
+        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1);
         CacheTestHelper.setUp(cache);
     }

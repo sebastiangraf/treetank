@@ -29,8 +29,10 @@ package org.treetank.access.conf;
 import java.io.File;
 
 import org.treetank.access.Session;
-import org.treetank.io.EStorage;
-import org.treetank.settings.ERevisioning;
+import org.treetank.api.INodeFactory;
+import org.treetank.io.IStorage;
+import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.revisioning.IRevisioning;
 
 /**
  * <h1>ResourceConfiguration</h1>
@@ -118,23 +120,18 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         }
     }
 
-    // FIXED STANDARD FIELDS
-    /** Standard storage. */
-    public static final EStorage STORAGE = EStorage.File;
-    /** Standard Versioning Approach. */
-    public static final ERevisioning VERSIONING = ERevisioning.INCREMENTAL;
-    /** Versions to restore. */
-    public static final int VERSIONSTORESTORE = 4;
-    /** Folder for tmp-database. */
-    public static final String INTRINSICTEMP = "tmp";
-    // END FIXED STANDARD FIELDS
-
     // MEMBERS FOR FIXED FIELDS
     /** Type of Storage (File, Berkeley). */
-    public final EStorage mType;
+    public final IStorage mStorage;
+
+    /** Node Factory to generate nodes for this resource. */
+    public final INodeFactory mNodeFac;
+
+    /** Handler for bytes before serialization. */
+    public final IByteHandler mByteHandler;
 
     /** Kind of revisioning (Incremental, Differential). */
-    public final ERevisioning mRevision;
+    public final IRevisioning mRevision;
 
     /** Number of revisions to restore a complete set of data. */
     public final int mRevisionsToRestore;
@@ -152,14 +149,19 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      * @param pBuilder
      *            {@link Builder} reference
      */
-    private ResourceConfiguration(final ResourceConfiguration.Builder pBuilder) {
-        mType = pBuilder.mType;
-        mRevision = pBuilder.mRevision;
-        mRevisionsToRestore = pBuilder.mRevisionsToRestore;
+    private ResourceConfiguration(IStorage pStorage, INodeFactory pNodeFactory, IByteHandler pByteHandler,
+        IRevisioning pRevision) {
+        mStorage = pStorage;
+        mNodeFac = pNodeFactory;
+        mByteHandler = pByteHandler;
+        mRevision = pRevision;
+
         mDBConfig = pBuilder.mDBConfig;
+        mByteHandler = pBuilder.mByteHandler;
         mPath =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 pBuilder.mResource);
+
     }
 
     /**
@@ -169,7 +171,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     public int hashCode() {
         final int prime = 90599;
         int result = 13;
-        result = prime * result + mType.hashCode();
+        result = prime * result + mStorage.hashCode();
         result = prime * result + mRevision.hashCode();
         result = prime * result + mPath.hashCode();
         result = prime * result + mDBConfig.hashCode();
@@ -193,7 +195,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         builder.append("\nResource: ");
         builder.append(this.mPath);
         builder.append("Type: ");
-        builder.append(this.mType);
+        builder.append(this.mStorage);
         builder.append("\nRevision: ");
         builder.append(this.mRevision);
         return builder.toString();
@@ -213,15 +215,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      */
     public static final class Builder {
 
-        /** Type of Storage (File, Berkeley). */
-        private EStorage mType = STORAGE;
-
-        /** Kind of revisioning (Incremental, Differential). */
-        private ERevisioning mRevision = VERSIONING;
-
-        /** Number of revisions to restore a complete set of data. */
-        private int mRevisionsToRestore = VERSIONSTORESTORE;
-
         /** Resource for the this session. */
         private String mResource;
 
@@ -237,56 +230,8 @@ public final class ResourceConfiguration implements IConfigureSerializable {
          *            the related {@link DatabaseConfiguration}, must to be set.
          */
         public Builder(final String paramResource, final DatabaseConfiguration pConfig) {
-            if (paramResource == null || pConfig == null) {
-                throw new IllegalArgumentException("Parameter must not be null!");
-            }
             mResource = paramResource;
             mDBConfig = pConfig;
-        }
-
-        /**
-         * Setter for mType.
-         * 
-         * @param pType
-         *            to be set
-         * @return reference to the builder object
-         */
-        public Builder setType(final EStorage pType) {
-            if (pType == null) {
-                throw new NullPointerException("paramType may not be null!");
-            }
-            mType = pType;
-            return this;
-        }
-
-        /**
-         * Setter for mRevision.
-         * 
-         * @param pRev
-         *            to be set
-         * @return reference to the builder object
-         */
-        public Builder setRevision(final ERevisioning pRev) {
-            if (pRev == null) {
-                throw new NullPointerException("paramType may not be null!");
-            }
-            mRevision = pRev;
-            return this;
-        }
-
-        /**
-         * Setter for mRevisionsToRestore.
-         * 
-         * @param pRevToRestore
-         *            to be set
-         * @return reference to the builder object
-         */
-        public Builder setRevisionsToRestore(final int pRevToRestore) {
-            if (pRevToRestore <= 0) {
-                throw new IllegalArgumentException("paramRevisionsToRestore must be > 0!");
-            }
-            mRevisionsToRestore = pRevToRestore;
-            return this;
         }
 
         /**
@@ -298,7 +243,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
             builder.append("\nResource: ");
             builder.append(this.mResource);
             builder.append("\nType: ");
-            builder.append(this.mType);
+            builder.append(this.mStorage);
             builder.append("\nRevision: ");
             builder.append(this.mRevision);
             return builder.toString();

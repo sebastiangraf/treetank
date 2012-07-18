@@ -28,6 +28,9 @@ package org.treetank.io;
 
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.file.FileFactory;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * Interface to generate access to the underlaying storage. The underlaying storage is flexible as long as
@@ -37,6 +40,7 @@ import org.treetank.exception.TTIOException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@ImplementedBy(FileFactory.class)
 public interface IStorage {
 
     /**

@@ -31,8 +31,8 @@ package org.treetank.utils;
  * <h1>UTF</h1>
  * 
  * <p>
- * Util to efficiently convert byte arrays to various Java types and vice versa.
- * It also provides efficient comparison and hash methods.
+ * Util to efficiently convert byte arrays to various Java types and vice versa. It also provides efficient
+ * comparison and hash methods.
  * </p>
  */
 public final class TypedValue {
@@ -55,19 +55,19 @@ public final class TypedValue {
     public static byte[] getBytes(final int mValue) {
         final byte[] tmpBytes = new byte[5];
         int position = 0;
-        tmpBytes[position++] = (byte) (mValue);
+        tmpBytes[position++] = (byte)(mValue);
         if (mValue > 63 || mValue < -64) {
             tmpBytes[position - 1] |= 128;
-            tmpBytes[position++] = (byte) (mValue >> 7);
+            tmpBytes[position++] = (byte)(mValue >> 7);
             if (mValue > 8191 || mValue < -8192) {
                 tmpBytes[position - 1] |= 128;
-                tmpBytes[position++] = (byte) (mValue >> 14);
+                tmpBytes[position++] = (byte)(mValue >> 14);
                 if (mValue > 1048575 || mValue < -1048576) {
                     tmpBytes[position - 1] |= 128;
-                    tmpBytes[position++] = (byte) (mValue >> 21);
+                    tmpBytes[position++] = (byte)(mValue >> 21);
                     if (mValue > 268435455 || mValue < -268435456) {
                         tmpBytes[position - 1] |= 128;
-                        tmpBytes[position++] = (byte) (mValue >> 28);
+                        tmpBytes[position++] = (byte)(mValue >> 28);
                     } else {
                         tmpBytes[position - 1] &= 127;
                     }
@@ -119,8 +119,7 @@ public final class TypedValue {
                 // .getBytes(IConstants.DEFAULT_ENCODING);
             }
         } catch (final Exception e) {
-            throw new RuntimeException("Could not convert String to byte[]: "
-                    + e.getLocalizedMessage());
+            throw new RuntimeException("Could not convert String to byte[]: " + e.getLocalizedMessage());
         }
         return bytes;
     }

@@ -40,6 +40,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
@@ -64,7 +65,7 @@ public final class OverallTest {
 
     @Test
     public void testJustEverything() throws TTException {
-        TestHelper.createDocumentRootNode(holder.getNWtx());
+        NodeHelper.createDocumentRootNode(holder.getNWtx());
         holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {

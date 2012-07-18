@@ -47,7 +47,6 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.EStorage;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -150,7 +149,7 @@ public final class Database implements IDatabase {
             // if file is existing and folder is a tt-dataplace, delete it
             if (pConf.mFile.exists() && DatabaseConfiguration.Paths.compareStructure(pConf.mFile) == 0) {
                 // instantiate the database for deletion
-                EStorage.recursiveDelete(pConf.mFile);
+                DatabaseConfiguration.Paths.recursiveDelete(pConf.mFile);
             }
         }
     }
@@ -225,7 +224,7 @@ public final class Database implements IDatabase {
             // if file is existing and folder is a tt-dataplace, delete it
             if (resourceFile.exists() && ResourceConfiguration.Paths.compareStructure(resourceFile) == 0) {
                 // instantiate the database for deletion
-                EStorage.recursiveDelete(resourceFile);
+                DatabaseConfiguration.Paths.recursiveDelete(resourceFile);
             }
         }
     }

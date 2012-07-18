@@ -36,6 +36,7 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.treetank.DocumentCreater;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
@@ -49,7 +50,6 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
-import org.treetank.utils.DocumentCreater;
 
 /**
  * Test XPath S9Api.
@@ -75,7 +75,8 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
         database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db).build());
         final ISession session =
             database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
+        final INodeWriteTrx wtx =
+            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
