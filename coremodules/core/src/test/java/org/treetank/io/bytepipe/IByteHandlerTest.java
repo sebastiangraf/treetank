@@ -17,7 +17,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class BytePipelineTest {
+public class IByteHandlerTest {
 
     /**
      * Test method for {@link org.treetank.io.bytepipe.IByteHandler#deserialize(byte[])} and for
@@ -57,4 +57,5 @@ public class BytePipelineTest {
             };
         return returnVal;
     }
+    
 }
