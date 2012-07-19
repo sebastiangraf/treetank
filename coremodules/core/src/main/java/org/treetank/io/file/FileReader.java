@@ -68,10 +68,10 @@ public final class FileReader implements IReader {
     private final PageFactory mFac;
 
     /** Random access mFile to work on. */
-    protected transient final RandomAccessFile mFile;
+    protected final RandomAccessFile mFile;
 
     /** Inflater to decompress. */
-    protected transient final IByteHandler mByteHandler;
+    protected final IByteHandler mByteHandler;
 
     /**
      * Constructor.
