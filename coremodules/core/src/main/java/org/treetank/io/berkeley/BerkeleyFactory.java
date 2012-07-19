@@ -33,7 +33,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
+import org.treetank.io.IStorageFactory;
 import org.treetank.io.IWriter;
 
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -56,7 +56,7 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyFactory implements IStorage {
+public final class BerkeleyFactory implements IStorageFactory {
 
     /** Name for the database. */
     private static final String NAME = "berkeleyDatabase";

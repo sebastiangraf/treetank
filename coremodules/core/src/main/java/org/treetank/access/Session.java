@@ -37,7 +37,7 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
+import org.treetank.io.IStorageFactory;
 import org.treetank.io.IWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
@@ -67,7 +67,7 @@ public final class Session implements ISession {
     private final Set<IPageReadTrx> mPageTrxs;
 
     /** abstract factory for all interaction to the storage. */
-    private final IStorage mFac;
+    private final IStorageFactory mFac;
 
     /** Determines if session was closed. */
     private transient boolean mClosed;

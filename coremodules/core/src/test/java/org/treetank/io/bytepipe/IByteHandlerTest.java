@@ -31,9 +31,11 @@ public class IByteHandlerTest {
         for (final IByteHandler handler : pHandlers) {
             final byte[] bytes = TestHelper.generateRandomBytes(10000);
             byte[] serialized = handler.serialize(bytes);
-            assertFalse(Arrays.equals(bytes, serialized));
+            assertFalse(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), Arrays.equals(bytes, serialized));
             byte[] deserialized = handler.deserialize(serialized);
-            assertTrue(Arrays.equals(bytes, deserialized));
+            assertTrue(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), Arrays.equals(bytes, deserialized));
         }
     }
 
@@ -57,5 +59,5 @@ public class IByteHandlerTest {
             };
         return returnVal;
     }
-    
+
 }

@@ -30,7 +30,7 @@ import java.io.File;
 
 import org.treetank.access.Session;
 import org.treetank.api.INodeFactory;
-import org.treetank.io.IStorage;
+import org.treetank.io.IStorageFactory;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.revisioning.IRevisioning;
 
@@ -122,7 +122,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
 
     // MEMBERS FOR FIXED FIELDS
     /** Type of Storage (File, Berkeley). */
-    public final IStorage mStorage;
+    public final IStorageFactory mStorage;
 
     /** Node Factory to generate nodes for this resource. */
     public final INodeFactory mNodeFac;
@@ -149,7 +149,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      * @param pBuilder
      *            {@link Builder} reference
      */
-    private ResourceConfiguration(IStorage pStorage, INodeFactory pNodeFactory, IByteHandler pByteHandler,
+    private ResourceConfiguration(IStorageFactory pStorage, INodeFactory pNodeFactory, IByteHandler pByteHandler,
         IRevisioning pRevision) {
         mStorage = pStorage;
         mNodeFac = pNodeFactory;

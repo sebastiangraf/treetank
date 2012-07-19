@@ -33,7 +33,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
+import org.treetank.io.IStorageFactory;
 import org.treetank.io.IWriter;
 
 /**
@@ -42,7 +42,7 @@ import org.treetank.io.IWriter;
  * @author Sebastian Graf, University of Konstanz.
  * 
  */
-public final class FileFactory implements IStorage {
+public final class FileFactory implements IStorageFactory {
 
     /** private constant for fileName. */
     private static final String FILENAME = "tt.tnk";

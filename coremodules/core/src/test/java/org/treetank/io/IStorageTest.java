@@ -65,29 +65,33 @@ public class IStorageTest {
      * @throws TTException
      */
     @Test(dataProvider = "instantiateStorages")
-    public void testFirstRef(Class<IStorage> clazz, IStorage[] pStorages) throws TTException {
-        for (final IStorage storage : pStorages) {
+    public void testFirstRef(Class<IStorageFactory> clazz, IStorageFactory[] pStorages) throws TTException {
+        for (final IStorageFactory handler : pStorages) {
             final PageReference pageRef1 = new PageReference();
             final UberPage page1 = new UberPage();
             pageRef1.setPage(page1);
 
             // same instance check
-            final IWriter writer = storage.getWriter();
+            final IWriter writer = handler.getWriter();
             writer.writeFirstReference(pageRef1);
             final PageReference pageRef2 = writer.readFirstReference();
-            assertEquals(pageRef1.getNodePageKey(), pageRef2.getNodePageKey());
-            assertEquals(((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef2.getPage())
-                .getRevisionCount());
+            assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), pageRef1.getNodePageKey(), pageRef2.getNodePageKey());
+            assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), ((UberPage)pageRef1.getPage()).getRevisionCount(),
+                ((UberPage)pageRef2.getPage()).getRevisionCount());
             writer.close();
 
             // new instance check
-            final IReader reader = storage.getReader();
+            final IReader reader = handler.getReader();
             final PageReference pageRef3 = reader.readFirstReference();
-            assertEquals(pageRef1.getNodePageKey(), pageRef3.getNodePageKey());
-            assertEquals(((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef3.getPage())
-                .getRevisionCount());
+            assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), pageRef1.getNodePageKey(), pageRef3.getNodePageKey());
+            assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), ((UberPage)pageRef1.getPage()).getRevisionCount(),
+                ((UberPage)pageRef3.getPage()).getRevisionCount());
             reader.close();
-            storage.close();
+            handler.close();
 
         }
     }
@@ -103,8 +107,8 @@ public class IStorageTest {
         Object[][] returnVal =
             {
                 {
-                    IStorage.class,
-                    new IStorage[] {
+                    IStorageFactory.class,
+                    new IStorageFactory[] {
                         new FileFactory(TestHelper.PATHS.PATH1.getFile()),
                         new BerkeleyFactory(TestHelper.PATHS.PATH1.getFile())
                     }

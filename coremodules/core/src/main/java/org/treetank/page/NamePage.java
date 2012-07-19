@@ -141,11 +141,9 @@ public final class NamePage implements IPage {
 
         for (final int key : mNameMap.keySet()) {
             pOutput.writeInt(key);
-            final byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
+            final byte[] tmp = mNameMap.get(key).getBytes();
             pOutput.writeInt(tmp.length);
-            for (final byte byteVal : tmp) {
-                pOutput.writeByte(byteVal);
-            }
+            pOutput.write(tmp);
         }
         return pOutput.toByteArray();
     }

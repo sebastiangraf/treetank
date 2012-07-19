@@ -45,48 +45,6 @@ public final class TypedValue {
     }
 
     /**
-     * Get UTF-8 byte array from int. The given byte array yields a string
-     * representation if read with parseString().
-     * 
-     * @param mValue
-     *            Int to encode as UTF-8 byte array.
-     * @return UTF-8-encoded byte array of int.
-     */
-    public static byte[] getBytes(final int mValue) {
-        final byte[] tmpBytes = new byte[5];
-        int position = 0;
-        tmpBytes[position++] = (byte)(mValue);
-        if (mValue > 63 || mValue < -64) {
-            tmpBytes[position - 1] |= 128;
-            tmpBytes[position++] = (byte)(mValue >> 7);
-            if (mValue > 8191 || mValue < -8192) {
-                tmpBytes[position - 1] |= 128;
-                tmpBytes[position++] = (byte)(mValue >> 14);
-                if (mValue > 1048575 || mValue < -1048576) {
-                    tmpBytes[position - 1] |= 128;
-                    tmpBytes[position++] = (byte)(mValue >> 21);
-                    if (mValue > 268435455 || mValue < -268435456) {
-                        tmpBytes[position - 1] |= 128;
-                        tmpBytes[position++] = (byte)(mValue >> 28);
-                    } else {
-                        tmpBytes[position - 1] &= 127;
-                    }
-                } else {
-                    tmpBytes[position - 1] &= 127;
-                }
-            } else {
-                tmpBytes[position - 1] &= 127;
-            }
-        } else {
-            tmpBytes[position - 1] &= 127;
-        }
-
-        final byte[] bytes = new byte[position];
-        System.arraycopy(tmpBytes, 0, bytes, 0, position);
-        return bytes;
-    }
-
-    /**
      * Get UTF-8 byte array from string. The given byte array yields a int if
      * read with parseInt().
      * 

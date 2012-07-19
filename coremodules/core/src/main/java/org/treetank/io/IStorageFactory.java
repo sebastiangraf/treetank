@@ -41,7 +41,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(FileFactory.class)
-public interface IStorage {
+public interface IStorageFactory {
 
     /**
      * Getting a writer.

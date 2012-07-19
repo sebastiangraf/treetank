@@ -59,7 +59,8 @@ public class IRevisioningTest {
             final NodePage page = handler.combinePages(pages);
 
             for (int j = 0; j < page.getNodes().length; j++) {
-                assertEquals(pages[0].getNode(j), page.getNode(j));
+                assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                    .toString(), pages[0].getNode(j), page.getNode(j));
             }
         }
     }
@@ -79,7 +80,17 @@ public class IRevisioningTest {
         for (final IRevisioning handler : pHandlers) {
             final NodePage[] pages = prepareNormal(4);
             final NodePage page = handler.combinePages(pages);
-            checkCombined(pages, page);
+            for (int i = 0; i < pages.length; i++) {
+                for (int j = i * 32; j < (i * 32) + 32; j++) {
+                    assertEquals(new StringBuilder("Check for ").append(handler.getClass())
+                        .append(" failed.").toString(), pages[i].getNode(j), page.getNode(j));
+                }
+            }
+
+            for (int j = 0; j < page.getNodes().length; j++) {
+                assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                    .toString(), pages[0].getNode(j), page.getNode(j));
+            }
         }
     }
 
@@ -100,16 +111,18 @@ public class IRevisioningTest {
             final NodePage page = handler.combinePages(pages);
 
             for (int j = 0; j < 32; j++) {
-                assertEquals(pages[0].getNode(j), page.getNode(j));
+                assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                    .toString(), pages[0].getNode(j), page.getNode(j));
             }
             for (int j = 32; j < page.getNodes().length; j++) {
-                assertEquals(pages[3].getNode(j), page.getNode(j));
+                assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                    .toString(), pages[3].getNode(j), page.getNode(j));
             }
         }
     }
 
     /**
-     * Providing different implementations of the {@link IByteHandler} as Dataprovider to the test class.
+     * Providing different implementations of the {@link IRevisioning} as Dataprovider to the test class.
      * 
      * @return different classes of the {@link IByteHandler}
      * @throws TTByteHandleException
@@ -124,14 +137,6 @@ public class IRevisioningTest {
             }
         };
         return returnVal;
-    }
-
-    private static void checkCombined(final NodePage[] toCheck, final NodePage page) {
-        for (int i = 0; i < toCheck.length; i++) {
-            for (int j = i * 32; j < (i * 32) + 32; j++) {
-                assertEquals(toCheck[i].getNode(j), page.getNode(j));
-            }
-        }
     }
 
     private static NodePage[] prepareNormal(final int length) {

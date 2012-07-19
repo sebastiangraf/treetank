@@ -103,7 +103,6 @@ public final class PageFactory {
             }
             revRootPage.setRevisionSize(input.readLong());
             revRootPage.setMaxNodeKey(input.readLong());
-            revRootPage.setRevisionTimestamp(input.readLong());
             return revRootPage;
         default:
             throw new IllegalStateException(
