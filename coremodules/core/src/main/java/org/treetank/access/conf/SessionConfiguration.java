@@ -32,6 +32,9 @@ import java.security.Key;
 import org.treetank.access.Database;
 import org.treetank.access.Session;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 /**
  * <h1>SessionConfiguration</h1>
  * 
@@ -58,7 +61,8 @@ public final class SessionConfiguration {
      * @param pKey
      *            key for accessing encrypted data
      */
-    private SessionConfiguration(String pResource, Key pKey) {
+    @Inject
+    public SessionConfiguration(@Assisted String pResource, Key pKey) {
         mResource = pResource;
         mKey = pKey;
     }

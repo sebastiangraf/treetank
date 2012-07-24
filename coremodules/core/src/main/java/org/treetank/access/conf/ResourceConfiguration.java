@@ -34,6 +34,9 @@ import org.treetank.io.IStorageFactory;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.revisioning.IRevisioning;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 /**
  * <h1>ResourceConfiguration</h1>
  * 
@@ -148,9 +151,9 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      * @param pByteHandler
      * @param pRevision
      */
-
-    public ResourceConfiguration(DatabaseConfiguration pDBConf, IStorageFactory pStorage,
-        INodeFactory pNodeFactory, IByteHandler pByteHandler, IRevisioning pRevision, String pResourceName) {
+    @Inject
+    public ResourceConfiguration(@Assisted DatabaseConfiguration pDBConf, @Assisted String pResourceName,
+        IStorageFactory pStorage, INodeFactory pNodeFactory, IByteHandler pByteHandler, IRevisioning pRevision) {
         mStorage = pStorage;
         mNodeFac = pNodeFactory;
         mByteHandler = pByteHandler;
