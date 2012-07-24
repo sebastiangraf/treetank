@@ -133,9 +133,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     /** Kind of revisioning (Incremental, Differential). */
     public final IRevisioning mRevision;
 
-    /** Number of revisions to restore a complete set of data. */
-    public final int mRevisionsToRestore;
-
     /** Path for the resource to be associated. */
     public final File mPath;
     // END MEMBERS FOR FIXED FIELDS
@@ -146,21 +143,23 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @param pBuilder
-     *            {@link Builder} reference
+     * @param pStorage
+     * @param pNodeFactory
+     * @param pByteHandler
+     * @param pRevision
      */
-    private ResourceConfiguration(IStorageFactory pStorage, INodeFactory pNodeFactory, IByteHandler pByteHandler,
-        IRevisioning pRevision) {
+
+    public ResourceConfiguration(DatabaseConfiguration pDBConf, IStorageFactory pStorage,
+        INodeFactory pNodeFactory, IByteHandler pByteHandler, IRevisioning pRevision, String pResourceName) {
         mStorage = pStorage;
         mNodeFac = pNodeFactory;
         mByteHandler = pByteHandler;
         mRevision = pRevision;
 
-        mDBConfig = pBuilder.mDBConfig;
-        mByteHandler = pBuilder.mByteHandler;
+        mDBConfig = pDBConf;
         mPath =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                pBuilder.mResource);
+                pResourceName);
 
     }
 
@@ -210,53 +209,4 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         return file;
     }
 
-    /**
-     * Builder class for generating new {@link ResourceConfiguration} instance.
-     */
-    public static final class Builder {
-
-        /** Resource for the this session. */
-        private String mResource;
-
-        /** Resource for the this session. */
-        private DatabaseConfiguration mDBConfig;
-
-        /**
-         * Constructor, setting the mandatory fields.
-         * 
-         * @param paramResource
-         *            the name of the resource, must to be set.
-         * @param pConfig
-         *            the related {@link DatabaseConfiguration}, must to be set.
-         */
-        public Builder(final String paramResource, final DatabaseConfiguration pConfig) {
-            mResource = paramResource;
-            mDBConfig = pConfig;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            final StringBuilder builder = new StringBuilder();
-            builder.append("\nResource: ");
-            builder.append(this.mResource);
-            builder.append("\nType: ");
-            builder.append(this.mStorage);
-            builder.append("\nRevision: ");
-            builder.append(this.mRevision);
-            return builder.toString();
-        }
-
-        /**
-         * Building a new {@link ResourceConfiguration} with immutable fields.
-         * 
-         * @return a new {@link ResourceConfiguration}.
-         */
-        public ResourceConfiguration build() {
-            return new ResourceConfiguration(this);
-        }
-
-    }
 }

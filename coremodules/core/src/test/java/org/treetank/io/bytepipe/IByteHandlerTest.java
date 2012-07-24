@@ -6,7 +6,10 @@ package org.treetank.io.bytepipe;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
+import java.security.Key;
 import java.util.Arrays;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -47,13 +50,21 @@ public class IByteHandlerTest {
      */
     @DataProvider(name = "instantiateByteHandler")
     public Object[][] instantiateByteHandler() throws TTByteHandleException {
+
+        // 128bit key
+        byte[] keyValue = new byte[] {
+            'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
+        };
+        Key key = new SecretKeySpec(keyValue, "AES");
+
         Object[][] returnVal =
             {
                 {
                     IByteHandler.class,
                     new IByteHandler[] {
-                        new Encryptor(), new Zipper(), new ByteHandlePipeline(new Encryptor(), new Zipper()),
-                        new ByteHandlePipeline(new Zipper(), new Encryptor())
+                        new Encryptor(key), new Zipper(),
+                        new ByteHandlePipeline(new Encryptor(key), new Zipper()),
+                        new ByteHandlePipeline(new Zipper(), new Encryptor(key))
                     }
                 }
             };

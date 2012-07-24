@@ -10,7 +10,6 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.treetank.exception.TTByteHandleException;
 
@@ -24,13 +23,12 @@ public class Encryptor implements IByteHandler {
 
     private static final String ALGORITHM = "AES";
     private static final int ITERATIONS = 2;
-    // 128bit key
-    private static final byte[] keyValue = new byte[] {
-        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
-    };
+
+    /** Cipher to perform encryption and decryption operations. */
     private final Cipher mCipher;
 
-    private final Key key;
+    /** Key for access data. */
+    private final Key mKey;
 
     /**
      * Constructor.
@@ -38,10 +36,10 @@ public class Encryptor implements IByteHandler {
      * @param pComponent
      * @throws TTByteHandleException
      */
-    public Encryptor() throws TTByteHandleException {
+    public Encryptor(Key pKey) throws TTByteHandleException {
         try {
             mCipher = Cipher.getInstance(ALGORITHM);
-            key = new SecretKeySpec(keyValue, ALGORITHM);
+            mKey = pKey;
         } catch (final NoSuchAlgorithmException exc) {
             throw new TTByteHandleException(exc);
         } catch (final NoSuchPaddingException exc) {
@@ -56,7 +54,7 @@ public class Encryptor implements IByteHandler {
      */
     public byte[] serialize(final byte[] pToSerialize) throws TTByteHandleException {
         try {
-            mCipher.init(Cipher.ENCRYPT_MODE, key);
+            mCipher.init(Cipher.ENCRYPT_MODE, mKey);
 
             byte[] toEncrypt = pToSerialize;
             for (int i = 0; i < ITERATIONS; i++) {
@@ -74,7 +72,7 @@ public class Encryptor implements IByteHandler {
      */
     public byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException {
         try {
-            mCipher.init(Cipher.DECRYPT_MODE, key);
+            mCipher.init(Cipher.DECRYPT_MODE, mKey);
 
             byte[] toDecrypt = pToDeserialize;
             for (int i = 0; i < ITERATIONS; i++) {

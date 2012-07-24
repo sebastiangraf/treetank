@@ -265,7 +265,7 @@ public final class Database implements IDatabase {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         } catch (final ClassNotFoundException exc) {
-            throw new TTIOException(exc.toString());
+            throw new TTIOException(exc);
         }
         final Database database = new Database(config);
         final IDatabase returnVal = DATABASEMAP.putIfAbsent(pFile, database);
@@ -311,7 +311,7 @@ public final class Database implements IDatabase {
                 de.close();
                 is.close();
             } catch (final ClassNotFoundException exc) {
-                throw new TTIOException(exc.toString());
+                throw new TTIOException(exc);
             } catch (final IOException exc) {
                 throw new TTIOException(exc);
             }
