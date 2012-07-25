@@ -1,0 +1,3 @@
+org.treetank.revisioning.Differential
+org.treetank.revisioning.FullDump
+org.treetank.revisioning.Incremental
