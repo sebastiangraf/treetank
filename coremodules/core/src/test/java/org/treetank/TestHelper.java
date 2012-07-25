@@ -37,12 +37,10 @@ import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INode;
 import org.treetank.exception.TTException;
+import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.NodePage;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 /**
