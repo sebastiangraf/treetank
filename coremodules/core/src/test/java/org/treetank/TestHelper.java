@@ -174,71 +174,11 @@ public final class TestHelper {
         final long nodePageKey) {
         final NodePage page = new NodePage(nodePageKey, revision);
         for (int i = offset; i < length; i++) {
-            page.setNode(i, new DumpNode(random.nextLong(), random.nextLong()));
+            page.setNode(i, new DumbNode(random.nextLong(), random.nextLong()));
         }
         return page;
     }
 
-    /**
-     * Simple DumpNode just for testing the {@link NodePage}s.
-     * 
-     * @author Sebastian Graf, University of Konstanz
-     * 
-     */
-    public static class DumpNode implements INode {
 
-        final long mNodeKey;
-        final long mHash;
-
-        public DumpNode(long pNodeKey, long pHash) {
-            mNodeKey = pNodeKey;
-            mHash = pHash;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public byte[] getByteRepresentation() {
-            final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-            pOutput.writeLong(mNodeKey);
-            pOutput.writeLong(mHash);
-            return pOutput.toByteArray();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setNodeKey(long pNodeKey) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public long getNodeKey() {
-            return mNodeKey;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setHash(long pHash) {
-            throw new UnsupportedOperationException();
-
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public long getHash() {
-            return mHash;
-        }
-
-    }
 
 }

@@ -11,7 +11,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.DumpFactoryModule;
-import org.treetank.FactoriesForTest;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.bytepipe.IByteHandler;
@@ -66,7 +65,7 @@ public class IPageTest {
         // NodePage setup
         NodePage nodePage = new NodePage(TestHelper.random.nextLong(), TestHelper.random.nextLong());
         for (int i = 0; i < IConstants.NDP_NODE_COUNT - 1; i++) {
-            nodePage.setNode(i, FactoriesForTest.generateOne());
+            nodePage.setNode(i, DumbNodeFactory.generateOne());
         }
         // NamePage setup
         NamePage namePage = new NamePage(TestHelper.random.nextLong());

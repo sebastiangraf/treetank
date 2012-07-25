@@ -1,6 +1,7 @@
 package org.treetank;
 
 import org.treetank.api.INodeFactory;
+import org.treetank.page.DumbNodeFactory;
 
 import com.google.inject.AbstractModule;
 
@@ -11,6 +12,6 @@ public class DumpFactoryModule extends AbstractModule {
      */
     @Override
     protected void configure() {
-        bind(INodeFactory.class).to(FactoriesForTest.class);
+        bind(INodeFactory.class).to(DumbNodeFactory.class);
     }
 }
