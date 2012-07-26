@@ -1,17 +1,17 @@
 -classpath
-'/Users/sebi/Documents/workspace/treetank/coremodules/core/node/target/classes:/Users/sebi/.m2/repository/com/google/guava/guava/11.0.2/guava-11.0.2.jar:/Users/sebi/.m2/repository/com/google/code/guice/guice/2.0.1/guice-2.0.1.jar:/Users/sebi/Documents/workspace/treetank/coremodules/commons/target/classes:/Users/sebi/.m2/repository/commons-math/commons-math/1.2/commons-math-1.2.jar:/Users/sebi/.m2/repository/commons-primitives/commons-primitives/20041207.202534/commons-primitives-20041207.202534.jar:/Users/sebi/.m2/repository/org/perfidix/perfidix/3.6.5/perfidix-3.6.5.jar:/Users/sebi/Documents/workspace/treetank/coremodules/core/target/classes:/Users/sebi/.m2/repository/com/sleepycat/je/4.1.10/je-4.1.10.jar:/Users/sebi/.m2/repository/org/aspectj/aspectjrt/1.6.10/aspectjrt-1.6.10.jar:/Users/sebi/.m2/repository/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar:/Users/sebi/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar'
+'/Users/sebi/Dropbox/github/treetank/coremodules/core/node/target/classes:/Users/sebi/.m2/repository/com/google/guava/guava/11.0.2/guava-11.0.2.jar:/Users/sebi/.m2/repository/com/google/code/guice/guice/2.0.1/guice-2.0.1.jar:/Users/sebi/Dropbox/github/treetank/coremodules/commons/target/classes:/Users/sebi/.m2/repository/commons-math/commons-math/1.2/commons-math-1.2.jar:/Users/sebi/.m2/repository/commons-primitives/commons-primitives/20041207.202534/commons-primitives-20041207.202534.jar:/Users/sebi/.m2/repository/org/perfidix/perfidix/3.6.5/perfidix-3.6.5.jar:/Users/sebi/Dropbox/github/treetank/coremodules/core/target/classes:/Users/sebi/.m2/repository/com/sleepycat/je/4.1.10/je-4.1.10.jar:/Users/sebi/.m2/repository/org/aspectj/aspectjrt/1.6.10/aspectjrt-1.6.10.jar:/Users/sebi/.m2/repository/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar:/Users/sebi/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar'
 -encoding
 'UTF-8'
 -protected
 -sourcepath
-'/Users/sebi/Documents/workspace/treetank/coremodules/core/node/src/main/java'
+'/Users/sebi/Dropbox/github/treetank/coremodules/core/node/src/main/java'
 -author
 -bottom
 'Copyright &#169; 2012 <a href="http://www.disy.uni-konstanz.de">Distributed Systems Group</a>. All Rights Reserved.'
 -charset
 'UTF-8'
 -d
-'/Users/sebi/Documents/workspace/treetank/coremodules/core/node/target/site/apidocs'
+'/Users/sebi/Dropbox/github/treetank/coremodules/core/node/target/site/apidocs'
 -docencoding
 'UTF-8'
 -doctitle
@@ -19,17 +19,17 @@
 -link
 'http://java.sun.com/javase/6/docs/api'
 -linkoffline
-'http://disy.github.com/treetank/coremodules/commons/apidocs' '/Users/sebi/Documents/workspace/treetank/coremodules/commons/target/site/apidocs'
+'http://disy.github.com/treetank/coremodules/commons/apidocs' '/Users/sebi/Dropbox/github/treetank/coremodules/commons/target/site/apidocs'
 -linkoffline
-'http://disy.github.com/treetank/coremodules/core/apidocs' '/Users/sebi/Documents/workspace/treetank/coremodules/core/target/site/apidocs'
+'http://disy.github.com/treetank/coremodules/core/apidocs' '/Users/sebi/Dropbox/github/treetank/coremodules/core/target/site/apidocs'
 -linkoffline
-'http://disy.github.com/treetank/jclouds/apidocs' '/Users/sebi/Documents/workspace/treetank/coremodules/io/jclouds/target/site/apidocs'
+'http://disy.github.com/treetank/jclouds/apidocs' '/Users/sebi/Dropbox/github/treetank/coremodules/io/jclouds/target/site/apidocs'
 -linkoffline
-'http://disy.github.com/treetank/interfacemodules/xml/apidocs' '/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/target/site/apidocs'
+'http://disy.github.com/treetank/interfacemodules/xml/apidocs' '/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/target/site/apidocs'
 -linkoffline
-'http://disy.github.com/treetank/interfacemodules/saxon/apidocs' '/Users/sebi/Documents/workspace/treetank/interfacemodules/saxon/target/site/apidocs'
+'http://disy.github.com/treetank/interfacemodules/saxon/apidocs' '/Users/sebi/Dropbox/github/treetank/interfacemodules/saxon/target/site/apidocs'
 -linkoffline
-'http://disy.github.com/treetank/interfacemodules/jax-rx/apidocs' '/Users/sebi/Documents/workspace/treetank/interfacemodules/jax-rx/target/site/apidocs'
+'http://disy.github.com/treetank/interfacemodules/jax-rx/apidocs' '/Users/sebi/Dropbox/github/treetank/interfacemodules/jax-rx/target/site/apidocs'
 -use
 -version
 -windowtitle

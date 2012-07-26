@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-07-13T18:08:44.058">
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/saxon/src/main/java/org/treetank/saxon/wrapper/NodeWrapper.java">
+<pmd version="4.3" timestamp="2012-07-26T14:08:26.500">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/saxon/src/main/java/org/treetank/saxon/wrapper/NodeWrapper.java">
 <violation beginline="28" endline="925" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.treetank.saxon.wrapper" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
 </violation>

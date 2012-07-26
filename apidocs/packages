@@ -6,7 +6,7 @@ org.treetank.access
 org.treetank.api
 org.treetank.cache
 org.treetank.io.berkeley
-org.treetank.io.bytepipe
+org.treetank.io.decorators
 org.treetank.io
 org.treetank.io.file
 org.treetank.node

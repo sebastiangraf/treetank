@@ -9,7 +9,7 @@
     <copyright>&#169;2012 Distributed Systems Group</copyright>
     <item>
       <title>File: 11,
-             Errors: 86,
+             Errors: 127,
              Warnings: 0,
              Infos: 0
       </title>
@@ -66,7 +66,7 @@
                   0
                 </td>
                 <td>
-                  14
+                  6
                 </td>
               </tr>
                           <tr>
@@ -164,7 +164,7 @@
                   0
                 </td>
                 <td>
-                  10
+                  59
                 </td>
               </tr>
                           <tr>

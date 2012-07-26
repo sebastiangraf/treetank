@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
 <duplication lines="97" tokens="129">
-<file line="185" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
-<file line="72" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
+<file line="185" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
+<file line="72" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -106,8 +106,8 @@
 </codefragment>
 </duplication>
 <duplication lines="64" tokens="120">
-<file line="58" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/DatabaseConfiguration.java"/>
-<file line="61" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
+<file line="58" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/DatabaseConfiguration.java"/>
+<file line="61" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
 <codefragment>
 <![CDATA[
         Data(new File("resources"), true);
@@ -178,8 +178,8 @@
 </codefragment>
 </duplication>
 <duplication lines="79" tokens="104">
-<file line="103" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/NamespaceNode.java"/>
-<file line="105" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/node/TextNode.java"/>
+<file line="103" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/NamespaceNode.java"/>
+<file line="105" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/TextNode.java"/>
 <codefragment>
 <![CDATA[
     }

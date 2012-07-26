@@ -107,7 +107,7 @@
 <a class="jxr_linenumber" name="97" href="#97">97</a>  <em class="jxr_javadoccomment">     *             if IO Error</em>
 <a class="jxr_linenumber" name="98" href="#98">98</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="99" href="#99">99</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/access/PageWriteTrx.html">PageWriteTrx</a>(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/ISession.html">ISession</a> pSession, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/UberPage.html">UberPage</a> paramUberPage, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IWriter.html">IWriter</a> paramWriter,
-<a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramRepresentRev, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramStoreRev) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramRepresentRev, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramStoreRev) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="101" href="#101">101</a>         mDelegate = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/access/PageReadTrx.html">PageReadTrx</a>(pSession, paramUberPage, paramRepresentRev, paramWriter);
 <a class="jxr_linenumber" name="102" href="#102">102</a>         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
 <a class="jxr_linenumber" name="103" href="#103">103</a>         mLog = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/cache/TransactionLogCache.html">TransactionLogCache</a>(pSession.getConfig().mPath, paramStoreRev);
@@ -126,7 +126,7 @@
 <a class="jxr_linenumber" name="116" href="#116">116</a> <em class="jxr_javadoccomment">     * @throws TTIOException</em>
 <a class="jxr_linenumber" name="117" href="#117">117</a> <em class="jxr_javadoccomment">     *             if IO Error</em>
 <a class="jxr_linenumber" name="118" href="#118">118</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="119" href="#119">119</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/api/INode.html">INode</a> prepareNodeForModification(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramNodeKey) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="119" href="#119">119</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/api/INode.html">INode</a> prepareNodeForModification(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramNodeKey) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="120" href="#120">120</a>         <strong class="jxr_keyword">if</strong> (paramNodeKey &lt; 0) {
 <a class="jxr_linenumber" name="121" href="#121">121</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"paramNodeKey must be &gt;= 0!"</span>);
 <a class="jxr_linenumber" name="122" href="#122">122</a>         }
@@ -180,7 +180,7 @@
 <a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * @throws TTIOException</em>
 <a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     *             if IO Error</em>
 <a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="173" href="#173">173</a>     <strong class="jxr_keyword">public</strong> &lt;T <strong class="jxr_keyword">extends</strong> INode&gt; T createNode(<strong class="jxr_keyword">final</strong> T paramNode) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="173" href="#173">173</a>     <strong class="jxr_keyword">public</strong> &lt;T <strong class="jxr_keyword">extends</strong> INode&gt; T createNode(<strong class="jxr_keyword">final</strong> T paramNode) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="174" href="#174">174</a>         <em class="jxr_comment">// Allocate node key and increment node count.</em>
 <a class="jxr_linenumber" name="175" href="#175">175</a>         mNewRoot.incrementMaxNodeKey();
 <a class="jxr_linenumber" name="176" href="#176">176</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mNewRoot.getMaxNodeKey();
@@ -201,7 +201,7 @@
 <a class="jxr_linenumber" name="191" href="#191">191</a> <em class="jxr_javadoccomment">     * @throws TTIOException</em>
 <a class="jxr_linenumber" name="192" href="#192">192</a> <em class="jxr_javadoccomment">     *             if the removal fails</em>
 <a class="jxr_linenumber" name="193" href="#193">193</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="194" href="#194">194</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> removeNode(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> paramNode) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="194" href="#194">194</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> removeNode(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> paramNode) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="195" href="#195">195</a>         assert paramNode != <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="196" href="#196">196</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodePageKey = nodePageKey(paramNode.getNodeKey());
 <a class="jxr_linenumber" name="197" href="#197">197</a>         prepareNodePage(nodePageKey);
@@ -214,7 +214,7 @@
 <a class="jxr_linenumber" name="204" href="#204">204</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="205" href="#205">205</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="206" href="#206">206</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="207" href="#207">207</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/api/INode.html">INode</a> getNode(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodeKey) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="207" href="#207">207</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/api/INode.html">INode</a> getNode(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodeKey) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="208" href="#208">208</a> 
 <a class="jxr_linenumber" name="209" href="#209">209</a>         <em class="jxr_comment">// Calculate page and node part for given nodeKey.</em>
 <a class="jxr_linenumber" name="210" href="#210">210</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodePageKey = nodePageKey(pNodeKey);
@@ -404,7 +404,7 @@
 <a class="jxr_linenumber" name="394" href="#394">394</a>         <strong class="jxr_keyword">return</strong> mNewRoot.getMaxNodeKey();
 <a class="jxr_linenumber" name="395" href="#395">395</a>     }
 <a class="jxr_linenumber" name="396" href="#396">396</a> 
-<a class="jxr_linenumber" name="397" href="#397">397</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a> prepareIndirectPage(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> paramReference) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="397" href="#397">397</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a> prepareIndirectPage(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> paramReference) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="398" href="#398">398</a> 
 <a class="jxr_linenumber" name="399" href="#399">399</a>         <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a> page = (IndirectPage)paramReference.getPage();
 <a class="jxr_linenumber" name="400" href="#400">400</a>         <strong class="jxr_keyword">if</strong> (page == <strong class="jxr_keyword">null</strong>) {
@@ -421,7 +421,7 @@
 <a class="jxr_linenumber" name="411" href="#411">411</a>         <strong class="jxr_keyword">return</strong> page;
 <a class="jxr_linenumber" name="412" href="#412">412</a>     }
 <a class="jxr_linenumber" name="413" href="#413">413</a> 
-<a class="jxr_linenumber" name="414" href="#414">414</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a> prepareNodePage(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pPageKey) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="414" href="#414">414</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a> prepareNodePage(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pPageKey) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="415" href="#415">415</a> 
 <a class="jxr_linenumber" name="416" href="#416">416</a>         <em class="jxr_comment">// Last level points to node nodePageReference.</em>
 <a class="jxr_linenumber" name="417" href="#417">417</a>         <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a> cont = mLog.get(pPageKey);
@@ -449,7 +449,7 @@
 <a class="jxr_linenumber" name="439" href="#439">439</a>     }
 <a class="jxr_linenumber" name="440" href="#440">440</a> 
 <a class="jxr_linenumber" name="441" href="#441">441</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a> preparePreviousRevisionRootPage(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> mBaseRevision,
-<a class="jxr_linenumber" name="442" href="#442">442</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> representRevision) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="442" href="#442">442</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> representRevision) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="443" href="#443">443</a> 
 <a class="jxr_linenumber" name="444" href="#444">444</a>         <strong class="jxr_keyword">if</strong> (mDelegate.getUberPage().isBootstrap()) {
 <a class="jxr_linenumber" name="445" href="#445">445</a>             <strong class="jxr_keyword">return</strong> mDelegate.loadRevRoot(mBaseRevision);
@@ -478,7 +478,7 @@
 <a class="jxr_linenumber" name="468" href="#468">468</a>     }
 <a class="jxr_linenumber" name="469" href="#469">469</a> 
 <a class="jxr_linenumber" name="470" href="#470">470</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> prepareLeafOfTree(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/PageReference.html">PageReference</a> mStartReference, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> mKey)
-<a class="jxr_linenumber" name="471" href="#471">471</a>         <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="471" href="#471">471</a>         <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="472" href="#472">472</a> 
 <a class="jxr_linenumber" name="473" href="#473">473</a>         <em class="jxr_comment">// Initial state pointing to the indirect nodePageReference of level 0.</em>
 <a class="jxr_linenumber" name="474" href="#474">474</a> 
@@ -509,7 +509,7 @@
 <a class="jxr_linenumber" name="499" href="#499">499</a> <em class="jxr_javadoccomment">     *             if something happened in the node</em>
 <a class="jxr_linenumber" name="500" href="#500">500</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="501" href="#501">501</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/cache/NodePageContainer.html">NodePageContainer</a> dereferenceNodePageForModification(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> paramNodePageKey)
-<a class="jxr_linenumber" name="502" href="#502">502</a>         <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="502" href="#502">502</a>         <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="503" href="#503">503</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>[] revs = mDelegate.getSnapshotPages(paramNodePageKey);
 <a class="jxr_linenumber" name="504" href="#504">504</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/settings/ERevisioning.html">ERevisioning</a> revision = mDelegate.mSession.getConfig().mRevision;
 <a class="jxr_linenumber" name="505" href="#505">505</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> mileStoneRevision = mDelegate.mSession.getConfig().mRevisionsToRestore;
