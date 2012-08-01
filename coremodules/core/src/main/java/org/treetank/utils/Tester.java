@@ -14,23 +14,24 @@ import org.treetank.revisioning.IRevisioning;
  */
 public class Tester {
 
-    private static final ServiceLoader<IRevisioning> revServ = ServiceLoader.load(IRevisioning.class);
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
 
-    private static final ServiceLoader<IByteHandler> byteServ = ServiceLoader.load(IByteHandler.class);
+		ServiceLoader<IRevisioning> revServ = ServiceLoader
+				.load(IRevisioning.class);
+//		ServiceLoader<IByteHandler> byteServ = ServiceLoader
+//				.load(IByteHandler.class);
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
+		for (IRevisioning rev : revServ) {
+			System.out.println(rev);
+		}
 
-        for (IRevisioning rev : revServ) {
-            System.out.println(rev);
-        }
+//		for (IByteHandler rev : byteServ) {
+//			System.out.println(rev);
+//		}
 
-        for (IByteHandler rev : byteServ) {
-            System.out.println(rev);
-        }
-
-    }
+	}
 
 }
