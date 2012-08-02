@@ -15,7 +15,7 @@ public class Incremental implements IRevisioning {
     /**
      * Parameter to determine the gap between two full-dumps
      */
-    private final long mRevToRestore;
+    private final int mRevToRestore;
 
     /**
      * 
@@ -24,7 +24,7 @@ public class Incremental implements IRevisioning {
      * @param pRevToRestore
      *            to be set.
      */
-    public Incremental(long pRevToRestore) {
+    public Incremental(int pRevToRestore) {
         mRevToRestore = pRevToRestore;
     }
 
@@ -80,4 +80,11 @@ public class Incremental implements IRevisioning {
         return cont;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRevisionsToRestore() {
+        return mRevToRestore;
+    }
 }

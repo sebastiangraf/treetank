@@ -50,4 +50,12 @@ public class FullDump implements IRevisioning {
         return cont;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRevisionsToRestore() {
+        return 1;
+    }
+
 }

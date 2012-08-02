@@ -38,4 +38,12 @@ public interface IRevisioning {
      *         for writing
      */
     NodePageContainer combinePagesForModification(final NodePage[] pages);
+
+    /**
+     * Getting the numbers of necessary revisions to restore.
+     * 
+     * @return the number of revisions to restore.
+     */
+    int getRevisionsToRestore();
+
 }

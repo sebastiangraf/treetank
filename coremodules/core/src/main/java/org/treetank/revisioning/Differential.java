@@ -15,7 +15,7 @@ public class Differential implements IRevisioning {
     /**
      * Parameter to determine the gap between two full-dumps
      */
-    private final long mRevToRestore;
+    private final int mRevToRestore;
 
     /**
      * 
@@ -24,10 +24,10 @@ public class Differential implements IRevisioning {
      * @param pRevToRestore
      *            to be set.
      */
-    public Differential(long pRevToRestore) {
+    public Differential(int pRevToRestore) {
         mRevToRestore = pRevToRestore;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -95,6 +95,14 @@ public class Differential implements IRevisioning {
 
         final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
         return cont;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRevisionsToRestore() {
+        return mRevToRestore;
     }
 
 }
