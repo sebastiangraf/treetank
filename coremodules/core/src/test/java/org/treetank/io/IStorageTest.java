@@ -32,18 +32,28 @@ import static org.testng.AssertJUnit.assertEquals;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.DumpFactoryModule;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyFactory;
+import org.treetank.io.bytepipe.ByteHandlePipeline;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.file.FileFactory;
+import org.treetank.page.DumbNodeFactory;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
+import com.google.inject.Inject;
+
+//@Guice(modules = DumpFactoryModule.class)
 public class IStorageTest {
+
+//    @Inject
+//    private IStorageFactory handler;
 
     @BeforeMethod
     public void setUp() throws TTException {
@@ -109,8 +119,10 @@ public class IStorageTest {
                 {
                     IStorageFactory.class,
                     new IStorageFactory[] {
-                        new FileFactory(TestHelper.PATHS.PATH1.getFile()),
-                        new BerkeleyFactory(TestHelper.PATHS.PATH1.getFile())
+                        new FileFactory(TestHelper.PATHS.PATH1.getFile(), new DumbNodeFactory(),
+                            new ByteHandlePipeline()),
+                        new BerkeleyFactory(TestHelper.PATHS.PATH1.getFile(), new DumbNodeFactory(),
+                            new ByteHandlePipeline())
                     }
                 }
             };

@@ -111,8 +111,9 @@ public final class TestHelper {
                 Database.createDatabase(config);
             }
             final IDatabase database = Database.openDatabase(file);
-            database.createResource(new ResourceConfiguration.Builder(RESOURCE, config).build());
-            INSTANCES.put(file, database);
+            //Need to be transferred to guice
+//            database.createResource(new ResourceConfiguration.Builder(RESOURCE, config).build());
+//            INSTANCES.put(file, database);
             return database;
         }
     }

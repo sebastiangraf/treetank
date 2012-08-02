@@ -6,6 +6,9 @@ package org.treetank.revisioning;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 /**
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -24,7 +27,8 @@ public class Incremental implements IRevisioning {
      * @param pRevToRestore
      *            to be set.
      */
-    public Incremental(int pRevToRestore) {
+    @Inject
+    public Incremental(@Assisted int pRevToRestore) {
         mRevToRestore = pRevToRestore;
     }
 
