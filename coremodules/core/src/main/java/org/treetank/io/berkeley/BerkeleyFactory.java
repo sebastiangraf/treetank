@@ -116,7 +116,7 @@ public final class BerkeleyFactory implements IStorageFactory {
     @Override
     public IReader getReader() throws TTIOException {
         try {
-            return new BerkeleyReader(mEnv, mDatabase);
+            return new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -127,7 +127,7 @@ public final class BerkeleyFactory implements IStorageFactory {
      */
     @Override
     public IWriter getWriter() throws TTIOException {
-        return new BerkeleyWriter(mEnv, mDatabase);
+        return new BerkeleyWriter(mEnv, mDatabase, mPageBinding);
     }
 
     /**
@@ -152,7 +152,7 @@ public final class BerkeleyFactory implements IStorageFactory {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         boolean returnVal = false;
         try {
-            final IReader reader = new BerkeleyReader(mEnv, mDatabase);
+            final IReader reader = new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
             TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
