@@ -29,9 +29,7 @@ package org.treetank.access.conf;
 import java.io.File;
 
 import org.treetank.access.Session;
-import org.treetank.api.INodeFactory;
 import org.treetank.io.IStorageFactory;
-import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.inject.Inject;
@@ -127,12 +125,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     /** Type of Storage (File, Berkeley). */
     public final IStorageFactory mStorage;
 
-    /** Node Factory to generate nodes for this resource. */
-    public final INodeFactory mNodeFac;
-
-    /** Handler for bytes before serialization. */
-    public final IByteHandler mByteHandler;
-
     /** Kind of revisioning (Incremental, Differential). */
     public final IRevisioning mRevision;
 
@@ -153,10 +145,8 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      */
     @Inject
     public ResourceConfiguration(@Assisted DatabaseConfiguration pDBConf, @Assisted String pResourceName,
-        IStorageFactory pStorage, INodeFactory pNodeFactory, IByteHandler pByteHandler, IRevisioning pRevision) {
+        IStorageFactory pStorage, IRevisioning pRevision) {
         mStorage = pStorage;
-        mNodeFac = pNodeFactory;
-        mByteHandler = pByteHandler;
         mRevision = pRevision;
 
         mDBConfig = pDBConf;
