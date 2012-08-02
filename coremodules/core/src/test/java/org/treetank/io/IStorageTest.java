@@ -31,25 +31,20 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.CopyOfDumpFactoryModule;
 import org.treetank.DumpFactoryModule;
 import org.treetank.TestHelper;
-import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
-import org.treetank.io.berkeley.BerkeleyStorage;
-import org.treetank.io.bytepipe.ByteHandlePipeline;
-import org.treetank.io.bytepipe.IByteHandler;
-import org.treetank.io.file.FileStorage;
-import org.treetank.page.DumbNodeFactory;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
 import com.google.inject.Inject;
 
-@Guice(modules = DumpFactoryModule.class)
+@Guice(modules = {
+    DumpFactoryModule.class
+})
 public class IStorageTest {
 
     @Inject
