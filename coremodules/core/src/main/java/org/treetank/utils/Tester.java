@@ -5,7 +5,6 @@ package org.treetank.utils;
 
 import java.util.ServiceLoader;
 
-import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.revisioning.IRevisioning;
 
 /**
