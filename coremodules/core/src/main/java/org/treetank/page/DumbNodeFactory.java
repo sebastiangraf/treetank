@@ -12,6 +12,8 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 /**
+ * Simple Factory for generating {@link DumbNode}s mainly for testing the page-layer.
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
@@ -26,6 +28,11 @@ public class DumbNodeFactory implements INodeFactory {
         return new DumbNode(input.readLong(), input.readLong());
     }
 
+    /**
+     * Generating one single {@link DumbNode} with random values.
+     * 
+     * @return one {@link DumbNode} with random values.
+     */
     public static final INode generateOne() {
         return new DumbNode(TestHelper.random.nextLong(), TestHelper.random.nextLong());
     }
@@ -41,6 +48,14 @@ public class DumbNodeFactory implements INodeFactory {
         final long mNodeKey;
         final long mHash;
 
+        /**
+         * Simple constructor.
+         * 
+         * @param pNodeKey
+         *            to be set
+         * @param pHash
+         *            to be set
+         */
         public DumbNode(long pNodeKey, long pHash) {
             mNodeKey = pNodeKey;
             mHash = pHash;
