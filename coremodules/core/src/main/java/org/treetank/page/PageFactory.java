@@ -36,6 +36,13 @@ import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+/**
+ * Factory to deserialize pages out of a chunk of bytes.
+ * This factory needs a {@link INodeFactory}-reference to perform inlying node-serializations as well.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 @Singleton
 public final class PageFactory {
 
@@ -46,6 +53,7 @@ public final class PageFactory {
      * Constructor.
      * 
      * @param pFac
+     *            to be set
      */
     @Inject
     public PageFactory(final INodeFactory pFac) {

@@ -27,17 +27,16 @@
 
 package org.treetank.io.berkeley;
 
-import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
-import org.treetank.io.bytepipe.ByteHandlePipeline;
-import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
-import org.treetank.io.bytepipe.Zipper;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -48,6 +47,7 @@ import com.sleepycat.bind.tuple.TupleOutput;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Singleton
 public final class PageBinding extends TupleBinding<IPage> {
 
     /** Factory for Pages. */
@@ -56,13 +56,18 @@ public final class PageBinding extends TupleBinding<IPage> {
     /** Handling the byte-representation before serialization. */
     private final IByteHandler mByteHandler;
 
-    public PageBinding(final ResourceConfiguration pConf) {
-        mFac = new PageFactory(pConf.mNodeFac);
-        try {
-            mByteHandler = new ByteHandlePipeline(new Encryptor(), new Zipper());
-        } catch (TTByteHandleException e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * Constructor.
+     * 
+     * @param pNodeFac
+     *            to be set
+     * @param pByteHandler
+     *            to be set
+     */
+    @Inject
+    public PageBinding(INodeFactory pNodeFac, IByteHandler pByteHandler) {
+        mFac = new PageFactory(pNodeFac);
+        mByteHandler = pByteHandler;
     }
 
     /**
