@@ -8,15 +8,11 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.util.Arrays;
 
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.DumpFactoryModule;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.revisioning.IRevisioning;
-
-import com.google.inject.Inject;
 
 /**
  * Test class for all classes implementing the {@link IPage} interface.
@@ -24,11 +20,7 @@ import com.google.inject.Inject;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-@Guice(modules = DumpFactoryModule.class)
 public class IPageTest {
-
-    @Inject
-    private PageFactory mFac;
 
     /**
      * Test method for {@link org.treetank.page.IPage#IPage(long)} and
@@ -41,10 +33,12 @@ public class IPageTest {
      */
     @Test(dataProvider = "instantiatePages")
     public void testByteRepresentation(Class<IRevisioning> clazz, IPage[] pHandlers) {
+        final PageFactory fac = new PageFactory(new DumbNodeFactory());
+
         for (final IPage handler : pHandlers) {
             final byte[] pageBytes = handler.getByteRepresentation();
 
-            final IPage serializedPage = mFac.deserializePage(pageBytes);
+            final IPage serializedPage = fac.deserializePage(pageBytes);
             assertTrue(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
                 .toString(), Arrays.equals(pageBytes, serializedPage.getByteRepresentation()));
         }

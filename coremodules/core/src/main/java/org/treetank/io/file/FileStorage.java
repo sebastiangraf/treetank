@@ -34,7 +34,7 @@ import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.IStorageFactory;
+import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.PageFactory;
@@ -48,7 +48,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Sebastian Graf, University of Konstanz.
  * 
  */
-public final class FileFactory implements IStorageFactory {
+public final class FileStorage implements IStorage {
 
     /** private constant for fileName. */
     private static final String FILENAME = "tt.tnk";
@@ -77,7 +77,7 @@ public final class FileFactory implements IStorageFactory {
      * 
      */
     @Inject
-    public FileFactory(@Assisted File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler) {
+    public FileStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler) {
         mFile = pFile;
         final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
         if (!repoFile.exists()) {

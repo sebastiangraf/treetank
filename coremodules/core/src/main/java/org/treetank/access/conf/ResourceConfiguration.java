@@ -29,7 +29,7 @@ package org.treetank.access.conf;
 import java.io.File;
 
 import org.treetank.access.Session;
-import org.treetank.io.IStorageFactory;
+import org.treetank.io.IStorage;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.inject.Inject;
@@ -123,7 +123,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
 
     // MEMBERS FOR FIXED FIELDS
     /** Type of Storage (File, Berkeley). */
-    public final IStorageFactory mStorage;
+    public final IStorage mStorage;
 
     /** Kind of revisioning (Incremental, Differential). */
     public final IRevisioning mRevision;
@@ -145,7 +145,7 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      */
     @Inject
     public ResourceConfiguration(@Assisted DatabaseConfiguration pDBConf, @Assisted String pResourceName,
-        IStorageFactory pStorage, IRevisioning pRevision) {
+        IStorage pStorage, IRevisioning pRevision) {
         mStorage = pStorage;
         mRevision = pRevision;
 

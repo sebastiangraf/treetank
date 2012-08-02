@@ -34,7 +34,7 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.IStorageFactory;
+import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.IPage;
@@ -55,13 +55,13 @@ import com.sleepycat.je.OperationStatus;
  * Factory class to build up {@link IReader} {@link IWriter} instances for the
  * Treetank Framework.
  * 
- * After all this class is implemented as a Singleton to hold one {@link BerkeleyFactory} per
+ * After all this class is implemented as a Singleton to hold one {@link BerkeleyStorage} per
  * {@link SessionConfiguration}.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyFactory implements IStorageFactory {
+public final class BerkeleyStorage implements IStorage {
 
     /** Name for the database. */
     private static final String NAME = "berkeleyDatabase";
@@ -88,7 +88,7 @@ public final class BerkeleyFactory implements IStorageFactory {
      *             of something odd happens while database-connection
      */
     @Inject
-    public BerkeleyFactory(@Assisted File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler)
+    public BerkeleyStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler)
         throws TTIOException {
 
         final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
