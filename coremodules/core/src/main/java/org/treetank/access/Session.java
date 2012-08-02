@@ -75,23 +75,23 @@ public final class Session implements ISession {
     /**
      * Hidden constructor.
      * 
-     * @param paramDatabase
+     * @param pDatabase
      *            Database for centralized operations on related sessions.
-     * @param paramDatabaseConf
+     * @param pSessionConf
      *            DatabaseConfiguration for general setting about the storage
-     * @param paramSessionConf
-     *            SessionConfiguration for handling this specific session
+     * @param pResourceConf
+     *            ResourceConfiguration for handling this specific session
      * @throws TTException
      *             Exception if something weird happens
      */
-    protected Session(final Database paramDatabase, final ResourceConfiguration paramResourceConf,
-        final SessionConfiguration paramSessionConf) throws TTException {
-        mDatabase = paramDatabase;
-        mResourceConfig = paramResourceConf;
-        mSessionConfig = paramSessionConf;
+    protected Session(final Database pDatabase, final ResourceConfiguration pResourceConf,
+        final SessionConfiguration pSessionConf) throws TTException {
+        mDatabase = pDatabase;
+        mResourceConfig = pResourceConf;
+        mSessionConfig = pSessionConf;
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
 
-        mFac = paramResourceConf.mStorage;
+        mFac = pResourceConf.mStorage;
 
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
