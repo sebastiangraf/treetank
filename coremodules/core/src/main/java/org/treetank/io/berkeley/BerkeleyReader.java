@@ -37,7 +37,6 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
@@ -63,28 +62,17 @@ public final class BerkeleyReader implements IReader {
     /**
      * Constructor.
      * 
-     * @param paramDatabase
+     * @param pDatabase
      *            {@link Database} reference to be connected to
-     * @param paramTxn
+     * @param pTxn
      *            {@link Transaction} to be used
+     * @param pPageBinding
+     *            {@link TupleBinding} for de/-serializing pages
      */
-    public BerkeleyReader(final Database paramDatabase, final Transaction paramTxn) {
-        mTxn = paramTxn;
-        mDatabase = paramDatabase;
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param paramEnv
-     *            {@link Envirenment} to be used
-     * @param paramDatabase
-     *            {@link Database} to be connected to
-     * @throws DatabaseException
-     *             if something weird happens
-     */
-    public BerkeleyReader(final Environment paramEnv, final Database paramDatabase) throws DatabaseException {
-        this(paramDatabase, paramEnv.beginTransaction(null, null));
+    public BerkeleyReader(Database pDatabase, Transaction pTxn, TupleBinding<IPage> pPageBinding) {
+        mTxn = pTxn;
+        mDatabase = pDatabase;
+        mPageBinding = pPageBinding;
     }
 
     /**
@@ -101,7 +89,7 @@ public final class BerkeleyReader implements IReader {
         try {
             final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             if (status == OperationStatus.SUCCESS) {
-                page = BerkeleyFactory.PAGE_VAL_B.entryToObject(valueEntry);
+                page = mPageBinding.entryToObject(valueEntry);
             }
             return page;
         } catch (final DatabaseException exc) {

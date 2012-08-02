@@ -31,21 +31,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.bytepipe.ByteHandlePipeline;
-import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
-import org.treetank.io.bytepipe.Zipper;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 /**
  * File Reader. Used for NodeReadTrx to provide read only access on a
@@ -76,20 +71,27 @@ public final class FileReader implements IReader {
     /**
      * Constructor.
      * 
-     * @throws TTIOException
-     *             if something bad happens
-     * @throws TTByteHandleException
+     * @param pFile
+     *            path to the storage.
+     * @param pNodeFac
+     *            the factory to build nodes.
+     * @param pByteHandler
+     *            handling the bytes.
+     * @throws TTException
+     *             if anything bad happens
      */
-    public FileReader(final File mConcreteStorage) throws TTException {
+    public FileReader(File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler)
+        throws TTException {
 
         try {
-            if (!mConcreteStorage.exists()) {
-                mConcreteStorage.getParentFile().mkdirs();
-                mConcreteStorage.createNewFile();
+            if (!pFile.exists()) {
+                pFile.getParentFile().mkdirs();
+                pFile.createNewFile();
             }
 
-            mFile = new RandomAccessFile(mConcreteStorage, "r");
-            mByteHandler = new ByteHandlePipeline(new Encryptor(), new Zipper());
+            mFile = new RandomAccessFile(pFile, "r");
+            mByteHandler = pByteHandler;
+            mFac = new PageFactory(pNodeFac);
 
         } catch (final IOException exc) {
             throw new TTIOException(exc);

@@ -66,23 +66,27 @@ public final class BerkeleyWriter implements IWriter {
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Database}.
      * 
-     * @param paramEnv
+     * @param pEnv
      *            {@link Environment} reference for the write
-     * @param paramDatabase
+     * @param pDatabase
      *            {@link Database} reference where the data should be written to
+     * @param pPageBinding
+     *            {@link TupleBinding} for de/-serializing pages
+     * 
      * @throws TTIOException
      *             if something odd happens
      */
-    public BerkeleyWriter(final Environment paramEnv, final Database paramDatabase) throws TTIOException {
+    public BerkeleyWriter(Environment pEnv, Database pDatabase, TupleBinding<IPage> pPageBinding)
+        throws TTIOException {
         try {
-            mTxn = paramEnv.beginTransaction(null, null);
-            mDatabase = paramDatabase;
+            mTxn = pEnv.beginTransaction(null, null);
+            mDatabase = pDatabase;
             mNodepagekey = getLastNodePage();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
 
-        mReader = new BerkeleyReader(mDatabase, mTxn);
+        mReader = new BerkeleyReader(mDatabase, mTxn, pPageBinding);
     }
 
     /**

@@ -35,8 +35,6 @@ import org.treetank.page.PageFactory;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -47,7 +45,6 @@ import com.sleepycat.bind.tuple.TupleOutput;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-@Singleton
 public final class PageBinding extends TupleBinding<IPage> {
 
     /** Factory for Pages. */
@@ -64,7 +61,6 @@ public final class PageBinding extends TupleBinding<IPage> {
      * @param pByteHandler
      *            to be set
      */
-    @Inject
     public PageBinding(INodeFactory pNodeFac, IByteHandler pByteHandler) {
         mFac = new PageFactory(pNodeFac);
         mByteHandler = pByteHandler;

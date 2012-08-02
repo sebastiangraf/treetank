@@ -35,6 +35,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorageFactory;
 import org.treetank.io.IWriter;
+import org.treetank.page.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
@@ -64,10 +65,11 @@ public final class BerkeleyFactory implements IStorageFactory {
     /** Berkeley Environment for the database. */
     private final Environment mEnv;
 
-    /**
-     * Database instance per session.
-     */
+    /** Database instance per session. */
     private final Database mDatabase;
+
+    /** Binding for de/-serializing pages. */
+    private final TupleBinding<IPage> mPageBinding;
 
     /**
      * Private constructor.
@@ -99,11 +101,12 @@ public final class BerkeleyFactory implements IStorageFactory {
 
         try {
             mEnv = new Environment(repoFile, config);
-
             mDatabase = mEnv.openDatabase(null, NAME, conf);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
+        
+        mPageBinding = new PageBinding(pNodeFac, pByteHandler);
 
     }
 
