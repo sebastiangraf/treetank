@@ -31,12 +31,16 @@ import java.io.File;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorageFactory;
 import org.treetank.io.IWriter;
+import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.IPage;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -74,18 +78,20 @@ public final class BerkeleyFactory implements IStorageFactory {
     /**
      * Private constructor.
      * 
-     * @param paramFile
+     * @param pFile
      *            the file associated with the database
-     * @param paramDatabase
-     *            for the Database settings
-     * @param paramSession
-     *            for the settings
+     * @param pNodeFac
+     *            factory for the nodes
+     * @param pByteHandler
+     *            handling any bytes
      * @throws TTIOException
      *             of something odd happens while database-connection
      */
-    public BerkeleyFactory(final File paramFile) throws TTIOException {
+    @Inject
+    public BerkeleyFactory(@Assisted File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler)
+        throws TTIOException {
 
-        final File repoFile = new File(paramFile, ResourceConfiguration.Paths.Data.getFile().getName());
+        final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
         if (!repoFile.exists()) {
             repoFile.mkdirs();
         }
@@ -105,7 +111,7 @@ public final class BerkeleyFactory implements IStorageFactory {
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
-        
+
         mPageBinding = new PageBinding(pNodeFac, pByteHandler);
 
     }
@@ -152,7 +158,8 @@ public final class BerkeleyFactory implements IStorageFactory {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         boolean returnVal = false;
         try {
-            final IReader reader = new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
+            final IReader reader =
+                new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
             TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);

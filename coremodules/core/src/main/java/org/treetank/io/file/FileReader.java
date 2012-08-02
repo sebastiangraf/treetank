@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -73,15 +72,14 @@ public final class FileReader implements IReader {
      * 
      * @param pFile
      *            path to the storage.
-     * @param pNodeFac
-     *            the factory to build nodes.
+     * @param pFac
+     *            the factory to build pages.
      * @param pByteHandler
      *            handling the bytes.
      * @throws TTException
      *             if anything bad happens
      */
-    public FileReader(File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler)
-        throws TTException {
+    public FileReader(File pFile, PageFactory pFac, IByteHandler pByteHandler) throws TTException {
 
         try {
             if (!pFile.exists()) {
@@ -91,7 +89,7 @@ public final class FileReader implements IReader {
 
             mFile = new RandomAccessFile(pFile, "r");
             mByteHandler = pByteHandler;
-            mFac = new PageFactory(pNodeFac);
+            mFac = pFac;
 
         } catch (final IOException exc) {
             throw new TTIOException(exc);

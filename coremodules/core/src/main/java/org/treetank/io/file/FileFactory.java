@@ -30,11 +30,17 @@ package org.treetank.io.file;
 import java.io.File;
 
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorageFactory;
 import org.treetank.io.IWriter;
+import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.page.PageFactory;
+
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 /**
  * Factory to provide File access as a backend.
@@ -53,19 +59,32 @@ public final class FileFactory implements IStorageFactory {
     /** Instance to storage. */
     private final File mFile;
 
+    /** Factory for Pages. */
+    private final PageFactory mFac;
+
+    /** Handling the byte-representation before serialization. */
+    private final IByteHandler mByteHandler;
+
     /**
      * Constructor.
      * 
-     * @param paramFile
+     * @param pFile
      *            the location of the database
+     * @param pNodeFac
+     *            factory for the nodes
+     * @param pByteHandler
+     *            handling any bytes
      * 
      */
-    public FileFactory(final File paramFile) {
-        mFile = paramFile;
-        final File repoFile = new File(paramFile, ResourceConfiguration.Paths.Data.getFile().getName());
+    @Inject
+    public FileFactory(@Assisted File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler) {
+        mFile = pFile;
+        final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
         if (!repoFile.exists()) {
             repoFile.mkdirs();
         }
+        mFac = new PageFactory(pNodeFac);
+        mByteHandler = pByteHandler;
     }
 
     /**
@@ -73,7 +92,7 @@ public final class FileFactory implements IStorageFactory {
      */
     @Override
     public IReader getReader() throws TTException {
-        return new FileReader(getConcreteStorage());
+        return new FileReader(getConcreteStorage(), mFac, mByteHandler);
     }
 
     /**
@@ -81,7 +100,7 @@ public final class FileFactory implements IStorageFactory {
      */
     @Override
     public IWriter getWriter() throws TTException {
-        return new FileWriter(getConcreteStorage());
+        return new FileWriter(getConcreteStorage(), mFac, mByteHandler);
     }
 
     /**
