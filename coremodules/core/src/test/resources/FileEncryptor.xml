@@ -1,7 +1,11 @@
 <suite name="FileEncryptor">
 	<test name="FileEncryptor">
-		<classes>
-			<class name="org.treetank.io.IStorageTestFactory"/>
-		</classes>
+		<packages>
+			<package name="org.treetank.cache"/>
+			<package name="org.treetank.io"/>
+			<package name="org.treetank.io.bytepipe"/>
+			<package name="org.treetank.io.page"/>
+			<package name="org.treetank.io.revisioning"/>
+		</packages>
 	</test>
 </suite>

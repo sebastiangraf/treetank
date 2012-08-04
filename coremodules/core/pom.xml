@@ -57,29 +57,24 @@
 			</snapshots>
 		</repository>
 	</repositories>
-<!--	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/jarAssembly.xml</descriptor>
-					</descriptors>
-					<archive>
-						<manifest>
-							<mainClass>org.treetank.utils.TreeTankCommandoLineExplorer</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>-->
+	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-assembly-plugin</artifactId> <configuration> <descriptors> 
+		<descriptor>src/main/assembly/jarAssembly.xml</descriptor> </descriptors> 
+		<archive> <manifest> <mainClass>org.treetank.utils.TreeTankCommandoLineExplorer</mainClass> 
+		</manifest> </archive> </configuration> </plugin> </plugins> </build> -->
 	<dependencies>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>commons</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>commons</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

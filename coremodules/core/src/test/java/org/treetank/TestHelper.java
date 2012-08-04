@@ -35,7 +35,6 @@ import java.util.Random;
 import org.treetank.access.Database;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.exception.TTException;
 import org.treetank.page.DumbNodeFactory.DumbNode;

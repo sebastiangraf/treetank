@@ -8,6 +8,8 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
+import org.treetank.guicemodule.ModuleFactory;
+import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 

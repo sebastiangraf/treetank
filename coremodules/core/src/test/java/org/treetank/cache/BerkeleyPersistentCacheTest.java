@@ -33,39 +33,44 @@ import java.io.File;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.exception.TTException;
+import org.treetank.guicemodule.ModuleFactory;
 import org.treetank.page.NodePage;
 
+
+@Guice(moduleFactory = ModuleFactory.class)
 public class BerkeleyPersistentCacheTest {
 
-    private ICache cache;
+	private ICache cache;
 
-    @BeforeMethod
-    public void setUp() throws TTException {
-        TestHelper.deleteEverything();
-        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        cache =
-            new BerkeleyPersistenceCache(new File(new File(TestHelper.PATHS.PATH1.getFile(),
-                DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCE), 1);
-        CacheTestHelper.setUp(cache);
-    }
+	@BeforeMethod
+	public void setUp() throws TTException {
+		TestHelper.deleteEverything();
+		TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+		cache = new BerkeleyPersistenceCache(new File(new File(
+				TestHelper.PATHS.PATH1.getFile(),
+				DatabaseConfiguration.Paths.Data.getFile().getName()),
+				TestHelper.RESOURCE), 1);
+		CacheTestHelper.setUp(cache);
+	}
 
-    @Test
-    public void test() {
-        for (int i = 0; i < CacheTestHelper.PAGES.length; i++) {
-            final NodePageContainer cont = cache.get(i);
-            final NodePage current = cont.getComplete();
-            assertEquals(CacheTestHelper.PAGES[i][0], current);
+	@Test
+	public void test() {
+		for (int i = 0; i < CacheTestHelper.PAGES.length; i++) {
+			final NodePageContainer cont = cache.get(i);
+			final NodePage current = cont.getComplete();
+			assertEquals(CacheTestHelper.PAGES[i][0], current);
 
-        }
-        cache.clear();
-    }
+		}
+		cache.clear();
+	}
 
-    @AfterMethod
-    public void tearDown() throws TTException {
-        TestHelper.closeEverything();
-    }
+	@AfterMethod
+	public void tearDown() throws TTException {
+		TestHelper.closeEverything();
+	}
 }
