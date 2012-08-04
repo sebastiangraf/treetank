@@ -1,0 +1,7 @@
+<suite name="FileEncryptor">
+	<test name="FileEncryptor">
+		<classes>
+			<class name="org.treetank.io.IStorageTestFactory"/>
+		</classes>
+	</test>
+</suite>

@@ -1,0 +1,7 @@
+<suite name="FileZipper">
+	<test name="FileZipper">
+		<classes>
+			<class name="org.treetank.io.IStorageTestFactory"/>
+		</classes>
+	</test>
+</suite>

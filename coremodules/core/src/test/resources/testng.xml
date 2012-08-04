@@ -1,0 +1,6 @@
+<suite name="EntireSuite">
+	<suite-files>
+		<suite-file path="./FileZipper.xml" />
+		<suite-file path="./FileEncryptor.xml" />
+	</suite-files>
+</suite>
