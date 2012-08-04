@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.treetank.exception.TTByteHandleException;
 
@@ -45,6 +46,15 @@ public class Encryptor implements IByteHandler {
         } catch (final NoSuchPaddingException exc) {
             throw new TTByteHandleException(exc);
         }
+    }
+
+    static// 128bit key
+    byte[] keyValue = new byte[] {
+        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
+    };
+
+    public Encryptor() throws TTByteHandleException {
+        this(new SecretKeySpec(keyValue, "AES"));
     }
 
     /**
