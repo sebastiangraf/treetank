@@ -12,7 +12,6 @@ import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.bytepipe.IByteHandler;
-import org.treetank.revisioning.IRevisioning;
 
 /**
  * Test class for all classes implementing the {@link IPage} interface.
