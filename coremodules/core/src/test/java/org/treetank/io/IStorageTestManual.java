@@ -44,7 +44,7 @@ import org.treetank.page.UberPage;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class IStorageTest {
+public class IStorageTestManual {
 
     @BeforeMethod
     public void setUp() throws TTException {
