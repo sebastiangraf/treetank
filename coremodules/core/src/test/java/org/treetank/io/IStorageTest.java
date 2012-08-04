@@ -31,24 +31,20 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Guice;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.treetank.CopyOfDumpFactoryModule;
 import org.treetank.DumpFactoryModule;
 import org.treetank.TestHelper;
+import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
+import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
-import com.google.inject.Inject;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
-@Guice(modules = {
-    DumpFactoryModule.class
-})
 public class IStorageTest {
-
-    @Inject
-    private IStorageFactory mFacHandler;
 
     @BeforeMethod
     public void setUp() throws TTException {
@@ -69,41 +65,62 @@ public class IStorageTest {
      * 
      * @throws TTException
      */
-    @Test
-    public void testFirstRef() throws TTException {
+    @Test(dataProvider = "instantiateStorageFactories")
+    public void testFirstRef(Class<IStorageFactory> clazz, IStorageFactory[] pStorageFactories)
+        throws TTException {
 
-        IStorage handler = mFacHandler.create(TestHelper.PATHS.PATH1.getFile());
+        for (IStorageFactory fac : pStorageFactories) {
 
-        final PageReference pageRef1 = new PageReference();
-        final UberPage page1 = new UberPage();
-        pageRef1.setPage(page1);
+            IStorage handler = fac.create(TestHelper.PATHS.PATH1.getFile());
 
-        // same instance check
-        final IWriter writer = handler.getWriter();
-        writer.writeFirstReference(pageRef1);
-        final PageReference pageRef2 = writer.readFirstReference();
-        assertEquals(
-            new StringBuilder("Check for ").append(handler.getClass()).append(" failed.").toString(),
-            pageRef1.getNodePageKey(), pageRef2.getNodePageKey());
-        assertEquals(
-            new StringBuilder("Check for ").append(handler.getClass()).append(" failed.").toString(),
-            ((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef2.getPage())
-                .getRevisionCount());
-        writer.close();
+            final PageReference pageRef1 = new PageReference();
+            final UberPage page1 = new UberPage();
+            pageRef1.setPage(page1);
 
-        // new instance check
-        final IReader reader = handler.getReader();
-        final PageReference pageRef3 = reader.readFirstReference();
-        assertEquals(
-            new StringBuilder("Check for ").append(handler.getClass()).append(" failed.").toString(),
-            pageRef1.getNodePageKey(), pageRef3.getNodePageKey());
-        assertEquals(
-            new StringBuilder("Check for ").append(handler.getClass()).append(" failed.").toString(),
-            ((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef3.getPage())
-                .getRevisionCount());
-        reader.close();
-        handler.close();
+            // same instance check
+            final IWriter writer = handler.getWriter();
+            writer.writeFirstReference(pageRef1);
+            final PageReference pageRef2 = writer.readFirstReference();
+            assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), pageRef1.getNodePageKey(), pageRef2.getNodePageKey());
+            assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), ((UberPage)pageRef1.getPage()).getRevisionCount(),
+                ((UberPage)pageRef2.getPage()).getRevisionCount());
+            writer.close();
 
+            // new instance check
+            final IReader reader = handler.getReader();
+            final PageReference pageRef3 = reader.readFirstReference();
+            assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), pageRef1.getNodePageKey(), pageRef3.getNodePageKey());
+            assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), ((UberPage)pageRef1.getPage()).getRevisionCount(),
+                ((UberPage)pageRef3.getPage()).getRevisionCount());
+            reader.close();
+            handler.close();
+        }
+    }
+
+    /**
+     * Providing different implementations of the {@link IStorageFactory} as Dataprovider to the test class.
+     * 
+     * @return different classes of the {@link IByteHandler}
+     * @throws TTByteHandleException
+     */
+    @DataProvider(name = "instantiateStorageFactories")
+    public Object[][] instantiateStorageFactories() throws TTByteHandleException {
+
+        Injector injector = Guice.createInjector(new DumpFactoryModule());
+        IStorageFactory fac = injector.getInstance(IStorageFactory.class);
+
+        Object[][] returnVal = {
+            {
+                IStorageFactory.class, new IStorageFactory[] {
+                    fac
+                }
+            }
+        };
+        return returnVal;
     }
 
 }

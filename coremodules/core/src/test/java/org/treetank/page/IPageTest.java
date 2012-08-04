@@ -32,7 +32,7 @@ public class IPageTest {
      *            different pages
      */
     @Test(dataProvider = "instantiatePages")
-    public void testByteRepresentation(Class<IRevisioning> clazz, IPage[] pHandlers) {
+    public void testByteRepresentation(Class<IPage> clazz, IPage[] pHandlers) {
         final PageFactory fac = new PageFactory(new DumbNodeFactory());
 
         for (final IPage handler : pHandlers) {
