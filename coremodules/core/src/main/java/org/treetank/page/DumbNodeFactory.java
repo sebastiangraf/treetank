@@ -3,7 +3,6 @@
  */
 package org.treetank.page;
 
-import org.treetank.TestHelper;
 import org.treetank.api.INode;
 import org.treetank.api.INodeFactory;
 
@@ -28,14 +27,6 @@ public class DumbNodeFactory implements INodeFactory {
         return new DumbNode(input.readLong(), input.readLong());
     }
 
-    /**
-     * Generating one single {@link DumbNode} with random values.
-     * 
-     * @return one {@link DumbNode} with random values.
-     */
-    public static final INode generateOne() {
-        return new DumbNode(TestHelper.random.nextLong(), TestHelper.random.nextLong());
-    }
 
     /**
      * Simple DumbNode just for testing the {@link NodePage}s.

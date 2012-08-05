@@ -36,6 +36,7 @@ import org.treetank.access.Database;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.api.IDatabase;
+import org.treetank.api.INode;
 import org.treetank.exception.TTException;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.NodePage;
@@ -177,6 +178,13 @@ public final class TestHelper {
         return page;
     }
 
-
+    /**
+     * Generating one single {@link DumbNode} with random values.
+     * 
+     * @return one {@link DumbNode} with random values.
+     */
+    public static final INode generateOne() {
+        return new DumbNode(TestHelper.random.nextLong(), TestHelper.random.nextLong());
+    }
 
 }

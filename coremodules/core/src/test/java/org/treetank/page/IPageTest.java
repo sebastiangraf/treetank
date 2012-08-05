@@ -58,7 +58,7 @@ public class IPageTest {
         // NodePage setup
         NodePage nodePage = new NodePage(TestHelper.random.nextLong(), TestHelper.random.nextLong());
         for (int i = 0; i < IConstants.NDP_NODE_COUNT - 1; i++) {
-            nodePage.setNode(i, DumbNodeFactory.generateOne());
+            nodePage.setNode(i, TestHelper.generateOne());
         }
         // NamePage setup
         NamePage namePage = new NamePage(TestHelper.random.nextLong());
