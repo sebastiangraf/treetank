@@ -16,7 +16,7 @@ import org.treetank.page.UberPage;
 import com.google.inject.Inject;
 
 @Guice(moduleFactory = ModuleFactory.class)
-public class IStorageTestFactory {
+public class IStorageTest {
 
     @Inject
     private IStorageFactory mFac;

@@ -57,11 +57,22 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-		<artifactId>maven-assembly-plugin</artifactId> <configuration> <descriptors> 
-		<descriptor>src/main/assembly/jarAssembly.xml</descriptor> </descriptors> 
-		<archive> <manifest> <mainClass>org.treetank.utils.TreeTankCommandoLineExplorer</mainClass> 
-		</manifest> </archive> </configuration> </plugin> </plugins> </build> -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.1</version>
+				<configuration>
+					<suiteXmlFiles>
+						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+			</plugin><!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-assembly-plugin</artifactId> 
+				<configuration> <descriptors> <descriptor>src/main/assembly/jarAssembly.xml</descriptor> 
+				</descriptors> <archive> <manifest> <mainClass>org.treetank.utils.TreeTankCommandoLineExplorer</mainClass> 
+				</manifest> </archive> </configuration> </plugin> -->
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>treetank</groupId>
