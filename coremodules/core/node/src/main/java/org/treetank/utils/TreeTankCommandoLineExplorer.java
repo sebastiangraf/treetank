@@ -43,7 +43,6 @@ import java.io.InputStreamReader;
 import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
@@ -110,8 +109,7 @@ public final class TreeTankCommandoLineExplorer {
             final DatabaseConfiguration config = new DatabaseConfiguration(file);
             Database.createDatabase(config);
             database = Database.openDatabase(file);
-            database.createResource(new ResourceConfiguration.Builder("TMP", config).build());
-            session = database.getSession(new SessionConfiguration.Builder("TMP").build());
+            session = database.getSession(new SessionConfiguration("TMP", null));
             if (revision != 0) {
                 pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
             } else {
@@ -145,7 +143,7 @@ public final class TreeTankCommandoLineExplorer {
                     final File file = findFile(line);
                     if (file != null) {
                         database = Database.openDatabase(file);
-                        session = database.getSession(new SessionConfiguration.Builder("TMP").build());
+                        session = database.getSession(new SessionConfiguration("TMP", null));
                         pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
                         nRtx = new NodeReadTrx(pRtx);
                         System.out.println(command.executeCommand(nRtx));
