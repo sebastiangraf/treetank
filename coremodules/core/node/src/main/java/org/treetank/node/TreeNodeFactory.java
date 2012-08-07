@@ -18,10 +18,12 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 /**
+ * Factory necessary to deserialize tree-nodes.
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class NodeFactory implements INodeFactory {
+public class TreeNodeFactory implements INodeFactory {
 
     /**
      * {@inheritDoc}

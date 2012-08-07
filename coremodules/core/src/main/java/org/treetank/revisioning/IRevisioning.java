@@ -12,6 +12,7 @@ import org.treetank.page.NodePage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+
 public interface IRevisioning {
 
     /**

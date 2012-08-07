@@ -45,7 +45,7 @@ public class NamespaceNodeTest {
 
         // Serialize and deserialize node.
         final byte[] data = node1.getByteRepresentation();
-        final NamespaceNode node2 = (NamespaceNode)new NodeFactory().deserializeNode(data);
+        final NamespaceNode node2 = (NamespaceNode)new TreeNodeFactory().deserializeNode(data);
         check(node2);
 
     }

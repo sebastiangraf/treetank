@@ -4,7 +4,7 @@
 package org.treetank;
 
 import org.treetank.api.INodeFactory;
-import org.treetank.node.NodeFactory;
+import org.treetank.node.TreeNodeFactory;
 
 import com.google.inject.AbstractModule;
 
@@ -21,7 +21,7 @@ public class NodePageFactoryModule extends AbstractModule {
      */
     @Override
     protected void configure() {
-        bind(INodeFactory.class).to(NodeFactory.class);
+        bind(INodeFactory.class).to(TreeNodeFactory.class);
     }
 
 }

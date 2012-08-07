@@ -49,7 +49,7 @@ public class DocumentRootNodeTest {
 
         // Serialize and deserialize node.
         final byte[] data = node1.getByteRepresentation();
-        final DocumentRootNode node2 = (DocumentRootNode)new NodeFactory().deserializeNode(data);
+        final DocumentRootNode node2 = (DocumentRootNode)new TreeNodeFactory().deserializeNode(data);
         check(node2);
 
     }

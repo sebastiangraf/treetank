@@ -53,7 +53,7 @@ public class TextNodeTest {
 
         // Serialize and deserialize node.
         final byte[] data = node1.getByteRepresentation();
-        final TextNode node2 = (TextNode)new NodeFactory().deserializeNode(data);
+        final TextNode node2 = (TextNode)new TreeNodeFactory().deserializeNode(data);
         check(node2);
 
     }

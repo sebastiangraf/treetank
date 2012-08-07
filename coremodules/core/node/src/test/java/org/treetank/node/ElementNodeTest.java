@@ -58,7 +58,7 @@ public class ElementNodeTest {
 
         // Serialize and deserialize node.
         final byte[] data = node1.getByteRepresentation();
-        final ElementNode node2 = (ElementNode)new NodeFactory().deserializeNode(data);
+        final ElementNode node2 = (ElementNode)new TreeNodeFactory().deserializeNode(data);
         check(node2);
     }
 
