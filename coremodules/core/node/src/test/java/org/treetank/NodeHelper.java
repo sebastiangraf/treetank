@@ -30,11 +30,15 @@ package org.treetank;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import javax.crypto.spec.SecretKeySpec;
+
+import org.testng.annotations.Guice;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Session;
-import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
@@ -44,6 +48,8 @@ import org.treetank.exception.TTException;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
+
+import com.google.inject.Inject;
 
 /**
  * 
@@ -55,19 +61,28 @@ import org.treetank.node.delegates.StructNodeDelegate;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+
 public final class NodeHelper {
+
+    private static final DatabaseConfiguration DATABASECONFIGURATION = new DatabaseConfiguration(
+        TestHelper.PATHS.PATH1.getFile());
+
+    private static final String RESOURCENAME = "tmp";
+
+    static byte[] keyValue = new byte[] {
+        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
+    };
 
     /**
      * Creating a test document at {@link PATHS#PATH1}.
      * 
      * @throws TTException
      */
-    public static void createTestDocument() throws TTException {
+    public void createTestDocument(IResourceConfigurationFactory mResourceConfig) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE,
-            TestHelper.PATHS.PATH1.config).build());
+        database.createResource(mResourceConfig.create(DATABASECONFIGURATION, RESOURCENAME));
         final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+            database.getSession(new SessionConfiguration(RESOURCENAME, new SecretKeySpec(keyValue, "AES")));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
         final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
         DocumentCreater.create(nWtx);
