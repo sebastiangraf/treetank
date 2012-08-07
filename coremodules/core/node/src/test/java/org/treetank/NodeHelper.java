@@ -32,7 +32,6 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.testng.annotations.Guice;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -48,8 +47,6 @@ import org.treetank.exception.TTException;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
-
-import com.google.inject.Inject;
 
 /**
  * 
