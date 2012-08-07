@@ -118,4 +118,23 @@ public final class SessionConfiguration {
         return mKey;
     }
 
+    /**
+     * 
+     * Factory for generating an {@link SessionConfiguration}-instance. Needed mainly
+     * because of Guice-Assisted utilization.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public static interface ISessionConfigurationFactory {
+
+        /**
+         * Generating a storage for a fixed file.
+         * 
+         * @param pResourceName
+         *            Name of resource to be set.
+         * @return an {@link SessionConfiguration}-instance
+         */
+        ISessionConfigurationFactory create(String pResourceName);
+    }
 }

@@ -6,12 +6,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
-import org.treetank.guicemodule.ModuleFactory;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 

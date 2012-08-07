@@ -1,4 +1,4 @@
-package org.treetank.guicemodule;
+package org.treetank;
 
 import org.testng.IModuleFactory;
 import org.testng.ITestContext;
