@@ -87,6 +87,16 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jclouds</groupId>
+			<artifactId>jclouds-blobstore</artifactId>
+			<version>1.5.0-alpha.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jclouds</groupId>
+			<artifactId>jclouds-allblobstore</artifactId>
+			<version>1.5.0-alpha.1</version>
+		</dependency>
 	</dependencies>
 
 </project>
