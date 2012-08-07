@@ -30,6 +30,7 @@ package org.treetank.cache;
 import java.io.File;
 
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 
 /**
@@ -50,16 +51,20 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * Constructor including the {@link ResourceConfiguration} for persistent
      * storage.
      * 
-     * @param paramFile
+     * @param pFile
      *            the config for having a storage-place
-     * @param paramRevision
+     * @param pRevision
      *            revision number
+     * @param pNodeFac
+     *            for deserialization of nodes
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public TransactionLogCache(final File paramFile, final long paramRevision) throws TTIOException {
-        super(paramFile);
-        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(paramFile, paramRevision);
+    public TransactionLogCache(final File pFile, final long pRevision, final INodeFactory pNodeFac)
+        throws TTIOException {
+        super(pFile);
+        final BerkeleyPersistenceCache secondCache =
+            new BerkeleyPersistenceCache(pFile, pRevision, pNodeFac);
         mFirstCache = new LRUCache(secondCache);
     }
 

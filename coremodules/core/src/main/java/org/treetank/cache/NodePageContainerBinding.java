@@ -34,50 +34,49 @@ import org.treetank.page.PageFactory;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.google.inject.Inject;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
 public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
-	private final PageFactory mFac;
+    private final PageFactory mFac;
 
-	@Inject
-	INodeFactory mNodeFac;
+    /**
+     * Constructor
+     * 
+     * @param pNodeFac
+     *            for the deserialization of nodes
+     */
+    public NodePageContainerBinding(final INodeFactory pNodeFac) {
+        mFac = new PageFactory(pNodeFac);
+    }
 
-	public NodePageContainerBinding() {
-		mFac = new PageFactory(mNodeFac);
-	}
+    @Override
+    public NodePageContainer entryToObject(final TupleInput arg0) {
+        final ByteArrayDataInput data = ByteStreams.newDataInput(arg0.getBufferBytes());
 
-	@Override
-	public NodePageContainer entryToObject(final TupleInput arg0) {
-		final ByteArrayDataInput data = ByteStreams.newDataInput(arg0
-				.getBufferBytes());
+        final int completeLength = data.readInt();
+        final int modifiedLength = data.readInt();
+        byte[] completeBytes = new byte[completeLength];
+        byte[] modifiedBytes = new byte[modifiedLength];
+        data.readFully(completeBytes);
+        data.readFully(modifiedBytes);
 
-		final int completeLength = data.readInt();
-		final int modifiedLength = data.readInt();
-		byte[] completeBytes = new byte[completeLength];
-		byte[] modifiedBytes = new byte[modifiedLength];
-		data.readFully(completeBytes);
-		data.readFully(modifiedBytes);
+        final NodePage current = (NodePage)mFac.deserializePage(completeBytes);
+        final NodePage modified = (NodePage)mFac.deserializePage(modifiedBytes);
+        return new NodePageContainer(current, modified);
+    }
 
-		final NodePage current = (NodePage) mFac.deserializePage(completeBytes);
-		final NodePage modified = (NodePage) mFac
-				.deserializePage(modifiedBytes);
-		return new NodePageContainer(current, modified);
-	}
-
-	@Override
-	public void objectToEntry(final NodePageContainer arg0,
-			final TupleOutput arg1) {
-		final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-		final byte[] completeData = arg0.getComplete().getByteRepresentation();
-		final byte[] modifiedData = arg0.getModified().getByteRepresentation();
-		pOutput.writeInt(completeData.length);
-		pOutput.writeInt(modifiedData.length);
-		pOutput.write(arg0.getComplete().getByteRepresentation());
-		pOutput.write(arg0.getModified().getByteRepresentation());
-		arg1.write(pOutput.toByteArray());
-	}
+    @Override
+    public void objectToEntry(final NodePageContainer arg0, final TupleOutput arg1) {
+        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+        final byte[] completeData = arg0.getComplete().getByteRepresentation();
+        final byte[] modifiedData = arg0.getModified().getByteRepresentation();
+        pOutput.writeInt(completeData.length);
+        pOutput.writeInt(modifiedData.length);
+        pOutput.write(arg0.getComplete().getByteRepresentation());
+        pOutput.write(arg0.getModified().getByteRepresentation());
+        arg1.write(pOutput.toByteArray());
+    }
 }

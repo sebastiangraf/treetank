@@ -31,19 +31,28 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
+import org.treetank.guicemodule.ModuleFactory;
 import org.treetank.page.NodePage;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = ModuleFactory.class)
 public class TransactionLogCacheTest {
     private ICache cache;
+
+    @Inject
+    public INodeFactory mNodeFac;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1);
+        cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1, mNodeFac);
         CacheTestHelper.setUp(cache);
     }
 

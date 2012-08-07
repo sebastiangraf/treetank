@@ -29,6 +29,7 @@ package org.treetank.cache;
 
 import java.io.File;
 
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -79,16 +80,19 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     /**
      * Constructor. Building up the berkeley db and setting necessary settings.
      * 
-     * @param paramFile
+     * @param pFile
      *            the place where the berkeley db is stored.
-     * @param paramRevision
+     * @param pRevision
      *            revision number, needed to reconstruct the sliding window in
      *            the correct way
+     * @param pNodeFac
+     *            for deserialization of nodes
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceCache(final File paramFile, final long paramRevision) throws TTIOException {
-        super(paramFile);
+    public BerkeleyPersistenceCache(final File pFile, final long pRevision,
+        final INodeFactory pNodeFac) throws TTIOException {
+        super(pFile);
         try {
             /* Create a new, transactional database environment */
             final EnvironmentConfig config = new EnvironmentConfig();
@@ -104,7 +108,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
 
             mKeyBinding = TupleBinding.getPrimitiveBinding(Long.class);
-            mValueBinding = new NodePageContainerBinding();
+            mValueBinding = new NodePageContainerBinding(pNodeFac);
 
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);

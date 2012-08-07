@@ -100,7 +100,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long paramRepresentRev, final long paramStoreRev) throws TTException {
         mDelegate = new PageReadTrx(pSession, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
-        mLog = new TransactionLogCache(pSession.getConfig().mPath, paramStoreRev);
+        mLog =
+            new TransactionLogCache(pSession.getConfig().mPath, paramStoreRev, pSession.getConfig().mNodeFac);
         mPageWriter = paramWriter;
 
     }

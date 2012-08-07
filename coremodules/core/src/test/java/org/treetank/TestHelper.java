@@ -55,9 +55,6 @@ import com.google.common.io.Files;
  */
 public final class TestHelper {
 
-    /** Common resource name. */
-    public static final String RESOURCE = "shredded";
-
     /** Paths where the data is stored to. */
     public enum PATHS {
 
@@ -111,9 +108,6 @@ public final class TestHelper {
                 Database.createDatabase(config);
             }
             final IDatabase database = Database.openDatabase(file);
-            //Need to be transferred to guice
-//            database.createResource(new ResourceConfiguration.Builder(RESOURCE, config).build());
-//            INSTANCES.put(file, database);
             return database;
         }
     }

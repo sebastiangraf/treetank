@@ -29,6 +29,7 @@ package org.treetank.access.conf;
 import java.io.File;
 
 import org.treetank.access.Session;
+import org.treetank.api.INodeFactory;
 import org.treetank.io.IStorage;
 import org.treetank.revisioning.IRevisioning;
 
@@ -130,6 +131,9 @@ public final class ResourceConfiguration implements IConfigureSerializable {
 
     /** Path for the resource to be associated. */
     public final File mPath;
+
+    /** Node Factory for deserializing nodes. */
+    public final INodeFactory mNodeFac;
     // END MEMBERS FOR FIXED FIELDS
 
     /** DatabaseConfiguration for this {@link ResourceConfiguration}. */
@@ -145,11 +149,12 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      */
     @Inject
     public ResourceConfiguration(@Assisted DatabaseConfiguration pDBConf, @Assisted String pResourceName,
-        IStorage pStorage, IRevisioning pRevision) {
+        IStorage pStorage, IRevisioning pRevision, INodeFactory pNodeFac) {
         mStorage = pStorage;
         mRevision = pRevision;
 
         mDBConfig = pDBConf;
+        mNodeFac = pNodeFac;
         mPath =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 pResourceName);
