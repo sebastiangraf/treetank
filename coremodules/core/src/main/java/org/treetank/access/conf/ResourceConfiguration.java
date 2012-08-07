@@ -31,6 +31,7 @@ import java.io.File;
 import org.treetank.access.Session;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IStorage;
+import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.inject.Inject;
@@ -149,15 +150,14 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      */
     @Inject
     public ResourceConfiguration(@Assisted DatabaseConfiguration pDBConf, @Assisted String pResourceName,
-        IStorage pStorage, IRevisioning pRevision, INodeFactory pNodeFac) {
-        mStorage = pStorage;
+        IStorageFactory pStorage, IRevisioning pRevision, INodeFactory pNodeFac) {
         mRevision = pRevision;
-
         mDBConfig = pDBConf;
         mNodeFac = pNodeFac;
         mPath =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 pResourceName);
+        mStorage = pStorage.create(mPath);
 
     }
 
@@ -205,6 +205,28 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     public File getConfigFile() {
         final File file = new File(mPath, Paths.ConfigBinary.getFile().getName());
         return file;
+    }
+
+    /**
+     * 
+     * Factory for generating an {@link ResourceConfiguration}-instance. Needed mainly
+     * because of Guice-Assisted utilization.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public static interface IResourceConfigurationFactory {
+
+        /**
+         * Generating a storage for a fixed file.
+         * 
+         * @param pDBConf
+         *            DatabaseConfiguration to be set.
+         * @param pResourceName
+         *            Name of resource to be set.
+         * @return an {@link ResourceConfiguration}-instance
+         */
+        ResourceConfiguration create(DatabaseConfiguration pDBConf, String pResourceName);
     }
 
 }

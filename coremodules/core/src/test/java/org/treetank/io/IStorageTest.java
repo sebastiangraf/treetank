@@ -7,9 +7,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.guicemodule.ModuleFactory;
-import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
@@ -19,7 +21,7 @@ import com.google.inject.Inject;
 public class IStorageTest {
 
     @Inject
-    private IStorageFactory mFac;
+    private IResourceConfigurationFactory mResourceConfig;
 
     @BeforeMethod
     public void setUp() throws TTException {
@@ -43,7 +45,9 @@ public class IStorageTest {
     @Test
     public void testFirstRef() throws TTException {
 
-        IStorage handler = mFac.create(TestHelper.PATHS.PATH1.getFile());
+        ResourceConfiguration conf =
+            mResourceConfig.create(new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile()), "bla");
+        IStorage handler = conf.mStorage;
 
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();

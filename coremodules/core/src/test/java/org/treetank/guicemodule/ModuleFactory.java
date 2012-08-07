@@ -2,6 +2,7 @@ package org.treetank.guicemodule;
 
 import org.testng.IModuleFactory;
 import org.testng.ITestContext;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IStorage;
@@ -48,6 +49,7 @@ public class ModuleFactory implements IModuleFactory {
                     install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
                         IStorageFactory.class));
 
+                    install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
                 }
             };
         }
@@ -60,12 +62,12 @@ public class ModuleFactory implements IModuleFactory {
                     bind(IRevisioning.class).to(FullDump.class);
 
                     bind(INodeFactory.class).to(DumbNodeFactory.class);
-
                     bind(IByteHandler.class).to(Encryptor.class);
 
                     install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
                         IStorageFactory.class));
-
+                    
+                    install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
                 }
             };
         }
