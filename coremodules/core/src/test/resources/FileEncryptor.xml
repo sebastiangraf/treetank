@@ -5,7 +5,7 @@
 			<package name="org.treetank.io"/>
 			<package name="org.treetank.io.bytepipe"/>
 			<package name="org.treetank.io.page"/>
-			<package name="org.treetank.io.revisioning"/>
+			<package name="org.treetank.revisioning"/>
 		</packages>
 	</test>
 </suite>
