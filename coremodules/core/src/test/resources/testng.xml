@@ -1,4 +1,11 @@
 <suite name="EntireSuite">
+	<test name="NormalBundles">
+		<packages>
+			<package name="org.treetank.cache" />
+			<package name="org.treetank.io.page" />
+			<package name="org.treetank.revisioning" />
+		</packages>
+	</test>
 	<suite-files>
 		<suite-file path="./FileZipper.xml" />
 		<suite-file path="./FileEncryptor.xml" />
