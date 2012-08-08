@@ -78,45 +78,14 @@ public class IRevisioningTest {
     @Test(dataProvider = "instantiateVersioning")
     public void testFragmentedPages(Class<IRevisioning> clazz, IRevisioning[] pHandlers) {
         for (final IRevisioning handler : pHandlers) {
-            final NodePage[] pages = prepareNormal(4);
+            NodePage[] pages = prepareNormal(4);
+
             final NodePage page = handler.combinePages(pages);
             for (int i = 0; i < pages.length; i++) {
                 for (int j = i * 32; j < (i * 32) + 32; j++) {
                     assertEquals(new StringBuilder("Check for ").append(handler.getClass())
                         .append(" failed.").toString(), pages[i].getNode(j), page.getNode(j));
                 }
-            }
-
-            for (int j = 0; j < page.getNodes().length; j++) {
-                assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
-                    .toString(), pages[0].getNode(j), page.getNode(j));
-            }
-        }
-    }
-
-    /**
-     * Test method for
-     * {@link org.treetank.revisioning.IRevisioning#combinePages(org.treetank.page.NodePage[])}.
-     * This test just takes two versions and checks if the version-counter is interpreted correctly.
-     * 
-     * @param clazz
-     *            to check revisioning approaches
-     * @param pHandlers
-     *            the different revisioning approaches
-     */
-    @Test(dataProvider = "instantiateVersioning")
-    public void testFragmentedPages2(Class<IRevisioning> clazz, IRevisioning[] pHandlers) {
-        for (final IRevisioning handler : pHandlers) {
-            final NodePage[] pages = prepareNormal(4);
-            final NodePage page = handler.combinePages(pages);
-
-            for (int j = 0; j < 32; j++) {
-                assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
-                    .toString(), pages[0].getNode(j), page.getNode(j));
-            }
-            for (int j = 32; j < page.getNodes().length; j++) {
-                assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
-                    .toString(), pages[3].getNode(j), page.getNode(j));
             }
         }
     }
@@ -141,25 +110,13 @@ public class IRevisioningTest {
 
     private static NodePage[] prepareNormal(final int length) {
         final NodePage[] pages = new NodePage[length];
-        //filling one entire page with revision 0 and key 0
+        // filling one entire page with revision 0 and key 0
         pages[pages.length - 1] = getNodePage(0, 0, 128, 0);
         for (int i = 0; i < pages.length - 1; i++) {
-            //filling nodepages from end to start with 32 elements each slot
+            // filling nodepages from end to start with 32 elements each slot
             pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32, 0);
         }
         return pages;
     }
-
-    // private static NodePage[] prepareOverlapping(final int length) {
-    // final NodePage[] pages = new NodePage[length];
-    // final int[] borders = new int[4];
-    // pages[pages.length - 1] = getNodePage(0, 0, 128);
-    // for (int i = 0; i < pages.length - 1; i++) {
-    // borders[i] = random.nextInt(32) + ((i) * 32);
-    // pages[i] = getNodePage(pages.length - i, borders[i], (i * 32) + 32);
-    // }
-    // return pages;
-    //
-    // }
 
 }
