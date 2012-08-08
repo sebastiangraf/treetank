@@ -30,6 +30,8 @@ package org.treetank;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import java.security.Key;
+
 import javax.crypto.spec.SecretKeySpec;
 
 import org.treetank.TestHelper.PATHS;
@@ -61,14 +63,20 @@ import org.treetank.node.delegates.StructNodeDelegate;
 
 public final class NodeHelper {
 
-    private static final DatabaseConfiguration DATABASECONFIGURATION = new DatabaseConfiguration(
+    public static final DatabaseConfiguration DATABASECONFIGURATION = new DatabaseConfiguration(
         TestHelper.PATHS.PATH1.getFile());
 
-    private static final String RESOURCENAME = "tmp";
+    public static final String RESOURCENAME = "tmp";
 
     private static byte[] keyValue = new byte[] {
         'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
+
+    public static final Key KEY;
+
+    static {
+        KEY = new SecretKeySpec(keyValue, "AES");
+    }
 
     /**
      * Creating a test document at {@link PATHS#PATH1}.
@@ -78,8 +86,7 @@ public final class NodeHelper {
     public static void createTestDocument(IResourceConfigurationFactory mResourceConfig) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(mResourceConfig.create(DATABASECONFIGURATION, RESOURCENAME));
-        final ISession session =
-            database.getSession(new SessionConfiguration(RESOURCENAME, new SecretKeySpec(keyValue, "AES")));
+        final ISession session = database.getSession(new SessionConfiguration(RESOURCENAME, KEY));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
         final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
         DocumentCreater.create(nWtx);

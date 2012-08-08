@@ -30,7 +30,6 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -50,8 +49,6 @@ import org.treetank.exception.TTException;
  */
 public class Holder {
 
-    private static final String RESOURCENAME = "bla";
-
     private IDatabase mDatabase;
 
     private ISession mSession;
@@ -62,8 +59,9 @@ public class Holder {
 
     public static Holder generateSession(IResourceConfigurationFactory pConf) throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(pConf.create(new DatabaseConfiguration(PATHS.PATH1.getFile()), RESOURCENAME));
-        final ISession session = database.getSession(new SessionConfiguration(RESOURCENAME, null));
+        database.createResource(pConf.create(NodeHelper.DATABASECONFIGURATION, NodeHelper.RESOURCENAME));
+        final ISession session =
+            database.getSession(new SessionConfiguration(NodeHelper.RESOURCENAME, NodeHelper.KEY));
         final Holder holder = new Holder();
         holder.mDatabase = database;
         holder.mSession = session;
