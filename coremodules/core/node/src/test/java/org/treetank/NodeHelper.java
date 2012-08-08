@@ -66,7 +66,7 @@ public final class NodeHelper {
 
     private static final String RESOURCENAME = "tmp";
 
-    static byte[] keyValue = new byte[] {
+    private static byte[] keyValue = new byte[] {
         'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
 
@@ -75,7 +75,7 @@ public final class NodeHelper {
      * 
      * @throws TTException
      */
-    public void createTestDocument(IResourceConfigurationFactory mResourceConfig) throws TTException {
+    public static void createTestDocument(IResourceConfigurationFactory mResourceConfig) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(mResourceConfig.create(DATABASECONFIGURATION, RESOURCENAME));
         final ISession session =
