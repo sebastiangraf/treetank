@@ -11,7 +11,7 @@ import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.file.FileStorage;
-import org.treetank.page.DumbNodeFactory;
+import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.FullDump;
 import org.treetank.revisioning.IRevisioning;
 
@@ -43,7 +43,7 @@ public class NodeModuleFactory implements IModuleFactory {
                 protected void configure() {
                     bind(IRevisioning.class).to(FullDump.class);
 
-                    bind(INodeFactory.class).to(DumbNodeFactory.class);
+                    bind(INodeFactory.class).to(TreeNodeFactory.class);
                     bind(IByteHandler.class).to(Zipper.class);
 
                     install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
@@ -61,12 +61,12 @@ public class NodeModuleFactory implements IModuleFactory {
                 protected void configure() {
                     bind(IRevisioning.class).to(FullDump.class);
 
-                    bind(INodeFactory.class).to(DumbNodeFactory.class);
+                    bind(INodeFactory.class).to(TreeNodeFactory.class);
                     bind(IByteHandler.class).to(Encryptor.class);
 
                     install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
                         IStorageFactory.class));
-                    
+
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
                 }
             };
