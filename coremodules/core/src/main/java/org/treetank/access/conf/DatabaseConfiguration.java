@@ -30,6 +30,7 @@ package org.treetank.access.conf;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import org.treetank.exception.TTIOException;
@@ -37,6 +38,7 @@ import org.treetank.exception.TTIOException;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 /**
  * <h1>Database Configuration</h1>
@@ -191,8 +193,21 @@ public final class DatabaseConfiguration {
         return new Gson().toJsonTree(this);
     }
 
-    public static boolean serialize(final DatabaseConfiguration pConfig) {
-        return true;
+    public static void serialize(final DatabaseConfiguration pConfig) throws TTIOException {
+        try {
+            FileWriter fileWriter =
+                new FileWriter(new File(pConfig.mFile, Paths.ConfigBinary.getFile().getName()));
+            JsonWriter jsonWriter = new JsonWriter(fileWriter);
+            jsonWriter.beginObject();
+            jsonWriter.name("file").value(pConfig.mFile.getAbsolutePath());
+            jsonWriter.endObject();
+            jsonWriter.close();
+            fileWriter.close();
+        } catch (FileNotFoundException fileExec) {
+            throw new TTIOException(fileExec);
+        } catch (IOException ioexc) {
+            throw new TTIOException(ioexc);
+        }
     }
 
     public static DatabaseConfiguration deserialize(final File pFile) throws TTIOException {
@@ -200,8 +215,12 @@ public final class DatabaseConfiguration {
             FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
-
-            return null;
+            assert jsonReader.nextName().equals("file");
+            File file = new File(jsonReader.nextString());
+            jsonReader.endObject();
+            jsonReader.close();
+            fileReader.close();
+            return new DatabaseConfiguration(file);
         } catch (FileNotFoundException fileExec) {
             throw new TTIOException(fileExec);
         } catch (IOException ioexc) {

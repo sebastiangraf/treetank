@@ -115,7 +115,7 @@ public final class Database implements IDatabase {
                 }
             }
             // serialization of the config
-            returnVal = DatabaseConfiguration.serialize(pDBConfig);
+            DatabaseConfiguration.serialize(pDBConfig);
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
