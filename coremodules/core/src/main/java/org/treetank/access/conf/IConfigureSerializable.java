@@ -29,6 +29,8 @@ package org.treetank.access.conf;
 import java.io.File;
 import java.io.Serializable;
 
+import com.google.gson.JsonElement;
+
 /**
  * <h1>IConfigureSerializable</h1>
  * 
@@ -49,5 +51,12 @@ public interface IConfigureSerializable extends Serializable {
      * @return the location of the file.
      */
     File getConfigFile();
+
+    /**
+     * Serializing the configuration into a jsco
+     * 
+     * @return the {@link JsonElement}
+     */
+    JsonElement serialize();
 
 }

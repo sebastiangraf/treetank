@@ -374,7 +374,7 @@ public final class Database implements IDatabase {
         FileOutputStream os = null;
         os = new FileOutputStream(pConf.getConfigFile());
         final ObjectOutputStream en = new ObjectOutputStream(os);
-        en.writeObject(pConf);
+        en.writeObject(pConf.serialize().toString());
         en.close();
         os.close();
     }

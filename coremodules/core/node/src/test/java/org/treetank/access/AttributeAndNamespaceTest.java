@@ -55,7 +55,7 @@ public class AttributeAndNamespaceTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         NodeHelper.createTestDocument(mResourceConfig);
-        holder = Holder.generateRtx();
+        holder = Holder.generateRtx(mResourceConfig);
     }
 
     @AfterMethod

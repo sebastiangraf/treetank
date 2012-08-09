@@ -29,6 +29,9 @@ package org.treetank.access.conf;
 
 import java.io.File;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+
 /**
  * <h1>Database Configuration</h1>
  * 
@@ -183,6 +186,14 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
     @Override
     public File getConfigFile() {
         return new File(mFile, Paths.ConfigBinary.getFile().getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonElement serialize() {
+        return new Gson().toJsonTree(this);
     }
 
 }

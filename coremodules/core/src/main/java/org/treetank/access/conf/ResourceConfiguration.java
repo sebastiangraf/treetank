@@ -34,6 +34,8 @@ import org.treetank.io.IStorage;
 import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.revisioning.IRevisioning;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -227,6 +229,14 @@ public final class ResourceConfiguration implements IConfigureSerializable {
          * @return an {@link ResourceConfiguration}-instance
          */
         ResourceConfiguration create(DatabaseConfiguration pDBConf, String pResourceName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonElement serialize() {
+        return new Gson().toJsonTree(this);
     }
 
 }

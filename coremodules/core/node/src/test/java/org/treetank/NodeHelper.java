@@ -49,6 +49,7 @@ import org.treetank.exception.TTException;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
+import static org.testng.AssertJUnit.assertTrue;
 
 /**
  * 
@@ -85,7 +86,7 @@ public final class NodeHelper {
      */
     public static void createTestDocument(IResourceConfigurationFactory mResourceConfig) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(mResourceConfig.create(DATABASECONFIGURATION, RESOURCENAME));
+        assertTrue(database.createResource(mResourceConfig.create(DATABASECONFIGURATION, RESOURCENAME)));
         final ISession session = database.getSession(new SessionConfiguration(RESOURCENAME, KEY));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
         final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
