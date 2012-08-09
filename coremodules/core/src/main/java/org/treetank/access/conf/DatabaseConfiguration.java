@@ -28,9 +28,15 @@
 package org.treetank.access.conf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonReader;
 
 /**
  * <h1>Database Configuration</h1>
@@ -43,10 +49,7 @@ import com.google.gson.JsonElement;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class DatabaseConfiguration implements IConfigureSerializable {
-
-    /** For serialization. */
-    private static final long serialVersionUID = -5005030622296323912L;
+public final class DatabaseConfiguration {
 
     /**
      * Paths for a {@link org.treetank.access.Database}. Each {@link org.treetank.access.Database} has the
@@ -183,17 +186,26 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public File getConfigFile() {
-        return new File(mFile, Paths.ConfigBinary.getFile().getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public JsonElement serialize() {
+
         return new Gson().toJsonTree(this);
     }
 
+    public static boolean serialize(final DatabaseConfiguration pConfig) {
+        return true;
+    }
+
+    public static DatabaseConfiguration deserialize(final File pFile) throws TTIOException {
+        try {
+            FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
+            JsonReader jsonReader = new JsonReader(fileReader);
+            jsonReader.beginObject();
+
+            return null;
+        } catch (FileNotFoundException fileExec) {
+            throw new TTIOException(fileExec);
+        } catch (IOException ioexc) {
+            throw new TTIOException(ioexc);
+        }
+    }
 }

@@ -27,15 +27,18 @@
 package org.treetank.access.conf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import org.treetank.access.Session;
 import org.treetank.api.INodeFactory;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.IStorage;
 import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.revisioning.IRevisioning;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonReader;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -50,10 +53,7 @@ import com.google.inject.assistedinject.Assisted;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class ResourceConfiguration implements IConfigureSerializable {
-
-    /** For serialization. */
-    private static final long serialVersionUID = 1790483717305421672L;
+public final class ResourceConfiguration {
 
     /**
      * Paths for a {@link Session}. Each resource has the same folder.layout.
@@ -201,15 +201,6 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public File getConfigFile() {
-        final File file = new File(mPath, Paths.ConfigBinary.getFile().getName());
-        return file;
-    }
-
-    /**
      * 
      * Factory for generating an {@link ResourceConfiguration}-instance. Needed mainly
      * because of Guice-Assisted utilization.
@@ -231,12 +222,22 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         ResourceConfiguration create(DatabaseConfiguration pDBConf, String pResourceName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public JsonElement serialize() {
-        return new Gson().toJsonTree(this);
+    public static boolean serialize(final ResourceConfiguration pConfig) {
+        return true;
+    }
+
+    public static ResourceConfiguration deserialize(final File pFile) throws TTIOException {
+        try {
+            FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
+            JsonReader jsonReader = new JsonReader(fileReader);
+            jsonReader.beginObject();
+
+            return null;
+        } catch (FileNotFoundException fileExec) {
+            throw new TTIOException(fileExec);
+        } catch (IOException ioexc) {
+            throw new TTIOException(ioexc);
+        }
     }
 
 }
