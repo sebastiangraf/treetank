@@ -101,7 +101,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate = new PageReadTrx(pSession, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mLog =
-            new TransactionLogCache(pSession.getConfig().mPath, paramStoreRev, pSession.getConfig().mNodeFac);
+            new TransactionLogCache(pSession.getConfig().mFile, paramStoreRev, pSession.getConfig().mNodeFac);
         mPageWriter = paramWriter;
 
     }

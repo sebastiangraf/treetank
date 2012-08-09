@@ -163,7 +163,7 @@ public final class Database implements IDatabase {
         // set data.
         final File path =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                pResConf.mPath.getName());
+                pResConf.mFile.getName());
         // if file is existing, skipping
         if (path.exists()) {
             return false;
@@ -188,11 +188,11 @@ public final class Database implements IDatabase {
                 }
             }
             // serialization of the config
-            returnVal = ResourceConfiguration.serialize(pResConf);
+            ResourceConfiguration.serialize(pResConf);
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
-                pResConf.mPath.delete();
+                pResConf.mFile.delete();
             }
             return returnVal;
         }
@@ -205,7 +205,7 @@ public final class Database implements IDatabase {
     public synchronized void truncateResource(final ResourceConfiguration pResConf) {
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                pResConf.mPath.getName());
+                pResConf.mFile.getName());
         // check that database must be closed beforehand
         if (!mSessions.containsKey(resourceFile)) {
             // if file is existing and folder is a tt-dataplace, delete it
@@ -276,7 +276,7 @@ public final class Database implements IDatabase {
             ResourceConfiguration config = ResourceConfiguration.deserialize(resourceFile);
 
             // Resource of session must be associated to this database
-            assert config.mPath.getParentFile().getParentFile().equals(mDBConfig.mFile);
+            assert config.mFile.getParentFile().getParentFile().equals(mDBConfig.mFile);
             returnVal = new Session(this, config, pSessionConf);
             mSessions.put(resourceFile, returnVal);
         }

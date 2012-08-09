@@ -29,6 +29,7 @@ package org.treetank.access.conf;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import org.treetank.access.Session;
@@ -39,6 +40,7 @@ import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -133,7 +135,7 @@ public final class ResourceConfiguration {
     public final IRevisioning mRevision;
 
     /** Path for the resource to be associated. */
-    public final File mPath;
+    public final File mFile;
 
     /** Node Factory for deserializing nodes. */
     public final INodeFactory mNodeFac;
@@ -156,10 +158,10 @@ public final class ResourceConfiguration {
         mRevision = pRevision;
         mDBConfig = pDBConf;
         mNodeFac = pNodeFac;
-        mPath =
+        mFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 pResourceName);
-        mStorage = pStorage.create(mPath);
+        mStorage = pStorage.create(mFile);
 
     }
 
@@ -172,7 +174,7 @@ public final class ResourceConfiguration {
         int result = 13;
         result = prime * result + mStorage.hashCode();
         result = prime * result + mRevision.hashCode();
-        result = prime * result + mPath.hashCode();
+        result = prime * result + mFile.hashCode();
         result = prime * result + mDBConfig.hashCode();
         return result;
     }
@@ -192,7 +194,7 @@ public final class ResourceConfiguration {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("\nResource: ");
-        builder.append(this.mPath);
+        builder.append(this.mFile);
         builder.append("Type: ");
         builder.append(this.mStorage);
         builder.append("\nRevision: ");
@@ -222,8 +224,21 @@ public final class ResourceConfiguration {
         ResourceConfiguration create(DatabaseConfiguration pDBConf, String pResourceName);
     }
 
-    public static boolean serialize(final ResourceConfiguration pConfig) {
-        return true;
+    public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
+        try {
+            FileWriter fileWriter =
+                new FileWriter(new File(pConfig.mFile, Paths.ConfigBinary.getFile().getName()));
+            JsonWriter jsonWriter = new JsonWriter(fileWriter);
+            jsonWriter.beginObject();
+            jsonWriter.name("file").value(pConfig.mFile.getAbsolutePath());
+            jsonWriter.endObject();
+            jsonWriter.close();
+            fileWriter.close();
+        } catch (FileNotFoundException fileExec) {
+            throw new TTIOException(fileExec);
+        } catch (IOException ioexc) {
+            throw new TTIOException(ioexc);
+        }
     }
 
     public static ResourceConfiguration deserialize(final File pFile) throws TTIOException {
@@ -232,6 +247,7 @@ public final class ResourceConfiguration {
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
 
+            jsonReader.endObject();
             return null;
         } catch (FileNotFoundException fileExec) {
             throw new TTIOException(fileExec);

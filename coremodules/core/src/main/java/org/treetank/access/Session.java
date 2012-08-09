@@ -147,7 +147,7 @@ public final class Session implements ISession {
             mPageTrxs.clear();
 
             mFac.close();
-            mDatabase.removeSession(mResourceConfig.mPath);
+            mDatabase.removeSession(mResourceConfig.mFile);
             mClosed = true;
         }
     }
