@@ -122,8 +122,8 @@ public class IRevisioningTest {
                             // Check only the last version since the complete dump consists out of the last
                             // version within the FullDump
                             for (int i = 0; i < pComplete.getNodes().length; i++) {
-                                assertEquals(new StringBuilder("Check for FullDump: ").append(" failed.")
-                                    .toString(), pFragments[0].getNode(i), pComplete.getNode(i));
+                                assertEquals("Check for FullDump failed.", pFragments[0].getNode(i),
+                                    pComplete.getNode(i));
                             }
                         }
                     },
@@ -134,9 +134,8 @@ public class IRevisioningTest {
                             // Incrementally iterate through all pages to reconstruct the complete page.
                             for (int i = 0; i < pFragments.length; i++) {
                                 for (int j = i * 32; j < (i * 32) + 32; j++) {
-                                    assertEquals(new StringBuilder("Check for Incremental: ").append(
-                                        " failed.").toString(), pFragments[i].getNode(j), pComplete
-                                        .getNode(j));
+                                    assertEquals("Check for Incremental failed.", pFragments[i].getNode(j),
+                                        pComplete.getNode(j));
                                 }
                             }
                         }
@@ -146,8 +145,8 @@ public class IRevisioningTest {
                         public void checkRevisions(NodePage pComplete, NodePage[] pFragments) {
                             // Take the last version first, to get the data out there...
                             for (int j = 0; j < 32; j++) {
-                                assertEquals(new StringBuilder("Check for Incremental: ").append(" failed.")
-                                    .toString(), pFragments[0].getNode(j), pComplete.getNode(j));
+                                assertEquals("Check for Incremental failed.", pFragments[0].getNode(j),
+                                    pComplete.getNode(j));
                             }
                             // ...and iterate through the first version afterwards for the rest of the
                             // reconstruction
