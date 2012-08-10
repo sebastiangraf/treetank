@@ -223,17 +223,24 @@ public final class ResourceConfiguration {
          */
         ResourceConfiguration create(DatabaseConfiguration pDBConf, String pResourceName);
     }
-
+    
+    public static interface IResourceSerializable {
+        
+        
+        
+    }
+    
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
         try {
             FileWriter fileWriter =
                 new FileWriter(new File(pConfig.mFile, Paths.ConfigBinary.getFile().getName()));
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
-            jsonWriter.name("storage").value(pConfig.mStorage.getClass().getName());
-            jsonWriter.name("revisioning").value(pConfig.mRevision.getClass().getName());
             jsonWriter.name("file").value(pConfig.mFile.getAbsolutePath());
             jsonWriter.name("nodeFac").value(pConfig.mNodeFac.getClass().getName());
+
+            jsonWriter.name("storage").value(pConfig.mStorage.getClass().getName());
+            jsonWriter.name("revisioning").value(pConfig.mRevision.getClass().getName());
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
@@ -249,6 +256,10 @@ public final class ResourceConfiguration {
             FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
+            assert jsonReader.nextName().equals("file");
+            File file = new File(jsonReader.nextString());
+            assert jsonReader.nextName().equals("nodeFac");
+            INodeFactory nodeFac = (INodeFactory)Class.forName(jsonReader.nextString());
 
             jsonReader.endObject();
             return null;
@@ -258,5 +269,4 @@ public final class ResourceConfiguration {
             throw new TTIOException(ioexc);
         }
     }
-
 }
