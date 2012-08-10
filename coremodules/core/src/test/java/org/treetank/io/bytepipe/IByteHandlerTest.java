@@ -14,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTByteHandleException;
 
 /**
@@ -57,18 +58,18 @@ public class IByteHandlerTest {
         };
         Key key = new SecretKeySpec(keyValue, "AES");
 
+        new SessionConfiguration("bla", key);
+
         Object[][] returnVal =
             {
                 {
                     IByteHandler.class,
                     new IByteHandler[] {
-                        new Encryptor(key), new Zipper(),
-                        new ByteHandlePipeline(new Encryptor(key), new Zipper()),
-                        new ByteHandlePipeline(new Zipper(), new Encryptor(key))
+                        new Encryptor(), new Zipper(), new ByteHandlePipeline(new Encryptor(), new Zipper()),
+                        new ByteHandlePipeline(new Zipper(), new Encryptor())
                     }
                 }
             };
         return returnVal;
     }
-
 }

@@ -33,6 +33,7 @@ import org.treetank.access.Database;
 import org.treetank.access.Session;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -45,6 +46,7 @@ import com.google.inject.assistedinject.Assisted;
  * resources.
  * </p>
  */
+@Singleton
 public final class SessionConfiguration {
 
     /** ResourceConfiguration for this ResourceConfig. */
@@ -52,6 +54,9 @@ public final class SessionConfiguration {
 
     /** Key for accessing any encrypted data. */
     private final Key mKey;
+
+    /** SINGLETON instance for this configuration. */
+    private static SessionConfiguration SINGLETON;
 
     /**
      * Convenience constructor using the standard settings.
@@ -65,6 +70,16 @@ public final class SessionConfiguration {
     public SessionConfiguration(@Assisted String pResource, Key pKey) {
         mResource = pResource;
         mKey = pKey;
+        SINGLETON = this;
+    }
+
+    /**
+     * Singleton to get easy the key from the Encryptor.
+     * 
+     * @return the Singleton-instance.
+     */
+    public static SessionConfiguration getInstance() {
+        return SINGLETON;
     }
 
     /**

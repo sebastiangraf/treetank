@@ -5,13 +5,12 @@ package org.treetank.io.bytepipe;
 
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTByteHandleException;
 
 /**
@@ -28,33 +27,20 @@ public class Encryptor implements IByteHandler {
     /** Cipher to perform encryption and decryption operations. */
     private final Cipher mCipher;
 
-    /** Key for access data. */
-    private final Key mKey;
-
     /**
      * Constructor.
      * 
      * @param pComponent
      * @throws TTByteHandleException
      */
-    public Encryptor(Key pKey) throws TTByteHandleException {
+    public Encryptor() throws TTByteHandleException {
         try {
             mCipher = Cipher.getInstance(ALGORITHM);
-            mKey = pKey;
         } catch (final NoSuchAlgorithmException exc) {
             throw new TTByteHandleException(exc);
         } catch (final NoSuchPaddingException exc) {
             throw new TTByteHandleException(exc);
         }
-    }
-
-    static// 128bit key
-    byte[] keyValue = new byte[] {
-        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
-    };
-
-    public Encryptor() throws TTByteHandleException {
-        this(new SecretKeySpec(keyValue, "AES"));
     }
 
     /**
@@ -64,7 +50,7 @@ public class Encryptor implements IByteHandler {
      */
     public byte[] serialize(final byte[] pToSerialize) throws TTByteHandleException {
         try {
-            mCipher.init(Cipher.ENCRYPT_MODE, mKey);
+            mCipher.init(Cipher.ENCRYPT_MODE, SessionConfiguration.getInstance().getKey());
 
             byte[] toEncrypt = pToSerialize;
             for (int i = 0; i < ITERATIONS; i++) {
@@ -82,7 +68,7 @@ public class Encryptor implements IByteHandler {
      */
     public byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException {
         try {
-            mCipher.init(Cipher.DECRYPT_MODE, mKey);
+            mCipher.init(Cipher.DECRYPT_MODE, SessionConfiguration.getInstance().getKey());
 
             byte[] toDecrypt = pToDeserialize;
             for (int i = 0; i < ITERATIONS; i++) {

@@ -28,6 +28,7 @@
 package org.treetank.io.file;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
@@ -39,6 +40,7 @@ import org.treetank.io.IWriter;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.PageFactory;
 
+import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -129,6 +131,11 @@ public final class FileStorage implements IStorage {
         final File file = getConcreteStorage();
         final boolean returnVal = file.length() > 0;
         return returnVal;
+    }
+
+    @Override
+    public void serialize(JsonWriter pWriter) throws IOException {
+
     }
 
 }

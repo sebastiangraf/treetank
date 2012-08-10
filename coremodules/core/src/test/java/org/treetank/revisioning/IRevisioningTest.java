@@ -113,7 +113,7 @@ public class IRevisioningTest {
         Object[][] returnVal = {
             {
                 IRevisioning.class, new IRevisioning[] {
-                    new FullDump(), new Incremental(4), new Differential(4)
+                    new FullDump(1), new Incremental(4), new Differential(4)
                 }, IRevisionChecker.class, new IRevisionChecker[] {
                     // Checker for FullDump
                     new IRevisionChecker() {

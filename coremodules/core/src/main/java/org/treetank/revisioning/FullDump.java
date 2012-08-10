@@ -3,14 +3,33 @@
  */
 package org.treetank.revisioning;
 
+import java.io.IOException;
+
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
+import com.google.gson.stream.JsonWriter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 /**
+ * FullDump versioning of {@link NodePage}s.
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 public class FullDump implements IRevisioning {
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pRevToRestore
+     *            not really set since FullDump revisions are always restorable within one version.
+     */
+    @Inject
+    public FullDump(@Assisted int pRevToRestore) {
+    }
 
     /**
      * {@inheritDoc}
@@ -56,6 +75,12 @@ public class FullDump implements IRevisioning {
     @Override
     public int getRevisionsToRestore() {
         return 1;
+    }
+
+    @Override
+    public void serialize(JsonWriter pWriter) throws IOException {
+        // TODO Auto-generated method stub
+
     }
 
 }

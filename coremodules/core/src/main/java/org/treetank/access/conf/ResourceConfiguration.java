@@ -31,13 +31,20 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.treetank.access.Session;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IStorage;
 import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.bytepipe.ByteHandlePipeline;
+import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.revisioning.IRevisioning;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -139,30 +146,44 @@ public final class ResourceConfiguration {
 
     /** Node Factory for deserializing nodes. */
     public final INodeFactory mNodeFac;
-    // END MEMBERS FOR FIXED FIELDS
 
-    /** DatabaseConfiguration for this {@link ResourceConfiguration}. */
-    public final DatabaseConfiguration mDBConfig;
+    // END MEMBERS FOR FIXED FIELDS
 
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @param pStorage
+     * @param pDbFile
+     * @param pResourceName
+     * @param pNumbersOfRevToRestore
      * @param pNodeFactory
-     * @param pByteHandler
+     * @param pStorage
      * @param pRevision
      */
     @Inject
-    public ResourceConfiguration(@Assisted DatabaseConfiguration pDBConf, @Assisted String pResourceName,
-        IStorageFactory pStorage, IRevisioning pRevision, INodeFactory pNodeFac) {
-        mRevision = pRevision;
-        mDBConfig = pDBConf;
-        mNodeFac = pNodeFac;
-        mFile =
-            new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                pResourceName);
-        mStorage = pStorage.create(mFile);
+    public ResourceConfiguration(@Assisted File pDbFile, @Assisted String pResourceName,
+        @Assisted int pNumbersOfRevToRestore, IStorageFactory pStorage, IRevisioningFactory pRevision,
+        INodeFactory pNodeFac) {
 
+        this(
+            new File(new File(pDbFile, DatabaseConfiguration.Paths.Data.getFile().getName()), pResourceName),
+            pStorage.create(new File(new File(pDbFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+                pResourceName)), pRevision.create(pNumbersOfRevToRestore), pNodeFac);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param pResourceFile
+     * @param pStorage
+     * @param pRevisioning
+     * @param pNodeFac
+     */
+    private ResourceConfiguration(File pResourceFile, IStorage pStorage, IRevisioning pRevisioning,
+        INodeFactory pNodeFac) {
+        mFile = pResourceFile;
+        mStorage = pStorage;
+        mRevision = pRevisioning;
+        mNodeFac = pNodeFac;
     }
 
     /**
@@ -175,7 +196,6 @@ public final class ResourceConfiguration {
         result = prime * result + mStorage.hashCode();
         result = prime * result + mRevision.hashCode();
         result = prime * result + mFile.hashCode();
-        result = prime * result + mDBConfig.hashCode();
         return result;
     }
 
@@ -215,21 +235,30 @@ public final class ResourceConfiguration {
         /**
          * Generating a storage for a fixed file.
          * 
-         * @param pDBConf
-         *            DatabaseConfiguration to be set.
-         * @param pResourceName
+         * 
+         * @param pFile
          *            Name of resource to be set.
+         * @param pResourceName
+         *            Resource Name to be set
+         * @param pNumberOfRevsToRestore
+         *            numbers of revisions to restore an entire revision
          * @return an {@link ResourceConfiguration}-instance
          */
-        ResourceConfiguration create(DatabaseConfiguration pDBConf, String pResourceName);
+        ResourceConfiguration create(File pFile, String pResourceName, int pNumberOfRevsToRestore);
     }
-    
+
+    /**
+     * Interface to denote the serializability of a class into a json-object.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
     public static interface IResourceSerializable {
-        
-        
-        
+
+        public void serialize(JsonWriter pWriter) throws IOException;
+
     }
-    
+
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
         try {
             FileWriter fileWriter =
@@ -239,7 +268,6 @@ public final class ResourceConfiguration {
             jsonWriter.name("file").value(pConfig.mFile.getAbsolutePath());
             jsonWriter.name("nodeFac").value(pConfig.mNodeFac.getClass().getName());
 
-            jsonWriter.name("storage").value(pConfig.mStorage.getClass().getName());
             jsonWriter.name("revisioning").value(pConfig.mRevision.getClass().getName());
             jsonWriter.endObject();
             jsonWriter.close();
@@ -251,22 +279,79 @@ public final class ResourceConfiguration {
         }
     }
 
+    /**
+     * Deserializing a Resourceconfiguration out of a JSON-file from the persistent storage.
+     * The order is important and the reader is passed through the objects as visitor.
+     * 
+     * @param pFile
+     *            where the resource lies in.
+     * @return a complete {@link ResourceConfiguration} instance.
+     * @throws TTIOException
+     */
     public static ResourceConfiguration deserialize(final File pFile) throws TTIOException {
         try {
             FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
-            assert jsonReader.nextName().equals("file");
-            File file = new File(jsonReader.nextString());
-            assert jsonReader.nextName().equals("nodeFac");
-            INodeFactory nodeFac = (INodeFactory)Class.forName(jsonReader.nextString());
-
+            // caring about the versioning
+            assert jsonReader.nextName().equals("revisionClass");
+            Class<?> revClazz = Class.forName(jsonReader.nextString());
+            jsonReader.beginObject();
+            assert jsonReader.nextName().equals("numbersOfRevisiontoRestore");
+            int revisionToRestore = jsonReader.nextInt();
+            Constructor<?> revCons = revClazz.getConstructors()[0];
+            IRevisioning revisioning = (IRevisioning)revCons.newInstance(revisionToRestore);
             jsonReader.endObject();
-            return null;
+            // caring about the NodeFactory
+            assert jsonReader.nextName().equals("nodeFactoryClass");
+            Class<?> nodeFacClazz = Class.forName(jsonReader.nextString());
+            Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
+            INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
+            // caring about the ByteHandlers
+            List<IByteHandler> handlerList = new ArrayList<IByteHandler>();
+            if (jsonReader.nextName().equals("byteHandlerClasses")) {
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    Class<?> handlerClazz = Class.forName(jsonReader.nextString());
+                    Constructor<?> handlerCons = handlerClazz.getConstructors()[0];
+                    handlerList.add((IByteHandler)handlerCons.newInstance());
+                }
+                jsonReader.endObject();
+            }
+            IByteHandler pipeline =
+                new ByteHandlePipeline(handlerList.toArray(new IByteHandler[handlerList.size()]));
+            // caring about the storage
+            assert jsonReader.nextName().equals("storageClass");
+            Class<?> storageClazz = Class.forName(jsonReader.nextString());
+            Constructor<?> storageCons = storageClazz.getConstructors()[0];
+            IStorage storage =
+                (IStorage)storageCons.newInstance(new File(pFile, Paths.Data.name()), nodeFactory, pipeline);
+            jsonReader.endObject();
+            jsonReader.close();
+            fileReader.close();
+
+            return new ResourceConfiguration(pFile, storage, revisioning, nodeFactory);
+
         } catch (FileNotFoundException fileExec) {
             throw new TTIOException(fileExec);
         } catch (IOException ioexc) {
             throw new TTIOException(ioexc);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        return null;
     }
 }

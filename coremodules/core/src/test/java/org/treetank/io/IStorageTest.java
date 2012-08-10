@@ -8,7 +8,6 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
@@ -46,7 +45,7 @@ public class IStorageTest {
     public void testFirstRef() throws TTException {
 
         ResourceConfiguration conf =
-            mResourceConfig.create(new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile()), "bla");
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), "bla", 4);
         IStorage handler = conf.mStorage;
 
         final PageReference pageRef1 = new PageReference();

@@ -28,6 +28,7 @@ package org.treetank.io;
 
 import java.io.File;
 
+import org.treetank.access.conf.ResourceConfiguration.IResourceSerializable;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.file.FileStorage;
@@ -36,69 +37,69 @@ import com.google.inject.ImplementedBy;
 
 /**
  * Interface to generate access to the underlaying storage. The underlaying
- * storage is flexible as long as {@link IReader} and {@link IWriter}
- * -implementations are provided. Utility methods for common interaction with
+ * storage is flexible as long as {@link IReader} and {@link IWriter} -implementations are provided. Utility
+ * methods for common interaction with
  * the storage are provided via the <code>EStorage</code>-enum.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 @ImplementedBy(FileStorage.class)
-public interface IStorage {
+public interface IStorage extends IResourceSerializable {
 
-	/**
-	 * Getting a writer.
-	 * 
-	 * @return an {@link IWriter} instance
-	 * @throws TTIOException
-	 *             if the initalisation fails
-	 */
-	IWriter getWriter() throws TTException;
+    /**
+     * Getting a writer.
+     * 
+     * @return an {@link IWriter} instance
+     * @throws TTIOException
+     *             if the initalisation fails
+     */
+    IWriter getWriter() throws TTException;
 
-	/**
-	 * Getting a reader.
-	 * 
-	 * @return an {@link IReader} instance
-	 * @throws TTIOException
-	 *             if the initalisation fails
-	 */
-	IReader getReader() throws TTException;
+    /**
+     * Getting a reader.
+     * 
+     * @return an {@link IReader} instance
+     * @throws TTIOException
+     *             if the initalisation fails
+     */
+    IReader getReader() throws TTException;
 
-	/**
-	 * Closing this storage.
-	 * 
-	 * @throws TTIOException
-	 *             exception to be throwns
-	 */
-	void close() throws TTException;
+    /**
+     * Closing this storage.
+     * 
+     * @throws TTIOException
+     *             exception to be throwns
+     */
+    void close() throws TTException;
 
-	/**
-	 * Check if storage exists.
-	 * 
-	 * @return true if storage holds data, false otherwise
-	 * @throws TTIOException
-	 *             if storage is not accessible
-	 */
-	boolean exists() throws TTException;
+    /**
+     * Check if storage exists.
+     * 
+     * @return true if storage holds data, false otherwise
+     * @throws TTIOException
+     *             if storage is not accessible
+     */
+    boolean exists() throws TTException;
 
-	/**
-	 * 
-	 * Factory for generating an {@link IStorage}-instance. Needed mainly
-	 * because of Guice-Assisted utilization.
-	 * 
-	 * @author Sebastian Graf, University of Konstanz
-	 * 
-	 */
-	public static interface IStorageFactory {
+    /**
+     * 
+     * Factory for generating an {@link IStorage}-instance. Needed mainly
+     * because of Guice-Assisted utilization.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public static interface IStorageFactory {
 
-		/**
-		 * Generating a storage for a fixed file.
-		 * 
-		 * @param pFile
-		 *            referencing to the storage.
-		 * @return an {@link IStorage}-instance
-		 */
-		IStorage create(File pFile);
-	}
+        /**
+         * Generating a storage for a fixed file.
+         * 
+         * @param pFile
+         *            referencing to the storage.
+         * @return an {@link IStorage}-instance
+         */
+        IStorage create(File pFile);
+    }
 
 }

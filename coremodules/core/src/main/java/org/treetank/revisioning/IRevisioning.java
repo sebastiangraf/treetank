@@ -3,6 +3,7 @@
  */
 package org.treetank.revisioning;
 
+import org.treetank.access.conf.ResourceConfiguration.IResourceSerializable;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -13,7 +14,7 @@ import org.treetank.page.NodePage;
  * 
  */
 
-public interface IRevisioning {
+public interface IRevisioning extends IResourceSerializable {
 
     /**
      * Method to reconstruct a complete NodePage with the help of party filled
@@ -46,5 +47,25 @@ public interface IRevisioning {
      * @return the number of revisions to restore.
      */
     int getRevisionsToRestore();
+
+    /**
+     * 
+     * Factory for generating an {@link IRevisioning}-instance. Needed mainly
+     * because of Guice-Assisted utilization.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public static interface IRevisioningFactory {
+
+        /**
+         * Generating a storage for a fixed file.
+         * 
+         * @param pRevisionsToRestore
+         *            number of revisions to restore.
+         * @return an {@link IRevisioning}-instance
+         */
+        IRevisioning create(int pRevisionsToRestore);
+    }
 
 }

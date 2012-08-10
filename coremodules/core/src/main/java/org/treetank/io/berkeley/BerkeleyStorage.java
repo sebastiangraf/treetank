@@ -28,6 +28,7 @@
 package org.treetank.io.berkeley;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -39,6 +40,7 @@ import org.treetank.io.IWriter;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.IPage;
 
+import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -186,6 +188,12 @@ public final class BerkeleyStorage implements IStorage {
         conf.setTransactional(true);
         conf.setKeyPrefixing(true);
         return conf;
+    }
+
+    @Override
+    public void serialize(JsonWriter pWriter) throws IOException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

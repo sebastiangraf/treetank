@@ -3,13 +3,18 @@
  */
 package org.treetank.revisioning;
 
+import java.io.IOException;
+
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
+import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**
+ * Differential versioning of {@link NodePage}s.
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
@@ -107,6 +112,12 @@ public class Differential implements IRevisioning {
     @Override
     public int getRevisionsToRestore() {
         return mRevToRestore;
+    }
+
+    @Override
+    public void serialize(JsonWriter pWriter) throws IOException {
+        // TODO Auto-generated method stub
+
     }
 
 }

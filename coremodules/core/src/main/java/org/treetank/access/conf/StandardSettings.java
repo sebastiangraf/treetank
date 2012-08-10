@@ -11,8 +11,9 @@ import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.file.FileStorage;
 import org.treetank.page.DumbNodeFactory;
-import org.treetank.revisioning.FullDump;
+import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -27,7 +28,8 @@ public class StandardSettings extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(IRevisioning.class).to(FullDump.class);
+        install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class).build(
+            IRevisioningFactory.class));
 
         bind(INodeFactory.class).to(DumbNodeFactory.class);
         bind(IByteHandler.class).to(Zipper.class);
