@@ -230,7 +230,10 @@ public final class ResourceConfiguration {
                 new FileWriter(new File(pConfig.mFile, Paths.ConfigBinary.getFile().getName()));
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
+            jsonWriter.name("storage").value(pConfig.mStorage.getClass().getName());
+            jsonWriter.name("revisioning").value(pConfig.mRevision.getClass().getName());
             jsonWriter.name("file").value(pConfig.mFile.getAbsolutePath());
+            jsonWriter.name("nodeFac").value(pConfig.mNodeFac.getClass().getName());
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
