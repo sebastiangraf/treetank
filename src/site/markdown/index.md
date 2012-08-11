@@ -37,6 +37,8 @@ Treetank acted as a base in various thesis and papers namely:
 * Rolling Boles, Optimal XML Structure Integrity for Updating Operations; WWW'11, Poster: http://nbn-resolving.de/urn:nbn:de:bsz:352-126226
 * JAX-RX - Unified REST Access to XML Resources; TechReport'10: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-120511
 * Integrity Assurance for RESTful XML; WISM'10: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-123507
+* Temporal REST, How to really exploit XML; IADIS WWW/Internet'08:
+http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-84476
 * Distributing XML with focus on parallel evaluation; DBISP2P'08: http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-84487
 
 ##License
