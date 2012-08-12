@@ -247,17 +247,9 @@ public final class ResourceConfiguration {
         ResourceConfiguration create(File pFile, String pResourceName, int pNumberOfRevsToRestore);
     }
 
-    /**
-     * Interface to denote the serializability of a class into a json-object.
-     * 
-     * @author Sebastian Graf, University of Konstanz
-     * 
-     */
-    public static interface IResourceSerializable {
-
-        public void serialize(JsonWriter pWriter) throws IOException;
-
-    }
+    private static final String[] JSONNAMES = {
+        "revisioning", "numbersOfRevisiontoRestore", "nodeFactoryClass", "byteHandlerClasses"
+    };
 
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
         try {
@@ -265,10 +257,18 @@ public final class ResourceConfiguration {
                 new FileWriter(new File(pConfig.mFile, Paths.ConfigBinary.getFile().getName()));
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
+            // caring about the versioning
+            jsonWriter.name(JSONNAMES[0]).value(pConfig.mRevision.getClass().getName());
+            jsonWriter.beginObject();
+            jsonWriter.name(JSONNAMES[1]).value(pConfig.mRevision.getRevisionsToRestore());
+            jsonWriter.endObject();
+            // caring about the NodeFactory
+            jsonWriter.name(JSONNAMES[2]).value(pConfig.mNodeFac.getClass().getName());
+            // caring about the ByteHandlers
+
             jsonWriter.name("file").value(pConfig.mFile.getAbsolutePath());
             jsonWriter.name("nodeFac").value(pConfig.mNodeFac.getClass().getName());
 
-            jsonWriter.name("revisioning").value(pConfig.mRevision.getClass().getName());
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
@@ -294,22 +294,22 @@ public final class ResourceConfiguration {
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
             // caring about the versioning
-            assert jsonReader.nextName().equals("revisionClass");
+            assert jsonReader.nextName().equals(JSONNAMES[0]);
             Class<?> revClazz = Class.forName(jsonReader.nextString());
             jsonReader.beginObject();
-            assert jsonReader.nextName().equals("numbersOfRevisiontoRestore");
+            assert jsonReader.nextName().equals(JSONNAMES[1]);
             int revisionToRestore = jsonReader.nextInt();
             Constructor<?> revCons = revClazz.getConstructors()[0];
             IRevisioning revisioning = (IRevisioning)revCons.newInstance(revisionToRestore);
             jsonReader.endObject();
             // caring about the NodeFactory
-            assert jsonReader.nextName().equals("nodeFactoryClass");
+            assert jsonReader.nextName().equals(JSONNAMES[2]);
             Class<?> nodeFacClazz = Class.forName(jsonReader.nextString());
             Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
             INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
             // caring about the ByteHandlers
             List<IByteHandler> handlerList = new ArrayList<IByteHandler>();
-            if (jsonReader.nextName().equals("byteHandlerClasses")) {
+            if (jsonReader.nextName().equals(JSONNAMES[3])) {
                 jsonReader.beginObject();
                 while (jsonReader.hasNext()) {
                     Class<?> handlerClazz = Class.forName(jsonReader.nextString());

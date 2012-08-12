@@ -28,22 +28,26 @@
 package org.treetank.io.berkeley;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeFactory;
+import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.IPage;
+import org.treetank.page.PageFactory;
 
-import com.google.gson.stream.JsonWriter;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.sleepycat.bind.tuple.TupleBinding;
+import com.sleepycat.bind.tuple.TupleInput;
+import com.sleepycat.bind.tuple.TupleOutput;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
@@ -76,6 +80,12 @@ public final class BerkeleyStorage implements IStorage {
 
     /** Binding for de/-serializing pages. */
     private final TupleBinding<IPage> mPageBinding;
+
+    /** Handling the byte-representation before serialization. */
+    private final IByteHandler mByteHandler;
+
+    /** Factory for Pages. */
+    private final PageFactory mFac;
 
     /**
      * Private constructor.
@@ -114,7 +124,9 @@ public final class BerkeleyStorage implements IStorage {
             throw new TTIOException(exc);
         }
 
-        mPageBinding = new PageBinding(pNodeFac, pByteHandler);
+        mPageBinding = new PageBinding();
+        mByteHandler = pByteHandler;
+        mFac = new PageFactory(pNodeFac);
 
     }
 
@@ -191,9 +203,52 @@ public final class BerkeleyStorage implements IStorage {
     }
 
     @Override
-    public void serialize(JsonWriter pWriter) throws IOException {
-        // TODO Auto-generated method stub
-        
+    public IByteHandler getByteHander() {
+        return mByteHandler;
     }
 
+    /**
+     * Binding for storing {@link IPage} objects within the Berkeley DB.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    class PageBinding extends TupleBinding<IPage> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IPage entryToObject(final TupleInput arg0) {
+            final ByteArrayDataOutput data = ByteStreams.newDataOutput();
+            int result = arg0.read();
+            while (result != -1) {
+                byte b = (byte)result;
+                data.write(b);
+                result = arg0.read();
+            }
+            byte[] resultBytes;
+            try {
+                resultBytes = mByteHandler.deserialize(data.toByteArray());
+                return mFac.deserializePage(resultBytes);
+            } catch (TTByteHandleException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
+            final byte[] pagebytes = arg0.getByteRepresentation();
+            try {
+                arg1.write(mByteHandler.serialize(pagebytes));
+            } catch (TTByteHandleException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 }

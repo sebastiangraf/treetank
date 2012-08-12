@@ -28,9 +28,9 @@ package org.treetank.io;
 
 import java.io.File;
 
-import org.treetank.access.conf.ResourceConfiguration.IResourceSerializable;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.file.FileStorage;
 
 import com.google.inject.ImplementedBy;
@@ -45,7 +45,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(FileStorage.class)
-public interface IStorage extends IResourceSerializable {
+public interface IStorage {
 
     /**
      * Getting a writer.
@@ -81,6 +81,13 @@ public interface IStorage extends IResourceSerializable {
      *             if storage is not accessible
      */
     boolean exists() throws TTException;
+
+    /**
+     * Getting the ByteHandlers associated with this Storage.
+     * 
+     * @return the {@link IByteHandler} transforming bytes before storage
+     */
+    IByteHandler getByteHander();
 
     /**
      * 

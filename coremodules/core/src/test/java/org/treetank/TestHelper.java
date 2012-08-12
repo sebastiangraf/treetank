@@ -55,6 +55,8 @@ import com.google.common.io.Files;
  */
 public final class TestHelper {
 
+    public static final String RESOURCENAME = "tmp";
+    
     /** Paths where the data is stored to. */
     public enum PATHS {
 

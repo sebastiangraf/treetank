@@ -67,8 +67,6 @@ public final class NodeHelper {
     public static final DatabaseConfiguration DATABASECONFIGURATION = new DatabaseConfiguration(
         TestHelper.PATHS.PATH1.getFile());
 
-    public static final String RESOURCENAME = "tmp";
-
     private static byte[] keyValue = new byte[] {
         'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
@@ -86,8 +84,9 @@ public final class NodeHelper {
      */
     public static void createTestDocument(IResourceConfigurationFactory mResourceConfig) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        assertTrue(database.createResource(mResourceConfig.create(DATABASECONFIGURATION, RESOURCENAME)));
-        final ISession session = database.getSession(new SessionConfiguration(RESOURCENAME, KEY));
+        assertTrue(database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(),
+            TestHelper.RESOURCENAME, 4)));
+        final ISession session = database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, KEY));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
         final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
         DocumentCreater.create(nWtx);

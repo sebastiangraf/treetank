@@ -3,7 +3,6 @@
  */
 package org.treetank.revisioning;
 
-import org.treetank.access.conf.ResourceConfiguration.IResourceSerializable;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -14,7 +13,7 @@ import org.treetank.page.NodePage;
  * 
  */
 
-public interface IRevisioning extends IResourceSerializable {
+public interface IRevisioning {
 
     /**
      * Method to reconstruct a complete NodePage with the help of party filled
