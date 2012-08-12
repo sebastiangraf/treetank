@@ -37,7 +37,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
-import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 
@@ -82,7 +82,7 @@ public final class BerkeleyStorage implements IStorage {
     private final TupleBinding<IPage> mPageBinding;
 
     /** Handling the byte-representation before serialization. */
-    private final IByteHandler mByteHandler;
+    private final IByteHandlerPipeline mByteHandler;
 
     /** Factory for Pages. */
     private final PageFactory mFac;
@@ -100,7 +100,7 @@ public final class BerkeleyStorage implements IStorage {
      *             of something odd happens while database-connection
      */
     @Inject
-    public BerkeleyStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler)
+    public BerkeleyStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandlerPipeline pByteHandler)
         throws TTIOException {
 
         final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
@@ -203,7 +203,7 @@ public final class BerkeleyStorage implements IStorage {
     }
 
     @Override
-    public IByteHandler getByteHander() {
+    public IByteHandlerPipeline getByteHandler() {
         return mByteHandler;
     }
 
@@ -250,5 +250,25 @@ public final class BerkeleyStorage implements IStorage {
             }
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("BerkeleyStorage [mEnv=");
+        builder.append(mEnv);
+        builder.append(", mDatabase=");
+        builder.append(mDatabase);
+        builder.append(", mPageBinding=");
+        builder.append(mPageBinding);
+        builder.append(", mByteHandler=");
+        builder.append(mByteHandler);
+        builder.append(", mFac=");
+        builder.append(mFac);
+        builder.append("]");
+        return builder.toString();
     }
 }

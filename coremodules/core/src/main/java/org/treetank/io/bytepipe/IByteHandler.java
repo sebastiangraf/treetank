@@ -11,7 +11,7 @@ import com.google.inject.ImplementedBy;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-@ImplementedBy(ByteHandlePipeline.class)
+@ImplementedBy(ByteHandlerPipeline.class)
 public interface IByteHandler {
 
     /**
@@ -35,5 +35,14 @@ public interface IByteHandler {
      *             to be capsulated.
      */
     byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException;
+
+    /**
+     * Concartenating interface for offering dedicated access to {@link ByteHandlerPipeline} for injections.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public interface IByteHandlerPipeline extends IByteHandler, Iterable<IByteHandler> {
+    }
 
 }

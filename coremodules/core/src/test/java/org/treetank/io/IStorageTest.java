@@ -10,6 +10,7 @@ import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
@@ -21,6 +22,9 @@ public class IStorageTest {
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
+
+    @Inject
+    private ISessionConfigurationFactory mSessionConfig;
 
     @BeforeMethod
     public void setUp() throws TTException {
@@ -44,9 +48,11 @@ public class IStorageTest {
     @Test
     public void testFirstRef() throws TTException {
 
-        ResourceConfiguration conf =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), "bla", 4);
-        IStorage handler = conf.mStorage;
+        ResourceConfiguration resConf =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 4);
+        mSessionConfig.create(TestHelper.RESOURCENAME);
+
+        IStorage handler = resConf.mStorage;
 
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();

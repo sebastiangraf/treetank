@@ -61,7 +61,7 @@ public class Holder {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(pConf.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10));
         final ISession session =
-            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, NodeHelper.KEY));
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, TestHelper.KEY));
         final Holder holder = new Holder();
         holder.mDatabase = database;
         holder.mSession = session;

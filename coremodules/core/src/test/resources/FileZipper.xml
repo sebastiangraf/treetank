@@ -1,8 +1,8 @@
 <suite name="FileZipper">
 	<test name="FileZipper">
 		<packages>
+			<package name="org.treetank.access.conf" />
 			<package name="org.treetank.io" />
-			<package name="org.treetank.io.bytepipe" />
 		</packages>
 	</test>
 </suite>

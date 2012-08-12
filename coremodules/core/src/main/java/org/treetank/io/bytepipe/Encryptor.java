@@ -25,21 +25,14 @@ public class Encryptor implements IByteHandler {
     private static final int ITERATIONS = 2;
 
     /** Cipher to perform encryption and decryption operations. */
-    private final Cipher mCipher;
-
-    /**
-     * Constructor.
-     * 
-     * @param pComponent
-     * @throws TTByteHandleException
-     */
-    public Encryptor() throws TTByteHandleException {
+    private static final Cipher CIPHER;
+    static {
         try {
-            mCipher = Cipher.getInstance(ALGORITHM);
-        } catch (final NoSuchAlgorithmException exc) {
-            throw new TTByteHandleException(exc);
-        } catch (final NoSuchPaddingException exc) {
-            throw new TTByteHandleException(exc);
+            CIPHER = Cipher.getInstance(ALGORITHM);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -50,11 +43,11 @@ public class Encryptor implements IByteHandler {
      */
     public byte[] serialize(final byte[] pToSerialize) throws TTByteHandleException {
         try {
-            mCipher.init(Cipher.ENCRYPT_MODE, SessionConfiguration.getInstance().getKey());
+            CIPHER.init(Cipher.ENCRYPT_MODE, SessionConfiguration.getInstance().getKey());
 
             byte[] toEncrypt = pToSerialize;
             for (int i = 0; i < ITERATIONS; i++) {
-                byte[] encValue = mCipher.doFinal(toEncrypt);
+                byte[] encValue = CIPHER.doFinal(toEncrypt);
                 toEncrypt = encValue;
             }
             return toEncrypt;
@@ -68,11 +61,11 @@ public class Encryptor implements IByteHandler {
      */
     public byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException {
         try {
-            mCipher.init(Cipher.DECRYPT_MODE, SessionConfiguration.getInstance().getKey());
+            CIPHER.init(Cipher.DECRYPT_MODE, SessionConfiguration.getInstance().getKey());
 
             byte[] toDecrypt = pToDeserialize;
             for (int i = 0; i < ITERATIONS; i++) {
-                byte[] decValue = mCipher.doFinal(toDecrypt);
+                byte[] decValue = CIPHER.doFinal(toDecrypt);
                 toDecrypt = decValue;
             }
             return toDecrypt;
@@ -84,4 +77,15 @@ public class Encryptor implements IByteHandler {
         }
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Encryptor []");
+        return builder.toString();
+    }
+
 }

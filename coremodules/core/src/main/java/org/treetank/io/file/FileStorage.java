@@ -36,7 +36,8 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
-import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
 
 import com.google.inject.Inject;
@@ -63,7 +64,7 @@ public final class FileStorage implements IStorage {
     private final PageFactory mFac;
 
     /** Handling the byte-representation before serialization. */
-    private final IByteHandler mByteHandler;
+    private final IByteHandlerPipeline mByteHandler;
 
     /**
      * Constructor.
@@ -77,14 +78,14 @@ public final class FileStorage implements IStorage {
      * 
      */
     @Inject
-    public FileStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandler pByteHandler) {
+    public FileStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandlerPipeline pByteHandler) {
         mFile = pFile;
         final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
         if (!repoFile.exists()) {
             repoFile.mkdirs();
         }
         mFac = new PageFactory(pNodeFac);
-        mByteHandler = pByteHandler;
+        mByteHandler = (ByteHandlerPipeline)pByteHandler;
     }
 
     /**
@@ -132,8 +133,24 @@ public final class FileStorage implements IStorage {
     }
 
     @Override
-    public IByteHandler getByteHander() {
+    public IByteHandlerPipeline getByteHandler() {
         return mByteHandler;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("FileStorage [mFile=");
+        builder.append(mFile);
+        builder.append(", mFac=");
+        builder.append(mFac);
+        builder.append(", mByteHandler=");
+        builder.append(mByteHandler);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

@@ -27,12 +27,9 @@
 
 package org.treetank;
 
+import static org.testng.AssertJUnit.assertTrue;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
-
-import java.security.Key;
-
-import javax.crypto.spec.SecretKeySpec;
 
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
@@ -49,7 +46,6 @@ import org.treetank.exception.TTException;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
-import static org.testng.AssertJUnit.assertTrue;
 
 /**
  * 
@@ -67,16 +63,6 @@ public final class NodeHelper {
     public static final DatabaseConfiguration DATABASECONFIGURATION = new DatabaseConfiguration(
         TestHelper.PATHS.PATH1.getFile());
 
-    private static byte[] keyValue = new byte[] {
-        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
-    };
-
-    public static final Key KEY;
-
-    static {
-        KEY = new SecretKeySpec(keyValue, "AES");
-    }
-
     /**
      * Creating a test document at {@link PATHS#PATH1}.
      * 
@@ -86,7 +72,8 @@ public final class NodeHelper {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         assertTrue(database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(),
             TestHelper.RESOURCENAME, 4)));
-        final ISession session = database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, KEY));
+        final ISession session =
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, TestHelper.KEY));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
         final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
         DocumentCreater.create(nWtx);

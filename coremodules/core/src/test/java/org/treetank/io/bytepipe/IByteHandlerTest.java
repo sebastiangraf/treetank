@@ -64,9 +64,10 @@ public class IByteHandlerTest {
             {
                 {
                     IByteHandler.class,
-                    new IByteHandler[] {
-                        new Encryptor(), new Zipper(), new ByteHandlePipeline(new Encryptor(), new Zipper()),
-                        new ByteHandlePipeline(new Zipper(), new Encryptor())
+                    new ByteHandlerPipeline[] {
+                        new ByteHandlerPipeline(new Encryptor()), new ByteHandlerPipeline(new Zipper()),
+                        new ByteHandlerPipeline(new Encryptor(), new Zipper()),
+                        new ByteHandlerPipeline(new Zipper(), new Encryptor())
                     }
                 }
             };

@@ -41,8 +41,9 @@ import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IStorage;
 import org.treetank.io.IStorage.IStorageFactory;
-import org.treetank.io.bytepipe.ByteHandlePipeline;
+import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 
@@ -187,42 +188,6 @@ public final class ResourceConfiguration {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 90599;
-        int result = 13;
-        result = prime * result + mStorage.hashCode();
-        result = prime * result + mRevision.hashCode();
-        result = prime * result + mFile.hashCode();
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean equals(final Object pObj) {
-        return this.hashCode() == pObj.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("\nResource: ");
-        builder.append(this.mFile);
-        builder.append("Type: ");
-        builder.append(this.mStorage);
-        builder.append("\nRevision: ");
-        builder.append(this.mRevision);
-        return builder.toString();
-    }
-
-    /**
      * 
      * Factory for generating an {@link ResourceConfiguration}-instance. Needed mainly
      * because of Guice-Assisted utilization.
@@ -248,7 +213,8 @@ public final class ResourceConfiguration {
     }
 
     private static final String[] JSONNAMES = {
-        "revisioning", "numbersOfRevisiontoRestore", "nodeFactoryClass", "byteHandlerClasses"
+        "revisioning", "revisioningClass", "numbersOfRevisiontoRestore", "nodeFactoryClass",
+        "byteHandlerClasses", "storageClass"
     };
 
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
@@ -258,17 +224,23 @@ public final class ResourceConfiguration {
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
             // caring about the versioning
-            jsonWriter.name(JSONNAMES[0]).value(pConfig.mRevision.getClass().getName());
+            jsonWriter.name(JSONNAMES[0]);
             jsonWriter.beginObject();
-            jsonWriter.name(JSONNAMES[1]).value(pConfig.mRevision.getRevisionsToRestore());
+            jsonWriter.name(JSONNAMES[1]).value(pConfig.mRevision.getClass().getName());
+            jsonWriter.name(JSONNAMES[2]).value(pConfig.mRevision.getRevisionsToRestore());
             jsonWriter.endObject();
             // caring about the NodeFactory
-            jsonWriter.name(JSONNAMES[2]).value(pConfig.mNodeFac.getClass().getName());
+            jsonWriter.name(JSONNAMES[3]).value(pConfig.mNodeFac.getClass().getName());
             // caring about the ByteHandlers
-
-            jsonWriter.name("file").value(pConfig.mFile.getAbsolutePath());
-            jsonWriter.name("nodeFac").value(pConfig.mNodeFac.getClass().getName());
-
+            IByteHandlerPipeline byteHandler = pConfig.mStorage.getByteHandler();
+            jsonWriter.name(JSONNAMES[4]);
+            jsonWriter.beginArray();
+            for (IByteHandler handler : byteHandler) {
+                jsonWriter.value(handler.getClass().getName());
+            }
+            jsonWriter.endArray();
+            // caring about the storage
+            jsonWriter.name(JSONNAMES[5]).value(pConfig.mStorage.getClass().getName());
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
@@ -295,37 +267,37 @@ public final class ResourceConfiguration {
             jsonReader.beginObject();
             // caring about the versioning
             assert jsonReader.nextName().equals(JSONNAMES[0]);
-            Class<?> revClazz = Class.forName(jsonReader.nextString());
             jsonReader.beginObject();
             assert jsonReader.nextName().equals(JSONNAMES[1]);
+            Class<?> revClazz = Class.forName(jsonReader.nextString());
+            assert jsonReader.nextName().equals(JSONNAMES[2]);
             int revisionToRestore = jsonReader.nextInt();
             Constructor<?> revCons = revClazz.getConstructors()[0];
             IRevisioning revisioning = (IRevisioning)revCons.newInstance(revisionToRestore);
             jsonReader.endObject();
             // caring about the NodeFactory
-            assert jsonReader.nextName().equals(JSONNAMES[2]);
+            assert jsonReader.nextName().equals(JSONNAMES[3]);
             Class<?> nodeFacClazz = Class.forName(jsonReader.nextString());
             Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
             INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
             // caring about the ByteHandlers
             List<IByteHandler> handlerList = new ArrayList<IByteHandler>();
-            if (jsonReader.nextName().equals(JSONNAMES[3])) {
-                jsonReader.beginObject();
+            if (jsonReader.nextName().equals(JSONNAMES[4])) {
+                jsonReader.beginArray();
                 while (jsonReader.hasNext()) {
                     Class<?> handlerClazz = Class.forName(jsonReader.nextString());
                     Constructor<?> handlerCons = handlerClazz.getConstructors()[0];
                     handlerList.add((IByteHandler)handlerCons.newInstance());
                 }
-                jsonReader.endObject();
+                jsonReader.endArray();
             }
-            IByteHandler pipeline =
-                new ByteHandlePipeline(handlerList.toArray(new IByteHandler[handlerList.size()]));
+            ByteHandlerPipeline pipeline =
+                new ByteHandlerPipeline(handlerList.toArray(new IByteHandler[handlerList.size()]));
             // caring about the storage
-            assert jsonReader.nextName().equals("storageClass");
+            assert jsonReader.nextName().equals(JSONNAMES[5]);
             Class<?> storageClazz = Class.forName(jsonReader.nextString());
             Constructor<?> storageCons = storageClazz.getConstructors()[0];
-            IStorage storage =
-                (IStorage)storageCons.newInstance(new File(pFile, Paths.Data.name()), nodeFactory, pipeline);
+            IStorage storage = (IStorage)storageCons.newInstance(pFile, nodeFactory, pipeline);
             jsonReader.endObject();
             jsonReader.close();
             fileReader.close();
@@ -353,5 +325,45 @@ public final class ResourceConfiguration {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 90599;
+        int result = 13;
+        result = prime * result + mStorage.hashCode();
+        result = prime * result + mRevision.hashCode();
+        result = prime * result + mFile.hashCode();
+        result = prime * result + mNodeFac.hashCode();
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean equals(final Object pObj) {
+        return this.hashCode() == pObj.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ResourceConfiguration [mStorage=");
+        builder.append(mStorage);
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append(", mFile=");
+        builder.append(mFile);
+        builder.append(", mNodeFac=");
+        builder.append(mNodeFac);
+        builder.append("]");
+        return builder.toString();
     }
 }

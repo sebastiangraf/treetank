@@ -27,7 +27,6 @@ public class DumbNodeFactory implements INodeFactory {
         return new DumbNode(input.readLong(), input.readLong());
     }
 
-
     /**
      * Simple DumbNode just for testing the {@link NodePage}s.
      * 
@@ -96,6 +95,16 @@ public class DumbNodeFactory implements INodeFactory {
             return mHash;
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("DumbNodeFactory []");
+        return builder.toString();
     }
 
 }

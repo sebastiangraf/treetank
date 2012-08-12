@@ -94,4 +94,35 @@ public class Incremental implements IRevisioning {
         return mRevToRestore;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + mRevToRestore;
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return obj.hashCode() == this.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Incremental [mRevToRestore=");
+        builder.append(mRevToRestore);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

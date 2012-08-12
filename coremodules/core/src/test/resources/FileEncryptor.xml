@@ -1,8 +1,8 @@
 <suite name="FileEncryptor">
 	<test name="FileEncryptor">
 		<packages>
-			<package name="org.treetank.io"/>
-			<package name="org.treetank.io.bytepipe"/>
+			<package name="org.treetank.access.conf" />
+            <package name="org.treetank.io" />
 		</packages>
 	</test>
 </suite>

@@ -37,7 +37,7 @@ import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
-import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
@@ -70,7 +70,7 @@ public final class FileWriter implements IWriter {
      * @throws TTIOException
      *             if FileWriter IO error
      */
-    public FileWriter(File pFile, PageFactory pFac, IByteHandler pByteHandler) throws TTException {
+    public FileWriter(File pFile, PageFactory pFac, IByteHandlerPipeline pByteHandler) throws TTException {
         try {
             mFile = new RandomAccessFile(pFile, "rw");
         } catch (final FileNotFoundException fileExc) {

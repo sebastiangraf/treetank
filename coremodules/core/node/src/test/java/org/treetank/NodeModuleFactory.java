@@ -2,8 +2,8 @@ package org.treetank;
 
 import org.testng.IModuleFactory;
 import org.testng.ITestContext;
+import org.treetank.access.StandardNodeSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IStorage;
 import org.treetank.io.IStorage.IStorageFactory;
@@ -34,7 +34,7 @@ public class NodeModuleFactory implements IModuleFactory {
     @Override
     public Module createModule(ITestContext context, Class<?> testClass) {
 
-        AbstractModule returnVal = new StandardSettings();
+        AbstractModule returnVal = new StandardNodeSettings();
         String suiteName = context.getSuite().getName();
         if ("FileZipper".equals(suiteName)) {
             returnVal = new AbstractModule() {

@@ -2,7 +2,8 @@
 	<test name="NormalBundles">
 		<packages>
 			<package name="org.treetank.cache" />
-			<package name="org.treetank.io.page" />
+			<package name="org.treetank.io.bytepipe" />
+			<package name="org.treetank.page" />
 			<package name="org.treetank.revisioning" />
 		</packages>
 	</test>

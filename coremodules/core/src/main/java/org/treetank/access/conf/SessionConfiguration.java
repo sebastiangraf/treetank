@@ -150,6 +150,6 @@ public final class SessionConfiguration {
          *            Name of resource to be set.
          * @return an {@link SessionConfiguration}-instance
          */
-        ISessionConfigurationFactory create(String pResourceName);
+        SessionConfiguration create(String pResourceName);
     }
 }

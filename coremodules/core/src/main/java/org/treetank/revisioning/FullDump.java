@@ -74,4 +74,16 @@ public class FullDump implements IRevisioning {
         return 1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("FullDump []");
+        return builder.toString();
+    }
+    
+ 
+
 }

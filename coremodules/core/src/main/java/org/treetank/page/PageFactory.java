@@ -117,4 +117,35 @@ public final class PageFactory {
                 "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mNodeFac == null) ? 0 : mNodeFac.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return obj.hashCode() == this.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PageFactory [mNodeFac=");
+        builder.append(mNodeFac);
+        builder.append("]");
+        return builder.toString();
+    }
 }

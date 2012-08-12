@@ -35,7 +35,7 @@ import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
@@ -65,7 +65,7 @@ public final class FileReader implements IReader {
     protected final RandomAccessFile mFile;
 
     /** Inflater to decompress. */
-    protected final IByteHandler mByteHandler;
+    protected final IByteHandlerPipeline mByteHandler;
 
     /**
      * Constructor.
@@ -79,7 +79,7 @@ public final class FileReader implements IReader {
      * @throws TTException
      *             if anything bad happens
      */
-    public FileReader(File pFile, PageFactory pFac, IByteHandler pByteHandler) throws TTException {
+    public FileReader(File pFile, PageFactory pFac, IByteHandlerPipeline pByteHandler) throws TTException {
 
         try {
             if (!pFile.exists()) {

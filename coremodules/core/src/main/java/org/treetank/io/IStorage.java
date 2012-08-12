@@ -30,7 +30,7 @@ import java.io.File;
 
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.file.FileStorage;
 
 import com.google.inject.ImplementedBy;
@@ -85,9 +85,9 @@ public interface IStorage {
     /**
      * Getting the ByteHandlers associated with this Storage.
      * 
-     * @return the {@link IByteHandler} transforming bytes before storage
+     * @return the {@link IByteHandlerPipeline} transforming bytes before storage
      */
-    IByteHandler getByteHander();
+    IByteHandlerPipeline getByteHandler();
 
     /**
      * 

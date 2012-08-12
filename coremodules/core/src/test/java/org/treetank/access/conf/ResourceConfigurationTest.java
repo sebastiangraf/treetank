@@ -54,9 +54,9 @@ public class ResourceConfigurationTest {
             mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
         ResourceConfiguration.serialize(conf);
         ResourceConfiguration serializedConf =
-            ResourceConfiguration.deserialize(new File(TestHelper.PATHS.PATH1.getFile(),
-                TestHelper.RESOURCENAME));
-        assertEquals(conf, serializedConf);
+            ResourceConfiguration.deserialize(new File(new File(TestHelper.PATHS.PATH1.getFile(),
+                DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME));
+        assertEquals(conf.toString(), serializedConf.toString());
 
     }
 }

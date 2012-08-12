@@ -28,9 +28,12 @@
 package org.treetank;
 
 import java.io.File;
+import java.security.Key;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.treetank.access.Database;
 import org.treetank.access.Session;
@@ -55,8 +58,18 @@ import com.google.common.io.Files;
  */
 public final class TestHelper {
 
+    private static byte[] keyValue = new byte[] {
+        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
+    };
+
+    public static final Key KEY;
+
+    static {
+        KEY = new SecretKeySpec(keyValue, "AES");
+    }
+
     public static final String RESOURCENAME = "tmp";
-    
+
     /** Paths where the data is stored to. */
     public enum PATHS {
 
