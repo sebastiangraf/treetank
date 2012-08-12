@@ -35,8 +35,6 @@ import java.io.IOException;
 
 import org.treetank.exception.TTIOException;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
@@ -186,13 +184,12 @@ public final class DatabaseConfiguration {
     }
 
     /**
-     * {@inheritDoc}
+     * Serializing a {@link DatabaseConfiguration} to a json file.
+     * 
+     * @param pConfig
+     *            to be serialized
+     * @throws TTIOException
      */
-    public JsonElement serialize() {
-
-        return new Gson().toJsonTree(this);
-    }
-
     public static void serialize(final DatabaseConfiguration pConfig) throws TTIOException {
         try {
             FileWriter fileWriter =
@@ -210,6 +207,14 @@ public final class DatabaseConfiguration {
         }
     }
 
+    /**
+     * Generate a DatabaseConfiguration out of a file.
+     * 
+     * @param pFile
+     *            where the DatabaseConfiguration lies in as json
+     * @return a new {@link DatabaseConfiguration} class
+     * @throws TTIOException
+     */
     public static DatabaseConfiguration deserialize(final File pFile) throws TTIOException {
         try {
             FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
