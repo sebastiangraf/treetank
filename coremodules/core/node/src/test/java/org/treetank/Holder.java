@@ -30,7 +30,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
@@ -57,9 +57,9 @@ public class Holder {
 
     private INodeReadTrx mNRtx;
 
-    public static Holder generateSession(IResourceConfigurationFactory pConf) throws TTException {
+    public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(pConf.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10));
+        database.createResource(pConf);
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, TestHelper.KEY));
         final Holder holder = new Holder();
@@ -68,7 +68,7 @@ public class Holder {
         return holder;
     }
 
-    public static Holder generateWtx(IResourceConfigurationFactory pConf) throws TTException {
+    public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
         final Holder holder = generateSession(pConf);
         final IPageWriteTrx pRtx = holder.mSession.beginPageWriteTransaction();
         holder.mPRtx = pRtx;
@@ -76,7 +76,7 @@ public class Holder {
         return holder;
     }
 
-    public static Holder generateRtx(IResourceConfigurationFactory pConf) throws TTException {
+    public static Holder generateRtx(ResourceConfiguration pConf) throws TTException {
         final Holder holder = generateSession(pConf);
         final IPageReadTrx pRtx =
             holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());

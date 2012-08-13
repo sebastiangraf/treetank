@@ -37,6 +37,7 @@ import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
@@ -51,12 +52,16 @@ public class AttributeAndNamespaceTest {
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
         NodeHelper.createTestDocument(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(),
             TestHelper.RESOURCENAME, 10));
-        holder = Holder.generateRtx(mResourceConfig);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod

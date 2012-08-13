@@ -36,31 +36,45 @@ import javax.xml.namespace.QName;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.DocumentCreater;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.node.interfaces.IStructNode;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class UpdateTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        holder = Holder.generateWtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder = Holder.generateWtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -69,18 +83,18 @@ public class UpdateTest {
         INodeWriteTrx wtx = holder.getNWtx();
         NodeHelper.createDocumentRootNode(wtx);
         wtx.insertElementAsFirstChild(new QName(""));
-        testNodeTransactionIsolation(wtx);
+        nodeIsolation(wtx);
         wtx.commit();
-        testNodeTransactionIsolation(wtx);
+        nodeIsolation(wtx);
         INodeReadTrx rtx =
             new NodeReadTrx(holder.getSession().beginPageReadTransaction(
                 holder.getSession().getMostRecentVersion()));
-        testNodeTransactionIsolation(rtx);
+        nodeIsolation(rtx);
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.insertElementAsFirstChild(new QName(""));
-        testNodeTransactionIsolation(rtx);
+        nodeIsolation(rtx);
         wtx.commit();
-        testNodeTransactionIsolation(rtx);
+        nodeIsolation(rtx);
         rtx.close();
         wtx.close();
     }
@@ -93,8 +107,7 @@ public class UpdateTest {
      *            to test with
      * @throws TTException
      */
-    @Test(enabled = false)
-    private final static void testNodeTransactionIsolation(final INodeReadTrx pRtx) throws TTException {
+    private final static void nodeIsolation(final INodeReadTrx pRtx) throws TTException {
         assertTrue(pRtx.moveTo(ROOT_NODE));
         assertEquals(0, pRtx.getNode().getNodeKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
@@ -117,7 +130,7 @@ public class UpdateTest {
             new NodeReadTrx(holder.getSession().beginPageReadTransaction(
                 holder.getSession().getMostRecentVersion()));
 
-        assertEquals(0L, holder.getPRtx().getActualRevisionRootPage().getRevision());
+        assertEquals(1L, holder.getPRtx().getActualRevisionRootPage().getRevision());
 
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
@@ -136,7 +149,7 @@ public class UpdateTest {
             rtx.moveTo(ROOT_NODE);
             rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
             assertEquals(Integer.toString(i), rtx.getValueOfCurrentNode());
-            assertEquals(i, holder.getSession().getMostRecentVersion());
+            assertEquals(i + 1, holder.getSession().getMostRecentVersion());
             rtx.close();
         }
 
@@ -146,7 +159,7 @@ public class UpdateTest {
         rtx.moveTo(ROOT_NODE);
         rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
         assertEquals("10", rtx.getValueOfCurrentNode());
-        assertEquals(10L, holder.getSession().getMostRecentVersion());
+        assertEquals(11L, holder.getSession().getMostRecentVersion());
         rtx.close();
 
     }
@@ -192,14 +205,14 @@ public class UpdateTest {
             wtx.insertElementAsRightSibling(new QName(""));
         }
 
-        testPageBoundary(wtx);
+        pageBoundary(wtx);
         wtx.commit();
-        testPageBoundary(wtx);
+        pageBoundary(wtx);
         wtx.close();
         final INodeReadTrx rtx =
             new NodeReadTrx(holder.getSession().beginPageReadTransaction(
                 holder.getSession().getMostRecentVersion()));
-        testPageBoundary(rtx);
+        pageBoundary(rtx);
         rtx.close();
 
     }
@@ -212,8 +225,7 @@ public class UpdateTest {
      *            to test with
      * @throws TTException
      */
-    @Test(enabled = false)
-    private final static void testPageBoundary(final INodeReadTrx pRtx) throws TTException {
+    private final static void pageBoundary(final INodeReadTrx pRtx) throws TTException {
         assertTrue(pRtx.moveTo(2L));
         assertEquals(2L, pRtx.getNode().getNodeKey());
     }
@@ -239,14 +251,14 @@ public class UpdateTest {
         wtx.commit();
         wtx.moveTo(5L);
         wtx.remove();
-        testRemoveDescendant(wtx);
+        removeDescendant(wtx);
         wtx.commit();
-        testRemoveDescendant(wtx);
+        removeDescendant(wtx);
         wtx.close();
         final INodeReadTrx rtx =
             new NodeReadTrx(holder.getSession().beginPageReadTransaction(
                 holder.getSession().getMostRecentVersion()));
-        testRemoveDescendant(rtx);
+        removeDescendant(rtx);
         rtx.close();
     }
 
@@ -258,8 +270,7 @@ public class UpdateTest {
      *            to test with
      * @throws TTException
      */
-    @Test(enabled = false)
-    private final static void testRemoveDescendant(final INodeReadTrx pRtx) throws TTException {
+    private final static void removeDescendant(final INodeReadTrx pRtx) throws TTException {
         assertTrue(pRtx.moveTo(ROOT_NODE));
         assertEquals(0, pRtx.getNode().getNodeKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
