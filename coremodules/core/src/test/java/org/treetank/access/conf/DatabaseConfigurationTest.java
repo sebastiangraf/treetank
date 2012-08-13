@@ -4,11 +4,13 @@
 package org.treetank.access.conf;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
+import org.treetank.access.Database;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
@@ -22,14 +24,11 @@ public class DatabaseConfigurationTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
-        TestHelper.PATHS.PATH1.getFile().mkdirs();
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
@@ -43,10 +42,10 @@ public class DatabaseConfigurationTest {
     @Test
     public void testDeSerialize() throws TTIOException {
         DatabaseConfiguration conf = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
-        DatabaseConfiguration.serialize(conf);
+        assertTrue(Database.createDatabase(conf));
         DatabaseConfiguration serializedConf =
             DatabaseConfiguration.deserialize(TestHelper.PATHS.PATH1.getFile());
-        assertEquals(conf, serializedConf);
+        assertEquals(conf.toString(), serializedConf.toString());
 
     }
 }

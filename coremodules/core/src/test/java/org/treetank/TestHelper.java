@@ -38,6 +38,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.treetank.access.Database;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INode;
 import org.treetank.exception.TTException;
@@ -61,9 +62,7 @@ public final class TestHelper {
     private static byte[] keyValue = new byte[] {
         'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
-
     public static final Key KEY;
-
     static {
         KEY = new SecretKeySpec(keyValue, "AES");
     }
@@ -123,8 +122,14 @@ public final class TestHelper {
                 Database.createDatabase(config);
             }
             final IDatabase database = Database.openDatabase(file);
+            INSTANCES.put(file, database);
             return database;
         }
+    }
+
+    public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        return database.createResource(resConf);
     }
 
     /**

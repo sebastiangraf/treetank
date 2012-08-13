@@ -82,10 +82,10 @@ public final class FileReader implements IReader {
     public FileReader(File pFile, PageFactory pFac, IByteHandlerPipeline pByteHandler) throws TTException {
 
         try {
-            if (!pFile.exists()) {
-                pFile.getParentFile().mkdirs();
-                pFile.createNewFile();
-            }
+//            if (!pFile.exists()) {
+//                pFile.getParentFile().mkdirs();
+//                pFile.createNewFile();
+//            }
 
             mFile = new RandomAccessFile(pFile, "r");
             mByteHandler = pByteHandler;

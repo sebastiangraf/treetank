@@ -32,14 +32,11 @@ public class ResourceConfigurationTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
-        TestHelper.PATHS.PATH1.getFile().mkdirs();
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
@@ -50,13 +47,14 @@ public class ResourceConfigurationTest {
      */
     @Test
     public void testDeSerialize() throws Exception {
-        ResourceConfiguration conf =
+        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        ResourceConfiguration resConf =
             mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
-        ResourceConfiguration.serialize(conf);
+        TestHelper.createResource(resConf);
         ResourceConfiguration serializedConf =
             ResourceConfiguration.deserialize(new File(new File(TestHelper.PATHS.PATH1.getFile(),
                 DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME));
-        assertEquals(conf.toString(), serializedConf.toString());
+        assertEquals(resConf.toString(), serializedConf.toString());
 
     }
 }

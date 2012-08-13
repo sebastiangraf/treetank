@@ -61,7 +61,7 @@ public class AttributeAndNamespaceTest {
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test

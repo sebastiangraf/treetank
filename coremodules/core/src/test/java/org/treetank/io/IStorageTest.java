@@ -26,11 +26,15 @@ public class IStorageTest {
     @Inject
     private ISessionConfigurationFactory mSessionConfig;
 
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.closeEverything();
         TestHelper.deleteEverything();
-        TestHelper.PATHS.PATH1.getFile().mkdirs();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        TestHelper.createResource(mResource);
+        mSessionConfig.create(TestHelper.RESOURCENAME);
     }
 
     @AfterMethod
@@ -48,11 +52,7 @@ public class IStorageTest {
     @Test
     public void testFirstRef() throws TTException {
 
-        ResourceConfiguration resConf =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 4);
-        mSessionConfig.create(TestHelper.RESOURCENAME);
-
-        IStorage handler = resConf.mStorage;
+        IStorage handler = mResource.mStorage;
 
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();

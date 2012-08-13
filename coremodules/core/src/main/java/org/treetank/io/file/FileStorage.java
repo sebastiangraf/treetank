@@ -80,10 +80,10 @@ public final class FileStorage implements IStorage {
     @Inject
     public FileStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandlerPipeline pByteHandler) {
         mFile = pFile;
-        final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
-        if (!repoFile.exists()) {
-            repoFile.mkdirs();
-        }
+//        final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
+//        if (!repoFile.exists()) {
+//            repoFile.mkdirs();
+//        }
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
     }
