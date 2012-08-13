@@ -35,8 +35,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Session;
-import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
@@ -60,18 +59,14 @@ import org.treetank.node.delegates.StructNodeDelegate;
 
 public final class NodeHelper {
 
-    public static final DatabaseConfiguration DATABASECONFIGURATION = new DatabaseConfiguration(
-        TestHelper.PATHS.PATH1.getFile());
-
     /**
      * Creating a test document at {@link PATHS#PATH1}.
      * 
      * @throws TTException
      */
-    public static void createTestDocument(IResourceConfigurationFactory mResourceConfig) throws TTException {
+    public static void createTestDocument(ResourceConfiguration mResourceConfig) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        assertTrue(database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(),
-            TestHelper.RESOURCENAME, 4)));
+        assertTrue(database.createResource(mResourceConfig));
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, TestHelper.KEY));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();

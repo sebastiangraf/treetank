@@ -54,7 +54,8 @@ public class AttributeAndNamespaceTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        NodeHelper.createTestDocument(mResourceConfig);
+        NodeHelper.createTestDocument(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(),
+            TestHelper.RESOURCENAME, 10));
         holder = Holder.generateRtx(mResourceConfig);
     }
 
