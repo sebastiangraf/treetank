@@ -76,7 +76,7 @@
 	<modules>
 		<module>coremodules/commons</module>
 		<module>coremodules/core</module>
-		<module>coremodules/core/node</module>
+		<module>coremodules/node</module>
 		<module>interfacemodules/saxon</module>
 		<module>interfacemodules/jax-rx</module>
 		<module>interfacemodules/xml</module>

@@ -29,7 +29,6 @@ package org.treetank.access;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
@@ -80,8 +79,10 @@ public class UpdateTest {
     @Test
     public void testNodeTransactionIsolation() throws TTException {
 
+        INodeReadTrx rtx =
+            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+                holder.getSession().getMostRecentVersion()));
         INodeWriteTrx wtx = holder.getNWtx();
-        INodeReadTrx rtx = holder.getNRtx();
         wtx.insertElementAsFirstChild(new QName(""));
         nodeIsolation(rtx);
         wtx.commit();
@@ -108,10 +109,7 @@ public class UpdateTest {
         assertEquals(0, pRtx.getNode().getNodeKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
         assertEquals(1, pRtx.getNode().getNodeKey());
-        assertEquals(0, ((IStructNode)pRtx.getNode()).getChildCount());
-        assertEquals(NULL_NODE, ((IStructNode)pRtx.getNode()).getLeftSiblingKey());
-        assertEquals(NULL_NODE, ((IStructNode)pRtx.getNode()).getRightSiblingKey());
-        assertEquals(NULL_NODE, ((IStructNode)pRtx.getNode()).getFirstChildKey());
+        assertEquals(5, ((IStructNode)pRtx.getNode()).getChildCount());
     }
 
     @Test
