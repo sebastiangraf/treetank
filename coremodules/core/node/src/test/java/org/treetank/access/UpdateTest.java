@@ -246,8 +246,6 @@ public class UpdateTest {
     @Test
     public void testRemoveDescendant() throws TTException {
         final INodeWriteTrx wtx = holder.getNWtx();
-        DocumentCreater.create(wtx);
-        wtx.commit();
         wtx.moveTo(5L);
         wtx.remove();
         removeDescendant(wtx);
