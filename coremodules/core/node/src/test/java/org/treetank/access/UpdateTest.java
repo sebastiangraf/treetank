@@ -81,13 +81,10 @@ public class UpdateTest {
     public void testNodeTransactionIsolation() throws TTException {
 
         INodeWriteTrx wtx = holder.getNWtx();
+        INodeReadTrx rtx = holder.getNRtx();
         wtx.insertElementAsFirstChild(new QName(""));
-        nodeIsolation(wtx);
+        nodeIsolation(rtx);
         wtx.commit();
-        nodeIsolation(wtx);
-        INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
-                holder.getSession().getMostRecentVersion()));
         nodeIsolation(rtx);
         wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
         wtx.insertElementAsFirstChild(new QName(""));
