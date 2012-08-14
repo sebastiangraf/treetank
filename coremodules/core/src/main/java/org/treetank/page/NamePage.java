@@ -102,7 +102,13 @@ public final class NamePage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": nameCount=" + mNameMap.size();
+        StringBuilder builder = new StringBuilder();
+        builder.append("NamePage [mNameMap=");
+        builder.append(mNameMap);
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append("]");
+        return builder.toString();
     }
 
     /**
