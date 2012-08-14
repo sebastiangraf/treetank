@@ -37,7 +37,7 @@ import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
@@ -71,22 +71,22 @@ public class ForAxisTest {
 
         rtx.moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::text() return child::node()"),
+        AxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::text() return child::node()"),
             new long[] {
                 4L, 5L, 8L, 9L, 13L, 4L, 5L, 8L, 9L, 13L, 4L, 5L, 8L, 9L, 13L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::node() return $a/node()"),
+        AxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::node() return $a/node()"),
             new long[] {
                 6L, 7L, 11L, 12L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::node() return $a/text()"),
+        AxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::node() return $a/text()"),
             new long[] {
                 6L, 12L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::node() return $a/c"),
+        AxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::node() return $a/c"),
             new long[] {
                 7L, 11L
             });
@@ -96,12 +96,12 @@ public class ForAxisTest {
         // "for $a in child::node(), $b in /node(), $c in ., $d in /c return $a/c"),
         // new long[] {7L, 11L});
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::node() return $a[@p:x]"),
+        AxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in child::node() return $a[@p:x]"),
             new long[] {
                 9L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in . return $a"), new long[] {
+        AxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in . return $a"), new long[] {
             1L
         });
 

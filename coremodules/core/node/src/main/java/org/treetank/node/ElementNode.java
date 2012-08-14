@@ -428,15 +428,23 @@ public final class ElementNode implements INode, IStructNode, INameNode {
         return IConstants.ELEMENT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder(mDel.toString());
-        builder.append(mStrucDel.toString());
-        builder.append(mNameDel.toString());
-        builder.append("\n\tnamespaces: ");
-        builder.append(mNamespaceKeys.toString());
-        builder.append("\n\tattributes: ");
-        builder.append(mAttributeKeys.toString());
+        StringBuilder builder = new StringBuilder();
+        builder.append("ElementNode [mDel=");
+        builder.append(mDel);
+        builder.append(", mStrucDel=");
+        builder.append(mStrucDel);
+        builder.append(", mNameDel=");
+        builder.append(mNameDel);
+        builder.append(", mAttributeKeys=");
+        builder.append(mAttributeKeys);
+        builder.append(", mNamespaceKeys=");
+        builder.append(mNamespaceKeys);
+        builder.append("]");
         return builder.toString();
     }
 

@@ -172,8 +172,20 @@ public final class Session implements ISession {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(this.mSessionConfig);
+        StringBuilder builder = new StringBuilder();
+        builder.append("Session [mResourceConfig=");
+        builder.append(mResourceConfig);
+        builder.append(", mSessionConfig=");
+        builder.append(mSessionConfig);
+        builder.append(", mDatabase=");
+        builder.append(mDatabase);
+        builder.append(", mLastCommittedUberPage=");
+        builder.append(mLastCommittedUberPage);
+        builder.append(", mPageTrxs=");
+        builder.append(mPageTrxs);
+        builder.append(", mFac=");
+        builder.append(mFac);
+        builder.append("]");
         return builder.toString();
     }
 

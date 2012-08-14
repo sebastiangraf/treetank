@@ -31,33 +31,46 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.filter.NameFilter;
 import org.treetank.axis.filter.NodeFilter;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.TTException;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class NestedAxisTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        NodeHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
-
     @Test
     public void testNestedAxisTest() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
@@ -75,7 +88,7 @@ public class NestedAxisTest {
         // Part: /p:a/b/text()
         final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB, rtx), text, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis, new long[] {
+        AxisTest.testIAxisConventions(axis, new long[] {
             6L, 12L
         });
     }
@@ -97,7 +110,7 @@ public class NestedAxisTest {
         // Part: /p:a/b/@p:x
         final AbsAxis axis = new NestedAxis(new NestedAxis(childA, childB, rtx), attributeX, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis, new long[] {
+        AxisTest.testIAxisConventions(axis, new long[] {
             10L
         });
 
@@ -120,7 +133,7 @@ public class NestedAxisTest {
         // Part: /p:a/node():
         final AbsAxis axis = new NestedAxis(childA, childNode, rtx);
 
-        AbsAxisTest.testIAxisConventions(axis, new long[] {
+        AxisTest.testIAxisConventions(axis, new long[] {
             4L, 5L, 8L, 9L, 13L
         });
 

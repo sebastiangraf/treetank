@@ -29,22 +29,35 @@ package org.treetank.axis;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.TTException;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class PrecedingSiblingAxisTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        NodeHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder = Holder.generateRtx(mResource);
     }
 
     @AfterMethod
@@ -58,26 +71,26 @@ public class PrecedingSiblingAxisTest {
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(12L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
+        AxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
             11L
         });
 
         rtx.moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
+        AxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
             4L
         });
 
         rtx.moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
+        AxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {
             9L, 8L, 5L, 4L
         });
 
         rtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {});
+        AxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {});
 
         rtx.moveTo(9L);
         rtx.moveToAttribute(0);
-        AbsAxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {});
+        AxisTest.testIAxisConventions(new PrecedingSiblingAxis(rtx), new long[] {});
     }
 
 }

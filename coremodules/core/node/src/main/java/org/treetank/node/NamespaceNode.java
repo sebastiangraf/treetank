@@ -211,13 +211,17 @@ public final class NamespaceNode implements INode, INameNode {
         return hashCode() == obj.hashCode();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(mDel.toString());
-        builder.append("\n");
-        builder.append(mNameDel.toString());
+        StringBuilder builder = new StringBuilder();
+        builder.append("NamespaceNode [mDel=");
+        builder.append(mDel);
+        builder.append(", mNameDel=");
+        builder.append(mNameDel);
+        builder.append("]");
         return builder.toString();
     }
 

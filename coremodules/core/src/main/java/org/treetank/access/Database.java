@@ -303,8 +303,12 @@ public final class Database implements IDatabase {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(this.mDBConfig);
+        StringBuilder builder = new StringBuilder();
+        builder.append("Database [mSessions=");
+        builder.append(mSessions);
+        builder.append(", mDBConfig=");
+        builder.append(mDBConfig);
+        builder.append("]");
         return builder.toString();
     }
 

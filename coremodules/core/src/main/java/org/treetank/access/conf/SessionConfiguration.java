@@ -107,11 +107,12 @@ public final class SessionConfiguration {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("User: ");
-        builder.append(this.mResource);
-        builder.append("Key: ");
-        builder.append(this.mKey);
+        StringBuilder builder = new StringBuilder();
+        builder.append("SessionConfiguration [mResource=");
+        builder.append(mResource);
+        builder.append(", mKey=");
+        builder.append(mKey);
+        builder.append("]");
         return builder.toString();
     }
 

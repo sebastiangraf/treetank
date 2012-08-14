@@ -34,30 +34,42 @@ import javax.xml.namespace.QName;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 
+import com.google.inject.Inject;
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class AttributeAxisTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        NodeHelper.createTestDocument();
-        holder = Holder.generateRtx();
-
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -65,23 +77,23 @@ public class AttributeAxisTest {
         final INodeReadTrx wtx = holder.getNRtx();
 
         wtx.moveTo(ROOT_NODE);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
+        AxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
         wtx.moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
+        AxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
             2L
         });
 
         wtx.moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
+        AxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
             10L
         });
 
         wtx.moveTo(12L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
+        AxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
         wtx.moveTo(2L);
-        AbsAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
+        AxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
     }
 
     @Test(enabled = false)

@@ -204,8 +204,21 @@ public class PageReadTrx implements IPageReadTrx {
      */
     @Override
     public String toString() {
-        return new StringBuilder("PageReader: ").append(mPageReader).append("\nUberPage: ").append(mUberPage)
-            .append("\nRevRootPage: ").append(mRootPage).toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("PageReadTrx [mPageReader=");
+        builder.append(mPageReader);
+        builder.append(", mUberPage=");
+        builder.append(mUberPage);
+        builder.append(", mRootPage=");
+        builder.append(mRootPage);
+        builder.append(", mCache=");
+        builder.append(mCache);
+        builder.append(", mSession=");
+        builder.append(mSession);
+        builder.append(", mClose=");
+        builder.append(mClose);
+        builder.append("]");
+        return builder.toString();
     }
 
     /**

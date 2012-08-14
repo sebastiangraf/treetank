@@ -159,15 +159,16 @@ public class NodeDelegate implements INode {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("node key: ");
-        builder.append(getNodeKey());
-        builder.append("\nparent key: ");
-        builder.append(getParentKey());
-        builder.append("\ntype key: ");
-        builder.append(getTypeKey());
-        builder.append("\nhash: ");
-        builder.append(getHash());
+        StringBuilder builder = new StringBuilder();
+        builder.append("NodeDelegate [mNodeKey=");
+        builder.append(mNodeKey);
+        builder.append(", mParentKey=");
+        builder.append(mParentKey);
+        builder.append(", mHash=");
+        builder.append(mHash);
+        builder.append(", mTypeKey=");
+        builder.append(mTypeKey);
+        builder.append("]");
         return builder.toString();
     }
 

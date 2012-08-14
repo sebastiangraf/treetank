@@ -26,6 +26,8 @@
  */
 package org.treetank.node.delegates;
 
+import java.util.Arrays;
+
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IValNode;
 
@@ -199,10 +201,14 @@ public class ValNodeDelegate implements IValNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("value: ");
-        builder.append(new String(mVal));
+        StringBuilder builder = new StringBuilder();
+        builder.append("ValNodeDelegate [mDelegate=");
+        builder.append(mDelegate);
+        builder.append(", mVal=");
+        builder.append(Arrays.toString(mVal));
+        builder.append("]");
         return builder.toString();
     }
 

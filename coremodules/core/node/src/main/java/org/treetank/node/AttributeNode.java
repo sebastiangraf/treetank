@@ -144,12 +144,16 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder(mDel.toString());
-        builder.append("\n");
-        builder.append(mNameDel.toString());
-        builder.append("\n");
-        builder.append(mValDel.toString());
+        StringBuilder builder = new StringBuilder();
+        builder.append("AttributeNode [mDel=");
+        builder.append(mDel);
+        builder.append(", mNameDel=");
+        builder.append(mNameDel);
+        builder.append(", mValDel=");
+        builder.append(mValDel);
+        builder.append("]");
         return builder.toString();
     }
 

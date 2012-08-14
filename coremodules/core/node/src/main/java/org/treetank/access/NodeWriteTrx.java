@@ -996,4 +996,22 @@ public class NodeWriteTrx implements INodeWriteTrx {
     public IPageWriteTrx getPageWtx() throws TTException {
         return mPageWtx;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("NodeWriteTrx [mSession=");
+        builder.append(mSession);
+        builder.append(", mHashKind=");
+        builder.append(mHashKind);
+        builder.append(", mDelegate=");
+        builder.append(mDelegate);
+        builder.append(", mPageWtx=");
+        builder.append(mPageWtx);
+        builder.append("]");
+        return builder.toString();
+    }
 }

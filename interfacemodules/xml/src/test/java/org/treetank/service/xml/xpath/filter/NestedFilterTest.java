@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
-import org.treetank.axis.filter.AbsFilterTest;
+import org.treetank.axis.filter.FilterTestUtil;
 import org.treetank.axis.filter.AttributeFilter;
 import org.treetank.axis.filter.ElementFilter;
 import org.treetank.axis.filter.ItemFilter;
@@ -64,21 +64,21 @@ public class NestedFilterTest {
     public void testIFilterConvetions() throws TTException {
 
         holder.getNRtx().moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(), new ItemFilter(holder
+        FilterTestUtil.proveConventions(new NestedFilter(holder.getNRtx(), new ItemFilter(holder
             .getNRtx()), new ElementFilter(holder.getNRtx()), new NameFilter(holder.getNRtx(), "b")), true);
-        AbsFilterTest
-            .testIFilterConventions(new NestedFilter(holder.getNRtx(), new ItemFilter(holder.getNRtx()),
+        FilterTestUtil
+            .proveConventions(new NestedFilter(holder.getNRtx(), new ItemFilter(holder.getNRtx()),
                 new AttributeFilter(holder.getNRtx()), new NameFilter(holder.getNRtx(), "b")), false);
 
         holder.getNRtx().moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(), new NodeFilter(holder
+        FilterTestUtil.proveConventions(new NestedFilter(holder.getNRtx(), new NodeFilter(holder
             .getNRtx()), new ElementFilter(holder.getNRtx())), false);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(), new NodeFilter(holder
+        FilterTestUtil.proveConventions(new NestedFilter(holder.getNRtx(), new NodeFilter(holder
             .getNRtx()), new TextFilter(holder.getNRtx())), true);
 
         holder.getNRtx().moveTo(1L);
         holder.getNRtx().moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(), new AttributeFilter(holder
+        FilterTestUtil.proveConventions(new NestedFilter(holder.getNRtx(), new AttributeFilter(holder
             .getNRtx()), new NameFilter(holder.getNRtx(), "i")), true);
 
     }

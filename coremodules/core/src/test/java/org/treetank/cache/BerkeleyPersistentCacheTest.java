@@ -38,7 +38,8 @@ import org.testng.annotations.Test;
 import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.api.INodeFactory;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.page.NodePage;
 
@@ -47,17 +48,23 @@ import com.google.inject.Inject;
 @Guice(moduleFactory = ModuleFactory.class)
 public class BerkeleyPersistentCacheTest {
 
-    private ICache cache;
-
     @Inject
-    public INodeFactory mNodeFac;
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ICache cache;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
+        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        ResourceConfiguration conf =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        TestHelper.createResource(conf);
+
         cache =
             new BerkeleyPersistenceCache(new File(new File(TestHelper.PATHS.PATH1.getFile(),
-                DatabaseConfiguration.Paths.Data.getFile().getName()), "shredded"), 1, mNodeFac);
+                DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), 1,
+                conf.mNodeFac);
         CacheTestHelper.setUp(cache);
     }
 

@@ -81,7 +81,6 @@ public class UpdateTest {
     public void testNodeTransactionIsolation() throws TTException {
 
         INodeWriteTrx wtx = holder.getNWtx();
-        NodeHelper.createDocumentRootNode(wtx);
         wtx.insertElementAsFirstChild(new QName(""));
         nodeIsolation(wtx);
         wtx.commit();
@@ -175,11 +174,11 @@ public class UpdateTest {
                 HashKind.Rolling);
         NodeHelper.createDocumentRootNode(wtx);
         wtx.moveTo(ROOT_NODE);
-        assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
-        assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
-        assertEquals(3L, wtx.insertElementAsFirstChild(new QName("")));
+        assertEquals(15L, wtx.insertElementAsFirstChild(new QName("")));
+        assertEquals(16L, wtx.insertElementAsFirstChild(new QName("")));
+        assertEquals(17L, wtx.insertElementAsFirstChild(new QName("")));
         assertTrue(wtx.moveTo(wtx.getNode().getParentKey()));
-        assertEquals(4L, wtx.insertElementAsRightSibling(new QName("")));
+        assertEquals(18L, wtx.insertElementAsRightSibling(new QName("")));
         wtx.commit();
         wtx.close();
 
@@ -187,7 +186,7 @@ public class UpdateTest {
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                 HashKind.Rolling);
         assertTrue(wtx.moveTo(ROOT_NODE));
-        assertEquals(5L, wtx.insertElementAsFirstChild(new QName("")));
+        assertEquals(19L, wtx.insertElementAsFirstChild(new QName("")));
         wtx.commit();
         wtx.close();
 

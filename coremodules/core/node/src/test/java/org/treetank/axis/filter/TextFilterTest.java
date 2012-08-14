@@ -29,44 +29,58 @@ package org.treetank.axis.filter;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.TTException;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class TextFilterTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        NodeHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testIFilterConvetions() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
         rtx.moveTo(8L);
-        AbsFilterTest.testIFilterConventions(new TextFilter(rtx), true);
+        FilterTestUtil.proveConventions(new TextFilter(rtx), true);
 
         rtx.moveTo(3L);
-        AbsFilterTest.testIFilterConventions(new TextFilter(rtx), false);
+        FilterTestUtil.proveConventions(new TextFilter(rtx), false);
 
         rtx.moveTo(5L);
-        AbsFilterTest.testIFilterConventions(new TextFilter(rtx), false);
+        FilterTestUtil.proveConventions(new TextFilter(rtx), false);
 
         rtx.moveTo(1L);
         rtx.moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new TextFilter(rtx), false);
+        FilterTestUtil.proveConventions(new TextFilter(rtx), false);
     }
 }

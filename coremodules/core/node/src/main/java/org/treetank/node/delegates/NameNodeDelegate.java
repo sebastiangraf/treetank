@@ -223,12 +223,16 @@ public class NameNodeDelegate implements INode, INameNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("\nuri key: ");
-        builder.append(mUriKey);
-        builder.append("\nname key: ");
+        StringBuilder builder = new StringBuilder();
+        builder.append("NameNodeDelegate [mDelegate=");
+        builder.append(mDelegate);
+        builder.append(", mNameKey=");
         builder.append(mNameKey);
+        builder.append(", mUriKey=");
+        builder.append(mUriKey);
+        builder.append("]");
         return builder.toString();
     }
 

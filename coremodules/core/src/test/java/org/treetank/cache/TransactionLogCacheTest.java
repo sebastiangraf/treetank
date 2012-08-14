@@ -35,7 +35,8 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.api.INodeFactory;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.page.NodePage;
 
@@ -46,12 +47,17 @@ public class TransactionLogCacheTest {
     private ICache cache;
 
     @Inject
-    public INodeFactory mNodeFac;
+    private IResourceConfigurationFactory mResourceConfig;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1, mNodeFac);
+        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        ResourceConfiguration conf =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        TestHelper.createResource(conf);
+
+        cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1, conf.mNodeFac);
         CacheTestHelper.setUp(cache);
     }
 

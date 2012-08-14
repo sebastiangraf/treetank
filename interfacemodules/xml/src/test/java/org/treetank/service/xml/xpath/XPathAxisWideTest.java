@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -66,22 +66,22 @@ public class XPathAxisWideTest {
         final Holder holder = Holder.generateRtx();
         holder.getNRtx().moveTo(ROOT_NODE);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/mondial/continent[@id]"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/mondial/continent[@id]"),
             new long[] {
                 2L, 5L, 8L, 11L, 14L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "mondial/continent[@name]"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "mondial/continent[@name]"),
             new long[] {
                 2L, 5L, 8L, 11L, 14L
             });
 
-        AbsAxisTest.testIAxisConventions(
+        AxisTest.testIAxisConventions(
             new XPathAxis(holder.getNRtx(), "mondial/continent[@id=\"f0_119\"]"), new long[] {
                 2L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "/mondial/continent[@name = \"Africa\"]"), new long[] {
             14L
         });

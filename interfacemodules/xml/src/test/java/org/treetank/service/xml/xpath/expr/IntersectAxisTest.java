@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
-import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.xpath.XPathAxis;
 
@@ -65,33 +65,33 @@ public class IntersectAxisTest {
 
         holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::node() intersect b"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::node() intersect b"),
             new long[] {
                 5L, 9L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node() intersect b intersect child::node()[@p:x]"), new long[] {
             9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node() intersect child::node()[attribute::p:x]"), new long[] {
             9L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node()/parent::node() intersect self::node()"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//node() intersect //text()"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//node() intersect //text()"),
             new long[] {
                 4L, 8L, 13L, 6L, 12L
             });
 
         holder.getNRtx().moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "b/preceding::node() intersect text()"), new long[] {
             4L, 8L
         });

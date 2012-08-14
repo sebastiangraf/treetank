@@ -563,4 +563,24 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return mDelegate.isClosed();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PageWriteTrx [mPageWriter=");
+        builder.append(mPageWriter);
+        builder.append(", mLog=");
+        builder.append(mLog);
+        builder.append(", mNodePageCon=");
+        builder.append(mNodePageCon);
+        builder.append(", mNewRoot=");
+        builder.append(mNewRoot);
+        builder.append(", mDelegate=");
+        builder.append(mDelegate);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

@@ -199,25 +199,13 @@ public class NodeReadTrx implements INodeReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
-        assertNotClosed();
-        final StringBuilder builder = new StringBuilder();
-        if (getNode().getKind() == IConstants.ATTRIBUTE || getNode().getKind() == IConstants.ELEMENT) {
-            builder.append("Name of Node: ");
-            builder.append(getQNameOfCurrentNode().toString());
-            builder.append("\n");
-        }
-        if (getNode().getKind() == IConstants.ATTRIBUTE || getNode().getKind() == IConstants.TEXT) {
-            builder.append("Value of Node: ");
-            builder.append(getValueOfCurrentNode());
-            builder.append("\n");
-        }
-        if (getNode().getKind() == IConstants.ROOT) {
-            builder.append("Node is DocumentRoot");
-            builder.append("\n");
-        }
-        builder.append(getNode().toString());
-
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("NodeReadTrx [mPageReadTrx=");
+        builder.append(mPageReadTrx);
+        builder.append(", mCurrentNode=");
+        builder.append(mCurrentNode);
+        builder.append("]");
         return builder.toString();
     }
 

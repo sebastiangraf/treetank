@@ -35,12 +35,14 @@ import javax.xml.namespace.QName;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
@@ -49,15 +51,25 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class HashTest {
 
     private final static String NAME1 = "a";
     private final static String NAME2 = "b";
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
+    }
 
+    @AfterMethod
+    public void tearDown() throws TTException {
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -233,19 +245,14 @@ public class HashTest {
 
     private INodeWriteTrx createWtx(final HashKind kind) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).build());
+        ResourceConfiguration res =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        TestHelper.createResource(res);
         final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, TestHelper.KEY));
         final IPageWriteTrx pTrx = session.beginPageWriteTransaction();
         final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx, kind);
         NodeHelper.createDocumentRootNode(wTrx);
         return wTrx;
     }
-
-    @AfterMethod
-    public void tearDown() throws TTException {
-        TestHelper.closeEverything();
-    }
-
 }

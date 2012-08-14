@@ -34,7 +34,7 @@ import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.filter.AbsFilterTest;
+import org.treetank.axis.filter.FilterTestUtil;
 import org.treetank.axis.filter.TypeFilter;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.xpath.XPathAxis;
@@ -62,18 +62,18 @@ public class TypeFilterTest {
         final AbsAxis axis = new XPathAxis(holder.getNRtx(), "a");
 
         axis.moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:long"), false);
+        FilterTestUtil.proveConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
+        FilterTestUtil.proveConventions(new TypeFilter(holder.getNRtx(), "xs:long"), false);
 
         holder.getNRtx().moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:double"), false);
+        FilterTestUtil.proveConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
+        FilterTestUtil.proveConventions(new TypeFilter(holder.getNRtx(), "xs:double"), false);
 
         holder.getNRtx().moveTo(1L);
         holder.getNRtx().moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
+        FilterTestUtil.proveConventions(new TypeFilter(holder.getNRtx(), "xs:untyped"), true);
 
-        AbsFilterTest.testIFilterConventions(new TypeFilter(holder.getNRtx(), "xs:anyType"), false);
+        FilterTestUtil.proveConventions(new TypeFilter(holder.getNRtx(), "xs:anyType"), false);
 
     }
 }

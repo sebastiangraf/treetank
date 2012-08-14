@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
-import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
 
 public class DocumentNodeAxisTest {
@@ -59,28 +59,28 @@ public class DocumentNodeAxisTest {
     public void testIterate() throws TTException {
 
         holder.getNRtx().moveTo(1L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
+        AxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 
         holder.getNRtx().moveTo(5L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
+        AxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 
         holder.getNRtx().moveTo(9L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
+        AxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 
         holder.getNRtx().moveTo(9L);
         holder.getNRtx().moveToAttribute(0);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
+        AxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 
         holder.getNRtx().moveTo(13L);
-        AbsAxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
+        AxisTest.testIAxisConventions(new DocumentNodeAxis(holder.getNRtx()), new long[] {
             ROOT_NODE
         });
 

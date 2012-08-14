@@ -157,10 +157,10 @@ public final class DatabaseConfiguration {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("DatabaseConfiguration, ");
-        builder.append("File: ");
-        builder.append(this.mFile);
+        StringBuilder builder = new StringBuilder();
+        builder.append("DatabaseConfiguration [mFile=");
+        builder.append(mFile);
+        builder.append("]");
         return builder.toString();
     }
 

@@ -29,19 +29,9 @@ package org.treetank.axis.filter;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.treetank.TestHelper;
-import org.treetank.exception.TTException;
+public class FilterTestUtil {
 
-public class AbsFilterTest {
-
-    @BeforeMethod
-    public void setUp() throws TTException {
-        TestHelper.deleteEverything();
-    }
-
-    public static void testIFilterConventions(final AbsFilter filter, final boolean expected) {
+    public static void proveConventions(final AbsFilter filter, final boolean expected) {
 
         // IFilter Convention 1.
         final long startKey = filter.getNode().getNodeKey();
@@ -53,8 +43,4 @@ public class AbsFilterTest {
 
     }
 
-    @AfterMethod
-    public void tearDown() throws TTException {
-        TestHelper.closeEverything();
-    }
 }

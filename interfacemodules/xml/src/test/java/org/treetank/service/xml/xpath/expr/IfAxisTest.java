@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
-import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.xpath.XPathAxis;
 
@@ -65,17 +65,17 @@ public class IfAxisTest {
 
         holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "if (text()) then . else child::node()"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "if (node()) then . else child::node()"), new long[] {
             1L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "if (processing-instruction()) then . else child::node()"), new long[] {
             4L, 5L, 8L, 9L, 13L
         });

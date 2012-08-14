@@ -318,14 +318,19 @@ public final class TextNode implements IStructNode, IValNode, INode {
         return hashCode() == obj.hashCode();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder(mDel.toString());
-        builder.append("\n");
-        builder.append(mValDel.toString());
-        builder.append("\n");
-        builder.append(mStrucDel.toString());
+        StringBuilder builder = new StringBuilder();
+        builder.append("TextNode [mDel=");
+        builder.append(mDel);
+        builder.append(", mValDel=");
+        builder.append(mValDel);
+        builder.append(", mStrucDel=");
+        builder.append(mStrucDel);
+        builder.append("]");
         return builder.toString();
     }
 

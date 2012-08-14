@@ -29,43 +29,57 @@ package org.treetank.axis.filter;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.TTException;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class ValueFilterTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        NodeHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testIFilterConvetions() throws TTException {
         final INodeReadTrx rtx = holder.getNRtx();
         rtx.moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new ValueFilter(rtx, "oops1"), true);
-        AbsFilterTest.testIFilterConventions(new ValueFilter(rtx, "foo"), false);
+        FilterTestUtil.proveConventions(new ValueFilter(rtx, "oops1"), true);
+        FilterTestUtil.proveConventions(new ValueFilter(rtx, "foo"), false);
 
         rtx.moveTo(1L);
         rtx.moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new ValueFilter(rtx, "j"), true);
+        FilterTestUtil.proveConventions(new ValueFilter(rtx, "j"), true);
 
         rtx.moveTo(2L);
-        AbsFilterTest.testIFilterConventions(new ValueFilter(rtx, "j"), true);
+        FilterTestUtil.proveConventions(new ValueFilter(rtx, "j"), true);
     }
 
 }

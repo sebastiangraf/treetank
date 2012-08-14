@@ -301,17 +301,18 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("\nfirst child: ");
-        builder.append(getFirstChildKey());
-        builder.append("\nleft sib: ");
-        builder.append(getLeftSiblingKey());
-        builder.append("\nright sib: ");
-        builder.append(getRightSiblingKey());
-        builder.append("\nfirst child: ");
-        builder.append(getFirstChildKey());
-        builder.append("\nchild count: ");
-        builder.append(getChildCount());
+        StringBuilder builder = new StringBuilder();
+        builder.append("StructNodeDelegate [mFirstChild=");
+        builder.append(mFirstChild);
+        builder.append(", mRightSibling=");
+        builder.append(mRightSibling);
+        builder.append(", mLeftSibling=");
+        builder.append(mLeftSibling);
+        builder.append(", mChildCount=");
+        builder.append(mChildCount);
+        builder.append(", mDelegate=");
+        builder.append(mDelegate);
+        builder.append("]");
         return builder.toString();
     }
     

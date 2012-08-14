@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
-import org.treetank.axis.filter.AbsFilterTest;
+import org.treetank.axis.filter.FilterTestUtil;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.TTException;
 
@@ -60,10 +60,10 @@ public class WildcardFilterTest {
     @Test
     public void testIFilterConvetions() throws TTException {
         holder.getNRtx().moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "b", true), true);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "b", true), true);
         holder.getNRtx().moveToAttribute(0);
         try {
-            AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
+            FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
             Assert.fail("Expected an Exception, because attributes are not supported.");
         } catch (IllegalStateException e) {
             assertEquals(e.getMessage(), "Wildcards are not supported in attribute names yet.");
@@ -78,10 +78,10 @@ public class WildcardFilterTest {
         // true);
 
         holder.getNRtx().moveTo(1L);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "a", true), true);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "c", true), false);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "b", false), false);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "a", true), true);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "c", true), false);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "b", false), false);
 
     }
 }

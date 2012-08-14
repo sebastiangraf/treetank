@@ -295,13 +295,17 @@ public final class DocumentRootNode implements INode, IStructNode {
     }
 
     /**
-     * Delegate method for toString.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#toString()
+     * {@inheritDoc}
      */
+    @Override
     public String toString() {
-        return mStrucDel.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("DocumentRootNode [mDel=");
+        builder.append(mDel);
+        builder.append(", mStrucDel=");
+        builder.append(mStrucDel);
+        builder.append("]");
+        return builder.toString();
     }
 
     /**

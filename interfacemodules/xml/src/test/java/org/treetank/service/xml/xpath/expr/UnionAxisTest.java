@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
-import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.xpath.XPathAxis;
 
@@ -65,33 +65,33 @@ public class UnionAxisTest {
 
         holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node()/parent::node() union child::node()"), new long[] {
             1L, 4L, 5L, 8L, 9L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node()/parent::node() | child::node()"), new long[] {
             1L, 4L, 5L, 8L, 9L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node()/parent::node() | child::node() | self::node()"), new long[] {
             1L, 4L, 5L, 8L, 9L, 13L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "child::node()/parent::node() | child::node() | self::node()" + "union parent::node()"),
             new long[] {
                 1L, 4L, 5L, 8L, 9L, 13L, 0L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "b/preceding::node() union text() | descendant::node()"), new long[] {
             4L, 8L, 7L, 6L, 5L, 13L, 9L, 11L, 12L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//c/ancestor::node() | //node()"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//c/ancestor::node() | //node()"),
             new long[] {
                 5L, 1L, 9L, 4L, 8L, 13L, 6L, 7L, 11L, 12L
             });

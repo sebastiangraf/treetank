@@ -29,6 +29,8 @@ package org.treetank.node;
 
 import static org.treetank.node.IConstants.NULL_NODE;
 
+import java.util.Arrays;
+
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.NamePageHash;
@@ -244,17 +246,18 @@ public class AtomicValue implements INode, IValNode {
     }
 
     /**
-     * To String method.
-     * 
-     * @return String String representation of this node
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Atomic Value: ");
-        builder.append(new String(mValue));
-        builder.append("\nKey: ");
+        StringBuilder builder = new StringBuilder();
+        builder.append("AtomicValue [mValue=");
+        builder.append(Arrays.toString(mValue));
+        builder.append(", mType=");
+        builder.append(mType);
+        builder.append(", mItemKey=");
         builder.append(mItemKey);
+        builder.append("]");
         return builder.toString();
     }
 

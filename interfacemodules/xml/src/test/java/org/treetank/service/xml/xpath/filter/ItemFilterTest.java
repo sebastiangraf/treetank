@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.TestHelper;
-import org.treetank.axis.filter.AbsFilterTest;
+import org.treetank.axis.filter.FilterTestUtil;
 import org.treetank.axis.filter.ItemFilter;
 import org.treetank.exception.TTException;
 
@@ -58,14 +58,14 @@ public class ItemFilterTest {
     public void testIFilterConvetions() throws TTException {
 
         holder.getNRtx().moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getNRtx()), true);
+        FilterTestUtil.proveConventions(new ItemFilter(holder.getNRtx()), true);
 
         holder.getNRtx().moveTo(3L);
-        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getNRtx()), true);
+        FilterTestUtil.proveConventions(new ItemFilter(holder.getNRtx()), true);
 
         holder.getNRtx().moveTo(2L);
         holder.getNRtx().moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new ItemFilter(holder.getNRtx()), true);
+        FilterTestUtil.proveConventions(new ItemFilter(holder.getNRtx()), true);
 
     }
 }

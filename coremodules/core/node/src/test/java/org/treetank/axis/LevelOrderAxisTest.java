@@ -28,12 +28,18 @@ package org.treetank.axis;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.TTException;
+
+import com.google.inject.Inject;
 
 /**
  * Test {@link LevelOrderAxis}.
@@ -41,21 +47,29 @@ import org.treetank.exception.TTException;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class LevelOrderAxisTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        NodeHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -63,35 +77,35 @@ public class LevelOrderAxisTest {
         final INodeReadTrx rtx = holder.getNRtx();
 
         rtx.moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
+        AxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
             12L
         });
         rtx.moveTo(11L);
-        AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
+        AxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
             11L, 12L
         });
         rtx.moveTo(0L);
-        AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
+        AxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
             0L, 1L, 4L, 5L, 8L, 9L, 13L, 6L, 7L, 11L, 12L
         });
 
         rtx.moveTo(4L);
-        AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
+        AxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
             4L, 5L, 8L, 9L, 13L, 6L, 7L, 11L, 12L
         });
 
         rtx.moveTo(4L);
-        AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
+        AxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
             5L, 8L, 9L, 13L, 6L, 7L, 11L, 12L
         });
 
         rtx.moveTo(6L);
-        AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
+        AxisTest.testIAxisConventions(new LevelOrderAxis(rtx), new long[] {
             7L
         });
 
         rtx.moveTo(6L);
-        AbsAxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
+        AxisTest.testIAxisConventions(new LevelOrderAxis(rtx, true), new long[] {
             6L, 7L
         });
     }
