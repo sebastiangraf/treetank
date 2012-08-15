@@ -56,8 +56,8 @@ public class ModuleFactory implements IModuleFactory {
                         IStorageFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
-                    
-                    bind(Key.class).toInstance(TestHelper.KEY);
+
+                    bind(Key.class).toInstance(StandardSettings.KEY);
                     install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
                 }
             };
@@ -78,8 +78,8 @@ public class ModuleFactory implements IModuleFactory {
                         IStorageFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
-                    
-                    bind(Key.class).toInstance(TestHelper.KEY);
+
+                    bind(Key.class).toInstance(StandardSettings.KEY);
                     install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
                 }
             };

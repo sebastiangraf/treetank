@@ -98,11 +98,27 @@ public interface IDatabase {
      * Truncating a resource. This includes the removal of all data stored
      * within this resource.
      * 
-     * @param pResConf
+     * @param pResourceName
      *            storing the name of the resource
      * 
      */
-    void truncateResource(final ResourceConfiguration pResConf);
+    void truncateResource(final String pResourceName);
+
+    /**
+     * Is the resource within this database existing?
+     * 
+     * @param pResourceName
+     *            ot be checked
+     * @return true, if existing; false otherwise
+     */
+    boolean existsResource(final String pResourceName);
+
+    /**
+     * Listing all resources within this database.
+     * 
+     * @return all resources
+     */
+    String[] listResources();
 
     /**
      * Closing the database for further access.

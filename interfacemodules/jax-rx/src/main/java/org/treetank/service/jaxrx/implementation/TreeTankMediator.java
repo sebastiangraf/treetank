@@ -38,6 +38,9 @@ import org.jaxrx.JaxRx;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.jaxrx.core.ResourcePath;
+import org.treetank.access.Database;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.api.IDatabase;
 import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.WorkerHelper;
@@ -68,10 +71,15 @@ public final class TreeTankMediator implements JaxRx {
      * 
      * @param pStoragePath
      *            where the data should be stored.
+     * @throws TTException
      */
-    public TreeTankMediator(final File pStoragePath) {
-        database = new DatabaseRepresentation(pStoragePath);
-        nodeIdResource = new NodeIdRepresentation(pStoragePath);
+    public TreeTankMediator(final File pStoragePath) throws TTException {
+        if (!Database.existsDatabase(pStoragePath)) {
+            Database.createDatabase(new DatabaseConfiguration(pStoragePath));
+        }
+        IDatabase db = Database.openDatabase(pStoragePath);
+        database = new DatabaseRepresentation(db);
+        nodeIdResource = new NodeIdRepresentation(db);
     }
 
     /**

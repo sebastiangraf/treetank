@@ -27,7 +27,6 @@
 
 package org.treetank.service.jaxrx.util;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -39,8 +38,6 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
-import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
@@ -108,28 +105,6 @@ public final class WorkerHelper {
         } catch (final Exception exce) {
             throw new WebApplicationException(exce);
         }
-    }
-
-    /**
-     * This method checks if the file is available and not empty.
-     * 
-     * @param storagePath
-     *            the storage path
-     * @param resource
-     *            The file that will be checked.
-     * @return <code>true</code> when the file exists and is not empty. <code>false</code> otherwise.
-     */
-    public static boolean checkExistingResource(final File storagePath, final String resource) {
-        final File resourceFile =
-            new File(new File(storagePath, DatabaseConfiguration.Paths.Data.getFile().getName()), resource);
-
-        boolean isExisting;
-        if (resourceFile.getTotalSpace() > 0) {
-            isExisting = true;
-        } else {
-            isExisting = false;
-        }
-        return isExisting;
     }
 
     /**
@@ -219,13 +194,13 @@ public final class WorkerHelper {
      *            IDatabase to be closed
      * @throws TreetankException
      */
-    public static void closeWTX(final boolean abortTransaction, final INodeWriteTrx wtx, final ISession ses,
-        final IDatabase dbase) throws TTException {
-        synchronized (dbase) {
+    public static void closeWTX(final boolean abortTransaction, final INodeWriteTrx wtx, final ISession ses)
+        throws TTException {
+        synchronized (ses) {
             if (abortTransaction) {
                 wtx.abort();
             }
-            dbase.close();
+            ses.close();
         }
     }
 
@@ -241,10 +216,9 @@ public final class WorkerHelper {
      *            IDatabase to be closed
      * @throws TTException
      */
-    public static void closeRTX(final INodeReadTrx rtx, final ISession ses, final IDatabase dbase)
-        throws TTException {
-        synchronized (dbase) {
-            dbase.close();
+    public static void closeRTX(final INodeReadTrx rtx, final ISession ses) throws TTException {
+        synchronized (ses) {
+            ses.close();
         }
     }
 

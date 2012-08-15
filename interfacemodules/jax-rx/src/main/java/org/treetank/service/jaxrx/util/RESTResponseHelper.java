@@ -27,7 +27,6 @@
 
 package org.treetank.service.jaxrx.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -45,6 +44,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.treetank.api.IDatabase;
 import org.treetank.exception.TTException;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
@@ -98,9 +98,8 @@ public final class RESTResponseHelper {
      * collection contains the available resources which are children of the
      * database.
      * 
-     * @param resources
-     *            The list with the path of the available resources.
-     * @param pStoragePath
+     * 
+     * @param pDatabase
      *            path where the data must be stored
      * @param document
      *            The XML {@link Document} instance.
@@ -108,16 +107,17 @@ public final class RESTResponseHelper {
      * @throws TTException
      * @throws WebApplicationException
      */
-    private static List<Element> createCollectionElementDBs(final File pStoragePath,
-        final List<String> resources, final Document document) throws WebApplicationException, TTException {
+    private static List<Element>
+        createCollectionElementDBs(final IDatabase pDatabase, final Document document)
+            throws WebApplicationException, TTException {
         final List<Element> collectionsEls = new ArrayList<Element>();
-        for (final String res : resources) {
+        for (final String res : pDatabase.listResources()) {
             final Element elRes = document.createElement("resource");
             // Getting the name
             elRes.setAttribute("name", res);
 
             // get last revision from given db name
-            final DatabaseRepresentation dbWorker = new DatabaseRepresentation(pStoragePath);
+            final DatabaseRepresentation dbWorker = new DatabaseRepresentation(pDatabase);
             final String lastRevision = Long.toString(dbWorker.getLastRevision(res.toString()));
 
             elRes.setAttribute("lastRevision", lastRevision);
@@ -131,14 +131,12 @@ public final class RESTResponseHelper {
      * This method builds the overview for the resources and collection we offer
      * in our implementation.
      * 
-     * @param pStoragePath
+     * @param pDatabase
      *            path to the storage
-     * @param availableRes
-     *            A list of available resources or collections.
+     * 
      * @return The streaming output for the HTTP response body.
      */
-    public static StreamingOutput buildResponseOfDomLR(final File pStoragePath,
-        final List<String> availableRes) {
+    public static StreamingOutput buildResponseOfDomLR(final IDatabase pDatabase) {
 
         final StreamingOutput sOutput = new StreamingOutput() {
 
@@ -151,9 +149,7 @@ public final class RESTResponseHelper {
 
                     List<Element> collections;
                     try {
-                        collections =
-                            RESTResponseHelper.createCollectionElementDBs(pStoragePath, availableRes,
-                                document);
+                        collections = RESTResponseHelper.createCollectionElementDBs(pDatabase, document);
                     } catch (final TTException exce) {
                         throw new WebApplicationException(exce);
                     }
@@ -180,5 +176,4 @@ public final class RESTResponseHelper {
 
         return sOutput;
     }
-
 }

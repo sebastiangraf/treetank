@@ -55,6 +55,7 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
@@ -85,7 +86,7 @@ import org.treetank.service.xml.xpath.XPathAxis;
 public class DatabaseRepresentation {
 
     /** Path to storage. */
-    private final File mStoragePath;
+    private final IDatabase mDatabase;
 
     /**
      * This field the begin result element of a XQuery or XPath expression.
@@ -102,8 +103,8 @@ public class DatabaseRepresentation {
      */
     private final static transient String YESSTRING = "yes";
 
-    public DatabaseRepresentation(final File pStoragePath) {
-        mStoragePath = pStoragePath;
+    public DatabaseRepresentation(final IDatabase pDatabase) throws TTException {
+        mDatabase = pDatabase;
     }
 
     /**
@@ -203,7 +204,7 @@ public class DatabaseRepresentation {
                 final boolean wrapResult = (wrap == null) ? true : wrap.equalsIgnoreCase(YESSTRING);
                 final boolean nodeid = (nodeId == null) ? false : nodeId.equalsIgnoreCase(YESSTRING);
                 final Long rev = revision == null ? null : Long.valueOf(revision);
-                final RestXPathProcessor xpathProcessor = new RestXPathProcessor(mStoragePath);
+                final RestXPathProcessor xpathProcessor = new RestXPathProcessor(mDatabase);
                 try {
                     xpathProcessor.getXpathResource(resource, query, nodeid, rev, output, wrapResult);
                 } catch (final TTException exce) {
@@ -224,19 +225,7 @@ public class DatabaseRepresentation {
      *             The exception occurred.
      */
     public StreamingOutput getResourcesNames() throws JaxRxException {
-        final List<String> availResources = new ArrayList<String>();
-        final File[] files =
-            new File(mStoragePath, DatabaseConfiguration.Paths.Data.getFile().getName()).listFiles();
-        if (files != null) {
-            for (final File file : files) {
-                if (file.isDirectory()) {
-                    final String dirName = file.getAbsoluteFile().getName();
-                    availResources.add(dirName);
-                }
-            }
-        }
-
-        return RESTResponseHelper.buildResponseOfDomLR(mStoragePath, availResources);
+        return RESTResponseHelper.buildResponseOfDomLR(mDatabase);
     }
 
     /**
@@ -270,13 +259,7 @@ public class DatabaseRepresentation {
      */
     public void deleteResource(final String resourceName) throws WebApplicationException {
         synchronized (resourceName) {
-            try {
-                final DatabaseConfiguration dbConfig = new DatabaseConfiguration(mStoragePath);
-                final IDatabase database = Database.openDatabase(mStoragePath);
-                database.truncateResource(new ResourceConfiguration.Builder(resourceName, dbConfig).build());
-            } catch (final TTException exc) {
-                throw new JaxRxException(500, "Deletion could not be performed");
-            }
+            mDatabase.truncateResource(resourceName);
         }
     }
 
@@ -295,21 +278,16 @@ public class DatabaseRepresentation {
         boolean allOk;
         INodeWriteTrx wtx = null;
         IPageWriteTrx pWtx = null;
-        IDatabase database = null;
         ISession session = null;
         boolean abort = false;
         try {
-
-            final DatabaseConfiguration dbConf = new DatabaseConfiguration(mStoragePath);
 
             // Shredding the database to the file as XML
             final ResourceConfiguration resConf =
                 new ResourceConfiguration.Builder(resource, dbConf).setRevisionsToRestore(1).build();
 
-            Database.createDatabase(dbConf);
-            database = Database.openDatabase(dbConf.mFile);
             database.createResource(resConf);
-            session = database.getSession(new SessionConfiguration.Builder(resource).build());
+            session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
             pWtx = session.beginPageWriteTransaction();
             wtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
             wtx.moveTo(ROOT_NODE);
@@ -321,7 +299,7 @@ public class DatabaseRepresentation {
             abort = true;
             throw new JaxRxException(exce);
         } finally {
-            WorkerHelper.closeWTX(abort, wtx, session, database);
+            WorkerHelper.closeWTX(abort, wtx, session);
         }
         return allOk;
     }
@@ -344,10 +322,9 @@ public class DatabaseRepresentation {
      * @throws WebApplicationException
      */
     private final OutputStream serialize(final String resource, final Long revision, final boolean nodeid,
-        final OutputStream output, final boolean wrapResult) throws IOException, JaxRxException,
-        TTException {
+        final OutputStream output, final boolean wrapResult) throws IOException, JaxRxException, TTException {
 
-        if (WorkerHelper.checkExistingResource(mStoragePath, resource)) {
+        if (mDatabase.existsResource(resource)) {
             try {
                 if (wrapResult) {
                     output.write(beginResult.getBytes());
@@ -380,17 +357,15 @@ public class DatabaseRepresentation {
     public long getLastRevision(final String resourceName) throws JaxRxException, TTException {
 
         long lastRevision;
-        if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
-            IDatabase database = Database.openDatabase(mStoragePath);
+        if (mDatabase.existsResource(resourceName)) {
             ISession session = null;
             try {
-                session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
+                session = mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
                 lastRevision = session.getMostRecentVersion();
             } catch (final Exception globExcep) {
                 throw new JaxRxException(globExcep);
             } finally {
                 session.close();
-                database.close();
             }
         } else {
             throw new JaxRxException(404, "Resource not found");
@@ -437,7 +412,6 @@ public class DatabaseRepresentation {
             long maxRestidRev2 = 0;
 
             // Connection to treetank, creating a session
-            IDatabase database = null;
             AbsAxis axis = null;
             INodeReadTrx rtx = null;
             ISession session = null;
@@ -448,8 +422,7 @@ public class DatabaseRepresentation {
             final List<Long> restIdsRev1 = new LinkedList<Long>();
 
             try {
-                database = Database.openDatabase(mStoragePath);
-                session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
+                session = mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
 
                 // get highest rest-id from given revision 1
                 rtx = new NodeReadTrx(session.beginPageReadTransaction(revision1));
@@ -545,7 +518,7 @@ public class DatabaseRepresentation {
             } catch (final Exception globExcep) {
                 throw new JaxRxException(globExcep);
             } finally {
-                WorkerHelper.closeRTX(rtx, session, database);
+                WorkerHelper.closeRTX(rtx, session);
             }
         } else {
             throw new JaxRxException(400, "Bad user request");
@@ -573,12 +546,10 @@ public class DatabaseRepresentation {
     private void serializIt(final String resource, final Long revision, final OutputStream output,
         final boolean nodeid) throws JaxRxException, TTException {
         // Connection to treetank, creating a session
-        IDatabase database = null;
         ISession session = null;
         // INodeReadTrx rtx = null;
         try {
-            database = Database.openDatabase(mStoragePath);
-            session = database.getSession(new SessionConfiguration.Builder(resource).build());
+            session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
             // and creating a transaction
             // if (revision == null) {
             // rtx = session.beginReadTransaction();
@@ -599,7 +570,7 @@ public class DatabaseRepresentation {
             throw new JaxRxException(exce);
         } finally {
             // closing the treetank storage
-            WorkerHelper.closeRTX(null, session, database);
+            WorkerHelper.closeRTX(null, session);
         }
     }
 
@@ -615,21 +586,19 @@ public class DatabaseRepresentation {
      */
     public void revertToRevision(final String resourceName, final long backToRevision) throws JaxRxException,
         TTException {
-        IDatabase database = null;
         ISession session = null;
         INodeWriteTrx wtx = null;
         boolean abort = false;
         try {
-            database = Database.openDatabase(mStoragePath);
-            session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
-            wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
+            session = mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
+            wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
             wtx.revertTo(backToRevision);
             wtx.commit();
         } catch (final TTException exce) {
             abort = true;
             throw new JaxRxException(exce);
         } finally {
-            WorkerHelper.closeWTX(abort, wtx, session, database);
+            WorkerHelper.closeWTX(abort, wtx, session);
         }
     }
 

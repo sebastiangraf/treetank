@@ -5,7 +5,8 @@ package org.treetank.access.conf;
 
 import java.security.Key;
 
-import org.treetank.TestHelper;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.api.INodeFactory;
@@ -31,6 +32,14 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  */
 public class StandardSettings extends AbstractModule {
 
+    private static byte[] keyValue = new byte[] {
+        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
+    };
+    public static final Key KEY;
+    static {
+        KEY = new SecretKeySpec(keyValue, "AES");
+    }
+
     @Override
     protected void configure() {
         install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class).build(
@@ -42,7 +51,7 @@ public class StandardSettings extends AbstractModule {
             IStorageFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
-        bind(Key.class).toInstance(TestHelper.KEY);
+        bind(Key.class).toInstance(KEY);
         install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
 
     }

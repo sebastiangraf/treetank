@@ -137,12 +137,28 @@ public final class Database implements IDatabase {
     public static synchronized void truncateDatabase(final DatabaseConfiguration pConf) throws TTException {
         // check that database must be closed beforehand
         if (!DATABASEMAP.containsKey(pConf.mFile)) {
-            // if file is existing and folder is a tt-dataplace, delete it
-            if (pConf.mFile.exists() && DatabaseConfiguration.Paths.compareStructure(pConf.mFile) == 0) {
+            if (existsDatabase(pConf.mFile)) {
                 // instantiate the database for deletion
                 DatabaseConfiguration.Paths.recursiveDelete(pConf.mFile);
             }
         }
+    }
+
+    /**
+     * Check if Database exists or not at a given path.
+     * 
+     * @param pStoragePath
+     *            to be checked.
+     * @return true if existing, false otherwise.
+     */
+    public static synchronized boolean existsDatabase(final File pStoragePath) {
+        // if file is existing and folder is a tt-dataplace, delete it
+        if (pStoragePath.exists() && DatabaseConfiguration.Paths.compareStructure(pStoragePath) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     // //////////////////////////////////////////////////////////
@@ -202,17 +218,14 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void truncateResource(final ResourceConfiguration pResConf) {
+    public synchronized void truncateResource(final String pResConf) {
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                pResConf.mFile.getName());
+                pResConf);
         // check that database must be closed beforehand
-        if (!mSessions.containsKey(resourceFile)) {
-            // if file is existing and folder is a tt-dataplace, delete it
-            if (resourceFile.exists() && ResourceConfiguration.Paths.compareStructure(resourceFile) == 0) {
-                // instantiate the database for deletion
-                DatabaseConfiguration.Paths.recursiveDelete(resourceFile);
-            }
+        if (!mSessions.containsKey(resourceFile) && existsResource(pResConf)) {
+            // instantiate the database for deletion
+            DatabaseConfiguration.Paths.recursiveDelete(resourceFile);
         }
     }
 
@@ -322,5 +335,29 @@ public final class Database implements IDatabase {
      */
     protected boolean removeSession(final File pFile) {
         return mSessions.remove(pFile) != null ? true : false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsResource(String pResourceName) {
+        final File resourceFile =
+            new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+                pResourceName);
+        // if file is existing and folder is a tt-dataplace, delete it
+        if (resourceFile.exists() && DatabaseConfiguration.Paths.compareStructure(resourceFile) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String[] listResources() {
+        return DatabaseConfiguration.Paths.Data.getFile().list();
     }
 }
