@@ -969,14 +969,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public byte[] rawNameForKey(int pKey) {
-        return mDelegate.rawNameForKey(pKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public INode getNode() {
         return mDelegate.getNode();
     }

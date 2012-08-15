@@ -53,17 +53,25 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
+import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.service.xml.StandardXMLSettings;
 import org.treetank.utils.TypedValue;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * <h1>XMLUpdateShredder</h1>
@@ -1394,12 +1402,17 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         final long time = System.currentTimeMillis();
         final File target = new File(args[1]);
 
+        Injector injector = Guice.createInjector(new StandardXMLSettings());
+        IStorageFactory storage = injector.getInstance(IStorageFactory.class);
+        IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
+        
         try {
             final DatabaseConfiguration config = new DatabaseConfiguration(target);
             Database.createDatabase(config);
             final IDatabase db = Database.openDatabase(target);
-            db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
-            final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
+            db.createResource(new ResourceConfiguration(target, "shredded", 1, storage, revision,
+                new TreeNodeFactory()));
+            final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
             final INodeWriteTrx wtx =
                 new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
             final XMLEventReader reader = createFileReader(new File(args[0]));

@@ -46,6 +46,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.treetank.api.IDatabase;
 import org.treetank.exception.TTException;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -107,9 +109,9 @@ public final class RESTResponseHelper {
      * @throws TTException
      * @throws WebApplicationException
      */
-    private static List<Element>
-        createCollectionElementDBs(final IDatabase pDatabase, final Document document)
-            throws WebApplicationException, TTException {
+    private static List<Element> createCollectionElementDBs(final IDatabase pDatabase,
+        final Document document, final IStorageFactory pStorageFac, final IRevisioningFactory pRevisionFac)
+        throws WebApplicationException, TTException {
         final List<Element> collectionsEls = new ArrayList<Element>();
         for (final String res : pDatabase.listResources()) {
             final Element elRes = document.createElement("resource");
@@ -117,7 +119,8 @@ public final class RESTResponseHelper {
             elRes.setAttribute("name", res);
 
             // get last revision from given db name
-            final DatabaseRepresentation dbWorker = new DatabaseRepresentation(pDatabase);
+            final DatabaseRepresentation dbWorker =
+                new DatabaseRepresentation(pDatabase, pStorageFac, pRevisionFac);
             final String lastRevision = Long.toString(dbWorker.getLastRevision(res.toString()));
 
             elRes.setAttribute("lastRevision", lastRevision);
@@ -136,7 +139,8 @@ public final class RESTResponseHelper {
      * 
      * @return The streaming output for the HTTP response body.
      */
-    public static StreamingOutput buildResponseOfDomLR(final IDatabase pDatabase) {
+    public static StreamingOutput buildResponseOfDomLR(final IDatabase pDatabase,
+        final IStorageFactory pStorageFac, final IRevisioningFactory pRevisionFac) {
 
         final StreamingOutput sOutput = new StreamingOutput() {
 
@@ -149,7 +153,9 @@ public final class RESTResponseHelper {
 
                     List<Element> collections;
                     try {
-                        collections = RESTResponseHelper.createCollectionElementDBs(pDatabase, document);
+                        collections =
+                            RESTResponseHelper.createCollectionElementDBs(pDatabase, document, pStorageFac,
+                                pRevisionFac);
                     } catch (final TTException exce) {
                         throw new WebApplicationException(exce);
                     }

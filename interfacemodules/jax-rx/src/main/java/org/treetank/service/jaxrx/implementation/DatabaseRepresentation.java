@@ -31,11 +31,9 @@ package org.treetank.service.jaxrx.implementation; // NOPMD we need all these im
 
 import static org.treetank.node.IConstants.ROOT_NODE;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -48,21 +46,23 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
-import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
+import org.treetank.api.INodeFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.node.TreeNodeFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.util.RESTResponseHelper;
 import org.treetank.service.jaxrx.util.RESTXMLShredder;
 import org.treetank.service.jaxrx.util.RestXPathProcessor;
@@ -103,8 +103,21 @@ public class DatabaseRepresentation {
      */
     private final static transient String YESSTRING = "yes";
 
-    public DatabaseRepresentation(final IDatabase pDatabase) throws TTException {
+    /**
+     * Factory to build pages.
+     */
+    private final static INodeFactory NODEFACTORY = new TreeNodeFactory();
+
+    private final IStorageFactory mStorageFac;
+
+    private final IRevisioningFactory mRevisionFac;
+
+    public DatabaseRepresentation(final IDatabase pDatabase, final IStorageFactory pStorageFac,
+        final IRevisioningFactory pRevisionFac) throws TTException {
         mDatabase = pDatabase;
+        mStorageFac = pStorageFac;
+        mRevisionFac = pRevisionFac;
+
     }
 
     /**
@@ -225,7 +238,7 @@ public class DatabaseRepresentation {
      *             The exception occurred.
      */
     public StreamingOutput getResourcesNames() throws JaxRxException {
-        return RESTResponseHelper.buildResponseOfDomLR(mDatabase);
+        return RESTResponseHelper.buildResponseOfDomLR(mDatabase, mStorageFac, mRevisionFac);
     }
 
     /**
@@ -282,11 +295,8 @@ public class DatabaseRepresentation {
         boolean abort = false;
         try {
 
-            // Shredding the database to the file as XML
-            final ResourceConfiguration resConf =
-                new ResourceConfiguration.Builder(resource, dbConf).setRevisionsToRestore(1).build();
-
-            database.createResource(resConf);
+            mDatabase.createResource(new ResourceConfiguration(mDatabase.getLocation(), resource, 1,
+                mStorageFac, mRevisionFac, NODEFACTORY));
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
             pWtx = session.beginPageWriteTransaction();
             wtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);

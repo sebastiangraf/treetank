@@ -35,7 +35,6 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,14 +42,20 @@ import java.io.OutputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.service.jaxrx.JaxRXModuleFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.google.inject.Inject;
 
 /**
  * This class tests the class {@link RestXPathProcessor}.
@@ -58,13 +63,14 @@ import org.xml.sax.SAXException;
  * @author Lukas Lewandowski, University of Konstanz
  * 
  */
+
+@Guice(moduleFactory = JaxRXModuleFactory.class)
 public class RestXPathProcessorTest {
 
     /**
      * The rxProcessor reference;
      */
-    private final transient RestXPathProcessor rxProcessor = new RestXPathProcessor(TestHelper.PATHS.PATH1
-        .getFile());
+    private transient RestXPathProcessor rxProcessor;
 
     /**
      * The resource name.
@@ -88,19 +94,30 @@ public class RestXPathProcessorTest {
      */
     public static final transient String PARAMJRESTSEQ = "rest:sequence";
 
-    @BeforeClass
-    public static void setUpGlobal() throws TTException {
-        deleteDirectory(TestHelper.PATHS.PATH1.getFile());
+    @Inject
+    public IStorageFactory mStorageFac;
+
+    @Inject
+    public IRevisioningFactory mRevisioningFac;
+
+    @BeforeMethod
+    public void setUpGlobal() throws TTException {
+        TestHelper.deleteEverything();
+        rxProcessor = new RestXPathProcessor(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
         final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
-        new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile()).shred(xmlInput, RESOURCENAME);
+        new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+            mRevisioningFac).shred(xmlInput, RESOURCENAME);
     }
 
     /**
      * Test method for {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor()} .
+     * 
+     * @throws TTException
      */
     @Test
-    public final void testRestXPathProcessor() {
-        final RestXPathProcessor reference = new RestXPathProcessor(TestHelper.PATHS.PATH1.getFile());
+    public final void testRestXPathProcessor() throws TTException {
+        final RestXPathProcessor reference =
+            new RestXPathProcessor(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
         assertNotNull("checks if the reference is not null and constructor works", reference);
     }
 
@@ -164,8 +181,7 @@ public class RestXPathProcessorTest {
         String xPath = "//author";
         boolean withNodeIds = true;
         OutputStream output = new ByteArrayOutputStream();
-        final File tnkFile = new File(TestHelper.PATHS.PATH1.getFile(), RESOURCENAME);
-        rxProcessor.getXpathResource(tnkFile, 10L, xPath, withNodeIds, 0L, output, true);
+        rxProcessor.getXpathResource(RESOURCENAME, 10L, xPath, withNodeIds, 0L, output, true);
         InputStream xmlInput = new ByteArrayInputStream(((ByteArrayOutputStream)output).toByteArray());
         Document resultDoc = xmlDocument(xmlInput);
         final NodeList bNodes = resultDoc.getElementsByTagName(PARAMBOOKS);
@@ -179,7 +195,7 @@ public class RestXPathProcessorTest {
         xPath = "//author";
         withNodeIds = false;
         output = new ByteArrayOutputStream();
-        rxProcessor.getXpathResource(tnkFile, 10L, xPath, withNodeIds, null, output, true);
+        rxProcessor.getXpathResource(RESOURCENAME, 10L, xPath, withNodeIds, null, output, true);
         xmlInput = new ByteArrayInputStream(((ByteArrayOutputStream)output).toByteArray());
         resultDoc = xmlDocument(xmlInput);
         final NodeList b2Nodes = resultDoc.getElementsByTagName(PARAMBOOKS);
@@ -190,27 +206,6 @@ public class RestXPathProcessorTest {
         assertEquals("test of result element", 1, r2Nodes.getLength());
         final NodeList i2Nodes = resultDoc.getElementsByTagName(PARAMJRESTSEQ);
         assertEquals("test existence of node ids", 0, i2Nodes.getLength());
-    }
-
-    /**
-     * This method deletes a not empty directory.
-     * 
-     * @param path
-     *            The director that has to be deleted.
-     * @return <code>true</code> if the deletion process has been successful. <code>false</code> otherwise.
-     */
-    private static boolean deleteDirectory(final File path) {
-        if (path.exists()) {
-            final File[] files = path.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory()) {
-                    deleteDirectory(files[i]);
-                } else {
-                    files[i].delete();
-                }
-            }
-        }
-        return path.delete();
     }
 
     /**

@@ -346,7 +346,7 @@ public final class Database implements IDatabase {
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
                 pResourceName);
         // if file is existing and folder is a tt-dataplace, delete it
-        if (resourceFile.exists() && DatabaseConfiguration.Paths.compareStructure(resourceFile) == 0) {
+        if (resourceFile.exists() && ResourceConfiguration.Paths.compareStructure(resourceFile) == 0) {
             return true;
         } else {
             return false;
@@ -358,6 +358,14 @@ public final class Database implements IDatabase {
      */
     @Override
     public String[] listResources() {
-        return DatabaseConfiguration.Paths.Data.getFile().list();
+        return new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()).list();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public File getLocation() {
+        return mDBConfig.mFile;
     }
 }

@@ -38,6 +38,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.testng.annotations.Guice;
+import org.treetank.service.jaxrx.JaxRXModuleFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -48,6 +50,8 @@ import org.xml.sax.SAXException;
  * @author Lukas Lewandowski, University of Konstanz
  * 
  */
+
+@Guice(moduleFactory = JaxRXModuleFactory.class)
 public final class DOMHelper {
 
     /**

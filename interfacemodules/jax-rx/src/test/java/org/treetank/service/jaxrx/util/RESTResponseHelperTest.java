@@ -31,13 +31,15 @@
 package org.treetank.service.jaxrx.util;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
@@ -45,16 +47,20 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.service.jaxrx.JaxRXModuleFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.jaxrx.implementation.NodeIdRepresentationTest;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.google.inject.Inject;
 
 /**
  * This class tests {@link RESTResponseHelper}.
@@ -62,16 +68,13 @@ import org.xml.sax.SAXException;
  * @author Lukas Lewandowski, University of Konstanz
  * 
  */
+
+@Guice(moduleFactory = JaxRXModuleFactory.class)
 public class RESTResponseHelperTest {
     /**
      * name constant.
      */
     private static final String NAME = "name";
-
-    /**
-     * last revision constant.
-     */
-    private static final String LREV = "lastRevision";
 
     /**
      * shake constant.
@@ -94,16 +97,20 @@ public class RESTResponseHelperTest {
      */
     private static final String RESPATH = "/factbook.xml";
 
+    @Inject
+    public IStorageFactory mStorageFac;
+
+    @Inject
+    public IRevisioningFactory mRevisioningFac;
+
     @BeforeMethod
     public void before() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
     }
 
     @AfterMethod
     public void after() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
@@ -128,64 +135,54 @@ public class RESTResponseHelperTest {
         availResources.add(BOOK);
         availResources.add(SHAKE);
 
-        final DatabaseRepresentation treeTank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
+        final DatabaseRepresentation treetank =
+            new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+                mRevisioningFac);
         InputStream input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.shred(input, FACT);
+        treetank.shred(input, FACT);
         input.close();
 
         input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.shred(input, EBAY);
+        treetank.shred(input, EBAY);
         input.close();
 
         input.close();
         input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.add(input, BOOK);
+        treetank.add(input, BOOK);
 
         input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
-        treeTank.shred(input, SHAKE);
+        treetank.shred(input, SHAKE);
         input.close();
-
-        Node node;
-        Attr attribute;
 
         final StreamingOutput result =
-            RESTResponseHelper.buildResponseOfDomLR(TestHelper.PATHS.PATH1.getFile(), availResources);
+            RESTResponseHelper.buildResponseOfDomLR(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()),
+                mStorageFac, mRevisioningFac);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         result.write(outputStream);
         final Document doc = DOMHelper.buildDocument(outputStream);
         final NodeList listRes = doc.getElementsByTagName("resource");
         assertEquals("Test for the length of resource", 4, listRes.getLength());
 
-        node = listRes.item(0);
-        attribute = (Attr)node.getAttributes().getNamedItem(NAME);
-        assertEquals("test for name factbook", FACT, attribute.getTextContent());
-        attribute = (Attr)node.getAttributes().getNamedItem(LREV);
-        assertNotNull("test for existence of revision attribute", attribute);
+        Set<String> names = new HashSet<String>();
 
-        node = listRes.item(1);
-        attribute = (Attr)node.getAttributes().getNamedItem(NAME);
-        assertEquals("test for name ebay", EBAY, attribute.getTextContent());
-        attribute = (Attr)node.getAttributes().getNamedItem(LREV);
-        assertNotNull("test for existence of revision attribute", attribute);
+        names.add(listRes.item(0).getAttributes().getNamedItem(NAME).getTextContent());
+        names.add(listRes.item(1).getAttributes().getNamedItem(NAME).getTextContent());
+        names.add(listRes.item(2).getAttributes().getNamedItem(NAME).getTextContent());
+        names.add(listRes.item(3).getAttributes().getNamedItem(NAME).getTextContent());
 
-        node = listRes.item(2);
-        attribute = (Attr)node.getAttributes().getNamedItem(NAME);
-        assertEquals("test for name shakespeare", BOOK, attribute.getTextContent());
-        attribute = (Attr)node.getAttributes().getNamedItem(LREV);
-        assertNotNull("test for existence of revision attribute in collection", attribute);
+        assertTrue(names.remove(FACT));
+        assertTrue(names.remove(EBAY));
+        assertTrue(names.remove(BOOK));
+        assertTrue(names.remove(SHAKE));
 
-        node = listRes.item(3);
-        attribute = (Attr)node.getAttributes().getNamedItem(NAME);
-        assertEquals("test for name books", SHAKE, attribute.getTextContent());
-        attribute = (Attr)node.getAttributes().getNamedItem(LREV);
-        assertNotNull("test for existence of revision attribute in collection", attribute);
+        assertEquals("Size of test-structure must be 0", 0, names.size());
 
         outputStream.close();
 
-        treeTank.deleteResource(EBAY);
-        treeTank.deleteResource(FACT);
-        treeTank.deleteResource(BOOK);
-        treeTank.deleteResource(SHAKE);
+        treetank.deleteResource(EBAY);
+        treetank.deleteResource(FACT);
+        treetank.deleteResource(BOOK);
+        treetank.deleteResource(SHAKE);
 
     }
 }

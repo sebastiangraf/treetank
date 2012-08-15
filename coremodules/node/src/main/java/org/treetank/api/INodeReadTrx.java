@@ -100,15 +100,6 @@ public interface INodeReadTrx {
     String nameForKey(final int pKey);
 
     /**
-     * Get raw name for key. This is used for efficient key testing.
-     * 
-     * @param pKey
-     *            Key, i.e., local part key, URI key, or prefix key.
-     * @return Byte array containing name for given key.
-     */
-    byte[] rawNameForKey(final int pKey);
-
-    /**
      * Getting the current node.
      * 
      * @return the node

@@ -194,9 +194,7 @@ public class RestXPathProcessor {
 
         } catch (final Exception globExcep) {
             throw new WebApplicationException(globExcep, Response.Status.INTERNAL_SERVER_ERROR);
-        } finally {
-            WorkerHelper.closeRTX(rtx, session);
-        }
+        } 
     }
 
     /**

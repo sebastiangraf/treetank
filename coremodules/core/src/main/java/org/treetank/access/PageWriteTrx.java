@@ -543,14 +543,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getRawName(int pKey) {
-        return mDelegate.getRawName(pKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public UberPage getUberPage() {
         return mDelegate.getUberPage();
     }

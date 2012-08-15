@@ -48,13 +48,20 @@ import org.treetank.access.Database;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.node.ElementNode;
+import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.settings.ECharsForSerializing;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.service.xml.StandardXMLSettings;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * <h1>XMLSerializer</h1>
@@ -233,7 +240,7 @@ public final class XMLSerializer extends AbsSerializer {
                 indent();
                 final INameNode namenode = (INameNode)paramRTX.getNode();
                 mOut.write(ECharsForSerializing.OPEN.getBytes());
-                mOut.write(paramRTX.rawNameForKey(namenode.getNameKey()));
+                mOut.write(paramRTX.nameForKey(namenode.getNameKey()).getBytes());
                 final long key = paramRTX.getNode().getNodeKey();
                 // Emit namespace declarations.
                 for (int index = 0, length = ((ElementNode)namenode).getNamespaceCount(); index < length; index++) {
@@ -269,7 +276,7 @@ public final class XMLSerializer extends AbsSerializer {
                 for (int index = 0; index < ((ElementNode)paramRTX.getNode()).getAttributeCount(); index++) {
                     paramRTX.moveToAttribute(index);
                     mOut.write(ECharsForSerializing.SPACE.getBytes());
-                    mOut.write(paramRTX.rawNameForKey(((INameNode)paramRTX.getNode()).getNameKey()));
+                    mOut.write(paramRTX.nameForKey(((INameNode)paramRTX.getNode()).getNameKey()).getBytes());
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
                     mOut.write(paramRTX.getValueOfCurrentNode().getBytes());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
@@ -308,7 +315,7 @@ public final class XMLSerializer extends AbsSerializer {
         try {
             indent();
             mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
-            mOut.write(paramRTX.rawNameForKey(((INameNode)paramRTX.getNode()).getNameKey()));
+            mOut.write(paramRTX.nameForKey(((INameNode)paramRTX.getNode()).getNameKey()).getBytes());
             mOut.write(ECharsForSerializing.CLOSE.getBytes());
             if (mIndent) {
                 mOut.write(ECharsForSerializing.NEWLINE.getBytes());
@@ -434,6 +441,11 @@ public final class XMLSerializer extends AbsSerializer {
 
         System.out.print("Serializing '" + args[0] + "' to '" + args[1] + "' ... ");
         final long time = System.currentTimeMillis();
+
+        Injector injector = Guice.createInjector(new StandardXMLSettings());
+        IStorageFactory storage = injector.getInstance(IStorageFactory.class);
+        IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
+
         final File target = new File(args[1]);
         target.delete();
         final FileOutputStream outputStream = new FileOutputStream(target);
@@ -441,8 +453,9 @@ public final class XMLSerializer extends AbsSerializer {
         final DatabaseConfiguration config = new DatabaseConfiguration(new File(args[0]));
         Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(new File(args[0]));
-        db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
-        final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
+        db.createResource(new ResourceConfiguration(target, "shredded", 1, storage, revision,
+            new TreeNodeFactory()));
+        final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();
         serializer.call();

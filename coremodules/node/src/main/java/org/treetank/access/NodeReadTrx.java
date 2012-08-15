@@ -179,15 +179,6 @@ public class NodeReadTrx implements INodeReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public final byte[] rawNameForKey(final int paramKey) {
-        assertNotClosed();
-        return mPageReadTrx.getRawName(paramKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void close() throws TTException {
         if (!mPageReadTrx.isClosed()) {
             // Close own state.

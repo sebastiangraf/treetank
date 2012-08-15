@@ -1,4 +1,4 @@
-package org.treetank;
+package org.treetank.service.jaxrx;
 
 import java.security.Key;
 
@@ -32,7 +32,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class NodeModuleFactory implements IModuleFactory {
+public class JaxRXModuleFactory implements IModuleFactory {
 
     /**
      * {@inheritDoc}

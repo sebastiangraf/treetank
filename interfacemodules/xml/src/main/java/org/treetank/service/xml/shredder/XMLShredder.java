@@ -58,18 +58,26 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
+import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.service.xml.StandardXMLSettings;
 import org.treetank.utils.TypedValue;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
@@ -151,7 +159,7 @@ public class XMLShredder implements Callable<Void> {
         mFirstChildAppend = paramAddAsFirstChild;
         mCommit = paramCommit;
         mLatch = new CountDownLatch(1);
-        if (mWtx.getNode()  == null) {
+        if (mWtx.getNode() == null) {
             final NodeDelegate nodeDel = new NodeDelegate(0, NULL_NODE, 0);
             mWtx.getPageWtx().createNode(
                 new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
@@ -337,13 +345,19 @@ public class XMLShredder implements Callable<Void> {
 
         System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1] + "' ... ");
         final long time = System.currentTimeMillis();
+
+        Injector injector = Guice.createInjector(new StandardXMLSettings());
+        IStorageFactory storage = injector.getInstance(IStorageFactory.class);
+        IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
+
         final File target = new File(paramArgs[1]);
         final DatabaseConfiguration config = new DatabaseConfiguration(target);
         Database.truncateDatabase(config);
         Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(target);
-        db.createResource(new ResourceConfiguration.Builder("shredded", config).build());
-        final ISession session = db.getSession(new SessionConfiguration.Builder("shredded").build());
+        db.createResource(new ResourceConfiguration(target, "shredded", 1, storage, revision,
+            new TreeNodeFactory()));
+        final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         // generating root node

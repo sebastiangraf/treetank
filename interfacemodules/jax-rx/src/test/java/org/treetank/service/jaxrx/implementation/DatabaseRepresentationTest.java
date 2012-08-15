@@ -31,6 +31,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
+import static org.treetank.TestHelper.RESOURCENAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,15 +50,21 @@ import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.service.jaxrx.JaxRXModuleFactory;
 import org.treetank.service.jaxrx.util.DOMHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.google.inject.Inject;
 
 /**
  * This class is responsible to test the implementation class <code> DatabaseRepresentation</code>;
@@ -66,12 +73,9 @@ import org.xml.sax.SAXException;
  * 
  * 
  */
-public class DatabaseRepresentationTest {
 
-    /**
-     * The name of the resource;
-     */
-    private final static transient String RESOURCENAME = "factbookTT";
+@Guice(moduleFactory = JaxRXModuleFactory.class)
+public class DatabaseRepresentationTest {
 
     /**
      * Check message for JUnit test: assertTrue
@@ -112,6 +116,12 @@ public class DatabaseRepresentationTest {
      */
     private static final transient String NAME = "name";
 
+    @Inject
+    public IStorageFactory mStorageFac;
+
+    @Inject
+    public IRevisioningFactory mRevisioningFac;
+
     /**
      * This a simple setUp.
      * 
@@ -119,11 +129,12 @@ public class DatabaseRepresentationTest {
      */
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
-        treetank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
+        treetank =
+            new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+                mRevisioningFac);
         treetank.shred(input, RESOURCENAME);
     }
 
@@ -134,7 +145,6 @@ public class DatabaseRepresentationTest {
      */
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
@@ -250,7 +260,7 @@ public class DatabaseRepresentationTest {
             attribute = (Attr)node.getAttributes().getNamedItem("name");
             assertNotNull("Check if name attribute exists", attribute);
             assertTrue("Check if name is the expected one", attribute.getTextContent().equals(RESOURCENAME)
-                || attribute.getTextContent().equals(TestHelper.RESOURCE));
+                || attribute.getTextContent().equals(RESOURCENAME));
         }
         output.close();
     }
@@ -361,7 +371,8 @@ public class DatabaseRepresentationTest {
     @Test
     public void getLastRevision() throws TTException {
         assertEquals(ASSEQUALS, 0, treetank.getLastRevision(RESOURCENAME));
-        final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
+        final NodeIdRepresentation rid =
+            new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         assertEquals(ASSEQUALS, 1, treetank.getLastRevision(RESOURCENAME));
     }
@@ -377,9 +388,10 @@ public class DatabaseRepresentationTest {
      * @throws SAXException
      */
     @Test
-    public void getModificHistory() throws WebApplicationException, TTException, SAXException,
-        IOException, ParserConfigurationException {
-        final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
+    public void getModificHistory() throws WebApplicationException, TTException, SAXException, IOException,
+        ParserConfigurationException {
+        final NodeIdRepresentation rid =
+            new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         final OutputStream output = new ByteArrayOutputStream();
         treetank.getModificHistory(RESOURCENAME, "0-1", false, output, true);
@@ -403,7 +415,8 @@ public class DatabaseRepresentationTest {
     @Test
     public void revertToRevision() throws TTException, WebApplicationException, IOException,
         ParserConfigurationException, SAXException, InterruptedException {
-        final NodeIdRepresentation rid = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
+        final NodeIdRepresentation rid =
+            new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         rid.deleteResource(RESOURCENAME, 11);
         rid.deleteResource(RESOURCENAME, 14);

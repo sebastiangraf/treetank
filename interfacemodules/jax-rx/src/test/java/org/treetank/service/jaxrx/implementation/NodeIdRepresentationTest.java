@@ -49,9 +49,13 @@ import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.service.jaxrx.JaxRXModuleFactory;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.DOMHelper;
 import org.w3c.dom.Attr;
@@ -61,12 +65,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.inject.Inject;
+
 /**
  * This class is responsible to test the {@link NodeIdRepresentation} class.
  * 
  * @author Patrick Lang, Lukas Lewandowski, University of Konstanz
  * 
  */
+
+@Guice(moduleFactory = JaxRXModuleFactory.class)
 public class NodeIdRepresentationTest {
 
     /**
@@ -76,7 +84,7 @@ public class NodeIdRepresentationTest {
     /**
      * The TreeTank reference.
      */
-    private transient static DatabaseRepresentation treeTank;
+    private transient static DatabaseRepresentation treetank;
     /**
      * This variable defines the node id from where the resource should be
      * retrieved
@@ -128,6 +136,12 @@ public class NodeIdRepresentationTest {
      */
     private static final String NODENAME = "myNode";
 
+    @Inject
+    public IStorageFactory mStorageFac;
+
+    @Inject
+    public IRevisioningFactory mRevisioningFac;
+
     /**
      * The set up method.
      * 
@@ -135,14 +149,15 @@ public class NodeIdRepresentationTest {
      */
     @BeforeMethod
     public void setUp() throws Exception {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        ridWorker = new NodeIdRepresentation(TestHelper.PATHS.PATH1.getFile());
-        treeTank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
+        ridWorker = new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
+        treetank =
+            new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+                mRevisioningFac);
         final InputStream input =
             NodeIdRepresentationTest.class.getClass().getResourceAsStream("/factbook.xml");
-        treeTank.shred(input, RESOURCENAME);
+        treetank.shred(input, RESOURCENAME);
     }
 
     /**
@@ -152,7 +167,6 @@ public class NodeIdRepresentationTest {
      */
     @AfterMethod
     public void tearDown() throws Exception {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
@@ -445,9 +459,9 @@ public class NodeIdRepresentationTest {
     @Test
     public final void testModifyResource() throws JaxRxException, TTException {
         final InputStream inputStream = new ByteArrayInputStream("<testNode/>".getBytes());
-        long lastRevision = treeTank.getLastRevision(RESOURCENAME);
+        long lastRevision = treetank.getLastRevision(RESOURCENAME);
         ridWorker.modifyResource(RESOURCENAME, NODEIDTOMODIFY, inputStream);
-        assertEquals("Test modify resource", treeTank.getLastRevision(RESOURCENAME), ++lastRevision);
+        assertEquals("Test modify resource", treetank.getLastRevision(RESOURCENAME), ++lastRevision);
     }
 
     /**

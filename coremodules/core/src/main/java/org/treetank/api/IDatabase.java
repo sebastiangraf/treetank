@@ -27,6 +27,8 @@
 
 package org.treetank.api;
 
+import java.io.File;
+
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTException;
@@ -119,6 +121,13 @@ public interface IDatabase {
      * @return all resources
      */
     String[] listResources();
+
+    /**
+     * Getting the file location of this database.
+     * 
+     * @return the File of this database
+     */
+    File getLocation();
 
     /**
      * Closing the database for further access.

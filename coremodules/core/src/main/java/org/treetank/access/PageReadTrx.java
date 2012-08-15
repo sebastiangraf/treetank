@@ -163,18 +163,6 @@ public class PageReadTrx implements IPageReadTrx {
     }
 
     /**
-     * Getting the raw name related to the name key.
-     * 
-     * @param pNameKey
-     *            for the raw name searched
-     * @return a byte array containing the raw name
-     */
-    public final byte[] getRawName(final int pNameKey) {
-        return ((NamePage)mRootPage.getNamePageReference().getPage()).getRawName(pNameKey);
-
-    }
-
-    /**
      * Closing this Readtransaction.
      * 
      * @throws TTIOException

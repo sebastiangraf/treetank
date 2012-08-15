@@ -47,6 +47,7 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 
 import com.google.inject.Inject;
+
 @Guice(moduleFactory = NodeModuleFactory.class)
 public class AttributeAxisTest {
 

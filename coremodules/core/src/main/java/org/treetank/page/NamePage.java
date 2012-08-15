@@ -32,7 +32,6 @@ import java.util.Map;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
-import org.treetank.utils.TypedValue;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -72,17 +71,6 @@ public final class NamePage implements IPage {
      */
     public String getName(final int mKey) {
         return mNameMap.get(mKey);
-    }
-
-    /**
-     * Get raw name belonging to name key.
-     * 
-     * @param mKey
-     *            Name key identifying name.
-     * @return Raw name of name key.
-     */
-    public byte[] getRawName(final int mKey) {
-        return TypedValue.getBytes(mNameMap.get(mKey));
     }
 
     /**
