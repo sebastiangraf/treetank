@@ -23,7 +23,8 @@ The documentation so far is accessible under http://treetank.org (pointing to ht
 
 The framework was presented at various conferences and acted as base for multiple publications and reports:
 
-* A legal and technical perspective on secure clouzd Storage; DFN Forum'12: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-192389)
+* Versatile Key Management for Secure Cloud Storage; DISCCO'12: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-200971)
+* A legal and technical perspective on secure cloud Storage; DFN Forum'12: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-192389)
 * A Secure Cloud Gateway based upon XML and Web Services; ECOWS'11, PhD Symposium: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-154112)
 * Treetank, Designing a Versioned XML Storage; XMLPrague'11: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-opus-126912)
 * Hecate, Managing Authorization with RESTful XML; WS-REST'11: [PDF](http://nbn-resolving.de/urn:nbn:de:bsz:352-126237)
@@ -47,12 +48,12 @@ Treetank is maintained by:
 
 Current subprojects are:
 
-* Patrick Lang (Encryption layer)
-* Johannes Lichtenberger (Visualization of temporal trees)
 * Wolfgang Miller (Binding of Treetank to cloud backends)
 
 Concluded subprojects were:
 
+* Patrick Lang (Encryption layer)
+* Johannes Lichtenberger (Visualization of temporal trees)
 * Johannes Lichtenberger (Evaluation of several versioning approaches)
 * Patrick Lang (Encryption layer)
 * Lukas Lewandowski (Jax-RX binding)
