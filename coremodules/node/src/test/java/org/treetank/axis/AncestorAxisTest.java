@@ -41,6 +41,7 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.TTException;
 
 import com.google.inject.Inject;
+
 @Guice(moduleFactory = NodeModuleFactory.class)
 public class AncestorAxisTest {
 
@@ -62,7 +63,6 @@ public class AncestorAxisTest {
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
         TestHelper.deleteEverything();
     }
 

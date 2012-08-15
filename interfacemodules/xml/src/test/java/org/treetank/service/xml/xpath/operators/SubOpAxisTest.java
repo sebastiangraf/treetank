@@ -32,10 +32,14 @@ import static org.testng.AssertJUnit.assertEquals;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
 import org.treetank.node.AtomicValue;
@@ -46,20 +50,28 @@ import org.treetank.service.xml.xpath.axis.SequenceAxis;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.utils.NamePageHash;
 
+import com.google.inject.Inject;
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class SubOpAxisTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        holder = Holder.generateWtx();
-        NodeHelper.createDocumentRootNode(holder.getNWtx());
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateWtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
         TestHelper.deleteEverything();
     }
 

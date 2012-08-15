@@ -31,8 +31,10 @@ import java.io.File;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
@@ -45,6 +47,7 @@ import org.treetank.service.xml.xpath.XPathStringChecker;
  * 
  * @author Patrick Lang
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class XMarkBenchTest {
 
     final XMarkBenchQueries xmbq = new XMarkBenchQueries();

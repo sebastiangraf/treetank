@@ -42,6 +42,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
@@ -56,7 +57,6 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
-import org.treetank.service.jaxrx.JaxRXModuleFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.xml.shredder.EShredderInsert;
 
@@ -69,7 +69,7 @@ import com.google.inject.Inject;
  * 
  */
 
-@Guice(moduleFactory = JaxRXModuleFactory.class)
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class WorkerHelperTest {
     /**
      * The WorkerHelper reference.

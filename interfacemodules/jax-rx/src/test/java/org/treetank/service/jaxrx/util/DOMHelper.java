@@ -39,7 +39,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.testng.annotations.Guice;
-import org.treetank.service.jaxrx.JaxRXModuleFactory;
+import org.treetank.NodeModuleFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
  * 
  */
 
-@Guice(moduleFactory = JaxRXModuleFactory.class)
+@Guice(moduleFactory = NodeModuleFactory.class)
 public final class DOMHelper {
 
     /**

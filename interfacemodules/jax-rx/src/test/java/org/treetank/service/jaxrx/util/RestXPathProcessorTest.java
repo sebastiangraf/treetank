@@ -45,11 +45,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
-import org.treetank.service.jaxrx.JaxRXModuleFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -64,7 +64,7 @@ import com.google.inject.Inject;
  * 
  */
 
-@Guice(moduleFactory = JaxRXModuleFactory.class)
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class RestXPathProcessorTest {
 
     /**

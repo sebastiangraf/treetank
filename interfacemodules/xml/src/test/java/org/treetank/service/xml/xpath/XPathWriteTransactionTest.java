@@ -34,13 +34,16 @@ import java.io.File;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
@@ -48,24 +51,28 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
 
+import com.google.inject.Inject;
+
 /**
  * Testcase for working with XPath and WriteTransactions
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public final class XPathWriteTransactionTest {
 
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "enwiki-revisions-test.xml";
-
-    private static final String RESOURCE = "bla";
 
     private ISession session;
 
     private INodeWriteTrx wtx;
 
     private IDatabase database;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -75,8 +82,8 @@ public final class XPathWriteTransactionTest {
 
         // Verify.
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.getConfig()).build());
-        session = database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+        database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), "shredded", 1));
+        session = database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
     }
 
