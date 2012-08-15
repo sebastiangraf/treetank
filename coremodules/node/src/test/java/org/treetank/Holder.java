@@ -32,6 +32,7 @@ import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
@@ -61,7 +62,7 @@ public class Holder {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         database.createResource(pConf);
         final ISession session =
-            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, TestHelper.KEY));
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final Holder holder = new Holder();
         holder.mDatabase = database;
         holder.mSession = session;

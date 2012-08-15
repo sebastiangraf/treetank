@@ -42,6 +42,7 @@ import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
@@ -249,7 +250,7 @@ public class HashTest {
             mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
         TestHelper.createResource(res);
         final ISession session =
-            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, TestHelper.KEY));
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final IPageWriteTrx pTrx = session.beginPageWriteTransaction();
         final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx, kind);
         NodeHelper.createDocumentRootNode(wTrx);
