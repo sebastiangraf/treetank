@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2012-08-16T14:58:05.331">
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/access/NodeReadTrx.java">
+<violation beginline="38" endline="38" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.access" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.treetank.exception.TTIOException'
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/access/NodeWriteTrx.java">
+<violation beginline="41" endline="41" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.access" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.treetank.exception.TTIOException'
+</violation>
+<violation beginline="320" endline="333" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.access" class="NodeWriteTrx" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused method parameters such as 'hash'.
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/api/INodeWriteTrx.java">
+<violation beginline="33" endline="33" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.api" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.treetank.exception.TTIOException'
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/Type.java">
+<violation beginline="1024" endline="1027" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.node" method="isCastableTo" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/utils/TreeTankCommandoLineExplorer.java">
+<violation beginline="28" endline="442" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.treetank.utils" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
+Too many static imports may lead to messy code
+</violation>
+</file>
+</pmd>

@@ -8,8 +8,8 @@
     <language>en-us</language>
     <copyright>&#169;2012 Distributed Systems Group</copyright>
     <item>
-      <title>File: 11,
-             Errors: 127,
+      <title>File: 9,
+             Errors: 75,
              Warnings: 0,
              Infos: 0
       </title>
@@ -43,20 +43,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.annotations.NotNull.java">org/treetank/annotations/NotNull.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  7
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.exception.TTByteHandleException.java">org/treetank/exception/TTByteHandleException.java</a>
                 </td>
                 <td>
@@ -66,7 +52,7 @@
                   0
                 </td>
                 <td>
-                  6
+                  14
                 </td>
               </tr>
                           <tr>
@@ -127,20 +113,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.annotations.Nullable.java">org/treetank/annotations/Nullable.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/commons//checkstyle.html#org.treetank.exception.TTXPathException.java">org/treetank/exception/TTXPathException.java</a>
                 </td>
                 <td>
@@ -164,7 +136,7 @@
                   0
                 </td>
                 <td>
-                  59
+                  11
                 </td>
               </tr>
                           <tr>

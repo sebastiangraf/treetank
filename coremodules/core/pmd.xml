@@ -1,51 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-07-26T14:06:56.666">
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/Database.java">
-<violation beginline="151" endline="154" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.access" class="Database" method="truncateDatabase" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
-These nested if statements could be combined
-</violation>
-<violation beginline="226" endline="229" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.access" class="Database" method="truncateResource" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<pmd version="4.3" timestamp="2012-08-16T14:57:07.335">
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/Database.java">
+<violation beginline="140" endline="143" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.access" class="Database" method="truncateDatabase" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
 </file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/NodeWriteTrx.java">
-<violation beginline="316" endline="329" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.access" class="NodeWriteTrx" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
-Avoid unused method parameters such as 'hash'.
-</violation>
-</file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java">
-<violation beginline="183" endline="185" begincolumn="18" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.access.conf" class="ResourceConfiguration" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java">
+<violation beginline="348" endline="350" begincolumn="18" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.access.conf" class="ResourceConfiguration" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
 Unnecessary final modifier in final class
 </violation>
 </file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/SessionConfiguration.java">
-<violation beginline="83" endline="85" begincolumn="18" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.access.conf" class="SessionConfiguration" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/SessionConfiguration.java">
+<violation beginline="101" endline="103" begincolumn="18" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.access.conf" class="SessionConfiguration" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
 Unnecessary final modifier in final class
 </violation>
 </file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/api/INodeWriteTrx.java">
-<violation beginline="33" endline="33" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.api" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/cache/BerkeleyPersistenceCache.java">
+<violation beginline="93" endline="117" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.cache" class="BerkeleyPersistenceCache" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused constructor parameters such as 'pRevision'.
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/io/IStorage.java">
+<violation beginline="32" endline="32" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.io" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
 Avoid unused imports such as 'org.treetank.exception.TTIOException'
 </violation>
 </file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/cache/BerkeleyPersistenceCache.java">
-<violation beginline="90" endline="113" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.cache" class="BerkeleyPersistenceCache" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
-Avoid unused constructor parameters such as 'paramRevision'.
-</violation>
-</file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/node/Type.java">
-<violation beginline="1024" endline="1027" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.node" method="isCastableTo" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
-These nested if statements could be combined
-</violation>
-</file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/page/PageFactory.java">
-<violation beginline="57" endline="59" begincolumn="25" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.page" class="PageFactory" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
-Unnecessary final modifier in final class
-</violation>
-</file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/utils/TreeTankCommandoLineExplorer.java">
-<violation beginline="28" endline="444" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.treetank.utils" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
-Too many static imports may lead to messy code
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/revisioning/FullDump.java">
+<violation beginline="28" endline="29" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.revisioning" class="FullDump" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+Avoid unused constructor parameters such as 'pRevToRestore'.
 </violation>
 </file>
 </pmd>

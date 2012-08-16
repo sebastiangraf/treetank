@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
 <duplication lines="12" tokens="116">
-<file line="119" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/jax-rx/src/main/java/org/treetank/service/jaxrx/implementation/NodeIdRepresentation.java"/>
-<file line="156" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/jax-rx/src/main/java/org/treetank/service/jaxrx/implementation/NodeIdRepresentation.java"/>
+<file line="118" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/jax-rx/src/main/java/org/treetank/service/jaxrx/implementation/NodeIdRepresentation.java"/>
+<file line="155" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/jax-rx/src/main/java/org/treetank/service/jaxrx/implementation/NodeIdRepresentation.java"/>
 <codefragment>
 <![CDATA[
         final Map<QueryParameter, String> queryParams) throws JaxRxException {
