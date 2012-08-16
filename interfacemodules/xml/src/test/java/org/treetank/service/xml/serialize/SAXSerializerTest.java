@@ -27,9 +27,10 @@
 
 package org.treetank.service.xml.serialize;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 import java.io.IOException;
 
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -56,7 +57,7 @@ import com.google.inject.Inject;
  * 
  */
 @Guice(moduleFactory = NodeModuleFactory.class)
-public class SAXSerializerTest extends XMLTestCase {
+public class SAXSerializerTest {
 
     private Holder holder;
 
@@ -123,6 +124,6 @@ public class SAXSerializerTest extends XMLTestCase {
 
         final SAXSerializer serializer = new SAXSerializer(holder.getSession(), contHandler);
         serializer.call();
-        assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
+        assertEquals(DocumentCreater.XML, strBuilder.toString());
     }
 }

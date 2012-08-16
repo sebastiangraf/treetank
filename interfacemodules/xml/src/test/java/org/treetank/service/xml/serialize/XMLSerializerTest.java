@@ -84,7 +84,11 @@ public class XMLSerializerTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final XMLSerializer serializer = new XMLSerializerBuilder(holder.getSession(), out).build();
         serializer.call();
-        assertEquals(org.treetank.DocumentCreater.XML, out.toString());
+        String compareTo =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a>";
+
+        assertEquals(compareTo, out.toString());
     }
 
     @Test

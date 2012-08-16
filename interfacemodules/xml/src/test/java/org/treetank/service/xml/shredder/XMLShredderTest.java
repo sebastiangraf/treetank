@@ -37,7 +37,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -52,9 +51,9 @@ import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
@@ -69,7 +68,7 @@ import org.treetank.service.xml.DocumentCreater;
 import com.google.inject.Inject;
 
 @Guice(moduleFactory = NodeModuleFactory.class)
-public class XMLShredderTest extends XMLTestCase {
+public class XMLShredderTest {
 
     public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "test.xml";
