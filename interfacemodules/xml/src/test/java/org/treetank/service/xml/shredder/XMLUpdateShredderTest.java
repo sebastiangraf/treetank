@@ -69,49 +69,6 @@ import com.google.inject.Inject;
 
 @Guice(moduleFactory = NodeModuleFactory.class)
 public final class XMLUpdateShredderTest extends XMLTestCase {
-    private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
-
-    private static final String XMLINSERTFIRST = RESOURCES + File.separator + "revXMLsInsert";
-
-    private static final String XMLINSERTSECOND = RESOURCES + File.separator + "revXMLsInsert1";
-
-    private static final String XMLINSERTTHIRD = RESOURCES + File.separator + "revXMLsInsert2";
-
-    private static final String XMLDELETEFIRST = RESOURCES + File.separator + "revXMLsDelete";
-
-    private static final String XMLDELETESECOND = RESOURCES + File.separator + "revXMLsDelete1";
-
-    private static final String XMLDELETETHIRD = RESOURCES + File.separator + "revXMLsDelete2";
-
-    private static final String XMLDELETEFOURTH = RESOURCES + File.separator + "revXMLsDelete3";
-
-    private static final String XMLSAME = RESOURCES + File.separator + "revXMLsSame";
-
-    private static final String XMLALLFIRST = RESOURCES + File.separator + "revXMLsAll";
-
-    private static final String XMLALLSECOND = RESOURCES + File.separator + "revXMLsAll1";
-
-    private static final String XMLALLTHIRD = RESOURCES + File.separator + "revXMLsAll2";
-
-    private static final String XMLALLFOURTH = RESOURCES + File.separator + "revXMLsAll3";
-
-    private static final String XMLALLFIFTH = RESOURCES + File.separator + "revXMLsAll4";
-
-    private static final String XMLALLSIXTH = RESOURCES + File.separator + "revXMLsAll5";
-
-    private static final String XMLALLSEVENTH = RESOURCES + File.separator + "revXMLsAll6";
-
-    private static final String XMLALLEIGHTH = RESOURCES + File.separator + "revXMLsAll7";
-
-    private static final String XMLALLNINETH = RESOURCES + File.separator + "revXMLsAll8";
-
-    // private static final String XMLLINGUISTICS = RESOURCES + File.separator +
-    // "linguistics";
-
-    static {
-        XMLUnit.setIgnoreComments(true);
-        XMLUnit.setIgnoreWhitespace(true);
-    }
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -119,6 +76,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
+        XMLUnit.setIgnoreComments(true);
+        XMLUnit.setIgnoreWhitespace(true);
     }
 
     @AfterMethod
@@ -128,87 +87,113 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     @Test
     public void testSame() throws Exception {
-        check(XMLSAME);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsSame",
+            mResourceConfig);
     }
 
     @Test
     public void testInsertsFirst() throws Exception {
-        check(XMLINSERTFIRST);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsInsert", mResourceConfig);
     }
 
     @Test
     public void testInsertsSecond() throws Exception {
-        check(XMLINSERTSECOND);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsInsert1", mResourceConfig);
     }
 
     @Test
     public void testInsertsThird() throws Exception {
-        check(XMLINSERTTHIRD);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsInsert2", mResourceConfig);
     }
 
     @Test
     public void testDeletesFirst() throws Exception {
-        check(XMLDELETEFIRST);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsDelete", mResourceConfig);
     }
 
     @Test
     public void testDeletesSecond() throws Exception {
-        check(XMLDELETESECOND);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsDelete1", mResourceConfig);
     }
 
     @Test
     public void testDeletesThird() throws Exception {
-        check(XMLDELETETHIRD);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsDelete2", mResourceConfig);
     }
 
     @Test
     public void testDeletesFourth() throws Exception {
-        check(XMLDELETEFOURTH);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsDelete3", mResourceConfig);
     }
 
     @Test
     public void testAllFirst() throws Exception {
-        check(XMLALLFIRST);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll",
+            mResourceConfig);
     }
 
     @Test
     public void testAllSecond() throws Exception {
-        check(XMLALLSECOND);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll1",
+            mResourceConfig);
     }
 
     @Test
     public void testAllThird() throws Exception {
-        check(XMLALLTHIRD);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll2",
+            mResourceConfig);
     }
 
     @Test
     public void testAllFourth() throws Exception {
-        check(XMLALLFOURTH);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll3",
+            mResourceConfig);
     }
 
     @Test
     public void testAllFifth() throws Exception {
-        check(XMLALLFIFTH);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll4",
+            mResourceConfig);
     }
 
     @Test
     public void testAllSixth() throws Exception {
-        check(XMLALLSIXTH);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll5",
+            mResourceConfig);
     }
 
     @Test
     public void testAllSeventh() throws Exception {
-        check(XMLALLSEVENTH);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll6",
+            mResourceConfig);
     }
 
     @Test
     public void testAllEighth() throws Exception {
-        check(XMLALLEIGHTH);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll7",
+            mResourceConfig);
     }
 
     @Test
     public void testAllNineth() throws Exception {
-        check(XMLALLNINETH);
+        check(
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll8",
+            mResourceConfig);
     }
 
     // @Test
@@ -216,12 +201,13 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     // test(XMLLINGUISTICS);
     // }
 
-    private void check(final String FOLDER) throws Exception {
+    private static void check(final String folderString, final IResourceConfigurationFactory mResourceConfig)
+        throws Exception {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         database.createResource(mResourceConfig.create(PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 1));
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
-        final File folder = new File(FOLDER);
+        final File folder = new File(folderString);
         final File[] filesList = folder.listFiles();
         final List<File> list = new ArrayList<File>();
         for (final File file : filesList) {
