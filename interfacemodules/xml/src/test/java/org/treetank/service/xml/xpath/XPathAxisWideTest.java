@@ -34,55 +34,68 @@ import java.io.File;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AbsAxis;
-import org.treetank.axis.AbsAxisTest;
+import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
+import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class XPathAxisWideTest {
 
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "factbook.xml";
 
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        // Setup parsed session.
-        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateWtx(mResource);
+        new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
+            EShredderInsert.ADDASFIRSTCHILD).call();
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testIterateFactbook() throws Exception {
         // Verify.
-        final Holder holder = Holder.generateRtx();
         holder.getNRtx().moveTo(ROOT_NODE);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/mondial/continent[@id]"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/mondial/continent[@id]"), new long[] {
+            2L, 5L, 8L, 11L, 14L
+        });
+
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "mondial/continent[@name]"),
             new long[] {
                 2L, 5L, 8L, 11L, 14L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "mondial/continent[@name]"),
-            new long[] {
-                2L, 5L, 8L, 11L, 14L
-            });
-
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "mondial/continent[@id=\"f0_119\"]"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "mondial/continent[@id=\"f0_119\"]"),
             new long[] {
                 2L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
             "/mondial/continent[@name = \"Africa\"]"), new long[] {
             14L
         });

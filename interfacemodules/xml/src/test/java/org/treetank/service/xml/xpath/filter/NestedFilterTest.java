@@ -29,10 +29,15 @@ package org.treetank.service.xml.xpath.filter;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.axis.filter.AbsFilterTest;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.axis.filter.FilterTestUtil;
 import org.treetank.axis.filter.AttributeFilter;
 import org.treetank.axis.filter.ElementFilter;
 import org.treetank.axis.filter.ItemFilter;
@@ -42,20 +47,28 @@ import org.treetank.axis.filter.NodeFilter;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.TTException;
 
+import com.google.inject.Inject;
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class NestedFilterTest {
-
+   
     private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
         TestHelper.deleteEverything();
     }
 
@@ -63,22 +76,21 @@ public class NestedFilterTest {
     public void testIFilterConvetions() throws TTException {
 
         holder.getNRtx().moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(),
-            new ItemFilter(holder.getNRtx()), new ElementFilter(holder.getNRtx()), new NameFilter(holder
-                .getNRtx(), "b")), true);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(),
-            new ItemFilter(holder.getNRtx()), new AttributeFilter(holder.getNRtx()), new NameFilter(holder
-                .getNRtx(), "b")), false);
+        FilterTestUtil.proveConventions(new NestedFilter(holder.getNRtx(), new ItemFilter(holder
+            .getNRtx()), new ElementFilter(holder.getNRtx()), new NameFilter(holder.getNRtx(), "b")), true);
+        FilterTestUtil
+            .proveConventions(new NestedFilter(holder.getNRtx(), new ItemFilter(holder.getNRtx()),
+                new AttributeFilter(holder.getNRtx()), new NameFilter(holder.getNRtx(), "b")), false);
 
         holder.getNRtx().moveTo(4L);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(),
-            new NodeFilter(holder.getNRtx()), new ElementFilter(holder.getNRtx())), false);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(),
-            new NodeFilter(holder.getNRtx()), new TextFilter(holder.getNRtx())), true);
+        FilterTestUtil.proveConventions(new NestedFilter(holder.getNRtx(), new NodeFilter(holder
+            .getNRtx()), new ElementFilter(holder.getNRtx())), false);
+        FilterTestUtil.proveConventions(new NestedFilter(holder.getNRtx(), new NodeFilter(holder
+            .getNRtx()), new TextFilter(holder.getNRtx())), true);
 
         holder.getNRtx().moveTo(1L);
         holder.getNRtx().moveToAttribute(0);
-        AbsFilterTest.testIFilterConventions(new NestedFilter(holder.getNRtx(), new AttributeFilter(holder
+        FilterTestUtil.proveConventions(new NestedFilter(holder.getNRtx(), new AttributeFilter(holder
             .getNRtx()), new NameFilter(holder.getNRtx(), "i")), true);
 
     }

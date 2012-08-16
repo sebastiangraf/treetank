@@ -35,10 +35,7 @@ import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IReader;
-import org.treetank.io.bytepipe.ByteHandlePipeline;
-import org.treetank.io.bytepipe.Encryptor;
-import org.treetank.io.bytepipe.IByteHandler;
-import org.treetank.io.bytepipe.Zipper;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
@@ -55,38 +52,44 @@ import org.treetank.page.UberPage;
  */
 public final class FileReader implements IReader {
 
-    /** Factory for building Pages. */
-    private final PageFactory mFac = PageFactory.getInstance();
-
     /** Beacon of first references. */
     protected final static int FIRST_BEACON = 12;
 
     /** Beacon of the other references. */
     protected final static int OTHER_BEACON = 4;
 
+    /** Factory for building Pages. */
+    private final PageFactory mFac;
+
     /** Random access mFile to work on. */
-    protected transient final RandomAccessFile mFile;
+    protected final RandomAccessFile mFile;
 
     /** Inflater to decompress. */
-    protected transient final IByteHandler mByteHandler;
+    protected final IByteHandlerPipeline mByteHandler;
 
     /**
      * Constructor.
      * 
-     * @throws TTIOException
-     *             if something bad happens
-     * @throws TTByteHandleException
+     * @param pFile
+     *            path to the storage.
+     * @param pFac
+     *            the factory to build pages.
+     * @param pByteHandler
+     *            handling the bytes.
+     * @throws TTException
+     *             if anything bad happens
      */
-    public FileReader(final File mConcreteStorage) throws TTException {
+    public FileReader(File pFile, PageFactory pFac, IByteHandlerPipeline pByteHandler) throws TTException {
 
         try {
-            if (!mConcreteStorage.exists()) {
-                mConcreteStorage.getParentFile().mkdirs();
-                mConcreteStorage.createNewFile();
-            }
+//            if (!pFile.exists()) {
+//                pFile.getParentFile().mkdirs();
+//                pFile.createNewFile();
+//            }
 
-            mFile = new RandomAccessFile(mConcreteStorage, "r");
-            mByteHandler = new ByteHandlePipeline(new Encryptor(), new Zipper());
+            mFile = new RandomAccessFile(pFile, "r");
+            mByteHandler = pByteHandler;
+            mFac = pFac;
 
         } catch (final IOException exc) {
             throw new TTIOException(exc);

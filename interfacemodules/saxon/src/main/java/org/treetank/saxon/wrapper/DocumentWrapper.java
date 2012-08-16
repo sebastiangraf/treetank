@@ -99,8 +99,7 @@ public final class DocumentWrapper implements DocumentInfo {
      *            Configuration used.
      * @throws TTException
      */
-    public DocumentWrapper(final ISession paramSession, final Configuration paramConfig)
-        throws TTException {
+    public DocumentWrapper(final ISession paramSession, final Configuration paramConfig) throws TTException {
         this.mSession = paramSession;
         mBaseURI = paramSession.toString();
         setConfiguration(paramConfig);

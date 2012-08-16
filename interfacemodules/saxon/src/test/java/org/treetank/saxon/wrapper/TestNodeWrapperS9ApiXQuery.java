@@ -31,13 +31,20 @@ import static org.testng.AssertJUnit.assertEquals;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
 
+import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XQueryEvaluator;
+
+import com.google.inject.Inject;
 
 /**
  * Test XQuery S9Api.
@@ -46,26 +53,32 @@ import org.treetank.saxon.evaluator.XQueryEvaluator;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public final class TestNodeWrapperS9ApiXQuery {
-    /** Treetank database on books document. */
-    private transient Holder mHolder;
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
     @BeforeMethod
-    public void setUp() throws Exception {
-        SaxonHelper.createBookDB();
-        mHolder = Holder.generateSession();
+    public void beforeMethod() throws Exception {
+        TestHelper.deleteEverything();
+        SaxonHelper.createBookDB(mResourceConfig);
+        ResourceConfiguration mResource =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 1);
+        holder = Holder.generateSession(mResource);
+        XMLUnit.setIgnoreWhitespace(true);
     }
 
     @AfterMethod
-    public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+    public void afterMethod() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @Test
     public void testWhereBooks() throws Exception {
         final XdmValue value =
-            new XQueryEvaluator("for $x in /bookstore/book where $x/price>30 return $x/title", mHolder
+            new XQueryEvaluator("for $x in /bookstore/book where $x/price>30 return $x/title", holder
                 .getSession()).call();
 
         final StringBuilder strBuilder = new StringBuilder();
@@ -82,7 +95,7 @@ public final class TestNodeWrapperS9ApiXQuery {
     public void testOrderByBooks() throws Exception {
         final XdmValue value =
             new XQueryEvaluator(
-                "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title", mHolder
+                "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title", holder
                     .getSession()).call();
 
         final StringBuilder strBuilder = new StringBuilder();
@@ -100,7 +113,7 @@ public final class TestNodeWrapperS9ApiXQuery {
         final XdmValue value =
             new XQueryEvaluator(
                 "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
-                mHolder.getSession()).call();
+                holder.getSession()).call();
         final StringBuilder strBuilder = new StringBuilder();
 
         for (final XdmItem item : value) {

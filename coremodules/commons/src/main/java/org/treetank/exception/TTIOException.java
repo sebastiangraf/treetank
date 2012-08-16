@@ -80,11 +80,11 @@ public class TTIOException extends TTException {
     /**
      * Constructor.
      * 
-     * @param message
+     * @param paramExc
      *            for the overlaying {@link IOException}
      */
-    public TTIOException(final String... message) {
-        super(message);
+    public TTIOException(final ClassNotFoundException paramExc) {
+        super(paramExc);
     }
 
     /**
@@ -95,6 +95,16 @@ public class TTIOException extends TTException {
      */
     public TTIOException(final TTByteHandleException paramExc) {
         super(paramExc);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            for the overlaying {@link IOException}
+     */
+    public TTIOException(final String... message) {
+        super(message);
     }
 
 }

@@ -38,7 +38,9 @@ import java.io.InputStream;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.NodeModuleFactory;
 
 /**
  * This class tests the class {@link RESTXMLShredder}.
@@ -46,6 +48,8 @@ import org.testng.annotations.Test;
  * @author Lukas Lewandowski, University of Konstanz
  * 
  */
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class RESTXMLShredderTest {
 
     /**

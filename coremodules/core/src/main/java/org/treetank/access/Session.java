@@ -36,7 +36,6 @@ import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.io.EStorage;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -76,23 +75,24 @@ public final class Session implements ISession {
     /**
      * Hidden constructor.
      * 
-     * @param paramDatabase
+     * @param pDatabase
      *            Database for centralized operations on related sessions.
-     * @param paramDatabaseConf
+     * @param pSessionConf
      *            DatabaseConfiguration for general setting about the storage
-     * @param paramSessionConf
-     *            SessionConfiguration for handling this specific session
+     * @param pResourceConf
+     *            ResourceConfiguration for handling this specific session
      * @throws TTException
      *             Exception if something weird happens
      */
-    protected Session(final Database paramDatabase, final ResourceConfiguration paramResourceConf,
-        final SessionConfiguration paramSessionConf) throws TTException {
-        mDatabase = paramDatabase;
-        mResourceConfig = paramResourceConf;
-        mSessionConfig = paramSessionConf;
+    protected Session(final Database pDatabase, final ResourceConfiguration pResourceConf,
+        final SessionConfiguration pSessionConf) throws TTException {
+        mDatabase = pDatabase;
+        mResourceConfig = pResourceConf;
+        mSessionConfig = pSessionConf;
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
 
-        mFac = EStorage.getStorage(mResourceConfig);
+        mFac = pResourceConf.mStorage;
+
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
@@ -147,7 +147,7 @@ public final class Session implements ISession {
             mPageTrxs.clear();
 
             mFac.close();
-            mDatabase.removeSession(mResourceConfig.mPath);
+            mDatabase.removeSession(mResourceConfig.mFile);
             mClosed = true;
         }
     }
@@ -172,8 +172,18 @@ public final class Session implements ISession {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(this.mSessionConfig);
+        StringBuilder builder = new StringBuilder();
+        builder.append("Session [mResourceConfig=");
+        builder.append(mResourceConfig);
+        builder.append(", mSessionConfig=");
+        builder.append(mSessionConfig);
+        builder.append(", mLastCommittedUberPage=");
+        builder.append(mLastCommittedUberPage);
+        builder.append(", mPageTrxs=");
+        builder.append(mPageTrxs);
+        builder.append(", mFac=");
+        builder.append(mFac);
+        builder.append("]");
         return builder.toString();
     }
 

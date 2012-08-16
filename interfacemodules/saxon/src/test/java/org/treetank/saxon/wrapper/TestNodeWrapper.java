@@ -50,8 +50,11 @@ import net.sf.saxon.value.Value;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
@@ -59,12 +62,16 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
+
+import com.google.inject.Inject;
 
 /**
  * Test implemented methods in NodeWrapper.
@@ -73,30 +80,34 @@ import org.treetank.service.xml.shredder.XMLShredder;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class TestNodeWrapper {
 
-    /** Treetank session on Treetank test document. */
-    private transient Holder mHolder;
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
 
     /** Document node. */
     private transient NodeWrapper node;
 
     @BeforeMethod
     public void beforeMethod() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        mHolder = Holder.generateSession();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder = Holder.generateRtx(mResource);
 
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 
-        node = new DocumentWrapper(mHolder.getSession(), config).getNodeWrapper();
+        node = new DocumentWrapper(holder.getSession(), config).getNodeWrapper();
     }
 
     @AfterMethod
     public void afterMethod() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
@@ -112,37 +123,28 @@ public class TestNodeWrapper {
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
 
-        final DatabaseConfiguration db2 = new DatabaseConfiguration(TestHelper.PATHS.PATH2.getFile());
-        Database.createDatabase(db2);
-        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db2).build());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-
         // Before.
-        NodeInfo node = new DocumentWrapper(mHolder.getSession(), config);
-        NodeInfo other = new NodeWrapper(new DocumentWrapper(mHolder.getSession(), config), 3);
+        NodeInfo node = new DocumentWrapper(holder.getSession(), config);
+        NodeInfo other = new NodeWrapper(new DocumentWrapper(holder.getSession(), config), 3);
         assertEquals(-1, node.compareOrder(other));
 
         // After.
-        node = new NodeWrapper(new DocumentWrapper(mHolder.getSession(), config), 3);
-        other = new NodeWrapper(new DocumentWrapper(mHolder.getSession(), config), 0);
+        node = new NodeWrapper(new DocumentWrapper(holder.getSession(), config), 3);
+        other = new NodeWrapper(new DocumentWrapper(holder.getSession(), config), 0);
         assertEquals(1, node.compareOrder(other));
 
         // Same.
-        node = new NodeWrapper(new DocumentWrapper(mHolder.getSession(), config), 3);
-        other = new NodeWrapper(new DocumentWrapper(mHolder.getSession(), config), 3);
+        node = new NodeWrapper(new DocumentWrapper(holder.getSession(), config), 3);
+        other = new NodeWrapper(new DocumentWrapper(holder.getSession(), config), 3);
         assertEquals(0, node.compareOrder(other));
 
-        session.close();
-        database.close();
     }
 
     @Test
     public void testGetAttributeValue() throws TTException {
         final Processor proc = new Processor(false);
         node =
-            new NodeWrapper(new DocumentWrapper(mHolder.getSession(), proc.getUnderlyingConfiguration()), 1);
+            new NodeWrapper(new DocumentWrapper(holder.getSession(), proc.getUnderlyingConfiguration()), 1);
 
         final AxisIterator iterator = node.iterateAxis(Axis.ATTRIBUTE);
         final NodeInfo attribute = (NodeInfo)iterator.next();
@@ -168,9 +170,10 @@ public class TestNodeWrapper {
 
         Database.createDatabase(db2);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db2).build());
+        database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH2.getFile(),
+            TestHelper.RESOURCENAME, 1));
         final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         SaxonHelper.createDocumentRootNode(wtx);

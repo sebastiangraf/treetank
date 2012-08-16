@@ -27,42 +27,59 @@
 
 package org.treetank.access.conf;
 
+import java.security.Key;
+
 import org.treetank.access.Database;
 import org.treetank.access.Session;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.assistedinject.Assisted;
 
 /**
  * <h1>SessionConfiguration</h1>
  * 
  * <p>
- * Holds the {@link Session}-wide settings that can not change within the
- * runtime of a {@link Session}. This included stuff like commit-threshold and
- * number of usable write/read transactions. Each {@link SessionConfiguration}
- * is only bound through the location to a {@link Database} and related
+ * Holds the {@link Session}-wide settings that can not change within the runtime of a {@link Session}. This
+ * included stuff like commit-threshold and number of usable write/read transactions. Each
+ * {@link SessionConfiguration} is only bound through the location to a {@link Database} and related
  * resources.
  * </p>
  */
+@Singleton
 public final class SessionConfiguration {
-
-    /** Default User. */
-    public static final String DEFAULT_USER = "ALL";
-    // END STATIC STANDARD FIELDS
-
-    /** User for this session. */
-    public final String mUser;
-    // END MEMBERS FOR FIXED FIELDS
 
     /** ResourceConfiguration for this ResourceConfig. */
     private final String mResource;
 
+    /** Key for accessing any encrypted data. */
+    private final Key mKey;
+
+    /** SINGLETON instance for this configuration. */
+    private static SessionConfiguration SINGLETON;
+
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @param pBuilder
-     *            {@link Builder} reference
+     * @param pResource
+     *            resource to be accessed
+     * @param pKey
+     *            key for accessing encrypted data
      */
-    private SessionConfiguration(final SessionConfiguration.Builder pBuilder) {
-        mUser = pBuilder.mUser;
-        mResource = pBuilder.mResource;
+    @Inject
+    public SessionConfiguration(@Assisted String pResource, Key pKey) {
+        mResource = pResource;
+        mKey = pKey;
+        SINGLETON = this;
+    }
+
+    /**
+     * Singleton to get easy the key from the Encryptor.
+     * 
+     * @return the Singleton-instance.
+     */
+    public static SessionConfiguration getInstance() {
+        return SINGLETON;
     }
 
     /**
@@ -72,7 +89,8 @@ public final class SessionConfiguration {
     public int hashCode() {
         final int prime = 90599;
         int result = 13;
-        result = prime * result + mUser.hashCode();
+        result = prime * result + mResource.hashCode();
+        result = prime * result + mKey.hashCode();
         return result;
     }
 
@@ -89,9 +107,12 @@ public final class SessionConfiguration {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("User: ");
-        builder.append(this.mUser);
+        StringBuilder builder = new StringBuilder();
+        builder.append("SessionConfiguration [mResource=");
+        builder.append(mResource);
+        builder.append(", mKey=");
+        builder.append(mKey);
+        builder.append("]");
         return builder.toString();
     }
 
@@ -105,65 +126,31 @@ public final class SessionConfiguration {
     }
 
     /**
-     * Builder class for generating new {@link SessionConfiguration} instance.
+     * Getter for the key material
+     * 
+     * @return the key within this session
      */
-    public static final class Builder {
-
-        /** User for this session. */
-        private String mUser = SessionConfiguration.DEFAULT_USER;
-
-        /** Resource for the this session. */
-        private String mResource;
-
-        /**
-         * Constructor for the {@link Builder} with fixed fields to be set.
-         * 
-         * @param pRes
-         *            to be set.
-         */
-        public Builder(final String pRes) {
-            if (pRes == null) {
-                throw new IllegalArgumentException(
-                        "Parameter must not be null!");
-            }
-            this.mResource = pRes;
-        }
-
-        /**
-         * Setter for field mUser.
-         * 
-         * @param pUser
-         *            new value for field
-         * @return reference to the builder object
-         */
-        public Builder setUser(final String pUser) {
-            if (pUser == null) {
-                throw new NullPointerException("paramUser may not be null!");
-            }
-            mUser = pUser;
-            return this;
-        }
-
-        /**
-         * Building a new {@link SessionConfiguration} with immutable fields.
-         * 
-         * @return a new {@link SessionConfiguration}.
-         */
-        public SessionConfiguration build() {
-            return new SessionConfiguration(this);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            final StringBuilder builder = new StringBuilder();
-            builder.append("User: ");
-            builder.append(this.mUser);
-            return builder.toString();
-        }
-
+    public Key getKey() {
+        return mKey;
     }
 
+    /**
+     * 
+     * Factory for generating an {@link SessionConfiguration}-instance. Needed mainly
+     * because of Guice-Assisted utilization.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public static interface ISessionConfigurationFactory {
+
+        /**
+         * Generating a storage for a fixed file.
+         * 
+         * @param pResourceName
+         *            Name of resource to be set.
+         * @return an {@link SessionConfiguration}-instance
+         */
+        SessionConfiguration create(String pResourceName);
+    }
 }

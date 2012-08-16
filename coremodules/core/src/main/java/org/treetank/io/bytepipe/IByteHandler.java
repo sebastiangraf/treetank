@@ -2,6 +2,8 @@ package org.treetank.io.bytepipe;
 
 import org.treetank.exception.TTByteHandleException;
 
+import com.google.inject.ImplementedBy;
+
 /**
  * Interface for the decorator, representing any byte representation to be
  * serialized or to serialize.
@@ -9,6 +11,7 @@ import org.treetank.exception.TTByteHandleException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@ImplementedBy(ByteHandlerPipeline.class)
 public interface IByteHandler {
 
     /**
@@ -32,5 +35,14 @@ public interface IByteHandler {
      *             to be capsulated.
      */
     byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException;
+
+    /**
+     * Concartenating interface for offering dedicated access to {@link ByteHandlerPipeline} for injections.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public interface IByteHandlerPipeline extends IByteHandler, Iterable<IByteHandler> {
+    }
 
 }

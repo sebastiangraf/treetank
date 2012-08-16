@@ -31,15 +31,21 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorSAXHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
+
+import com.google.inject.Inject;
 
 /**
  * <h1>TestNodeWrapperS9ApiXQueryHandler</h1>
@@ -52,20 +58,25 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
-    /** Treetank database on books document. */
-    private transient Holder mHolder;
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
     @BeforeMethod
-    public void setUp() throws Exception {
-        SaxonHelper.createBookDB();
-        mHolder = Holder.generateSession();
+    public void beforeMethod() throws Exception {
+        TestHelper.deleteEverything();
+        SaxonHelper.createBookDB(mResourceConfig);
+        ResourceConfiguration mResource =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateSession(mResource);
     }
 
     @AfterMethod
-    public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+    public void afterMethod() throws TTException {
         TestHelper.deleteEverything();
     }
 
@@ -100,7 +111,7 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
             }
         };
 
-        new XQueryEvaluatorSAXHandler("for $x in /bookstore/book where $x/price>30 return $x/title", mHolder
+        new XQueryEvaluatorSAXHandler("for $x in /bookstore/book where $x/price>30 return $x/title", holder
             .getSession(), contHandler).call();
 
         assertEquals(strBuilder.toString(),

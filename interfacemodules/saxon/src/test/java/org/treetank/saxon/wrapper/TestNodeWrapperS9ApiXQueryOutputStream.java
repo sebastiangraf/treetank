@@ -35,11 +35,17 @@ import java.io.OutputStream;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
+
+import com.google.inject.Inject;
 
 /**
  * Test XQuery S9Api.
@@ -47,28 +53,33 @@ import org.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
-    /** Treetank database on books document. */
-    private transient Holder mHolder;
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
     @BeforeMethod
-    public void setUp() throws Exception {
-        SaxonHelper.createBookDB();
-        mHolder = Holder.generateSession();
+    public void beforeMethod() throws Exception {
+        TestHelper.deleteEverything();
+        SaxonHelper.createBookDB(mResourceConfig);
+        ResourceConfiguration mResource =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateSession(mResource);
     }
 
     @AfterMethod
-    public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+    public void afterMethod() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @Test
     public void testWhereBooks() throws Exception {
         final OutputStream out = new ByteArrayOutputStream();
-        new XQueryEvaluatorOutputStream("for $x in /bookstore/book where $x/price>30 return $x/title",
-            mHolder.getSession(), out).call();
+        new XQueryEvaluatorOutputStream("for $x in /bookstore/book where $x/price>30 return $x/title", holder
+            .getSession(), out).call();
         final String result = out.toString();
         assertEquals("<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
             result);
@@ -78,7 +89,7 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
     public void testOrderByBooks() throws Exception {
         final OutputStream out = new ByteArrayOutputStream();
         new XQueryEvaluatorOutputStream(
-            "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title", mHolder
+            "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title", holder
                 .getSession(), out).call();
         final String result = out.toString();
         assertEquals("<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
@@ -90,7 +101,7 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
         final OutputStream out = new ByteArrayOutputStream();
         new XQueryEvaluatorOutputStream(
             "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
-            mHolder.getSession(), out).call();
+            holder.getSession(), out).call();
         final String result = out.toString();
         assertEquals("<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
             result);

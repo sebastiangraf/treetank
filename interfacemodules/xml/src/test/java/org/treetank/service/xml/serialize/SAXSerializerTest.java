@@ -27,20 +27,28 @@
 
 package org.treetank.service.xml.serialize;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 import java.io.IOException;
 
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.DocumentCreater;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
-import org.treetank.utils.DocumentCreater;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.XMLFilterImpl;
+
+import com.google.inject.Inject;
 
 /**
  * Test SAXSerializer.
@@ -48,20 +56,27 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class SAXSerializerTest extends XMLTestCase {
+@Guice(moduleFactory = NodeModuleFactory.class)
+public class SAXSerializerTest {
+
     private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder = Holder.generateWtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -109,6 +124,6 @@ public class SAXSerializerTest extends XMLTestCase {
 
         final SAXSerializer serializer = new SAXSerializer(holder.getSession(), contHandler);
         serializer.call();
-        assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
+        assertEquals(DocumentCreater.XML, strBuilder.toString());
     }
 }

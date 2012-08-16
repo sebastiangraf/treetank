@@ -33,64 +33,77 @@ import java.io.ByteArrayOutputStream;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IDatabase;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.service.xml.DocumentCreater;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-import org.treetank.service.xml.util.DocumentCreater;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class XMLSerializerTest {
+
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateSession(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testXMLSerializer() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.utils.DocumentCreater.create(wtx);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
+        org.treetank.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();
+        final XMLSerializer serializer = new XMLSerializerBuilder(holder.getSession(), out).build();
         serializer.call();
-        assertEquals(org.treetank.utils.DocumentCreater.XML, out.toString());
-        session.close();
+        String compareTo =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a>";
+
+        assertEquals(compareTo, out.toString());
     }
 
     @Test
     public void testRestSerializer() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.utils.DocumentCreater.create(wtx);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
+        org.treetank.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(session, out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(holder.getSession(), out);
         builder.setREST(true);
         builder.setID(true);
         builder.setDeclaration(true);
@@ -98,38 +111,32 @@ public class XMLSerializerTest {
         serializer.call();
         assertEquals(DocumentCreater.REST, out.toString());
 
-        session.close();
     }
 
     @Test
     public void testIDSerializer() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.utils.DocumentCreater.create(wtx);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
+        org.treetank.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(session, out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(holder.getSession(), out);
         builder.setID(true);
         builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
         serializer.call();
         assertEquals(DocumentCreater.ID, out.toString());
-        session.close();
     }
 
     @Test
     public void testSampleCompleteSerializer() throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // generate serialize all from this session
@@ -137,15 +144,14 @@ public class XMLSerializerTest {
         wtx.commit();
         wtx.close();
 
-        XMLSerializer serializerall = new XMLSerializerBuilder(session, out, -1).build();
+        XMLSerializer serializerall = new XMLSerializerBuilder(holder.getSession(), out, -1).build();
         serializerall.call();
         assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
         out.reset();
 
-        serializerall = new XMLSerializerBuilder(session, out, 0, 1, 2).build();
+        serializerall = new XMLSerializerBuilder(holder.getSession(), out, 0, 1, 2).build();
         serializerall.call();
         assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
-        session.close();
     }
 
     /**
@@ -156,11 +162,9 @@ public class XMLSerializerTest {
     @Test
     public void testKeyStart() throws Exception {
 
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // generate serialize all from this session
@@ -169,7 +173,7 @@ public class XMLSerializerTest {
         wtx.close();
 
         XMLSerializer serializerall =
-            new XMLSerializerBuilder(session, 5l, out, new XMLSerializerProperties()).build();
+            new XMLSerializerBuilder(holder.getSession(), 5l, out, new XMLSerializerProperties()).build();
         serializerall.call();
         final String result =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><b>\n  foo\n  <c/>\n</b>\n";
@@ -177,10 +181,9 @@ public class XMLSerializerTest {
         assertEquals(result, out.toString());
         out.reset();
 
-        serializerall = new XMLSerializerBuilder(session, out, 0, 1, 2).build();
+        serializerall = new XMLSerializerBuilder(holder.getSession(), out, 0, 1, 2).build();
         serializerall.call();
         assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
-        session.close();
 
     }
 }

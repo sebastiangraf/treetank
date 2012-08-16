@@ -27,6 +27,7 @@
 
 package org.treetank.cache;
 
+import org.treetank.api.INodeFactory;
 import org.treetank.page.NodePage;
 import org.treetank.page.PageFactory;
 
@@ -39,7 +40,17 @@ import com.sleepycat.bind.tuple.TupleOutput;
 
 public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
-    private final PageFactory mFac = PageFactory.getInstance();
+    private final PageFactory mFac;
+
+    /**
+     * Constructor
+     * 
+     * @param pNodeFac
+     *            for the deserialization of nodes
+     */
+    public NodePageContainerBinding(final INodeFactory pNodeFac) {
+        mFac = new PageFactory(pNodeFac);
+    }
 
     @Override
     public NodePageContainer entryToObject(final TupleInput arg0) {

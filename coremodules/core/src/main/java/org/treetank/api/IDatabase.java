@@ -27,6 +27,8 @@
 
 package org.treetank.api;
 
+import java.io.File;
+
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTException;
@@ -98,11 +100,34 @@ public interface IDatabase {
      * Truncating a resource. This includes the removal of all data stored
      * within this resource.
      * 
-     * @param pResConf
+     * @param pResourceName
      *            storing the name of the resource
      * 
      */
-    void truncateResource(final ResourceConfiguration pResConf);
+    void truncateResource(final String pResourceName);
+
+    /**
+     * Is the resource within this database existing?
+     * 
+     * @param pResourceName
+     *            ot be checked
+     * @return true, if existing; false otherwise
+     */
+    boolean existsResource(final String pResourceName);
+
+    /**
+     * Listing all resources within this database.
+     * 
+     * @return all resources
+     */
+    String[] listResources();
+
+    /**
+     * Getting the file location of this database.
+     * 
+     * @return the File of this database
+     */
+    File getLocation();
 
     /**
      * Closing the database for further access.

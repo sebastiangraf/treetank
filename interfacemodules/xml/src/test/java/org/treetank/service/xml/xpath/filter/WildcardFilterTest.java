@@ -32,37 +32,49 @@ import static org.testng.AssertJUnit.assertEquals;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.axis.filter.AbsFilterTest;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.axis.filter.FilterTestUtil;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.TTException;
 
+import com.google.inject.Inject;
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class WildcardFilterTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
         TestHelper.deleteEverything();
     }
-
     @Test
     public void testIFilterConvetions() throws TTException {
         holder.getNRtx().moveTo(9L);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "b", true), true);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "b", true), true);
         holder.getNRtx().moveToAttribute(0);
         try {
-            AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
+            FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
             Assert.fail("Expected an Exception, because attributes are not supported.");
         } catch (IllegalStateException e) {
             assertEquals(e.getMessage(), "Wildcards are not supported in attribute names yet.");
@@ -77,10 +89,10 @@ public class WildcardFilterTest {
         // true);
 
         holder.getNRtx().moveTo(1L);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "a", true), true);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "c", true), false);
-        AbsFilterTest.testIFilterConventions(new WildcardFilter(holder.getNRtx(), "b", false), false);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "p", false), true);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "a", true), true);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "c", true), false);
+        FilterTestUtil.proveConventions(new WildcardFilter(holder.getNRtx(), "b", false), false);
 
     }
 }

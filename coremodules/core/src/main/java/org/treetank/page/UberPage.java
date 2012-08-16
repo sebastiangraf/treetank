@@ -27,6 +27,8 @@
 
 package org.treetank.page;
 
+import java.util.Arrays;
+
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -218,8 +220,17 @@ public final class UberPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
-            + getReferences()[INDIRECT_REFERENCE_OFFSET] + "), isBootstrap=" + mBootstrap;
+        StringBuilder builder = new StringBuilder();
+        builder.append("UberPage [mRevisionCount=");
+        builder.append(mRevisionCount);
+        builder.append(", mBootstrap=");
+        builder.append(mBootstrap);
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append(", mReferences=");
+        builder.append(Arrays.toString(mReferences));
+        builder.append("]");
+        return builder.toString();
     }
 
     @Override

@@ -41,10 +41,15 @@ import org.treetank.access.PageWriteTrx;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.node.ElementNode;
+import org.treetank.node.TreeNodeFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.service.xml.StandardXMLSettings;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -56,6 +61,9 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * <h1>SaxSerializer</h1>
@@ -220,8 +228,15 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         final DatabaseConfiguration config = new DatabaseConfiguration(new File(args[0]));
         Database.createDatabase(config);
         final IDatabase database = Database.openDatabase(new File(args[0]));
-        database.createResource(new ResourceConfiguration.Builder("shredded", config).build());
-        final ISession session = database.getSession(new SessionConfiguration.Builder("shredded").build());
+        
+
+        Injector injector = Guice.createInjector(new StandardXMLSettings());
+        IStorageFactory storage = injector.getInstance(IStorageFactory.class);
+        IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
+        
+        database.createResource(new ResourceConfiguration(database.getLocation(), "shredded", 1, storage, revision,
+            new TreeNodeFactory()));
+        final ISession session = database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final DefaultHandler defHandler = new DefaultHandler();
 

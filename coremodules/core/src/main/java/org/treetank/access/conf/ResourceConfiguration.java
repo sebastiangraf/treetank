@@ -27,10 +27,30 @@
 package org.treetank.access.conf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.treetank.access.Session;
-import org.treetank.io.EStorage;
-import org.treetank.settings.ERevisioning;
+import org.treetank.api.INodeFactory;
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IStorage;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
+import org.treetank.revisioning.IRevisioning;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 /**
  * <h1>ResourceConfiguration</h1>
@@ -43,10 +63,7 @@ import org.treetank.settings.ERevisioning;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class ResourceConfiguration implements IConfigureSerializable {
-
-    /** For serialization. */
-    private static final long serialVersionUID = 1790483717305421672L;
+public final class ResourceConfiguration {
 
     /**
      * Paths for a {@link Session}. Each resource has the same folder.layout.
@@ -118,48 +135,196 @@ public final class ResourceConfiguration implements IConfigureSerializable {
         }
     }
 
-    // FIXED STANDARD FIELDS
-    /** Standard storage. */
-    public static final EStorage STORAGE = EStorage.File;
-    /** Standard Versioning Approach. */
-    public static final ERevisioning VERSIONING = ERevisioning.INCREMENTAL;
-    /** Versions to restore. */
-    public static final int VERSIONSTORESTORE = 4;
-    /** Folder for tmp-database. */
-    public static final String INTRINSICTEMP = "tmp";
-    // END FIXED STANDARD FIELDS
-
     // MEMBERS FOR FIXED FIELDS
     /** Type of Storage (File, Berkeley). */
-    public final EStorage mType;
+    public final IStorage mStorage;
 
     /** Kind of revisioning (Incremental, Differential). */
-    public final ERevisioning mRevision;
-
-    /** Number of revisions to restore a complete set of data. */
-    public final int mRevisionsToRestore;
+    public final IRevisioning mRevision;
 
     /** Path for the resource to be associated. */
-    public final File mPath;
-    // END MEMBERS FOR FIXED FIELDS
+    public final File mFile;
 
-    /** DatabaseConfiguration for this {@link ResourceConfiguration}. */
-    public final DatabaseConfiguration mDBConfig;
+    /** Node Factory for deserializing nodes. */
+    public final INodeFactory mNodeFac;
+
+    // END MEMBERS FOR FIXED FIELDS
 
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @param pBuilder
-     *            {@link Builder} reference
+     * @param pDbFile
+     * @param pResourceName
+     * @param pNumbersOfRevToRestore
+     * @param pNodeFactory
+     * @param pStorage
+     * @param pRevision
      */
-    private ResourceConfiguration(final ResourceConfiguration.Builder pBuilder) {
-        mType = pBuilder.mType;
-        mRevision = pBuilder.mRevision;
-        mRevisionsToRestore = pBuilder.mRevisionsToRestore;
-        mDBConfig = pBuilder.mDBConfig;
-        mPath =
-            new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                pBuilder.mResource);
+    @Inject
+    public ResourceConfiguration(@Assisted File pDbFile, @Assisted String pResourceName,
+        @Assisted int pNumbersOfRevToRestore, IStorageFactory pStorage, IRevisioningFactory pRevision,
+        INodeFactory pNodeFac) {
+
+        this(
+            new File(new File(pDbFile, DatabaseConfiguration.Paths.Data.getFile().getName()), pResourceName),
+            pStorage.create(new File(new File(pDbFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+                pResourceName)), pRevision.create(pNumbersOfRevToRestore), pNodeFac);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param pResourceFile
+     * @param pStorage
+     * @param pRevisioning
+     * @param pNodeFac
+     */
+    private ResourceConfiguration(File pResourceFile, IStorage pStorage, IRevisioning pRevisioning,
+        INodeFactory pNodeFac) {
+        mFile = pResourceFile;
+        mStorage = pStorage;
+        mRevision = pRevisioning;
+        mNodeFac = pNodeFac;
+    }
+
+    /**
+     * 
+     * Factory for generating an {@link ResourceConfiguration}-instance. Needed mainly
+     * because of Guice-Assisted utilization.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public static interface IResourceConfigurationFactory {
+
+        /**
+         * Generating a storage for a fixed file.
+         * 
+         * 
+         * @param pFile
+         *            Name of resource to be set.
+         * @param pResourceName
+         *            Resource Name to be set
+         * @param pNumberOfRevsToRestore
+         *            numbers of revisions to restore an entire revision
+         * @return an {@link ResourceConfiguration}-instance
+         */
+        ResourceConfiguration create(File pFile, String pResourceName, int pNumberOfRevsToRestore);
+    }
+
+    private static final String[] JSONNAMES = {
+        "revisioning", "revisioningClass", "numbersOfRevisiontoRestore", "nodeFactoryClass",
+        "byteHandlerClasses", "storageClass"
+    };
+
+    public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
+        try {
+            FileWriter fileWriter =
+                new FileWriter(new File(pConfig.mFile, Paths.ConfigBinary.getFile().getName()));
+            JsonWriter jsonWriter = new JsonWriter(fileWriter);
+            jsonWriter.beginObject();
+            // caring about the versioning
+            jsonWriter.name(JSONNAMES[0]);
+            jsonWriter.beginObject();
+            jsonWriter.name(JSONNAMES[1]).value(pConfig.mRevision.getClass().getName());
+            jsonWriter.name(JSONNAMES[2]).value(pConfig.mRevision.getRevisionsToRestore());
+            jsonWriter.endObject();
+            // caring about the NodeFactory
+            jsonWriter.name(JSONNAMES[3]).value(pConfig.mNodeFac.getClass().getName());
+            // caring about the ByteHandlers
+            IByteHandlerPipeline byteHandler = pConfig.mStorage.getByteHandler();
+            jsonWriter.name(JSONNAMES[4]);
+            jsonWriter.beginArray();
+            for (IByteHandler handler : byteHandler) {
+                jsonWriter.value(handler.getClass().getName());
+            }
+            jsonWriter.endArray();
+            // caring about the storage
+            jsonWriter.name(JSONNAMES[5]).value(pConfig.mStorage.getClass().getName());
+            jsonWriter.endObject();
+            jsonWriter.close();
+            fileWriter.close();
+        } catch (FileNotFoundException fileExec) {
+            throw new TTIOException(fileExec);
+        } catch (IOException ioexc) {
+            throw new TTIOException(ioexc);
+        }
+    }
+
+    /**
+     * Deserializing a Resourceconfiguration out of a JSON-file from the persistent storage.
+     * The order is important and the reader is passed through the objects as visitor.
+     * 
+     * @param pFile
+     *            where the resource lies in.
+     * @return a complete {@link ResourceConfiguration} instance.
+     * @throws TTIOException
+     */
+    public static ResourceConfiguration deserialize(final File pFile) throws TTIOException {
+        try {
+            FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
+            JsonReader jsonReader = new JsonReader(fileReader);
+            jsonReader.beginObject();
+            // caring about the versioning
+            assert jsonReader.nextName().equals(JSONNAMES[0]);
+            jsonReader.beginObject();
+            assert jsonReader.nextName().equals(JSONNAMES[1]);
+            Class<?> revClazz = Class.forName(jsonReader.nextString());
+            assert jsonReader.nextName().equals(JSONNAMES[2]);
+            int revisionToRestore = jsonReader.nextInt();
+            Constructor<?> revCons = revClazz.getConstructors()[0];
+            IRevisioning revisioning = (IRevisioning)revCons.newInstance(revisionToRestore);
+            jsonReader.endObject();
+            // caring about the NodeFactory
+            assert jsonReader.nextName().equals(JSONNAMES[3]);
+            Class<?> nodeFacClazz = Class.forName(jsonReader.nextString());
+            Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
+            INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
+            // caring about the ByteHandlers
+            List<IByteHandler> handlerList = new ArrayList<IByteHandler>();
+            if (jsonReader.nextName().equals(JSONNAMES[4])) {
+                jsonReader.beginArray();
+                while (jsonReader.hasNext()) {
+                    Class<?> handlerClazz = Class.forName(jsonReader.nextString());
+                    Constructor<?> handlerCons = handlerClazz.getConstructors()[0];
+                    handlerList.add((IByteHandler)handlerCons.newInstance());
+                }
+                jsonReader.endArray();
+            }
+            ByteHandlerPipeline pipeline =
+                new ByteHandlerPipeline(handlerList.toArray(new IByteHandler[handlerList.size()]));
+            // caring about the storage
+            assert jsonReader.nextName().equals(JSONNAMES[5]);
+            Class<?> storageClazz = Class.forName(jsonReader.nextString());
+            Constructor<?> storageCons = storageClazz.getConstructors()[0];
+            IStorage storage = (IStorage)storageCons.newInstance(pFile, nodeFactory, pipeline);
+            jsonReader.endObject();
+            jsonReader.close();
+            fileReader.close();
+
+            return new ResourceConfiguration(pFile, storage, revisioning, nodeFactory);
+
+        } catch (FileNotFoundException fileExec) {
+            throw new TTIOException(fileExec);
+        } catch (IOException ioexc) {
+            throw new TTIOException(ioexc);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -169,10 +334,10 @@ public final class ResourceConfiguration implements IConfigureSerializable {
     public int hashCode() {
         final int prime = 90599;
         int result = 13;
-        result = prime * result + mType.hashCode();
+        result = prime * result + mStorage.hashCode();
         result = prime * result + mRevision.hashCode();
-        result = prime * result + mPath.hashCode();
-        result = prime * result + mDBConfig.hashCode();
+        result = prime * result + mFile.hashCode();
+        result = prime * result + mNodeFac.hashCode();
         return result;
     }
 
@@ -189,129 +354,16 @@ public final class ResourceConfiguration implements IConfigureSerializable {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("\nResource: ");
-        builder.append(this.mPath);
-        builder.append("Type: ");
-        builder.append(this.mType);
-        builder.append("\nRevision: ");
-        builder.append(this.mRevision);
+        StringBuilder builder = new StringBuilder();
+        builder.append("ResourceConfiguration [mStorage=");
+        builder.append(mStorage);
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append(", mFile=");
+        builder.append(mFile);
+        builder.append(", mNodeFac=");
+        builder.append(mNodeFac);
+        builder.append("]");
         return builder.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public File getConfigFile() {
-        final File file = new File(mPath, Paths.ConfigBinary.getFile().getName());
-        return file;
-    }
-
-    /**
-     * Builder class for generating new {@link ResourceConfiguration} instance.
-     */
-    public static final class Builder {
-
-        /** Type of Storage (File, Berkeley). */
-        private EStorage mType = STORAGE;
-
-        /** Kind of revisioning (Incremental, Differential). */
-        private ERevisioning mRevision = VERSIONING;
-
-        /** Number of revisions to restore a complete set of data. */
-        private int mRevisionsToRestore = VERSIONSTORESTORE;
-
-        /** Resource for the this session. */
-        private String mResource;
-
-        /** Resource for the this session. */
-        private DatabaseConfiguration mDBConfig;
-
-        /**
-         * Constructor, setting the mandatory fields.
-         * 
-         * @param paramResource
-         *            the name of the resource, must to be set.
-         * @param pConfig
-         *            the related {@link DatabaseConfiguration}, must to be set.
-         */
-        public Builder(final String paramResource, final DatabaseConfiguration pConfig) {
-            if (paramResource == null || pConfig == null) {
-                throw new IllegalArgumentException("Parameter must not be null!");
-            }
-            mResource = paramResource;
-            mDBConfig = pConfig;
-        }
-
-        /**
-         * Setter for mType.
-         * 
-         * @param pType
-         *            to be set
-         * @return reference to the builder object
-         */
-        public Builder setType(final EStorage pType) {
-            if (pType == null) {
-                throw new NullPointerException("paramType may not be null!");
-            }
-            mType = pType;
-            return this;
-        }
-
-        /**
-         * Setter for mRevision.
-         * 
-         * @param pRev
-         *            to be set
-         * @return reference to the builder object
-         */
-        public Builder setRevision(final ERevisioning pRev) {
-            if (pRev == null) {
-                throw new NullPointerException("paramType may not be null!");
-            }
-            mRevision = pRev;
-            return this;
-        }
-
-        /**
-         * Setter for mRevisionsToRestore.
-         * 
-         * @param pRevToRestore
-         *            to be set
-         * @return reference to the builder object
-         */
-        public Builder setRevisionsToRestore(final int pRevToRestore) {
-            if (pRevToRestore <= 0) {
-                throw new IllegalArgumentException("paramRevisionsToRestore must be > 0!");
-            }
-            mRevisionsToRestore = pRevToRestore;
-            return this;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            final StringBuilder builder = new StringBuilder();
-            builder.append("\nResource: ");
-            builder.append(this.mResource);
-            builder.append("\nType: ");
-            builder.append(this.mType);
-            builder.append("\nRevision: ");
-            builder.append(this.mRevision);
-            return builder.toString();
-        }
-
-        /**
-         * Building a new {@link ResourceConfiguration} with immutable fields.
-         * 
-         * @return a new {@link ResourceConfiguration}.
-         */
-        public ResourceConfiguration build() {
-            return new ResourceConfiguration(this);
-        }
-
     }
 }

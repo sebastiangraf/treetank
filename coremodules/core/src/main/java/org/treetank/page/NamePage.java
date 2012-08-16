@@ -32,7 +32,6 @@ import java.util.Map;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
-import org.treetank.utils.TypedValue;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -75,17 +74,6 @@ public final class NamePage implements IPage {
     }
 
     /**
-     * Get raw name belonging to name key.
-     * 
-     * @param mKey
-     *            Name key identifying name.
-     * @return Raw name of name key.
-     */
-    public byte[] getRawName(final int mKey) {
-        return TypedValue.getBytes(mNameMap.get(mKey));
-    }
-
-    /**
      * Create name key given a name.
      * 
      * @param paramKey
@@ -102,7 +90,13 @@ public final class NamePage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": nameCount=" + mNameMap.size();
+        StringBuilder builder = new StringBuilder();
+        builder.append("NamePage [mNameMap=");
+        builder.append(mNameMap);
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append("]");
+        return builder.toString();
     }
 
     /**
@@ -141,11 +135,9 @@ public final class NamePage implements IPage {
 
         for (final int key : mNameMap.keySet()) {
             pOutput.writeInt(key);
-            final byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
+            final byte[] tmp = mNameMap.get(key).getBytes();
             pOutput.writeInt(tmp.length);
-            for (final byte byteVal : tmp) {
-                pOutput.writeByte(byteVal);
-            }
+            pOutput.write(tmp);
         }
         return pOutput.toByteArray();
     }

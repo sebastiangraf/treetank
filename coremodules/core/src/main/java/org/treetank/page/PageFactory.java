@@ -30,42 +30,34 @@ package org.treetank.page;
 import java.util.Arrays;
 
 import org.treetank.api.INodeFactory;
-import org.treetank.node.NodeFactory;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+/**
+ * Factory to deserialize pages out of a chunk of bytes.
+ * This factory needs a {@link INodeFactory}-reference to perform inlying node-serializations as well.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
+@Singleton
 public final class PageFactory {
 
     /** Node Factory to be initialized. */
     private INodeFactory mNodeFac;
 
-    private static PageFactory INSTANCE = new PageFactory(new NodeFactory());
-
     /**
      * Constructor.
      * 
      * @param pFac
+     *            to be set
      */
     @Inject
     public PageFactory(final INodeFactory pFac) {
         mNodeFac = pFac;
-    }
-
-    /** Singleton method. */
-    public static synchronized final PageFactory getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Set new singleton.
-     * 
-     * @param pFac
-     *            to be set
-     */
-    public static synchronized void registerNewInstance(final PageFactory pFac) {
-        INSTANCE = pFac;
     }
 
     /**
@@ -119,11 +111,41 @@ public final class PageFactory {
             }
             revRootPage.setRevisionSize(input.readLong());
             revRootPage.setMaxNodeKey(input.readLong());
-            revRootPage.setRevisionTimestamp(input.readLong());
             return revRootPage;
         default:
             throw new IllegalStateException(
                 "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mNodeFac == null) ? 0 : mNodeFac.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return obj.hashCode() == this.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PageFactory [mNodeFac=");
+        builder.append(mNodeFac);
+        builder.append("]");
+        return builder.toString();
     }
 }

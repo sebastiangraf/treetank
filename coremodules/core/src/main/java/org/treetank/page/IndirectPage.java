@@ -106,4 +106,16 @@ public final class IndirectPage implements IPage {
         return pOutput.toByteArray();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IndirectPage [mRevision=");
+        builder.append(mRevision);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

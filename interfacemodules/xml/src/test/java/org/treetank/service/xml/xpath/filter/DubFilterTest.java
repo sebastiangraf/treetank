@@ -29,12 +29,19 @@ package org.treetank.service.xml.xpath.filter;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.axis.AbsAxisTest;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.xpath.XPathAxis;
+
+import com.google.inject.Inject;
 
 /**
  * JUnit-test class to test the functionality of the DubFilter.
@@ -42,20 +49,27 @@ import org.treetank.service.xml.xpath.XPathAxis;
  * @author Tina Scherer
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class DubFilterTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
         TestHelper.deleteEverything();
     }
 
@@ -64,21 +78,21 @@ public class DubFilterTest {
 
         holder.getNRtx().moveTo(1L);
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::node()/parent::node()"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::node()/parent::node()"),
             new long[] {
                 1L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/following-sibling::node()"),
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/following-sibling::node()"),
             new long[] {
                 8L, 9L, 13L
             });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/preceding::node()"), new long[] {
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "b/preceding::node()"), new long[] {
             4L, 8L, 7L, 6L, 5L
         });
 
-        AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//c/ancestor::node()"), new long[] {
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//c/ancestor::node()"), new long[] {
             5L, 1L, 9L
         });
 

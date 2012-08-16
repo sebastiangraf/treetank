@@ -36,168 +36,147 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IDatabase;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.service.xml.XMLTestHelper;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
+
+import com.google.inject.Inject;
 
 /**
  * Test XMLUpdateShredder.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  */
-public final class XMLUpdateShredderTest extends XMLTestCase {
-    private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
-    private static final String XMLINSERTFIRST = RESOURCES + File.separator + "revXMLsInsert";
+@Guice(moduleFactory = NodeModuleFactory.class)
+public final class XMLUpdateShredderTest {
 
-    private static final String XMLINSERTSECOND = RESOURCES + File.separator + "revXMLsInsert1";
+    private Holder holder;
 
-    private static final String XMLINSERTTHIRD = RESOURCES + File.separator + "revXMLsInsert2";
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
-    private static final String XMLDELETEFIRST = RESOURCES + File.separator + "revXMLsDelete";
-
-    private static final String XMLDELETESECOND = RESOURCES + File.separator + "revXMLsDelete1";
-
-    private static final String XMLDELETETHIRD = RESOURCES + File.separator + "revXMLsDelete2";
-
-    private static final String XMLDELETEFOURTH = RESOURCES + File.separator + "revXMLsDelete3";
-
-    private static final String XMLSAME = RESOURCES + File.separator + "revXMLsSame";
-
-    private static final String XMLALLFIRST = RESOURCES + File.separator + "revXMLsAll";
-
-    private static final String XMLALLSECOND = RESOURCES + File.separator + "revXMLsAll1";
-
-    private static final String XMLALLTHIRD = RESOURCES + File.separator + "revXMLsAll2";
-
-    private static final String XMLALLFOURTH = RESOURCES + File.separator + "revXMLsAll3";
-
-    private static final String XMLALLFIFTH = RESOURCES + File.separator + "revXMLsAll4";
-
-    private static final String XMLALLSIXTH = RESOURCES + File.separator + "revXMLsAll5";
-
-    private static final String XMLALLSEVENTH = RESOURCES + File.separator + "revXMLsAll6";
-
-    private static final String XMLALLEIGHTH = RESOURCES + File.separator + "revXMLsAll7";
-
-    private static final String XMLALLNINETH = RESOURCES + File.separator + "revXMLsAll8";
-
-    // private static final String XMLLINGUISTICS = RESOURCES + File.separator +
-    // "linguistics";
-
-    static {
-        XMLUnit.setIgnoreComments(true);
-        XMLUnit.setIgnoreWhitespace(true);
-    }
+    private ResourceConfiguration mResource;
 
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateWtx(mResource);
+        XMLUnit.setIgnoreComments(true);
+        XMLUnit.setIgnoreWhitespace(true);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testSame() throws Exception {
-        test(XMLSAME);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsSame");
     }
 
     @Test
     public void testInsertsFirst() throws Exception {
-        test(XMLINSERTFIRST);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsInsert");
     }
 
     @Test
     public void testInsertsSecond() throws Exception {
-        test(XMLINSERTSECOND);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsInsert1");
     }
 
     @Test
     public void testInsertsThird() throws Exception {
-        test(XMLINSERTTHIRD);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsInsert2");
     }
 
     @Test
     public void testDeletesFirst() throws Exception {
-        test(XMLDELETEFIRST);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsDelete");
     }
 
     @Test
     public void testDeletesSecond() throws Exception {
-        test(XMLDELETESECOND);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsDelete1");
     }
 
     @Test
     public void testDeletesThird() throws Exception {
-        test(XMLDELETETHIRD);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsDelete2");
     }
 
     @Test
     public void testDeletesFourth() throws Exception {
-        test(XMLDELETEFOURTH);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "revXMLsDelete3");
     }
 
     @Test
     public void testAllFirst() throws Exception {
-        test(XMLALLFIRST);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll");
     }
 
     @Test
     public void testAllSecond() throws Exception {
-        test(XMLALLSECOND);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll1");
     }
 
     @Test
     public void testAllThird() throws Exception {
-        test(XMLALLTHIRD);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll2");
     }
 
     @Test
     public void testAllFourth() throws Exception {
-        test(XMLALLFOURTH);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll3");
     }
 
     @Test
     public void testAllFifth() throws Exception {
-        test(XMLALLFIFTH);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll4");
     }
 
     @Test
     public void testAllSixth() throws Exception {
-        test(XMLALLSIXTH);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll5");
     }
 
     @Test
     public void testAllSeventh() throws Exception {
-        test(XMLALLSEVENTH);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll6");
     }
 
     @Test
     public void testAllEighth() throws Exception {
-        test(XMLALLEIGHTH);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll7");
     }
 
     @Test
     public void testAllNineth() throws Exception {
-        test(XMLALLNINETH);
+        check("src" + File.separator + "test" + File.separator + "resources" + File.separator + "revXMLsAll8");
     }
 
     // @Test
@@ -205,14 +184,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     // test(XMLLINGUISTICS);
     // }
 
-    @Test(enabled = false)
-    private void test(final String FOLDER) throws Exception {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, PATHS.PATH1
-            .getConfig()).build());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final File folder = new File(FOLDER);
+    private void check(final String folderString) throws Exception {
+        final File folder = new File(folderString);
         final File[] filesList = folder.listFiles();
         final List<File> list = new ArrayList<File>();
         for (final File file : filesList) {
@@ -246,7 +219,9 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
-                final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(),HashKind.Rolling);
+                final INodeWriteTrx wtx =
+                    new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                        HashKind.Rolling);
                 if (first) {
                     final XMLShredder shredder =
                         new XMLShredder(wtx, XMLShredder.createFileReader(file),
@@ -261,9 +236,9 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 }
 
                 final OutputStream out = new ByteArrayOutputStream();
-                final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();
+                final XMLSerializer serializer = new XMLSerializerBuilder(holder.getSession(), out).build();
                 serializer.call();
-                final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
+                final StringBuilder sBuilder = XMLTestHelper.readFile(file.getAbsoluteFile(), false);
 
                 // System.out.println(out.toString());
                 final Diff diff = new Diff(sBuilder.toString(), out.toString());

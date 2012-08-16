@@ -27,43 +27,20 @@
 
 package org.treetank;
 
-import static org.treetank.node.IConstants.NULL_NODE;
-import static org.treetank.node.IConstants.ROOT_NODE;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
 import org.treetank.access.Database;
-import org.treetank.access.NodeWriteTrx;
-import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IDatabase;
-import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.IPageWriteTrx;
-import org.treetank.api.ISession;
+import org.treetank.api.INode;
 import org.treetank.exception.TTException;
-import org.treetank.node.AttributeNode;
-import org.treetank.node.DocumentRootNode;
-import org.treetank.node.ElementNode;
-import org.treetank.node.NamespaceNode;
-import org.treetank.node.TextNode;
-import org.treetank.node.delegates.NameNodeDelegate;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.delegates.ValNodeDelegate;
+import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.NodePage;
-import org.treetank.page.NodePage.DeletedNode;
-import org.treetank.settings.ECharsForSerializing;
-import org.treetank.utils.DocumentCreater;
 
 import com.google.common.io.Files;
 
@@ -79,8 +56,8 @@ import com.google.common.io.Files;
  */
 public final class TestHelper {
 
-    /** Common resource name. */
-    public static final String RESOURCE = "shredded";
+
+    public static final String RESOURCENAME = "tmp";
 
     /** Paths where the data is stored to. */
     public enum PATHS {
@@ -135,10 +112,14 @@ public final class TestHelper {
                 Database.createDatabase(config);
             }
             final IDatabase database = Database.openDatabase(file);
-            database.createResource(new ResourceConfiguration.Builder(RESOURCE, config).build());
             INSTANCES.put(file, database);
             return database;
         }
+    }
+
+    public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
+        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        return database.createResource(resConf);
     }
 
     /**
@@ -168,109 +149,6 @@ public final class TestHelper {
         }
     }
 
-    public static NodePage getNodePage(final long revision, final int offset, final int length,
-        final long nodePageKey) {
-        final NodePage page = new NodePage(nodePageKey, revision);
-        NodeDelegate nodeDel;
-        NameNodeDelegate nameDel;
-        StructNodeDelegate strucDel;
-        ValNodeDelegate valDel;
-        for (int i = offset; i < length; i++) {
-            switch (random.nextInt(6)) {
-            case 0:
-                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
-                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
-                valDel = new ValNodeDelegate(nodeDel, generateRandomBytes(1000));
-                page.setNode(i, new AttributeNode(nodeDel, nameDel, valDel));
-                break;
-            case 1:
-                page.setNode(i, new DeletedNode(random.nextLong()));
-                break;
-            case 2:
-                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
-                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
-                strucDel =
-                    new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
-                        random.nextLong());
-                page.setNode(i, new ElementNode(nodeDel, strucDel, nameDel, new ArrayList<Long>(),
-                    new ArrayList<Long>()));
-                break;
-            case 3:
-                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
-                nameDel = new NameNodeDelegate(nodeDel, random.nextInt(), random.nextInt());
-                page.setNode(i, new NamespaceNode(nodeDel, nameDel));
-                break;
-            case 4:
-                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
-                strucDel =
-                    new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
-                        random.nextLong());
-                page.setNode(i, new DocumentRootNode(nodeDel, strucDel));
-                break;
-            case 5:
-                nodeDel = new NodeDelegate(random.nextLong(), random.nextLong(), random.nextLong());
-                valDel = new ValNodeDelegate(nodeDel, generateRandomBytes(1000));
-                strucDel =
-                    new StructNodeDelegate(nodeDel, random.nextLong(), random.nextLong(), random.nextLong(),
-                        random.nextLong());
-                page.setNode(i, new TextNode(nodeDel, strucDel, valDel));
-                break;
-            }
-
-        }
-        return page;
-    }
-
-    /**
-     * Read a file into a StringBuilder.
-     * 
-     * @param paramFile
-     *            The file to read.
-     * @param paramWhitespaces
-     *            Retrieve file and don't remove any whitespaces.
-     * @return StringBuilder instance, which has the string representation of
-     *         the document.
-     * @throws IOException
-     *             throws an IOException if any I/O operation fails.
-     */
-    public static StringBuilder readFile(final File paramFile, final boolean paramWhitespaces)
-        throws IOException {
-        final BufferedReader in = new BufferedReader(new FileReader(paramFile));
-        final StringBuilder sBuilder = new StringBuilder();
-        for (String line = in.readLine(); line != null; line = in.readLine()) {
-            if (paramWhitespaces) {
-                sBuilder.append(line + ECharsForSerializing.NEWLINE);
-            } else {
-                sBuilder.append(line.trim());
-            }
-        }
-
-        // Remove last newline.
-        if (paramWhitespaces) {
-            sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), "");
-        }
-        in.close();
-
-        return sBuilder;
-    }
-
-    /**
-     * Creating a test document at {@link PATHS#PATH1}.
-     * 
-     * @throws TTException
-     */
-    public static void createTestDocument() throws TTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(RESOURCE, PATHS.PATH1.config).build());
-        final ISession session = database.getSession(new SessionConfiguration.Builder(RESOURCE).build());
-        final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
-        final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
-        DocumentCreater.create(nWtx);
-        nWtx.commit();
-        nWtx.close();
-        session.close();
-    }
-
     /**
      * Generating random bytes.
      * 
@@ -283,18 +161,34 @@ public final class TestHelper {
     }
 
     /**
-     * Generating a Document Root node.
+     * Getting a node pages filled with nodes.
      * 
-     * @param pWtx
-     *            where the docroot should be generated.
-     * @throws TTException
+     * @param revision
+     *            of the page
+     * @param offset
+     *            offset to start within the page
+     * @param length
+     *            length of the page
+     * @param nodePageKey
+     *            key of the nodepage
+     * @return a {@link NodePage} filled
      */
-    public static final void createDocumentRootNode(final INodeWriteTrx pWtx) throws TTException {
-        final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
-        pWtx.getPageWtx()
-            .createNode(
-                new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
-                    NULL_NODE, 0)));
-        pWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
+    public static NodePage getNodePage(final long revision, final int offset, final int length,
+        final long nodePageKey) {
+        final NodePage page = new NodePage(nodePageKey, revision);
+        for (int i = offset; i < length; i++) {
+            page.setNode(i, new DumbNode(random.nextLong(), random.nextLong()));
+        }
+        return page;
     }
+
+    /**
+     * Generating one single {@link DumbNode} with random values.
+     * 
+     * @return one {@link DumbNode} with random values.
+     */
+    public static final INode generateOne() {
+        return new DumbNode(TestHelper.random.nextLong(), TestHelper.random.nextLong());
+    }
+
 }

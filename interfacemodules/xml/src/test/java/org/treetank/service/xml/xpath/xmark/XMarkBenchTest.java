@@ -31,21 +31,28 @@ import java.io.File;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
+import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathStringChecker;
+
+import com.google.inject.Inject;
 
 /**
  * Performs the XMark benchmark.
  * 
  * @author Patrick Lang
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class XMarkBenchTest {
 
     final XMarkBenchQueries xmbq = new XMarkBenchQueries();
@@ -56,16 +63,27 @@ public class XMarkBenchTest {
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + XMLFILE;
 
-    private static Holder holder;
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
 
     @BeforeMethod
-    public static void setUp() throws Exception {
+    public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        // EncryptionHelper.start();
-        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateWtx(mResource);
+        new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
+            EShredderInsert.ADDASFIRSTCHILD).call();
     }
 
+    @AfterMethod
+    public void tearDown() throws TTException {
+        TestHelper.deleteEverything();
+    }
+    
     @Test
     public void xMarkTest_Q1() throws TTXPathException {
         String query = xmbq.getQuery(1, FACTOR);
@@ -123,10 +141,4 @@ public class XMarkBenchTest {
      * new String[] { result }); }
      */
 
-    @AfterMethod
-    public static void tearDown() throws TTException {
-        holder.close();
-        TestHelper.closeEverything();
-
-    }
 }

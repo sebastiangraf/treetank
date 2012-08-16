@@ -38,9 +38,16 @@ import org.jaxrx.JaxRx;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.jaxrx.core.ResourcePath;
+import org.treetank.access.Database;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.api.IDatabase;
 import org.treetank.exception.TTException;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.WorkerHelper;
+
+import com.google.inject.Inject;
 
 /**
  * This class works as mediator between the JAX-RX REST interface layer and the
@@ -62,16 +69,27 @@ public final class TreeTankMediator implements JaxRx {
      */
     private final transient NodeIdRepresentation nodeIdResource;
 
+    @Inject
+    private IStorageFactory mStorageFac;
+
+    @Inject
+    private IRevisioningFactory mRevisionFac;
+
     /**
      * 
      * Constructor.
      * 
      * @param pStoragePath
      *            where the data should be stored.
+     * @throws TTException
      */
-    public TreeTankMediator(final File pStoragePath) {
-        database = new DatabaseRepresentation(pStoragePath);
-        nodeIdResource = new NodeIdRepresentation(pStoragePath);
+    public TreeTankMediator(final File pStoragePath) throws TTException {
+        if (!Database.existsDatabase(pStoragePath)) {
+            Database.createDatabase(new DatabaseConfiguration(pStoragePath));
+        }
+        IDatabase db = Database.openDatabase(pStoragePath);
+        database = new DatabaseRepresentation(db, mStorageFac, mRevisionFac);
+        nodeIdResource = new NodeIdRepresentation(db);
     }
 
     /**

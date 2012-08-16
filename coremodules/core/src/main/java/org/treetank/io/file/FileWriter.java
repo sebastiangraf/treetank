@@ -37,7 +37,9 @@ import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IWriter;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
+import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
 
 /**
@@ -59,19 +61,23 @@ public final class FileWriter implements IWriter {
      * Constructor.
      * 
      * 
-     * @param paramStorage
+     * @param pFile
      *            the Concrete Storage
+     * @param pFac
+     *            the factory to build nodes.
+     * @param pByteHandler
+     *            handling the bytes.
      * @throws TTIOException
      *             if FileWriter IO error
      */
-    public FileWriter(final File paramStorage) throws TTException {
+    public FileWriter(File pFile, PageFactory pFac, IByteHandlerPipeline pByteHandler) throws TTException {
         try {
-            mFile = new RandomAccessFile(paramStorage, "rw");
+            mFile = new RandomAccessFile(pFile, "rw");
         } catch (final FileNotFoundException fileExc) {
             throw new TTIOException(fileExc);
         }
 
-        reader = new FileReader(paramStorage);
+        reader = new FileReader(pFile, pFac, pByteHandler);
 
     }
 

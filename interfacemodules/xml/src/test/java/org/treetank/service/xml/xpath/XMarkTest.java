@@ -32,18 +32,25 @@ import java.io.File;
 import org.perfidix.annotation.BenchClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
+import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
+
+import com.google.inject.Inject;
 
 /**
  * Performes the XMark benchmark.
  * 
  * @author Tina Scherer
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 @BenchClass(runs = 1)
 public class XMarkTest {
 
@@ -53,19 +60,23 @@ public class XMarkTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        // Build simple test tree.
-        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        holder = Holder.generateRtx();
-
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateWtx(mResource);
+        new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
+            EShredderInsert.ADDASFIRSTCHILD).call();
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test

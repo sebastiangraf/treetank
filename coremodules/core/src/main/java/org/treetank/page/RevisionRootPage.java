@@ -54,9 +54,6 @@ public final class RevisionRootPage implements IPage {
     /** Last allocated node key. */
     private long mMaxNodeKey;
 
-    /** Timestamp of revision. */
-    private long mRevisionTimestamp;
-
     /** Revision of this page. */
     private final long mRevision;
 
@@ -80,7 +77,6 @@ public final class RevisionRootPage implements IPage {
         ref.setPage(new NamePage(IConstants.UBP_ROOT_REVISION_NUMBER));
         mMaxNodeKey = -1L;
     }
-
 
     /**
      * Clone revision root page.
@@ -135,25 +131,6 @@ public final class RevisionRootPage implements IPage {
     }
 
     /**
-     * Get timestamp of revision.
-     * 
-     * @return Revision timestamp.
-     */
-    public long getRevisionTimestamp() {
-        return mRevisionTimestamp;
-    }
-
-    /**
-     * Setter for mRevisionTimestamp
-     * 
-     * @param pRevisionTimestamp
-     *            to be set
-     */
-    protected void setRevisionTimestamp(final long pRevisionTimestamp) {
-        mRevisionTimestamp = pRevisionTimestamp;
-    }
-
-    /**
      * Get last allocated node key.
      * 
      * @return Last allocated node key.
@@ -184,9 +161,15 @@ public final class RevisionRootPage implements IPage {
      */
     @Override
     public String toString() {
-        return super.toString() + " revisionSize=" + mRevisionSize + ", revisionTimestamp="
-            + mRevisionTimestamp + ", namePage=(" + getReferences()[NAME_REFERENCE_OFFSET]
-            + "), indirectPage=(" + getReferences()[INDIRECT_REFERENCE_OFFSET] + ")";
+        StringBuilder builder = new StringBuilder();
+        builder.append("RevisionRootPage [mRevisionSize=");
+        builder.append(mRevisionSize);
+        builder.append(", mMaxNodeKey=");
+        builder.append(mMaxNodeKey);
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append("]");
+        return builder.toString();
     }
 
     @Override
@@ -217,10 +200,10 @@ public final class RevisionRootPage implements IPage {
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
         }
-        mRevisionTimestamp = System.currentTimeMillis();
         pOutput.writeLong(mRevisionSize);
         pOutput.writeLong(mMaxNodeKey);
-        pOutput.writeLong(mRevisionTimestamp);
+        // mRevisionTimestamp = System.currentTimeMillis();
+        // pOutput.writeLong(mRevisionTimestamp);
         return pOutput.toByteArray();
     }
 

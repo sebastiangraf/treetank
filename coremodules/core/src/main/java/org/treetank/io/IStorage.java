@@ -26,17 +26,25 @@
  */
 package org.treetank.io;
 
+import java.io.File;
+
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
+import org.treetank.io.file.FileStorage;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * Interface to generate access to the underlaying storage. The underlaying storage is flexible as long as
- * {@link IReader} and {@link IWriter}-implementations are provided. Utility methods for common interaction
- * with the storage are provided via the <code>EStorage</code>-enum.
+ * Interface to generate access to the underlaying storage. The underlaying
+ * storage is flexible as long as {@link IReader} and {@link IWriter} -implementations are provided. Utility
+ * methods for common interaction with
+ * the storage are provided via the <code>EStorage</code>-enum.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@ImplementedBy(FileStorage.class)
 public interface IStorage {
 
     /**
@@ -73,5 +81,32 @@ public interface IStorage {
      *             if storage is not accessible
      */
     boolean exists() throws TTException;
+
+    /**
+     * Getting the ByteHandlers associated with this Storage.
+     * 
+     * @return the {@link IByteHandlerPipeline} transforming bytes before storage
+     */
+    IByteHandlerPipeline getByteHandler();
+
+    /**
+     * 
+     * Factory for generating an {@link IStorage}-instance. Needed mainly
+     * because of Guice-Assisted utilization.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    public static interface IStorageFactory {
+
+        /**
+         * Generating a storage for a fixed file.
+         * 
+         * @param pFile
+         *            referencing to the storage.
+         * @return an {@link IStorage}-instance
+         */
+        IStorage create(File pFile);
+    }
 
 }

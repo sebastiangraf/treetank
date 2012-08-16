@@ -37,7 +37,6 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
@@ -51,149 +50,134 @@ import com.sleepycat.je.Transaction;
  */
 public final class BerkeleyReader implements IReader {
 
-	/** Link to the {@link Database}. */
-	private final Database mDatabase;
+    /** Binding for {@link IPage}. */
+    protected final TupleBinding<IPage> mPageBinding;
 
-	/** Link to the {@link Transaction}. */
-	private final Transaction mTxn;
+    /** Link to the {@link Database}. */
+    private final Database mDatabase;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param paramDatabase
-	 *            {@link Database} reference to be connected to
-	 * @param paramTxn
-	 *            {@link Transaction} to be used
-	 */
-	public BerkeleyReader(final Database paramDatabase,
-			final Transaction paramTxn) {
-		mTxn = paramTxn;
-		mDatabase = paramDatabase;
-	}
+    /** Link to the {@link Transaction}. */
+    private final Transaction mTxn;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param paramEnv
-	 *            {@link Envirenment} to be used
-	 * @param paramDatabase
-	 *            {@link Database} to be connected to
-	 * @throws DatabaseException
-	 *             if something weird happens
-	 */
-	public BerkeleyReader(final Environment paramEnv,
-			final Database paramDatabase) throws DatabaseException {
-		this(paramDatabase, paramEnv.beginTransaction(null, null));
-	}
+    /**
+     * Constructor.
+     * 
+     * @param pDatabase
+     *            {@link Database} reference to be connected to
+     * @param pTxn
+     *            {@link Transaction} to be used
+     * @param pPageBinding
+     *            {@link TupleBinding} for de/-serializing pages
+     */
+    public BerkeleyReader(Database pDatabase, Transaction pTxn, TupleBinding<IPage> pPageBinding) {
+        mTxn = pTxn;
+        mDatabase = pDatabase;
+        mPageBinding = pPageBinding;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IPage read(final long pKey) throws TTIOException {
-		final DatabaseEntry valueEntry = new DatabaseEntry();
-		final DatabaseEntry keyEntry = new DatabaseEntry();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPage read(final long pKey) throws TTIOException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
 
-		TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pKey,
-				keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pKey, keyEntry);
 
-		IPage page = null;
-		try {
-			final OperationStatus status = mDatabase.get(mTxn, keyEntry,
-					valueEntry, LockMode.DEFAULT);
-			if (status == OperationStatus.SUCCESS) {
-				page = BerkeleyFactory.PAGE_VAL_B.entryToObject(valueEntry);
-			}
-			return page;
-		} catch (final DatabaseException exc) {
-			throw new TTIOException(exc);
-		}
+        IPage page = null;
+        try {
+            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
+            if (status == OperationStatus.SUCCESS) {
+                page = mPageBinding.entryToObject(valueEntry);
+            }
+            return page;
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public PageReference readFirstReference() throws TTIOException {
-		final DatabaseEntry valueEntry = new DatabaseEntry();
-		final DatabaseEntry keyEntry = new DatabaseEntry();
-		TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l,
-				keyEntry);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PageReference readFirstReference() throws TTIOException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
-		try {
-			final OperationStatus status = mDatabase.get(mTxn, keyEntry,
-					valueEntry, LockMode.DEFAULT);
-			PageReference uberPageReference = new PageReference();
-			if (status == OperationStatus.SUCCESS) {
-				uberPageReference.setKey(TupleBinding.getPrimitiveBinding(
-						Long.class).entryToObject(valueEntry));
-			}
-			final UberPage page = (UberPage) read(uberPageReference.getKey());
+        try {
+            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
+            PageReference uberPageReference = new PageReference();
+            if (status == OperationStatus.SUCCESS) {
+                uberPageReference.setKey(TupleBinding.getPrimitiveBinding(Long.class).entryToObject(
+                    valueEntry));
+            }
+            final UberPage page = (UberPage)read(uberPageReference.getKey());
 
-			if (uberPageReference != null) {
-				uberPageReference.setPage(page);
-			}
+            if (uberPageReference != null) {
+                uberPageReference.setPage(page);
+            }
 
-			return uberPageReference;
-		} catch (final DatabaseException e) {
-			throw new TTIOException(e);
-		}
+            return uberPageReference;
+        } catch (final DatabaseException e) {
+            throw new TTIOException(e);
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void close() throws TTIOException {
-		try {
-			mTxn.abort();
-		} catch (final DatabaseException e) {
-			throw new TTIOException(e);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws TTIOException {
+        try {
+            mTxn.abort();
+        } catch (final DatabaseException e) {
+            throw new TTIOException(e);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((mDatabase == null) ? 0 : mDatabase.hashCode());
-		result = prime * result + ((mTxn == null) ? 0 : mTxn.hashCode());
-		return result;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDatabase == null) ? 0 : mDatabase.hashCode());
+        result = prime * result + ((mTxn == null) ? 0 : mTxn.hashCode());
+        return result;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(final Object paramObj) {
-		boolean returnVal = true;
-		if (paramObj == null) {
-			returnVal = false;
-		} else if (getClass() != paramObj.getClass()) {
-			returnVal = false;
-		}
-		final BerkeleyReader other = (BerkeleyReader) paramObj;
-		if (mDatabase == null) {
-			if (other.mDatabase != null) {
-				returnVal = false;
-			}
-		} else if (!mDatabase.equals(other.mDatabase)) {
-			returnVal = false;
-		}
-		if (mTxn == null) {
-			if (other.mTxn != null) {
-				returnVal = false;
-			}
-		} else if (!mTxn.equals(other.mTxn)) {
-			returnVal = false;
-		}
-		return returnVal;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object paramObj) {
+        boolean returnVal = true;
+        if (paramObj == null) {
+            returnVal = false;
+        } else if (getClass() != paramObj.getClass()) {
+            returnVal = false;
+        }
+        final BerkeleyReader other = (BerkeleyReader)paramObj;
+        if (mDatabase == null) {
+            if (other.mDatabase != null) {
+                returnVal = false;
+            }
+        } else if (!mDatabase.equals(other.mDatabase)) {
+            returnVal = false;
+        }
+        if (mTxn == null) {
+            if (other.mTxn != null) {
+                returnVal = false;
+            }
+        } else if (!mTxn.equals(other.mTxn)) {
+            returnVal = false;
+        }
+        return returnVal;
+    }
 
 }

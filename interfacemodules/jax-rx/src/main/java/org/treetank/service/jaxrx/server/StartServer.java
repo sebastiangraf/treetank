@@ -31,6 +31,9 @@
 package org.treetank.service.jaxrx.server;
 
 import org.jaxrx.JettyServer;
+import org.treetank.access.StandardNodeSettings;
+
+import com.google.inject.Guice;
 
 /**
  * This class starts the in JAX-RX embedded Jetty server.
@@ -55,6 +58,8 @@ public final class StartServer {
      * 
      */
     public StartServer(final int sPort) throws Exception {
+
+        Guice.createInjector(new StandardNodeSettings());
         System.setProperty("org.jaxrx.systemPath",
             "org.treetank.service.jaxrx.implementation.TreeTankMediator");
         System.setProperty("org.jaxrx.systemName", "treetank");

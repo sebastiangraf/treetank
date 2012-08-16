@@ -19,8 +19,6 @@ public interface IPageReadTrx {
 
     String getName(final int pKey);
 
-    byte[] getRawName(final int pKey);
-
     void close() throws TTIOException;
 
     boolean isClosed();

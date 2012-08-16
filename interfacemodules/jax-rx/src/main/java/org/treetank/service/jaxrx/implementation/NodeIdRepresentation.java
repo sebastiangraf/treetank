@@ -27,7 +27,6 @@
 
 package org.treetank.service.jaxrx.implementation;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,11 +36,11 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
-import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
@@ -88,7 +87,7 @@ public class NodeIdRepresentation {
     /**
      * Storage path to the data.
      */
-    private final File mStoragePath;
+    private final IDatabase mDatabase;
 
     /**
      * 
@@ -97,8 +96,8 @@ public class NodeIdRepresentation {
      * @param pStoragePath
      *            storage to be set
      */
-    public NodeIdRepresentation(final File pStoragePath) {
-        mStoragePath = pStoragePath;
+    public NodeIdRepresentation(final IDatabase pDatabase) {
+        mDatabase = pDatabase;
     }
 
     /**
@@ -193,16 +192,16 @@ public class NodeIdRepresentation {
             @Override
             public void write(final OutputStream output) throws IOException, JaxRxException {
 
-                final File dbFile = new File(mStoragePath, resourceName);
                 final String revision = queryParams.get(QueryParameter.REVISION);
                 final String wrap = queryParams.get(QueryParameter.WRAP);
                 final String doNodeId = queryParams.get(QueryParameter.OUTPUT);
                 final boolean wrapResult = (wrap == null) ? true : wrap.equalsIgnoreCase(YESSTRING);
                 final boolean nodeid = (doNodeId == null) ? false : doNodeId.equalsIgnoreCase(YESSTRING);
                 final Long rev = revision == null ? null : Long.valueOf(revision);
-                final RestXPathProcessor xpathProcessor = new RestXPathProcessor(mStoragePath);
+                final RestXPathProcessor xpathProcessor = new RestXPathProcessor(mDatabase);
                 try {
-                    xpathProcessor.getXpathResource(dbFile, nodeId, query, nodeid, rev, output, wrapResult);
+                    xpathProcessor.getXpathResource(resourceName, nodeId, query, nodeid, rev, output,
+                        wrapResult);
                 } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
@@ -226,14 +225,13 @@ public class NodeIdRepresentation {
     public void deleteResource(final String resourceName, final long nodeId) throws JaxRxException {
         synchronized (resourceName) {
             ISession session = null;
-            IDatabase database = null;
             INodeWriteTrx wtx = null;
             boolean abort = false;
-            if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
+            if (mDatabase.existsResource(resourceName)) {
                 try {
-                    database = Database.openDatabase(mStoragePath);
                     // Creating a new session
-                    session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
+                    session =
+                        mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
                     // Creating a write transaction
                     wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
                     // move to node with given rest id and deletes it
@@ -249,7 +247,7 @@ public class NodeIdRepresentation {
                     throw new JaxRxException(exce);
                 } finally {
                     try {
-                        WorkerHelper.closeWTX(abort, wtx, session, database);
+                        WorkerHelper.closeWTX(abort, wtx, session);
                     } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
@@ -277,14 +275,13 @@ public class NodeIdRepresentation {
         throws JaxRxException {
         synchronized (resourceName) {
             ISession session = null;
-            IDatabase database = null;
             INodeWriteTrx wtx = null;
             boolean abort = false;
-            if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
+            if (mDatabase.existsResource(resourceName)) {
                 try {
-                    database = Database.openDatabase(mStoragePath);
                     // Creating a new session
-                    session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
+                    session =
+                        mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
                     // Creating a write transaction
                     wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
 
@@ -304,7 +301,7 @@ public class NodeIdRepresentation {
                     throw new JaxRxException(exc);
                 } finally {
                     try {
-                        WorkerHelper.closeWTX(abort, wtx, session, database);
+                        WorkerHelper.closeWTX(abort, wtx, session);
                     } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
@@ -335,17 +332,15 @@ public class NodeIdRepresentation {
     public void addSubResource(final String resourceName, final long nodeId, final InputStream input,
         final EIdAccessType type) throws JaxRxException {
         ISession session = null;
-        IDatabase database = null;
         INodeWriteTrx wtx = null;
         synchronized (resourceName) {
             boolean abort;
-            if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
+            if (mDatabase.existsResource(resourceName)) {
                 abort = false;
                 try {
-
-                    database = Database.openDatabase(mStoragePath);
                     // Creating a new session
-                    session = database.getSession(new SessionConfiguration.Builder(resourceName).build());
+                    session =
+                        mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
                     // Creating a write transaction
                     wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
                     final boolean exist = wtx.moveTo(nodeId);
@@ -388,7 +383,7 @@ public class NodeIdRepresentation {
                     throw new JaxRxException(exce);
                 } finally {
                     try {
-                        WorkerHelper.closeWTX(abort, wtx, session, database);
+                        WorkerHelper.closeWTX(abort, wtx, session);
                     } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
@@ -417,12 +412,10 @@ public class NodeIdRepresentation {
      */
     private void serialize(final String resource, final long nodeId, final Long revision,
         final boolean doNodeId, final OutputStream output, final boolean wrapResult) {
-        if (WorkerHelper.checkExistingResource(mStoragePath, resource)) {
+        if (mDatabase.existsResource(resource)) {
             ISession session = null;
-            IDatabase database = null;
             try {
-                database = Database.openDatabase(mStoragePath);
-                session = database.getSession(new SessionConfiguration.Builder(resource).build());
+                session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
                 if (wrapResult) {
                     output.write(BEGINRESULT);
                     final XMLSerializerProperties props = new XMLSerializerProperties();
@@ -461,7 +454,7 @@ public class NodeIdRepresentation {
                 }
             } finally {
                 try {
-                    WorkerHelper.closeRTX(null, session, database);
+                    WorkerHelper.closeRTX(null, session);
                 } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
@@ -497,13 +490,11 @@ public class NodeIdRepresentation {
     private void serializeAT(final String resource, final long nodeId, final Long revision,
         final boolean doNodeId, final OutputStream output, final boolean wrapResult,
         final EIdAccessType accessType) {
-        if (WorkerHelper.checkExistingResource(mStoragePath, resource)) {
+        if (mDatabase.existsResource(resource)) {
             ISession session = null;
-            IDatabase database = null;
             INodeReadTrx rtx = null;
             try {
-                database = Database.openDatabase(mStoragePath);
-                session = database.getSession(new SessionConfiguration.Builder(resource).build());
+                session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
                 if (revision == null) {
                     rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
                 } else {
@@ -581,7 +572,7 @@ public class NodeIdRepresentation {
                 }
             } finally {
                 try {
-                    WorkerHelper.closeRTX(rtx, session, database);
+                    WorkerHelper.closeRTX(rtx, session);
                 } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }

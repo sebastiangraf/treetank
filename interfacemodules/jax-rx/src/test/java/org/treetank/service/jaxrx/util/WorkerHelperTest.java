@@ -40,20 +40,27 @@ import java.io.OutputStream;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.xml.shredder.EShredderInsert;
+
+import com.google.inject.Inject;
 
 /**
  * This class is responsible to test the {@link WorkerHelper} class.
@@ -61,6 +68,8 @@ import org.treetank.service.xml.shredder.EShredderInsert;
  * @author Patrick Lang, Lukas Lewandowski, University of Konstanz
  * 
  */
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class WorkerHelperTest {
     /**
      * The WorkerHelper reference.
@@ -69,7 +78,7 @@ public class WorkerHelperTest {
     /**
      * The Treetank reference.
      */
-    private transient static DatabaseRepresentation treeTank;
+    private transient static DatabaseRepresentation treetank;
     /**
      * The resource name.
      */
@@ -79,6 +88,12 @@ public class WorkerHelperTest {
      */
     private final static File DBFILE = new File(TestHelper.PATHS.PATH1.getFile(), RESOURCENAME);
 
+    @Inject
+    public IStorageFactory mStorageFac;
+
+    @Inject
+    public IRevisioningFactory mRevisioningFac;
+
     /**
      * A simple set up.
      * 
@@ -86,28 +101,19 @@ public class WorkerHelperTest {
      */
     @BeforeMethod
     public void setUp() throws FileNotFoundException, TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         workerHelper = WorkerHelper.getInstance();
-        treeTank = new DatabaseRepresentation(TestHelper.PATHS.PATH1.getFile());
+        treetank =
+            new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+                mRevisioningFac);
         InputStream inputfile = WorkerHelperTest.class.getClass().getResourceAsStream("/factbook.xml");
-        treeTank.shred(inputfile, RESOURCENAME);
+        treetank.shred(inputfile, RESOURCENAME);
     }
 
     @AfterMethod
     public void after() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
-    }
-
-    /**
-     * This method tests {@link WorkerHelper#checkExistingResource(File)}
-     */
-    @Test
-    public void testCheckExistingResource() {
-        assertEquals("test check existing resource", true, WorkerHelper.checkExistingResource(
-            TestHelper.PATHS.PATH1.getFile(), RESOURCENAME));
     }
 
     /**
@@ -125,7 +131,7 @@ public class WorkerHelperTest {
     public void testSerializeXML() throws TTException, IOException {
         final IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         final ISession session =
-            database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
+            database.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final OutputStream out = new ByteArrayOutputStream();
 
         assertNotNull("test serialize xml", WorkerHelper.serializeXML(session, out, true, true, null));
@@ -140,11 +146,11 @@ public class WorkerHelperTest {
     @Test
     public void testShredInputStream() throws TTException, IOException {
 
-        long lastRevision = treeTank.getLastRevision(RESOURCENAME);
+        long lastRevision = treetank.getLastRevision(RESOURCENAME);
 
         final IDatabase database = Database.openDatabase(DBFILE.getParentFile());
         final ISession session =
-            database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
+            database.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
 
@@ -152,7 +158,7 @@ public class WorkerHelperTest {
 
         WorkerHelper.shredInputStream(wtx, inputStream, EShredderInsert.ADDASFIRSTCHILD);
 
-        assertEquals("test shred input stream", treeTank.getLastRevision(RESOURCENAME), ++lastRevision);
+        assertEquals("test shred input stream", treetank.getLastRevision(RESOURCENAME), ++lastRevision);
         wtx.close();
         session.close();
         database.close();
@@ -165,22 +171,21 @@ public class WorkerHelperTest {
     @Test(expectedExceptions = IllegalStateException.class)
     public void testClose() throws TTException {
         IDatabase database = Database.openDatabase(DBFILE.getParentFile());
-        ISession session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
+        ISession session =
+            database.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
 
-        WorkerHelper.closeWTX(false, wtx, session, database);
+        WorkerHelper.closeWTX(false, wtx, session);
 
         wtx.commit();
 
         database = Database.openDatabase(DBFILE.getParentFile());
-        session = database.getSession(new SessionConfiguration.Builder(DBFILE.getName()).build());
+        session = database.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeReadTrx rtx =
             new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
-        WorkerHelper.closeRTX(rtx, session, database);
-
+        WorkerHelper.closeRTX(rtx, session);
         rtx.moveTo(11);
 
     }
-
 }

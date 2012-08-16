@@ -100,21 +100,19 @@ public class NodePage implements IPage {
     }
 
     /**
-     * /** {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
-    public final String toString() {
-        final StringBuilder returnString = new StringBuilder();
-        returnString.append("pagekey=");
-        returnString.append(mNodePageKey);
-        returnString.append(", nodes: ");
-        for (final INode node : getNodes()) {
-            if (node != null) {
-                returnString.append(node.getNodeKey());
-                returnString.append(",");
-            }
-        }
-        return returnString.toString();
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("NodePage [mNodePageKey=");
+        builder.append(mNodePageKey);
+        builder.append(", mNodes=");
+        builder.append(Arrays.toString(mNodes));
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append("]");
+        return builder.toString();
     }
 
     /**

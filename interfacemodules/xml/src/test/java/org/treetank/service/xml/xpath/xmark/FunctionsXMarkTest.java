@@ -29,18 +29,23 @@ package org.treetank.service.xml.xpath.xmark;
 
 import java.io.File;
 
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
+import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathStringChecker;
+
+import com.google.inject.Inject;
 
 /**
  * This class performs tests for XQuery functions used for XMark bench test and
@@ -49,6 +54,7 @@ import org.treetank.service.xml.xpath.XPathStringChecker;
  * @author Patrick Lang, Konstanz University
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class FunctionsXMarkTest {
     /** XML file name to test. */
     private static final String XMLFILE = "10mb.xml";
@@ -56,21 +62,26 @@ public class FunctionsXMarkTest {
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + XMLFILE;
 
-    private static Holder holder;
+    private Holder holder;
 
-    /**
-     * Method is called once before each test. It deletes all states, shreds XML
-     * file to database and initializes the required variables.
-     * 
-     * @throws Exception
-     */
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
-    public static final void setUp() throws Exception {
+    public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateWtx(mResource);
+        new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
+            EShredderInsert.ADDASFIRSTCHILD).call();
     }
 
+    @AfterMethod
+    public void tearDown() throws TTException {
+        TestHelper.deleteEverything();
+    }
     /**
      * Test function string().
      * 
@@ -484,17 +495,5 @@ public class FunctionsXMarkTest {
             });
     }
 
-    /**
-     * Close all connections.
-     * 
-     * @throws TTException
-     */
-    @AfterMethod
-    @AfterClass
-    public static final void tearDown() throws TTException {
-        holder.close();
-        TestHelper.closeEverything();
-
-    }
 
 }

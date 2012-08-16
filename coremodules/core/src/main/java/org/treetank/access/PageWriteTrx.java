@@ -51,7 +51,7 @@ import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
-import org.treetank.settings.ERevisioning;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -100,7 +100,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long paramRepresentRev, final long paramStoreRev) throws TTException {
         mDelegate = new PageReadTrx(pSession, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
-        mLog = new TransactionLogCache(pSession.getConfig().mPath, paramStoreRev);
+        mLog =
+            new TransactionLogCache(pSession.getConfig().mFile, paramStoreRev, pSession.getConfig().mNodeFac);
         mPageWriter = paramWriter;
 
     }
@@ -501,10 +502,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
         throws TTException {
         final NodePage[] revs = mDelegate.getSnapshotPages(paramNodePageKey);
-        final ERevisioning revision = mDelegate.mSession.getConfig().mRevision;
-        final int mileStoneRevision = mDelegate.mSession.getConfig().mRevisionsToRestore;
+        final IRevisioning revision = mDelegate.mSession.getConfig().mRevision;
 
-        return revision.combinePagesForModification(revs, mileStoneRevision);
+        return revision.combinePagesForModification(revs);
     }
 
     /**
@@ -543,14 +543,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getRawName(int pKey) {
-        return mDelegate.getRawName(pKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public UberPage getUberPage() {
         return mDelegate.getUberPage();
     }
@@ -561,6 +553,26 @@ public final class PageWriteTrx implements IPageWriteTrx {
     @Override
     public boolean isClosed() {
         return mDelegate.isClosed();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PageWriteTrx [mPageWriter=");
+        builder.append(mPageWriter);
+        builder.append(", mLog=");
+        builder.append(mLog);
+        builder.append(", mNodePageCon=");
+        builder.append(mNodePageCon);
+        builder.append(", mNewRoot=");
+        builder.append(mNewRoot);
+        builder.append(", mDelegate=");
+        builder.append(mDelegate);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

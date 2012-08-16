@@ -32,9 +32,14 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.ChildAxis;
 import org.treetank.axis.DescendantAxis;
@@ -46,21 +51,30 @@ import org.treetank.exception.TTException;
 import org.treetank.service.xml.xpath.axis.UnionAxis;
 import org.treetank.service.xml.xpath.filter.DupFilterAxis;
 
+import com.google.inject.Inject;
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class ExpressionSingleTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        TestHelper.createTestDocument();
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder =
+            Holder.generateRtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -116,8 +130,8 @@ public class ExpressionSingleTest {
         assertEquals(false, builder.isOrdered());
 
         builder = new ExpressionSingle(holder.getNRtx());
-        builder.add(new UnionAxis(holder.getNRtx(), new DescendantAxis(holder.getNRtx()), new ParentAxis(holder
-            .getNRtx())));
+        builder.add(new UnionAxis(holder.getNRtx(), new DescendantAxis(holder.getNRtx()), new ParentAxis(
+            holder.getNRtx())));
         assertEquals(false, builder.isOrdered());
         assertTrue(builder.getExpr() instanceof DupFilterAxis);
 

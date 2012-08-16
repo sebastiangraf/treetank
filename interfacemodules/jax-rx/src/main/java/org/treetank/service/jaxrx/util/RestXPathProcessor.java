@@ -30,18 +30,15 @@
  */
 package org.treetank.service.jaxrx.util;
 
-import static org.treetank.node.IConstants.ROOT_NODE;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
@@ -70,17 +67,17 @@ public class RestXPathProcessor {
     /**
      * Path to storage.
      */
-    private final File mStoragePath;
+    private final IDatabase mDatabase;
 
     /**
      * 
      * Constructor.
      * 
-     * @param pStoragePath
+     * @param pDatabase
      *            path to the storage
      */
-    public RestXPathProcessor(final File pStoragePath) {
-        mStoragePath = pStoragePath;
+    public RestXPathProcessor(final IDatabase pDatabase) {
+        mDatabase = pDatabase;
     }
 
     /**
@@ -112,7 +109,7 @@ public class RestXPathProcessor {
         String qQuery = xpath;
         if (xpath.charAt(0) == '/')
             qQuery = ".".concat(xpath);
-        if (WorkerHelper.checkExistingResource(mStoragePath, resourceName)) {
+        if (mDatabase.existsResource(resourceName)) {
             if (wrapResult) {
                 output.write(beginResult.getBytes());
                 doXPathRes(resourceName, revision, output, nodeid, qQuery);
@@ -130,7 +127,7 @@ public class RestXPathProcessor {
     /**
      * Getting part of the XML based on a XPath query
      * 
-     * @param dbFile
+     * @param resourceName
      *            where the content should be extracted
      * 
      * @param query
@@ -150,7 +147,7 @@ public class RestXPathProcessor {
      *            output of result elements
      * @throws TTException
      */
-    public void getXpathResource(final File dbFile, final long rId, final String query,
+    public void getXpathResource(final String resourceName, final long rId, final String query,
         final boolean doNodeId, final Long doRevision, final OutputStream output, final boolean doWrap)
         throws TTException {
 
@@ -159,45 +156,45 @@ public class RestXPathProcessor {
         if (query.charAt(0) == '/')
             qQuery = ".".concat(query);
 
-        IDatabase database = null;
         ISession session = null;
         INodeReadTrx rtx = null;
         try {
-            database = Database.openDatabase(dbFile.getParentFile());
-            session = database.getSession(new SessionConfiguration.Builder(dbFile.getName()).build());
-            // Creating a transaction
+            if (mDatabase.existsResource(resourceName)) {
+                session = mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
+                // Creating a transaction
 
-            if (doRevision == null) {
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
-            } else {
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(doRevision));
-            }
-
-            final boolean exist = rtx.moveTo(rId);
-            if (exist) {
-                final AbsAxis axis = new XPathAxis(rtx, qQuery);
-                if (doWrap) {
-                    output.write(beginResult.getBytes());
-                    for (final long key : axis) {
-                        WorkerHelper.serializeXML(session, output, false, doNodeId, key, doRevision).call();
-                    }
-
-                    output.write(endResult.getBytes());
+                if (doRevision == null) {
+                    rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
                 } else {
-                    for (final long key : axis) {
-                        WorkerHelper.serializeXML(session, output, false, doNodeId, key, doRevision).call();
-                    }
-
+                    rtx = new NodeReadTrx(session.beginPageReadTransaction(doRevision));
                 }
-            } else {
-                throw new WebApplicationException(404);
+
+                final boolean exist = rtx.moveTo(rId);
+                if (exist) {
+                    final AbsAxis axis = new XPathAxis(rtx, qQuery);
+                    if (doWrap) {
+                        output.write(beginResult.getBytes());
+                        for (final long key : axis) {
+                            WorkerHelper.serializeXML(session, output, false, doNodeId, key, doRevision)
+                                .call();
+                        }
+
+                        output.write(endResult.getBytes());
+                    } else {
+                        for (final long key : axis) {
+                            WorkerHelper.serializeXML(session, output, false, doNodeId, key, doRevision)
+                                .call();
+                        }
+
+                    }
+                } else {
+                    throw new WebApplicationException(404);
+                }
             }
 
         } catch (final Exception globExcep) {
             throw new WebApplicationException(globExcep, Response.Status.INTERNAL_SERVER_ERROR);
-        } finally {
-            WorkerHelper.closeRTX(rtx, session, database);
-        }
+        } 
     }
 
     /**
@@ -219,35 +216,28 @@ public class RestXPathProcessor {
     private void doXPathRes(final String resource, final Long revision, final OutputStream output,
         final boolean nodeid, final String xpath) throws TTException {
         // Database connection to treetank
-        IDatabase database = null;
         ISession session = null;
         INodeReadTrx rtx = null;
         try {
-            database = Database.openDatabase(mStoragePath);
-            session = database.getSession(new SessionConfiguration.Builder(resource).build());
-            // Creating a transaction
-            if (revision == null) {
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
-            } else {
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision));
-            }
+            if (mDatabase.existsResource(resource)) {
+                session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
+                // Creating a transaction
+                if (revision == null) {
+                    rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+                } else {
+                    rtx = new NodeReadTrx(session.beginPageReadTransaction(revision));
+                }
 
-            final AbsAxis axis = new XPathAxis(rtx, xpath);
-            for (final long key : axis) {
-                WorkerHelper.serializeXML(session, output, false, nodeid, key, revision).call();
+                final AbsAxis axis = new XPathAxis(rtx, xpath);
+                for (final long key : axis) {
+                    WorkerHelper.serializeXML(session, output, false, nodeid, key, revision).call();
+                }
             }
-
         } catch (final Exception globExcep) {
             throw new WebApplicationException(globExcep, Response.Status.INTERNAL_SERVER_ERROR);
         } finally {
-            rtx.moveTo(ROOT_NODE);
+            WorkerHelper.closeRTX(rtx, session);
 
-            WorkerHelper.closeRTX(rtx, session, database);
-
-            // rtx.close();
-            // session.close();
-            // database.close();
         }
     }
-
 }

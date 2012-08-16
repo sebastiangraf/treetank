@@ -26,7 +26,6 @@
  */
 package org.treetank.cache;
 
-import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTException;
 import org.treetank.page.NodePage;
 
@@ -38,16 +37,18 @@ import org.treetank.page.NodePage;
  */
 public class CacheTestHelper {
 
+    private final static int VERSIONSTORESTORE = 100;
+    
     protected static NodePage[][] PAGES;
 
     public static void setUp(final ICache cache) throws TTException {
         // Be sure to store more pages as defined in the RAMCache and to be reproduced by the versions
-        PAGES = new NodePage[LRUCache.CACHE_CAPACITY + 1][ResourceConfiguration.VERSIONSTORESTORE + 1];
+        PAGES = new NodePage[LRUCache.CACHE_CAPACITY + 1][VERSIONSTORESTORE+1];
         for (int i = 0; i < PAGES.length; i++) {
             final NodePage page = new NodePage(i, 0);
-            final NodePage[] revs = new NodePage[ResourceConfiguration.VERSIONSTORESTORE];
+            final NodePage[] revs = new NodePage[VERSIONSTORESTORE+1];
 
-            for (int j = 0; j < ResourceConfiguration.VERSIONSTORESTORE; j++) {
+            for (int j = 0; j < VERSIONSTORESTORE; j++) {
                 PAGES[i][j + 1] = new NodePage(i, 0);
                 revs[j] = PAGES[i][j + 1];
             }

@@ -28,6 +28,15 @@
 package org.treetank.access.conf;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
+
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 /**
  * <h1>Database Configuration</h1>
@@ -40,20 +49,16 @@ import java.io.File;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class DatabaseConfiguration implements IConfigureSerializable {
-
-    /** For serialization. */
-    private static final long serialVersionUID = -5005030622296323912L;
+public final class DatabaseConfiguration {
 
     /**
-     * Paths for a {@link org.treetank.access.Database}. Each {@link org.treetank.access.Database} has the same folder.layout.
+     * Paths for a {@link org.treetank.access.Database}. Each {@link org.treetank.access.Database} has the
+     * same folder.layout.
      */
     public enum Paths {
 
         /** File to store db settings. */
         ConfigBinary(new File("dbsetting.obj"), false),
-        /** File to store encryption db settings. */
-        KEYSELECTOR(new File("keyselector"), true),
         /** File to store the data. */
         Data(new File("resources"), true);
 
@@ -114,15 +119,25 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
             return existing - values().length;
         }
 
+        /**
+         * Deleting a storage recursive. Used for deleting a databases
+         * 
+         * @param pFile
+         *            which should be deleted included descendants
+         * @return true if delete is valid
+         */
+        public static boolean recursiveDelete(final File pFile) {
+            if (pFile.isDirectory()) {
+                for (final File child : pFile.listFiles()) {
+                    if (!recursiveDelete(child)) {
+                        return false;
+                    }
+                }
+            }
+            return pFile.delete();
+        }
+
     }
-
-    // STATIC STANDARD FIELDS
-    /** Identification for string. */
-    public static final String BINARY = "5.4.0";
-    // END STATIC STANDARD FIELDS
-
-    /** Binary version of storage. */
-    public final String mBinaryVersion;
 
     /** Path to file. */
     public final File mFile;
@@ -134,7 +149,6 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
      *            file to be set
      */
     public DatabaseConfiguration(final File paramFile) {
-        mBinaryVersion = BINARY;
         mFile = paramFile;
     }
 
@@ -143,10 +157,10 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("DatabaseConfiguration, ");
-        builder.append("File: ");
-        builder.append(this.mFile);
+        StringBuilder builder = new StringBuilder();
+        builder.append("DatabaseConfiguration [mFile=");
+        builder.append(mFile);
+        builder.append("]");
         return builder.toString();
     }
 
@@ -166,16 +180,56 @@ public final class DatabaseConfiguration implements IConfigureSerializable {
         final int prime = 72277;
         int result = 13;
         result = prime * result + mFile.hashCode();
-        result = prime * result + mBinaryVersion.hashCode();
         return result;
     }
 
     /**
-     * {@inheritDoc}
+     * Serializing a {@link DatabaseConfiguration} to a json file.
+     * 
+     * @param pConfig
+     *            to be serialized
+     * @throws TTIOException
      */
-    @Override
-    public File getConfigFile() {
-        return new File(mFile, Paths.ConfigBinary.getFile().getName());
+    public static void serialize(final DatabaseConfiguration pConfig) throws TTIOException {
+        try {
+            FileWriter fileWriter =
+                new FileWriter(new File(pConfig.mFile, Paths.ConfigBinary.getFile().getName()));
+            JsonWriter jsonWriter = new JsonWriter(fileWriter);
+            jsonWriter.beginObject();
+            jsonWriter.name("file").value(pConfig.mFile.getAbsolutePath());
+            jsonWriter.endObject();
+            jsonWriter.close();
+            fileWriter.close();
+        } catch (FileNotFoundException fileExec) {
+            throw new TTIOException(fileExec);
+        } catch (IOException ioexc) {
+            throw new TTIOException(ioexc);
+        }
     }
 
+    /**
+     * Generate a DatabaseConfiguration out of a file.
+     * 
+     * @param pFile
+     *            where the DatabaseConfiguration lies in as json
+     * @return a new {@link DatabaseConfiguration} class
+     * @throws TTIOException
+     */
+    public static DatabaseConfiguration deserialize(final File pFile) throws TTIOException {
+        try {
+            FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
+            JsonReader jsonReader = new JsonReader(fileReader);
+            jsonReader.beginObject();
+            assert jsonReader.nextName().equals("file");
+            File file = new File(jsonReader.nextString());
+            jsonReader.endObject();
+            jsonReader.close();
+            fileReader.close();
+            return new DatabaseConfiguration(file);
+        } catch (FileNotFoundException fileExec) {
+            throw new TTIOException(fileExec);
+        } catch (IOException ioexc) {
+            throw new TTIOException(ioexc);
+        }
+    }
 }
