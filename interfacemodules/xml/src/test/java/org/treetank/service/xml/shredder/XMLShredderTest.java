@@ -161,6 +161,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
+        database2.createResource(mResourceConfig.create(PATHS.PATH2.getFile(), "shredded", 1));
         final ISession expectedSession =
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
@@ -211,8 +212,10 @@ public class XMLShredderTest extends XMLTestCase {
 
         // Setup parsed session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
+        database2.createResource(mResourceConfig.create(TestHelper.PATHS.PATH2.getFile(),
+            TestHelper.RESOURCENAME, 1));
         final ISession session2 =
-            database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
+            database2.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session2, session2.beginPageWriteTransaction(), HashKind.Rolling);
         final XMLShredder shredder =
@@ -248,6 +251,7 @@ public class XMLShredderTest extends XMLTestCase {
     @Test
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
+        database.createResource(mResourceConfig.create(PATHS.PATH2.getFile(), "shredded", 1));
         final ISession session =
             database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =

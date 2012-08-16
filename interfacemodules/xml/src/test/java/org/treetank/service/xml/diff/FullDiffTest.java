@@ -33,11 +33,17 @@ import javax.xml.stream.XMLStreamException;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
+
+import com.google.inject.Inject;
 
 /**
  * FullDiff test.
@@ -46,17 +52,23 @@ import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class FullDiffTest {
 
-    private Holder mHolder;
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
 
     private IDiffObserver mObserver;
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
-        mHolder = Holder.generateWtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateWtx(mResource);
         mObserver = DiffTestHelper.createMock();
     }
 
@@ -68,51 +80,51 @@ public class FullDiffTest {
 
     @Test
     public void testFullDiffFirst() throws TTException, InterruptedException {
-        DiffTestHelper.setUpFirst(mHolder);
-        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.setUpFirst(holder);
+        DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFirst(mObserver);
     }
 
     @Test
     public void testOptimizedFirst() throws InterruptedException, TTException {
-        DiffTestHelper.setUpFirst(mHolder);
-        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.setUpFirst(holder);
+        DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFirst(mObserver);
     }
 
     @Test
     public void testFullDiffSecond() throws TTException, InterruptedException, IOException,
         XMLStreamException {
-        DiffTestHelper.setUpSecond(mHolder);
-        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.setUpSecond(holder);
+        DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffSecond(mObserver);
     }
 
     @Test
     public void testFullDiffThird() throws TTException, IOException, XMLStreamException, InterruptedException {
-        DiffTestHelper.setUpThird(mHolder);
-        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.setUpThird(holder);
+        DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffThird(mObserver);
     }
 
     @Test
     public void testFullDiffFourth() throws Exception {
-        DiffTestHelper.setUpFourth(mHolder);
-        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.setUpFourth(holder);
+        DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFourth(mObserver);
     }
 
     @Test
     public void testFullDiffFifth() throws Exception {
-        DiffTestHelper.setUpFifth(mHolder);
-        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.setUpFifth(holder);
+        DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFifth(mObserver);
     }
 
     @Test
     public void testFullDiffSixth() throws Exception {
-        DiffTestHelper.setUpSixth(mHolder);
-        DiffTestHelper.check(mHolder, mObserver, EDiffOptimized.NO);
+        DiffTestHelper.setUpSixth(holder);
+        DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffSixth(mObserver);
     }
 }

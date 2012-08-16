@@ -41,12 +41,16 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
@@ -55,11 +59,15 @@ import org.treetank.service.xml.XMLTestHelper;
 import org.treetank.service.xml.serialize.XMLSerializer;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
+import com.google.inject.Inject;
+
 /**
  * Test XMLUpdateShredder.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  */
+
+@Guice(moduleFactory = NodeModuleFactory.class)
 public final class XMLUpdateShredderTest extends XMLTestCase {
     private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
 
@@ -105,6 +113,9 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         XMLUnit.setIgnoreWhitespace(true);
     }
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
@@ -112,92 +123,92 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
     public void testSame() throws Exception {
-        test(XMLSAME);
+        check(XMLSAME);
     }
 
     @Test
     public void testInsertsFirst() throws Exception {
-        test(XMLINSERTFIRST);
+        check(XMLINSERTFIRST);
     }
 
     @Test
     public void testInsertsSecond() throws Exception {
-        test(XMLINSERTSECOND);
+        check(XMLINSERTSECOND);
     }
 
     @Test
     public void testInsertsThird() throws Exception {
-        test(XMLINSERTTHIRD);
+        check(XMLINSERTTHIRD);
     }
 
     @Test
     public void testDeletesFirst() throws Exception {
-        test(XMLDELETEFIRST);
+        check(XMLDELETEFIRST);
     }
 
     @Test
     public void testDeletesSecond() throws Exception {
-        test(XMLDELETESECOND);
+        check(XMLDELETESECOND);
     }
 
     @Test
     public void testDeletesThird() throws Exception {
-        test(XMLDELETETHIRD);
+        check(XMLDELETETHIRD);
     }
 
     @Test
     public void testDeletesFourth() throws Exception {
-        test(XMLDELETEFOURTH);
+        check(XMLDELETEFOURTH);
     }
 
     @Test
     public void testAllFirst() throws Exception {
-        test(XMLALLFIRST);
+        check(XMLALLFIRST);
     }
 
     @Test
     public void testAllSecond() throws Exception {
-        test(XMLALLSECOND);
+        check(XMLALLSECOND);
     }
 
     @Test
     public void testAllThird() throws Exception {
-        test(XMLALLTHIRD);
+        check(XMLALLTHIRD);
     }
 
     @Test
     public void testAllFourth() throws Exception {
-        test(XMLALLFOURTH);
+        check(XMLALLFOURTH);
     }
 
     @Test
     public void testAllFifth() throws Exception {
-        test(XMLALLFIFTH);
+        check(XMLALLFIFTH);
     }
 
     @Test
     public void testAllSixth() throws Exception {
-        test(XMLALLSIXTH);
+        check(XMLALLSIXTH);
     }
 
     @Test
     public void testAllSeventh() throws Exception {
-        test(XMLALLSEVENTH);
+        check(XMLALLSEVENTH);
     }
 
     @Test
     public void testAllEighth() throws Exception {
-        test(XMLALLEIGHTH);
+        check(XMLALLEIGHTH);
     }
 
     @Test
     public void testAllNineth() throws Exception {
-        test(XMLALLNINETH);
+        check(XMLALLNINETH);
     }
 
     // @Test
@@ -205,13 +216,11 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     // test(XMLLINGUISTICS);
     // }
 
-    @Test(enabled = false)
-    private void test(final String FOLDER) throws Exception {
+    private void check(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, TestHelper.PATHS.PATH1
-            .getConfig()).build());
+        database.createResource(mResourceConfig.create(PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 1));
         final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final File folder = new File(FOLDER);
         final File[] filesList = folder.listFiles();
         final List<File> list = new ArrayList<File>();
