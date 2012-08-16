@@ -27,10 +27,10 @@
 
 package org.treetank.saxon.wrapper;
 
+import static org.testng.AssertJUnit.assertEquals;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
@@ -56,7 +56,7 @@ import com.google.inject.Inject;
  * 
  */
 @Guice(moduleFactory = NodeModuleFactory.class)
-public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
+public final class TestNodeWrapperS9ApiXPath {
 
     private Holder holder;
 
@@ -88,7 +88,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
             strBuilder.append(item.toString());
         }
 
-        assertXMLEqual("expected pieces to be similar", "<b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/></b>",
+        assertEquals("expected pieces to be similar", "<b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/>\n</b>",
             strBuilder.toString());
     }
 
@@ -115,8 +115,8 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
             strBuilder.append(item.toString());
         }
 
-        assertXMLEqual("expected pieces to be similar",
-            "<b xmlns:p=\"ns\" p:x=\"y\"><c xmlns:p=\"ns\"/>bar</b>", strBuilder.toString());
+        assertEquals("expected pieces to be similar",
+            "<b xmlns:p=\"ns\" p:x=\"y\">\n   <c xmlns:p=\"ns\"/>bar</b>", strBuilder.toString());
     }
 
     @Test
@@ -144,8 +144,9 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
         }
         strBuilder.append("</result>");
 
-        assertXMLEqual("expected pieces to be similar",
-            "<result><b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/></b><b xmlns:p=\"ns\" p:x=\"y\">"
+        assertEquals("expected pieces to be similar",
+            "<result><b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/>\n"+
+        "</b><b xmlns:p=\"ns\" p:x=\"y\">\n   "
                 + "<c xmlns:p=\"ns\"/>bar</b></result>", strBuilder.toString());
     }
 

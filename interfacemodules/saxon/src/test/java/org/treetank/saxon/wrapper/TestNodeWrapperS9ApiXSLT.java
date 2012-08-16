@@ -46,7 +46,6 @@ import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
 import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 import org.testng.AssertJUnit;
@@ -62,8 +61,8 @@ import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
@@ -82,7 +81,7 @@ import com.google.inject.Inject;
  * 
  */
 @Guice(moduleFactory = NodeModuleFactory.class)
-public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
+public final class TestNodeWrapperS9ApiXSLT {
 
     /** Stylesheet file. */
     private static final File STYLESHEET = new File("src" + File.separator + "test" + File.separator

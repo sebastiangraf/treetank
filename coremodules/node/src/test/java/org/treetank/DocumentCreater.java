@@ -77,7 +77,7 @@ public final class DocumentCreater {
 
     /** String representation of test document. */
     public static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-        + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">" + "<c/>bar</b>oops3</p:a>";
+        + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c></c></b>oops2<b p:x=\"y\"><c></c>bar</b>oops3</p:a>";
 
     /**
      * Private Constructor, not used.
