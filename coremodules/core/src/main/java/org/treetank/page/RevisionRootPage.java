@@ -27,8 +27,6 @@
 
 package org.treetank.page;
 
-import java.util.Arrays;
-
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -170,8 +168,6 @@ public final class RevisionRootPage implements IPage {
         builder.append(mMaxNodeKey);
         builder.append(", mRevision=");
         builder.append(mRevision);
-        builder.append(", mReferences=");
-        builder.append(Arrays.toString(mReferences));
         builder.append("]");
         return builder.toString();
     }

@@ -35,21 +35,18 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.DocumentCreater;
 import org.treetank.Holder;
+import org.treetank.NodeHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.access.Database;
-import org.treetank.access.NodeWriteTrx;
-import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IDatabase;
-import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.ISession;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
+
+import com.google.inject.Inject;
 
 /**
  * Test XPath S9Api.
@@ -58,42 +55,32 @@ import org.treetank.saxon.evaluator.XPathEvaluator;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
-    /**
-     * Treetank database on Treetank test document {@link IDatabase}.
-     */
-    private transient Holder mHolder;
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
     @BeforeMethod
-    public void setUp() throws TTException {
-        TestHelper.closeEverything();
+    public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
-        final DatabaseConfiguration db = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
-        Database.createDatabase(db);
-        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db).build());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
-        final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
-        session.close();
+        ResourceConfiguration mResource =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        NodeHelper.createTestDocument(mResource);
+        holder = Holder.generateRtx(mResource);
         XMLUnit.setIgnoreWhitespace(true);
-        mHolder = Holder.generateRtx();
     }
 
     @AfterMethod
-    public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+    public void afterMethod() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @Test
     public void testB1() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[1]", mHolder.getSession()).call();
+        final XPathSelector selector = new XPathEvaluator("//b[1]", holder.getSession()).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -107,7 +94,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testB1String() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[1]/text()", mHolder.getSession()).call();
+        final XPathSelector selector = new XPathEvaluator("//b[1]/text()", holder.getSession()).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -120,7 +107,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testB2() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[2]", mHolder.getSession()).call();
+        final XPathSelector selector = new XPathEvaluator("//b[2]", holder.getSession()).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -134,7 +121,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testB2Text() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b[2]/text()", mHolder.getSession()).call();
+        final XPathSelector selector = new XPathEvaluator("//b[2]/text()", holder.getSession()).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -147,7 +134,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testB() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("//b", mHolder.getSession()).call();
+        final XPathSelector selector = new XPathEvaluator("//b", holder.getSession()).call();
 
         final StringBuilder strBuilder = new StringBuilder();
 
@@ -164,7 +151,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
     @Test
     public void testCountB() throws Exception {
-        final XPathSelector selector = new XPathEvaluator("count(//b)", mHolder.getSession()).call();
+        final XPathSelector selector = new XPathEvaluator("count(//b)", holder.getSession()).call();
 
         final StringBuilder sb = new StringBuilder();
 

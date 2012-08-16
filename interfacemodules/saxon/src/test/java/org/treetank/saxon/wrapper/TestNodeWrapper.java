@@ -63,6 +63,7 @@ import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
@@ -107,7 +108,6 @@ public class TestNodeWrapper {
 
     @AfterMethod
     public void afterMethod() throws TTException {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
@@ -122,13 +122,6 @@ public class TestNodeWrapper {
     public void testCompareOrder() throws XPathException, TTException {
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
-
-        final DatabaseConfiguration db2 = new DatabaseConfiguration(TestHelper.PATHS.PATH2.getFile());
-        Database.createDatabase(db2);
-        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db2).build());
-        final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
 
         // Before.
         NodeInfo node = new DocumentWrapper(holder.getSession(), config);
@@ -145,8 +138,6 @@ public class TestNodeWrapper {
         other = new NodeWrapper(new DocumentWrapper(holder.getSession(), config), 3);
         assertEquals(0, node.compareOrder(other));
 
-        session.close();
-        database.close();
     }
 
     @Test
@@ -179,9 +170,10 @@ public class TestNodeWrapper {
 
         Database.createDatabase(db2);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, db2).build());
+        database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH2.getFile(),
+            TestHelper.RESOURCENAME, 1));
         final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         SaxonHelper.createDocumentRootNode(wtx);

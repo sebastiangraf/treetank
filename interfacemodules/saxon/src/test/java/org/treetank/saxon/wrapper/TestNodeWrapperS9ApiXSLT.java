@@ -52,8 +52,10 @@ import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
@@ -61,6 +63,8 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
@@ -69,12 +73,15 @@ import org.treetank.saxon.evaluator.XSLTEvaluator;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
+import com.google.inject.Inject;
+
 /**
  * Test XSLT S9Api.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
 
     /** Stylesheet file. */
@@ -85,7 +92,10 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     private static final File BOOKS = new File("src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "data" + File.separator + "books.xml");
 
-    private Holder mHolder;
+    private Holder holder;
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -93,10 +103,11 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
         Database.createDatabase(dbConfig);
         final IDatabase databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        databaseBooks
-            .createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
+        ResourceConfiguration resConfig =
+            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 1);
+        databaseBooks.createResource(resConfig);
         final ISession session =
-            databaseBooks.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+            databaseBooks.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         SaxonHelper.createDocumentRootNode(wtx);
@@ -106,7 +117,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         wtx.close();
         session.close();
         databaseBooks.close();
-        mHolder = Holder.generateSession();
+        holder = Holder.generateSession(resConfig);
 
         saxonTransform(BOOKS, STYLESHEET);
 
@@ -122,7 +133,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     @Test
     public void testWithoutSerializer() throws Exception {
         final OutputStream out =
-            new XSLTEvaluator(mHolder.getSession(), STYLESHEET, new ByteArrayOutputStream()).call();
+            new XSLTEvaluator(holder.getSession(), STYLESHEET, new ByteArrayOutputStream()).call();
 
         final StringBuilder sBuilder = readFile();
 
@@ -139,7 +150,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
         serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
 
         final OutputStream out =
-            new XSLTEvaluator(mHolder.getSession(), STYLESHEET, new ByteArrayOutputStream(), serializer)
+            new XSLTEvaluator(holder.getSession(), STYLESHEET, new ByteArrayOutputStream(), serializer)
                 .call();
 
         final StringBuilder sBuilder = readFile();

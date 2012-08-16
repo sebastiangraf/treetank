@@ -201,8 +201,6 @@ public class PageReadTrx implements IPageReadTrx {
         builder.append(mRootPage);
         builder.append(", mCache=");
         builder.append(mCache);
-        builder.append(", mSession=");
-        builder.append(mSession);
         builder.append(", mClose=");
         builder.append(mClose);
         builder.append("]");

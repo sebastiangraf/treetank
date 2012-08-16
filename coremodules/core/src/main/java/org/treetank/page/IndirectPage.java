@@ -27,8 +27,6 @@
 
 package org.treetank.page;
 
-import java.util.Arrays;
-
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -114,9 +112,7 @@ public final class IndirectPage implements IPage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("IndirectPage [mReferences=");
-        builder.append(Arrays.toString(mReferences));
-        builder.append(", mRevision=");
+        builder.append("IndirectPage [mRevision=");
         builder.append(mRevision);
         builder.append("]");
         return builder.toString();

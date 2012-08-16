@@ -38,8 +38,9 @@ import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
@@ -63,16 +64,15 @@ public final class SaxonHelper {
         "test").append(File.separator).append("resources").append(File.separator).append("data").append(
         File.separator).append("my-books.xml").toString());
 
-    public static void createBookDB() throws Exception {
-        TestHelper.closeEverything();
+    public static void createBookDB(IResourceConfigurationFactory resFac) throws Exception {
         TestHelper.deleteEverything();
 
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
         Database.createDatabase(dbConfig);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        database.createResource(new ResourceConfiguration.Builder(TestHelper.RESOURCE, dbConfig).build());
+        database.createResource(resFac.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 1));
         final ISession session =
-            database.getSession(new SessionConfiguration.Builder(TestHelper.RESOURCE).build());
+            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         createDocumentRootNode(wtx);

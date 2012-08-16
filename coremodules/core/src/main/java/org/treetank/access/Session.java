@@ -177,8 +177,6 @@ public final class Session implements ISession {
         builder.append(mResourceConfig);
         builder.append(", mSessionConfig=");
         builder.append(mSessionConfig);
-        builder.append(", mDatabase=");
-        builder.append(mDatabase);
         builder.append(", mLastCommittedUberPage=");
         builder.append(mLastCommittedUberPage);
         builder.append(", mPageTrxs=");
