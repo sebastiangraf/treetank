@@ -31,12 +31,19 @@ import java.io.File;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
+import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
+
+import com.google.inject.Inject;
 
 /**
  * Performes the XPathFunctionalityTest provided on <a
@@ -46,6 +53,7 @@ import org.treetank.service.xml.shredder.XMLShredder;
  * @author Tina Scherer, University of Konstanz
  * @author Sebastian Graf, University of Konstanz
  */
+@Guice(moduleFactory = NodeModuleFactory.class)
 public class XPathFunctionTest {
 
     public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
@@ -53,17 +61,23 @@ public class XPathFunctionTest {
 
     private Holder holder;
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        XMLShredder.main(XML, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
-        holder = Holder.generateRtx();
+        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        holder = Holder.generateWtx(mResource);
+        new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
+            EShredderInsert.ADDASFIRSTCHILD).call();
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
-        TestHelper.closeEverything();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -90,10 +104,9 @@ public class XPathFunctionTest {
             20L, 1L
         });
 
-        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//L/ancestor-or-self::*"),
-            new long[] {
-                53L, 20L, 1L
-            });
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//L/ancestor-or-self::*"), new long[] {
+            53L, 20L, 1L
+        });
 
         AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//L/following-sibling::*"),
             new long[] {
@@ -207,8 +220,8 @@ public class XPathFunctionTest {
             new long[] {});
 
         // porcessing instructions are not supported yet
-        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
-            "//L/processing-instruction(\"myPI\")"), new long[] {});
+        AxisTest.testIAxisConventions(
+            new XPathAxis(holder.getNRtx(), "//L/processing-instruction(\"myPI\")"), new long[] {});
 
         AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//L/node()"), new long[] {
             57L, 58L, 62L, 63L, 77L
@@ -240,15 +253,15 @@ public class XPathFunctionTest {
             87L, 92L, 101L, 106L, 115L, 120L
         });
 
-        AxisTest.testIAxisConventions(
-            new XPathAxis(holder.getNRtx(), "//*[preceding::L or following::L]"), new long[] {
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//*[preceding::L or following::L]"),
+            new long[] {
                 6L, 111L, 10L, 15L, 24L, 39L, 83L, 97L, 28L, 33L, 43L, 48L, 87L, 92L, 101L, 106L, 115L, 120L
             });
 
-        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
-            "//L/ancestor::* | //L/descendant::*"), new long[] {
-            20L, 1L, 58L, 63L, 67L, 72L, 77L
-        });
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "//L/ancestor::* | //L/descendant::*"),
+            new long[] {
+                20L, 1L, 58L, 63L, 67L, 72L, 77L
+            });
 
         // AbsAxisTest.testIAxisConventions(new XPathAxis(holder.getRtx(),
         // "//*[.=\"happy-go-lucky man\"]"), new long[] { 38L });
