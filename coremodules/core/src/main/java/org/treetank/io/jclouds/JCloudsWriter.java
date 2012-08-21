@@ -5,7 +5,7 @@ package org.treetank.io.jclouds;
 
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IReader;
+import org.treetank.io.IWriter;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
@@ -13,10 +13,8 @@ import org.treetank.page.PageReference;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class JCloudsReader implements IReader {
+public class JCloudsWriter implements IWriter {
 
-    
-    
     /**
      * {@inheritDoc}
      */
@@ -33,6 +31,24 @@ public class JCloudsReader implements IReader {
     public IPage read(long pKey) throws TTIOException, TTByteHandleException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long write(PageReference pageReference) throws TTIOException, TTByteHandleException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeFirstReference(PageReference pageReference) throws TTIOException, TTByteHandleException {
+        // TODO Auto-generated method stub
+
     }
 
     /**

@@ -57,14 +57,11 @@
 			</snapshots>
 		</repository>
 	</repositories>
-<!--	<build>
-		<plugins>
- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-assembly-plugin</artifactId> 
-				<configuration> <descriptors> <descriptor>src/main/assembly/jarAssembly.xml</descriptor> 
-				</descriptors> <archive> <manifest> <mainClass>org.treetank.utils.TreeTankCommandoLineExplorer</mainClass> 
-				</manifest> </archive> </configuration> </plugin> 
-		</plugins>
-	</build>-->
+	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-assembly-plugin</artifactId> <configuration> <descriptors> 
+		<descriptor>src/main/assembly/jarAssembly.xml</descriptor> </descriptors> 
+		<archive> <manifest> <mainClass>org.treetank.utils.TreeTankCommandoLineExplorer</mainClass> 
+		</manifest> </archive> </configuration> </plugin> </plugins> </build> -->
 	<dependencies>
 		<dependency>
 			<groupId>treetank</groupId>
@@ -81,7 +78,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jclouds</groupId>
-			<artifactId>jclouds-blobstore</artifactId>
+			<artifactId>jclouds-allcompute</artifactId>
 			<version>1.5.0-alpha.1</version>
 		</dependency>
 		<dependency>
