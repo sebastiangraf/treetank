@@ -64,7 +64,7 @@ public class AttributeAxisTest {
         mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
         NodeHelper.createTestDocument(mResource);
         holder =
-            Holder.generateRtx(mResource);
+            Holder.generateWtx(mResource);
     }
 
     @AfterMethod
@@ -97,7 +97,7 @@ public class AttributeAxisTest {
         AxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
     }
 
-    @Test(enabled = false)
+    @Test
     public void testMultipleAttributes() throws TTException {
         final INodeWriteTrx wtx = holder.getNWtx();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
