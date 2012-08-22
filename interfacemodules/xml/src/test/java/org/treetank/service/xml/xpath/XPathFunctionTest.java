@@ -28,6 +28,7 @@
 package org.treetank.service.xml.xpath;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -40,6 +41,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -69,7 +71,10 @@ public class XPathFunctionTest {
     @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
         new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
             EShredderInsert.ADDASFIRSTCHILD).call();

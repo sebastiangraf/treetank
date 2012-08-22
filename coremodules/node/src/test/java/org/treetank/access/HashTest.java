@@ -31,6 +31,8 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import java.util.Properties;
+
 import javax.xml.namespace.QName;
 
 import org.testng.annotations.AfterMethod;
@@ -50,6 +52,7 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.inject.Inject;
@@ -246,8 +249,10 @@ public class HashTest {
 
     private INodeWriteTrx createWtx(final HashKind kind) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        ResourceConfiguration res =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        ResourceConfiguration res = mResourceConfig.create(props, 10);
         TestHelper.createResource(res);
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));

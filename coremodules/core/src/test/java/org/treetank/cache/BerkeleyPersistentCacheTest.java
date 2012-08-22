@@ -58,7 +58,7 @@ public class BerkeleyPersistentCacheTest {
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         ResourceConfiguration conf =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+            mResourceConfig.create(TestHelper.createProperties(), 10);
         TestHelper.createResource(conf);
 
         cache =

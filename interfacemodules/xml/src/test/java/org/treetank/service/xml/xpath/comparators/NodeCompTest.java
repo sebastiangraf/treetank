@@ -29,6 +29,8 @@ package org.treetank.service.xml.xpath.comparators;
 
 import static org.testng.AssertJUnit.assertEquals;
 
+import java.util.Properties;
+
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -62,7 +64,10 @@ public class NodeCompTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 1);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
         comparator =

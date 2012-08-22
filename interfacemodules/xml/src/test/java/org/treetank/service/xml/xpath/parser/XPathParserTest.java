@@ -29,6 +29,8 @@ package org.treetank.service.xml.xpath.parser;
 
 import static org.testng.AssertJUnit.assertEquals;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -41,6 +43,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.utils.NamePageHash;
@@ -60,10 +63,12 @@ public class XPathParserTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
-        holder =
-            Holder.generateRtx(mResource);
+        holder = Holder.generateRtx(mResource);
     }
 
     @AfterMethod

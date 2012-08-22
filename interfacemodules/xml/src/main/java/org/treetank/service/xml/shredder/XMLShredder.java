@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -355,8 +356,10 @@ public class XMLShredder implements Callable<Void> {
         Database.truncateDatabase(config);
         Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(target);
-        db.createResource(new ResourceConfiguration(target, "shredded", 1, storage, revision,
-            new TreeNodeFactory()));
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            target, "shredded").getAbsolutePath());
+        db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);

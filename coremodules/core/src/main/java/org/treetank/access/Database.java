@@ -42,6 +42,7 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.io.IConstants;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -177,9 +178,7 @@ public final class Database implements IDatabase {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already
         // set data.
-        final File path =
-            new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                pResConf.mFile.getName());
+        final File path = new File(pResConf.mProperties.getProperty(IConstants.FILENAME));
         // if file is existing, skipping
         if (path.exists()) {
             return false;
@@ -208,7 +207,8 @@ public final class Database implements IDatabase {
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
-                pResConf.mFile.delete();
+                throw new IllegalStateException(new StringBuilder("Failure, please remove folder ").append(
+                    pResConf.mProperties.getProperty(IConstants.FILENAME)).append(" manually!").toString());
             }
             return returnVal;
         }
@@ -289,7 +289,8 @@ public final class Database implements IDatabase {
             ResourceConfiguration config = ResourceConfiguration.deserialize(resourceFile);
 
             // Resource of session must be associated to this database
-            assert config.mFile.getParentFile().getParentFile().equals(mDBConfig.mFile);
+            assert new File(config.mProperties.getProperty(IConstants.FILENAME)).getParentFile()
+                .getParentFile().equals(mDBConfig.mFile);
             returnVal = new Session(this, config, pSessionConf);
             mSessions.put(resourceFile, returnVal);
         }

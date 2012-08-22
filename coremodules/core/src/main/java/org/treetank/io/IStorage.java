@@ -26,7 +26,7 @@
  */
 package org.treetank.io;
 
-import java.io.File;
+import java.util.Properties;
 
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -102,11 +102,11 @@ public interface IStorage {
         /**
          * Generating a storage for a fixed file.
          * 
-         * @param pFile
-         *            referencing to the storage.
+         * @param pProperties
+         *            referencing not only to the storage.
          * @return an {@link IStorage}-instance
          */
-        IStorage create(File pFile);
+        IStorage create(Properties pProperties);
     }
 
 }

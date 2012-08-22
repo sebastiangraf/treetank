@@ -31,6 +31,8 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import java.util.Properties;
+
 import javax.xml.namespace.QName;
 
 import org.testng.annotations.AfterMethod;
@@ -49,6 +51,7 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.io.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.inject.Inject;
@@ -66,7 +69,10 @@ public class UpdateTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);
     }

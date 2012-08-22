@@ -30,6 +30,7 @@ package org.treetank;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 
 import org.treetank.access.Database;
@@ -39,6 +40,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INode;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.NodePage;
 
@@ -55,7 +57,6 @@ import com.google.common.io.Files;
  * 
  */
 public final class TestHelper {
-
 
     public static final String RESOURCENAME = "tmp";
 
@@ -115,6 +116,13 @@ public final class TestHelper {
             INSTANCES.put(file, database);
             return database;
         }
+    }
+
+    public static final Properties createProperties() {
+        Properties returnVal = new Properties();
+        returnVal.setProperty(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), RESOURCENAME).getAbsolutePath());
+        return returnVal;
     }
 
     public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {

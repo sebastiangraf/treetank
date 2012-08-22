@@ -4,7 +4,6 @@
 package org.treetank.io.jclouds;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -12,7 +11,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.jclouds.Constants;
-import org.jclouds.blobstore.BlobMap;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
@@ -37,29 +36,36 @@ public class MainApp {
 
         // setup where the provider must store the files
         Properties properties = new Properties();
-        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new StringBuilder(Files.createTempDir()
-            .getAbsolutePath()).append(File.pathSeparator).append("filesystemstorage").toString());
+        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
         properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
 
         // get a context with filesystem that offers the portable BlobStore api
         BlobStoreContext context = new BlobStoreContextFactory().createContext("filesystem", properties);
 
-        BlobMap map = context.createBlobMap("container1");
-        BlobBuilder builder = map.blobBuilder();
-        Blob blob = builder.build();
+        // setup the container name used by the provider (like bucket in S3)
+        String containerName = "test-container";
+
+        // create a container in the default location
+        BlobStore blobStore = context.getBlobStore();
+        blobStore.createContainerInLocation(null, containerName);
 
         for (int i = 0; i < vals.length; i++) {
+
+            // add blob
+            BlobBuilder blobbuilder = blobStore.blobBuilder(new StringBuilder("test").append(i).toString());
+            Blob blob = blobbuilder.build();
             blob.setPayload(vals[i]);
-            map.put(new StringBuilder("key").append(i).toString(), blob);
+            blobStore.putBlob(containerName, blob);
         }
         context.close();
-        context = new BlobStoreContextFactory().createContext("filesystem", properties);
 
-        map = context.createBlobMap("container1");
-        builder = map.blobBuilder();
+        context = new BlobStoreContextFactory().createContext("filesystem", properties);
+        blobStore = context.getBlobStore();
+
         for (int i = 0; i < vals.length; i++) {
-            blob = map.get(new StringBuilder("key").append(i).toString());
-            InputStream in = blob.getPayload().getInput();
+            Blob blobRetrieved =
+                blobStore.getBlob(containerName, new StringBuilder("test").append(i).toString());
+            InputStream in = blobRetrieved.getPayload().getInput();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ByteStreams.copy(in, out);
             if (!Arrays.equals(out.toByteArray(), vals[i])) {
@@ -69,6 +75,10 @@ public class MainApp {
             }
 
         }
+        //
+        // // close context
+        // context.close();
 
     }
 }
+//

@@ -32,6 +32,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
@@ -89,12 +90,12 @@ public final class TestNodeWrapperXPath {
     @BeforeMethod
     public void setUp() throws TTException, XPathFactoryConfigurationException {
         TestHelper.deleteEverything();
-        ResourceConfiguration mResource =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
-        NodeHelper.createTestDocument(mResource);
-        holder =
-            Holder.generateRtx(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(),
-                TestHelper.RESOURCENAME, 10));
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        ResourceConfiguration resource = mResourceConfig.create(props, 10);
+        NodeHelper.createTestDocument(resource);
+        holder = Holder.generateRtx(resource);
 
         // Saxon setup.
         System.setProperty("javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON,

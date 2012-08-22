@@ -31,6 +31,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
@@ -89,7 +90,10 @@ public class XMLShredderTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
     }
 
@@ -108,7 +112,11 @@ public class XMLShredderTest {
 
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        database2.createResource(mResourceConfig.create(PATHS.PATH2.getFile(), "shredded", 1));
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
+        database2.createResource(mResource);
         final ISession session =
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeReadTrx rtx =
@@ -160,7 +168,11 @@ public class XMLShredderTest {
 
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        database2.createResource(mResourceConfig.create(PATHS.PATH2.getFile(), "shredded", 1));
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
+        database2.createResource(mResource);
         final ISession expectedSession =
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
@@ -200,8 +212,11 @@ public class XMLShredderTest {
     public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(),
-            TestHelper.RESOURCENAME, 1));
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 1);
+        database.createResource(mResource);
         final ISession expectedSession2 =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx expectedTrx2 =
@@ -211,8 +226,11 @@ public class XMLShredderTest {
 
         // Setup parsed session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        database2.createResource(mResourceConfig.create(TestHelper.PATHS.PATH2.getFile(),
-            TestHelper.RESOURCENAME, 1));
+        props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH2.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 1);
+        database2.createResource(mResource);
         final ISession session2 =
             database2.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
@@ -250,7 +268,11 @@ public class XMLShredderTest {
     @Test
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        database.createResource(mResourceConfig.create(PATHS.PATH2.getFile(), "shredded", 1));
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
+        mResource = mResourceConfig.create(props, 1);
+        database.createResource(mResource);
         final ISession session =
             database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =

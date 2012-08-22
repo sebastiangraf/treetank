@@ -30,6 +30,7 @@ package org.treetank.service.xml.serialize;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -44,6 +45,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.service.xml.DocumentCreater;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
@@ -62,7 +64,10 @@ public class XMLSerializerTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateSession(mResource);
     }
 

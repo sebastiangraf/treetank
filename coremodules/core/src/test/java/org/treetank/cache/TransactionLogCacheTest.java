@@ -53,8 +53,7 @@ public class TransactionLogCacheTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        ResourceConfiguration conf =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        ResourceConfiguration conf = mResourceConfig.create(TestHelper.createProperties(), 10);
         TestHelper.createResource(conf);
 
         cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1, conf.mNodeFac);

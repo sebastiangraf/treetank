@@ -39,9 +39,10 @@ public class ModuleFactory implements IModuleFactory {
     @Override
     public Module createModule(ITestContext context, Class<?> testClass) {
 
-        AbstractModule returnVal = new StandardSettings();
+        AbstractModule returnVal;
         String suiteName = context.getSuite().getName();
-        if ("FileZipper".equals(suiteName)) {
+        switch (suiteName) {
+        case "FileZipper":
             returnVal = new AbstractModule() {
 
                 @Override
@@ -61,9 +62,8 @@ public class ModuleFactory implements IModuleFactory {
                     install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
                 }
             };
-        }
-
-        if ("FileEncryptor".equals(suiteName)) {
+            break;
+        case "FileEnryptor":
             returnVal = new AbstractModule() {
 
                 @Override
@@ -83,6 +83,10 @@ public class ModuleFactory implements IModuleFactory {
                     install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
                 }
             };
+            break;
+        default:
+            returnVal = new StandardSettings();
+            break;
         }
 
         return returnVal;
