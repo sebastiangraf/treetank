@@ -32,6 +32,7 @@ import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
+import java.util.Properties;
 
 import javax.xml.stream.XMLEventReader;
 
@@ -96,7 +97,10 @@ public class TestNodeWrapper {
     @BeforeMethod
     public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
 
@@ -158,9 +162,7 @@ public class TestNodeWrapper {
     }
 
     @Test
-    // @Ignore
-        public
-        void testGetBaseURI() throws Exception {
+    public void testGetBaseURI() throws Exception {
         // Test with xml:base specified.
         final File source =
             new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "data"
@@ -170,8 +172,10 @@ public class TestNodeWrapper {
 
         Database.createDatabase(db2);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
-        database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH2.getFile(),
-            TestHelper.RESOURCENAME, 1));
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH2.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        database.createResource(mResourceConfig.create(props, 1));
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =

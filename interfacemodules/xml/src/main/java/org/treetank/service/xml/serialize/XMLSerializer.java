@@ -42,6 +42,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
 
 import org.treetank.access.Database;
@@ -52,6 +53,7 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.io.IConstants;
 import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
@@ -453,8 +455,10 @@ public final class XMLSerializer extends AbsSerializer {
         final DatabaseConfiguration config = new DatabaseConfiguration(new File(args[0]));
         Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(new File(args[0]));
-        db.createResource(new ResourceConfiguration(target, "shredded", 1, storage, revision,
-            new TreeNodeFactory()));
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(target, "shredded")
+            .getAbsolutePath());
+        db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();

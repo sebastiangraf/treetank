@@ -6,6 +6,7 @@ package org.treetank.access.conf;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -15,6 +16,7 @@ import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 
 import com.google.inject.Inject;
 
@@ -47,13 +49,12 @@ public class ResourceConfigurationTest {
      */
     @Test
     public void testDeSerialize() throws Exception {
+        Properties props = TestHelper.createProperties();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        ResourceConfiguration resConf =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        ResourceConfiguration resConf = mResourceConfig.create(props, 10);
         TestHelper.createResource(resConf);
         ResourceConfiguration serializedConf =
-            ResourceConfiguration.deserialize(new File(new File(TestHelper.PATHS.PATH1.getFile(),
-                DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME));
+            ResourceConfiguration.deserialize(new File(props.getProperty(IConstants.FILENAME)));
         assertEquals(resConf.toString(), serializedConf.toString());
 
     }

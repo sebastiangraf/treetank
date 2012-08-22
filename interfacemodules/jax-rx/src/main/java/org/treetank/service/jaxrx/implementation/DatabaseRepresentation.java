@@ -37,6 +37,7 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,6 +61,7 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
@@ -294,9 +296,11 @@ public class DatabaseRepresentation {
         ISession session = null;
         boolean abort = false;
         try {
-
-            mDatabase.createResource(new ResourceConfiguration(mDatabase.getLocation(), resource, 1,
-                mStorageFac, mRevisionFac, NODEFACTORY));
+            Properties properties = new Properties();
+            properties.setProperty(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+                mDatabase.getLocation(), resource).getAbsolutePath());
+            mDatabase.createResource(new ResourceConfiguration(properties, 1, mStorageFac, mRevisionFac,
+                NODEFACTORY));
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
             pWtx = session.beginPageWriteTransaction();
             wtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);

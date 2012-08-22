@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Properties;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.transform.stream.StreamSource;
@@ -102,8 +103,10 @@ public final class TestNodeWrapperS9ApiXSLT {
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
         Database.createDatabase(dbConfig);
         final IDatabase databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        ResourceConfiguration resConfig =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 1);
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        ResourceConfiguration resConfig = mResourceConfig.create(props, 1);
         databaseBooks.createResource(resConfig);
         final ISession session =
             databaseBooks.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));

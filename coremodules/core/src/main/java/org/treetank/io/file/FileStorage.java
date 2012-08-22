@@ -28,11 +28,13 @@
 package org.treetank.io.file;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IConstants;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -78,12 +80,9 @@ public final class FileStorage implements IStorage {
      * 
      */
     @Inject
-    public FileStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandlerPipeline pByteHandler) {
-        mFile = pFile;
-//        final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
-//        if (!repoFile.exists()) {
-//            repoFile.mkdirs();
-//        }
+    public FileStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
+        IByteHandlerPipeline pByteHandler) {
+        mFile = new File(pProperties.getProperty(IConstants.FILENAME));
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
     }

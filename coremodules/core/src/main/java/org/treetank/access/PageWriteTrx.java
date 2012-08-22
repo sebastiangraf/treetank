@@ -30,6 +30,8 @@ package org.treetank.access;
 import static org.treetank.access.PageReadTrx.nodePageKey;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
 
+import java.io.File;
+
 import javax.xml.namespace.QName;
 
 import org.treetank.access.conf.SessionConfiguration;
@@ -101,7 +103,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate = new PageReadTrx(pSession, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mLog =
-            new TransactionLogCache(pSession.getConfig().mFile, paramStoreRev, pSession.getConfig().mNodeFac);
+            new TransactionLogCache(new File(pSession.getConfig().mProperties
+                .getProperty(org.treetank.io.IConstants.FILENAME)), paramStoreRev,
+                pSession.getConfig().mNodeFac);
         mPageWriter = paramWriter;
 
     }

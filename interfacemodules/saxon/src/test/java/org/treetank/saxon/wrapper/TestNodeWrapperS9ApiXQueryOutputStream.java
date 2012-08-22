@@ -32,6 +32,7 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -65,8 +66,11 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
     public void beforeMethod() throws Exception {
         TestHelper.deleteEverything();
         SaxonHelper.createBookDB(mResourceConfig);
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         ResourceConfiguration mResource =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+            mResourceConfig.create(props, 10);
         holder = Holder.generateSession(mResource);
     }
 

@@ -30,6 +30,8 @@ package org.treetank.service.xml.xpath;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -48,6 +50,7 @@ import org.treetank.axis.NestedAxis;
 import org.treetank.axis.ParentAxis;
 import org.treetank.axis.SelfAxis;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.service.xml.xpath.axis.UnionAxis;
 import org.treetank.service.xml.xpath.filter.DupFilterAxis;
 
@@ -66,7 +69,10 @@ public class ExpressionSingleTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder =
             Holder.generateRtx(mResource);

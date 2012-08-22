@@ -29,6 +29,8 @@ package org.treetank.axis;
 
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import java.util.Properties;
+
 import javax.xml.namespace.QName;
 
 import org.testng.AssertJUnit;
@@ -45,6 +47,7 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 
 import com.google.inject.Inject;
 
@@ -61,7 +64,10 @@ public class AttributeAxisTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder =
             Holder.generateWtx(mResource);

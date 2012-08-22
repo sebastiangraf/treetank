@@ -29,6 +29,8 @@ package org.treetank.saxon.wrapper;
 
 import static org.testng.AssertJUnit.assertEquals;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -70,8 +72,10 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
     public void beforeMethod() throws Exception {
         TestHelper.deleteEverything();
         SaxonHelper.createBookDB(mResourceConfig);
-        ResourceConfiguration mResource =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        ResourceConfiguration mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateSession(mResource);
     }
 

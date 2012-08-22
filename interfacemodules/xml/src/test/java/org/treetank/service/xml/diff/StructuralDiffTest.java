@@ -28,6 +28,7 @@
 package org.treetank.service.xml.diff;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -41,6 +42,7 @@ import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
 
 import com.google.inject.Inject;
@@ -67,7 +69,10 @@ public final class StructuralDiffTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
         mObserver = DiffTestHelper.createMock();
     }

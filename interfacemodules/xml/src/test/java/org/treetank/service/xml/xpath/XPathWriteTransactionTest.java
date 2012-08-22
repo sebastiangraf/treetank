@@ -30,6 +30,7 @@ package org.treetank.service.xml.xpath;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -42,6 +43,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
@@ -49,6 +51,7 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
+import org.treetank.io.IConstants;
 import org.treetank.service.xml.shredder.XMLShredder;
 
 import com.google.inject.Inject;
@@ -82,7 +85,10 @@ public final class XPathWriteTransactionTest {
 
         // Verify.
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), "shredded", 1));
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), "shredded").getAbsolutePath());
+        database.createResource(mResourceConfig.create(props, 10));
         session = database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
     }

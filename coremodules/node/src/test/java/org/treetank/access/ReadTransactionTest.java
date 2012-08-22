@@ -30,6 +30,8 @@ package org.treetank.access;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -59,7 +61,10 @@ public class ReadTransactionTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);
     }

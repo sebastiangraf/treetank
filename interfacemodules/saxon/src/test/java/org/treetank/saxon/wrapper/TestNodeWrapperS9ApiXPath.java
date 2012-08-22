@@ -28,6 +28,9 @@
 package org.treetank.saxon.wrapper;
 
 import static org.testng.AssertJUnit.assertEquals;
+
+import java.util.Properties;
+
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 
@@ -66,8 +69,11 @@ public final class TestNodeWrapperS9ApiXPath {
     @BeforeMethod
     public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
+        Properties props = new Properties();
+        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         ResourceConfiguration mResource =
-            mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+            mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
         XMLUnit.setIgnoreWhitespace(true);

@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 
 import javax.xml.namespace.QName;
@@ -1137,8 +1138,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
      * @throws TTException
      *             if inserting node fails
      */
-    private void addNewElement(final EAdd paramAdd, final StartElement paramStartElement)
-        throws TTException {
+    private void addNewElement(final EAdd paramAdd, final StartElement paramStartElement) throws TTException {
         assert paramStartElement != null;
         final QName name = paramStartElement.getName();
         long key;
@@ -1405,14 +1405,17 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         Injector injector = Guice.createInjector(new StandardXMLSettings());
         IStorageFactory storage = injector.getInstance(IStorageFactory.class);
         IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
-        
+
         try {
             final DatabaseConfiguration config = new DatabaseConfiguration(target);
             Database.createDatabase(config);
             final IDatabase db = Database.openDatabase(target);
-            db.createResource(new ResourceConfiguration(target, "shredded", 1, storage, revision,
-                new TreeNodeFactory()));
-            final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
+            Properties props = new Properties();
+            props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+                target, "shredded").getAbsolutePath());
+            db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
+            final ISession session =
+                db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
             final INodeWriteTrx wtx =
                 new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
             final XMLEventReader reader = createFileReader(new File(args[0]));

@@ -33,6 +33,7 @@ import static org.treetank.node.IConstants.TEXT;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
@@ -45,6 +46,7 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.io.IConstants;
 import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
@@ -228,15 +230,17 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         final DatabaseConfiguration config = new DatabaseConfiguration(new File(args[0]));
         Database.createDatabase(config);
         final IDatabase database = Database.openDatabase(new File(args[0]));
-        
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
         IStorageFactory storage = injector.getInstance(IStorageFactory.class);
         IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
-        
-        database.createResource(new ResourceConfiguration(database.getLocation(), "shredded", 1, storage, revision,
-            new TreeNodeFactory()));
-        final ISession session = database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            database.getLocation(), "shredded").getAbsolutePath());
+        database
+            .createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
+        final ISession session =
+            database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final DefaultHandler defHandler = new DefaultHandler();
 

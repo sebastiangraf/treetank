@@ -28,12 +28,14 @@
 package org.treetank.io.berkeley;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IConstants;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -90,8 +92,8 @@ public final class BerkeleyStorage implements IStorage {
     /**
      * Private constructor.
      * 
-     * @param pFile
-     *            the file associated with the database
+     * @param pProperties
+     *            not only the file associated with the database
      * @param pNodeFac
      *            factory for the nodes
      * @param pByteHandler
@@ -100,10 +102,12 @@ public final class BerkeleyStorage implements IStorage {
      *             of something odd happens while database-connection
      */
     @Inject
-    public BerkeleyStorage(@Assisted File pFile, INodeFactory pNodeFac, IByteHandlerPipeline pByteHandler)
-        throws TTIOException {
+    public BerkeleyStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
+        IByteHandlerPipeline pByteHandler) throws TTIOException {
 
-        final File repoFile = new File(pFile, ResourceConfiguration.Paths.Data.getFile().getName());
+        final File repoFile =
+            new File(pProperties.getProperty(IConstants.FILENAME), ResourceConfiguration.Paths.Data.getFile()
+                .getName());
         if (!repoFile.exists()) {
             repoFile.mkdirs();
         }

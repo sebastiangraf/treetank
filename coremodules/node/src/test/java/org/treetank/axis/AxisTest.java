@@ -32,6 +32,8 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import java.util.Properties;
+
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -48,8 +50,10 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.filter.NameFilter;
 import org.treetank.axis.filter.NodeFilter;
 import org.treetank.axis.filter.TextFilter;
+import org.treetank.axis.filter.ValueFilter;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 
 import com.google.inject.Inject;
 
@@ -72,7 +76,10 @@ public class AxisTest {
     @BeforeClass
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME, 10);
+        Properties props = new Properties();
+        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
     }
@@ -522,6 +529,46 @@ public class AxisTest {
                             AxisTest.testIAxisConventions(new SelfAxis(pRtx), new long[] {
                                 8L
                             });
+
+                        }
+                    }, // Filter Axis Test 1
+                    new IAxisChecker() {
+
+                        @Override
+                        public void checkAxis(INodeReadTrx pRtx) {
+                            pRtx.moveTo(ROOT_NODE);
+                            AxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(pRtx), pRtx,
+                                new NameFilter(pRtx, "b")), new long[] {
+                                5L, 9L
+                            });
+
+                        }
+                    }, // Filter Axis Test 2
+                    new IAxisChecker() {
+
+                        @Override
+                        public void checkAxis(INodeReadTrx pRtx) {
+                            pRtx.moveTo(ROOT_NODE);
+                            AxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(pRtx), pRtx,
+                                new ValueFilter(pRtx, "foo")), new long[] {
+                                6L
+                            });
+
+                        }
+                    }, // Filter Axis Test 3
+                    new IAxisChecker() {
+
+                        @Override
+                        public void checkAxis(INodeReadTrx pRtx) {
+                            pRtx.moveTo(1L);
+                            AxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(pRtx), pRtx,
+                                new NameFilter(pRtx, "i"), new ValueFilter(pRtx, "j")), new long[] {
+                                2L
+                            });
+
+                            pRtx.moveTo(9L);
+                            AxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(pRtx), pRtx,
+                                new NameFilter(pRtx, "y"), new ValueFilter(pRtx, "y")), new long[] {});
 
                         }
                     }
