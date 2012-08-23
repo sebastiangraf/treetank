@@ -55,7 +55,7 @@ public final class FileWriter implements IWriter {
     private transient final RandomAccessFile mFile;
 
     /** Reader instance for this writer. */
-    private transient final FileReader reader;
+    private transient final FileReader mReader;
 
     /**
      * Constructor.
@@ -77,7 +77,7 @@ public final class FileWriter implements IWriter {
             throw new TTIOException(fileExc);
         }
 
-        reader = new FileReader(pFile, pFac, pByteHandler);
+        mReader = new FileReader(pFile, pFac, pByteHandler);
 
     }
 
@@ -96,7 +96,7 @@ public final class FileWriter implements IWriter {
         final byte[] rawPage = page.getByteRepresentation();
 
         // Perform crypto operations.
-        final byte[] decryptedPage = reader.mByteHandler.serialize(rawPage);
+        final byte[] decryptedPage = mReader.mByteHandler.serialize(rawPage);
 
         final byte[] writtenPage = new byte[decryptedPage.length + FileReader.OTHER_BEACON];
         ByteBuffer buffer = ByteBuffer.allocate(writtenPage.length);
@@ -126,7 +126,7 @@ public final class FileWriter implements IWriter {
     public void close() throws TTIOException {
         try {
             if (mFile != null) {
-                reader.close();
+                mReader.close();
                 mFile.close();
             }
         } catch (final IOException e) {
@@ -169,14 +169,14 @@ public final class FileWriter implements IWriter {
      * {@inheritDoc}
      */
     public IPage read(final long pKey) throws TTIOException {
-        return reader.read(pKey);
+        return mReader.read(pKey);
     }
 
     /**
      * {@inheritDoc}
      */
     public PageReference readFirstReference() throws TTIOException {
-        return reader.readFirstReference();
+        return mReader.readFirstReference();
     }
 
 }

@@ -82,10 +82,6 @@ public final class FileReader implements IReader {
     public FileReader(File pFile, PageFactory pFac, IByteHandlerPipeline pByteHandler) throws TTException {
 
         try {
-//            if (!pFile.exists()) {
-//                pFile.getParentFile().mkdirs();
-//                pFile.createNewFile();
-//            }
 
             mFile = new RandomAccessFile(pFile, "r");
             mByteHandler = pByteHandler;
@@ -120,10 +116,8 @@ public final class FileReader implements IReader {
 
             // Return reader required to instantiate and deserialize page.
             return mFac.deserializePage(decryptedPage);
-        } catch (final IOException exc) {
+        } catch (final IOException | TTByteHandleException exc) {
             throw new TTIOException(exc);
-        } catch (final TTByteHandleException e) {
-            throw new TTIOException(e);
         }
     }
 
