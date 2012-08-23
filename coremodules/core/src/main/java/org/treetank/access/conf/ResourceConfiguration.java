@@ -216,9 +216,13 @@ public final class ResourceConfiguration {
 
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
         try {
-            FileWriter fileWriter =
-                new FileWriter(new File(pConfig.mProperties.getProperty(IConstants.DBFILE),
-                    Paths.ConfigBinary.getFile().getName()));
+
+            final File file =
+                new File(new File(new File(pConfig.mProperties.getProperty(IConstants.DBFILE),
+                    DatabaseConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
+                    .getProperty(IConstants.RESOURCE)), Paths.ConfigBinary.getFile().getName());
+
+            FileWriter fileWriter = new FileWriter(file);
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
             // caring about the versioning
@@ -265,9 +269,15 @@ public final class ResourceConfiguration {
      * @return a complete {@link ResourceConfiguration} instance.
      * @throws TTIOException
      */
-    public static ResourceConfiguration deserialize(final File pFile) throws TTIOException {
+    public static ResourceConfiguration deserialize(final File pFile, final String pResource)
+        throws TTIOException {
         try {
-            FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
+
+            final File file =
+                new File(new File(new File(pFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+                    pResource), Paths.ConfigBinary.getFile().getName());
+
+            FileReader fileReader = new FileReader(file);
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
             // caring about the versioning

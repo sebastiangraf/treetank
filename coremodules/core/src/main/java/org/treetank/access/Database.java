@@ -289,11 +289,9 @@ public final class Database implements IDatabase {
                     "Resource could not be opened (since it was not created?) at location", resourceFile
                         .toString());
             }
-            ResourceConfiguration config = ResourceConfiguration.deserialize(resourceFile);
+            ResourceConfiguration config =
+                ResourceConfiguration.deserialize(mDBConfig.mFile, pSessionConf.getResource());
 
-            // Resource of session must be associated to this database
-            assert new File(config.mProperties.getProperty(IConstants.DBFILE)).getParentFile()
-                .getParentFile().equals(mDBConfig.mFile);
             returnVal = new Session(this, config, pSessionConf);
             mSessions.put(resourceFile, returnVal);
         }
