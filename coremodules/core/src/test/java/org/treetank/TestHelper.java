@@ -120,8 +120,8 @@ public final class TestHelper {
 
     public static final Properties createProperties() {
         Properties returnVal = new Properties();
-        returnVal.setProperty(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), RESOURCENAME).getAbsolutePath());
+        returnVal.setProperty(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
+        returnVal.setProperty(IConstants.RESOURCE, RESOURCENAME);
         return returnVal;
     }
 

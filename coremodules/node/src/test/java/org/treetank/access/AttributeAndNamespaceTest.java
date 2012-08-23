@@ -61,12 +61,11 @@ public class AttributeAndNamespaceTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        props.put(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile());
+        props.put(IConstants.RESOURCE, TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
-        holder =
-            Holder.generateRtx(mResource);
+        holder = Holder.generateRtx(mResource);
     }
 
     @AfterMethod

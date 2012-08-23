@@ -72,7 +72,7 @@ public class SAXSerializerTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);

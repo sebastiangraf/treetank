@@ -1411,7 +1411,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
             Database.createDatabase(config);
             final IDatabase db = Database.openDatabase(target);
             Properties props = new Properties();
-            props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+            props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
                 target, "shredded").getAbsolutePath());
             db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
             final ISession session =

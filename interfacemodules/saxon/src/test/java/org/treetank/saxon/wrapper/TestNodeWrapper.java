@@ -98,7 +98,7 @@ public class TestNodeWrapper {
     public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
@@ -173,7 +173,7 @@ public class TestNodeWrapper {
         Database.createDatabase(db2);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH2.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         database.createResource(mResourceConfig.create(props, 1));
         final ISession session =

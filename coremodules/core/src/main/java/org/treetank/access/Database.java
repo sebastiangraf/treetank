@@ -178,7 +178,10 @@ public final class Database implements IDatabase {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already
         // set data.
-        final File path = new File(pResConf.mProperties.getProperty(IConstants.FILENAME));
+        final File path =
+            new File(new File(pResConf.mProperties.getProperty(IConstants.DBFILE),
+                DatabaseConfiguration.Paths.Data.getFile().getName()), pResConf.mProperties
+                .getProperty(IConstants.RESOURCE));
         // if file is existing, skipping
         if (path.exists()) {
             return false;
@@ -208,7 +211,7 @@ public final class Database implements IDatabase {
             // substructure
             if (!returnVal) {
                 throw new IllegalStateException(new StringBuilder("Failure, please remove folder ").append(
-                    pResConf.mProperties.getProperty(IConstants.FILENAME)).append(" manually!").toString());
+                    pResConf.mProperties.getProperty(IConstants.DBFILE)).append(" manually!").toString());
             }
             return returnVal;
         }
@@ -289,7 +292,7 @@ public final class Database implements IDatabase {
             ResourceConfiguration config = ResourceConfiguration.deserialize(resourceFile);
 
             // Resource of session must be associated to this database
-            assert new File(config.mProperties.getProperty(IConstants.FILENAME)).getParentFile()
+            assert new File(config.mProperties.getProperty(IConstants.DBFILE)).getParentFile()
                 .getParentFile().equals(mDBConfig.mFile);
             returnVal = new Session(this, config, pSessionConf);
             mSessions.put(resourceFile, returnVal);

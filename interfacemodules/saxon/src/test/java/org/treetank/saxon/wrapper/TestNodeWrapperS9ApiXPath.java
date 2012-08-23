@@ -70,7 +70,7 @@ public final class TestNodeWrapperS9ApiXPath {
     public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         ResourceConfiguration mResource =
             mResourceConfig.create(props, 10);

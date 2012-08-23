@@ -73,7 +73,7 @@ public final class SaxonHelper {
         Database.createDatabase(dbConfig);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         database.createResource(resFac.create(props, 1));
         final ISession session =

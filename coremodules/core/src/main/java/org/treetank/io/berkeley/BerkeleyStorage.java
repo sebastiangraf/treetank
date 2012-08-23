@@ -30,6 +30,7 @@ package org.treetank.io.berkeley;
 import java.io.File;
 import java.util.Properties;
 
+import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeFactory;
@@ -75,10 +76,10 @@ public final class BerkeleyStorage implements IStorage {
     private static final String NAME = "berkeleyDatabase";
 
     /** Berkeley Environment for the database. */
-    private final Environment mEnv;
+    private Environment mEnv = null;
 
     /** Database instance per session. */
-    private final Database mDatabase;
+    private Database mDatabase = null;
 
     /** Binding for de/-serializing pages. */
     private final TupleBinding<IPage> mPageBinding;
@@ -88,6 +89,9 @@ public final class BerkeleyStorage implements IStorage {
 
     /** Factory for Pages. */
     private final PageFactory mFac;
+
+    /** File for DB. */
+    private final File mFile;
 
     /**
      * Private constructor.
@@ -105,28 +109,10 @@ public final class BerkeleyStorage implements IStorage {
     public BerkeleyStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
         IByteHandlerPipeline pByteHandler) throws TTIOException {
 
-        final File repoFile =
-            new File(pProperties.getProperty(IConstants.FILENAME), ResourceConfiguration.Paths.Data.getFile()
-                .getName());
-        if (!repoFile.exists()) {
-            repoFile.mkdirs();
-        }
-
-        final DatabaseConfig conf = generateDBConf();
-        final EnvironmentConfig config = generateEnvConf();
-
-        if (repoFile.listFiles().length == 0
-            || (repoFile.listFiles().length == 1 && "tt.tnk".equals(repoFile.listFiles()[0].getName()))) {
-            conf.setAllowCreate(true);
-            config.setAllowCreate(true);
-        }
-
-        try {
-            mEnv = new Environment(repoFile, config);
-            mDatabase = mEnv.openDatabase(null, NAME, conf);
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
-        }
+        mFile =
+            new File(new File(new File(pProperties.getProperty(IConstants.DBFILE),
+                DatabaseConfiguration.Paths.Data.getFile().getName()), pProperties
+                .getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName());
 
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;
@@ -135,11 +121,38 @@ public final class BerkeleyStorage implements IStorage {
     }
 
     /**
+     * Setting up the database after having the storage object. Necessary because folder creation takes not
+     * place within the storage but within the ResourceConfiguration.
+     * 
+     * @throws TTIOException
+     */
+    private synchronized final void setUpIfNecessary() throws TTIOException {
+        final DatabaseConfig conf = generateDBConf();
+        final EnvironmentConfig config = generateEnvConf();
+
+        if (mEnv == null) {
+
+            if (mFile.listFiles().length == 0) {
+                conf.setAllowCreate(true);
+                config.setAllowCreate(true);
+            }
+
+            try {
+                mEnv = new Environment(mFile, config);
+                mDatabase = mEnv.openDatabase(null, NAME, conf);
+            } catch (final DatabaseException exc) {
+                throw new TTIOException(exc);
+            }
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public IReader getReader() throws TTIOException {
         try {
+            setUpIfNecessary();
             return new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
@@ -151,6 +164,7 @@ public final class BerkeleyStorage implements IStorage {
      */
     @Override
     public IWriter getWriter() throws TTIOException {
+        setUpIfNecessary();
         return new BerkeleyWriter(mEnv, mDatabase, mPageBinding);
     }
 
@@ -160,6 +174,7 @@ public final class BerkeleyStorage implements IStorage {
     @Override
     public void close() throws TTIOException {
         try {
+            setUpIfNecessary();
             mDatabase.close();
             mEnv.close();
         } catch (final DatabaseException exc) {
@@ -172,6 +187,7 @@ public final class BerkeleyStorage implements IStorage {
      */
     @Override
     public boolean exists() throws TTIOException {
+        setUpIfNecessary();
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         boolean returnVal = false;
@@ -262,14 +278,10 @@ public final class BerkeleyStorage implements IStorage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("BerkeleyStorage [mEnv=");
-        builder.append(mEnv);
-        builder.append(", mDatabase=");
-        builder.append(mDatabase);
-        builder.append(", mPageBinding=");
-        builder.append(mPageBinding);
-        builder.append(", mByteHandler=");
+        builder.append("BerkeleyStorage [mByteHandler=");
         builder.append(mByteHandler);
+        builder.append(", mFile=");
+        builder.append(mFile);
         builder.append(", mFac=");
         builder.append(mFac);
         builder.append("]");

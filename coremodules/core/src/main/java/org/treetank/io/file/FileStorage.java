@@ -30,6 +30,7 @@ package org.treetank.io.file;
 import java.io.File;
 import java.util.Properties;
 
+import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
@@ -71,8 +72,8 @@ public final class FileStorage implements IStorage {
     /**
      * Constructor.
      * 
-     * @param pFile
-     *            the location of the database
+     * @param pProperties
+     *            not only the location of the database
      * @param pNodeFac
      *            factory for the nodes
      * @param pByteHandler
@@ -82,7 +83,11 @@ public final class FileStorage implements IStorage {
     @Inject
     public FileStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
         IByteHandlerPipeline pByteHandler) {
-        mFile = new File(pProperties.getProperty(IConstants.FILENAME));
+        mFile =
+            new File(new File(new File(pProperties.getProperty(IConstants.DBFILE),
+                DatabaseConfiguration.Paths.Data.getFile().getName()), pProperties
+                .getProperty(IConstants.RESOURCE)), new StringBuilder(ResourceConfiguration.Paths.Data
+                .getFile().getName()).append(File.separator).append(FILENAME).toString());
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
     }
@@ -92,7 +97,7 @@ public final class FileStorage implements IStorage {
      */
     @Override
     public IReader getReader() throws TTException {
-        return new FileReader(getConcreteStorage(), mFac, mByteHandler);
+        return new FileReader(mFile, mFac, mByteHandler);
     }
 
     /**
@@ -100,7 +105,7 @@ public final class FileStorage implements IStorage {
      */
     @Override
     public IWriter getWriter() throws TTException {
-        return new FileWriter(getConcreteStorage(), mFac, mByteHandler);
+        return new FileWriter(mFile, mFac, mByteHandler);
     }
 
     /**
@@ -112,22 +117,11 @@ public final class FileStorage implements IStorage {
     }
 
     /**
-     * Getting concrete storage for this file.
-     * 
-     * @return the concrete storage for this database
-     */
-    private File getConcreteStorage() {
-        return new File(mFile, new StringBuilder(ResourceConfiguration.Paths.Data.getFile().getName())
-            .append(File.separator).append(FILENAME).toString());
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public boolean exists() throws TTIOException {
-        final File file = getConcreteStorage();
-        final boolean returnVal = file.length() > 0;
+        final boolean returnVal = mFile.length() > 0;
         return returnVal;
     }
 

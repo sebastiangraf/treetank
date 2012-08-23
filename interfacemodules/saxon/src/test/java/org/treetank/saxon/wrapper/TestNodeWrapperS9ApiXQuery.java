@@ -68,7 +68,7 @@ public final class TestNodeWrapperS9ApiXQuery {
         TestHelper.deleteEverything();
         SaxonHelper.createBookDB(mResourceConfig);
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         ResourceConfiguration mResource =
             mResourceConfig.create(props, 1);

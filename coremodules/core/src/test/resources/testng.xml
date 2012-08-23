@@ -10,5 +10,7 @@
 	<suite-files>
 		<suite-file path="./FileZipper.xml" />
 		<suite-file path="./FileEncryptor.xml" />
+		<suite-file path="./BerkeleyZipper.xml" />
+        <suite-file path="./BerkeleyEncryptor.xml" />
 	</suite-files>
 </suite>

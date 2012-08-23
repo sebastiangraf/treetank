@@ -27,7 +27,6 @@
 package org.treetank.access.conf;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -218,7 +217,7 @@ public final class ResourceConfiguration {
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
         try {
             FileWriter fileWriter =
-                new FileWriter(new File(pConfig.mProperties.getProperty(IConstants.FILENAME),
+                new FileWriter(new File(pConfig.mProperties.getProperty(IConstants.DBFILE),
                     Paths.ConfigBinary.getFile().getName()));
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
@@ -252,10 +251,8 @@ public final class ResourceConfiguration {
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
-        } catch (FileNotFoundException fileExec) {
-            throw new TTIOException(fileExec);
-        } catch (IOException ioexc) {
-            throw new TTIOException(ioexc);
+        } catch (IOException exc) {
+            throw new TTIOException(exc);
         }
     }
 
@@ -322,31 +319,10 @@ public final class ResourceConfiguration {
 
             return new ResourceConfiguration(props, storage, revisioning, nodeFactory);
 
-        } catch (IOException fileExec) {
-            throw new TTIOException(fileExec);
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException | IllegalArgumentException | InstantiationException
+        | IllegalAccessException | InvocationTargetException exc) {
+            throw new TTIOException(exc);
         }
-        return null;
-    }
-
-    public static File generateFileOutOfResource(final File pDBFile, final String pResourceName) {
-        return new File(new File(pDBFile.getAbsolutePath(), DatabaseConfiguration.Paths.Data.getFile()
-            .getName()), pResourceName);
-
     }
 
     /**

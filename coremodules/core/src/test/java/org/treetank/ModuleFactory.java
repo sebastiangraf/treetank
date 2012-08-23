@@ -10,6 +10,7 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IStorage;
 import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -42,6 +43,48 @@ public class ModuleFactory implements IModuleFactory {
         AbstractModule returnVal;
         String suiteName = context.getSuite().getName();
         switch (suiteName) {
+        case "BerkeleyZipper":
+            returnVal = new AbstractModule() {
+
+                @Override
+                protected void configure() {
+                    install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class)
+                        .build(IRevisioningFactory.class));
+
+                    bind(INodeFactory.class).to(DumbNodeFactory.class);
+                    bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
+
+                    install(new FactoryModuleBuilder().implement(IStorage.class, BerkeleyStorage.class)
+                        .build(IStorageFactory.class));
+
+                    install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
+
+                    bind(Key.class).toInstance(StandardSettings.KEY);
+                    install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
+                }
+            };
+            break;
+        case "BerkeleyEncryptor":
+            returnVal = new AbstractModule() {
+
+                @Override
+                protected void configure() {
+                    install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class)
+                        .build(IRevisioningFactory.class));
+
+                    bind(INodeFactory.class).to(DumbNodeFactory.class);
+                    bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Encryptor()));
+
+                    install(new FactoryModuleBuilder().implement(IStorage.class, BerkeleyStorage.class)
+                        .build(IStorageFactory.class));
+
+                    install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
+
+                    bind(Key.class).toInstance(StandardSettings.KEY);
+                    install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
+                }
+            };
+            break;
         case "FileZipper":
             returnVal = new AbstractModule() {
 

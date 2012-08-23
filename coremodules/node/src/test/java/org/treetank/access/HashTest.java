@@ -250,8 +250,8 @@ public class HashTest {
     private INodeWriteTrx createWtx(final HashKind kind) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        props.put(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile());
+        props.put(IConstants.RESOURCE, TestHelper.RESOURCENAME);
         ResourceConfiguration res = mResourceConfig.create(props, 10);
         TestHelper.createResource(res);
         final ISession session =

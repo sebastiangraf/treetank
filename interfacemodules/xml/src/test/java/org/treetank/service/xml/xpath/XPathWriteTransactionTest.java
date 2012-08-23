@@ -86,7 +86,7 @@ public final class XPathWriteTransactionTest {
         // Verify.
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), "shredded").getAbsolutePath());
         database.createResource(mResourceConfig.create(props, 10));
         session = database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));

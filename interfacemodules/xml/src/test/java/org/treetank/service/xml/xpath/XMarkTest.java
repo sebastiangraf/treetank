@@ -71,7 +71,7 @@ public class XMarkTest {
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);

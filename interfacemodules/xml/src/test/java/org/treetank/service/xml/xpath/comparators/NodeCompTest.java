@@ -65,7 +65,7 @@ public class NodeCompTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         mResource = mResourceConfig.create(props, 1);
         NodeHelper.createTestDocument(mResource);

@@ -297,8 +297,8 @@ public class DatabaseRepresentation {
         boolean abort = false;
         try {
             Properties properties = new Properties();
-            properties.setProperty(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-                mDatabase.getLocation(), resource).getAbsolutePath());
+            properties.setProperty(IConstants.DBFILE, mDatabase.getLocation().getAbsolutePath());
+            properties.setProperty(IConstants.RESOURCE, resource);
             mDatabase.createResource(new ResourceConfiguration(properties, 1, mStorageFac, mRevisionFac,
                 NODEFACTORY));
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));

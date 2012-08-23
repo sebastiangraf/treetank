@@ -91,7 +91,7 @@ public class XMLShredderTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
@@ -113,7 +113,7 @@ public class XMLShredderTest {
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
         mResource = mResourceConfig.create(props, 10);
         database2.createResource(mResource);
@@ -169,7 +169,7 @@ public class XMLShredderTest {
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
         mResource = mResourceConfig.create(props, 10);
         database2.createResource(mResource);
@@ -213,7 +213,7 @@ public class XMLShredderTest {
         // Setup expected session.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         mResource = mResourceConfig.create(props, 1);
         database.createResource(mResource);
@@ -227,7 +227,7 @@ public class XMLShredderTest {
         // Setup parsed session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH2.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
         mResource = mResourceConfig.create(props, 1);
         database2.createResource(mResource);
@@ -269,7 +269,7 @@ public class XMLShredderTest {
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
+        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
             TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
         mResource = mResourceConfig.create(props, 1);
         database.createResource(mResource);

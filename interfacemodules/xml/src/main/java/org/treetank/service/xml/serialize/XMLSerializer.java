@@ -456,7 +456,7 @@ public final class XMLSerializer extends AbsSerializer {
         Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(new File(args[0]));
         Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(target, "shredded")
+        props.put(IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(target, "shredded")
             .getAbsolutePath());
         db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
