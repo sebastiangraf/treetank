@@ -45,7 +45,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 import org.treetank.service.xml.DocumentCreater;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
@@ -64,9 +63,7 @@ public class XMLSerializerTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateSession(mResource);
     }

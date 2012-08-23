@@ -90,9 +90,7 @@ public class XMLShredderTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
     }
@@ -113,8 +111,9 @@ public class XMLShredderTest {
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile()
+            .getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
         mResource = mResourceConfig.create(props, 10);
         database2.createResource(mResource);
         final ISession session =
@@ -169,8 +168,8 @@ public class XMLShredderTest {
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
         mResource = mResourceConfig.create(props, 10);
         database2.createResource(mResource);
         final ISession expectedSession =
@@ -212,9 +211,7 @@ public class XMLShredderTest {
     public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 1);
         database.createResource(mResource);
         final ISession expectedSession2 =
@@ -227,8 +224,8 @@ public class XMLShredderTest {
         // Setup parsed session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH2.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 1);
         database2.createResource(mResource);
         final ISession session2 =
@@ -269,8 +266,9 @@ public class XMLShredderTest {
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH2.getFile(), "shredded").getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile()
+            .getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
         mResource = mResourceConfig.create(props, 1);
         database.createResource(mResource);
         final ISession session =

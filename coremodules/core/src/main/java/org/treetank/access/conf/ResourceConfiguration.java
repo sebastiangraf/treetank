@@ -27,7 +27,6 @@
 package org.treetank.access.conf;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -217,9 +216,13 @@ public final class ResourceConfiguration {
 
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
         try {
-            FileWriter fileWriter =
-                new FileWriter(new File(pConfig.mProperties.getProperty(IConstants.FILENAME),
-                    Paths.ConfigBinary.getFile().getName()));
+
+            final File file =
+                new File(new File(new File(pConfig.mProperties.getProperty(IConstants.DBFILE),
+                    DatabaseConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
+                    .getProperty(IConstants.RESOURCE)), Paths.ConfigBinary.getFile().getName());
+
+            FileWriter fileWriter = new FileWriter(file);
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
             // caring about the versioning
@@ -252,10 +255,8 @@ public final class ResourceConfiguration {
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
-        } catch (FileNotFoundException fileExec) {
-            throw new TTIOException(fileExec);
-        } catch (IOException ioexc) {
-            throw new TTIOException(ioexc);
+        } catch (IOException exc) {
+            throw new TTIOException(exc);
         }
     }
 
@@ -268,9 +269,15 @@ public final class ResourceConfiguration {
      * @return a complete {@link ResourceConfiguration} instance.
      * @throws TTIOException
      */
-    public static ResourceConfiguration deserialize(final File pFile) throws TTIOException {
+    public static ResourceConfiguration deserialize(final File pFile, final String pResource)
+        throws TTIOException {
         try {
-            FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
+
+            final File file =
+                new File(new File(new File(pFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+                    pResource), Paths.ConfigBinary.getFile().getName());
+
+            FileReader fileReader = new FileReader(file);
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
             // caring about the versioning
@@ -310,7 +317,7 @@ public final class ResourceConfiguration {
             Properties props = new Properties();
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
-                props.put(jsonReader.nextName(), jsonReader.nextString());
+                props.setProperty(jsonReader.nextName(), jsonReader.nextString());
             }
             jsonReader.endObject();
             Constructor<?> storageCons = storageClazz.getConstructors()[0];
@@ -322,31 +329,10 @@ public final class ResourceConfiguration {
 
             return new ResourceConfiguration(props, storage, revisioning, nodeFactory);
 
-        } catch (IOException fileExec) {
-            throw new TTIOException(fileExec);
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException | IllegalArgumentException | InstantiationException
+        | IllegalAccessException | InvocationTargetException exc) {
+            throw new TTIOException(exc);
         }
-        return null;
-    }
-
-    public static File generateFileOutOfResource(final File pDBFile, final String pResourceName) {
-        return new File(new File(pDBFile.getAbsolutePath(), DatabaseConfiguration.Paths.Data.getFile()
-            .getName()), pResourceName);
-
     }
 
     /**

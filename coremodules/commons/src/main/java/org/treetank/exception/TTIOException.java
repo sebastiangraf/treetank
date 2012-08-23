@@ -29,10 +29,6 @@ package org.treetank.exception;
 
 import java.io.IOException;
 
-import javax.xml.stream.XMLStreamException;
-
-import com.sleepycat.je.DatabaseException;
-
 /**
  * All Treetank IO Exception are wrapped in this class. It inherits from
  * IOException since it is a Treetank IO Exception.
@@ -53,47 +49,7 @@ public class TTIOException extends TTException {
      * @param paramExc
      *            exception to be wrapped
      */
-    public TTIOException(final XMLStreamException paramExc) {
-        super(paramExc);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param paramExc
-     *            exception to be wrapped
-     */
-    public TTIOException(final IOException paramExc) {
-        super(paramExc);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param paramExc
-     *            exception to be wrapped
-     */
-    public TTIOException(final DatabaseException paramExc) {
-        super(paramExc);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param paramExc
-     *            for the overlaying {@link IOException}
-     */
-    public TTIOException(final ClassNotFoundException paramExc) {
-        super(paramExc);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param paramExc
-     *            for handling bytes in the wrong way.
-     */
-    public TTIOException(final TTByteHandleException paramExc) {
+    public TTIOException(final Exception paramExc) {
         super(paramExc);
     }
 

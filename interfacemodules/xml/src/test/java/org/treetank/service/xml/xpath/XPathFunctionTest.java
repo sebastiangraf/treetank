@@ -41,7 +41,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -71,9 +70,7 @@ public class XPathFunctionTest {
     @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
         new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),

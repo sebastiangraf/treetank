@@ -44,7 +44,6 @@ import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -71,9 +70,7 @@ public class SAXSerializerTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);

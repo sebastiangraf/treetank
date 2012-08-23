@@ -77,9 +77,7 @@ public final class XMLUpdateShredderTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
         XMLUnit.setIgnoreComments(true);

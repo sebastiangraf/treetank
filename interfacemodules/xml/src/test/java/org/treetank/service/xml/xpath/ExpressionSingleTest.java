@@ -50,7 +50,6 @@ import org.treetank.axis.NestedAxis;
 import org.treetank.axis.ParentAxis;
 import org.treetank.axis.SelfAxis;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 import org.treetank.service.xml.xpath.axis.UnionAxis;
 import org.treetank.service.xml.xpath.filter.DupFilterAxis;
 
@@ -69,9 +68,7 @@ public class ExpressionSingleTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder =

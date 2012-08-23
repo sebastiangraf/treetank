@@ -90,9 +90,7 @@ public final class TestNodeWrapperXPath {
     @BeforeMethod
     public void setUp() throws TTException, XPathFactoryConfigurationException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         ResourceConfiguration resource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(resource);
         holder = Holder.generateRtx(resource);

@@ -44,29 +44,6 @@ import org.treetank.exception.TTIOException;
  * of a database cannot be changed.
  * 
  * 
- * <h2>Usage Example</h2>
- * 
- * <p>
- * 
- * <pre>
- * // Simple session with standards as defined in <code>EDatabaseSetting</code> and 
- * <code>ESessionSetting</code>. Creation takes place in open-process
- * final IDatabase database = Database.openDatabase(&quot;examplek&quot;);
- * final ISession session = database.getSession()
- * 
- * // Database with berkeley db and incremental revisioning.
- * final Properties dbProps = new Properties();
- * dbProps.setProperty(STORAGE_TYPE.name(),StorageType.Berkeley.name());
- * dbProps.setProperty(REVISION_TYPE.name(), ERevisioning.INCREMENTAL.name());
- * final DatabaseConfiguration dbConfig = new DatabaseConfiguration(&quot;example&quot;, dbProps);
- * Database.create(dbConfig);
- * final IDatabase database = Database.openDatabase(&quot;examplek&quot;);
- * final ISession session = database.getSession();
- * </pre>
- * 
- * </p>
- * 
- * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */

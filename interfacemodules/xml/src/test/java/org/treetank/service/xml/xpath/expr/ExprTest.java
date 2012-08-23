@@ -22,7 +22,6 @@ import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
-import org.treetank.io.IConstants;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
 import org.treetank.node.interfaces.IValNode;
@@ -52,9 +51,7 @@ public class ExprTest {
     @BeforeClass
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);

@@ -62,8 +62,8 @@ import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
@@ -97,9 +97,7 @@ public class TestNodeWrapper {
     @BeforeMethod
     public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
@@ -173,8 +171,8 @@ public class TestNodeWrapper {
         Database.createDatabase(db2);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH2.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
         database.createResource(mResourceConfig.create(props, 1));
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));

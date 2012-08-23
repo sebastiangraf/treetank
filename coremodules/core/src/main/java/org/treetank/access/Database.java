@@ -56,7 +56,7 @@ public final class Database implements IDatabase {
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
     /** Central repository of all running sessions. */
-    private final Map<File, Session> mSessions;
+    private final Map<String, Session> mSessions;
 
     /** DatabaseConfiguration with fixed settings. */
     private final DatabaseConfiguration mDBConfig;
@@ -71,7 +71,7 @@ public final class Database implements IDatabase {
      */
     private Database(final DatabaseConfiguration paramDBConf) throws TTException {
         mDBConfig = paramDBConf;
-        mSessions = new HashMap<File, Session>();
+        mSessions = new HashMap<String, Session>();
 
     }
 
@@ -178,7 +178,10 @@ public final class Database implements IDatabase {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already
         // set data.
-        final File path = new File(pResConf.mProperties.getProperty(IConstants.FILENAME));
+        final File path =
+            new File(new File(pResConf.mProperties.getProperty(IConstants.DBFILE),
+                DatabaseConfiguration.Paths.Data.getFile().getName()), pResConf.mProperties
+                .getProperty(IConstants.RESOURCE));
         // if file is existing, skipping
         if (path.exists()) {
             return false;
@@ -208,7 +211,7 @@ public final class Database implements IDatabase {
             // substructure
             if (!returnVal) {
                 throw new IllegalStateException(new StringBuilder("Failure, please remove folder ").append(
-                    pResConf.mProperties.getProperty(IConstants.FILENAME)).append(" manually!").toString());
+                    pResConf.mProperties.getProperty(IConstants.DBFILE)).append(" manually!").toString());
             }
             return returnVal;
         }
@@ -286,13 +289,11 @@ public final class Database implements IDatabase {
                     "Resource could not be opened (since it was not created?) at location", resourceFile
                         .toString());
             }
-            ResourceConfiguration config = ResourceConfiguration.deserialize(resourceFile);
+            ResourceConfiguration config =
+                ResourceConfiguration.deserialize(mDBConfig.mFile, pSessionConf.getResource());
 
-            // Resource of session must be associated to this database
-            assert new File(config.mProperties.getProperty(IConstants.FILENAME)).getParentFile()
-                .getParentFile().equals(mDBConfig.mFile);
             returnVal = new Session(this, config, pSessionConf);
-            mSessions.put(resourceFile, returnVal);
+            mSessions.put(pSessionConf.getResource(), returnVal);
         }
         return returnVal;
     }
@@ -330,12 +331,12 @@ public final class Database implements IDatabase {
      * Closing a resource. This callback is necessary due to centralized
      * handling of all sessions within a database.
      * 
-     * @param pFile
+     * @param pResourceName
      *            to be closed
      * @return true if close successful, false otherwise
      */
-    protected boolean removeSession(final File pFile) {
-        return mSessions.remove(pFile) != null ? true : false;
+    protected boolean removeSession(final String pResourceName) {
+        return mSessions.remove(pResourceName) != null ? true : false;
     }
 
     /**

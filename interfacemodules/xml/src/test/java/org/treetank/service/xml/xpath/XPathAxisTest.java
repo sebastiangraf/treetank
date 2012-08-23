@@ -41,7 +41,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 
 import com.google.inject.Inject;
 
@@ -63,13 +62,10 @@ public class XPathAxisTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(IConstants.FILENAME, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
-        holder =
-            Holder.generateRtx(mResource);
+        holder = Holder.generateRtx(mResource);
     }
 
     @AfterMethod
@@ -99,8 +95,8 @@ public class XPathAxisTest {
             5L, 9L
         });
 
-        AxisTest.testIAxisConventions(
-            new XPathAxis(holder.getNRtx(), "child::p:" + "a/child::b/child::c"), new long[] {
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::p:" + "a/child::b/child::c"),
+            new long[] {
                 7L, 11L
             });
 
@@ -233,10 +229,9 @@ public class XPathAxisTest {
             1L
         });
 
-        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "descendant-or-self::p:a"),
-            new long[] {
-                1L
-            });
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "descendant-or-self::p:a"), new long[] {
+            1L
+        });
 
         AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "/p:a/descendant-or-self::b"),
             new long[] {
@@ -247,8 +242,7 @@ public class XPathAxisTest {
             5L, 9L
         });
 
-        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/descendant::p:a"),
-            new long[] {});
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "p:a/descendant::p:a"), new long[] {});
 
     }
 
@@ -417,15 +411,14 @@ public class XPathAxisTest {
             5L, 9L
         });
 
-        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::*[text() or c]"),
-            new long[] {
-                5l, 9L
-            });
-
-        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(),
-            "child::*[text() or c], /node(), //c"), new long[] {
-            5l, 9L, 1L, 7L, 11L
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::*[text() or c]"), new long[] {
+            5l, 9L
         });
+
+        AxisTest.testIAxisConventions(new XPathAxis(holder.getNRtx(), "child::*[text() or c], /node(), //c"),
+            new long[] {
+                5l, 9L, 1L, 7L, 11L
+            });
     }
 
     @Test

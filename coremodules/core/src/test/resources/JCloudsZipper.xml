@@ -1,0 +1,8 @@
+<suite name="JCloudsZipper">
+	<test name="JCloudsZipper">
+		<packages>
+			<package name="org.treetank.access.conf" />
+			<package name="org.treetank.io" />
+		</packages>
+	</test>
+</suite>
