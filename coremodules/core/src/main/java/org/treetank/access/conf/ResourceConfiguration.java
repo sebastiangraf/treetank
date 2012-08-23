@@ -317,7 +317,7 @@ public final class ResourceConfiguration {
             Properties props = new Properties();
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
-                props.put(jsonReader.nextName(), jsonReader.nextString());
+                props.setProperty(jsonReader.nextName(), jsonReader.nextString());
             }
             jsonReader.endObject();
             Constructor<?> storageCons = storageClazz.getConstructors()[0];

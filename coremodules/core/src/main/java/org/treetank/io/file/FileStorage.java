@@ -83,6 +83,7 @@ public final class FileStorage implements IStorage {
     @Inject
     public FileStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
         IByteHandlerPipeline pByteHandler) {
+
         mFile =
             new File(new File(new File(pProperties.getProperty(IConstants.DBFILE),
                 DatabaseConfiguration.Paths.Data.getFile().getName()), pProperties

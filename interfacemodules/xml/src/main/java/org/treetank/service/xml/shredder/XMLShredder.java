@@ -357,8 +357,8 @@ public class XMLShredder implements Callable<Void> {
         Database.createDatabase(config);
         final IDatabase db = Database.openDatabase(target);
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.DBFILE, target);
-        props.put(org.treetank.io.IConstants.RESOURCE, "shredded");
+        props.setProperty(org.treetank.io.IConstants.DBFILE, target.getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
         db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =

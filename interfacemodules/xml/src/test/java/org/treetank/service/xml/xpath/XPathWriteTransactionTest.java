@@ -50,6 +50,7 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
+import org.treetank.io.IConstants;
 import org.treetank.service.xml.shredder.XMLShredder;
 
 import com.google.inject.Inject;
@@ -83,7 +84,9 @@ public final class XPathWriteTransactionTest {
 
         // Verify.
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        Properties props = TestHelper.createProperties();
+        Properties props = new Properties();
+        props.put(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
+        props.put(IConstants.RESOURCE, "shredded");
         database.createResource(mResourceConfig.create(props, 10));
         session = database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);

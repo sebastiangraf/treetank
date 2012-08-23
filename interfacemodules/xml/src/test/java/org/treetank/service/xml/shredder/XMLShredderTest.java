@@ -111,8 +111,9 @@ public class XMLShredderTest {
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile());
-        props.put(org.treetank.io.IConstants.RESOURCE, "shredded");
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile()
+            .getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
         mResource = mResourceConfig.create(props, 10);
         database2.createResource(mResource);
         final ISession session =
@@ -167,8 +168,8 @@ public class XMLShredderTest {
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile());
-        props.put(org.treetank.io.IConstants.RESOURCE, "shredded");
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
         mResource = mResourceConfig.create(props, 10);
         database2.createResource(mResource);
         final ISession expectedSession =
@@ -223,8 +224,8 @@ public class XMLShredderTest {
         // Setup parsed session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         props = new Properties();
-        props.put(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile());
-        props.put(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 1);
         database2.createResource(mResource);
         final ISession session2 =
@@ -265,8 +266,9 @@ public class XMLShredderTest {
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile());
-        props.put(org.treetank.io.IConstants.RESOURCE, "shredded");
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile()
+            .getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
         mResource = mResourceConfig.create(props, 1);
         database.createResource(mResource);
         final ISession session =

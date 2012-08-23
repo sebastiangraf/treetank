@@ -153,7 +153,7 @@ public final class XMLSerializerProperties {
                 }
 
                 final String key = line.substring(0, equals).toUpperCase();
-                final Object value = line.substring(equals + 1);
+                final String value = line.substring(equals + 1);
 
                 mProps.put(key, value);
                 buffReader.close();

@@ -171,8 +171,8 @@ public class TestNodeWrapper {
         Database.createDatabase(db2);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile());
-        props.put(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
+        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
         database.createResource(mResourceConfig.create(props, 1));
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
