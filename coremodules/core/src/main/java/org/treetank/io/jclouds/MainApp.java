@@ -75,9 +75,9 @@ public class MainApp {
             }
 
         }
-        //
-        // // close context
-        // context.close();
+
+        // close context
+        context.close();
 
     }
 }
