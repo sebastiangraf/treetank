@@ -103,9 +103,7 @@ public final class TestNodeWrapperS9ApiXSLT {
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
         Database.createDatabase(dbConfig);
         final IDatabase databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.DBFILE, ResourceConfiguration.generateFileOutOfResource(
-            TestHelper.PATHS.PATH1.getFile(), TestHelper.RESOURCENAME).getAbsolutePath());
+        Properties props = TestHelper.createProperties();
         ResourceConfiguration resConfig = mResourceConfig.create(props, 1);
         databaseBooks.createResource(resConfig);
         final ISession session =

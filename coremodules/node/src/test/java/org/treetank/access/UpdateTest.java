@@ -51,7 +51,6 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.inject.Inject;
@@ -69,9 +68,7 @@ public class UpdateTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile());
-        props.put(IConstants.RESOURCE, TestHelper.RESOURCENAME);
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);

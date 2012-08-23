@@ -73,9 +73,7 @@ public final class OverallTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = new Properties();
-        props.put(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile());
-        props.put(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
+        Properties props = TestHelper.createProperties();
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
     }

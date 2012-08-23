@@ -44,15 +44,14 @@ import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.inject.Inject;
@@ -249,9 +248,7 @@ public class HashTest {
 
     private INodeWriteTrx createWtx(final HashKind kind) throws TTException {
         final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        Properties props = new Properties();
-        props.put(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile());
-        props.put(IConstants.RESOURCE, TestHelper.RESOURCENAME);
+        Properties props = TestHelper.createProperties();
         ResourceConfiguration res = mResourceConfig.create(props, 10);
         TestHelper.createResource(res);
         final ISession session =
