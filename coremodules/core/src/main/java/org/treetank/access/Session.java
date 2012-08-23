@@ -27,7 +27,6 @@
 
 package org.treetank.access;
 
-import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -37,7 +36,6 @@ import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -149,7 +147,7 @@ public final class Session implements ISession {
             mPageTrxs.clear();
 
             mFac.close();
-            mDatabase.removeSession(new File(mResourceConfig.mProperties.getProperty(IConstants.DBFILE)));
+            mDatabase.removeSession(mSessionConfig.getResource());
             mClosed = true;
         }
     }

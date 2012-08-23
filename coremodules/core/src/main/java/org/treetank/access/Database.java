@@ -56,7 +56,7 @@ public final class Database implements IDatabase {
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
     /** Central repository of all running sessions. */
-    private final Map<File, Session> mSessions;
+    private final Map<String, Session> mSessions;
 
     /** DatabaseConfiguration with fixed settings. */
     private final DatabaseConfiguration mDBConfig;
@@ -71,7 +71,7 @@ public final class Database implements IDatabase {
      */
     private Database(final DatabaseConfiguration paramDBConf) throws TTException {
         mDBConfig = paramDBConf;
-        mSessions = new HashMap<File, Session>();
+        mSessions = new HashMap<String, Session>();
 
     }
 
@@ -293,7 +293,7 @@ public final class Database implements IDatabase {
                 ResourceConfiguration.deserialize(mDBConfig.mFile, pSessionConf.getResource());
 
             returnVal = new Session(this, config, pSessionConf);
-            mSessions.put(resourceFile, returnVal);
+            mSessions.put(pSessionConf.getResource(), returnVal);
         }
         return returnVal;
     }
@@ -331,12 +331,12 @@ public final class Database implements IDatabase {
      * Closing a resource. This callback is necessary due to centralized
      * handling of all sessions within a database.
      * 
-     * @param pFile
+     * @param pResourceName
      *            to be closed
      * @return true if close successful, false otherwise
      */
-    protected boolean removeSession(final File pFile) {
-        return mSessions.remove(pFile) != null ? true : false;
+    protected boolean removeSession(final String pResourceName) {
+        return mSessions.remove(pResourceName) != null ? true : false;
     }
 
     /**
