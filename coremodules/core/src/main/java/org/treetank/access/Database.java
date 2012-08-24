@@ -251,7 +251,7 @@ public final class Database implements IDatabase {
      *             if something odd happens
      */
     public static synchronized IDatabase openDatabase(final File pFile) throws TTException {
-        if (!pFile.exists()) {
+        if (!existsDatabase(pFile)) {
             throw new TTUsageException("DB could not be opened (since it was not created?) at location",
                 pFile.toString());
         }

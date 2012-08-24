@@ -73,11 +73,6 @@ public class JCloudsStorage implements IStorage {
         mContext = new BlobStoreContextFactory().createContext("filesystem", mProperties);
 
         mBlobStore = mContext.getBlobStore();
-        // setup the container name used by the provider (like bucket in S3)
-        String containerName = mProperties.getProperty(IConstants.RESOURCE);
-        if (!mBlobStore.containerExists(containerName)) {
-            mBlobStore.createContainerInLocation(null, containerName);
-        }
 
     }
 
@@ -86,6 +81,11 @@ public class JCloudsStorage implements IStorage {
      */
     @Override
     public IWriter getWriter() throws TTException {
+        // setup the container name used by the provider (like bucket in S3)
+        String containerName = mProperties.getProperty(IConstants.RESOURCE);
+        if (!mBlobStore.containerExists(containerName)) {
+            mBlobStore.createContainerInLocation(null, containerName);
+        }
         return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties.getProperty(IConstants.RESOURCE));
     }
 
@@ -94,6 +94,11 @@ public class JCloudsStorage implements IStorage {
      */
     @Override
     public IReader getReader() throws TTException {
+        // setup the container name used by the provider (like bucket in S3)
+        String containerName = mProperties.getProperty(IConstants.RESOURCE);
+        if (!mBlobStore.containerExists(containerName)) {
+            mBlobStore.createContainerInLocation(null, containerName);
+        }
         return new JCloudsReader(mBlobStore, mFac, mByteHandler, mProperties.getProperty(IConstants.RESOURCE));
     }
 
@@ -110,7 +115,11 @@ public class JCloudsStorage implements IStorage {
      */
     @Override
     public boolean exists() throws TTException {
-        return mBlobStore.containerExists(mProperties.getProperty(IConstants.RESOURCE));
+        if (mBlobStore.blobExists(mProperties.getProperty(IConstants.RESOURCE), Long.toString(-2l))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -119,6 +128,22 @@ public class JCloudsStorage implements IStorage {
     @Override
     public IByteHandlerPipeline getByteHandler() {
         return mByteHandler;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("JCloudsStorage [mFac=");
+        builder.append(mFac);
+        builder.append(", mByteHandler=");
+        builder.append(mByteHandler);
+        builder.append(", mProperties=");
+        builder.append(mProperties);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

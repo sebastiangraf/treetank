@@ -69,6 +69,7 @@ public class JCloudsWriter implements IWriter {
         Blob blob = blobbuilder.build();
         blob.setPayload(decryptedPage);
         mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+        pageReference.setKey(mNodepagekey);
         return mNodepagekey;
     }
 
@@ -110,13 +111,17 @@ public class JCloudsWriter implements IWriter {
      */
     private long getLastNodePage() throws TTIOException {
         try {
-            Blob blobRetrieved = mReader.mBlobStore.getBlob(mReader.mResourceName, Long.toString(-2l));
-            InputStream in = blobRetrieved.getPayload().getInput();
-            DataInputStream datain = new DataInputStream(in);
-            long key = datain.readLong();
-            datain.close();
-            in.close();
-            return key;
+            if (mReader.mBlobStore.blobExists(mReader.mResourceName, Long.toString(-2l))) {
+                Blob blobRetrieved = mReader.mBlobStore.getBlob(mReader.mResourceName, Long.toString(-2l));
+                InputStream in = blobRetrieved.getPayload().getInput();
+                DataInputStream datain = new DataInputStream(in);
+                long key = datain.readLong();
+                datain.close();
+                in.close();
+                return key;
+            } else {
+                return 0;
+            }
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
