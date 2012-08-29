@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
+import org.jclouds.Constants;
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.treetank.access.Database;
 import org.treetank.access.Session;
 import org.treetank.access.conf.DatabaseConfiguration;
@@ -122,6 +124,12 @@ public final class TestHelper {
         Properties returnVal = new Properties();
         returnVal.setProperty(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         returnVal.setProperty(IConstants.RESOURCE, RESOURCENAME);
+        returnVal.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(returnVal
+            .getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile().getName()), returnVal
+            .getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
+            .getAbsolutePath());
+        returnVal.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
+        returnVal.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
         return returnVal;
     }
 

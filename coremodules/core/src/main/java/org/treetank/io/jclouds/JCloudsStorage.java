@@ -3,16 +3,11 @@
  */
 package org.treetank.io.jclouds;
 
-import java.io.File;
 import java.util.Properties;
 
-import org.jclouds.Constants;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.filesystem.reference.FilesystemConstants;
-import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IConstants;
@@ -64,13 +59,9 @@ public class JCloudsStorage implements IStorage {
         mProperties = pProperties;
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
-        mProperties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(mProperties
-            .getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile().getName()),
-            mProperties.getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile()
-            .getName()).getAbsolutePath());
-        mProperties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        // get a context with filesystem that offers the portable BlobStore api
-        mContext = new BlobStoreContextFactory().createContext("filesystem", mProperties);
+        mContext =
+            ContextBuilder.newBuilder(mProperties.getProperty(IConstants.JCLOUDSTYPE)).overrides(mProperties)
+                .buildView(BlobStoreContext.class);
 
         mBlobStore = mContext.getBlobStore();
 
@@ -115,7 +106,8 @@ public class JCloudsStorage implements IStorage {
      */
     @Override
     public boolean exists() throws TTException {
-        if (mBlobStore.blobExists(mProperties.getProperty(IConstants.RESOURCE), Long.toString(-2l))) {
+        if (mBlobStore.containerExists(mProperties.getProperty(IConstants.RESOURCE))
+            && mBlobStore.blobExists(mProperties.getProperty(IConstants.RESOURCE), Long.toString(-2l))) {
             return true;
         } else {
             return false;
