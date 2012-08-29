@@ -6,4 +6,6 @@ public interface IConstants {
     
     public static final String RESOURCE = "RESOURCE";
 
+    public static final String JCLOUDSTYPE = "JCLOUDS";
+    
 }

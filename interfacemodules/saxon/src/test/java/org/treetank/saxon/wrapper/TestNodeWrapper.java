@@ -48,6 +48,8 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
+import org.jclouds.Constants;
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -69,6 +71,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.io.IConstants;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -173,6 +176,12 @@ public class TestNodeWrapper {
         Properties props = new Properties();
         props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
         props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
+        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
+            props.getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
+                .getName()), props.getProperty(IConstants.RESOURCE)),
+            ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
+        props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
+        props.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
         database.createResource(mResourceConfig.create(props, 1));
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));

@@ -31,6 +31,7 @@ package org.treetank.service.jaxrx.implementation; // NOPMD we need all these im
 
 import static org.treetank.node.IConstants.ROOT_NODE;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,9 +48,12 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
+import org.jclouds.Constants;
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
+import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -299,8 +303,16 @@ public class DatabaseRepresentation {
             Properties properties = new Properties();
             properties.setProperty(IConstants.DBFILE, mDatabase.getLocation().getAbsolutePath());
             properties.setProperty(IConstants.RESOURCE, resource);
+            properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
+                properties.getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
+                    .getName()), properties.getProperty(IConstants.RESOURCE)),
+                ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
+            properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
+            properties.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
+
             mDatabase.createResource(new ResourceConfiguration(properties, 1, mStorageFac, mRevisionFac,
                 NODEFACTORY));
+
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
             pWtx = session.beginPageWriteTransaction();
             wtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);

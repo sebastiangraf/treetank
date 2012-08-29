@@ -32,6 +32,8 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 import java.io.File;
 import java.util.Properties;
 
+import org.jclouds.Constants;
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -43,6 +45,8 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
@@ -87,6 +91,12 @@ public final class XPathWriteTransactionTest {
         Properties props = new Properties();
         props.put(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         props.put(IConstants.RESOURCE, "shredded");
+        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
+            props.getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
+                .getName()), props.getProperty(IConstants.RESOURCE)),
+            ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
+        props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
+        props.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
         database.createResource(mResourceConfig.create(props, 10));
         session = database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
