@@ -56,6 +56,11 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>SonatypeSnapshot</id>
+			<name>Snapshot Repository for Sonatype</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
 	</repositories>
 	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
 		<artifactId>maven-assembly-plugin</artifactId> <configuration> <descriptors> 
