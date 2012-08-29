@@ -38,9 +38,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
-import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.filesystem.reference.FilesystemConstants;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.Providers;
 
@@ -48,7 +46,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
-import com.google.inject.Module;
 
 /**
  * Demonstrates the use of {@link BlobStore}.
@@ -103,14 +100,8 @@ public class MainApp {
 
         // Init
         BlobStoreContext context =
-            ContextBuilder.newBuilder(provider).credentials(identity, credential)
-                .overrides(mProperties)
-
-                // default jclouds has few dependencies, and uses builtin logging, date, and encryption.
-                // we can add support for libraries by adding driver modules like below
-                .modules(
-                    ImmutableSet.<Module> of(new EnterpriseConfigurationModule(), new SLF4JLoggingModule()))
-                .buildView(BlobStoreContext.class);
+            ContextBuilder.newBuilder(provider).credentials(identity, credential).overrides(mProperties)
+            .buildView(BlobStoreContext.class);
 
         // Create Container
         BlobStore blobStore = context.getBlobStore();
@@ -129,11 +120,6 @@ public class MainApp {
         BlobStoreContext context2 =
             ContextBuilder.newBuilder(provider).credentials(identity, credential)
                 .overrides(mProperties)
-
-                // default jclouds has few dependencies, and uses builtin logging, date, and encryption.
-                // we can add support for libraries by adding driver modules like below
-                .modules(
-                    ImmutableSet.<Module> of(new EnterpriseConfigurationModule(), new SLF4JLoggingModule()))
                 .buildView(BlobStoreContext.class);
         blobStore = context2.getBlobStore();
 
