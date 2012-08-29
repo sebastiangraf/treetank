@@ -115,7 +115,8 @@ public class JCloudsStorage implements IStorage {
      */
     @Override
     public boolean exists() throws TTException {
-        if (mBlobStore.blobExists(mProperties.getProperty(IConstants.RESOURCE), Long.toString(-2l))) {
+        if (mBlobStore.containerExists(mProperties.getProperty(IConstants.RESOURCE))
+            && mBlobStore.blobExists(mProperties.getProperty(IConstants.RESOURCE), Long.toString(-2l))) {
             return true;
         } else {
             return false;
