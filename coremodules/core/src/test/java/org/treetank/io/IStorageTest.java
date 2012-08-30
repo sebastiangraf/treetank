@@ -2,6 +2,8 @@ package org.treetank.io;
 
 import static org.testng.AssertJUnit.assertEquals;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -9,6 +11,7 @@ import org.testng.annotations.Test;
 import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.exception.TTException;
@@ -31,7 +34,8 @@ public class IStorageTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        mResource = mResourceConfig.create(TestHelper.createProperties(), 10);
+        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        mResource = mResourceConfig.create(props, 10);
         TestHelper.createResource(mResource);
         mSessionConfig.create(TestHelper.RESOURCENAME);
     }

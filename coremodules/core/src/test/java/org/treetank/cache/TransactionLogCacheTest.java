@@ -29,6 +29,8 @@ package org.treetank.cache;
 
 import static org.testng.AssertJUnit.assertEquals;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -36,6 +38,7 @@ import org.testng.annotations.Test;
 import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.page.NodePage;
@@ -53,7 +56,8 @@ public class TransactionLogCacheTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        ResourceConfiguration conf = mResourceConfig.create(TestHelper.createProperties(), 10);
+        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        ResourceConfiguration conf = mResourceConfig.create(props, 10);
         TestHelper.createResource(conf);
 
         cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1, conf.mNodeFac);

@@ -38,6 +38,7 @@ import org.treetank.Holder;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
@@ -74,7 +75,9 @@ public class XMarkBenchTest {
     @BeforeMethod
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        Properties props = TestHelper.createProperties();
+        Properties props =
+        StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+            TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
         new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),

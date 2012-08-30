@@ -41,6 +41,7 @@ import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.ChildAxis;
@@ -68,7 +69,9 @@ public class ExpressionSingleTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = TestHelper.createProperties();
+        Properties props =
+        StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+            TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder =

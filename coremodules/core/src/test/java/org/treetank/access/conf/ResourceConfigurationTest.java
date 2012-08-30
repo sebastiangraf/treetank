@@ -49,7 +49,7 @@ public class ResourceConfigurationTest {
      */
     @Test
     public void testDeSerialize() throws Exception {
-        Properties props = TestHelper.createProperties();
+        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         ResourceConfiguration resConf = mResourceConfig.create(props, 10);
         TestHelper.createResource(resConf);

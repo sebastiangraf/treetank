@@ -71,7 +71,7 @@ public final class SaxonHelper {
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
         Database.createDatabase(dbConfig);
         final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        Properties props = TestHelper.createProperties();
+        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         database.createResource(resFac.create(props, 1));
         final ISession session =
             database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
