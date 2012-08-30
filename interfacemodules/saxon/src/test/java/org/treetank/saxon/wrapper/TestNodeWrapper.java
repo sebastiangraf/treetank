@@ -100,7 +100,7 @@ public class TestNodeWrapper {
     @BeforeMethod
     public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = TestHelper.createProperties();
+        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);

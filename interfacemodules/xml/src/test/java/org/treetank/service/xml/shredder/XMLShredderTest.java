@@ -38,8 +38,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jclouds.Constants;
-import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -55,7 +53,6 @@ import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
-import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IDatabase;
@@ -93,7 +90,9 @@ public class XMLShredderTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = TestHelper.createProperties();
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 10);
         holder = Holder.generateWtx(mResource);
     }
@@ -113,16 +112,9 @@ public class XMLShredderTest {
 
         // Verify.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        Properties props = new Properties();
-        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile()
-            .getAbsolutePath());
-        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
-        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
-            props.getProperty(org.treetank.io.IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
-                .getName()), props.getProperty(org.treetank.io.IConstants.RESOURCE)),
-            ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
-        props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        props.setProperty(org.treetank.io.IConstants.JCLOUDSTYPE, "filesystem");
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+                "shredded");
         mResource = mResourceConfig.create(props, 10);
         database2.createResource(mResource);
         final ISession session =
@@ -176,15 +168,9 @@ public class XMLShredderTest {
 
         // Setup expected session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        Properties props = new Properties();
-        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
-        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
-        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
-            props.getProperty(org.treetank.io.IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
-                .getName()), props.getProperty(org.treetank.io.IConstants.RESOURCE)),
-            ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
-        props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        props.setProperty(org.treetank.io.IConstants.JCLOUDSTYPE, "filesystem");
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+                "shredded");
         mResource = mResourceConfig.create(props, 10);
         database2.createResource(mResource);
         final ISession expectedSession =
@@ -226,7 +212,9 @@ public class XMLShredderTest {
     public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        Properties props = TestHelper.createProperties();
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 1);
         database.createResource(mResource);
         final ISession expectedSession2 =
@@ -238,15 +226,7 @@ public class XMLShredderTest {
 
         // Setup parsed session.
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        props = new Properties();
-        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
-        props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
-        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
-            props.getProperty(org.treetank.io.IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
-                .getName()), props.getProperty(org.treetank.io.IConstants.RESOURCE)),
-            ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
-        props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        props.setProperty(org.treetank.io.IConstants.JCLOUDSTYPE, "filesystem");
+        props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props, 1);
         database2.createResource(mResource);
         final ISession session2 =
@@ -286,16 +266,7 @@ public class XMLShredderTest {
     @Test
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        Properties props = new Properties();
-        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile()
-            .getAbsolutePath());
-        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
-        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
-            props.getProperty(org.treetank.io.IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
-                .getName()), props.getProperty(org.treetank.io.IConstants.RESOURCE)),
-            ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
-        props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        props.setProperty(org.treetank.io.IConstants.JCLOUDSTYPE, "filesystem");
+        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(), "shredded");
         mResource = mResourceConfig.create(props, 1);
         database.createResource(mResource);
         final ISession session =

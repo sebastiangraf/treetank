@@ -45,6 +45,7 @@ import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XPathEvaluator;
@@ -69,7 +70,7 @@ public final class TestNodeWrapperS9ApiXPath {
     @BeforeMethod
     public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = TestHelper.createProperties();
+        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         ResourceConfiguration mResource =
             mResourceConfig.create(props, 10);
         NodeHelper.createTestDocument(mResource);

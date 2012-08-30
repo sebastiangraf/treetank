@@ -103,7 +103,7 @@ public final class TestNodeWrapperS9ApiXSLT {
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
         Database.createDatabase(dbConfig);
         final IDatabase databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-        Properties props = TestHelper.createProperties();
+        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         ResourceConfiguration resConfig = mResourceConfig.create(props, 1);
         databaseBooks.createResource(resConfig);
         final ISession session =
