@@ -3,13 +3,18 @@
  */
 package org.treetank.access.conf;
 
+import java.io.File;
 import java.security.Key;
+import java.util.Properties;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.jclouds.Constants;
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.io.IConstants;
 import org.treetank.io.IStorage;
 import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
@@ -56,5 +61,18 @@ public class StandardSettings extends AbstractModule {
 
         bind(Key.class).toInstance(KEY);
         install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
+    }
+
+    public static Properties getStandardProperties(final String mDatabase, final String resource) {
+        Properties properties = new Properties();
+        properties.setProperty(IConstants.DBFILE, mDatabase);
+        properties.setProperty(IConstants.RESOURCE, resource);
+        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(properties
+            .getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile().getName()),
+            properties.getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile()
+            .getName()).getAbsolutePath());
+        properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
+        properties.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
+        return properties;
     }
 }
