@@ -11,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.jclouds.Constants;
 import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.imagestore.ImageStoreConstants;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.api.INodeFactory;
@@ -73,15 +74,15 @@ public class StandardSettings extends AbstractModule {
             .getName()).getAbsolutePath());
         properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
         properties.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
-//        //Class name for painter for imagehost
-//        properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
-//            "org.jclouds.imagestore.imagegenerator.bytepainter.HexadecimalBytesToImagePainter");
-//        //Class name for imagehost
-//        properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
-//            "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
-//        //storage for imagehost (or any other parameter)
-//        properties.setProperty(ImageStoreConstants.PROPERTY_STORAGEPARAMETER, properties
-//            .getProperty(FilesystemConstants.PROPERTY_BASEDIR));
+        // Class name for painter for imagehost
+        properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
+            "org.jclouds.imagestore.imagegenerator.bytepainter.HexadecimalBytesToImagePainter");
+        // Class name for imagehost
+        properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
+            "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
+        // storage for imagehost (or any other parameter)
+        properties.setProperty(ImageStoreConstants.PROPERTY_STORAGEPARAMETER, properties
+            .getProperty(FilesystemConstants.PROPERTY_BASEDIR));
         return properties;
     }
 }
