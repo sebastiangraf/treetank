@@ -27,15 +27,19 @@
 
 package org.treetank.access;
 
+import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.treetank.access.conf.DatabaseConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTUsageException;
+import org.treetank.io.IOUtils;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -67,7 +71,7 @@ public final class Session implements ISession {
     private final Set<IPageReadTrx> mPageTrxs;
 
     /** abstract factory for all interaction to the storage. */
-    private final IStorage mFac;
+    private final IStorage mStorage;
 
     /** Determines if session was closed. */
     private transient boolean mClosed;
@@ -91,14 +95,14 @@ public final class Session implements ISession {
         mSessionConfig = pSessionConf;
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
 
-        mFac = pResourceConf.mStorage;
+        mStorage = pResourceConf.mStorage;
 
-        if (!mFac.exists()) {
+        if (!mStorage.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
             mLastCommittedUberPage = new UberPage();
         } else {
-            final IReader reader = mFac.getReader();
+            final IReader reader = mStorage.getReader();
             final PageReference firstRef = reader.readFirstReference();
             mLastCommittedUberPage = (UberPage)firstRef.getPage();
             reader.close();
@@ -108,7 +112,7 @@ public final class Session implements ISession {
 
     public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
         assertAccess(pRevKey);
-        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mFac.getReader());
+        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mStorage.getReader());
         mPageTrxs.add(trx);
         return trx;
     }
@@ -123,7 +127,7 @@ public final class Session implements ISession {
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision, final long mStoreRevision)
         throws TTException {
         assertAccess(mLastCommittedUberPage.getRevision());
-        final IWriter writer = mFac.getWriter();
+        final IWriter writer = mStorage.getWriter();
         final IPageWriteTrx trx =
             new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), writer,
                 mRepresentRevision, mStoreRevision);
@@ -146,7 +150,7 @@ public final class Session implements ISession {
             mLastCommittedUberPage = null;
             mPageTrxs.clear();
 
-            mFac.close();
+            mStorage.close();
             mDatabase.removeSession(mSessionConfig.getResource());
             mClosed = true;
         }
@@ -170,6 +174,18 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
+    public void truncate() throws TTException {
+        if (!mClosed) {
+            throw new TTUsageException("Session must be closed before truncated.");
+        }
+        mStorage.truncate();
+        IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(), DatabaseConfiguration.Paths.Data
+            .getFile().getName()), mSessionConfig.getResource()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -182,7 +198,7 @@ public final class Session implements ISession {
         builder.append(", mPageTrxs=");
         builder.append(mPageTrxs);
         builder.append(", mFac=");
-        builder.append(mFac);
+        builder.append(mStorage);
         builder.append("]");
         return builder.toString();
     }

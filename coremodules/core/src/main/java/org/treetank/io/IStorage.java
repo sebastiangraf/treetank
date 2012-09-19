@@ -90,6 +90,14 @@ public interface IStorage {
     IByteHandlerPipeline getByteHandler();
 
     /**
+     * Truncating a storage.
+     * 
+     * @throws TTException
+     *             if anything weird happens
+     */
+    void truncate() throws TTException;
+
+    /**
      * 
      * Factory for generating an {@link IStorage}-instance. Needed mainly
      * because of Guice-Assisted utilization.

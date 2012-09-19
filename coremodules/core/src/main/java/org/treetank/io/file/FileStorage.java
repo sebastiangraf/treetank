@@ -35,7 +35,9 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.exception.TTUsageException;
 import org.treetank.io.IConstants;
+import org.treetank.io.IOUtils;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -69,6 +71,9 @@ public final class FileStorage implements IStorage {
     /** Handling the byte-representation before serialization. */
     private final IByteHandlerPipeline mByteHandler;
 
+    /** Flag if storage is closed. */
+    private boolean mClosed;
+
     /**
      * Constructor.
      * 
@@ -91,6 +96,7 @@ public final class FileStorage implements IStorage {
                 .getFile().getName()).append(File.separator).append(FILENAME).toString());
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
+        mClosed = false;
     }
 
     /**
@@ -114,7 +120,7 @@ public final class FileStorage implements IStorage {
      */
     @Override
     public void close() {
-        // not used over here
+        mClosed = true;
     }
 
     /**
@@ -145,6 +151,17 @@ public final class FileStorage implements IStorage {
         builder.append(mByteHandler);
         builder.append("]");
         return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void truncate() throws TTException {
+        if (!mClosed) {
+            throw new TTUsageException("Storage opened, close first");
+        }
+        IOUtils.recursiveDelete(mFile);
     }
 
 }

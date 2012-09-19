@@ -119,24 +119,6 @@ public final class DatabaseConfiguration {
             return existing - values().length;
         }
 
-        /**
-         * Deleting a storage recursive. Used for deleting a databases
-         * 
-         * @param pFile
-         *            which should be deleted included descendants
-         * @return true if delete is valid
-         */
-        public static boolean recursiveDelete(final File pFile) {
-            if (pFile.isDirectory()) {
-                for (final File child : pFile.listFiles()) {
-                    if (!recursiveDelete(child)) {
-                        return false;
-                    }
-                }
-            }
-            return pFile.delete();
-        }
-
     }
 
     /** Path to file. */

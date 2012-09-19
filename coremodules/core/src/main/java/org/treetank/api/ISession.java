@@ -118,4 +118,13 @@ public interface ISession {
      */
     void close() throws TTException;
 
+    /**
+     * Truncating the resource where this {@link ISession} is bound to. Note that the session must be closed
+     * first.
+     * 
+     * @throws TTException
+     *             if anything weird happens.
+     */
+    void truncate() throws TTException;
+
 }

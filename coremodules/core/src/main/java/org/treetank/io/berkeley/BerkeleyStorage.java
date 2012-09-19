@@ -35,8 +35,10 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IConstants;
+import org.treetank.io.IOUtils;
 import org.treetank.io.IReader;
 import org.treetank.io.IStorage;
 import org.treetank.io.IWriter;
@@ -228,6 +230,30 @@ public final class BerkeleyStorage implements IStorage {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void truncate() throws TTException {
+        IOUtils.recursiveDelete(mFile);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("BerkeleyStorage [mByteHandler=");
+        builder.append(mByteHandler);
+        builder.append(", mFile=");
+        builder.append(mFile);
+        builder.append(", mFac=");
+        builder.append(mFac);
+        builder.append("]");
+        return builder.toString();
+    }
+
+    /**
      * Binding for storing {@link IPage} objects within the Berkeley DB.
      * 
      * @author Sebastian Graf, University of Konstanz
@@ -272,19 +298,4 @@ public final class BerkeleyStorage implements IStorage {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BerkeleyStorage [mByteHandler=");
-        builder.append(mByteHandler);
-        builder.append(", mFile=");
-        builder.append(mFile);
-        builder.append(", mFac=");
-        builder.append(mFac);
-        builder.append("]");
-        return builder.toString();
-    }
 }

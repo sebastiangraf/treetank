@@ -43,6 +43,7 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.IConstants;
+import org.treetank.io.IOUtils;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -139,8 +140,15 @@ public final class Database implements IDatabase {
         // check that database must be closed beforehand
         if (!DATABASEMAP.containsKey(pConf.mFile)) {
             if (existsDatabase(pConf.mFile)) {
+                final IDatabase database = new Database(pConf);
+                final File[] resources =
+                    new File(pConf.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()).listFiles();
+                for (final File resource : resources) {
+                    database.truncateResource(new SessionConfiguration(resource.getName(), null));
+                }
+                database.close();
                 // instantiate the database for deletion
-                DatabaseConfiguration.Paths.recursiveDelete(pConf.mFile);
+                IOUtils.recursiveDelete(pConf.mFile);
             }
         }
     }
@@ -219,16 +227,18 @@ public final class Database implements IDatabase {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    public synchronized void truncateResource(final String pResConf) {
+    public synchronized void truncateResource(final SessionConfiguration pResConf) throws TTException {
         final File resourceFile =
             new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
-                pResConf);
+                pResConf.getResource());
         // check that database must be closed beforehand
-        if (!mSessions.containsKey(resourceFile) && existsResource(pResConf)) {
-            // instantiate the database for deletion
-            DatabaseConfiguration.Paths.recursiveDelete(resourceFile);
+        if (!mSessions.containsKey(resourceFile) && existsResource(pResConf.getResource())) {
+            ISession session = getSession(pResConf);
+            session.close();
+            session.truncate();
         }
     }
 

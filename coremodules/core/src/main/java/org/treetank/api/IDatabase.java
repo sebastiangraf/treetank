@@ -77,11 +77,12 @@ public interface IDatabase {
      * Truncating a resource. This includes the removal of all data stored
      * within this resource.
      * 
-     * @param pResourceName
+     * @param pResConf
      *            storing the name of the resource
-     * 
+     * @throws TTException
+     *             if anything weird happens
      */
-    void truncateResource(final String pResourceName);
+    void truncateResource(final SessionConfiguration pResConf) throws TTException;
 
     /**
      * Is the resource within this database existing?

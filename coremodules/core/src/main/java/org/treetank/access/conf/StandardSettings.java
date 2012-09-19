@@ -78,11 +78,10 @@ public class StandardSettings extends AbstractModule {
         properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
             "org.jclouds.imagestore.imagegenerator.bytepainter.");
         // Class name for imagehost
+        properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
+            "org.jclouds.imagestore.imagehoster.file.ImageHostFile");
 //         properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
-//         "org.jclouds.imagestore.imagehoster.file.ImageHostFile");
-         properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
-         "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
-
+//         "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
         return properties;
     }
 }
