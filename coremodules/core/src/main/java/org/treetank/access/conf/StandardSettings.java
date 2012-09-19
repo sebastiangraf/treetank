@@ -21,7 +21,7 @@ import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
-import org.treetank.io.jclouds.JCloudsStorage;
+import org.treetank.io.file.FileStorage;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
@@ -56,7 +56,7 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class).build(
             IRevisioningFactory.class));
         bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
-        install(new FactoryModuleBuilder().implement(IStorage.class, JCloudsStorage.class).build(
+        install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
             IStorageFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
@@ -73,16 +73,16 @@ public class StandardSettings extends AbstractModule {
             properties.getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile()
             .getName()).getAbsolutePath());
         properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        properties.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
+        properties.setProperty(IConstants.JCLOUDSTYPE, "imagestore");
         // Class name for painter for imagehost
         properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
-            "org.jclouds.imagestore.imagegenerator.bytepainter.HexadecimalBytesToImagePainter");
+            "org.jclouds.imagestore.imagegenerator.bytepainter.");
         // Class name for imagehost
-        properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
-            "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
-        // storage for imagehost (or any other parameter)
-        properties.setProperty(ImageStoreConstants.PROPERTY_STORAGEPARAMETER, properties
-            .getProperty(FilesystemConstants.PROPERTY_BASEDIR));
+//         properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
+//         "org.jclouds.imagestore.imagehoster.file.ImageHostFile");
+         properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
+         "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
+
         return properties;
     }
 }
