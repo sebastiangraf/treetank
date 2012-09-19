@@ -268,12 +268,16 @@ public class DatabaseRepresentation {
      * 
      * @param resourceName
      *            The name of the database.
-     * @throws JaxRxException
+     * @throws WebApplicationException
      *             The exception occurred.
      */
     public void deleteResource(final String resourceName) throws WebApplicationException {
         synchronized (resourceName) {
-            mDatabase.truncateResource(resourceName);
+            try {
+                mDatabase.truncateResource(new SessionConfiguration(resourceName, null));
+            } catch (TTException e) {
+                throw new WebApplicationException(e);
+            }
         }
     }
 

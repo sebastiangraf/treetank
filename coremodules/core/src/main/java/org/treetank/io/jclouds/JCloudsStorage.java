@@ -122,6 +122,11 @@ public class JCloudsStorage implements IStorage {
         return mByteHandler;
     }
 
+    @Override
+    public void truncate() throws TTException {
+        mBlobStore.deleteContainer(mProperties.getProperty(IConstants.RESOURCE));
+    }
+
     /**
      * {@inheritDoc}
      */
