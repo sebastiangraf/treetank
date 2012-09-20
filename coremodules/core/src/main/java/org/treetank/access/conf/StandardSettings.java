@@ -22,6 +22,7 @@ import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.file.FileStorage;
+import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
@@ -76,12 +77,12 @@ public class StandardSettings extends AbstractModule {
         properties.setProperty(IConstants.JCLOUDSTYPE, "imagestore");
         // Class name for painter for imagehost
         properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
-            "org.jclouds.imagestore.imagegenerator.bytepainter.");
+            "org.jclouds.imagestore.imagegenerator.bytepainter.HexadecimalBytesToImagePainter");
         // Class name for imagehost
         properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
             "org.jclouds.imagestore.imagehoster.file.ImageHostFile");
-//         properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
-//         "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
+        // properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
+        // "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
         return properties;
     }
 }
