@@ -28,7 +28,7 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendWriter;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
@@ -43,13 +43,13 @@ import com.sleepycat.je.Transaction;
 
 /**
  * This class represents an reading instance of the Treetank-Application
- * implementing the {@link IWriter}-interface. It inherits and overrides some
+ * implementing the {@link IBackendWriter}-interface. It inherits and overrides some
  * reader methods because of the transaction layer.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyWriter implements IWriter {
+public final class BerkeleyWriter implements IBackendWriter {
 
     /** Current {@link Database} to write to. */
     private final Database mDatabase;

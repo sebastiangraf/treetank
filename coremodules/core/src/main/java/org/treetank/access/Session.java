@@ -40,9 +40,9 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.IOUtils;
-import org.treetank.io.IReader;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
@@ -102,10 +102,10 @@ public final class Session implements ISession {
             // node.
             mLastCommittedUberPage = new UberPage();
         } else {
-            final IReader reader = mStorage.getReader();
-            final PageReference firstRef = reader.readFirstReference();
+            final IBackendReader backendReader = mStorage.getReader();
+            final PageReference firstRef = backendReader.readFirstReference();
             mLastCommittedUberPage = (UberPage)firstRef.getPage();
-            reader.close();
+            backendReader.close();
         }
         mClosed = false;
     }
@@ -127,9 +127,9 @@ public final class Session implements ISession {
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision, final long mStoreRevision)
         throws TTException {
         assertAccess(mLastCommittedUberPage.getRevision());
-        final IWriter writer = mStorage.getWriter();
+        final IBackendWriter backendWriter = mStorage.getWriter();
         final IPageWriteTrx trx =
-            new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), writer,
+            new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), backendWriter,
                 mRepresentRevision, mStoreRevision);
         mPageTrxs.add(trx);
 

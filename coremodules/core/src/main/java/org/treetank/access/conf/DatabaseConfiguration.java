@@ -43,8 +43,7 @@ import com.google.gson.stream.JsonWriter;
  * 
  * <p>
  * Represents a configuration of a database. Includes all settings which have to be made when it comes to the
- * creation of the database. Since the settings are persisted after creation, it must contain a link to the
- * file defined by the interface {@link IConfigureSerializable}.
+ * creation of the database.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz

@@ -39,9 +39,9 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IConstants;
 import org.treetank.io.IOUtils;
-import org.treetank.io.IReader;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
@@ -63,7 +63,7 @@ import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 
 /**
- * Factory class to build up {@link IReader} {@link IWriter} instances for the
+ * Factory class to build up {@link IBackendReader} {@link IBackendWriter} instances for the
  * Treetank Framework.
  * 
  * After all this class is implemented as a Singleton to hold one {@link BerkeleyStorage} per
@@ -152,7 +152,7 @@ public final class BerkeleyStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public IReader getReader() throws TTIOException {
+    public IBackendReader getReader() throws TTIOException {
         try {
             setUpIfNecessary();
             return new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
@@ -165,7 +165,7 @@ public final class BerkeleyStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public IWriter getWriter() throws TTIOException {
+    public IBackendWriter getWriter() throws TTIOException {
         setUpIfNecessary();
         return new BerkeleyWriter(mEnv, mDatabase, mPageBinding);
     }
@@ -194,7 +194,7 @@ public final class BerkeleyStorage implements IBackend {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         boolean returnVal = false;
         try {
-            final IReader reader =
+            final IBackendReader backendReader =
                 new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
             TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
@@ -202,7 +202,7 @@ public final class BerkeleyStorage implements IBackend {
             if (status == OperationStatus.SUCCESS) {
                 returnVal = true;
             }
-            reader.close();
+            backendReader.close();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }

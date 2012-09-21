@@ -43,7 +43,7 @@ import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.TransactionLogCache;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendWriter;
 import org.treetank.page.IConstants;
 import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
@@ -66,7 +66,7 @@ import org.treetank.utils.NamePageHash;
 public final class PageWriteTrx implements IPageWriteTrx {
 
     /** Page writer to serialize. */
-    private final IWriter mPageWriter;
+    private final IBackendWriter mPageWriter;
 
     /** Cache to store the changes in this writetransaction. */
     private final ICache mLog;
@@ -98,7 +98,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if IO Error
      */
-    protected PageWriteTrx(final ISession pSession, final UberPage paramUberPage, final IWriter paramWriter,
+    protected PageWriteTrx(final ISession pSession, final UberPage paramUberPage, final IBackendWriter paramWriter,
         final long paramRepresentRev, final long paramStoreRev) throws TTException {
         mDelegate = new PageReadTrx(pSession, paramUberPage, paramRepresentRev, paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);

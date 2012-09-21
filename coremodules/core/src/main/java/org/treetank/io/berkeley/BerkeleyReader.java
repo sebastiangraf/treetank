@@ -28,7 +28,7 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IReader;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
@@ -43,12 +43,12 @@ import com.sleepycat.je.Transaction;
 
 /**
  * This class represents an reading instance of the Treetank-Application
- * implementing the {@link IReader}-interface.
+ * implementing the {@link IBackendReader}-interface.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyReader implements IReader {
+public final class BerkeleyReader implements IBackendReader {
 
     /** Binding for {@link IPage}. */
     protected final TupleBinding<IPage> mPageBinding;

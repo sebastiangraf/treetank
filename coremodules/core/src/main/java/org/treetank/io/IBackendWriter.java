@@ -29,43 +29,44 @@ package org.treetank.io;
 
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
 /**
- * Interface for reading the stored pages in every backend.
+ * Interface to provide the abstract layer related to write access of the
+ * tt-backend.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IReader {
+public interface IBackendWriter extends IBackendReader {
 
     /**
-     * Getting the first reference of the <code>Uberpage</code>.
+     * Writing a page related to the reference.
      * 
-     * @return a {@link PageReference} with link to the first reference
+     * @param pageReference
+     *            that points to a page
      * @throws TTIOException
-     *             if something bad happens
+     *             execption to be thrown if something bad happens
      */
-    PageReference readFirstReference() throws TTIOException, TTByteHandleException;
+    long write(final PageReference pageReference) throws TTIOException, TTByteHandleException;
 
     /**
-     * Getting a reference for the given pointer.
+     * Write Beacon for the first reference.
      * 
-     * @param pKey
-     *            the reference for the page to be determined
-     * @return a {@link IPage} as the base for a page
+     * @param pageReference
+     *            that points to the beacon
      * @throws TTIOException
-     *             if something bad happens during read
+     *             exception if something bad happens
      */
-    IPage read(final long pKey) throws TTIOException, TTByteHandleException;
+    void writeFirstReference(final PageReference pageReference) throws TTIOException, TTByteHandleException;
 
     /**
-     * Closing the storage.
+     * Closing the write access.
      * 
      * @throws TTIOException
-     *             if something bad happens while access
+     *             if closing fails
      */
+    @Override
     void close() throws TTIOException;
 
 }

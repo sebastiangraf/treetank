@@ -38,9 +38,9 @@ import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.IConstants;
 import org.treetank.io.IOUtils;
-import org.treetank.io.IReader;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
@@ -103,7 +103,7 @@ public final class FileStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public IReader getReader() throws TTException {
+    public IBackendReader getReader() throws TTException {
         return new FileReader(mFile, mFac, mByteHandler);
     }
 
@@ -111,7 +111,7 @@ public final class FileStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public IWriter getWriter() throws TTException {
+    public IBackendWriter getWriter() throws TTException {
         return new FileWriter(mFile, mFac, mByteHandler);
     }
 

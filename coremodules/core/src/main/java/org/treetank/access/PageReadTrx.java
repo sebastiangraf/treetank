@@ -38,7 +38,7 @@ import org.treetank.api.ISession;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IReader;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.IConstants;
 import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
@@ -69,7 +69,7 @@ import com.google.common.cache.CacheBuilder;
 public class PageReadTrx implements IPageReadTrx {
 
     /** Page reader exclusively assigned to this transaction. */
-    private final IReader mPageReader;
+    private final IBackendReader mPageReader;
 
     /** Uber page this transaction is bound to. */
     private final UberPage mUberPage;
@@ -101,7 +101,7 @@ public class PageReadTrx implements IPageReadTrx {
      *             if the read of the persistent storage fails
      */
     protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevKey,
-        final IReader pReader) throws TTException {
+        final IBackendReader pReader) throws TTException {
         mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
         mSession = pSession;
         mPageReader = pReader;
