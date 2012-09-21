@@ -39,9 +39,9 @@ import java.util.Properties;
 import org.treetank.access.Session;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IConstants;
 import org.treetank.io.IBackend;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
+import org.treetank.io.IConstants;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -59,7 +59,7 @@ import com.google.inject.assistedinject.Assisted;
  * <p>
  * Holds the settings for a resource which acts as a base for session that can not change. This includes all
  * settings which are persistent. Each {@link ResourceConfiguration} is furthermore bound to one fixed
- * database denoted by a related {@link DatabaseConfiguration}.
+ * database denoted by a related {@link StorageConfiguration}.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
@@ -158,14 +158,14 @@ public final class ResourceConfiguration {
      * @param pResourceName
      * @param pNumbersOfRevToRestore
      * @param pNodeFactory
-     * @param pStorage
+     * @param pBackend
      * @param pRevision
      */
     @Inject
     public ResourceConfiguration(@Assisted Properties pProperties, @Assisted int pNumbersOfRevToRestore,
-        IStorageFactory pStorage, IRevisioningFactory pRevision, INodeFactory pNodeFac) {
+        IBackendFactory pBackend, IRevisioningFactory pRevision, INodeFactory pNodeFac) {
 
-        this(pProperties, pStorage.create(pProperties), pRevision.create(pNumbersOfRevToRestore), pNodeFac);
+        this(pProperties, pBackend.create(pProperties), pRevision.create(pNumbersOfRevToRestore), pNodeFac);
     }
 
     /**
@@ -219,7 +219,7 @@ public final class ResourceConfiguration {
 
             final File file =
                 new File(new File(new File(pConfig.mProperties.getProperty(IConstants.DBFILE),
-                    DatabaseConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
+                    StorageConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
                     .getProperty(IConstants.RESOURCE)), Paths.ConfigBinary.getFile().getName());
 
             FileWriter fileWriter = new FileWriter(file);
@@ -274,7 +274,7 @@ public final class ResourceConfiguration {
         try {
 
             final File file =
-                new File(new File(new File(pFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+                new File(new File(new File(pFile, StorageConfiguration.Paths.Data.getFile().getName()),
                     pResource), Paths.ConfigBinary.getFile().getName());
 
             FileReader fileReader = new FileReader(file);

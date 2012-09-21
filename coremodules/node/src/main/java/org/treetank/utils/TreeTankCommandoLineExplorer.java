@@ -40,11 +40,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
-import org.treetank.access.Database;
+import org.treetank.access.Storage;
 import org.treetank.access.NodeReadTrx;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageReadTrx;
@@ -94,7 +94,7 @@ public final class TreeTankCommandoLineExplorer {
      *             of any kind
      */
     public static void main(final String[] args) throws Exception {
-        IDatabase database = null;
+        IStorage storage = null;
         ISession session = null;
         INodeReadTrx nRtx = null;
         IPageReadTrx pRtx = null;
@@ -106,10 +106,10 @@ public final class TreeTankCommandoLineExplorer {
             }
 
             final File file = new File(args[0]);
-            final DatabaseConfiguration config = new DatabaseConfiguration(file);
-            Database.createDatabase(config);
-            database = Database.openDatabase(file);
-            session = database.getSession(new SessionConfiguration("TMP", null));
+            final StorageConfiguration config = new StorageConfiguration(file);
+            Storage.createDatabase(config);
+            storage = Storage.openDatabase(file);
+            session = storage.getSession(new SessionConfiguration("TMP", null));
             if (revision != 0) {
                 pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
             } else {
@@ -142,8 +142,8 @@ public final class TreeTankCommandoLineExplorer {
                     }
                     final File file = findFile(line);
                     if (file != null) {
-                        database = Database.openDatabase(file);
-                        session = database.getSession(new SessionConfiguration("TMP", null));
+                        storage = Storage.openDatabase(file);
+                        session = storage.getSession(new SessionConfiguration("TMP", null));
                         pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
                         nRtx = new NodeReadTrx(pRtx);
                         System.out.println(command.executeCommand(nRtx));

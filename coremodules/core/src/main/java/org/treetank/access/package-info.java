@@ -30,9 +30,9 @@
  * <p>
  * The access semantics is as follows:
  * <ul>
- * <li>There can only be a single {@link org.treetank.api.IDatabase} instance per Database-Folder</li>
+ * <li>There can only be a single {@link org.treetank.api.IStorage} instance per Storage-Folder</li>
  * <li>There can only be multiple {@link org.treetank.api.ISession} instances per
- * {@link org.treetank.api.IDatabase} linked uniquely to resources representing concrete data-storages.</li>
+ * {@link org.treetank.api.IStorage} linked uniquely to resources representing concrete data-storages.</li>
  * <li>There can only be a single {@link org.treetank.api.INodeWriteTrx} instance per
  * {@link org.treetank.api.ISession}</li>
  * <li>There can be multiple {@link org.treetank.api.INodeReadTrx} instances per
@@ -43,12 +43,12 @@
  * Code examples:
  * 
  * <pre>
- * // DatabaseConfiguration denoted the configuration for a connected set of data resources. 
- * final DatabaseConfiguration dbConfig = new DatabaseConfiguration(new File("/path/to/db/location"));
+ * // StorageConfiguration denoted the configuration for a connected set of data resources. 
+ * final StorageConfiguration dbConfig = new StorageConfiguration(new File("/path/to/db/location"));
  * // Creation of a database. Returns true if successful, false if not (including existence of the database)
- * Database.createDatabase(dbConfig);
+ * Storage.createDatabase(dbConfig);
  * // Getting of database instance, will be a singleton for the denoted path
- * final IDatabase database = Database.openDatabase(new File("/path/to/db/location");
+ * final IStorage database = Storage.openDatabase(new File("/path/to/db/location");
  * // Creation of a resource within the db. The creation includes the setting of versioning, etc. It must take place only one.
  * final ResourceConfiguration resourceConfig = new ResourceConfiguration.Builder(&quot;coolResource&quot;).setRevision(ERevisioning.Differential).build();
  * database.createResource(resourceConfig);
@@ -73,7 +73,7 @@
  * Best practice to safely manipulate a TreeTank resource within a database if everything exists:
  * 
  * <pre>
- *         final IDatabase database = Database.openDatabase(new File(&quot;/path/to/db/location&quot;);
+ *         final IStorage database = Storage.openDatabase(new File(&quot;/path/to/db/location&quot;);
  *         final ISession session = Session.beginSession(new SessionConfiguration(&quot;existingResource&quot;);
  *         final INodeWriteTrx wtx = session.beginWriteTransaction();
  *         try {

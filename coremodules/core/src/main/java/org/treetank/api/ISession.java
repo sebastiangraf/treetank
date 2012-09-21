@@ -36,7 +36,7 @@ import org.treetank.exception.TTException;
  * <h2>Description</h2>
  * 
  * <p>
- * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
+ * Each <code>IStorage</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
  * can then be started from this instance. There can only be one <code>INodeWriteTrx</code> at the time.
  * However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>

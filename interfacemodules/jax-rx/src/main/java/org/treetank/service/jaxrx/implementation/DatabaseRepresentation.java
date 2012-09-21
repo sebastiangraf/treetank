@@ -53,15 +53,15 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
 import org.treetank.api.INodeFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.util.RESTResponseHelper;
@@ -87,7 +87,7 @@ import org.treetank.service.xml.xpath.XPathAxis;
 public class DatabaseRepresentation {
 
     /** Path to storage. */
-    private final IDatabase mDatabase;
+    private final IStorage mDatabase;
 
     /**
      * This field the begin result element of a XQuery or XPath expression.
@@ -109,11 +109,11 @@ public class DatabaseRepresentation {
      */
     private final static INodeFactory NODEFACTORY = new TreeNodeFactory();
 
-    private final IStorageFactory mStorageFac;
+    private final IBackendFactory mStorageFac;
 
     private final IRevisioningFactory mRevisionFac;
 
-    public DatabaseRepresentation(final IDatabase pDatabase, final IStorageFactory pStorageFac,
+    public DatabaseRepresentation(final IStorage pDatabase, final IBackendFactory pStorageFac,
         final IRevisioningFactory pRevisionFac) throws TTException {
         mDatabase = pDatabase;
         mStorageFac = pStorageFac;

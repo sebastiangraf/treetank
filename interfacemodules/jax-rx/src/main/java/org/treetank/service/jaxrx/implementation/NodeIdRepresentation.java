@@ -41,7 +41,7 @@ import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
@@ -87,7 +87,7 @@ public class NodeIdRepresentation {
     /**
      * Storage path to the data.
      */
-    private final IDatabase mDatabase;
+    private final IStorage mDatabase;
 
     /**
      * 
@@ -96,7 +96,7 @@ public class NodeIdRepresentation {
      * @param pStoragePath
      *            storage to be set
      */
-    public NodeIdRepresentation(final IDatabase pDatabase) {
+    public NodeIdRepresentation(final IStorage pDatabase) {
         mDatabase = pDatabase;
     }
 

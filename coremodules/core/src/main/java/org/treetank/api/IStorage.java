@@ -39,7 +39,7 @@ import org.treetank.exception.TTIOException;
  * is a persistent place where all data is stored. The access to the data is
  * done with the help of {@link ISession}s.
  * 
- * Furthermore, databases can be created with the help of {@link org.access.conf.DatabaseConfiguration}s.
+ * Furthermore, databases can be created with the help of {@link org.StorageConfiguration.conf.DatabaseConfiguration}s.
  * After creation, the settings
  * of a database cannot be changed.
  * 
@@ -47,7 +47,7 @@ import org.treetank.exception.TTIOException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IDatabase {
+public interface IStorage {
     /**
      * Creation of a resource. Since databases can consist out of several
      * resources, those can be created within this method. This includes the

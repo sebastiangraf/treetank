@@ -45,16 +45,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
 
-import org.treetank.access.Database;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.Storage;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.IConstants;
-import org.treetank.io.IBackend.IStorageFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
@@ -445,16 +445,16 @@ public final class XMLSerializer extends AbsSerializer {
         final long time = System.currentTimeMillis();
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
-        IStorageFactory storage = injector.getInstance(IStorageFactory.class);
+        IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
 
         final File target = new File(args[1]);
         target.delete();
         final FileOutputStream outputStream = new FileOutputStream(target);
 
-        final DatabaseConfiguration config = new DatabaseConfiguration(new File(args[0]));
-        Database.createDatabase(config);
-        final IDatabase db = Database.openDatabase(new File(args[0]));
+        final StorageConfiguration config = new StorageConfiguration(new File(args[0]));
+        Storage.createDatabase(config);
+        final IStorage db = Storage.openDatabase(new File(args[0]));
         Properties props = new Properties();
         props.setProperty(IConstants.DBFILE, target.getAbsolutePath());
         props.setProperty(IConstants.RESOURCE, "shredded");

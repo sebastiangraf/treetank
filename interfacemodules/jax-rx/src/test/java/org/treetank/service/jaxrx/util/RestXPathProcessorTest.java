@@ -48,7 +48,7 @@ import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
@@ -95,7 +95,7 @@ public class RestXPathProcessorTest {
     public static final transient String PARAMJRESTSEQ = "rest:sequence";
 
     @Inject
-    public IStorageFactory mStorageFac;
+    public IBackendFactory mStorageFac;
 
     @Inject
     public IRevisioningFactory mRevisioningFac;

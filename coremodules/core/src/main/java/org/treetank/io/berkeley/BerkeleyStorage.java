@@ -30,7 +30,7 @@ package org.treetank.io.berkeley;
 import java.io.File;
 import java.util.Properties;
 
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INodeFactory;
@@ -80,7 +80,7 @@ public final class BerkeleyStorage implements IBackend {
     /** Berkeley Environment for the database. */
     private Environment mEnv = null;
 
-    /** Database instance per session. */
+    /** Storage instance per session. */
     private Database mDatabase = null;
 
     /** Binding for de/-serializing pages. */
@@ -113,7 +113,7 @@ public final class BerkeleyStorage implements IBackend {
 
         mFile =
             new File(new File(new File(pProperties.getProperty(IConstants.DBFILE),
-                DatabaseConfiguration.Paths.Data.getFile().getName()), pProperties
+                StorageConfiguration.Paths.Data.getFile().getName()), pProperties
                 .getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName());
 
         mPageBinding = new PageBinding();

@@ -9,7 +9,7 @@ import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactor
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
@@ -55,8 +55,8 @@ public class ModuleFactory implements IModuleFactory {
                     bind(INodeFactory.class).to(DumbNodeFactory.class);
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
 
-                    install(new FactoryModuleBuilder().implement(IBackend.class, JCloudsStorage.class)
-                        .build(IStorageFactory.class));
+                    install(new FactoryModuleBuilder().implement(IBackend.class, JCloudsStorage.class).build(
+                        IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
@@ -76,8 +76,8 @@ public class ModuleFactory implements IModuleFactory {
                     bind(INodeFactory.class).to(DumbNodeFactory.class);
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Encryptor()));
 
-                    install(new FactoryModuleBuilder().implement(IBackend.class, JCloudsStorage.class)
-                        .build(IStorageFactory.class));
+                    install(new FactoryModuleBuilder().implement(IBackend.class, JCloudsStorage.class).build(
+                        IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
@@ -98,7 +98,7 @@ public class ModuleFactory implements IModuleFactory {
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
 
                     install(new FactoryModuleBuilder().implement(IBackend.class, BerkeleyStorage.class)
-                        .build(IStorageFactory.class));
+                        .build(IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
@@ -119,7 +119,7 @@ public class ModuleFactory implements IModuleFactory {
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Encryptor()));
 
                     install(new FactoryModuleBuilder().implement(IBackend.class, BerkeleyStorage.class)
-                        .build(IStorageFactory.class));
+                        .build(IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
@@ -140,7 +140,7 @@ public class ModuleFactory implements IModuleFactory {
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
 
                     install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
-                        IStorageFactory.class));
+                        IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
@@ -161,7 +161,7 @@ public class ModuleFactory implements IModuleFactory {
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Encryptor()));
 
                     install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
-                        IStorageFactory.class));
+                        IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 

@@ -38,7 +38,7 @@ import org.treetank.access.Session;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
@@ -66,10 +66,10 @@ public final class NodeHelper {
      * @throws TTException
      */
     public static void createTestDocument(ResourceConfiguration mResourceConfig) throws TTException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        assertTrue(database.createResource(mResourceConfig));
+        final IStorage storage = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        assertTrue(storage.createResource(mResourceConfig));
         final ISession session =
-            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
         final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
         DocumentCreater.create(nWtx);

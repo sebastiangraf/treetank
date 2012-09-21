@@ -35,8 +35,8 @@
     <code><pre>
       final File file = new File("src" + File.separator + "test"
              + File.separator + "resources" + File.separator + "testfile");
-      Database.truncateDatabase(file);
-      final IDatabase database = Database.openDatabase(file);
+      Storage.truncateDatabase(file);
+      final IStorage database = Storage.openDatabase(file);
       final XPathSelector selector = new XPathEvaluator(QUERYSTRING,
         database).call();
 
@@ -61,8 +61,8 @@
     <code><pre>
       final File file = new File("src" + File.separator + "test"
              + File.separator + "resources" + File.separator + "testfile");
-      Database.truncateDatabase(file);
-      final IDatabase database = Database.openDatabase(file);
+      Storage.truncateDatabase(file);
+      final IStorage database = Storage.openDatabase(file);
       
       final StringBuilder strBuilder = new StringBuilder();
 
@@ -78,8 +78,8 @@
     <code><pre>
       final File file = new File("src" + File.separator + "test"
          + File.separator + "resources" + File.separator + "testfile");
-      Database.truncateDatabase(file);
-      final IDatabase database = Database.openDatabase(file);
+      Storage.truncateDatabase(file);
+      final IStorage database = Storage.openDatabase(file);
       final XQueryEvaluator xqe =
         new XQueryEvaluator(
           XQUERYSTRING,
@@ -128,8 +128,8 @@
 
       final File file = new File("src" + File.separator + "test"
              + File.separator + "resources" + File.separator + "testfile");
-      Database.truncateDatabase(file);
-      final IDatabase database = Database.openDatabase(file);
+      Storage.truncateDatabase(file);
+      final IStorage database = Storage.openDatabase(file);
 
       new XQueryEvaluatorSAXHandler(
           XQUERYSTRING,
@@ -146,7 +146,7 @@
          + File.separator + "resources" + File.separator + "testfile");
       final File stylesheet = new File("src" + File.separator + "test"
          + File.separator + "resources" + File.separator + "stylesheet.xsl");
-      final IDatabase database = Database.openDatabase(file);
+      final IStorage database = Storage.openDatabase(file);
       
       final OutputStream out = new ByteArrayOutputStream();
       

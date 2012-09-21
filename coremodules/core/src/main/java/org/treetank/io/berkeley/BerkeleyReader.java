@@ -53,7 +53,7 @@ public final class BerkeleyReader implements IBackendReader {
     /** Binding for {@link IPage}. */
     protected final TupleBinding<IPage> mPageBinding;
 
-    /** Link to the {@link Database}. */
+    /** Link to the {@link Storage}. */
     private final Database mDatabase;
 
     /** Link to the {@link Transaction}. */
@@ -63,7 +63,7 @@ public final class BerkeleyReader implements IBackendReader {
      * Constructor.
      * 
      * @param pDatabase
-     *            {@link Database} reference to be connected to
+     *            {@link Storage} reference to be connected to
      * @param pTxn
      *            {@link Transaction} to be used
      * @param pPageBinding

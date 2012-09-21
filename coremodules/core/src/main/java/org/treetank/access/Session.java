@@ -31,7 +31,7 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IPageReadTrx;
@@ -61,8 +61,8 @@ public final class Session implements ISession {
     /** Session configuration. */
     protected final SessionConfiguration mSessionConfig;
 
-    /** Database for centralized closure of related Sessions. */
-    private final Database mDatabase;
+    /** Storage for centralized closure of related Sessions. */
+    private final Storage mDatabase;
 
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
@@ -80,15 +80,15 @@ public final class Session implements ISession {
      * Hidden constructor.
      * 
      * @param pDatabase
-     *            Database for centralized operations on related sessions.
+     *            Storage for centralized operations on related sessions.
      * @param pSessionConf
-     *            DatabaseConfiguration for general setting about the storage
+     *            StorageConfiguration for general setting about the storage
      * @param pResourceConf
      *            ResourceConfiguration for handling this specific session
      * @throws TTException
      *             Exception if something weird happens
      */
-    protected Session(final Database pDatabase, final ResourceConfiguration pResourceConf,
+    protected Session(final Storage pDatabase, final ResourceConfiguration pResourceConf,
         final SessionConfiguration pSessionConf) throws TTException {
         mDatabase = pDatabase;
         mResourceConfig = pResourceConf;
@@ -179,7 +179,7 @@ public final class Session implements ISession {
             throw new TTUsageException("Session must be closed before truncated.");
         }
         mStorage.truncate();
-        IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(), DatabaseConfiguration.Paths.Data
+        IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(), StorageConfiguration.Paths.Data
             .getFile().getName()), mSessionConfig.getResource()));
     }
 

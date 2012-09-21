@@ -33,8 +33,8 @@
  * 
  * <h2>Usage of Treetank</h2> Treetank is based on three layers of interaction:
  * <ul>
- * <li>IDatabase: This layer denotes a persistent database. Each database can be created using one specific
- * <code>DatabaseConfiguration</code>. Afterwards, this configuration is valid for the whole lifetime of the
+ * <li>IStorage: This layer denotes a persistent database. Each database can be created using one specific
+ * <code>StorageConfiguration</code>. Afterwards, this configuration is valid for the whole lifetime of the
  * database.</li>
  * <li>ISession: This layer denotes a runtime access on the database. Only one Session is allowed at one time.
  * The layer has ability to provide runtime-settings as well. Especially settings regarding the

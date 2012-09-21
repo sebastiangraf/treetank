@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
@@ -67,7 +67,7 @@ public class RestXPathProcessor {
     /**
      * Path to storage.
      */
-    private final IDatabase mDatabase;
+    private final IStorage mDatabase;
 
     /**
      * 
@@ -76,7 +76,7 @@ public class RestXPathProcessor {
      * @param pDatabase
      *            path to the storage
      */
-    public RestXPathProcessor(final IDatabase pDatabase) {
+    public RestXPathProcessor(final IStorage pDatabase) {
         mDatabase = pDatabase;
     }
 
@@ -215,7 +215,7 @@ public class RestXPathProcessor {
      */
     private void doXPathRes(final String resource, final Long revision, final OutputStream output,
         final boolean nodeid, final String xpath) throws TTException {
-        // Database connection to treetank
+        // Storage connection to treetank
         ISession session = null;
         INodeReadTrx rtx = null;
         try {

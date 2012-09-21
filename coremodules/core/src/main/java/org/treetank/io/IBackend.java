@@ -105,7 +105,7 @@ public interface IBackend {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    public static interface IStorageFactory {
+    public static interface IBackendFactory {
 
         /**
          * Generating a storage for a fixed file.

@@ -52,7 +52,7 @@ import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.jaxrx.implementation.NodeIdRepresentationTest;
@@ -98,7 +98,7 @@ public class RESTResponseHelperTest {
     private static final String RESPATH = "/factbook.xml";
 
     @Inject
-    public IStorageFactory mStorageFac;
+    public IBackendFactory mStorageFac;
 
     @Inject
     public IRevisioningFactory mRevisioningFac;

@@ -53,20 +53,20 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.treetank.access.Database;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.Storage;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
@@ -348,14 +348,14 @@ public class XMLShredder implements Callable<Void> {
         final long time = System.currentTimeMillis();
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
-        IStorageFactory storage = injector.getInstance(IStorageFactory.class);
+        IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
 
         final File target = new File(paramArgs[1]);
-        final DatabaseConfiguration config = new DatabaseConfiguration(target);
-        Database.truncateDatabase(config);
-        Database.createDatabase(config);
-        final IDatabase db = Database.openDatabase(target);
+        final StorageConfiguration config = new StorageConfiguration(target);
+        Storage.truncateDatabase(config);
+        Storage.createDatabase(config);
+        final IStorage db = Storage.openDatabase(target);
         Properties props = new Properties();
         props.setProperty(org.treetank.io.IConstants.DBFILE, target.getAbsolutePath());
         props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");

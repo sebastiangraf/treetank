@@ -45,11 +45,11 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
@@ -75,7 +75,7 @@ public final class XPathWriteTransactionTest {
 
     private INodeWriteTrx wtx;
 
-    private IDatabase database;
+    private IStorage storage;
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -87,18 +87,18 @@ public final class XPathWriteTransactionTest {
         XMLShredder.main(XML, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
 
         // Verify.
-        database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        storage = TestHelper.getDatabase(PATHS.PATH1.getFile());
         Properties props = new Properties();
         props.put(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         props.put(IConstants.RESOURCE, "shredded");
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
-            props.getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
+            props.getProperty(IConstants.DBFILE), StorageConfiguration.Paths.Data.getFile()
                 .getName()), props.getProperty(IConstants.RESOURCE)),
             ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
         props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
         props.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
-        database.createResource(mResourceConfig.create(props, 10));
-        session = database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
+        storage.createResource(mResourceConfig.create(props, 10));
+        session = storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
     }
 

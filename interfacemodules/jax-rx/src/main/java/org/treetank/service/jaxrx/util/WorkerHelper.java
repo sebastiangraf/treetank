@@ -191,7 +191,7 @@ public final class WorkerHelper {
      * @param ses
      *            ISession to be closed
      * @param dbase
-     *            IDatabase to be closed
+     *            IStorage to be closed
      * @throws TreetankException
      */
     public static void closeWTX(final boolean abortTransaction, final INodeWriteTrx wtx, final ISession ses)
@@ -213,7 +213,7 @@ public final class WorkerHelper {
      * @param ses
      *            ISession to be closed
      * @param dbase
-     *            IDatabase to be closed
+     *            IStorage to be closed
      * @throws TTException
      */
     public static void closeRTX(final INodeReadTrx rtx, final ISession ses) throws TTException {

@@ -30,7 +30,7 @@ package org.treetank.io.file;
 import java.io.File;
 import java.util.Properties;
 
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
@@ -91,7 +91,7 @@ public final class FileStorage implements IBackend {
 
         mFile =
             new File(new File(new File(pProperties.getProperty(IConstants.DBFILE),
-                DatabaseConfiguration.Paths.Data.getFile().getName()), pProperties
+                StorageConfiguration.Paths.Data.getFile().getName()), pProperties
                 .getProperty(IConstants.RESOURCE)), new StringBuilder(ResourceConfiguration.Paths.Data
                 .getFile().getName()).append(File.separator).append(FILENAME).toString());
         mFac = new PageFactory(pNodeFac);

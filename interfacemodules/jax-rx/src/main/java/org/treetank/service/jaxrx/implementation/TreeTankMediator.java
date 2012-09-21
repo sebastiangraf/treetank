@@ -38,11 +38,11 @@ import org.jaxrx.JaxRx;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.jaxrx.core.ResourcePath;
-import org.treetank.access.Database;
-import org.treetank.access.conf.DatabaseConfiguration;
-import org.treetank.api.IDatabase;
+import org.treetank.access.Storage;
+import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.WorkerHelper;
@@ -70,7 +70,7 @@ public final class TreeTankMediator implements JaxRx {
     private final transient NodeIdRepresentation nodeIdResource;
 
     @Inject
-    private IStorageFactory mStorageFac;
+    private IBackendFactory mStorageFac;
 
     @Inject
     private IRevisioningFactory mRevisionFac;
@@ -84,10 +84,10 @@ public final class TreeTankMediator implements JaxRx {
      * @throws TTException
      */
     public TreeTankMediator(final File pStoragePath) throws TTException {
-        if (!Database.existsDatabase(pStoragePath)) {
-            Database.createDatabase(new DatabaseConfiguration(pStoragePath));
+        if (!Storage.existsDatabase(pStoragePath)) {
+            Storage.createDatabase(new StorageConfiguration(pStoragePath));
         }
-        IDatabase db = Database.openDatabase(pStoragePath);
+        IStorage db = Storage.openDatabase(pStoragePath);
         database = new DatabaseRepresentation(db, mStorageFac, mRevisionFac);
         nodeIdResource = new NodeIdRepresentation(db);
     }

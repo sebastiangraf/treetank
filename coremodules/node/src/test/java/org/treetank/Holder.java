@@ -33,7 +33,7 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageReadTrx;
@@ -50,7 +50,7 @@ import org.treetank.exception.TTException;
  */
 public class Holder {
 
-    private IDatabase mDatabase;
+    private IStorage mDatabase;
 
     private ISession mSession;
 
@@ -59,12 +59,12 @@ public class Holder {
     private INodeReadTrx mNRtx;
 
     public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
-        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        database.createResource(pConf);
+        final IStorage storage = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        storage.createResource(pConf);
         final ISession session =
-            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final Holder holder = new Holder();
-        holder.mDatabase = database;
+        holder.mDatabase = storage;
         holder.mSession = session;
         return holder;
     }
@@ -92,7 +92,7 @@ public class Holder {
         mSession.close();
     }
 
-    public IDatabase getDatabase() {
+    public IStorage getDatabase() {
         return mDatabase;
     }
 

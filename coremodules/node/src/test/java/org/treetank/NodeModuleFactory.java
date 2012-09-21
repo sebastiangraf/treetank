@@ -10,7 +10,7 @@ import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactor
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -54,7 +54,7 @@ public class NodeModuleFactory implements IModuleFactory {
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
 
                     install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
-                        IStorageFactory.class));
+                        IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
@@ -76,7 +76,7 @@ public class NodeModuleFactory implements IModuleFactory {
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Encryptor()));
 
                     install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
-                        IStorageFactory.class));
+                        IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 

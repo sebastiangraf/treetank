@@ -27,7 +27,7 @@
 
 /**
  * Root package for all packages. This includes: This package contains all subpackages and classes for the
- * Database REST implementation layer with JAX-RX.
+ * Storage REST implementation layer with JAX-RX.
  * 
  * @author Lukas Lewandowski, University of Konstanz
  */

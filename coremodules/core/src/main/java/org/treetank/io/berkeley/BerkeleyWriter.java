@@ -51,7 +51,7 @@ import com.sleepycat.je.Transaction;
  */
 public final class BerkeleyWriter implements IBackendWriter {
 
-    /** Current {@link Database} to write to. */
+    /** Current {@link Storage} to write to. */
     private final Database mDatabase;
 
     /** Current {@link Transaction} to write with. */
@@ -64,12 +64,12 @@ public final class BerkeleyWriter implements IBackendWriter {
     private long mNodepagekey;
 
     /**
-     * Simple constructor starting with an {@link Environment} and a {@link Database}.
+     * Simple constructor starting with an {@link Environment} and a {@link Storage}.
      * 
      * @param pEnv
      *            {@link Environment} reference for the write
      * @param pDatabase
-     *            {@link Database} reference where the data should be written to
+     *            {@link Storage} reference where the data should be written to
      * @param pPageBinding
      *            {@link TupleBinding} for de/-serializing pages
      * 

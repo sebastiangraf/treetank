@@ -44,18 +44,18 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.access.Database;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
+import org.treetank.access.Storage;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackend.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -89,7 +89,7 @@ public class WorkerHelperTest {
     private final static File DBFILE = new File(TestHelper.PATHS.PATH1.getFile(), RESOURCENAME);
 
     @Inject
-    public IStorageFactory mStorageFac;
+    public IBackendFactory mStorageFac;
 
     @Inject
     public IRevisioningFactory mRevisioningFac;
@@ -129,14 +129,14 @@ public class WorkerHelperTest {
      */
     @Test
     public void testSerializeXML() throws TTException, IOException {
-        final IDatabase database = Database.openDatabase(DBFILE.getParentFile());
+        final IStorage storage = Storage.openDatabase(DBFILE.getParentFile());
         final ISession session =
-            database.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final OutputStream out = new ByteArrayOutputStream();
 
         assertNotNull("test serialize xml", WorkerHelper.serializeXML(session, out, true, true, null));
         session.close();
-        database.close();
+        storage.close();
         out.close();
     }
 
@@ -148,9 +148,9 @@ public class WorkerHelperTest {
 
         long lastRevision = treetank.getLastRevision(RESOURCENAME);
 
-        final IDatabase database = Database.openDatabase(DBFILE.getParentFile());
+        final IStorage storage = Storage.openDatabase(DBFILE.getParentFile());
         final ISession session =
-            database.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
 
@@ -161,18 +161,18 @@ public class WorkerHelperTest {
         assertEquals("test shred input stream", treetank.getLastRevision(RESOURCENAME), ++lastRevision);
         wtx.close();
         session.close();
-        database.close();
+        storage.close();
         inputStream.close();
     }
 
     /**
-     * This method tests {@link WorkerHelper#closeWTX(boolean, INodeWriteTrx, ISession, IDatabase)}
+     * This method tests {@link WorkerHelper#closeWTX(boolean, INodeWriteTrx, ISession, IStorage)}
      */
     @Test(expectedExceptions = IllegalStateException.class)
     public void testClose() throws TTException {
-        IDatabase database = Database.openDatabase(DBFILE.getParentFile());
+        IStorage storage = Storage.openDatabase(DBFILE.getParentFile());
         ISession session =
-            database.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
 
@@ -180,8 +180,8 @@ public class WorkerHelperTest {
 
         wtx.commit();
 
-        database = Database.openDatabase(DBFILE.getParentFile());
-        session = database.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
+        storage = Storage.openDatabase(DBFILE.getParentFile());
+        session = storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeReadTrx rtx =
             new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
         WorkerHelper.closeRTX(rtx, session);
