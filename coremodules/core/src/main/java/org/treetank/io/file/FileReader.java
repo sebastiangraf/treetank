@@ -34,7 +34,7 @@ import java.io.RandomAccessFile;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IReader;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
@@ -50,7 +50,7 @@ import org.treetank.page.UberPage;
  * 
  * 
  */
-public final class FileReader implements IReader {
+public final class FileReader implements IBackendReader {
 
     /** Beacon of first references. */
     protected final static int FIRST_BEACON = 12;

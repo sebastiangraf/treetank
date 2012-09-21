@@ -29,7 +29,7 @@ package org.treetank.access.conf;
 
 import java.security.Key;
 
-import org.treetank.access.Database;
+import org.treetank.access.Storage;
 import org.treetank.access.Session;
 
 import com.google.inject.Inject;
@@ -42,7 +42,7 @@ import com.google.inject.assistedinject.Assisted;
  * <p>
  * Holds the {@link Session}-wide settings that can not change within the runtime of a {@link Session}. This
  * included stuff like commit-threshold and number of usable write/read transactions. Each
- * {@link SessionConfiguration} is only bound through the location to a {@link Database} and related
+ * {@link SessionConfiguration} is only bound through the location to a {@link Storage} and related
  * resources.
  * </p>
  */

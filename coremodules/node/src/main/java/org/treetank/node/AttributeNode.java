@@ -84,7 +84,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Delegate method for getNodeKey.
      * 
-     * @return
+     * @return the current key
      * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
      */
     public long getNodeKey() {
@@ -104,7 +104,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Delegate method for getParentKey.
      * 
-     * @return
+     * @return the parent key
      * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
@@ -124,7 +124,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Delegate method for getHash.
      * 
-     * @return
+     * @return the current hash
      * @see org.treetank.node.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
@@ -160,7 +160,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Delegate method for getTypeKey.
      * 
-     * @return
+     * @return the key of the type
      * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
@@ -180,7 +180,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Delegate method for hasParent.
      * 
-     * @return
+     * @return if the node has a parent
      * @see org.treetank.node.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
@@ -190,7 +190,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Delegate method for getNameKey.
      * 
-     * @return
+     * @return the name key
      * @see org.treetank.node.delegates.NameNodeDelegate#getNameKey()
      */
     public int getNameKey() {
@@ -200,7 +200,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Delegate method for getURIKey.
      * 
-     * @return
+     * @return the uri key
      * @see org.treetank.node.delegates.NameNodeDelegate#getURIKey()
      */
     public int getURIKey() {
@@ -230,7 +230,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Delegate method for getRawValue.
      * 
-     * @return
+     * @return the raw value of the node
      * @see org.treetank.node.delegates.ValNodeDelegate#getRawValue()
      */
     public byte[] getRawValue() {
@@ -269,7 +269,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Getting the inlying {@link NodeDelegate}.
      * 
-     * @return
+     * @return the node delegate
      */
     NodeDelegate getNodeDelegate() {
         return mDel;
@@ -278,7 +278,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Getting the inlying {@link NameNodeDelegate}.
      * 
-     * @return
+     * @return the namenodedelegate
      */
     NameNodeDelegate getNameNodeDelegate() {
         return mNameDel;
@@ -287,7 +287,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     /**
      * Getting the inlying {@link ValNodeDelegate}.
      * 
-     * @return
+     * @return the valnodedelegate
      */
     ValNodeDelegate getValNodeDelegate() {
         return mValDel;

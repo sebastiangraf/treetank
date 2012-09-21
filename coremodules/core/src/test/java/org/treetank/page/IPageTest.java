@@ -22,7 +22,7 @@ import org.treetank.io.bytepipe.IByteHandler;
 public class IPageTest {
 
     /**
-     * Test method for {@link org.treetank.page.IPage#IPage(long)} and
+     * Test method for {@link org.treetank.page.IPage} and
      * {@link org.treetank.page.IPage#getByteRepresentation()}.
      * 
      * @param clazz

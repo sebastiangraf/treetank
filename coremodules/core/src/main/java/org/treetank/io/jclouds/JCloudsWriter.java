@@ -15,7 +15,7 @@ import org.jclouds.blobstore.domain.BlobBuilder;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
@@ -25,7 +25,7 @@ import org.treetank.page.PageReference;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class JCloudsWriter implements IWriter {
+public class JCloudsWriter implements IBackendWriter {
 
     /** Delegate for reader. */
     private final JCloudsReader mReader;

@@ -32,11 +32,11 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
-import org.treetank.access.Database;
+import org.treetank.access.Storage;
 import org.treetank.access.Session;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INode;
 import org.treetank.exception.TTException;
 import org.treetank.page.DumbNodeFactory.DumbNode;
@@ -71,18 +71,18 @@ public final class TestHelper {
 
         final File file;
 
-        final DatabaseConfiguration config;
+        final StorageConfiguration config;
 
         PATHS(final File paramFile) {
             file = paramFile;
-            config = new DatabaseConfiguration(paramFile);
+            config = new StorageConfiguration(paramFile);
         }
 
         public File getFile() {
             return file;
         }
 
-        public DatabaseConfiguration getConfig() {
+        public StorageConfiguration getConfig() {
             return config;
         }
 
@@ -91,7 +91,7 @@ public final class TestHelper {
     /** Common random instance for generating common tag names. */
     public final static Random random = new Random();
 
-    private final static Map<File, IDatabase> INSTANCES = new Hashtable<File, IDatabase>();
+    private final static Map<File, IStorage> INSTANCES = new Hashtable<File, IStorage>();
 
     /**
      * Getting a database and create one of not existing. This includes the
@@ -102,23 +102,23 @@ public final class TestHelper {
      * @return a database-obj
      * @throws TTException
      */
-    public static final IDatabase getDatabase(final File file) throws TTException {
+    public static final IStorage getDatabase(final File file) throws TTException {
         if (INSTANCES.containsKey(file)) {
             return INSTANCES.get(file);
         } else {
-            final DatabaseConfiguration config = new DatabaseConfiguration(file);
+            final StorageConfiguration config = new StorageConfiguration(file);
             if (!file.exists()) {
-                Database.createDatabase(config);
+                Storage.createStorage(config);
             }
-            final IDatabase database = Database.openDatabase(file);
-            INSTANCES.put(file, database);
-            return database;
+            final IStorage storage = Storage.openStorage(file);
+            INSTANCES.put(file, storage);
+            return storage;
         }
     }
 
     public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
-        final IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        return database.createResource(resConf);
+        final IStorage storage = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        return storage.createResource(resConf);
     }
 
     /**
@@ -128,8 +128,8 @@ public final class TestHelper {
      */
     public static final void deleteEverything() throws TTException {
         closeEverything();
-        Database.truncateDatabase(PATHS.PATH1.config);
-        Database.truncateDatabase(PATHS.PATH2.config);
+        Storage.truncateStorage(PATHS.PATH1.config);
+        Storage.truncateStorage(PATHS.PATH2.config);
     }
 
     /**
@@ -139,12 +139,12 @@ public final class TestHelper {
      */
     public static final void closeEverything() throws TTException {
         if (INSTANCES.containsKey(PATHS.PATH1.getFile())) {
-            final IDatabase database = INSTANCES.remove(PATHS.PATH1.getFile());
-            database.close();
+            final IStorage storage = INSTANCES.remove(PATHS.PATH1.getFile());
+            storage.close();
         }
         if (INSTANCES.containsKey(PATHS.PATH2.getFile())) {
-            final IDatabase database = INSTANCES.remove(PATHS.PATH2.getFile());
-            database.close();
+            final IStorage storage = INSTANCES.remove(PATHS.PATH2.getFile());
+            storage.close();
         }
     }
 

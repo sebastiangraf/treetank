@@ -35,14 +35,14 @@ import java.util.Properties;
 import javax.xml.stream.XMLEventReader;
 
 import org.treetank.TestHelper;
-import org.treetank.access.Database;
+import org.treetank.access.Storage;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
@@ -68,13 +68,13 @@ public final class SaxonHelper {
     public static void createBookDB(IResourceConfigurationFactory resFac) throws Exception {
         TestHelper.deleteEverything();
 
-        final DatabaseConfiguration dbConfig = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
-        Database.createDatabase(dbConfig);
-        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        final StorageConfiguration dbConfig = new StorageConfiguration(TestHelper.PATHS.PATH1.getFile());
+        Storage.createStorage(dbConfig);
+        final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH1.getFile());
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        database.createResource(resFac.create(props, 1));
+        storage.createResource(resFac.create(props, 1));
         final ISession session =
-            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         createDocumentRootNode(wtx);
@@ -83,7 +83,7 @@ public final class SaxonHelper {
         shredder.call();
         wtx.close();
         session.close();
-        database.close();
+        storage.close();
     }
 
     /**

@@ -34,10 +34,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -48,60 +48,60 @@ import org.treetank.io.IOUtils;
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
  * 
- * @see IDatabase
+ * @see IStorage
  * @author Sebastian Graf, University of Konstanz
  */
-public final class Database implements IDatabase {
+public final class Storage implements IStorage {
 
     /** Central repository of all running databases. */
-    private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
+    private static final ConcurrentMap<File, Storage> STORAGEMAP = new ConcurrentHashMap<File, Storage>();
 
     /** Central repository of all running sessions. */
     private final Map<String, Session> mSessions;
 
-    /** DatabaseConfiguration with fixed settings. */
-    private final DatabaseConfiguration mDBConfig;
+    /** StorageConfiguration with fixed settings. */
+    private final StorageConfiguration mStorageConfig;
 
     /**
      * Private constructor.
      * 
-     * @param paramDBConf
-     *            {@link ResourceConfiguration} reference to configure the {@link IDatabase}
+     * @param pStorageConf
+     *            {@link StorageConfiguration} reference to configure the {@link IStorage}
      * @throws TTException
      *             Exception if something weird happens
      */
-    private Database(final DatabaseConfiguration paramDBConf) throws TTException {
-        mDBConfig = paramDBConf;
+    private Storage(final StorageConfiguration pStorageConf) throws TTException {
+        mStorageConfig = pStorageConf;
         mSessions = new HashMap<String, Session>();
 
     }
 
     // //////////////////////////////////////////////////////////
-    // START Creation/Deletion of Databases /////////////////////
+    // START Creation/Deletion of Storages  /////////////////////
     // //////////////////////////////////////////////////////////
     /**
-     * Creating a database. This includes loading the database configuration,
+     * Creating a storage. This includes loading the storageconfiguration,
      * building up the structure and preparing everything for login.
      * 
      * 
-     * @param pDBConfig
-     *            which are used for the database, including storage location
+     * @param pStorageConfig
+     *            which are used for the storage, including storage location
      * @return true if creation is valid, false otherwise
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    public static synchronized boolean createDatabase(final DatabaseConfiguration pDBConfig)
+    public static synchronized boolean createStorage(final StorageConfiguration pStorageConfig)
         throws TTIOException {
         boolean returnVal = true;
         // if file is existing, skipping
-        if (pDBConfig.mFile.exists()) {
+        if (pStorageConfig.mFile.exists()) {
             return false;
         } else {
-            returnVal = pDBConfig.mFile.mkdirs();
+            returnVal = pStorageConfig.mFile.mkdirs();
             if (returnVal) {
                 // creation of folder structure
-                for (DatabaseConfiguration.Paths paths : DatabaseConfiguration.Paths.values()) {
-                    final File toCreate = new File(pDBConfig.mFile, paths.getFile().getName());
+                for (StorageConfiguration.Paths paths : StorageConfiguration.Paths.values()) {
+                    final File toCreate = new File(pStorageConfig.mFile, paths.getFile().getName());
                     if (paths.isFolder()) {
                         returnVal = toCreate.mkdir();
                     } else {
@@ -117,36 +117,36 @@ public final class Database implements IDatabase {
                 }
             }
             // serialization of the config
-            DatabaseConfiguration.serialize(pDBConfig);
+            StorageConfiguration.serialize(pStorageConfig);
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
-                pDBConfig.mFile.delete();
+                pStorageConfig.mFile.delete();
             }
             return returnVal;
         }
     }
 
     /**
-     * Truncate a database. This deletes all relevant data. All running sessions
+     * Truncate a storage. This deletes all relevant data. All running sessions
      * must be closed beforehand.
      * 
      * @param pConf
-     *            the database at this path should be deleted.
+     *            the storage at this path should be deleted.
      * @throws TTException
      *             any kind of false Treetank behaviour
      */
-    public static synchronized void truncateDatabase(final DatabaseConfiguration pConf) throws TTException {
+    public static synchronized void truncateStorage(final StorageConfiguration pConf) throws TTException {
         // check that database must be closed beforehand
-        if (!DATABASEMAP.containsKey(pConf.mFile)) {
-            if (existsDatabase(pConf.mFile)) {
-                final IDatabase database = new Database(pConf);
+        if (!STORAGEMAP.containsKey(pConf.mFile)) {
+            if (existsStorage(pConf.mFile)) {
+                final IStorage storage = new Storage(pConf);
                 final File[] resources =
-                    new File(pConf.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()).listFiles();
+                    new File(pConf.mFile, StorageConfiguration.Paths.Data.getFile().getName()).listFiles();
                 for (final File resource : resources) {
-                    database.truncateResource(new SessionConfiguration(resource.getName(), null));
+                    storage.truncateResource(new SessionConfiguration(resource.getName(), null));
                 }
-                database.close();
+                storage.close();
                 // instantiate the database for deletion
                 IOUtils.recursiveDelete(pConf.mFile);
             }
@@ -154,15 +154,15 @@ public final class Database implements IDatabase {
     }
 
     /**
-     * Check if Database exists or not at a given path.
+     * Check if Storage exists or not at a given path.
      * 
      * @param pStoragePath
      *            to be checked.
      * @return true if existing, false otherwise.
      */
-    public static synchronized boolean existsDatabase(final File pStoragePath) {
+    public static synchronized boolean existsStorage(final File pStoragePath) {
         // if file is existing and folder is a tt-dataplace, delete it
-        if (pStoragePath.exists() && DatabaseConfiguration.Paths.compareStructure(pStoragePath) == 0) {
+        if (pStoragePath.exists() && StorageConfiguration.Paths.compareStructure(pStoragePath) == 0) {
             return true;
         } else {
             return false;
@@ -188,7 +188,7 @@ public final class Database implements IDatabase {
         // set data.
         final File path =
             new File(new File(pResConf.mProperties.getProperty(IConstants.DBFILE),
-                DatabaseConfiguration.Paths.Data.getFile().getName()), pResConf.mProperties
+                StorageConfiguration.Paths.Data.getFile().getName()), pResConf.mProperties
                 .getProperty(IConstants.RESOURCE));
         // if file is existing, skipping
         if (path.exists()) {
@@ -232,7 +232,7 @@ public final class Database implements IDatabase {
     @Override
     public synchronized void truncateResource(final SessionConfiguration pResConf) throws TTException {
         final File resourceFile =
-            new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+            new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
                 pResConf.getResource());
         // check that database must be closed beforehand
         if (!mSessions.containsKey(resourceFile) && existsResource(pResConf.getResource())) {
@@ -256,20 +256,20 @@ public final class Database implements IDatabase {
      * @param pFile
      *            where the database is located sessionConf a {@link SessionConfiguration} object to set up
      *            the session
-     * @return {@link IDatabase} instance.
+     * @return {@link IStorage} instance.
      * @throws TTException
      *             if something odd happens
      */
-    public static synchronized IDatabase openDatabase(final File pFile) throws TTException {
-        if (!existsDatabase(pFile)) {
+    public static synchronized IStorage openStorage(final File pFile) throws TTException {
+        if (!existsStorage(pFile)) {
             throw new TTUsageException("DB could not be opened (since it was not created?) at location",
                 pFile.toString());
         }
-        DatabaseConfiguration config = DatabaseConfiguration.deserialize(pFile);
-        final Database database = new Database(config);
-        final IDatabase returnVal = DATABASEMAP.putIfAbsent(pFile, database);
+        StorageConfiguration config = StorageConfiguration.deserialize(pFile);
+        final Storage storage = new Storage(config);
+        final IStorage returnVal = STORAGEMAP.putIfAbsent(pFile, storage);
         if (returnVal == null) {
-            return database;
+            return storage;
         } else {
             return returnVal;
         }
@@ -290,7 +290,7 @@ public final class Database implements IDatabase {
     public synchronized ISession getSession(final SessionConfiguration pSessionConf) throws TTException {
 
         final File resourceFile =
-            new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+            new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
                 pSessionConf.getResource());
         Session returnVal = mSessions.get(resourceFile);
         if (returnVal == null) {
@@ -300,7 +300,7 @@ public final class Database implements IDatabase {
                         .toString());
             }
             ResourceConfiguration config =
-                ResourceConfiguration.deserialize(mDBConfig.mFile, pSessionConf.getResource());
+                ResourceConfiguration.deserialize(mStorageConfig.mFile, pSessionConf.getResource());
 
             returnVal = new Session(this, config, pSessionConf);
             mSessions.put(pSessionConf.getResource(), returnVal);
@@ -316,7 +316,7 @@ public final class Database implements IDatabase {
         for (final ISession session : mSessions.values()) {
             session.close();
         }
-        DATABASEMAP.remove(mDBConfig.mFile);
+        STORAGEMAP.remove(mStorageConfig.mFile);
     }
 
     // //////////////////////////////////////////////////////////
@@ -329,10 +329,10 @@ public final class Database implements IDatabase {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Database [mSessions=");
+        builder.append("Storage [mSessions=");
         builder.append(mSessions);
-        builder.append(", mDBConfig=");
-        builder.append(mDBConfig);
+        builder.append(", mStorageConfig=");
+        builder.append(mStorageConfig);
         builder.append("]");
         return builder.toString();
     }
@@ -355,7 +355,7 @@ public final class Database implements IDatabase {
     @Override
     public boolean existsResource(String pResourceName) {
         final File resourceFile =
-            new File(new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+            new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
                 pResourceName);
         // if file is existing and folder is a tt-dataplace, delete it
         if (resourceFile.exists() && ResourceConfiguration.Paths.compareStructure(resourceFile) == 0) {
@@ -370,7 +370,7 @@ public final class Database implements IDatabase {
      */
     @Override
     public String[] listResources() {
-        return new File(mDBConfig.mFile, DatabaseConfiguration.Paths.Data.getFile().getName()).list();
+        return new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()).list();
     }
 
     /**
@@ -378,6 +378,6 @@ public final class Database implements IDatabase {
      */
     @Override
     public File getLocation() {
-        return mDBConfig.mFile;
+        return mStorageConfig.mFile;
     }
 }

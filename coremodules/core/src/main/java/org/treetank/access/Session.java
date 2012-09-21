@@ -31,7 +31,7 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IPageReadTrx;
@@ -40,9 +40,9 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.IOUtils;
-import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendReader;
+import org.treetank.io.IBackend;
+import org.treetank.io.IBackendWriter;
 import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 
@@ -61,8 +61,8 @@ public final class Session implements ISession {
     /** Session configuration. */
     protected final SessionConfiguration mSessionConfig;
 
-    /** Database for centralized closure of related Sessions. */
-    private final Database mDatabase;
+    /** Storage for centralized closure of related Sessions. */
+    private final Storage mDatabase;
 
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
@@ -71,7 +71,7 @@ public final class Session implements ISession {
     private final Set<IPageReadTrx> mPageTrxs;
 
     /** abstract factory for all interaction to the storage. */
-    private final IStorage mStorage;
+    private final IBackend mStorage;
 
     /** Determines if session was closed. */
     private transient boolean mClosed;
@@ -80,15 +80,15 @@ public final class Session implements ISession {
      * Hidden constructor.
      * 
      * @param pDatabase
-     *            Database for centralized operations on related sessions.
+     *            Storage for centralized operations on related sessions.
      * @param pSessionConf
-     *            DatabaseConfiguration for general setting about the storage
+     *            StorageConfiguration for general setting about the storage
      * @param pResourceConf
      *            ResourceConfiguration for handling this specific session
      * @throws TTException
      *             Exception if something weird happens
      */
-    protected Session(final Database pDatabase, final ResourceConfiguration pResourceConf,
+    protected Session(final Storage pDatabase, final ResourceConfiguration pResourceConf,
         final SessionConfiguration pSessionConf) throws TTException {
         mDatabase = pDatabase;
         mResourceConfig = pResourceConf;
@@ -102,10 +102,10 @@ public final class Session implements ISession {
             // node.
             mLastCommittedUberPage = new UberPage();
         } else {
-            final IReader reader = mStorage.getReader();
-            final PageReference firstRef = reader.readFirstReference();
+            final IBackendReader backendReader = mStorage.getReader();
+            final PageReference firstRef = backendReader.readFirstReference();
             mLastCommittedUberPage = (UberPage)firstRef.getPage();
-            reader.close();
+            backendReader.close();
         }
         mClosed = false;
     }
@@ -127,9 +127,9 @@ public final class Session implements ISession {
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision, final long mStoreRevision)
         throws TTException {
         assertAccess(mLastCommittedUberPage.getRevision());
-        final IWriter writer = mStorage.getWriter();
+        final IBackendWriter backendWriter = mStorage.getWriter();
         final IPageWriteTrx trx =
-            new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), writer,
+            new PageWriteTrx(this, new UberPage(mLastCommittedUberPage, mStoreRevision + 1), backendWriter,
                 mRepresentRevision, mStoreRevision);
         mPageTrxs.add(trx);
 
@@ -179,7 +179,7 @@ public final class Session implements ISession {
             throw new TTUsageException("Session must be closed before truncated.");
         }
         mStorage.truncate();
-        IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(), DatabaseConfiguration.Paths.Data
+        IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(), StorageConfiguration.Paths.Data
             .getFile().getName()), mSessionConfig.getResource()));
     }
 

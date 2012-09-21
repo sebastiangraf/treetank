@@ -9,8 +9,8 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeFactory;
-import org.treetank.io.IStorage;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -53,8 +53,8 @@ public class NodeModuleFactory implements IModuleFactory {
                     bind(INodeFactory.class).to(TreeNodeFactory.class);
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
 
-                    install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
-                        IStorageFactory.class));
+                    install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
+                        IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
@@ -75,8 +75,8 @@ public class NodeModuleFactory implements IModuleFactory {
                     bind(INodeFactory.class).to(TreeNodeFactory.class);
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Encryptor()));
 
-                    install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
-                        IStorageFactory.class));
+                    install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
+                        IBackendFactory.class));
 
                     install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 

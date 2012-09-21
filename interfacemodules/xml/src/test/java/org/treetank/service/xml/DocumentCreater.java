@@ -41,20 +41,20 @@ public class DocumentCreater {
     /**
      * Create simple revision test in current database.
      * 
-     * @param paramWtx
-     *            {@link IWriteTransaction} to write to
+     * @param pWtx
+     *            {@link INodeWriteTrx} to write to
      * @throws TTException
      *             if anything went wrong
      */
-    public static void createVersioned(final INodeWriteTrx paramWtx) throws TTException {
-        assertNotNull(paramWtx);
-        org.treetank.DocumentCreater.create(paramWtx);
-        paramWtx.commit();
+    public static void createVersioned(final INodeWriteTrx pWtx) throws TTException {
+        assertNotNull(pWtx);
+        org.treetank.DocumentCreater.create(pWtx);
+        pWtx.commit();
         for (int i = 0; i <= 1; i++) {
-            paramWtx.moveTo(ROOT_NODE);
-            paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
-            paramWtx.insertTextAsFirstChild("OOPS4!");
-            paramWtx.commit();
+            pWtx.moveTo(ROOT_NODE);
+            pWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
+            pWtx.insertTextAsFirstChild("OOPS4!");
+            pWtx.commit();
         }
 
     }
@@ -63,40 +63,40 @@ public class DocumentCreater {
      * Create simple test document containing all supported node kinds, but
      * ignoring their namespace prefixes.
      * 
-     * @param paramWtx
-     *            {@link IWriteTransaction} to write to
+     * @param pWtx
+     *            {@link INodeWriteTrx} to write to
      * @throws TTException
      *             if anything went wrong
      */
-    public static void createWithoutNamespace(final INodeWriteTrx paramWtx) throws TTException {
-        assertNotNull(paramWtx);
-        NodeHelper.createDocumentRootNode(paramWtx);
-        paramWtx.moveTo(ROOT_NODE);
+    public static void createWithoutNamespace(final INodeWriteTrx pWtx) throws TTException {
+        assertNotNull(pWtx);
+        NodeHelper.createDocumentRootNode(pWtx);
+        pWtx.moveTo(ROOT_NODE);
 
-        paramWtx.insertElementAsFirstChild(new QName("a"));
-        paramWtx.insertAttribute(new QName("i"), "j");
-        paramWtx.moveTo(paramWtx.getNode().getParentKey());
+        pWtx.insertElementAsFirstChild(new QName("a"));
+        pWtx.insertAttribute(new QName("i"), "j");
+        pWtx.moveTo(pWtx.getNode().getParentKey());
 
-        paramWtx.insertTextAsFirstChild("oops1");
+        pWtx.insertTextAsFirstChild("oops1");
 
-        paramWtx.insertElementAsRightSibling(new QName("b"));
+        pWtx.insertElementAsRightSibling(new QName("b"));
 
-        paramWtx.insertTextAsFirstChild("foo");
-        paramWtx.insertElementAsRightSibling(new QName("c"));
-        paramWtx.moveTo(paramWtx.getNode().getParentKey());
+        pWtx.insertTextAsFirstChild("foo");
+        pWtx.insertElementAsRightSibling(new QName("c"));
+        pWtx.moveTo(pWtx.getNode().getParentKey());
 
-        paramWtx.insertTextAsRightSibling("oops2");
+        pWtx.insertTextAsRightSibling("oops2");
 
-        paramWtx.insertElementAsRightSibling(new QName("b"));
-        paramWtx.insertAttribute(new QName("x"), "y");
-        paramWtx.moveTo(paramWtx.getNode().getParentKey());
+        pWtx.insertElementAsRightSibling(new QName("b"));
+        pWtx.insertAttribute(new QName("x"), "y");
+        pWtx.moveTo(pWtx.getNode().getParentKey());
 
-        paramWtx.insertElementAsFirstChild(new QName("c"));
-        paramWtx.insertTextAsRightSibling("bar");
-        paramWtx.moveTo(paramWtx.getNode().getParentKey());
+        pWtx.insertElementAsFirstChild(new QName("c"));
+        pWtx.insertTextAsRightSibling("bar");
+        pWtx.moveTo(pWtx.getNode().getParentKey());
 
-        paramWtx.insertTextAsRightSibling("oops3");
+        pWtx.insertTextAsRightSibling("oops3");
 
-        paramWtx.moveTo(ROOT_NODE);
+        pWtx.moveTo(ROOT_NODE);
     }
 }

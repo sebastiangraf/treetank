@@ -15,14 +15,13 @@ import org.jclouds.imagestore.ImageStoreConstants;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.io.IBackend;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.IConstants;
-import org.treetank.io.IStorage;
-import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.file.FileStorage;
-import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
@@ -57,8 +56,8 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class).build(
             IRevisioningFactory.class));
         bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
-        install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
-            IStorageFactory.class));
+        install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
+            IBackendFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 
         bind(Key.class).toInstance(KEY);
@@ -70,9 +69,9 @@ public class StandardSettings extends AbstractModule {
         properties.setProperty(IConstants.DBFILE, mDatabase);
         properties.setProperty(IConstants.RESOURCE, resource);
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(properties
-            .getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile().getName()),
-            properties.getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile()
-            .getName()).getAbsolutePath());
+            .getProperty(IConstants.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), properties
+            .getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
+            .getAbsolutePath());
         properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
         properties.setProperty(IConstants.JCLOUDSTYPE, "imagestore");
         // Class name for painter for imagehost

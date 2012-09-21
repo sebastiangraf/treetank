@@ -11,9 +11,9 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IConstants;
-import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendReader;
+import org.treetank.io.IBackend;
+import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
@@ -25,7 +25,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class JCloudsStorage implements IStorage {
+public class JCloudsStorage implements IBackend {
 
     /** Factory for Pages. */
     private final PageFactory mFac;
@@ -71,7 +71,7 @@ public class JCloudsStorage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public IWriter getWriter() throws TTException {
+    public IBackendWriter getWriter() throws TTException {
         // setup the container name used by the provider (like bucket in S3)
         String containerName = mProperties.getProperty(IConstants.RESOURCE);
         if (!mBlobStore.containerExists(containerName)) {
@@ -84,7 +84,7 @@ public class JCloudsStorage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public IReader getReader() throws TTException {
+    public IBackendReader getReader() throws TTException {
         // setup the container name used by the provider (like bucket in S3)
         String containerName = mProperties.getProperty(IConstants.RESOURCE);
         if (!mBlobStore.containerExists(containerName)) {

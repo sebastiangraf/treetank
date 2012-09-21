@@ -29,44 +29,43 @@ package org.treetank.io;
 
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
+import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
 
 /**
- * Interface to provide the abstract layer related to write access of the
- * tt-backend.
+ * Interface for reading the stored pages in every backend.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IWriter extends IReader {
+public interface IBackendReader {
 
     /**
-     * Writing a page related to the reference.
+     * Getting the first reference of the <code>Uberpage</code>.
      * 
-     * @param pageReference
-     *            that points to a page
+     * @return a {@link PageReference} with link to the first reference
      * @throws TTIOException
-     *             execption to be thrown if something bad happens
+     *             if something bad happens
      */
-    long write(final PageReference pageReference) throws TTIOException, TTByteHandleException;
+    PageReference readFirstReference() throws TTIOException, TTByteHandleException;
 
     /**
-     * Write Beacon for the first reference.
+     * Getting a reference for the given pointer.
      * 
-     * @param pageReference
-     *            that points to the beacon
+     * @param pKey
+     *            the reference for the page to be determined
+     * @return a {@link IPage} as the base for a page
      * @throws TTIOException
-     *             exception if something bad happens
+     *             if something bad happens during read
      */
-    void writeFirstReference(final PageReference pageReference) throws TTIOException, TTByteHandleException;
+    IPage read(final long pKey) throws TTIOException, TTByteHandleException;
 
     /**
-     * Closing the write access.
+     * Closing the storage.
      * 
      * @throws TTIOException
-     *             if closing fails
+     *             if something bad happens while access
      */
-    @Override
     void close() throws TTIOException;
 
 }

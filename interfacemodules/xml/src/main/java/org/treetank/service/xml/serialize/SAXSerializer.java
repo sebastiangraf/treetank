@@ -37,17 +37,17 @@ import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.access.Database;
 import org.treetank.access.PageWriteTrx;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.Storage;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.IConstants;
-import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
@@ -227,20 +227,20 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      */
     public static void main(final String... args) throws Exception {
 
-        final DatabaseConfiguration config = new DatabaseConfiguration(new File(args[0]));
-        Database.createDatabase(config);
-        final IDatabase database = Database.openDatabase(new File(args[0]));
+        final StorageConfiguration config = new StorageConfiguration(new File(args[0]));
+        Storage.createStorage(config);
+        final IStorage storage = Storage.openStorage(new File(args[0]));
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
-        IStorageFactory storage = injector.getInstance(IStorageFactory.class);
+        IBackendFactory backend = injector.getInstance(IBackendFactory.class);
         IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
         Properties props = new Properties();
-        props.setProperty(IConstants.DBFILE, database.getLocation().getAbsolutePath());
+        props.setProperty(IConstants.DBFILE, storage.getLocation().getAbsolutePath());
         props.setProperty(IConstants.RESOURCE, "shredded");
-        database
-            .createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
+        storage
+            .createResource(new ResourceConfiguration(props, 1, backend, revision, new TreeNodeFactory()));
         final ISession session =
-            database.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final DefaultHandler defHandler = new DefaultHandler();
 

@@ -39,20 +39,19 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * <h1>Database Configuration</h1>
+ * <h1>Storage Configuration</h1>
  * 
  * <p>
  * Represents a configuration of a database. Includes all settings which have to be made when it comes to the
- * creation of the database. Since the settings are persisted after creation, it must contain a link to the
- * file defined by the interface {@link IConfigureSerializable}.
+ * creation of the database.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class DatabaseConfiguration {
+public final class StorageConfiguration {
 
     /**
-     * Paths for a {@link org.treetank.access.Database}. Each {@link org.treetank.access.Database} has the
+     * Paths for a {@link org.treetank.access.Storage}. Each {@link org.treetank.access.Storage} has the
      * same folder.layout.
      */
     public enum Paths {
@@ -130,7 +129,7 @@ public final class DatabaseConfiguration {
      * @param paramFile
      *            file to be set
      */
-    public DatabaseConfiguration(final File paramFile) {
+    public StorageConfiguration(final File paramFile) {
         mFile = paramFile;
     }
 
@@ -140,7 +139,7 @@ public final class DatabaseConfiguration {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("DatabaseConfiguration [mFile=");
+        builder.append("StorageConfiguration [mFile=");
         builder.append(mFile);
         builder.append("]");
         return builder.toString();
@@ -166,13 +165,13 @@ public final class DatabaseConfiguration {
     }
 
     /**
-     * Serializing a {@link DatabaseConfiguration} to a json file.
+     * Serializing a {@link StorageConfiguration} to a json file.
      * 
      * @param pConfig
      *            to be serialized
      * @throws TTIOException
      */
-    public static void serialize(final DatabaseConfiguration pConfig) throws TTIOException {
+    public static void serialize(final StorageConfiguration pConfig) throws TTIOException {
         try {
             FileWriter fileWriter =
                 new FileWriter(new File(pConfig.mFile, Paths.ConfigBinary.getFile().getName()));
@@ -190,14 +189,14 @@ public final class DatabaseConfiguration {
     }
 
     /**
-     * Generate a DatabaseConfiguration out of a file.
+     * Generate a StorageConfiguration out of a file.
      * 
      * @param pFile
-     *            where the DatabaseConfiguration lies in as json
-     * @return a new {@link DatabaseConfiguration} class
+     *            where the StorageConfiguration lies in as json
+     * @return a new {@link StorageConfiguration} class
      * @throws TTIOException
      */
-    public static DatabaseConfiguration deserialize(final File pFile) throws TTIOException {
+    public static StorageConfiguration deserialize(final File pFile) throws TTIOException {
         try {
             FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
             JsonReader jsonReader = new JsonReader(fileReader);
@@ -207,7 +206,7 @@ public final class DatabaseConfiguration {
             jsonReader.endObject();
             jsonReader.close();
             fileReader.close();
-            return new DatabaseConfiguration(file);
+            return new StorageConfiguration(file);
         } catch (FileNotFoundException fileExec) {
             throw new TTIOException(fileExec);
         } catch (IOException ioexc) {

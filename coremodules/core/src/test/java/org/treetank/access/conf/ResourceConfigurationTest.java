@@ -45,7 +45,7 @@ public class ResourceConfigurationTest {
     /**
      * Test method for
      * {@link org.treetank.access.conf.ResourceConfiguration#serialize(org.treetank.access.conf.ResourceConfiguration)}
-     * and {@link org.treetank.access.conf.ResourceConfiguration#deserialize(java.io.File)}.
+     * and {@link org.treetank.access.conf.ResourceConfiguration#deserialize(File, String)}.
      */
     @Test
     public void testDeSerialize() throws Exception {

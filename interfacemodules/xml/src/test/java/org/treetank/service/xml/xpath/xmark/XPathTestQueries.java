@@ -41,7 +41,7 @@ public class XPathTestQueries {
     //
     // public void executeQuery() {
     // INodeReadTrx rtx = null;
-    // IDatabase db = null;
+    // IStorage db = null;
     // ISession session = null;
     //
     // try {
@@ -70,18 +70,18 @@ public class XPathTestQueries {
     // long startTime = System.currentTimeMillis();
     //
     // INodeWriteTrx wtx = null;
-    // IDatabase database = null;
+    // IStorage database = null;
     // ISession session = null;
     //
     // try {
     //
     // final Properties dbProps = new Properties();
     // dbProps.setProperty(EDatabaseSetting.REVISION_TO_RESTORE.name(), "1");
-    // final DatabaseConfiguration conf = new DatabaseConfiguration(OUTPUTFILE,
+    // final StorageConfiguration conf = new StorageConfiguration(OUTPUTFILE,
     // dbProps);
     //
-    // Database.createDatabase(conf);
-    // database = Database.openDatabase(OUTPUTFILE);
+    // Storage.createDatabase(conf);
+    // database = Storage.openDatabase(OUTPUTFILE);
     // session = database.getSession();
     // wtx = session.beginWriteTransaction();
     // wtx.moveToDocumentRoot();

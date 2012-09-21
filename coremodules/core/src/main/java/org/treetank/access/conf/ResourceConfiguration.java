@@ -39,9 +39,9 @@ import java.util.Properties;
 import org.treetank.access.Session;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IBackend;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.IConstants;
-import org.treetank.io.IStorage;
-import org.treetank.io.IStorage.IStorageFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -59,7 +59,7 @@ import com.google.inject.assistedinject.Assisted;
  * <p>
  * Holds the settings for a resource which acts as a base for session that can not change. This includes all
  * settings which are persistent. Each {@link ResourceConfiguration} is furthermore bound to one fixed
- * database denoted by a related {@link DatabaseConfiguration}.
+ * database denoted by a related {@link StorageConfiguration}.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
@@ -138,7 +138,7 @@ public final class ResourceConfiguration {
 
     // MEMBERS FOR FIXED FIELDS
     /** Type of Storage (File, Berkeley). */
-    public final IStorage mStorage;
+    public final IBackend mStorage;
 
     /** Kind of revisioning (Incremental, Differential). */
     public final IRevisioning mRevision;
@@ -154,18 +154,17 @@ public final class ResourceConfiguration {
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @param pDbFile
-     * @param pResourceName
+     * @param pProperties
      * @param pNumbersOfRevToRestore
-     * @param pNodeFactory
-     * @param pStorage
+     * @param pBackend
      * @param pRevision
+     * @param pNodeFac
      */
     @Inject
     public ResourceConfiguration(@Assisted Properties pProperties, @Assisted int pNumbersOfRevToRestore,
-        IStorageFactory pStorage, IRevisioningFactory pRevision, INodeFactory pNodeFac) {
+        IBackendFactory pBackend, IRevisioningFactory pRevision, INodeFactory pNodeFac) {
 
-        this(pProperties, pStorage.create(pProperties), pRevision.create(pNumbersOfRevToRestore), pNodeFac);
+        this(pProperties, pBackend.create(pProperties), pRevision.create(pNumbersOfRevToRestore), pNodeFac);
     }
 
     /**
@@ -176,7 +175,7 @@ public final class ResourceConfiguration {
      * @param pRevisioning
      * @param pNodeFac
      */
-    private ResourceConfiguration(Properties pProperties, IStorage pStorage, IRevisioning pRevisioning,
+    private ResourceConfiguration(Properties pProperties, IBackend pStorage, IRevisioning pRevisioning,
         INodeFactory pNodeFac) {
         mProperties = pProperties;
         mStorage = pStorage;
@@ -200,8 +199,6 @@ public final class ResourceConfiguration {
          * 
          * @param pProperties
          *            Properties of resource to be set.
-         * @param pResourceName
-         *            Resource Name to be set
          * @param pNumberOfRevsToRestore
          *            numbers of revisions to restore an entire revision
          * @return an {@link ResourceConfiguration}-instance
@@ -219,7 +216,7 @@ public final class ResourceConfiguration {
 
             final File file =
                 new File(new File(new File(pConfig.mProperties.getProperty(IConstants.DBFILE),
-                    DatabaseConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
+                    StorageConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
                     .getProperty(IConstants.RESOURCE)), Paths.ConfigBinary.getFile().getName());
 
             FileWriter fileWriter = new FileWriter(file);
@@ -274,7 +271,7 @@ public final class ResourceConfiguration {
         try {
 
             final File file =
-                new File(new File(new File(pFile, DatabaseConfiguration.Paths.Data.getFile().getName()),
+                new File(new File(new File(pFile, StorageConfiguration.Paths.Data.getFile().getName()),
                     pResource), Paths.ConfigBinary.getFile().getName());
 
             FileReader fileReader = new FileReader(file);
@@ -321,13 +318,13 @@ public final class ResourceConfiguration {
             }
             jsonReader.endObject();
             Constructor<?> storageCons = storageClazz.getConstructors()[0];
-            IStorage storage = (IStorage)storageCons.newInstance(props, nodeFactory, pipeline);
+            IBackend backend = (IBackend)storageCons.newInstance(props, nodeFactory, pipeline);
             jsonReader.endObject();
             jsonReader.endObject();
             jsonReader.close();
             fileReader.close();
 
-            return new ResourceConfiguration(props, storage, revisioning, nodeFactory);
+            return new ResourceConfiguration(props, backend, revisioning, nodeFactory);
 
         } catch (IOException | ClassNotFoundException | IllegalArgumentException | InstantiationException
         | IllegalAccessException | InvocationTargetException exc) {

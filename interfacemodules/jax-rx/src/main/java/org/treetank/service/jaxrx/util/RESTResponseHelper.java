@@ -44,9 +44,9 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
@@ -109,8 +109,8 @@ public final class RESTResponseHelper {
      * @throws TTException
      * @throws WebApplicationException
      */
-    private static List<Element> createCollectionElementDBs(final IDatabase pDatabase,
-        final Document document, final IStorageFactory pStorageFac, final IRevisioningFactory pRevisionFac)
+    private static List<Element> createCollectionElementDBs(final IStorage pDatabase,
+        final Document document, final IBackendFactory pStorageFac, final IRevisioningFactory pRevisionFac)
         throws WebApplicationException, TTException {
         final List<Element> collectionsEls = new ArrayList<Element>();
         for (final String res : pDatabase.listResources()) {
@@ -139,8 +139,8 @@ public final class RESTResponseHelper {
      * 
      * @return The streaming output for the HTTP response body.
      */
-    public static StreamingOutput buildResponseOfDomLR(final IDatabase pDatabase,
-        final IStorageFactory pStorageFac, final IRevisioningFactory pRevisionFac) {
+    public static StreamingOutput buildResponseOfDomLR(final IStorage pDatabase,
+        final IBackendFactory pStorageFac, final IRevisioningFactory pRevisionFac) {
 
         final StreamingOutput sOutput = new StreamingOutput() {
 

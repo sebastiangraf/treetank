@@ -30,7 +30,7 @@ package org.treetank.io.file;
 import java.io.File;
 import java.util.Properties;
 
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
@@ -38,9 +38,9 @@ import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
 import org.treetank.io.IConstants;
 import org.treetank.io.IOUtils;
-import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendReader;
+import org.treetank.io.IBackend;
+import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
@@ -54,7 +54,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Sebastian Graf, University of Konstanz.
  * 
  */
-public final class FileStorage implements IStorage {
+public final class FileStorage implements IBackend {
 
     /** private constant for fileName. */
     private static final String FILENAME = "tt.tnk";
@@ -91,7 +91,7 @@ public final class FileStorage implements IStorage {
 
         mFile =
             new File(new File(new File(pProperties.getProperty(IConstants.DBFILE),
-                DatabaseConfiguration.Paths.Data.getFile().getName()), pProperties
+                StorageConfiguration.Paths.Data.getFile().getName()), pProperties
                 .getProperty(IConstants.RESOURCE)), new StringBuilder(ResourceConfiguration.Paths.Data
                 .getFile().getName()).append(File.separator).append(FILENAME).toString());
         mFac = new PageFactory(pNodeFac);
@@ -103,7 +103,7 @@ public final class FileStorage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public IReader getReader() throws TTException {
+    public IBackendReader getReader() throws TTException {
         return new FileReader(mFile, mFac, mByteHandler);
     }
 
@@ -111,7 +111,7 @@ public final class FileStorage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public IWriter getWriter() throws TTException {
+    public IBackendWriter getWriter() throws TTException {
         return new FileWriter(mFile, mFac, mByteHandler);
     }
 

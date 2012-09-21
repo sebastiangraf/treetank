@@ -10,12 +10,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
-import org.treetank.access.Database;
+import org.treetank.access.Storage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
 /**
- * Test case for de-/serialization of {@link DatabaseConfiguration}s.
+ * Test case for de-/serialization of {@link StorageConfiguration}s.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -34,17 +34,17 @@ public class DatabaseConfigurationTest {
 
     /**
      * Test method for
-     * {@link org.treetank.access.conf.DatabaseConfiguration#serialize(org.treetank.access.conf.DatabaseConfiguration)}
-     * and {@link org.treetank.access.conf.DatabaseConfiguration#deserialize(java.io.File)}.
+     * {@link org.treetank.access.conf.StorageConfiguration#serialize(org.treetank.access.conf.StorageConfiguration)}
+     * and {@link org.treetank.access.conf.StorageConfiguration#deserialize(java.io.File)}.
      * 
      * @throws TTIOException
      */
     @Test
     public void testDeSerialize() throws TTIOException {
-        DatabaseConfiguration conf = new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile());
-        assertTrue(Database.createDatabase(conf));
-        DatabaseConfiguration serializedConf =
-            DatabaseConfiguration.deserialize(TestHelper.PATHS.PATH1.getFile());
+        StorageConfiguration conf = new StorageConfiguration(TestHelper.PATHS.PATH1.getFile());
+        assertTrue(Storage.createStorage(conf));
+        StorageConfiguration serializedConf =
+            StorageConfiguration.deserialize(TestHelper.PATHS.PATH1.getFile());
         assertEquals(conf.toString(), serializedConf.toString());
 
     }

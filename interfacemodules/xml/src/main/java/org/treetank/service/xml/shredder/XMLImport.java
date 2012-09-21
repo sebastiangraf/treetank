@@ -92,7 +92,7 @@ public final class XMLImport {
     // try {
     // mTT = mTt;
     // mNodes = new ArrayList<RevNode>();
-    // final IDatabase database = Database.openDatabase(mTT);
+    // final IStorage database = Storage.openDatabase(mTT);
     // mSession = database.getSession();
     // } catch (final TreetankException e) {
     // LOGWRAPPER.error(e);
@@ -143,7 +143,7 @@ public final class XMLImport {
     // try {
     // mWtx.close();
     // mSession.close();
-    // Database.forceCloseDatabase(mTT);
+    // Storage.forceCloseDatabase(mTT);
     // } catch (final TreetankException e) {
     // LOGWRAPPER.error(e);
     // }

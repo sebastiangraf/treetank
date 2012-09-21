@@ -59,15 +59,15 @@ import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.access.Database;
+import org.treetank.access.Storage;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IDatabase;
+import org.treetank.api.IStorage;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
@@ -169,22 +169,22 @@ public class TestNodeWrapper {
             new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "data"
                 + File.separator + "testBaseURI.xml");
 
-        final DatabaseConfiguration db2 = new DatabaseConfiguration(TestHelper.PATHS.PATH2.getFile());
+        final StorageConfiguration db2 = new StorageConfiguration(TestHelper.PATHS.PATH2.getFile());
 
-        Database.createDatabase(db2);
-        final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
+        Storage.createStorage(db2);
+        final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH2.getFile());
         Properties props = new Properties();
         props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
         props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
-            props.getProperty(IConstants.DBFILE), DatabaseConfiguration.Paths.Data.getFile()
+            props.getProperty(IConstants.DBFILE), StorageConfiguration.Paths.Data.getFile()
                 .getName()), props.getProperty(IConstants.RESOURCE)),
             ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
         props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
         props.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
-        database.createResource(mResourceConfig.create(props, 1));
+        storage.createResource(mResourceConfig.create(props, 1));
         final ISession session =
-            database.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         SaxonHelper.createDocumentRootNode(wtx);
@@ -205,7 +205,7 @@ public class TestNodeWrapper {
 
         assertEquals("http://example.org", baz.getBaseURI());
         session.close();
-        database.close();
+        storage.close();
 
     }
 

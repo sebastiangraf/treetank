@@ -13,7 +13,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IReader;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
@@ -26,7 +26,7 @@ import com.google.common.io.ByteStreams;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class JCloudsReader implements IReader {
+public class JCloudsReader implements IBackendReader {
 
     /** Blob Store for Reading the data. */
     protected final BlobStore mBlobStore;

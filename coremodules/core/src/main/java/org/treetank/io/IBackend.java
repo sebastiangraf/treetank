@@ -37,7 +37,7 @@ import com.google.inject.ImplementedBy;
 
 /**
  * Interface to generate access to the underlaying storage. The underlaying
- * storage is flexible as long as {@link IReader} and {@link IWriter} -implementations are provided. Utility
+ * storage is flexible as long as {@link IBackendReader} and {@link IBackendWriter} -implementations are provided. Utility
  * methods for common interaction with
  * the storage are provided via the <code>EStorage</code>-enum.
  * 
@@ -45,25 +45,25 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(FileStorage.class)
-public interface IStorage {
+public interface IBackend {
 
     /**
      * Getting a writer.
      * 
-     * @return an {@link IWriter} instance
+     * @return an {@link IBackendWriter} instance
      * @throws TTIOException
      *             if the initalisation fails
      */
-    IWriter getWriter() throws TTException;
+    IBackendWriter getWriter() throws TTException;
 
     /**
      * Getting a reader.
      * 
-     * @return an {@link IReader} instance
+     * @return an {@link IBackendReader} instance
      * @throws TTIOException
      *             if the initalisation fails
      */
-    IReader getReader() throws TTException;
+    IBackendReader getReader() throws TTException;
 
     /**
      * Closing this storage.
@@ -99,22 +99,22 @@ public interface IStorage {
 
     /**
      * 
-     * Factory for generating an {@link IStorage}-instance. Needed mainly
+     * Factory for generating an {@link IBackend}-instance. Needed mainly
      * because of Guice-Assisted utilization.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    public static interface IStorageFactory {
+    public static interface IBackendFactory {
 
         /**
          * Generating a storage for a fixed file.
          * 
          * @param pProperties
          *            referencing not only to the storage.
-         * @return an {@link IStorage}-instance
+         * @return an {@link IBackend}-instance
          */
-        IStorage create(Properties pProperties);
+        IBackend create(Properties pProperties);
     }
 
 }

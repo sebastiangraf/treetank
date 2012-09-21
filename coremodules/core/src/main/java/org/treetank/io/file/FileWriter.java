@@ -36,7 +36,7 @@ import java.nio.ByteBuffer;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IWriter;
+import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
@@ -49,7 +49,7 @@ import org.treetank.page.PageReference;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class FileWriter implements IWriter {
+public final class FileWriter implements IBackendWriter {
 
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;

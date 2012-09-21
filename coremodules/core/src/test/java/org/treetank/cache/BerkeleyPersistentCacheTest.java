@@ -38,7 +38,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
-import org.treetank.access.conf.DatabaseConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -66,7 +66,7 @@ public class BerkeleyPersistentCacheTest {
 
         cache =
             new BerkeleyPersistenceCache(new File(new File(TestHelper.PATHS.PATH1.getFile(),
-                DatabaseConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), 1,
+                StorageConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), 1,
                 conf.mNodeFac);
         CacheTestHelper.setUp(cache);
     }

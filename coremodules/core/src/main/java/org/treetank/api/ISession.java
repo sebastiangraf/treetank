@@ -31,15 +31,19 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTException;
 
 /**
- * <h1>ISession</h1>
+ * Each <code>IStorage</code> contains multiple resources. To each resource, one {@link ISession} can be bound.  
  * 
- * <h2>Description</h2>
+ * Transactions can then be started from this instance. There can only be one {@link IPageWriteTrx} at the time.
+ * However, multiple {@link IPageReadTrx} can coexist concurrently:
  * 
- * <p>
- * Each <code>IDatabase</code> is bound to multiple instances implementing <code>ISession</code>. Transactions
- * can then be started from this instance. There can only be one <code>INodeWriteTrx</code> at the time.
- * However, multiple <code>IReadTransactions</code> can coexist concurrently.
- * </p>
+ *  * <code>
+ *      //Ensure, storage and resources are created
+ *      final IStorage storage = Storage.openStorage(FILE);
+ *      final ISession session =
+ *           storage.getSession(new SessionConfiguration(RESOURCENAME, KEY));
+ *      final IPageReadTrx pRtx = session.beginPageReadTransaction(REVISION);
+ *      final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
+ * </code>
  * 
  */
 public interface ISession {
@@ -55,12 +59,10 @@ public interface ISession {
     /**
      * Checks for valid revision.
      * 
-     * @param paramRevision
+     * @param pRevision
      *            revision parameter to check
-     * @throws IllegalArgumentException
-     *             if revision isn't valid
      */
-    void assertAccess(final long paramRevision);
+    void assertAccess(final long pRevision);
 
     /**
      * Getting the resource configuration

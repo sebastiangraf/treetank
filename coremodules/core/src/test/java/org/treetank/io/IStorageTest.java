@@ -55,16 +55,16 @@ public class IStorageTest {
     @Test
     public void testFirstRef() throws TTException {
 
-        IStorage handler = mResource.mStorage;
+        IBackend handler = mResource.mStorage;
 
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();
         pageRef1.setPage(page1);
 
         // same instance check
-        final IWriter writer = handler.getWriter();
-        writer.writeFirstReference(pageRef1);
-        final PageReference pageRef2 = writer.readFirstReference();
+        final IBackendWriter backendWriter = handler.getWriter();
+        backendWriter.writeFirstReference(pageRef1);
+        final PageReference pageRef2 = backendWriter.readFirstReference();
         assertEquals(
             new StringBuilder("Check for ").append(handler.getClass()).append(" failed.").toString(),
             pageRef1.getNodePageKey(), pageRef2.getNodePageKey());
@@ -72,11 +72,11 @@ public class IStorageTest {
             new StringBuilder("Check for ").append(handler.getClass()).append(" failed.").toString(),
             ((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef2.getPage())
                 .getRevisionCount());
-        writer.close();
+        backendWriter.close();
 
         // new instance check
-        final IReader reader = handler.getReader();
-        final PageReference pageRef3 = reader.readFirstReference();
+        final IBackendReader backendReader = handler.getReader();
+        final PageReference pageRef3 = backendReader.readFirstReference();
         assertEquals(
             new StringBuilder("Check for ").append(handler.getClass()).append(" failed.").toString(),
             pageRef1.getNodePageKey(), pageRef3.getNodePageKey());
@@ -84,7 +84,7 @@ public class IStorageTest {
             new StringBuilder("Check for ").append(handler.getClass()).append(" failed.").toString(),
             ((UberPage)pageRef1.getPage()).getRevisionCount(), ((UberPage)pageRef3.getPage())
                 .getRevisionCount());
-        reader.close();
+        backendReader.close();
         handler.close();
     }
 }
