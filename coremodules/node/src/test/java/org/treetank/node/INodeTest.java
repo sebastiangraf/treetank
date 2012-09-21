@@ -82,7 +82,7 @@ public class INodeTest {
     /**
      * Providing different implementations of the {@link INode} as Dataprovider to the test class.
      * 
-     * @return different classes of the {@link INode} and {@link INodeChecker}
+     * @return different classes of the {@link INode} and <code>INodeChecker</code>
      * @throws TTByteHandleException
      */
     @DataProvider(name = "instantiateNode")

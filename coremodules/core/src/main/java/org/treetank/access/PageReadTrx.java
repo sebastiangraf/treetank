@@ -327,7 +327,7 @@ public class PageReadTrx implements IPageReadTrx {
     /**
      * Dereference indirect page reference.
      * 
-     * @param reference
+     * @param pRef
      *            Reference to dereference.
      * @return Dereferenced page.
      * 

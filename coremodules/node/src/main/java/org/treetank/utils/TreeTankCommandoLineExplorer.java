@@ -107,8 +107,8 @@ public final class TreeTankCommandoLineExplorer {
 
             final File file = new File(args[0]);
             final StorageConfiguration config = new StorageConfiguration(file);
-            Storage.createDatabase(config);
-            storage = Storage.openDatabase(file);
+            Storage.createStorage(config);
+            storage = Storage.openStorage(file);
             session = storage.getSession(new SessionConfiguration("TMP", null));
             if (revision != 0) {
                 pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
@@ -142,7 +142,7 @@ public final class TreeTankCommandoLineExplorer {
                     }
                     final File file = findFile(line);
                     if (file != null) {
-                        storage = Storage.openDatabase(file);
+                        storage = Storage.openStorage(file);
                         session = storage.getSession(new SessionConfiguration("TMP", null));
                         pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
                         nRtx = new NodeReadTrx(pRtx);

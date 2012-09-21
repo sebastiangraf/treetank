@@ -154,12 +154,11 @@ public final class ResourceConfiguration {
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @param pDbFile
-     * @param pResourceName
+     * @param pProperties
      * @param pNumbersOfRevToRestore
-     * @param pNodeFactory
      * @param pBackend
      * @param pRevision
+     * @param pNodeFac
      */
     @Inject
     public ResourceConfiguration(@Assisted Properties pProperties, @Assisted int pNumbersOfRevToRestore,
@@ -200,8 +199,6 @@ public final class ResourceConfiguration {
          * 
          * @param pProperties
          *            Properties of resource to be set.
-         * @param pResourceName
-         *            Resource Name to be set
          * @param pNumberOfRevsToRestore
          *            numbers of revisions to restore an entire revision
          * @return an {@link ResourceConfiguration}-instance

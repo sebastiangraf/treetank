@@ -69,8 +69,8 @@ public final class SaxonHelper {
         TestHelper.deleteEverything();
 
         final StorageConfiguration dbConfig = new StorageConfiguration(TestHelper.PATHS.PATH1.getFile());
-        Storage.createDatabase(dbConfig);
-        final IStorage storage = Storage.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        Storage.createStorage(dbConfig);
+        final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH1.getFile());
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         storage.createResource(resFac.create(props, 1));
         final ISession session =

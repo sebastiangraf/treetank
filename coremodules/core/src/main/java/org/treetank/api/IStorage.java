@@ -35,13 +35,31 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
 /**
- * This interface describes database instances handled by treetank. A database
- * is a persistent place where all data is stored. The access to the data is
- * done with the help of {@link ISession}s.
  * 
- * Furthermore, databases can be created with the help of {@link org.StorageConfiguration.conf.DatabaseConfiguration}s.
- * After creation, the settings
- * of a database cannot be changed.
+ * This interface describes storage-instances handled by Treetank. A {@link IStorage} is a persistent place
+ * where all data is stored.
+ * 
+ * Resources must be created within this {@link IStorage} with the help of {@link ResourceConfiguration}s.
+ * 
+ * 
+ * <code>
+ *      //Creating the Storage
+ *      Storage.createDatabase(new StorageConfiguration(FILE));
+ *      final IStorage storage = Storage.openStorage(FILE);
+ *      
+ *      //Getting a ResourceConfiguration over Guice.
+ *      storage.createResource(mResourceConfig);
+ * 
+ * </code> The access to the data is done with the help of {@link ISession}s:
+ * 
+ * <code>
+ *      //Ensure, storage and resources are created
+ *      final IStorage storage = Storage.openStorage(FILE);
+ *      final ISession session =
+ *           storage.getSession(new SessionConfiguration(RESOURCENAME, KEY));
+ *      final IPageReadTrx pRtx = session.beginPageReadTransaction(REVISION);
+ *      final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
+ * </code>
  * 
  * 
  * @author Sebastian Graf, University of Konstanz
@@ -66,7 +84,7 @@ public interface IStorage {
      * Getting the session associated within this database.
      * 
      * @param pSessionConf
-     *            {@link SessionConfiguration.Builder} reference
+     *            {@link SessionConfiguration} reference
      * @throws TTException
      *             if can't get session
      * @return the session

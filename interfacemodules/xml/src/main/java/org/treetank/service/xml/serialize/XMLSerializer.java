@@ -453,8 +453,8 @@ public final class XMLSerializer extends AbsSerializer {
         final FileOutputStream outputStream = new FileOutputStream(target);
 
         final StorageConfiguration config = new StorageConfiguration(new File(args[0]));
-        Storage.createDatabase(config);
-        final IStorage db = Storage.openDatabase(new File(args[0]));
+        Storage.createStorage(config);
+        final IStorage db = Storage.openStorage(new File(args[0]));
         Properties props = new Properties();
         props.setProperty(IConstants.DBFILE, target.getAbsolutePath());
         props.setProperty(IConstants.RESOURCE, "shredded");

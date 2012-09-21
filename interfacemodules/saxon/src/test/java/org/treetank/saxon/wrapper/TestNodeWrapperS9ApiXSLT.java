@@ -101,8 +101,8 @@ public final class TestNodeWrapperS9ApiXSLT {
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
         final StorageConfiguration dbConfig = new StorageConfiguration(TestHelper.PATHS.PATH1.getFile());
-        Storage.createDatabase(dbConfig);
-        final IStorage databaseBooks = Storage.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        Storage.createStorage(dbConfig);
+        final IStorage databaseBooks = Storage.openStorage(TestHelper.PATHS.PATH1.getFile());
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         ResourceConfiguration resConfig = mResourceConfig.create(props, 1);
         databaseBooks.createResource(resConfig);

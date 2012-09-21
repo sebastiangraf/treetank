@@ -171,8 +171,8 @@ public class TestNodeWrapper {
 
         final StorageConfiguration db2 = new StorageConfiguration(TestHelper.PATHS.PATH2.getFile());
 
-        Storage.createDatabase(db2);
-        final IStorage storage = Storage.openDatabase(TestHelper.PATHS.PATH2.getFile());
+        Storage.createStorage(db2);
+        final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH2.getFile());
         Properties props = new Properties();
         props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
         props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);

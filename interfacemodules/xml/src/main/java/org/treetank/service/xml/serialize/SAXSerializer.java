@@ -228,8 +228,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     public static void main(final String... args) throws Exception {
 
         final StorageConfiguration config = new StorageConfiguration(new File(args[0]));
-        Storage.createDatabase(config);
-        final IStorage storage = Storage.openDatabase(new File(args[0]));
+        Storage.createStorage(config);
+        final IStorage storage = Storage.openStorage(new File(args[0]));
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);

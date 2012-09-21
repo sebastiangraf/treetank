@@ -105,7 +105,7 @@ public class IRevisioningTest {
     /**
      * Providing different implementations of the {@link IRevisioning} as Dataprovider to the test class.
      * 
-     * @return different classes of the {@link IRevisioning} and {@link IRevisionChecker}
+     * @return different classes of the {@link IRevisioning} and <code>IRevisionChecker</code>
      * @throws TTByteHandleException
      */
     @DataProvider(name = "instantiateVersioning")

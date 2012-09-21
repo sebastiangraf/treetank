@@ -84,10 +84,10 @@ public final class TreeTankMediator implements JaxRx {
      * @throws TTException
      */
     public TreeTankMediator(final File pStoragePath) throws TTException {
-        if (!Storage.existsDatabase(pStoragePath)) {
-            Storage.createDatabase(new StorageConfiguration(pStoragePath));
+        if (!Storage.existsStorage(pStoragePath)) {
+            Storage.createStorage(new StorageConfiguration(pStoragePath));
         }
-        IStorage db = Storage.openDatabase(pStoragePath);
+        IStorage db = Storage.openStorage(pStoragePath);
         database = new DatabaseRepresentation(db, mStorageFac, mRevisionFac);
         nodeIdResource = new NodeIdRepresentation(db);
     }

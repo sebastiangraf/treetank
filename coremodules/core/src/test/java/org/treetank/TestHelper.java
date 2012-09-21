@@ -108,9 +108,9 @@ public final class TestHelper {
         } else {
             final StorageConfiguration config = new StorageConfiguration(file);
             if (!file.exists()) {
-                Storage.createDatabase(config);
+                Storage.createStorage(config);
             }
-            final IStorage storage = Storage.openDatabase(file);
+            final IStorage storage = Storage.openStorage(file);
             INSTANCES.put(file, storage);
             return storage;
         }
@@ -128,8 +128,8 @@ public final class TestHelper {
      */
     public static final void deleteEverything() throws TTException {
         closeEverything();
-        Storage.truncateDatabase(PATHS.PATH1.config);
-        Storage.truncateDatabase(PATHS.PATH2.config);
+        Storage.truncateStorage(PATHS.PATH1.config);
+        Storage.truncateStorage(PATHS.PATH2.config);
     }
 
     /**

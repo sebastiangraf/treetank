@@ -110,7 +110,7 @@ public class RestXPathProcessorTest {
     }
 
     /**
-     * Test method for {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor()} .
+     * Test method for {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor(org.treetank.api.IStorage)} .
      * 
      * @throws TTException
      */
@@ -167,7 +167,7 @@ public class RestXPathProcessorTest {
 
     /**
      * Test method for
-     * {@link org.treetank.service.jaxrx.util.RestXPathProcessor#getXpathResource(java.io.File, long, java.lang.String, boolean, java.lang.Long, java.io.OutputStream, boolean)}
+     * {@link org.treetank.service.jaxrx.util.RestXPathProcessor#getXpathResource(String, String, boolean, Long, OutputStream, boolean)}
      * .
      * 
      * @throws ParserConfigurationException

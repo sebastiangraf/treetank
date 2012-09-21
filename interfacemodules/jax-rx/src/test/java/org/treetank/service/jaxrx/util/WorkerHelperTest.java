@@ -129,7 +129,7 @@ public class WorkerHelperTest {
      */
     @Test
     public void testSerializeXML() throws TTException, IOException {
-        final IStorage storage = Storage.openDatabase(DBFILE.getParentFile());
+        final IStorage storage = Storage.openStorage(DBFILE.getParentFile());
         final ISession session =
             storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final OutputStream out = new ByteArrayOutputStream();
@@ -148,7 +148,7 @@ public class WorkerHelperTest {
 
         long lastRevision = treetank.getLastRevision(RESOURCENAME);
 
-        final IStorage storage = Storage.openDatabase(DBFILE.getParentFile());
+        final IStorage storage = Storage.openStorage(DBFILE.getParentFile());
         final ISession session =
             storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeWriteTrx wtx =
@@ -166,11 +166,11 @@ public class WorkerHelperTest {
     }
 
     /**
-     * This method tests {@link WorkerHelper#closeWTX(boolean, INodeWriteTrx, ISession, IStorage)}
+     * This method tests {@link WorkerHelper#closeWTX(boolean, INodeWriteTrx, ISession)}
      */
     @Test(expectedExceptions = IllegalStateException.class)
     public void testClose() throws TTException {
-        IStorage storage = Storage.openDatabase(DBFILE.getParentFile());
+        IStorage storage = Storage.openStorage(DBFILE.getParentFile());
         ISession session =
             storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeWriteTrx wtx =
@@ -180,7 +180,7 @@ public class WorkerHelperTest {
 
         wtx.commit();
 
-        storage = Storage.openDatabase(DBFILE.getParentFile());
+        storage = Storage.openStorage(DBFILE.getParentFile());
         session = storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
         final INodeReadTrx rtx =
             new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));

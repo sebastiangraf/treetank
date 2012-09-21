@@ -116,7 +116,7 @@ public class RESTResponseHelperTest {
 
     /**
      * Test method for
-     * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(java.util.Map)} .
+     * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(org.treetank.api.IStorage, IBackendFactory, IRevisioningFactory)}.
      * 
      * @throws IOException
      * @throws WebApplicationException

@@ -4,9 +4,9 @@
 package org.treetank.api;
 
 /**
- * Overall Node-Interface for the Interaction with the page layer. All
+ * Overall {@link INode}-Interface for the interaction with the page-layer. All
  * persistence functionality must be handled over this interface while all
- * nodeelayer interfaces interhit from this interface.
+ * node-layers interfaces interhit from this interface.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -14,35 +14,33 @@ package org.treetank.api;
 public interface INode {
 
     /**
-     * Getting the byte representation of the node.
+     * Getting the byte representation of the {@link INode}.
      * 
-     * @return the byte representation of this node
+     * @return the byte representation of this {@link INode}
      */
     byte[] getByteRepresentation();
 
     /**
-     * Sets unique node key.
+     * Sets unique {@link INode} key.
      * 
      * 
      * @param pNodeKey
-     *            Unique key of item, maybe negative when atomics from the
-     *            XPath-engine.
+     *            Unique key of item.
      */
     void setNodeKey(final long pNodeKey);
 
     /**
-     * Gets unique node key.
+     * Gets unique {@link INode} key.
      * 
      * @return node key
      */
     long getNodeKey();
 
     /**
-     * Setting the actual hash of the structure. The hash of one node should
-     * have the entire integrity of the related subtree.
+     * Setting the actual hash of the structure.
      * 
      * @param pHash
-     *            hash to be set for this node
+     *            hash to be set for this {@link INode}
      * 
      */
     void setHash(final long pHash);
@@ -50,7 +48,7 @@ public interface INode {
     /**
      * Getting the persistent stored hash.
      * 
-     * @return the hash of this node
+     * @return the hash of this {@link INode}
      */
     long getHash();
 

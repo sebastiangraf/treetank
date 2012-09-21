@@ -1408,8 +1408,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
 
         try {
             final StorageConfiguration config = new StorageConfiguration(target);
-            Storage.createDatabase(config);
-            final IStorage db = Storage.openDatabase(target);
+            Storage.createStorage(config);
+            final IStorage db = Storage.openStorage(target);
             Properties props = new Properties();
             props.setProperty(org.treetank.io.IConstants.DBFILE, target.getAbsolutePath());
             props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");

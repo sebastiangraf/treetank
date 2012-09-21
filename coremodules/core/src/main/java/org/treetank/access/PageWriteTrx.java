@@ -34,7 +34,6 @@ import java.io.File;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
@@ -83,30 +82,28 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * Standard constructor.
      * 
      * 
-     * @param paramSessionConfiguration
-     *            {@link SessionConfiguration} reference
-     * @param paramUberPage
-     *            root of revision
-     * @param paramWriter
+     * @param pSession
+     *            {@link ISession} reference
+     * @param pUberPage
+     *            root of resource
+     * @param pWriter
      *            writer where this transaction should write to
-     * @param paramParamId
-     *            parameter ID
-     * @param paramRepresentRev
+     * @param pRepresentRev
      *            revision represent
-     * @param paramStoreRev
+     * @param pStoreRev
      *            revision store
      * @throws TTIOException
      *             if IO Error
      */
-    protected PageWriteTrx(final ISession pSession, final UberPage paramUberPage, final IBackendWriter paramWriter,
-        final long paramRepresentRev, final long paramStoreRev) throws TTException {
-        mDelegate = new PageReadTrx(pSession, paramUberPage, paramRepresentRev, paramWriter);
-        mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
+    protected PageWriteTrx(final ISession pSession, final UberPage pUberPage, final IBackendWriter pWriter,
+        final long pRepresentRev, final long pStoreRev) throws TTException {
+        mDelegate = new PageReadTrx(pSession, pUberPage, pRepresentRev, pWriter);
+        mNewRoot = preparePreviousRevisionRootPage(pRepresentRev, pStoreRev);
         mLog =
             new TransactionLogCache(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.io.IConstants.DBFILE)), paramStoreRev,
+                .getProperty(org.treetank.io.IConstants.DBFILE)), pStoreRev,
                 pSession.getConfig().mNodeFac);
-        mPageWriter = paramWriter;
+        mPageWriter = pWriter;
 
     }
 
@@ -115,14 +112,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * (persistence) layer, storing the page in the cache and setting up the
      * node for upcoming modification. Note that this only occurs for {@link INode}s.
      * 
-     * @param paramNodeKey
+     * @param pNodeKey
      *            key of the node to be modified
      * @return an {@link INode} instance
      * @throws TTIOException
      *             if IO Error
      */
-    protected INode prepareNodeForModification(final long paramNodeKey) throws TTException {
-        if (paramNodeKey < 0) {
+    protected INode prepareNodeForModification(final long pNodeKey) throws TTException {
+        if (pNodeKey < 0) {
             throw new IllegalArgumentException("paramNodeKey must be >= 0!");
         }
         if (mNodePageCon != null) {
@@ -130,8 +127,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 "Another node page container is currently in the cache for updates!");
         }
 
-        final long nodePageKey = nodePageKey(paramNodeKey);
-        final int nodePageOffset = nodePageOffset(paramNodeKey);
+        final long nodePageKey = nodePageKey(pNodeKey);
+        final int nodePageOffset = nodePageOffset(pNodeKey);
         prepareNodePage(nodePageKey);
 
         INode node = mNodePageCon.getModified().getNode(nodePageOffset);
@@ -150,12 +147,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * Finishing the node modification. That is storing the node including the
      * page in the cache.
      * 
-     * @param paramNode
+     * @param pNode
      *            the node to be modified
      */
-    protected void finishNodeModification(final INode paramNode) {
-        final long nodePageKey = nodePageKey(paramNode.getNodeKey());
-        if (mNodePageCon == null || paramNode == null || mLog.get(nodePageKey) == null) {
+    protected void finishNodeModification(final INode pNode) {
+        final long nodePageKey = nodePageKey(pNode.getNodeKey());
+        if (mNodePageCon == null || pNode == null || mLog.get(nodePageKey) == null) {
             throw new IllegalStateException();
         }
 
@@ -169,13 +166,13 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * Create fresh node and prepare node nodePageReference for modifications
      * (COW).
      * 
-     * @param paramNode
+     * @param pNode
      *            node to add
      * @return Unmodified node from parameter for convenience.
      * @throws TTIOException
      *             if IO Error
      */
-    public <T extends INode> T createNode(final T paramNode) throws TTException {
+    public <T extends INode> T createNode(final T pNode) throws TTException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         final long nodeKey = mNewRoot.getMaxNodeKey();
@@ -183,27 +180,27 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final int nodePageOffset = nodePageOffset(nodeKey);
         prepareNodePage(nodePageKey);
         final NodePage page = mNodePageCon.getModified();
-        page.setNode(nodePageOffset, paramNode);
-        finishNodeModification(paramNode);
-        return paramNode;
+        page.setNode(nodePageOffset, pNode);
+        finishNodeModification(pNode);
+        return pNode;
     }
 
     /**
      * Removing a node from the storage.
      * 
-     * @param paramNode
+     * @param pNode
      *            {@link INode} to be removed
      * @throws TTIOException
      *             if the removal fails
      */
-    protected void removeNode(final INode paramNode) throws TTException {
-        assert paramNode != null;
-        final long nodePageKey = nodePageKey(paramNode.getNodeKey());
+    protected void removeNode(final INode pNode) throws TTException {
+        assert pNode != null;
+        final long nodePageKey = nodePageKey(pNode.getNodeKey());
         prepareNodePage(nodePageKey);
-        final INode delNode = new DeletedNode(paramNode.getNodeKey());
-        mNodePageCon.getModified().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
-        mNodePageCon.getComplete().setNode(nodePageOffset(paramNode.getNodeKey()), delNode);
-        finishNodeModification(paramNode);
+        final INode delNode = new DeletedNode(pNode.getNodeKey());
+        mNodePageCon.getModified().setNode(nodePageOffset(pNode.getNodeKey()), delNode);
+        mNodePageCon.getComplete().setNode(nodePageOffset(pNode.getNodeKey()), delNode);
+        finishNodeModification(pNode);
     }
 
     /**
@@ -232,19 +229,19 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /**
      * Getting the name corresponding to the given key.
      * 
-     * @param mNameKey
+     * @param pNameKey
      *            for the term searched
      * @return the name
      */
-    public String getName(final int mNameKey) {
+    public String getName(final int pNameKey) {
         final NamePage currentNamePage = (NamePage)mNewRoot.getNamePageReference().getPage();
         String returnVal;
         // if currentNamePage == null -> state was commited and no
         // prepareNodepage was invoked yet
-        if (currentNamePage == null || currentNamePage.getName(mNameKey) == null) {
-            returnVal = mDelegate.getName(mNameKey);
+        if (currentNamePage == null || currentNamePage.getName(pNameKey) == null) {
+            returnVal = mDelegate.getName(pNameKey);
         } else {
-            returnVal = currentNamePage.getName(mNameKey);
+            returnVal = currentNamePage.getName(pNameKey);
         }
         return returnVal;
 
@@ -253,14 +250,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /**
      * Creating a namekey for a given name.
      * 
-     * @param mName
+     * @param pName
      *            for which the key should be created.
      * @return an int, representing the namekey
      * @throws TTIOException
      *             if something odd happens while storing the new key
      */
-    protected int createNameKey(final String mName) throws TTIOException {
-        final String string = (mName == null ? "" : mName);
+    protected int createNameKey(final String pName) throws TTIOException {
+        final String string = (pName == null ? "" : pName);
         final int nameKey = NamePageHash.generateHashForString(string);
 
         final NamePage namePage = (NamePage)mNewRoot.getNamePageReference().getPage();
@@ -274,18 +271,18 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /**
      * Committing a a writetransaction. This method is recursivly invoked by all {@link PageReference}s.
      * 
-     * @param reference
+     * @param pRef
      *            to be commited
      * @throws TTException
      *             if the write fails
      */
-    public void commit(final PageReference reference) throws TTException {
+    public void commit(final PageReference pRef) throws TTException {
         IPage page = null;
 
         // if reference is not null, get one from the persistent storage.
-        if (reference != null) {
+        if (pRef != null) {
             // first, try to get one from the log
-            final NodePageContainer cont = mLog.get(reference.getNodePageKey());
+            final NodePageContainer cont = mLog.get(pRef.getNodePageKey());
             if (cont != null) {
                 page = cont.getModified();
             }
@@ -293,18 +290,18 @@ public final class PageWriteTrx implements IPageWriteTrx {
             // the one flexible from the
             // reference
             if (page == null) {
-                page = reference.getPage();
+                page = pRef.getPage();
                 if (page == null) {
                     return;
                 }
             }
 
-            reference.setPage(page);
+            pRef.setPage(page);
             // Recursively commit indirectely referenced pages and then
             // write self.
             page.commit(this);
-            mPageWriter.write(reference);
-            reference.setPage(null);
+            mPageWriter.write(pRef);
+            pRef.setPage(null);
         }
     }
 
@@ -399,19 +396,19 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return mNewRoot.getMaxNodeKey();
     }
 
-    protected IndirectPage prepareIndirectPage(final PageReference paramReference) throws TTException {
+    protected IndirectPage prepareIndirectPage(final PageReference pRef) throws TTException {
 
-        IndirectPage page = (IndirectPage)paramReference.getPage();
+        IndirectPage page = (IndirectPage)pRef.getPage();
         if (page == null) {
-            if (paramReference.getKey() == IConstants.NULL_ID) {
+            if (pRef.getKey() == IConstants.NULL_ID) {
                 page = new IndirectPage(mDelegate.getUberPage().getRevision());
             } else {
                 page =
-                    new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(paramReference),
+                    new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef),
                         mNewRoot.getRevision() + 1);
 
             }
-            paramReference.setPage(page);
+            pRef.setPage(page);
         }
         return page;
     }
@@ -443,16 +440,16 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return cont;
     }
 
-    private RevisionRootPage preparePreviousRevisionRootPage(final long mBaseRevision,
-        final long representRevision) throws TTException {
+    private RevisionRootPage preparePreviousRevisionRootPage(final long pRev,
+        final long pRepresentRev) throws TTException {
 
         if (mDelegate.getUberPage().isBootstrap()) {
-            return mDelegate.loadRevRoot(mBaseRevision);
+            return mDelegate.loadRevRoot(pRev);
         } else {
 
             // Prepare revision root nodePageReference.
             final RevisionRootPage revisionRootPage =
-                new RevisionRootPage(mDelegate.loadRevRoot(mBaseRevision), representRevision + 1);
+                new RevisionRootPage(mDelegate.loadRevRoot(pRev), pRepresentRev + 1);
 
             // Prepare indirect tree to hold reference to prepared revision root
             // nodePageReference.
@@ -472,14 +469,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
         }
     }
 
-    protected PageReference prepareLeafOfTree(final PageReference mStartReference, final long mKey)
+    protected PageReference prepareLeafOfTree(final PageReference pStarRef, final long pKey)
         throws TTException {
 
         // Initial state pointing to the indirect nodePageReference of level 0.
 
-        PageReference reference = mStartReference;
+        PageReference reference = pStarRef;
         int offset = 0;
-        long levelKey = mKey;
+        long levelKey = pKey;
 
         // Iterate through all levels.
         for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
@@ -497,15 +494,15 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /**
      * Dereference node page reference.
      * 
-     * @param paramNodePageKey
+     * @param pNodeKey
      *            key of node page
      * @return dereferenced page
      * @throws TTIOException
      *             if something happened in the node
      */
-    private NodePageContainer dereferenceNodePageForModification(final long paramNodePageKey)
+    private NodePageContainer dereferenceNodePageForModification(final long pNodeKey)
         throws TTException {
-        final NodePage[] revs = mDelegate.getSnapshotPages(paramNodePageKey);
+        final NodePage[] revs = mDelegate.getSnapshotPages(pNodeKey);
         final IRevisioning revision = mDelegate.mSession.getConfig().mRevision;
 
         return revision.combinePagesForModification(revs);
@@ -524,20 +521,20 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * Building name consisting out of prefix and name. NamespaceUri is not used
      * over here.
      * 
-     * @param paramQname
+     * @param pQName
      *            the {@link QName} of an element
      * @return a string with [prefix:]localname
      */
-    public static String buildName(final QName paramQname) {
-        if (paramQname == null) {
+    public static String buildName(final QName pQName) {
+        if (pQName == null) {
             throw new NullPointerException("mQName must not be null!");
         }
         String name;
-        if (paramQname.getPrefix().isEmpty()) {
-            name = paramQname.getLocalPart();
+        if (pQName.getPrefix().isEmpty()) {
+            name = pQName.getLocalPart();
         } else {
             name =
-                new StringBuilder(paramQname.getPrefix()).append(":").append(paramQname.getLocalPart())
+                new StringBuilder(pQName.getPrefix()).append(":").append(pQName.getLocalPart())
                     .toString();
         }
         return name;

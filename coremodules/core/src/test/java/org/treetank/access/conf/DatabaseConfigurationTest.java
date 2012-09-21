@@ -42,7 +42,7 @@ public class DatabaseConfigurationTest {
     @Test
     public void testDeSerialize() throws TTIOException {
         StorageConfiguration conf = new StorageConfiguration(TestHelper.PATHS.PATH1.getFile());
-        assertTrue(Storage.createDatabase(conf));
+        assertTrue(Storage.createStorage(conf));
         StorageConfiguration serializedConf =
             StorageConfiguration.deserialize(TestHelper.PATHS.PATH1.getFile());
         assertEquals(conf.toString(), serializedConf.toString());

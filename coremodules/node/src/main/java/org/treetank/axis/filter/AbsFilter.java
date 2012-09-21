@@ -54,7 +54,9 @@ public abstract class AbsFilter extends AbsAxis {
     }
 
     /**
-     * {@inheritDoc}
+     * Filter on the current node
+     * 
+     * @return true if filter successful, false otherwise.
      */
     public abstract boolean filter();
 
