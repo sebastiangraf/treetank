@@ -61,7 +61,7 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend.IStorageFactory;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.util.RESTResponseHelper;

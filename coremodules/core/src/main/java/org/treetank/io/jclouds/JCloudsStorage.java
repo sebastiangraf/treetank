@@ -12,7 +12,7 @@ import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IConstants;
 import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
+import org.treetank.io.IBackend;
 import org.treetank.io.IWriter;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -25,7 +25,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class JCloudsStorage implements IStorage {
+public class JCloudsStorage implements IBackend {
 
     /** Factory for Pages. */
     private final PageFactory mFac;

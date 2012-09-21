@@ -55,7 +55,7 @@ public class IStorageTest {
     @Test
     public void testFirstRef() throws TTException {
 
-        IStorage handler = mResource.mStorage;
+        IBackend handler = mResource.mStorage;
 
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();

@@ -45,7 +45,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(FileStorage.class)
-public interface IStorage {
+public interface IBackend {
 
     /**
      * Getting a writer.
@@ -99,7 +99,7 @@ public interface IStorage {
 
     /**
      * 
-     * Factory for generating an {@link IStorage}-instance. Needed mainly
+     * Factory for generating an {@link IBackend}-instance. Needed mainly
      * because of Guice-Assisted utilization.
      * 
      * @author Sebastian Graf, University of Konstanz
@@ -112,9 +112,9 @@ public interface IStorage {
          * 
          * @param pProperties
          *            referencing not only to the storage.
-         * @return an {@link IStorage}-instance
+         * @return an {@link IBackend}-instance
          */
-        IStorage create(Properties pProperties);
+        IBackend create(Properties pProperties);
     }
 
 }

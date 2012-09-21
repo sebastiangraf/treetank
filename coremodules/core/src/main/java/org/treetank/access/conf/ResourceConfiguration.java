@@ -40,8 +40,8 @@ import org.treetank.access.Session;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IConstants;
-import org.treetank.io.IStorage;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend;
+import org.treetank.io.IBackend.IStorageFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -138,7 +138,7 @@ public final class ResourceConfiguration {
 
     // MEMBERS FOR FIXED FIELDS
     /** Type of Storage (File, Berkeley). */
-    public final IStorage mStorage;
+    public final IBackend mStorage;
 
     /** Kind of revisioning (Incremental, Differential). */
     public final IRevisioning mRevision;
@@ -176,7 +176,7 @@ public final class ResourceConfiguration {
      * @param pRevisioning
      * @param pNodeFac
      */
-    private ResourceConfiguration(Properties pProperties, IStorage pStorage, IRevisioning pRevisioning,
+    private ResourceConfiguration(Properties pProperties, IBackend pStorage, IRevisioning pRevisioning,
         INodeFactory pNodeFac) {
         mProperties = pProperties;
         mStorage = pStorage;
@@ -321,13 +321,13 @@ public final class ResourceConfiguration {
             }
             jsonReader.endObject();
             Constructor<?> storageCons = storageClazz.getConstructors()[0];
-            IStorage storage = (IStorage)storageCons.newInstance(props, nodeFactory, pipeline);
+            IBackend backend = (IBackend)storageCons.newInstance(props, nodeFactory, pipeline);
             jsonReader.endObject();
             jsonReader.endObject();
             jsonReader.close();
             fileReader.close();
 
-            return new ResourceConfiguration(props, storage, revisioning, nodeFactory);
+            return new ResourceConfiguration(props, backend, revisioning, nodeFactory);
 
         } catch (IOException | ClassNotFoundException | IllegalArgumentException | InstantiationException
         | IllegalAccessException | InvocationTargetException exc) {

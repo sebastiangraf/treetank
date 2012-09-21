@@ -39,7 +39,7 @@ import org.treetank.exception.TTUsageException;
 import org.treetank.io.IConstants;
 import org.treetank.io.IOUtils;
 import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
+import org.treetank.io.IBackend;
 import org.treetank.io.IWriter;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -54,7 +54,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Sebastian Graf, University of Konstanz.
  * 
  */
-public final class FileStorage implements IStorage {
+public final class FileStorage implements IBackend {
 
     /** private constant for fileName. */
     private static final String FILENAME = "tt.tnk";

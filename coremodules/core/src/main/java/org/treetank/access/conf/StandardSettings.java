@@ -16,8 +16,8 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IConstants;
-import org.treetank.io.IStorage;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend;
+import org.treetank.io.IBackend.IStorageFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
@@ -57,7 +57,7 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class).build(
             IRevisioningFactory.class));
         bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
-        install(new FactoryModuleBuilder().implement(IStorage.class, FileStorage.class).build(
+        install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
             IStorageFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
 

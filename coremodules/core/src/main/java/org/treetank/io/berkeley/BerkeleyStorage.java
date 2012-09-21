@@ -40,7 +40,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IConstants;
 import org.treetank.io.IOUtils;
 import org.treetank.io.IReader;
-import org.treetank.io.IStorage;
+import org.treetank.io.IBackend;
 import org.treetank.io.IWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.IPage;
@@ -72,7 +72,7 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyStorage implements IStorage {
+public final class BerkeleyStorage implements IBackend {
 
     /** Name for the database. */
     private static final String NAME = "berkeleyDatabase";

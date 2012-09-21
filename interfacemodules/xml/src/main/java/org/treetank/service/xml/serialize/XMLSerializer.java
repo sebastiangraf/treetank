@@ -54,7 +54,7 @@ import org.treetank.api.IDatabase;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.io.IConstants;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend.IStorageFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;

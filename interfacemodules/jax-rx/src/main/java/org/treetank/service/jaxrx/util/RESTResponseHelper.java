@@ -46,7 +46,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.treetank.api.IDatabase;
 import org.treetank.exception.TTException;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend.IStorageFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;

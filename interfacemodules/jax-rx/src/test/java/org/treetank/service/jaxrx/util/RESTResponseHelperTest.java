@@ -52,7 +52,7 @@ import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend.IStorageFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.jaxrx.implementation.NodeIdRepresentationTest;

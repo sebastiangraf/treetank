@@ -61,7 +61,7 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.IStorage.IStorageFactory;
+import org.treetank.io.IBackend.IStorageFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.node.TreeNodeFactory;
