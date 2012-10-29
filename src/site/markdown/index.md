@@ -54,12 +54,12 @@ Treetank is maintained by:
 
 Current subprojects are:
 
-* Johannes Lichtenberger (Visualization of temporal trees)
 * Wolfgang Miller (Binding of Treetank to cloud backends)
-* Nuray Gürler (Maven Websites)
 
 Concluded and adopted subprojects were:
 
+* Johannes Lichtenberger (Visualization of temporal trees)
+* Nuray Gürler (Maven Websites)
 * Patrick Lang (Encryption layer)
 * Johannes Lichtenberger (Evaluation of several versioning approaches)
 * Patrick Lang (Encryption layer)
