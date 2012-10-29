@@ -19,8 +19,8 @@
 <a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 <a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
 <a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeFactory;
-<a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IStorage;
-<a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IStorage.IStorageFactory;
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend;
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend.IBackendFactory;
 <a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.bytepipe.ByteHandlerPipeline;
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.bytepipe.Zipper;
@@ -47,8 +47,8 @@
 <a class="jxr_linenumber" name="37" href="#37">37</a>              IRevisioningFactory.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="38" href="#38">38</a>          bind(INodeFactory.<strong class="jxr_keyword">class</strong>).to(TreeNodeFactory.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="39" href="#39">39</a>          bind(IByteHandlerPipeline.<strong class="jxr_keyword">class</strong>).toInstance(<strong class="jxr_keyword">new</strong> ByteHandlerPipeline(<strong class="jxr_keyword">new</strong> Zipper()));
-<a class="jxr_linenumber" name="40" href="#40">40</a>          install(<strong class="jxr_keyword">new</strong> FactoryModuleBuilder().implement(IStorage.<strong class="jxr_keyword">class</strong>, FileStorage.<strong class="jxr_keyword">class</strong>).build(
-<a class="jxr_linenumber" name="41" href="#41">41</a>              IStorageFactory.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="40" href="#40">40</a>          install(<strong class="jxr_keyword">new</strong> FactoryModuleBuilder().implement(IBackend.<strong class="jxr_keyword">class</strong>, FileStorage.<strong class="jxr_keyword">class</strong>).build(
+<a class="jxr_linenumber" name="41" href="#41">41</a>              IBackendFactory.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="42" href="#42">42</a>          install(<strong class="jxr_keyword">new</strong> FactoryModuleBuilder().build(IResourceConfigurationFactory.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="43" href="#43">43</a>  
 <a class="jxr_linenumber" name="44" href="#44">44</a>          bind(Key.<strong class="jxr_keyword">class</strong>).toInstance(StandardSettings.KEY);

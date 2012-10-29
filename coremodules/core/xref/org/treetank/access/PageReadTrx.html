@@ -48,7 +48,7 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.cache.NodePageContainer;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IReader;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackendReader;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IConstants;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IPage;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IndirectPage;
@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="69" href="#69">69</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/treetank/access/PageReadTrx.html">PageReadTrx</a> <strong class="jxr_keyword">implements</strong> <a href="../../../org/treetank/api/IPageReadTrx.html">IPageReadTrx</a> {
 <a class="jxr_linenumber" name="70" href="#70">70</a>  
 <a class="jxr_linenumber" name="71" href="#71">71</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Page reader exclusively assigned to this transaction. */</em>
-<a class="jxr_linenumber" name="72" href="#72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IReader.html">IReader</a> mPageReader;
+<a class="jxr_linenumber" name="72" href="#72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IBackendReader.html">IBackendReader</a> mPageReader;
 <a class="jxr_linenumber" name="73" href="#73">73</a>  
 <a class="jxr_linenumber" name="74" href="#74">74</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Uber page this transaction is bound to. */</em>
 <a class="jxr_linenumber" name="75" href="#75">75</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/UberPage.html">UberPage</a> mUberPage;
@@ -111,7 +111,7 @@
 <a class="jxr_linenumber" name="101" href="#101">101</a> <em class="jxr_javadoccomment">     *             if the read of the persistent storage fails</em>
 <a class="jxr_linenumber" name="102" href="#102">102</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="103" href="#103">103</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/access/PageReadTrx.html">PageReadTrx</a>(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/ISession.html">ISession</a> pSession, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/UberPage.html">UberPage</a> pUberpage, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pRevKey,
-<a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IReader.html">IReader</a> pReader) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IBackendReader.html">IBackendReader</a> pReader) <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="105" href="#105">105</a>         mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
 <a class="jxr_linenumber" name="106" href="#106">106</a>         mSession = pSession;
 <a class="jxr_linenumber" name="107" href="#107">107</a>         mPageReader = pReader;
@@ -337,7 +337,7 @@
 <a class="jxr_linenumber" name="327" href="#327">327</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="328" href="#328">328</a> <em class="jxr_javadoccomment">     * Dereference indirect page reference.</em>
 <a class="jxr_linenumber" name="329" href="#329">329</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="330" href="#330">330</a> <em class="jxr_javadoccomment">     * @param reference</em>
+<a class="jxr_linenumber" name="330" href="#330">330</a> <em class="jxr_javadoccomment">     * @param pRef</em>
 <a class="jxr_linenumber" name="331" href="#331">331</a> <em class="jxr_javadoccomment">     *            Reference to dereference.</em>
 <a class="jxr_linenumber" name="332" href="#332">332</a> <em class="jxr_javadoccomment">     * @return Dereferenced page.</em>
 <a class="jxr_linenumber" name="333" href="#333">333</a> <em class="jxr_javadoccomment">     * </em>

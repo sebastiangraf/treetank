@@ -9,7 +9,7 @@
     <copyright>&#169;2012 Distributed Systems Group</copyright>
     <item>
       <title>File: 57,
-             Errors: 1434,
+             Errors: 1418,
              Warnings: 0,
              Infos: 0
       </title>
@@ -178,7 +178,7 @@
                   0
                 </td>
                 <td>
-                  86
+                  84
                 </td>
               </tr>
                           <tr>
@@ -360,7 +360,7 @@
                   0
                 </td>
                 <td>
-                  46
+                  35
                 </td>
               </tr>
                           <tr>
@@ -374,7 +374,7 @@
                   0
                 </td>
                 <td>
-                  6
+                  8
                 </td>
               </tr>
                           <tr>
@@ -752,7 +752,7 @@
                   0
                 </td>
                 <td>
-                  9
+                  4
                 </td>
               </tr>
                           <tr>

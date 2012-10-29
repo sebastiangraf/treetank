@@ -48,11 +48,11 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.jaxrx.core.JaxRxException;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.jaxrx.core.QueryParameter;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.jaxrx.core.ResourcePath;
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.Database;
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.DatabaseConfiguration;
-<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IDatabase;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.Storage;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StorageConfiguration;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IStorage;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IStorage.IStorageFactory;
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend.IBackendFactory;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.enums.EIdAccessType;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.util.WorkerHelper;
@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="70" href="#70">70</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">transient</strong> <a href="../../../../../org/treetank/service/jaxrx/implementation/NodeIdRepresentation.html">NodeIdRepresentation</a> nodeIdResource;
 <a class="jxr_linenumber" name="71" href="#71">71</a>  
 <a class="jxr_linenumber" name="72" href="#72">72</a>      @Inject
-<a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">private</strong> IStorageFactory mStorageFac;
+<a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">private</strong> IBackendFactory mStorageFac;
 <a class="jxr_linenumber" name="74" href="#74">74</a>  
 <a class="jxr_linenumber" name="75" href="#75">75</a>      @Inject
 <a class="jxr_linenumber" name="76" href="#76">76</a>      <strong class="jxr_keyword">private</strong> IRevisioningFactory mRevisionFac;
@@ -94,10 +94,10 @@
 <a class="jxr_linenumber" name="84" href="#84">84</a>  <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="85" href="#85">85</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="86" href="#86">86</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/treetank/service/jaxrx/implementation/TreeTankMediator.html">TreeTankMediator</a>(<strong class="jxr_keyword">final</strong> File pStoragePath) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="87" href="#87">87</a>          <strong class="jxr_keyword">if</strong> (!Database.existsDatabase(pStoragePath)) {
-<a class="jxr_linenumber" name="88" href="#88">88</a>              Database.createDatabase(<strong class="jxr_keyword">new</strong> DatabaseConfiguration(pStoragePath));
+<a class="jxr_linenumber" name="87" href="#87">87</a>          <strong class="jxr_keyword">if</strong> (!Storage.existsStorage(pStoragePath)) {
+<a class="jxr_linenumber" name="88" href="#88">88</a>              Storage.createStorage(<strong class="jxr_keyword">new</strong> StorageConfiguration(pStoragePath));
 <a class="jxr_linenumber" name="89" href="#89">89</a>          }
-<a class="jxr_linenumber" name="90" href="#90">90</a>          IDatabase db = Database.openDatabase(pStoragePath);
+<a class="jxr_linenumber" name="90" href="#90">90</a>          IStorage db = Storage.openStorage(pStoragePath);
 <a class="jxr_linenumber" name="91" href="#91">91</a>          database = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/treetank/service/jaxrx/implementation/DatabaseRepresentation.html">DatabaseRepresentation</a>(db, mStorageFac, mRevisionFac);
 <a class="jxr_linenumber" name="92" href="#92">92</a>          nodeIdResource = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/treetank/service/jaxrx/implementation/NodeIdRepresentation.html">NodeIdRepresentation</a>(db);
 <a class="jxr_linenumber" name="93" href="#93">93</a>      }

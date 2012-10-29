@@ -51,20 +51,20 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     * Create simple revision test in current database.</em>
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     * @param paramWtx</em>
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     *            {@link IWriteTransaction} to write to</em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     * @param pWtx</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     *            {@link INodeWriteTrx} to write to</em>
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <em class="jxr_javadoccomment">     *             if anything went wrong</em>
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="49" href="#49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> createVersioned(<strong class="jxr_keyword">final</strong> INodeWriteTrx paramWtx) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="50" href="#50">50</a>          assertNotNull(paramWtx);
-<a class="jxr_linenumber" name="51" href="#51">51</a>          org.treetank.DocumentCreater.create(paramWtx);
-<a class="jxr_linenumber" name="52" href="#52">52</a>          paramWtx.commit();
+<a class="jxr_linenumber" name="49" href="#49">49</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> createVersioned(<strong class="jxr_keyword">final</strong> INodeWriteTrx pWtx) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="50" href="#50">50</a>          assertNotNull(pWtx);
+<a class="jxr_linenumber" name="51" href="#51">51</a>          org.treetank.DocumentCreater.create(pWtx);
+<a class="jxr_linenumber" name="52" href="#52">52</a>          pWtx.commit();
 <a class="jxr_linenumber" name="53" href="#53">53</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt;= 1; i++) {
-<a class="jxr_linenumber" name="54" href="#54">54</a>              paramWtx.moveTo(ROOT_NODE);
-<a class="jxr_linenumber" name="55" href="#55">55</a>              paramWtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"ns"</span>, <span class="jxr_string">"a"</span>, <span class="jxr_string">"p"</span>));
-<a class="jxr_linenumber" name="56" href="#56">56</a>              paramWtx.insertTextAsFirstChild(<span class="jxr_string">"OOPS4!"</span>);
-<a class="jxr_linenumber" name="57" href="#57">57</a>              paramWtx.commit();
+<a class="jxr_linenumber" name="54" href="#54">54</a>              pWtx.moveTo(ROOT_NODE);
+<a class="jxr_linenumber" name="55" href="#55">55</a>              pWtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"ns"</span>, <span class="jxr_string">"a"</span>, <span class="jxr_string">"p"</span>));
+<a class="jxr_linenumber" name="56" href="#56">56</a>              pWtx.insertTextAsFirstChild(<span class="jxr_string">"OOPS4!"</span>);
+<a class="jxr_linenumber" name="57" href="#57">57</a>              pWtx.commit();
 <a class="jxr_linenumber" name="58" href="#58">58</a>          }
 <a class="jxr_linenumber" name="59" href="#59">59</a>  
 <a class="jxr_linenumber" name="60" href="#60">60</a>      }
@@ -73,41 +73,41 @@
 <a class="jxr_linenumber" name="63" href="#63">63</a>  <em class="jxr_javadoccomment">     * Create simple test document containing all supported node kinds, but</em>
 <a class="jxr_linenumber" name="64" href="#64">64</a>  <em class="jxr_javadoccomment">     * ignoring their namespace prefixes.</em>
 <a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * @param paramWtx</em>
-<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     *            {@link IWriteTransaction} to write to</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * @param pWtx</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     *            {@link INodeWriteTrx} to write to</em>
 <a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment">     *             if anything went wrong</em>
 <a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="71" href="#71">71</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> createWithoutNamespace(<strong class="jxr_keyword">final</strong> INodeWriteTrx paramWtx) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="72" href="#72">72</a>          assertNotNull(paramWtx);
-<a class="jxr_linenumber" name="73" href="#73">73</a>          NodeHelper.createDocumentRootNode(paramWtx);
-<a class="jxr_linenumber" name="74" href="#74">74</a>          paramWtx.moveTo(ROOT_NODE);
+<a class="jxr_linenumber" name="71" href="#71">71</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> createWithoutNamespace(<strong class="jxr_keyword">final</strong> INodeWriteTrx pWtx) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="72" href="#72">72</a>          assertNotNull(pWtx);
+<a class="jxr_linenumber" name="73" href="#73">73</a>          NodeHelper.createDocumentRootNode(pWtx);
+<a class="jxr_linenumber" name="74" href="#74">74</a>          pWtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="75" href="#75">75</a>  
-<a class="jxr_linenumber" name="76" href="#76">76</a>          paramWtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"a"</span>));
-<a class="jxr_linenumber" name="77" href="#77">77</a>          paramWtx.insertAttribute(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"i"</span>), <span class="jxr_string">"j"</span>);
-<a class="jxr_linenumber" name="78" href="#78">78</a>          paramWtx.moveTo(paramWtx.getNode().getParentKey());
+<a class="jxr_linenumber" name="76" href="#76">76</a>          pWtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"a"</span>));
+<a class="jxr_linenumber" name="77" href="#77">77</a>          pWtx.insertAttribute(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"i"</span>), <span class="jxr_string">"j"</span>);
+<a class="jxr_linenumber" name="78" href="#78">78</a>          pWtx.moveTo(pWtx.getNode().getParentKey());
 <a class="jxr_linenumber" name="79" href="#79">79</a>  
-<a class="jxr_linenumber" name="80" href="#80">80</a>          paramWtx.insertTextAsFirstChild(<span class="jxr_string">"oops1"</span>);
+<a class="jxr_linenumber" name="80" href="#80">80</a>          pWtx.insertTextAsFirstChild(<span class="jxr_string">"oops1"</span>);
 <a class="jxr_linenumber" name="81" href="#81">81</a>  
-<a class="jxr_linenumber" name="82" href="#82">82</a>          paramWtx.insertElementAsRightSibling(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"b"</span>));
+<a class="jxr_linenumber" name="82" href="#82">82</a>          pWtx.insertElementAsRightSibling(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"b"</span>));
 <a class="jxr_linenumber" name="83" href="#83">83</a>  
-<a class="jxr_linenumber" name="84" href="#84">84</a>          paramWtx.insertTextAsFirstChild(<span class="jxr_string">"foo"</span>);
-<a class="jxr_linenumber" name="85" href="#85">85</a>          paramWtx.insertElementAsRightSibling(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"c"</span>));
-<a class="jxr_linenumber" name="86" href="#86">86</a>          paramWtx.moveTo(paramWtx.getNode().getParentKey());
+<a class="jxr_linenumber" name="84" href="#84">84</a>          pWtx.insertTextAsFirstChild(<span class="jxr_string">"foo"</span>);
+<a class="jxr_linenumber" name="85" href="#85">85</a>          pWtx.insertElementAsRightSibling(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"c"</span>));
+<a class="jxr_linenumber" name="86" href="#86">86</a>          pWtx.moveTo(pWtx.getNode().getParentKey());
 <a class="jxr_linenumber" name="87" href="#87">87</a>  
-<a class="jxr_linenumber" name="88" href="#88">88</a>          paramWtx.insertTextAsRightSibling(<span class="jxr_string">"oops2"</span>);
+<a class="jxr_linenumber" name="88" href="#88">88</a>          pWtx.insertTextAsRightSibling(<span class="jxr_string">"oops2"</span>);
 <a class="jxr_linenumber" name="89" href="#89">89</a>  
-<a class="jxr_linenumber" name="90" href="#90">90</a>          paramWtx.insertElementAsRightSibling(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"b"</span>));
-<a class="jxr_linenumber" name="91" href="#91">91</a>          paramWtx.insertAttribute(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"x"</span>), <span class="jxr_string">"y"</span>);
-<a class="jxr_linenumber" name="92" href="#92">92</a>          paramWtx.moveTo(paramWtx.getNode().getParentKey());
+<a class="jxr_linenumber" name="90" href="#90">90</a>          pWtx.insertElementAsRightSibling(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"b"</span>));
+<a class="jxr_linenumber" name="91" href="#91">91</a>          pWtx.insertAttribute(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"x"</span>), <span class="jxr_string">"y"</span>);
+<a class="jxr_linenumber" name="92" href="#92">92</a>          pWtx.moveTo(pWtx.getNode().getParentKey());
 <a class="jxr_linenumber" name="93" href="#93">93</a>  
-<a class="jxr_linenumber" name="94" href="#94">94</a>          paramWtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"c"</span>));
-<a class="jxr_linenumber" name="95" href="#95">95</a>          paramWtx.insertTextAsRightSibling(<span class="jxr_string">"bar"</span>);
-<a class="jxr_linenumber" name="96" href="#96">96</a>          paramWtx.moveTo(paramWtx.getNode().getParentKey());
+<a class="jxr_linenumber" name="94" href="#94">94</a>          pWtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"c"</span>));
+<a class="jxr_linenumber" name="95" href="#95">95</a>          pWtx.insertTextAsRightSibling(<span class="jxr_string">"bar"</span>);
+<a class="jxr_linenumber" name="96" href="#96">96</a>          pWtx.moveTo(pWtx.getNode().getParentKey());
 <a class="jxr_linenumber" name="97" href="#97">97</a>  
-<a class="jxr_linenumber" name="98" href="#98">98</a>          paramWtx.insertTextAsRightSibling(<span class="jxr_string">"oops3"</span>);
+<a class="jxr_linenumber" name="98" href="#98">98</a>          pWtx.insertTextAsRightSibling(<span class="jxr_string">"oops3"</span>);
 <a class="jxr_linenumber" name="99" href="#99">99</a>  
-<a class="jxr_linenumber" name="100" href="#100">100</a>         paramWtx.moveTo(ROOT_NODE);
+<a class="jxr_linenumber" name="100" href="#100">100</a>         pWtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="101" href="#101">101</a>     }
 <a class="jxr_linenumber" name="102" href="#102">102</a> }
 </pre>

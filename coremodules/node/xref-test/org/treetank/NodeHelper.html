@@ -48,7 +48,7 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.SessionConfiguration;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IDatabase;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IStorage;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeWriteTrx;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IPageWriteTrx;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
@@ -76,10 +76,10 @@
 <a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> createTestDocument(ResourceConfiguration mResourceConfig) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">final</strong> IDatabase database = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-<a class="jxr_linenumber" name="70" href="#70">70</a>          assertTrue(database.createResource(mResourceConfig));
+<a class="jxr_linenumber" name="69" href="#69">69</a>          <strong class="jxr_keyword">final</strong> IStorage storage = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+<a class="jxr_linenumber" name="70" href="#70">70</a>          assertTrue(storage.createResource(mResourceConfig));
 <a class="jxr_linenumber" name="71" href="#71">71</a>          <strong class="jxr_keyword">final</strong> ISession session =
-<a class="jxr_linenumber" name="72" href="#72">72</a>              database.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+<a class="jxr_linenumber" name="72" href="#72">72</a>              storage.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
 <a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">final</strong> IPageWriteTrx pWtx = session.beginPageWriteTransaction();
 <a class="jxr_linenumber" name="74" href="#74">74</a>          <strong class="jxr_keyword">final</strong> INodeWriteTrx nWtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, pWtx, HashKind.Rolling);
 <a class="jxr_linenumber" name="75" href="#75">75</a>          DocumentCreater.create(nWtx);

@@ -58,7 +58,7 @@
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeModuleFactory;
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
-<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IStorage.IStorageFactory;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend.IBackendFactory;
 <a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 <a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 <a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Document;
@@ -105,7 +105,7 @@
 <a class="jxr_linenumber" name="95" href="#95">95</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">transient</strong> String PARAMJRESTSEQ = <span class="jxr_string">"rest:sequence"</span>;
 <a class="jxr_linenumber" name="96" href="#96">96</a>  
 <a class="jxr_linenumber" name="97" href="#97">97</a>      @Inject
-<a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">public</strong> IStorageFactory mStorageFac;
+<a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">public</strong> IBackendFactory mStorageFac;
 <a class="jxr_linenumber" name="99" href="#99">99</a>  
 <a class="jxr_linenumber" name="100" href="#100">100</a>     @Inject
 <a class="jxr_linenumber" name="101" href="#101">101</a>     <strong class="jxr_keyword">public</strong> IRevisioningFactory mRevisioningFac;
@@ -120,7 +120,7 @@
 <a class="jxr_linenumber" name="110" href="#110">110</a>     }
 <a class="jxr_linenumber" name="111" href="#111">111</a> 
 <a class="jxr_linenumber" name="112" href="#112">112</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="113" href="#113">113</a> <em class="jxr_javadoccomment">     * Test method for {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor()} .</em>
+<a class="jxr_linenumber" name="113" href="#113">113</a> <em class="jxr_javadoccomment">     * Test method for {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor(org.treetank.api.IStorage)} .</em>
 <a class="jxr_linenumber" name="114" href="#114">114</a> <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="115" href="#115">115</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="116" href="#116">116</a> <em class="jxr_javadoccomment">     */</em>
@@ -177,7 +177,7 @@
 <a class="jxr_linenumber" name="167" href="#167">167</a> 
 <a class="jxr_linenumber" name="168" href="#168">168</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * Test method for</em>
-<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * {@link org.treetank.service.jaxrx.util.RestXPathProcessor#getXpathResource(java.io.File, long, java.lang.String, boolean, java.lang.Long, java.io.OutputStream, boolean)}</em>
+<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * {@link org.treetank.service.jaxrx.util.RestXPathProcessor#getXpathResource(String, String, boolean, Long, OutputStream, boolean)}</em>
 <a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * .</em>
 <a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * @throws ParserConfigurationException</em>

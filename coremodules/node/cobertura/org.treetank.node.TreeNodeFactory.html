@@ -67,7 +67,7 @@
   <td class="src"><pre class="src">&nbsp;<span class="comment"> * </span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;25</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment"> */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;26</td>  <td class="nbHitsCovered">&nbsp;186</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">public</span> <span class="keyword">class</span> TreeNodeFactory <span class="keyword">implements</span> INodeFactory {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;26</td>  <td class="nbHitsCovered">&nbsp;103</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">public</span> <span class="keyword">class</span> TreeNodeFactory <span class="keyword">implements</span> INodeFactory {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;27</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;28</td>  <td class="nbHits">&nbsp;</td>
@@ -80,8 +80,8 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;32</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> INode deserializeNode(<span class="keyword">byte</span>[] pSource) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;33</td>  <td class="nbHitsCovered">&nbsp;869695</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> ByteArrayDataInput input = ByteStreams.newDataInput(pSource);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;34</td>  <td class="nbHitsCovered">&nbsp;869695</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> kind = input.readInt();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;33</td>  <td class="nbHitsCovered">&nbsp;869345</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> ByteArrayDataInput input = ByteStreams.newDataInput(pSource);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;34</td>  <td class="nbHitsCovered">&nbsp;869345</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> <span class="keyword">int</span> kind = input.readInt();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;35</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;36</td>  <td class="nbHits">&nbsp;</td>
@@ -94,93 +94,93 @@
   <td class="src"><pre class="src">&nbsp;        ValNodeDelegate valDel;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;40</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;41</td>  <td class="nbHitsCovered">&nbsp;869695</td>  <td class="src"><pre class="src">&nbsp;        INode returnVal = <span class="keyword">null</span>;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;42</td>  <td class="nbHitsUncovered"><a title="Line 42: Conditional coverage 85% (6/7).">&nbsp;869695</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 42: Conditional coverage 85% (6/7).">        <span class="keyword">switch</span> (kind) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;41</td>  <td class="nbHitsCovered">&nbsp;869345</td>  <td class="src"><pre class="src">&nbsp;        INode returnVal = <span class="keyword">null</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;42</td>  <td class="nbHitsUncovered"><a title="Line 42: Conditional coverage 85% (6/7).">&nbsp;869345</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 42: Conditional coverage 85% (6/7).">        <span class="keyword">switch</span> (kind) {</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;43</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">case</span> IConstants.ELEMENT:</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;44</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;45</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            strucDel =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;44</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;45</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            strucDel =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;46</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(), input</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;47</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    .readLong());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;48</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            nameDel = <span class="keyword">new</span> NameNodeDelegate(nodeDel, input.readInt(), input.readInt());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;48</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            nameDel = <span class="keyword">new</span> NameNodeDelegate(nodeDel, input.readInt(), input.readInt());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;49</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;50</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> List&lt;Long&gt; attrKeys = <span class="keyword">new</span> ArrayList&lt;Long&gt;();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> List&lt;Long&gt; namespKeys = <span class="keyword">new</span> ArrayList&lt;Long&gt;();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;50</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> List&lt;Long&gt; attrKeys = <span class="keyword">new</span> ArrayList&lt;Long&gt;();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">final</span> List&lt;Long&gt; namespKeys = <span class="keyword">new</span> ArrayList&lt;Long&gt;();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;52</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;53</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Attributes getting</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">int</span> attrCount = input.readInt();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered"><a title="Line 55: Conditional coverage 100% (2/2).">&nbsp;485694</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 55: Conditional coverage 100% (2/2).">            <span class="keyword">for</span> (<span class="keyword">int</span> i = 0; i &lt; attrCount; i++) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;56</td>  <td class="nbHitsCovered">&nbsp;204291</td>  <td class="src"><pre class="src">&nbsp;                attrKeys.add(input.readLong());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">int</span> attrCount = input.readInt();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered"><a title="Line 55: Conditional coverage 100% (2/2).">&nbsp;485519</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 55: Conditional coverage 100% (2/2).">            <span class="keyword">for</span> (<span class="keyword">int</span> i = 0; i &lt; attrCount; i++) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;56</td>  <td class="nbHitsCovered">&nbsp;204241</td>  <td class="src"><pre class="src">&nbsp;                attrKeys.add(input.readLong());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;57</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;58</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;59</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Namespace getting</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;60</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">int</span> nsCount = input.readInt();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered"><a title="Line 61: Conditional coverage 100% (2/2).">&nbsp;496893</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 61: Conditional coverage 100% (2/2).">            <span class="keyword">for</span> (<span class="keyword">int</span> i = 0; i &lt; nsCount; i++) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;62</td>  <td class="nbHitsCovered">&nbsp;215490</td>  <td class="src"><pre class="src">&nbsp;                namespKeys.add(input.readLong());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;60</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">int</span> nsCount = input.readInt();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered"><a title="Line 61: Conditional coverage 100% (2/2).">&nbsp;496743</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 61: Conditional coverage 100% (2/2).">            <span class="keyword">for</span> (<span class="keyword">int</span> i = 0; i &lt; nsCount; i++) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;62</td>  <td class="nbHitsCovered">&nbsp;215465</td>  <td class="src"><pre class="src">&nbsp;                namespKeys.add(input.readLong());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;63</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;64</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;65</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> ElementNode(nodeDel, strucDel, nameDel, attrKeys, namespKeys);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;66</td>  <td class="nbHitsCovered">&nbsp;281403</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;65</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> ElementNode(nodeDel, strucDel, nameDel, attrKeys, namespKeys);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;66</td>  <td class="nbHitsCovered">&nbsp;281278</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;67</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">case</span> IConstants.TEXT:</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;68</td>  <td class="nbHitsCovered">&nbsp;2996</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;68</td>  <td class="nbHitsCovered">&nbsp;2871</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;69</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Struct Node are 4*8 bytes (+4 (kind) + 24 (nodedel))</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered">&nbsp;2996</td>  <td class="src"><pre class="src">&nbsp;            strucDel =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered">&nbsp;2871</td>  <td class="src"><pre class="src">&nbsp;            strucDel =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;71</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(), input</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;72</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    .readLong());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;73</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Val is the rest</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;74</td>  <td class="nbHitsCovered">&nbsp;2996</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">byte</span>[] rawValText = <span class="keyword">new</span> <span class="keyword">byte</span>[input.readInt()];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;75</td>  <td class="nbHitsCovered">&nbsp;2996</td>  <td class="src"><pre class="src">&nbsp;            input.readFully(rawValText);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;76</td>  <td class="nbHitsCovered">&nbsp;2996</td>  <td class="src"><pre class="src">&nbsp;            valDel = <span class="keyword">new</span> ValNodeDelegate(nodeDel, rawValText);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;77</td>  <td class="nbHitsCovered">&nbsp;2996</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> TextNode(nodeDel, strucDel, valDel);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;78</td>  <td class="nbHitsCovered">&nbsp;2996</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;74</td>  <td class="nbHitsCovered">&nbsp;2871</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">byte</span>[] rawValText = <span class="keyword">new</span> <span class="keyword">byte</span>[input.readInt()];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;75</td>  <td class="nbHitsCovered">&nbsp;2871</td>  <td class="src"><pre class="src">&nbsp;            input.readFully(rawValText);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;76</td>  <td class="nbHitsCovered">&nbsp;2871</td>  <td class="src"><pre class="src">&nbsp;            valDel = <span class="keyword">new</span> ValNodeDelegate(nodeDel, rawValText);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;77</td>  <td class="nbHitsCovered">&nbsp;2871</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> TextNode(nodeDel, strucDel, valDel);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;78</td>  <td class="nbHitsCovered">&nbsp;2871</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;79</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">case</span> IConstants.ROOT:</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;2700</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;2675</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;81</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Struct Node are 4*8 bytes</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;82</td>  <td class="nbHitsCovered">&nbsp;2700</td>  <td class="src"><pre class="src">&nbsp;            strucDel =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;82</td>  <td class="nbHitsCovered">&nbsp;2675</td>  <td class="src"><pre class="src">&nbsp;            strucDel =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;83</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="keyword">new</span> StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(), input</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;84</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    .readLong());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;85</td>  <td class="nbHitsCovered">&nbsp;2700</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> DocumentRootNode(nodeDel, strucDel);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;86</td>  <td class="nbHitsCovered">&nbsp;2700</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;85</td>  <td class="nbHitsCovered">&nbsp;2675</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> DocumentRootNode(nodeDel, strucDel);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;86</td>  <td class="nbHitsCovered">&nbsp;2675</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;87</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">case</span> IConstants.ATTRIBUTE:</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;88</td>  <td class="nbHitsCovered">&nbsp;204498</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;88</td>  <td class="nbHitsCovered">&nbsp;204448</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;89</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Name Node are 2*4 bytes (+4 (kind) + 24 (nodedel))</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;204498</td>  <td class="src"><pre class="src">&nbsp;            nameDel = <span class="keyword">new</span> NameNodeDelegate(nodeDel, input.readInt(), input.readInt());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;204448</td>  <td class="src"><pre class="src">&nbsp;            nameDel = <span class="keyword">new</span> NameNodeDelegate(nodeDel, input.readInt(), input.readInt());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;91</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Val is the rest</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;92</td>  <td class="nbHitsCovered">&nbsp;204498</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">byte</span>[] rawValAttr = <span class="keyword">new</span> <span class="keyword">byte</span>[input.readInt()];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;93</td>  <td class="nbHitsCovered">&nbsp;204498</td>  <td class="src"><pre class="src">&nbsp;            input.readFully(rawValAttr);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;204498</td>  <td class="src"><pre class="src">&nbsp;            valDel = <span class="keyword">new</span> ValNodeDelegate(nodeDel, rawValAttr);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;95</td>  <td class="nbHitsCovered">&nbsp;204498</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> AttributeNode(nodeDel, nameDel, valDel);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;96</td>  <td class="nbHitsCovered">&nbsp;204498</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;92</td>  <td class="nbHitsCovered">&nbsp;204448</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">byte</span>[] rawValAttr = <span class="keyword">new</span> <span class="keyword">byte</span>[input.readInt()];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;93</td>  <td class="nbHitsCovered">&nbsp;204448</td>  <td class="src"><pre class="src">&nbsp;            input.readFully(rawValAttr);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;204448</td>  <td class="src"><pre class="src">&nbsp;            valDel = <span class="keyword">new</span> ValNodeDelegate(nodeDel, rawValAttr);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;95</td>  <td class="nbHitsCovered">&nbsp;204448</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> AttributeNode(nodeDel, nameDel, valDel);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;96</td>  <td class="nbHitsCovered">&nbsp;204448</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;97</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">case</span> IConstants.NAMESPACE:</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;98</td>  <td class="nbHitsCovered">&nbsp;213767</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;98</td>  <td class="nbHitsCovered">&nbsp;213742</td>  <td class="src"><pre class="src">&nbsp;            nodeDel = <span class="keyword">new</span> NodeDelegate(input.readLong(), input.readLong(), input.readLong());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;99</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// Name Node are 2*4 bytes</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;100</td>  <td class="nbHitsCovered">&nbsp;213767</td>  <td class="src"><pre class="src">&nbsp;            nameDel = <span class="keyword">new</span> NameNodeDelegate(nodeDel, input.readInt(), input.readInt());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;101</td>  <td class="nbHitsCovered">&nbsp;213767</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> NamespaceNode(nodeDel, nameDel);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;102</td>  <td class="nbHitsCovered">&nbsp;213767</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;100</td>  <td class="nbHitsCovered">&nbsp;213742</td>  <td class="src"><pre class="src">&nbsp;            nameDel = <span class="keyword">new</span> NameNodeDelegate(nodeDel, input.readInt(), input.readInt());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;101</td>  <td class="nbHitsCovered">&nbsp;213742</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> NamespaceNode(nodeDel, nameDel);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;102</td>  <td class="nbHitsCovered">&nbsp;213742</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">break</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;103</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">case</span> org.treetank.page.IConstants.NULL_NODE:</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;104</td>  <td class="nbHitsCovered">&nbsp;164331</td>  <td class="src"><pre class="src">&nbsp;            returnVal = <span class="keyword">new</span> DeletedNode(input.readLong());</pre></td></tr>
@@ -192,7 +192,7 @@
   <td class="src"><pre class="src">&nbsp;                <span class="string">"Invalid Kind of Node. Something went wrong in the serialization/deserialization"</span>);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;109</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;869695</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> returnVal;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;869345</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> returnVal;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;111</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;112</td>  <td class="nbHits">&nbsp;</td>
@@ -201,6 +201,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 8/16/12 2:57 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 10/29/12 3:47 PM.</div>
 </body>
 </html>

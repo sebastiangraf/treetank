@@ -14,9 +14,9 @@
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">package</strong> org.treetank.api;
 <a class="jxr_linenumber" name="5" href="#5">5</a>   
 <a class="jxr_linenumber" name="6" href="#6">6</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_javadoccomment"> * Overall Node-Interface for the Interaction with the page layer. All</em>
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <em class="jxr_javadoccomment"> * Overall {@link INode}-Interface for the interaction with the page-layer. All</em>
 <a class="jxr_linenumber" name="8" href="#8">8</a>   <em class="jxr_javadoccomment"> * persistence functionality must be handled over this interface while all</em>
-<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_javadoccomment"> * nodeelayer interfaces interhit from this interface.</em>
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_javadoccomment"> * node-layers interfaces interhit from this interface.</em>
 <a class="jxr_linenumber" name="10" href="#10">10</a>  <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_javadoccomment"> * @author Sebastian Graf, University of Konstanz</em>
 <a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment"> * </em>
@@ -24,47 +24,45 @@
 <a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a href="../../../org/treetank/api/INode.html">INode</a> {
 <a class="jxr_linenumber" name="15" href="#15">15</a>  
 <a class="jxr_linenumber" name="16" href="#16">16</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_javadoccomment">     * Getting the byte representation of the node.</em>
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <em class="jxr_javadoccomment">     * Getting the byte representation of the {@link INode}.</em>
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_javadoccomment">     * @return the byte representation of this node</em>
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_javadoccomment">     * @return the byte representation of this {@link INode}</em>
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="21" href="#21">21</a>      byte[] getByteRepresentation();
 <a class="jxr_linenumber" name="22" href="#22">22</a>  
 <a class="jxr_linenumber" name="23" href="#23">23</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment">     * Sets unique node key.</em>
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment">     * Sets unique {@link INode} key.</em>
 <a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment">     * @param pNodeKey</em>
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment">     *            Unique key of item, maybe negative when atomics from the</em>
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">     *            XPath-engine.</em>
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="31" href="#31">31</a>      <strong class="jxr_keyword">void</strong> setNodeKey(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodeKey);
-<a class="jxr_linenumber" name="32" href="#32">32</a>  
-<a class="jxr_linenumber" name="33" href="#33">33</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment">     * Gets unique node key.</em>
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment">     * @return node key</em>
-<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="38" href="#38">38</a>      <strong class="jxr_keyword">long</strong> getNodeKey();
-<a class="jxr_linenumber" name="39" href="#39">39</a>  
-<a class="jxr_linenumber" name="40" href="#40">40</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * Setting the actual hash of the structure. The hash of one node should</em>
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     * have the entire integrity of the related subtree.</em>
-<a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     * @param pHash</em>
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     *            hash to be set for this node</em>
-<a class="jxr_linenumber" name="46" href="#46">46</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="48" href="#48">48</a>      <strong class="jxr_keyword">void</strong> setHash(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pHash);
-<a class="jxr_linenumber" name="49" href="#49">49</a>  
-<a class="jxr_linenumber" name="50" href="#50">50</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment">     * Getting the persistent stored hash.</em>
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment">     * @return the hash of this node</em>
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">long</strong> getHash();
-<a class="jxr_linenumber" name="56" href="#56">56</a>  
-<a class="jxr_linenumber" name="57" href="#57">57</a>  }
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment">     *            Unique key of item.</em>
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>      <strong class="jxr_keyword">void</strong> setNodeKey(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodeKey);
+<a class="jxr_linenumber" name="31" href="#31">31</a>  
+<a class="jxr_linenumber" name="32" href="#32">32</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment">     * Gets unique {@link INode} key.</em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment">     * @return node key</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="37" href="#37">37</a>      <strong class="jxr_keyword">long</strong> getNodeKey();
+<a class="jxr_linenumber" name="38" href="#38">38</a>  
+<a class="jxr_linenumber" name="39" href="#39">39</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     * Setting the actual hash of the structure.</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     * @param pHash</em>
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     *            hash to be set for this {@link INode}</em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">void</strong> setHash(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pHash);
+<a class="jxr_linenumber" name="47" href="#47">47</a>  
+<a class="jxr_linenumber" name="48" href="#48">48</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">     * Getting the persistent stored hash.</em>
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment">     * @return the hash of this {@link INode}</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>      <strong class="jxr_keyword">long</strong> getHash();
+<a class="jxr_linenumber" name="54" href="#54">54</a>  
+<a class="jxr_linenumber" name="55" href="#55">55</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

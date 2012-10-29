@@ -1,4 +1,5 @@
 org.treetank
+org.treetank.access
 org.treetank.access.conf
 org.treetank.cache
 org.treetank.io

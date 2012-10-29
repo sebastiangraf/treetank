@@ -293,6 +293,26 @@ public enum EXPathError {
 ]]>
 </codefragment>
 </duplication>
+<duplication lines="12" tokens="119">
+<file line="356" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/shredder/XMLShredder.java"/>
+<file line="1410" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/shredder/XMLUpdateShredder.java"/>
+<codefragment>
+<![CDATA[
+        Storage.truncateStorage(config);
+        Storage.createStorage(config);
+        final IStorage db = Storage.openStorage(target);
+        Properties props = new Properties();
+        props.setProperty(org.treetank.io.IConstants.DBFILE, target.getAbsolutePath());
+        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
+        db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
+        final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
+        final INodeWriteTrx wtx =
+            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+        // generating root node
+        final NodeDelegate nodeDel = new NodeDelegate(0, NULL_NODE, 0);
+]]>
+</codefragment>
+</duplication>
 <duplication lines="36" tokens="103">
 <file line="70" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/axis/ExceptAxis.java"/>
 <file line="66" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/axis/IntersectAxis.java"/>

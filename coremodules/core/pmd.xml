@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-08-16T14:57:07.335">
-<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/Database.java">
-<violation beginline="140" endline="143" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.access" class="Database" method="truncateDatabase" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<pmd version="4.3" timestamp="2012-10-29T15:46:26.013">
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/Storage.java">
+<violation beginline="142" endline="152" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.access" class="Storage" method="truncateStorage" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
 </file>
 <file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java">
-<violation beginline="348" endline="350" begincolumn="18" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.access.conf" class="ResourceConfiguration" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
+<violation beginline="353" endline="355" begincolumn="18" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.access.conf" class="ResourceConfiguration" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
 Unnecessary final modifier in final class
 </violation>
 </file>
@@ -20,9 +20,14 @@ Unnecessary final modifier in final class
 Avoid unused constructor parameters such as 'pRevision'.
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/io/IStorage.java">
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/io/IBackend.java">
 <violation beginline="32" endline="32" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.io" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
 Avoid unused imports such as 'org.treetank.exception.TTIOException'
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/io/berkeley/BerkeleyStorage.java">
+<violation beginline="131" endline="149" begincolumn="32" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.io.berkeley" class="BerkeleyStorage" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
+Unnecessary final modifier in final class
 </violation>
 </file>
 <file name="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/revisioning/FullDump.java">

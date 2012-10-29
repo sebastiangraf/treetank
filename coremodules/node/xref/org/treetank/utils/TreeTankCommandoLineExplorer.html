@@ -50,11 +50,11 @@
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> java.io.File;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> java.io.InputStreamReader;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  
-<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.Database;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.Storage;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeReadTrx;
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.DatabaseConfiguration;
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StorageConfiguration;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.SessionConfiguration;
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IDatabase;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IStorage;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeReadTrx;
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeWriteTrx;
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IPageReadTrx;
@@ -104,7 +104,7 @@
 <a class="jxr_linenumber" name="94" href="#94">94</a>  <em class="jxr_javadoccomment">     *             of any kind</em>
 <a class="jxr_linenumber" name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="96" href="#96">96</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(<strong class="jxr_keyword">final</strong> String[] args) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="97" href="#97">97</a>          IDatabase database = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="97" href="#97">97</a>          IStorage storage = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="98" href="#98">98</a>          ISession session = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="99" href="#99">99</a>          <a href="../../../org/treetank/api/INodeReadTrx.html">INodeReadTrx</a> nRtx = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="100" href="#100">100</a>         IPageReadTrx pRtx = <strong class="jxr_keyword">null</strong>;
@@ -116,10 +116,10 @@
 <a class="jxr_linenumber" name="106" href="#106">106</a>             }
 <a class="jxr_linenumber" name="107" href="#107">107</a> 
 <a class="jxr_linenumber" name="108" href="#108">108</a>             <strong class="jxr_keyword">final</strong> File file = <strong class="jxr_keyword">new</strong> File(args[0]);
-<a class="jxr_linenumber" name="109" href="#109">109</a>             <strong class="jxr_keyword">final</strong> DatabaseConfiguration config = <strong class="jxr_keyword">new</strong> DatabaseConfiguration(file);
-<a class="jxr_linenumber" name="110" href="#110">110</a>             Database.createDatabase(config);
-<a class="jxr_linenumber" name="111" href="#111">111</a>             database = Database.openDatabase(file);
-<a class="jxr_linenumber" name="112" href="#112">112</a>             session = database.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(<span class="jxr_string">"TMP"</span>, <strong class="jxr_keyword">null</strong>));
+<a class="jxr_linenumber" name="109" href="#109">109</a>             <strong class="jxr_keyword">final</strong> StorageConfiguration config = <strong class="jxr_keyword">new</strong> StorageConfiguration(file);
+<a class="jxr_linenumber" name="110" href="#110">110</a>             Storage.createStorage(config);
+<a class="jxr_linenumber" name="111" href="#111">111</a>             storage = Storage.openStorage(file);
+<a class="jxr_linenumber" name="112" href="#112">112</a>             session = storage.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(<span class="jxr_string">"TMP"</span>, <strong class="jxr_keyword">null</strong>));
 <a class="jxr_linenumber" name="113" href="#113">113</a>             <strong class="jxr_keyword">if</strong> (revision != 0) {
 <a class="jxr_linenumber" name="114" href="#114">114</a>                 pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
 <a class="jxr_linenumber" name="115" href="#115">115</a>             } <strong class="jxr_keyword">else</strong> {
@@ -152,8 +152,8 @@
 <a class="jxr_linenumber" name="142" href="#142">142</a>                     }
 <a class="jxr_linenumber" name="143" href="#143">143</a>                     <strong class="jxr_keyword">final</strong> File file = findFile(line);
 <a class="jxr_linenumber" name="144" href="#144">144</a>                     <strong class="jxr_keyword">if</strong> (file != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="145" href="#145">145</a>                         database = Database.openDatabase(file);
-<a class="jxr_linenumber" name="146" href="#146">146</a>                         session = database.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(<span class="jxr_string">"TMP"</span>, <strong class="jxr_keyword">null</strong>));
+<a class="jxr_linenumber" name="145" href="#145">145</a>                         storage = Storage.openStorage(file);
+<a class="jxr_linenumber" name="146" href="#146">146</a>                         session = storage.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(<span class="jxr_string">"TMP"</span>, <strong class="jxr_keyword">null</strong>));
 <a class="jxr_linenumber" name="147" href="#147">147</a>                         pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
 <a class="jxr_linenumber" name="148" href="#148">148</a>                         nRtx = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/access/NodeReadTrx.html">NodeReadTrx</a>(pRtx);
 <a class="jxr_linenumber" name="149" href="#149">149</a>                         System.out.println(command.executeCommand(nRtx));

@@ -2,7 +2,6 @@ org.treetank
 org.treetank.access
 org.treetank.access.conf
 org.treetank.axis
-org.treetank.axis.filter
 org.treetank.cache
 org.treetank.io
 org.treetank.io.bytepipe
