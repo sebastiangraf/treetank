@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-10-29T15:48:57.706">
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/diff/DiffAxis.java">
+<pmd version="4.3" timestamp="2012-10-29T16:03:52.867">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/diff/DiffAxis.java">
 <violation beginline="47" endline="49" begincolumn="12" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.service.xml.diff" class="DiffAxis" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
 Avoid unused constructor parameters such as 'paramOldRtx'.
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/diff/StructuralDiff.java">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/diff/StructuralDiff.java">
 <violation beginline="60" endline="73" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.service.xml.diff" class="StructuralDiff" method="checkNodes" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/serialize/StAXSerializer.java">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/serialize/StAXSerializer.java">
 <violation beginline="28" endline="569" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.treetank.service.xml.serialize" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/serialize/XMLSerializer.java">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/serialize/XMLSerializer.java">
 <violation beginline="28" endline="632" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.treetank.service.xml.serialize" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/shredder/XMLUpdateShredder.java">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/shredder/XMLUpdateShredder.java">
 <violation beginline="63" endline="63" begincolumn="1" endcolumn="47" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.service.xml.shredder" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
 Avoid unused imports such as 'org.treetank.exception.TTUsageException'
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/AbsObAxis.java">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/AbsObAxis.java">
 <violation beginline="152" endline="175" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.service.xml.xpath.operators" class="AbsObAxis" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
 Avoid unused method parameters such as 'mOperand'.
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/parser/XPathScanner.java">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/parser/XPathScanner.java">
 <violation beginline="454" endline="457" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.service.xml.xpath.parser" class="XPathScanner" method="scanComment" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>

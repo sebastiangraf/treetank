@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
 <duplication lines="63" tokens="119">
-<file line="79" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
-<file line="62" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/access/conf/StorageConfiguration.java"/>
+<file line="79" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
+<file line="62" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/StorageConfiguration.java"/>
 <codefragment>
 <![CDATA[
         ConfigBinary(new File("ressetting.obj"), false);
@@ -72,8 +72,8 @@
 </codefragment>
 </duplication>
 <duplication lines="44" tokens="106">
-<file line="96" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Differential.java"/>
-<file line="79" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Incremental.java"/>
+<file line="96" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Differential.java"/>
+<file line="79" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Incremental.java"/>
 <codefragment>
 <![CDATA[
                         returnVal[1].setNode(j, fullDump.getNode(j));
