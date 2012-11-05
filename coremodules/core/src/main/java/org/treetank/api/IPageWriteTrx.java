@@ -53,4 +53,13 @@ public interface IPageWriteTrx extends IPageReadTrx {
      */
     <T extends INode> T createNode(T pnode) throws TTException;
 
+    /**
+     * Simple commit of this page transaction to store the newest version.
+     * 
+     * @return true of successful, false otherwise
+     * @throws if
+     *             anything weird happens
+     */
+    boolean commit() throws TTException;
+
 }
