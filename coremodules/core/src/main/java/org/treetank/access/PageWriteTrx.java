@@ -101,8 +101,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mNewRoot = preparePreviousRevisionRootPage(pRepresentRev, pStoreRev);
         mLog =
             new TransactionLogCache(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.io.IConstants.DBFILE)), pStoreRev,
-                pSession.getConfig().mNodeFac);
+                .getProperty(org.treetank.io.IConstants.DBFILE)), pStoreRev, pSession.getConfig().mNodeFac);
         mPageWriter = pWriter;
 
     }
@@ -305,7 +304,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         }
     }
 
-    protected UberPage commit() throws TTException {
+    public UberPage commit() throws TTException {
 
         final PageReference uberPageReference = new PageReference();
         final UberPage uberPage = mDelegate.getUberPage();
@@ -404,8 +403,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 page = new IndirectPage(mDelegate.getUberPage().getRevision());
             } else {
                 page =
-                    new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef),
-                        mNewRoot.getRevision() + 1);
+                    new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef), mNewRoot
+                        .getRevision() + 1);
 
             }
             pRef.setPage(page);
@@ -440,8 +439,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return cont;
     }
 
-    private RevisionRootPage preparePreviousRevisionRootPage(final long pRev,
-        final long pRepresentRev) throws TTException {
+    private RevisionRootPage preparePreviousRevisionRootPage(final long pRev, final long pRepresentRev)
+        throws TTException {
 
         if (mDelegate.getUberPage().isBootstrap()) {
             return mDelegate.loadRevRoot(pRev);
@@ -500,8 +499,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if something happened in the node
      */
-    private NodePageContainer dereferenceNodePageForModification(final long pNodeKey)
-        throws TTException {
+    private NodePageContainer dereferenceNodePageForModification(final long pNodeKey) throws TTException {
         final NodePage[] revs = mDelegate.getSnapshotPages(pNodeKey);
         final IRevisioning revision = mDelegate.mSession.getConfig().mRevision;
 
@@ -533,9 +531,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         if (pQName.getPrefix().isEmpty()) {
             name = pQName.getLocalPart();
         } else {
-            name =
-                new StringBuilder(pQName.getPrefix()).append(":").append(pQName.getLocalPart())
-                    .toString();
+            name = new StringBuilder(pQName.getPrefix()).append(":").append(pQName.getLocalPart()).toString();
         }
         return name;
     }

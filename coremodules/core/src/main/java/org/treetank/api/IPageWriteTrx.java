@@ -53,4 +53,13 @@ public interface IPageWriteTrx extends IPageReadTrx {
      */
     <T extends INode> T createNode(T pnode) throws TTException;
 
+    /**
+     * Simple commit of this page transaction to store the newest version.
+     * 
+     * @return the new UberPage of this revision
+     * @throws if
+     *             anything weird happens
+     */
+    UberPage commit() throws TTException;
+
 }
