@@ -304,7 +304,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         }
     }
 
-    public UberPage commit() throws TTException {
+    public boolean commit() throws TTException {
 
         final PageReference uberPageReference = new PageReference();
         final UberPage uberPage = mDelegate.getUberPage();
@@ -374,7 +374,11 @@ public final class PageWriteTrx implements IPageWriteTrx {
         uberPageReference.setPage(uberPage);
         mPageWriter.writeFirstReference(uberPageReference);
         uberPageReference.setPage(null);
-        return uberPage;
+
+        // Remember succesfully committed uber page in session state.
+        // TODO This is one of the dirtiest hacks I ever did! Sorry Future-ME!
+        ((Session)mDelegate.mSession).setLastCommittedUberPage(uberPage);
+        return true;
 
     }
 

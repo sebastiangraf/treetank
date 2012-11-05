@@ -167,6 +167,8 @@ public class TreetankStorageModule implements IStorageModule{
                 
             }
 
+            
+            
             pWtx.close();
             
         } catch (TTException e) {

@@ -54,7 +54,6 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
-import org.treetank.page.UberPage;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -495,12 +494,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         mDelegate.assertNotClosed();
 
         // Commit uber page.
-        final UberPage uberPage = getPageTransaction().commit();
-
-        // Remember succesfully committed uber page in session state.
-        // TODO This is one of the dirtiest hacks I ever did! Sorry Future-ME!
-        ((Session)mSession).setLastCommittedUberPage(uberPage);
-
+        getPageTransaction().commit();
         final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision();
 
         getPageTransaction().close();

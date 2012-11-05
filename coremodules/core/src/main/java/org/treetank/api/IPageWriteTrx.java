@@ -56,10 +56,10 @@ public interface IPageWriteTrx extends IPageReadTrx {
     /**
      * Simple commit of this page transaction to store the newest version.
      * 
-     * @return the new UberPage of this revision
+     * @return true of successful, false otherwise
      * @throws if
      *             anything weird happens
      */
-    UberPage commit() throws TTException;
+    boolean commit() throws TTException;
 
 }
