@@ -21,15 +21,6 @@ public interface INode {
     byte[] getByteRepresentation();
 
     /**
-     * Sets unique {@link INode} key.
-     * 
-     * 
-     * @param pNodeKey
-     *            Unique key of item.
-     */
-    void setNodeKey(final long pNodeKey);
-
-    /**
      * Gets unique {@link INode} key.
      * 
      * @return node key

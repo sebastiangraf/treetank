@@ -42,9 +42,8 @@ import com.google.common.io.ByteStreams;
 /**
  * <h1>AtomicValue</h1>
  * <p>
- * An item represents either an atomic value or a node. An atomic value is a
- * value in the value space of an atomic type, as defined in <a
- * href="http://www.w3.org/TR/xmlschema11-2/">XMLSchema 1.1</a>. (Definition:
+ * An item represents either an atomic value or a node. An atomic value is a value in the value space of an
+ * atomic type, as defined in <a href="http://www.w3.org/TR/xmlschema11-2/">XMLSchema 1.1</a>. (Definition:
  * Atomic types are anyAtomicType and all types derived from it.)
  * </p>
  */
@@ -121,15 +120,6 @@ public class AtomicValue implements INode, IValNode {
      * {@inheritDoc}
      */
     @Override
-    public void setNodeKey(final long mItemKey) {
-
-        this.mItemKey = mItemKey;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long getParentKey() {
 
         return NULL_NODE;
@@ -149,6 +139,13 @@ public class AtomicValue implements INode, IValNode {
     @Override
     public long getNodeKey() {
         return mItemKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setNodeKey(long nodeKey) {
+        mItemKey = nodeKey;
     }
 
     /**
@@ -213,7 +210,7 @@ public class AtomicValue implements INode, IValNode {
      */
     public int getInt() {
 
-        return (int) getDBL();
+        return (int)getDBL();
     }
 
     /**

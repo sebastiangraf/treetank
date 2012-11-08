@@ -42,8 +42,7 @@ public interface IPageWriteTrx extends IPageReadTrx {
     long getMaxNodeKey();
 
     /**
-     * Creating a new node and storing the node in the page-layer. This method invokes the
-     * {@link INode#setNodeKey(long)}.
+     * Creating a new node and storing the node in the page-layer. 
      * 
      * @param pnode
      *            the node to be stored.

@@ -219,15 +219,6 @@ public class NodePage implements IPage {
             return mNodeKey;
         }
 
-        /**
-         * Delegate method for setNodeKey.
-         * 
-         * @param pNodeKey
-         * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-         */
-        public void setNodeKey(final long pNodeKey) {
-            mNodeKey = pNodeKey;
-        }
 
         /**
          * {@inheritDoc}

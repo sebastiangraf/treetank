@@ -33,136 +33,126 @@ import org.treetank.api.INode;
 /**
  * This implementation of {@link INode} is used to
  * store byte arrays in nodes.
+ * 
  * @author Andreas Rain
- *
+ * 
  */
 public class ByteNode implements INode {
 
-  /**
-   * The nodes key value, which is equal with it's position in the list.
-   */
-  long nodeKey = 0;
-  
-  /**
-   * The following nodes key
-   */
-  long nextNodeKey = 0;
-  
-  /**
-   * The previous nodes key
-   */
-  long previousNodeKey = 0;
-  
-  /**
-   * The nodes hash value.
-   */
-  private long hash = 0;
-  
-  /**
-   * The size of the byte array in the node.
-   * The maximum size of a byte array in a {@link ByteNode} is
-   * 2^32 - 1. This is because in the deserialization the first 
-   * 4 bytes determine the size of each node.
-   */
-  private int size = 0;
+    /**
+     * The nodes key value, which is equal with it's position in the list.
+     */
+    long nodeKey = 0;
 
-  /**
-   * The content of this node in form of a byte array.
-   */
-  private byte[] val;
+    /**
+     * The following nodes key
+     */
+    long nextNodeKey = 0;
 
-  /**
-   * Standard constructor with a size of 512 bytes for each node.
-   */
-  public ByteNode() {
+    /**
+     * The previous nodes key
+     */
+    long previousNodeKey = 0;
 
-    int size = 512;
-    val = new byte[512];
-    
-    this.setHash(0);
-  }
+    /**
+     * The nodes hash value.
+     */
+    private long hash = 0;
 
-  /**
-   * Creates a ByteNode with given bytes
-   * 
-   * @param content
-   *          , as byte array
-   */
-  public ByteNode(byte[] content) {
-    size = content.length;
-    val = content;
-  }
+    /**
+     * The size of the byte array in the node.
+     * The maximum size of a byte array in a {@link ByteNode} is
+     * 2^32 - 1. This is because in the deserialization the first
+     * 4 bytes determine the size of each node.
+     */
+    private int size = 0;
 
-  @Override
-  public byte[] getByteRepresentation() {
-   
-    ByteArrayOutputStream output = new ByteArrayOutputStream(this.size+4);
-    ByteArrayOutputStream sizeByte = new ByteArrayOutputStream(4);
-    sizeByte.write(this.size);
-    
-    output.write(sizeByte.toByteArray(), 0, 4);
-    output.write(this.val, 4, (this.size+4));
-    
-    return output.toByteArray();
-  }
+    /**
+     * The content of this node in form of a byte array.
+     */
+    private byte[] val;
 
-  @Override
-  public void setNodeKey(long pNodeKey) {
+    /**
+     * Standard constructor with a size of 512 bytes for each node.
+     */
+    public ByteNode() {
 
-    this.nodeKey = pNodeKey;
-    this.hash = pNodeKey;
-  }
+        int size = 512;
+        val = new byte[512];
 
-  @Override
-  public long getNodeKey() {
+        this.setHash(0);
+    }
 
-    return this.nodeKey;
-  }
+    /**
+     * Creates a ByteNode with given bytes
+     * 
+     * @param content
+     *            , as byte array
+     */
+    public ByteNode(byte[] content) {
+        size = content.length;
+        val = content;
+    }
 
-  @Override
-  public void setHash(long pHash) {
-    
-    this.hash = pHash;
-  }
+    @Override
+    public byte[] getByteRepresentation() {
 
-  @Override
-  public long getHash() {
+        ByteArrayOutputStream output = new ByteArrayOutputStream(this.size + 4);
+        ByteArrayOutputStream sizeByte = new ByteArrayOutputStream(4);
+        sizeByte.write(this.size);
 
-    return this.hash;
-  }
+        output.write(sizeByte.toByteArray(), 0, 4);
+        output.write(this.val, 4, (this.size + 4));
 
-  public byte[] getVal() {
+        return output.toByteArray();
+    }
 
-    return val;
-  }
+    @Override
+    public long getNodeKey() {
 
-  public void setVal(byte[] val) {
+        return this.nodeKey;
+    }
 
-    this.val = val;
-  }
-  
-  public long getNextNodeKey() {
-  
-    return nextNodeKey;
-  }
+    @Override
+    public void setHash(long pHash) {
 
-  public void setNextNodeKey(long nextNodeKey) {
-  
-    this.nextNodeKey = nextNodeKey;
-  }
+        this.hash = pHash;
+    }
 
-  
-  public long getPreviousNodeKey() {
-  
-    return previousNodeKey;
-  }
+    @Override
+    public long getHash() {
 
-  
-  public void setPreviousNodeKey(long previousNodeKey) {
-  
-    this.previousNodeKey = previousNodeKey;
-  }
-  
-  
+        return this.hash;
+    }
+
+    public byte[] getVal() {
+
+        return val;
+    }
+
+    public void setVal(byte[] val) {
+
+        this.val = val;
+    }
+
+    public long getNextNodeKey() {
+
+        return nextNodeKey;
+    }
+
+    public void setNextNodeKey(long nextNodeKey) {
+
+        this.nextNodeKey = nextNodeKey;
+    }
+
+    public long getPreviousNodeKey() {
+
+        return previousNodeKey;
+    }
+
+    public void setPreviousNodeKey(long previousNodeKey) {
+
+        this.previousNodeKey = previousNodeKey;
+    }
 
 }

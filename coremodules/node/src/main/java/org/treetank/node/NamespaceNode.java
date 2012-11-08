@@ -123,16 +123,6 @@ public final class NamespaceNode implements INode, INameNode {
     }
 
     /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-     */
-    public void setNodeKey(final long pNodeKey) {
-        mDel.setNodeKey(pNodeKey);
-    }
-
-    /**
      * Delegate method for getNodeKey.
      * 
      * @return

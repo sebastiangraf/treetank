@@ -84,16 +84,6 @@ public class ValNodeDelegate implements IValNode {
     }
 
     /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-     */
-    public void setNodeKey(long pNodeKey) {
-        mDelegate.setNodeKey(pNodeKey);
-    }
-
-    /**
      * Delegate method for getParentKey.
      * 
      * @return the key of the parent
