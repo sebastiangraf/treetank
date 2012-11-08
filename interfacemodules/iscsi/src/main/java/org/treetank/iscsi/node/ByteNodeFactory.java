@@ -24,11 +24,11 @@
 
 package org.treetank.iscsi.node;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import org.treetank.api.INode;
 import org.treetank.api.INodeFactory;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
 
 /**
  * This factory is used to deserialize {@link ByteNode}
@@ -39,20 +39,17 @@ public class ByteNodeFactory implements INodeFactory {
 
   @Override
   public INode deserializeNode(byte[] pData) {
-
-    ByteArrayInputStream pInputStream = new ByteArrayInputStream(pData);
-
-    byte[] sizeAsByte = new byte[4];
-    pInputStream.read(sizeAsByte, 0, 4);
-
-    ByteArrayInputStream sizeInputStream = new ByteArrayInputStream(sizeAsByte);
-
-    int size = sizeInputStream.read();
-
-    byte[] nodeContent = new byte[size];
-    pInputStream.read(nodeContent, 4, 4 + size);
-
-    return new ByteNode(nodeContent);
+    ByteArrayDataInput input = ByteStreams.newDataInput(pData);
+    int size = input.readInt();
+    long previousNodeKey = input.readLong();
+    long nextNodeKey = input.readLong();
+    byte[] data = new byte[size];
+    input.readFully(data);
+    
+    ByteNode node = new ByteNode(data);
+    node.setNextNodeKey(nextNodeKey);
+    node.setPreviousNodeKey(previousNodeKey);
+    return node;
   }
 
 }

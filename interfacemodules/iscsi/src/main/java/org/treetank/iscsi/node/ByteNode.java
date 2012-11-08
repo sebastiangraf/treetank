@@ -1,158 +1,145 @@
 /**
- * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
- * * Neither the name of the University of Konstanz nor the
- * names of its contributors may be used to endorse or promote products
- * derived from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group All
+ * rights reserved. Redistribution and use in source and binary forms, with or
+ * without modification, are permitted provided that the following conditions
+ * are met: * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer. *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution. * Neither the name of
+ * the University of Konstanz nor the names of its contributors may be used to
+ * endorse or promote products derived from this software without specific prior
+ * written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+ * NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.iscsi.node;
 
-import java.io.ByteArrayOutputStream;
+package org.treetank.iscsi.node;
 
 import org.treetank.api.INode;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
- * This implementation of {@link INode} is used to
- * store byte arrays in nodes.
+ * This implementation of {@link INode} is used to store byte arrays in nodes.
  * 
  * @author Andreas Rain
- * 
  */
 public class ByteNode implements INode {
 
-    /**
-     * The nodes key value, which is equal with it's position in the list.
-     */
-    long nodeKey = 0;
+  /**
+   * The nodes key value, which is equal with it's position in the list.
+   */
+  long nodeKey = 0;
 
-    /**
-     * The following nodes key
-     */
-    long nextNodeKey = 0;
+  /**
+   * The following nodes key
+   */
+  long nextNodeKey = 0;
 
-    /**
-     * The previous nodes key
-     */
-    long previousNodeKey = 0;
+  /**
+   * The previous nodes key
+   */
+  long previousNodeKey = 0;
 
-    /**
-     * The nodes hash value.
-     */
-    private long hash = 0;
+  /**
+   * The size of the byte array in the node. The maximum size of a byte array in
+   * a {@link ByteNode} is 2^32 - 1. This is because in the deserialization the
+   * first 4 bytes determine the size of each node.
+   */
+  private int size = 0;
 
-    /**
-     * The size of the byte array in the node.
-     * The maximum size of a byte array in a {@link ByteNode} is
-     * 2^32 - 1. This is because in the deserialization the first
-     * 4 bytes determine the size of each node.
-     */
-    private int size = 0;
+  /**
+   * The content of this node in form of a byte array.
+   */
+  private byte[] val;
 
-    /**
-     * The content of this node in form of a byte array.
-     */
-    private byte[] val;
+  /**
+   * Standard constructor with a size of 512 bytes for each node.
+   */
+  public ByteNode() {
 
-    /**
-     * Standard constructor with a size of 512 bytes for each node.
-     */
-    public ByteNode() {
+    size = 512;
+    val = new byte[512];
+  }
 
-        int size = 512;
-        val = new byte[512];
+  /**
+   * Creates a ByteNode with given bytes
+   * 
+   * @param content
+   *          , as byte array
+   */
+  public ByteNode(byte[] content) {
 
-        this.setHash(0);
-    }
+    size = content.length;
+    val = content;
+  }
 
-    /**
-     * Creates a ByteNode with given bytes
-     * 
-     * @param content
-     *            , as byte array
-     */
-    public ByteNode(byte[] content) {
-        size = content.length;
-        val = content;
-    }
+  @Override
+  public byte[] getByteRepresentation() {
+    ByteArrayDataOutput output = ByteStreams.newDataOutput();
+    output.writeInt(size);
+    output.writeLong(previousNodeKey);
+    output.writeLong(nextNodeKey);
+    output.write(val);
 
-    @Override
-    public byte[] getByteRepresentation() {
+    return output.toByteArray();
+  }
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream(this.size + 4);
-        ByteArrayOutputStream sizeByte = new ByteArrayOutputStream(4);
-        sizeByte.write(this.size);
+  @Override
+  public long getNodeKey() {
 
-        output.write(sizeByte.toByteArray(), 0, 4);
-        output.write(this.val, 4, (this.size + 4));
+    return this.nodeKey;
+  }
 
-        return output.toByteArray();
-    }
+  @Override
+  public void setHash(long pHash) {
 
-    @Override
-    public long getNodeKey() {
+  }
 
-        return this.nodeKey;
-    }
+  @Override
+  public long getHash() {
 
-    @Override
-    public void setHash(long pHash) {
+    return this.nodeKey*previousNodeKey*nextNodeKey*31;
+  }
 
-        this.hash = pHash;
-    }
+  public byte[] getVal() {
 
-    @Override
-    public long getHash() {
+    return val;
+  }
 
-        return this.hash;
-    }
+  public void setVal(byte[] val) {
 
-    public byte[] getVal() {
+    this.val = val;
+  }
 
-        return val;
-    }
+  public long getNextNodeKey() {
 
-    public void setVal(byte[] val) {
+    return nextNodeKey;
+  }
 
-        this.val = val;
-    }
+  public void setNextNodeKey(long nextNodeKey) {
 
-    public long getNextNodeKey() {
+    this.nextNodeKey = nextNodeKey;
+  }
 
-        return nextNodeKey;
-    }
+  public long getPreviousNodeKey() {
 
-    public void setNextNodeKey(long nextNodeKey) {
+    return previousNodeKey;
+  }
 
-        this.nextNodeKey = nextNodeKey;
-    }
+  public void setPreviousNodeKey(long previousNodeKey) {
 
-    public long getPreviousNodeKey() {
-
-        return previousNodeKey;
-    }
-
-    public void setPreviousNodeKey(long previousNodeKey) {
-
-        this.previousNodeKey = previousNodeKey;
-    }
+    this.previousNodeKey = previousNodeKey;
+  }
 
 }
