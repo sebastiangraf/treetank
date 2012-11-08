@@ -30,12 +30,9 @@ import java.io.ByteArrayOutputStream;
 
 import org.treetank.api.INode;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-
 /**
- * This implementation of {@link INode} is used to abstract
- * a list of byte array segments.
+ * This implementation of {@link INode} is used to
+ * store byte arrays in nodes.
  * @author Andreas Rain
  *
  */
@@ -45,6 +42,16 @@ public class ByteNode implements INode {
    * The nodes key value, which is equal with it's position in the list.
    */
   long nodeKey = 0;
+  
+  /**
+   * The following nodes key
+   */
+  long nextNodeKey = 0;
+  
+  /**
+   * The previous nodes key
+   */
+  long previousNodeKey = 0;
   
   /**
    * The nodes hash value.
@@ -63,16 +70,6 @@ public class ByteNode implements INode {
    * The content of this node in form of a byte array.
    */
   private byte[] val;
-
-  /**
-   * A link to the next node in the list.
-   */
-  private ByteNode next = null;
-
-  /**
-   * A link to the previous node in the list.
-   */
-  private ByteNode previous = null;
 
   /**
    * Standard constructor with a size of 512 bytes for each node.
@@ -96,74 +93,17 @@ public class ByteNode implements INode {
     val = content;
   }
 
-  /**
-   * Inserts a node before this node.
-   * 
-   * @param node
-   *          the node to be inserted before this node
-   */
-  public void insertBefore(ByteNode node) {
-    
-    node.setPrevious(this.previous);
-    node.setNext(this);
-    node.setNodeKey(this.nodeKey+1);
-    this.previous.setNext(node);
-    this.setPrevious(node);
-    
-    this.nodeKey++;
-  }
-
-  /**
-   * Inserts a node after this node.
-   * 
-   * @param node
-   *          the node to be inserted after this node
-   */
-  public void insertAfter(ByteNode node) {
-
-    node.setPrevious(this);
-    node.setNext(this.next);
-    node.setNodeKey(this.nodeKey+2);
-    this.next.setNodeKey(this.nodeKey+2);
-    this.next.setPrevious(node);
-    this.setNext(node);
-  }
-
-  /**
-   * Removes this ByteNode from the list
-   * @return returns this ByteNode instance
-   */
-  public ByteNode remove() {
-
-    if (previous != null)
-      previous.setNext(next);
-
-    if (next != null){
-      next.setPrevious(previous);
-      next.setNodeKey(this.nodeKey);
-    }
-    
-    this.previous = null;
-    this.next = null;
-    this.nodeKey = 0;
-
-    return this;
-  }
-
   @Override
   public byte[] getByteRepresentation() {
-    if(previous == null){
-      ByteArrayOutputStream output = new ByteArrayOutputStream(this.size+4);
-      ByteArrayOutputStream sizeByte = new ByteArrayOutputStream(4);
-      sizeByte.write(this.size);
-      
-      output.write(sizeByte.toByteArray(), 0, 4);
-      output.write(this.val, 4, (this.size+4));
-      
-      //TODO Append the other nodes!. ~ara
-    }
+   
+    ByteArrayOutputStream output = new ByteArrayOutputStream(this.size+4);
+    ByteArrayOutputStream sizeByte = new ByteArrayOutputStream(4);
+    sizeByte.write(this.size);
     
-    return val;
+    output.write(sizeByte.toByteArray(), 0, 4);
+    output.write(this.val, 4, (this.size+4));
+    
+    return output.toByteArray();
   }
 
   @Override
@@ -200,25 +140,29 @@ public class ByteNode implements INode {
 
     this.val = val;
   }
-
-  public INode getNext() {
-
-    return next;
+  
+  public long getNextNodeKey() {
+  
+    return nextNodeKey;
   }
 
-  public void setNext(ByteNode next) {
-
-    this.next = next;
+  public void setNextNodeKey(long nextNodeKey) {
+  
+    this.nextNodeKey = nextNodeKey;
   }
 
-  public INode getPrevious() {
-
-    return previous;
+  
+  public long getPreviousNodeKey() {
+  
+    return previousNodeKey;
   }
 
-  public void setPrevious(ByteNode previous) {
-
-    this.previous = previous;
+  
+  public void setPreviousNodeKey(long previousNodeKey) {
+  
+    this.previousNodeKey = previousNodeKey;
   }
+  
+  
 
 }
