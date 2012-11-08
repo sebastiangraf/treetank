@@ -66,14 +66,6 @@ public class DumbNodeFactory implements INodeFactory {
          * {@inheritDoc}
          */
         @Override
-        public void setNodeKey(long pNodeKey) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public long getNodeKey() {
             return mNodeKey;
         }

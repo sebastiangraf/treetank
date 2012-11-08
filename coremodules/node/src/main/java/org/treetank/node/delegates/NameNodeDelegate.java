@@ -91,15 +91,6 @@ public class NameNodeDelegate implements INode, INameNode {
         return mDelegate.getHash();
     }
 
-    /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-     */
-    public void setNodeKey(final long pNodeKey) {
-        mDelegate.setNodeKey(pNodeKey);
-    }
 
     /**
      * Delegate method for getNodeKey.

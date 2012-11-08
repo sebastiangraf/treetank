@@ -69,8 +69,7 @@ public class NodeDelegate implements INode {
      * @param pHash
      *            to be represented by this delegate
      */
-    public NodeDelegate(final long pNodeKey, final long pParentKey,
-            final long pHash) {
+    public NodeDelegate(final long pNodeKey, final long pParentKey, final long pHash) {
         mNodeKey = pNodeKey;
         mParentKey = pParentKey;
         mHash = pHash;
@@ -91,14 +90,6 @@ public class NodeDelegate implements INode {
     @Override
     public long getNodeKey() {
         return mNodeKey;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setNodeKey(final long pNodeKey) {
-        this.mNodeKey = pNodeKey;
     }
 
     /**

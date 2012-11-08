@@ -83,16 +83,6 @@ public final class DocumentRootNode implements INode, IStructNode {
     }
 
     /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-     */
-    public void setNodeKey(final long pNodeKey) {
-        mDel.setNodeKey(pNodeKey);
-    }
-
-    /**
      * Delegate method for getParentKey.
      * 
      * @return

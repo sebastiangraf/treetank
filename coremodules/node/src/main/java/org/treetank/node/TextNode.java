@@ -122,15 +122,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
         return mDel.getHash();
     }
 
-    /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-     */
-    public void setNodeKey(final long pNodeKey) {
-        mDel.setNodeKey(pNodeKey);
-    }
 
     /**
      * Delegate method for getNodeKey.
