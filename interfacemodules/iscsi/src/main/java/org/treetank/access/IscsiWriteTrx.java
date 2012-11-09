@@ -60,12 +60,18 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
   @Override
   public void insert(INode node) throws TTException {
 
-    ByteNode lastNode = (ByteNode) getPageTransaction()
-        .prepareNodeForModification(getPageTransaction().getMaxNodeKey());
-    ((ByteNode) node).setPreviousNodeKey(lastNode.getNodeKey());
-    node = getPageTransaction().createNode(node);
-    lastNode.setNextNodeKey(node.getNodeKey());
-    getPageTransaction().finishNodeModification(lastNode);
+    if (mDelegate.getCurrentNode() != null) {
+      ByteNode lastNode = (ByteNode) getPageTransaction()
+          .prepareNodeForModification(getPageTransaction().getMaxNodeKey());
+      ((ByteNode) node).setPreviousNodeKey(lastNode.getNodeKey());
+      lastNode.setNextNodeKey(node.getNodeKey());
+      getPageTransaction().finishNodeModification(lastNode);
+      getPageTransaction().createNode(node);
+    } else {
+      ((ByteNode) node).setIndex(0);
+      node = getPageTransaction().createNode(node);
+      mDelegate.moveTo(node.getNodeKey());
+    }
 
   }
 
@@ -75,28 +81,28 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
   @Override
   public void insertAfter(INode node) throws TTException {
 
+    if (((ByteNode) mDelegate.getCurrentNode()).hasNext()) {
+      // Linking the new node.
+
+      ByteNode nextNode = (ByteNode) getPageTransaction()
+          .prepareNodeForModification(((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
+      ((ByteNode) node).setNextNodeKey(nextNode.getNodeKey());
+      nextNode.setPreviousNodeKey(node.getNodeKey());
+      getPageTransaction().finishNodeModification(nextNode);
+      
+      incrementAllFollowingIndizes(mDelegate.getCurrentNode());
+    }
+    
     ByteNode currNode = (ByteNode) getPageTransaction()
         .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
 
-    ByteNode nextNode = (ByteNode) getPageTransaction()
-        .prepareNodeForModification(currNode.getNextNodeKey());
-    if (nextNode != null) {
-      // Linking the new node.
-      ((ByteNode) node).setNextNodeKey(currNode.getNextNodeKey());
-    }
-
     ((ByteNode) node).setPreviousNodeKey(currNode.getNodeKey());
+    ((ByteNode) node).setIndex(currNode.getIndex() + 1);
     node = getPageTransaction().createNode(node);
-
-    if (nextNode != null) {
-      // Linking the new node.
-      nextNode.setPreviousNodeKey(node.getNodeKey());
-    }
-
-    getPageTransaction().finishNodeModification(nextNode);
 
     currNode.setNextNodeKey(node.getNodeKey());
     getPageTransaction().finishNodeModification(currNode);
+
   }
 
   /**
@@ -106,24 +112,30 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
   public void remove() throws TTException {
 
     checkAccessAndCommit();
-
-    ByteNode previousNode = (ByteNode) getPageTransaction()
-        .prepareNodeForModification(
-            ((ByteNode) mDelegate.getCurrentNode()).getPreviousNodeKey());
-
-    ByteNode nextNode = (ByteNode) getPageTransaction()
-        .prepareNodeForModification(
-            ((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
     
-    previousNode.setNextNodeKey(nextNode.getNodeKey());
-    nextNode.setPreviousNodeKey(previousNode.getNodeKey());
-    
-    getPageTransaction().finishNodeModification(previousNode);
-    getPageTransaction().finishNodeModification(nextNode);
+    if(((ByteNode) mDelegate.getCurrentNode()).hasPrevious() && ((ByteNode) mDelegate.getCurrentNode()).hasNext()){
+      ByteNode previousNode = (ByteNode) getPageTransaction()
+          .prepareNodeForModification(
+              ((ByteNode) mDelegate.getCurrentNode()).getPreviousNodeKey());
 
-    long nodeKey = mDelegate.getCurrentNode().getNodeKey();
-    INode deleteNode = new NodePage.DeletedNode(nodeKey);
-    getPageTransaction().createNode(deleteNode);
+      previousNode.setNextNodeKey(((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
+
+      getPageTransaction().finishNodeModification(previousNode);
+
+      ByteNode nextNode = (ByteNode) getPageTransaction()
+          .prepareNodeForModification(
+              ((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
+      
+      nextNode.setPreviousNodeKey(previousNode.getNodeKey());
+      
+      getPageTransaction().finishNodeModification(nextNode);
+
+      long nodeKey = mDelegate.getCurrentNode().getNodeKey();
+      INode deleteNode = new NodePage.DeletedNode(nodeKey);
+      getPageTransaction().createNode(deleteNode);
+      
+      decrementAllFollowingIndizes(previousNode);
+    }
 
   }
 
@@ -239,4 +251,46 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     return (PageWriteTrx) mDelegate.mPageReadTrx;
   }
 
+  private boolean incrementIndex(INode node) throws TTException {
+
+    if (node instanceof ByteNode) {
+      INode alter = getPageTransaction().prepareNodeForModification(
+          node.getNodeKey());
+      ((ByteNode) alter).incIndex();
+      getPageTransaction().finishNodeModification(alter);
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean incrementAllFollowingIndizes(INode node) throws TTException {
+
+    ByteNode nextNode = (ByteNode) node;
+
+    do {
+      nextNode = (ByteNode) getPageTransaction().prepareNodeForModification(
+          nextNode.getNextNodeKey());
+      nextNode.incIndex();
+      getPageTransaction().finishNodeModification(nextNode);
+
+    } while (nextNode.hasNext());
+
+    return true;
+  }
+  
+  private boolean decrementAllFollowingIndizes(INode node) throws TTException {
+
+    ByteNode nextNode = (ByteNode) node;
+
+    do {
+      nextNode = (ByteNode) getPageTransaction().prepareNodeForModification(
+          nextNode.getNextNodeKey());
+      nextNode.decIndex();
+      getPageTransaction().finishNodeModification(nextNode);
+
+    } while (nextNode.hasNext());
+
+    return true;
+  }
 }

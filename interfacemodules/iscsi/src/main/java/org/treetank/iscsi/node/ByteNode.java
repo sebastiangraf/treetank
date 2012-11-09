@@ -49,7 +49,12 @@ public class ByteNode implements INode {
   /**
    * The previous nodes key
    */
-  long previousNodeKey = 0;
+  long previousNodeKey = -1;
+  
+  /**
+   * The real index of this byte.
+   */
+  int index = 0;
 
   /**
    * The size of the byte array in the node. The maximum size of a byte array in
@@ -66,8 +71,9 @@ public class ByteNode implements INode {
   /**
    * Standard constructor with a size of 512 bytes for each node.
    */
-  public ByteNode() {
-
+  public ByteNode(long nodeKey) {
+    this.nodeKey = nodeKey;
+    
     size = 512;
     val = new byte[512];
   }
@@ -78,8 +84,9 @@ public class ByteNode implements INode {
    * @param content
    *          , as byte array
    */
-  public ByteNode(byte[] content) {
-
+  public ByteNode(long nodeKey, byte[] content) {
+    this.nodeKey = nodeKey;
+    
     size = content.length;
     val = content;
   }
@@ -88,6 +95,7 @@ public class ByteNode implements INode {
   public byte[] getByteRepresentation() {
     ByteArrayDataOutput output = ByteStreams.newDataOutput();
     output.writeInt(size);
+    output.writeLong(nodeKey);
     output.writeLong(previousNodeKey);
     output.writeLong(nextNodeKey);
     output.write(val);
@@ -127,6 +135,10 @@ public class ByteNode implements INode {
     return nextNodeKey;
   }
 
+  public boolean hasNext(){
+    return (this.nextNodeKey != 0);
+  }
+  
   public void setNextNodeKey(long nextNodeKey) {
 
     this.nextNodeKey = nextNodeKey;
@@ -140,6 +152,30 @@ public class ByteNode implements INode {
   public void setPreviousNodeKey(long previousNodeKey) {
 
     this.previousNodeKey = previousNodeKey;
+  }
+
+  public boolean hasPrevious(){
+    return (this.previousNodeKey != -1);
+  }
+  
+  public int getIndex() {
+  
+    return index;
+  }
+  
+  public void setIndex(int index) {
+  
+    this.index = index;
+  }
+  
+  public int incIndex(){
+    this.index++;
+    return this.index;
+  }
+  
+  public int decIndex(){
+    this.index--;
+    return this.index;
   }
 
 }

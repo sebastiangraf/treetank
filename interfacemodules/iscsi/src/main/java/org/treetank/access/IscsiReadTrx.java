@@ -80,7 +80,12 @@ public class IscsiReadTrx implements IIscsiReadTrx {
   @Override
   public boolean nextNode() {
     try {
-      this.mCurrentNode = mPageReadTrx.getNode(((ByteNode) mCurrentNode).getNextNodeKey());
+      if(mCurrentNode != null){
+        this.mCurrentNode = mPageReadTrx.getNode(((ByteNode) mCurrentNode).getNextNodeKey());
+      }
+      else{
+        return false;
+      }
       return true;
     } catch (TTException e) {
       return false;
