@@ -41,12 +41,13 @@ public class ByteNodeFactory implements INodeFactory {
   public INode deserializeNode(byte[] pData) {
     ByteArrayDataInput input = ByteStreams.newDataInput(pData);
     int size = input.readInt();
+    long nodeKey = input.readLong();
     long previousNodeKey = input.readLong();
     long nextNodeKey = input.readLong();
     byte[] data = new byte[size];
     input.readFully(data);
     
-    ByteNode node = new ByteNode(data);
+    ByteNode node = new ByteNode(nodeKey, data);
     node.setNextNodeKey(nextNodeKey);
     node.setPreviousNodeKey(previousNodeKey);
     return node;

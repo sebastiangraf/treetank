@@ -46,7 +46,7 @@ import org.treetank.node.interfaces.IValNode;
  * <h1>NodeReadTrx</h1>
  * 
  * <p>
- * Read-only transaction wiht single-threaded cursor semantics. Each read-only transaction works on a given
+ * Read-only transaction with single-threaded cursor semantics. Each read-only transaction works on a given
  * revision key.
  * </p>
  */
