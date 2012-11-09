@@ -6,7 +6,7 @@ package org.treetank.api;
 /**
  * Overall {@link INode}-Interface for the interaction with the page-layer. All
  * persistence functionality must be handled over this interface while all
- * node-layers interfaces interhit from this interface.
+ * node-layers interfaces inherit from this interface.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
