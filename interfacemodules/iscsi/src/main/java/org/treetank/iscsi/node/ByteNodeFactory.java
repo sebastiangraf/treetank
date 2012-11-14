@@ -37,6 +37,9 @@ import com.google.common.io.ByteStreams;
  */
 public class ByteNodeFactory implements INodeFactory {
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public INode deserializeNode(byte[] pData) {
     ByteArrayDataInput input = ByteStreams.newDataInput(pData);

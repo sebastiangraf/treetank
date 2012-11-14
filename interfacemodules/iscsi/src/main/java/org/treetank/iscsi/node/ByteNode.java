@@ -91,6 +91,9 @@ public class ByteNode implements INode {
     val = content;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public byte[] getByteRepresentation() {
     ByteArrayDataOutput output = ByteStreams.newDataOutput();
@@ -109,70 +112,124 @@ public class ByteNode implements INode {
     return this.nodeKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void setHash(long pHash) {
 
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public long getHash() {
 
     return this.nodeKey*previousNodeKey*nextNodeKey*31;
   }
 
+  /**
+   * Getting the byte array contained by this node.
+   * @return returns the byte array
+   */
   public byte[] getVal() {
 
     return val;
   }
 
+  /**
+   * Replace the existing byte array with another byte array.
+   * @param val
+   */
   public void setVal(byte[] val) {
 
     this.val = val;
   }
 
+  /**
+   * The node key of the next node
+   * @return returns the key as long
+   */
   public long getNextNodeKey() {
 
     return nextNodeKey;
   }
 
+  /**
+   * Determine if a node follows after this one.
+   * @return returns true if a node follows
+   */
   public boolean hasNext(){
     return (this.nextNodeKey != 0);
   }
   
+  /**
+   * Set the link to the next node. Use the nodekey of that node.
+   * @param nextNodeKey as a long
+   */
   public void setNextNodeKey(long nextNodeKey) {
 
     this.nextNodeKey = nextNodeKey;
   }
 
+  /**
+   * The node key of the previous node
+   * @return returns the key as long
+   */
   public long getPreviousNodeKey() {
 
     return previousNodeKey;
   }
-
+  
+  /**
+   * Set the link to the previous node. Use the nodekey of that node.
+   * @param previousNodeKey as a long
+   */
   public void setPreviousNodeKey(long previousNodeKey) {
 
     this.previousNodeKey = previousNodeKey;
   }
 
+  /**
+   * Determine if a node preceids this node.
+   * @return returns true if a node follows
+   */
   public boolean hasPrevious(){
     return (this.previousNodeKey != -1);
   }
   
+  /**
+   * Getting the index of the node.
+   * @return returns the index as an int
+   */
   public int getIndex() {
   
     return index;
   }
   
+  /**
+   * Reset the index of this node.
+   * @param index
+   */
   public void setIndex(int index) {
   
     this.index = index;
   }
   
+  /**
+   * Increment the index of this node
+   * @return return the new index
+   */
   public int incIndex(){
     this.index++;
     return this.index;
   }
   
+  /**
+   * Decrement the index of this node
+   * @return returns the new index of this node
+   */
   public int decIndex(){
     this.index--;
     return this.index;

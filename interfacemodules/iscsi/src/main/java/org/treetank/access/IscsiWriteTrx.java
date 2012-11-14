@@ -86,20 +86,20 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
 
       ByteNode nextNode = (ByteNode) getPageTransaction()
           .prepareNodeForModification(((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
-      ((ByteNode) node).setNextNodeKey(nextNode.getNodeKey());
       nextNode.setPreviousNodeKey(node.getNodeKey());
       getPageTransaction().finishNodeModification(nextNode);
       
       incrementAllFollowingIndizes(mDelegate.getCurrentNode());
     }
+
+    ((ByteNode) node).setNextNodeKey(((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
+    ((ByteNode) node).setPreviousNodeKey(((ByteNode) mDelegate.getCurrentNode()).getNodeKey());
+    ((ByteNode) node).setIndex(((ByteNode) mDelegate.getCurrentNode()).getIndex() + 1);
+    node = getPageTransaction().createNode(node);
     
     ByteNode currNode = (ByteNode) getPageTransaction()
         .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
-
-    ((ByteNode) node).setPreviousNodeKey(currNode.getNodeKey());
-    ((ByteNode) node).setIndex(currNode.getIndex() + 1);
-    node = getPageTransaction().createNode(node);
-
+    
     currNode.setNextNodeKey(node.getNodeKey());
     getPageTransaction().finishNodeModification(currNode);
 
@@ -204,30 +204,45 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     mDelegate.assertNotClosed();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public boolean moveTo(long pKey) {
 
     return mDelegate.moveTo(pKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public boolean nextNode() {
 
     return mDelegate.nextNode();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public byte[] getValueOfCurrentNode() {
 
     return mDelegate.getValueOfCurrentNode();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public INode getCurrentNode() {
 
     return mDelegate.getCurrentNode();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void close() throws TTIOException {
 
@@ -235,6 +250,9 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
       mDelegate.close();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public boolean isClosed() {
 
@@ -251,6 +269,12 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     return (PageWriteTrx) mDelegate.mPageReadTrx;
   }
 
+  /**
+   * A help method to increment the index of the given node.
+   * @param node
+   * @return true if successful, false otherwise
+   * @throws TTException
+   */
   private boolean incrementIndex(INode node) throws TTException {
 
     if (node instanceof ByteNode) {
@@ -264,6 +288,16 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     return false;
   }
 
+  /**
+   * A help method to increment the indizes following to this node
+   * without altering the index of the given node itself.
+   * 
+   * This is useful when inserting inbetween two nodes
+   * because following indizes have to be altered aswell.
+   * @param node
+   * @return true if successful, false otherwise
+   * @throws TTException
+   */
   private boolean incrementAllFollowingIndizes(INode node) throws TTException {
 
     ByteNode nextNode = (ByteNode) node;
@@ -279,6 +313,16 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     return true;
   }
   
+  /**
+   * A help method to decrement the indizes following to this node
+   * without altering the index of the given node itself.
+   * 
+   * This is useful when removing in the middle of the list and the
+   * indizes have to be cut down.
+   * @param node
+   * @return true if successful, false otherwise
+   * @throws TTException
+   */
   private boolean decrementAllFollowingIndizes(INode node) throws TTException {
 
     ByteNode nextNode = (ByteNode) node;
