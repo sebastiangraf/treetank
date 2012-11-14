@@ -35,6 +35,7 @@ import java.io.RandomAccessFile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.treetank.access.IscsiReadTrx;
 import org.treetank.access.Session;
 import org.treetank.access.Storage;
 import org.treetank.access.conf.SessionConfiguration;
@@ -45,7 +46,11 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
+import org.treetank.iscsi.node.ByteNode;
 import org.treetank.page.UberPage;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
 
 /**
  * <h1>TreetankStorageModule</h1>
@@ -135,15 +140,41 @@ public class TreetankStorageModule implements IStorageModule{
     public void read(byte[] bytes, int bytesOffset, int length, long storageIndex) throws IOException {
         try {
             // Using the most recent revision
+            if(bytesOffset + length > bytes.length) throw new IOException();
+            
+            int realIndex = (int)(storageIndex / sizeInBlocks);
+            
             pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
+            IscsiReadTrx iRtx = new IscsiReadTrx(pRtx);
+            getNodeByIndex(iRtx, realIndex);
             
-            INode node = pRtx.getNode(storageIndex);
+            INode node = iRtx.getCurrentNode();
             
-            ByteArrayOutputStream nodeBytes = new ByteArrayOutputStream(node.getByteRepresentation().length);
-            nodeBytes.write(node.getByteRepresentation());
+            byte[] val = ((ByteNode) node).getVal();
+            ByteArrayDataInput input = ByteStreams.newDataInput(val);
             
-            ByteArrayInputStream reader = new ByteArrayInputStream(node.getByteRepresentation());
-            reader.read(bytes, bytesOffset, length);
+            if(length <= sizeInBlocks){
+                input.readFully(bytes, bytesOffset, length);
+            }
+            else{
+                int i = 0;
+                int bytesLeft = length;
+                
+                while(bytesLeft > 0){
+                    if(bytesLeft >= sizeInBlocks){
+                        input.readFully(bytes, (int)(bytesOffset + (sizeInBlocks * i)), (int)sizeInBlocks);
+                        bytesLeft -= sizeInBlocks;
+                        i++;
+                        
+                        getNodeByIndex(iRtx, realIndex+1);
+                        input = ByteStreams.newDataInput(((ByteNode) iRtx.getCurrentNode()).getVal());
+                    }
+                    else{
+                        input.readFully(bytes, (int)(bytesOffset + (sizeInBlocks * i)), bytesLeft);
+                        bytesLeft = 0;
+                    }
+                }
+            }
         } catch (TTException e) {
             throw new IOException(e.getMessage());
         }
@@ -173,6 +204,19 @@ public class TreetankStorageModule implements IStorageModule{
             
         } catch (TTException e) {
             throw new IOException(e.getMessage());
+        }
+    }
+    
+    private void getNodeByIndex(IscsiReadTrx iRtx, int realIndex) throws IOException{
+        INode node = iRtx.getCurrentNode();
+        
+        while(((ByteNode) node).getIndex() != realIndex && ((ByteNode) node).getNextNodeKey() != 0){
+            iRtx.nextNode();
+            node = iRtx.getCurrentNode();
+        }
+        
+        if(((ByteNode) node).getIndex() != realIndex){
+            throw new IOException();
         }
     }
 

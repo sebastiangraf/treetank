@@ -33,11 +33,21 @@ import org.treetank.exception.TTIOException;
 
 
 public interface IIscsiWriteTrx extends IIscsiReadTrx{
-  
-  //TODO doc
+
+  /**
+   * This method inserts the given node into the database.
+   * @param node
+   * @throws TTException
+   */
   public void insert(INode node) throws TTException;
 
-  //TODO doc
+  /**
+   * This method inserts the given node, after
+   * the currently selected node and increments all
+   * following indizes.
+   * @param node
+   * @throws TTException
+   */
   public void insertAfter(INode node) throws TTException;
 
   /**
