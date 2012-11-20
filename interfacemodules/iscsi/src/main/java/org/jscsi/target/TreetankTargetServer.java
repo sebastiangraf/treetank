@@ -22,40 +22,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.iscsi.node;
+package org.jscsi.target;
 
-import org.treetank.api.INode;
-import org.treetank.api.INodeFactory;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
-
-/**
- * This factory is used to deserialize {@link ByteNode}
- * 
- * @author Andreas Rain
- */
-public class ByteNodeFactory implements INodeFactory {
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public INode deserializeNode(byte[] pData) {
-    ByteArrayDataInput input = ByteStreams.newDataInput(pData);
-    int size = input.readInt();
-    int index = input.readInt();
-    long nodeKey = input.readLong();
-    long previousNodeKey = input.readLong();
-    long nextNodeKey = input.readLong();
-    byte[] data = new byte[size];
-    input.readFully(data);
-    
-    ByteNode node = new ByteNode(nodeKey, data);
-    node.setIndex(index);
-    node.setNextNodeKey(nextNodeKey);
-    node.setPreviousNodeKey(previousNodeKey);
-    return node;
-  }
-
+public class TreetankTargetServer {
+   
 }

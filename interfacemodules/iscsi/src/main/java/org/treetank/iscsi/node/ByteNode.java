@@ -98,6 +98,7 @@ public class ByteNode implements INode {
   public byte[] getByteRepresentation() {
     ByteArrayDataOutput output = ByteStreams.newDataOutput();
     output.writeInt(size);
+    output.writeInt(index);
     output.writeLong(nodeKey);
     output.writeLong(previousNodeKey);
     output.writeLong(nextNodeKey);

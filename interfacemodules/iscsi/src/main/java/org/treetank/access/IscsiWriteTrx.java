@@ -38,303 +38,309 @@ import org.treetank.page.NodePage;
  */
 public class IscsiWriteTrx implements IIscsiWriteTrx {
 
-  /** Session for abort/commit. */
-  private final ISession mSession;
+    /** Session for abort/commit. */
+    private final ISession mSession;
 
-  /** Delegator for the read access */
-  private final IscsiReadTrx mDelegate;
+    /** Delegator for the read access */
+    private final IscsiReadTrx mDelegate;
 
-  /**
-   * {@inheritDoc}
-   */
-  public IscsiWriteTrx(IPageWriteTrx pPageTrx, ISession pSession)
-      throws TTException {
+    /**
+     * {@inheritDoc}
+     */
+    public IscsiWriteTrx(IPageWriteTrx pPageTrx, ISession pSession) throws TTException {
 
-    mSession = pSession;
-    mDelegate = new IscsiReadTrx(pPageTrx);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void insert(INode node) throws TTException {
-
-    if (mDelegate.getCurrentNode() != null) {
-      ByteNode lastNode = (ByteNode) getPageTransaction()
-          .prepareNodeForModification(getPageTransaction().getMaxNodeKey());
-      ((ByteNode) node).setPreviousNodeKey(lastNode.getNodeKey());
-      lastNode.setNextNodeKey(node.getNodeKey());
-      getPageTransaction().finishNodeModification(lastNode);
-      getPageTransaction().createNode(node);
-    } else {
-      ((ByteNode) node).setIndex(0);
-      node = getPageTransaction().createNode(node);
-      mDelegate.moveTo(node.getNodeKey());
+        mSession = pSession;
+        mDelegate = new IscsiReadTrx(pPageTrx);
     }
 
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insert(INode node) throws TTException {
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void insertAfter(INode node) throws TTException {
+        if (mDelegate.getCurrentNode() != null) {
+            ByteNode lastNode =
+                (ByteNode)getPageTransaction().prepareNodeForModification(
+                    getPageTransaction().getMaxNodeKey());
+            ((ByteNode)node).setPreviousNodeKey(lastNode.getNodeKey());
+            lastNode.setNextNodeKey(node.getNodeKey());
+            getPageTransaction().finishNodeModification(lastNode);
+            getPageTransaction().createNode(node);
+        } else {
+            ((ByteNode)node).setIndex(0);
+            node = getPageTransaction().createNode(node);
+            mDelegate.moveTo(node.getNodeKey());
+        }
 
-    if (((ByteNode) mDelegate.getCurrentNode()).hasNext()) {
-      // Linking the new node.
-
-      ByteNode nextNode = (ByteNode) getPageTransaction()
-          .prepareNodeForModification(((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
-      nextNode.setPreviousNodeKey(node.getNodeKey());
-      getPageTransaction().finishNodeModification(nextNode);
-      
-      incrementAllFollowingIndizes(mDelegate.getCurrentNode());
     }
 
-    ((ByteNode) node).setNextNodeKey(((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
-    ((ByteNode) node).setPreviousNodeKey(((ByteNode) mDelegate.getCurrentNode()).getNodeKey());
-    ((ByteNode) node).setIndex(((ByteNode) mDelegate.getCurrentNode()).getIndex() + 1);
-    node = getPageTransaction().createNode(node);
-    
-    ByteNode currNode = (ByteNode) getPageTransaction()
-        .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
-    
-    currNode.setNextNodeKey(node.getNodeKey());
-    getPageTransaction().finishNodeModification(currNode);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insertAfter(INode node) throws TTException {
 
-  }
+        if (((ByteNode)mDelegate.getCurrentNode()).hasNext()) {
+            // Linking the new node.
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void remove() throws TTException {
+            ByteNode nextNode =
+                (ByteNode)getPageTransaction().prepareNodeForModification(
+                    ((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
+            nextNode.setPreviousNodeKey(node.getNodeKey());
+            getPageTransaction().finishNodeModification(nextNode);
 
-    checkAccessAndCommit();
-    
-    if(((ByteNode) mDelegate.getCurrentNode()).hasPrevious() && ((ByteNode) mDelegate.getCurrentNode()).hasNext()){
-      ByteNode previousNode = (ByteNode) getPageTransaction()
-          .prepareNodeForModification(
-              ((ByteNode) mDelegate.getCurrentNode()).getPreviousNodeKey());
+            incrementAllFollowingIndizes(mDelegate.getCurrentNode());
+        }
 
-      previousNode.setNextNodeKey(((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
+        ((ByteNode)node).setNextNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
+        ((ByteNode)node).setPreviousNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNodeKey());
+        ((ByteNode)node).setIndex(((ByteNode)mDelegate.getCurrentNode()).getIndex() + 1);
+        node = getPageTransaction().createNode(node);
 
-      getPageTransaction().finishNodeModification(previousNode);
+        ByteNode currNode =
+            (ByteNode)getPageTransaction()
+                .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
 
-      ByteNode nextNode = (ByteNode) getPageTransaction()
-          .prepareNodeForModification(
-              ((ByteNode) mDelegate.getCurrentNode()).getNextNodeKey());
-      
-      nextNode.setPreviousNodeKey(previousNode.getNodeKey());
-      
-      getPageTransaction().finishNodeModification(nextNode);
+        currNode.setNextNodeKey(node.getNodeKey());
+        getPageTransaction().finishNodeModification(currNode);
 
-      long nodeKey = mDelegate.getCurrentNode().getNodeKey();
-      INode deleteNode = new NodePage.DeletedNode(nodeKey);
-      getPageTransaction().createNode(deleteNode);
-      
-      decrementAllFollowingIndizes(previousNode);
     }
 
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void remove() throws TTException {
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void setValue(byte[] val) throws TTException {
+        checkAccessAndCommit();
 
-    ByteNode node = (ByteNode) getPageTransaction().prepareNodeForModification(
-        mDelegate.getCurrentNode().getNodeKey());
-    node.setVal(val);
-    getPageTransaction().finishNodeModification(node);
-  }
+        if (((ByteNode)mDelegate.getCurrentNode()).hasPrevious()
+            && ((ByteNode)mDelegate.getCurrentNode()).hasNext()) {
+            ByteNode previousNode =
+                (ByteNode)getPageTransaction().prepareNodeForModification(
+                    ((ByteNode)mDelegate.getCurrentNode()).getPreviousNodeKey());
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void commit() throws TTException {
+            previousNode.setNextNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
 
-    checkAccessAndCommit();
+            getPageTransaction().finishNodeModification(previousNode);
 
-    // Commit uber page.
-    getPageTransaction().commit();
-    final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage()
-        .getRevision();
+            ByteNode nextNode =
+                (ByteNode)getPageTransaction().prepareNodeForModification(
+                    ((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
 
-    getPageTransaction().close();
-    // Reset internal transaction state to new uber page.
-    mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber,
-        revNumber));
+            nextNode.setPreviousNodeKey(previousNode.getNodeKey());
 
-  }
+            getPageTransaction().finishNodeModification(nextNode);
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void abort() throws TTException {
+            long nodeKey = mDelegate.getCurrentNode().getNodeKey();
+            INode deleteNode = new NodePage.DeletedNode(nodeKey);
+            getPageTransaction().createNode(deleteNode);
 
-    mDelegate.assertNotClosed();
+            decrementAllFollowingIndizes(previousNode);
+        }
 
-    long revisionToSet = 0;
-    if (!getPageTransaction().getUberPage().isBootstrap()) {
-      revisionToSet = mDelegate.mPageReadTrx.getActualRevisionRootPage()
-          .getRevision() - 1;
     }
 
-    getPageTransaction().close();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setValue(byte[] val) throws TTException {
 
-    // Reset internal transaction state to last committed uber page.
-    mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(
-        revisionToSet, revisionToSet));
-
-  }
-
-  /**
-   * Checking write access and intermediate commit.
-   * 
-   * @throws TTException
-   *           if anything weird happens
-   */
-  private void checkAccessAndCommit() throws TTException {
-
-    mDelegate.assertNotClosed();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean moveTo(long pKey) {
-
-    return mDelegate.moveTo(pKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean nextNode() {
-
-    return mDelegate.nextNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public byte[] getValueOfCurrentNode() {
-
-    return mDelegate.getValueOfCurrentNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public INode getCurrentNode() {
-
-    return mDelegate.getCurrentNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void close() throws TTIOException {
-
-    if (!isClosed())
-      mDelegate.close();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean isClosed() {
-
-    return mDelegate.isClosed();
-  }
-
-  /**
-   * Getter for superclasses.
-   * 
-   * @return The state of this transaction.
-   */
-  private PageWriteTrx getPageTransaction() {
-
-    return (PageWriteTrx) mDelegate.mPageReadTrx;
-  }
-
-  /**
-   * A help method to increment the index of the given node.
-   * @param node
-   * @return true if successful, false otherwise
-   * @throws TTException
-   */
-  private boolean incrementIndex(INode node) throws TTException {
-
-    if (node instanceof ByteNode) {
-      INode alter = getPageTransaction().prepareNodeForModification(
-          node.getNodeKey());
-      ((ByteNode) alter).incIndex();
-      getPageTransaction().finishNodeModification(alter);
-      return true;
+        ByteNode node =
+            (ByteNode)getPageTransaction()
+                .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+        node.setVal(val);
+        getPageTransaction().finishNodeModification(node);
     }
 
-    return false;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void commit() throws TTException {
 
-  /**
-   * A help method to increment the indizes following to this node
-   * without altering the index of the given node itself.
-   * 
-   * This is useful when inserting inbetween two nodes
-   * because following indizes have to be altered aswell.
-   * @param node
-   * @return true if successful, false otherwise
-   * @throws TTException
-   */
-  private boolean incrementAllFollowingIndizes(INode node) throws TTException {
+        checkAccessAndCommit();
 
-    ByteNode nextNode = (ByteNode) node;
+        // Commit uber page.
+        getPageTransaction().commit();
+        final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision();
 
-    do {
-      nextNode = (ByteNode) getPageTransaction().prepareNodeForModification(
-          nextNode.getNextNodeKey());
-      nextNode.incIndex();
-      getPageTransaction().finishNodeModification(nextNode);
+        getPageTransaction().close();
+        // Reset internal transaction state to new uber page.
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber, revNumber));
 
-    } while (nextNode.hasNext());
+    }
 
-    return true;
-  }
-  
-  /**
-   * A help method to decrement the indizes following to this node
-   * without altering the index of the given node itself.
-   * 
-   * This is useful when removing in the middle of the list and the
-   * indizes have to be cut down.
-   * @param node
-   * @return true if successful, false otherwise
-   * @throws TTException
-   */
-  private boolean decrementAllFollowingIndizes(INode node) throws TTException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void abort() throws TTException {
 
-    ByteNode nextNode = (ByteNode) node;
+        mDelegate.assertNotClosed();
 
-    do {
-      nextNode = (ByteNode) getPageTransaction().prepareNodeForModification(
-          nextNode.getNextNodeKey());
-      nextNode.decIndex();
-      getPageTransaction().finishNodeModification(nextNode);
+        long revisionToSet = 0;
+        if (!getPageTransaction().getUberPage().isBootstrap()) {
+            revisionToSet = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision() - 1;
+        }
 
-    } while (nextNode.hasNext());
+        getPageTransaction().close();
 
-    return true;
-  }
+        // Reset internal transaction state to last committed uber page.
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet, revisionToSet));
+
+    }
+
+    /**
+     * Checking write access and intermediate commit.
+     * 
+     * @throws TTException
+     *             if anything weird happens
+     */
+    private void checkAccessAndCommit() throws TTException {
+
+        mDelegate.assertNotClosed();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean moveTo(long pKey) {
+
+        return mDelegate.moveTo(pKey);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean nextNode() {
+
+        return mDelegate.nextNode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getValueOfCurrentNode() {
+
+        return mDelegate.getValueOfCurrentNode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public INode getCurrentNode() {
+
+        return mDelegate.getCurrentNode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws TTIOException {
+
+        if (!isClosed())
+            mDelegate.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+
+        return mDelegate.isClosed();
+    }
+
+    /**
+     * Getter for superclasses.
+     * 
+     * @return The state of this transaction.
+     */
+    private PageWriteTrx getPageTransaction() {
+
+        return (PageWriteTrx)mDelegate.mPageReadTrx;
+    }
+
+    /**
+     * A help method to increment the index of the given node.
+     * 
+     * @param node
+     * @return true if successful, false otherwise
+     * @throws TTException
+     */
+    private boolean incrementIndex(INode node) throws TTException {
+
+        if (node instanceof ByteNode) {
+            INode alter = getPageTransaction().prepareNodeForModification(node.getNodeKey());
+            ((ByteNode)alter).incIndex();
+            getPageTransaction().finishNodeModification(alter);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * A help method to increment the indizes following to this node
+     * without altering the index of the given node itself.
+     * 
+     * This is useful when inserting inbetween two nodes
+     * because following indizes have to be altered aswell.
+     * 
+     * @param node
+     * @return true if successful, false otherwise
+     * @throws TTException
+     */
+    private boolean incrementAllFollowingIndizes(INode node) throws TTException {
+
+        ByteNode nextNode = (ByteNode)node;
+
+        do {
+            nextNode = (ByteNode)getPageTransaction().prepareNodeForModification(nextNode.getNextNodeKey());
+            nextNode.incIndex();
+            getPageTransaction().finishNodeModification(nextNode);
+
+        } while (nextNode.hasNext());
+
+        return true;
+    }
+
+    /**
+     * A help method to decrement the indizes following to this node
+     * without altering the index of the given node itself.
+     * 
+     * This is useful when removing in the middle of the list and the
+     * indizes have to be cut down.
+     * 
+     * @param node
+     * @return true if successful, false otherwise
+     * @throws TTException
+     */
+    private boolean decrementAllFollowingIndizes(INode node) throws TTException {
+
+        ByteNode nextNode = (ByteNode)node;
+
+        do {
+            nextNode = (ByteNode)getPageTransaction().prepareNodeForModification(nextNode.getNextNodeKey());
+            nextNode.decIndex();
+            getPageTransaction().finishNodeModification(nextNode);
+
+        } while (nextNode.hasNext());
+
+        return true;
+    }
+
+    @Override
+    public long getMaxNodeKey() {
+        return getPageTransaction().getMaxNodeKey();
+    }
+
 }

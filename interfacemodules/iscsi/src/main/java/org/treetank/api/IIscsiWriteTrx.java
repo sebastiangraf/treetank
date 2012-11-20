@@ -51,12 +51,7 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx{
   public void insertAfter(INode node) throws TTException;
 
   /**
-   * Remove currently selected node. This does automatically remove
-   * descendants.
-   * 
-   * The cursor is located at the former right sibling. If there was no right
-   * sibling, it is located at the former left sibling. If there was no left
-   * sibling, it is located at the former parent.
+   * Remove currently selected node.
    * 
    * @throws TTException
    *             if node couldn't be removed
@@ -89,4 +84,10 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx{
    *             if this revision couldn't be aborted
    */
   public void abort() throws TTException;
+  
+  /**
+   * 
+   * @return the maximum node key in the list
+   */
+  public long getMaxNodeKey();
 }
