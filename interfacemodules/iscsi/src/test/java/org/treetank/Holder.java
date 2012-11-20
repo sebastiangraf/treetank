@@ -32,6 +32,7 @@ import org.treetank.access.IscsiWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IIscsiReadTrx;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.IPageReadTrx;

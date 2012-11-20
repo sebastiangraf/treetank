@@ -74,8 +74,8 @@ public class ByteNode implements INode {
   public ByteNode(long nodeKey) {
     this.nodeKey = nodeKey;
     
-    size = 512;
-    val = new byte[512];
+    size = 64;
+    val = new byte[64];
   }
 
   /**
