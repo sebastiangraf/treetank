@@ -50,7 +50,7 @@ import com.google.inject.Inject;
 public class TreetankStorageModuleTest {
     private TreetankStorageModule storageModule;
     
-    private int TEST_FILE_SIZE = 16384;
+    private int TEST_FILE_SIZE = 512*512;
     
     private StorageConfiguration configuration;
     private File file;
@@ -70,7 +70,7 @@ public class TreetankStorageModuleTest {
         file = TestHelper.PATHS.PATH1.getFile();
         configuration = TestHelper.PATHS.PATH1.getConfig();
         
-        storageModule = new TreetankStorageModule(8, configuration, file);
+        storageModule = new TreetankStorageModule(512, 512,configuration, file);
     }
     
     @Test(groups = "Initial read write")
