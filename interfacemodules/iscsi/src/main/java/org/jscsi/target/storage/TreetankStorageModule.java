@@ -70,10 +70,9 @@ public class TreetankStorageModule implements IStorageModule {
     private final long sizeInBlocks;
 
     /**
-     * The size of each block. If the block count is set to 512 each node has
-     * 64*512 bytes in it.
+     * The size of each block.
      */
-    private final int blockSize = 64;
+    private final int blockSize;
 
     /**
      * The {@link StorageConfiguration} used for accessing the storage medium.
@@ -106,10 +105,11 @@ public class TreetankStorageModule implements IStorageModule {
      *            the fully initialized {@link StorageConfiguration}
      * @throws TTException
      */
-    public TreetankStorageModule(final long sizeInBlocks, final StorageConfiguration conf, final File file)
+    public TreetankStorageModule(final long sizeInBlocks, final int blockSize, final StorageConfiguration conf, final File file)
         throws TTException {
 
         this.sizeInBlocks = sizeInBlocks;
+        this.blockSize = blockSize;
         this.conf = conf;
 
         // Creating and opening the storage.
@@ -123,25 +123,10 @@ public class TreetankStorageModule implements IStorageModule {
      * {@inheritDoc}
      */
     public int checkBounds(long logicalBlockAddress, int transferLengthInBlocks) {
-        int fullSize = estimateFullSize();
-        
-        if (logicalBlockAddress < 0 || logicalBlockAddress >= fullSize)
+        if (logicalBlockAddress < 0 || logicalBlockAddress >= sizeInBlocks)
             return 1;
-        if (transferLengthInBlocks < 0 || logicalBlockAddress + transferLengthInBlocks > fullSize)
+        if (transferLengthInBlocks < 0 || logicalBlockAddress + transferLengthInBlocks > sizeInBlocks)
             return 2;
-        return 0;
-    }
-
-    private int estimateFullSize() {
-        try {
-            pRtx = session.beginPageWriteTransaction();
-            IscsiWriteTrx iWtx = new IscsiWriteTrx((IPageWriteTrx)pRtx, session);
-            session.deregisterPageTrx(pRtx);
-            return (int)(iWtx.getMaxNodeKey()*sizeInBlocks);
-        } catch (TTException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         return 0;
     }
 
@@ -162,7 +147,7 @@ public class TreetankStorageModule implements IStorageModule {
             if (bytesOffset + length > bytes.length)
                 throw new IOException();
 
-            int realIndex = (int)(storageIndex / (sizeInBlocks * blockSize));
+            int realIndex = (int)(storageIndex / blockSize);
 
             pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
             IscsiReadTrx iRtx = new IscsiReadTrx(pRtx);
@@ -173,24 +158,24 @@ public class TreetankStorageModule implements IStorageModule {
             byte[] val = ((ByteNode)node).getVal();
             ByteArrayDataInput input = ByteStreams.newDataInput(val);
 
-            if (length <= (sizeInBlocks * blockSize)) {
+            if (length <= blockSize) {
                 input.readFully(bytes, bytesOffset, length);
             } else {
                 int i = 0;
                 int bytesLeft = length;
 
                 while (bytesLeft > 0) {
-                    if (bytesLeft >= (sizeInBlocks * blockSize)) {
-                        input.readFully(bytes, (int)(bytesOffset + ((sizeInBlocks * blockSize) * i)),
-                            (int)(sizeInBlocks * blockSize));
-                        bytesLeft -= (sizeInBlocks * blockSize);
+                    if (bytesLeft >= blockSize) {
+                        input.readFully(bytes, (int)(bytesOffset + (blockSize * i)),
+                            (int)blockSize);
+                        bytesLeft -= blockSize;
                         i++;
 
                         getNodeByIndex(iRtx, ((ByteNode) node).getIndex() + 1);
                         node = iRtx.getCurrentNode();
                         input = ByteStreams.newDataInput(((ByteNode)iRtx.getCurrentNode()).getVal());
                     } else {
-                        input.readFully(bytes, (int)(bytesOffset + ((sizeInBlocks * blockSize) * i)),
+                        input.readFully(bytes, (int)(bytesOffset + (blockSize * i)),
                             bytesLeft);
                         bytesLeft = 0;
                     }
@@ -213,7 +198,7 @@ public class TreetankStorageModule implements IStorageModule {
             if (bytesOffset + length > bytes.length)
                 throw new IOException();
 
-            int realIndex = (int)(storageIndex / (sizeInBlocks * blockSize));
+            int realIndex = (int)(storageIndex / blockSize);
 
             pRtx = session.beginPageWriteTransaction();
             IscsiWriteTrx iWtx = new IscsiWriteTrx((IPageWriteTrx)pRtx, session);
@@ -226,7 +211,7 @@ public class TreetankStorageModule implements IStorageModule {
 
             // The result of the modulo operation is the offset of the node to write
             // to.
-            int writeOffset = (int)(storageIndex % (sizeInBlocks * blockSize));
+            int writeOffset = (int)(storageIndex % blockSize);
 
             // If the byte length to be written doesn't exceed the rest bytes in the
             // array
@@ -239,13 +224,13 @@ public class TreetankStorageModule implements IStorageModule {
 
             // We now want to write to storage index 100. First the node gets
             // calculated using
-            // (storageIndex / (sizeInBlocks * blockSize)) which is 100 / (64*1). 64
+            // (storageIndex / blockSize) which is 100 / (64*1). 64
             // fits into 100
             // exactly once so the real index of the node is 1. (if we start to count
             // from zero!).
 
             // So starting with the second (index = 1) node, we have an offset of
-            // (storageIndex % (sizeInBlocks * blockSize))
+            // (storageIndex % blockSize)
             // which in this case is 36. So the byte where we start to write is, 36 in
             // the second node.
 
@@ -253,7 +238,7 @@ public class TreetankStorageModule implements IStorageModule {
             // we'd have to jump to the next node. If there
             // is no next node we just create a new node until there are no bytes left
             // to be written.
-            if (length <= (sizeInBlocks * blockSize) - writeOffset) {
+            if (length <= blockSize - writeOffset) {
                 input.readFully(val, bytesOffset, length);
                 iWtx.setValue(val);
 
@@ -263,21 +248,21 @@ public class TreetankStorageModule implements IStorageModule {
                 // As we know that our current node is going to be filled, we check how many nodes have to be
                 // filled aswell until we reach our last node that is probably not going to be filled until the end.
                 
-                // We write (sizeInBlocks * blockSize) - writeOffset in the first run which will then be taken from the bytesLeft.
+                // We write blockSize - writeOffset in the first run which will then be taken from the bytesLeft.
                 
                 int bytesLeft = length;
 
-                // Writing exactly (sizeInBlocks * blockSize) - writeOffset bytes into val.
-                input.readFully(val, bytesOffset, (int)((sizeInBlocks * blockSize) - writeOffset));
+                // Writing exactly blockSize - writeOffset bytes into val.
+                input.readFully(val, bytesOffset, (int)(blockSize - writeOffset));
                 iWtx.setValue(val);
-                bytesLeft -= (sizeInBlocks * blockSize) - writeOffset;
+                bytesLeft -= blockSize - writeOffset;
                 
                 // To how many nodes a full write is going to do the job.
-                int nodeCount = (int)(bytesLeft / (sizeInBlocks * blockSize));
+                int nodeCount = (int)(bytesLeft / blockSize);
                 
                 // After the nodes that have been written to, there is probably going to be one node,
                 // which we take a few bytes from.
-                int lastNodeByteToWrite = (int)(bytesLeft % (sizeInBlocks * blockSize));
+                int lastNodeByteToWrite = (int)(bytesLeft % blockSize);
                 
                 // First we get the next node according to the index structure. Then we fully write the bytes to it.
                 // Afterwards the value is set into the backend.
@@ -286,7 +271,7 @@ public class TreetankStorageModule implements IStorageModule {
                     node = iWtx.getCurrentNode();
 
                     val = ((ByteNode)node).getVal();
-                    input.readFully(val, 0, (int)(sizeInBlocks * blockSize));
+                    input.readFully(val, 0, (int)blockSize);
                     iWtx.setValue(val);
                 }
                 
@@ -295,7 +280,7 @@ public class TreetankStorageModule implements IStorageModule {
                 node = iWtx.getCurrentNode();
 
                 val = ((ByteNode)node).getVal();
-                input.readFully(val, bytesOffset+(int)(((sizeInBlocks * blockSize) - writeOffset)+nodeCount*(sizeInBlocks * blockSize)), lastNodeByteToWrite);
+                input.readFully(val, bytesOffset+(int)((blockSize - writeOffset)+nodeCount*(sizeInBlocks * blockSize)), lastNodeByteToWrite);
                 iWtx.setValue(val);
                 
             }
