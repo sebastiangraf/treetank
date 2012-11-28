@@ -20,7 +20,7 @@ import org.treetank.exception.TTIOException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class DatabaseConfigurationTest {
+public class StorageConfigurationTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
