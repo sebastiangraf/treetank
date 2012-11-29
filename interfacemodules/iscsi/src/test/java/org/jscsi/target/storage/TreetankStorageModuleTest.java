@@ -91,17 +91,22 @@ public class TreetankStorageModuleTest {
     try {
       storageModule.write(writeArray,// bytes (source)
           0,// bytesOffset
-          TEST_FILE_SIZE,// length
+          TEST_FILE_SIZE-50,// length
           0);
     } catch (IOException e1) {
+      e1.printStackTrace();
       fail("Couldn't write.");
     }// storage index
-
+    
+    System.arraycopy(writeArray, 0, readArray, 0, TEST_FILE_SIZE);
+    if (!Arrays.equals(writeArray,readArray))
+      fail("values do not match");
+    
     // read
     try {
       storageModule.read(readArray,// bytes (destination)
           0,// bytesOffset
-          TEST_FILE_SIZE,// length
+          TEST_FILE_SIZE-50,// length
           0);
     } catch (IOException e) {
       e.printStackTrace();
@@ -109,28 +114,27 @@ public class TreetankStorageModuleTest {
     }// storageIndex
 
     // check for errors
-    for (int i = 0; i < TEST_FILE_SIZE; ++i)
-      if (writeArray[i] != readArray[i])
-        fail("values do not match");
+    if (!Arrays.equals(writeArray,readArray))
+      fail("values do not match");
 
-    byte[][] splitBytes = new byte[512][512];
+    byte[][] splitBytes = new byte[16][8192];
 
     ByteArrayInputStream writeArrayInputStream = new ByteArrayInputStream(writeArray);
     
     for (int i = 0; i < splitBytes.length; i++) {
-      splitBytes[i] = new byte[512];
+      splitBytes[i] = new byte[8192];
       try {
         storageModule.read(splitBytes[i],// bytes (destination)
             0,// bytesOffset
-            512,// length
-            i * 512);
+            8192,// length
+            i * 16*512);
       } catch (IOException e) {
         e.printStackTrace();
         fail("Couldn't read.");
       }// storageIndex
-      byte[] b = new byte[512];
+      byte[] b = new byte[8192];
       System.out.println(i);
-      writeArrayInputStream.read(b, 0, 512);
+      writeArrayInputStream.read(b, 0, 8192);
       
       assertTrue(Arrays.equals(splitBytes[i], b));
     }
