@@ -72,7 +72,7 @@ public final class TestNodeWrapperS9ApiXPath {
         TestHelper.deleteEverything();
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         ResourceConfiguration mResource =
-            mResourceConfig.create(props, 10);
+            mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
         XMLUnit.setIgnoreWhitespace(true);

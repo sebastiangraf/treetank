@@ -138,7 +138,7 @@ public class TreetankStorageModule implements IStorageModule {
 
     Properties props = StandardSettings.getStandardProperties(
         file.getAbsolutePath(), "jscsi-target");
-    ResourceConfiguration mResourceConfig = new ResourceConfiguration(props, 1,
+    ResourceConfiguration mResourceConfig = new ResourceConfiguration(props,
         backend, revision, new ByteNodeFactory());
     storage.createResource(mResourceConfig);
 

@@ -69,7 +69,7 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
         SaxonHelper.createBookDB(mResourceConfig);
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         ResourceConfiguration mResource =
-            mResourceConfig.create(props, 10);
+            mResourceConfig.create(props);
         holder = Holder.generateSession(mResource);
     }
 

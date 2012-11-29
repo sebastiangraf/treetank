@@ -302,7 +302,7 @@ public class DatabaseRepresentation {
             Properties properties =
                 StandardSettings.getStandardProperties(mDatabase.getLocation().getAbsolutePath(), resource);
 
-            mDatabase.createResource(new ResourceConfiguration(properties, 1, mStorageFac, mRevisionFac,
+            mDatabase.createResource(new ResourceConfiguration(properties, mStorageFac, mRevisionFac,
                 NODEFACTORY));
 
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));

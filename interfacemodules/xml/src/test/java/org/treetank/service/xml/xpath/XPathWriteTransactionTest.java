@@ -45,6 +45,7 @@ import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -54,7 +55,6 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
-import org.treetank.io.IConstants;
 import org.treetank.service.xml.shredder.XMLShredder;
 
 import com.google.inject.Inject;
@@ -89,15 +89,16 @@ public final class XPathWriteTransactionTest {
         // Verify.
         storage = TestHelper.getDatabase(PATHS.PATH1.getFile());
         Properties props = new Properties();
-        props.put(IConstants.DBFILE, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
-        props.put(IConstants.RESOURCE, "shredded");
-        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
-            props.getProperty(IConstants.DBFILE), StorageConfiguration.Paths.Data.getFile()
-                .getName()), props.getProperty(IConstants.RESOURCE)),
-            ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
+        props.put(ContructorProps.DBFILE, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
+        props.put(ContructorProps.RESOURCE, "shredded");
+        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(props
+            .getProperty(ContructorProps.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), props
+            .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
+            .getAbsolutePath());
         props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        props.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
-        storage.createResource(mResourceConfig.create(props, 10));
+        props.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");
+        props.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
+        storage.createResource(mResourceConfig.create(props));
         session = storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
     }

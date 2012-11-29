@@ -74,7 +74,7 @@ public class XPathFunctionTest {
         Properties props =
         StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
             TestHelper.RESOURCENAME);
-        mResource = mResourceConfig.create(props, 10);
+        mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
         new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
             EShredderInsert.ADDASFIRSTCHILD).call();

@@ -72,7 +72,7 @@ public class ExpressionSingleTest {
         Properties props =
         StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
             TestHelper.RESOURCENAME);
-        mResource = mResourceConfig.create(props, 10);
+        mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder =
             Holder.generateRtx(mResource);

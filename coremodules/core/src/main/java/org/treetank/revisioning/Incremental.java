@@ -3,6 +3,9 @@
  */
 package org.treetank.revisioning;
 
+import java.util.Properties;
+
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -26,12 +29,12 @@ public class Incremental implements IRevisioning {
      * 
      * Constructor.
      * 
-     * @param pRevToRestore
+     * @param pProperties
      *            to be set.
      */
     @Inject
-    public Incremental(@Assisted int pRevToRestore) {
-        mRevToRestore = pRevToRestore;
+    public Incremental(@Assisted Properties pProperties) {
+        mRevToRestore = Integer.parseInt(pProperties.getProperty(ContructorProps.NUMBERTORESTORE));
     }
 
     /**

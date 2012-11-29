@@ -46,6 +46,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
 
 import org.treetank.access.Storage;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -54,7 +55,6 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.IConstants;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
@@ -456,9 +456,9 @@ public final class XMLSerializer extends AbsSerializer {
         Storage.createStorage(config);
         final IStorage db = Storage.openStorage(new File(args[0]));
         Properties props = new Properties();
-        props.setProperty(IConstants.DBFILE, target.getAbsolutePath());
-        props.setProperty(IConstants.RESOURCE, "shredded");
-        db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
+        props.setProperty(ContructorProps.DBFILE, target.getAbsolutePath());
+        props.setProperty(ContructorProps.RESOURCE, "shredded");
+        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();

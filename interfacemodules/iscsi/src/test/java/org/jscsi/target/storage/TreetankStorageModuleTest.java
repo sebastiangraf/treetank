@@ -24,26 +24,25 @@
 
 package org.jscsi.target.storage;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
 
-import static org.testng.Assert.fail;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ByteNodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
-import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 
 import com.google.inject.Inject;
@@ -71,7 +70,7 @@ public class TreetankStorageModuleTest {
     Properties props = StandardSettings.getStandardProperties(
         TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
         TestHelper.RESOURCENAME);
-    mResource = mResourceConfig.create(props, 10);
+    mResource = mResourceConfig.create(props);
     TestHelper.createResource(mResource);
 
     file = TestHelper.PATHS.PATH1.getFile();

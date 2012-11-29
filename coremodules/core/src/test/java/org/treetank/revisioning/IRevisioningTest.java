@@ -6,11 +6,14 @@ package org.treetank.revisioning;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.treetank.TestHelper.getNodePage;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.page.NodePage;
 
@@ -110,10 +113,13 @@ public class IRevisioningTest {
      */
     @DataProvider(name = "instantiateVersioning")
     public Object[][] instantiateVersioning() throws TTByteHandleException {
+        Properties props = new Properties();
+        props.put(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
+
         Object[][] returnVal = {
             {
                 IRevisioning.class, new IRevisioning[] {
-                    new FullDump(1), new Incremental(4), new Differential(4)
+                    new FullDump(props), new Incremental(props), new Differential(props)
                 }, IRevisionChecker.class, new IRevisionChecker[] {
                     // Checker for FullDump
                     new IRevisionChecker() {

@@ -30,13 +30,13 @@ package org.treetank.io.file;
 import java.io.File;
 import java.util.Properties;
 
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.IConstants;
 import org.treetank.io.IOUtils;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
@@ -90,9 +90,9 @@ public final class FileStorage implements IBackend {
         IByteHandlerPipeline pByteHandler) {
 
         mFile =
-            new File(new File(new File(pProperties.getProperty(IConstants.DBFILE),
+            new File(new File(new File(pProperties.getProperty(ContructorProps.DBFILE),
                 StorageConfiguration.Paths.Data.getFile().getName()), pProperties
-                .getProperty(IConstants.RESOURCE)), new StringBuilder(ResourceConfiguration.Paths.Data
+                .getProperty(ContructorProps.RESOURCE)), new StringBuilder(ResourceConfiguration.Paths.Data
                 .getFile().getName()).append(File.separator).append(FILENAME).toString());
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;

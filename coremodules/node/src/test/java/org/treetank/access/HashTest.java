@@ -249,7 +249,7 @@ public class HashTest {
     private INodeWriteTrx createWtx(final HashKind kind) throws TTException {
         final IStorage storage = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        ResourceConfiguration res = mResourceConfig.create(props, 10);
+        ResourceConfiguration res = mResourceConfig.create(props);
         TestHelper.createResource(res);
         final ISession session =
             storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
