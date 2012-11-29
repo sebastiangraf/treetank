@@ -278,17 +278,17 @@ public final class ResourceConfiguration {
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
             // caring about the versioning
-            assert jsonReader.nextName().equals(JSONNAMES[0]);
+            jsonReader.nextName().equals(JSONNAMES[0]);
             jsonReader.beginObject();
-            assert jsonReader.nextName().equals(JSONNAMES[1]);
+            jsonReader.nextName().equals(JSONNAMES[1]);
             Class<?> revClazz = Class.forName(jsonReader.nextString());
-            assert jsonReader.nextName().equals(JSONNAMES[2]);
+            jsonReader.nextName().equals(JSONNAMES[2]);
             int revisionToRestore = jsonReader.nextInt();
             Constructor<?> revCons = revClazz.getConstructors()[0];
             IRevisioning revisioning = (IRevisioning)revCons.newInstance(revisionToRestore);
             jsonReader.endObject();
             // caring about the NodeFactory
-            assert jsonReader.nextName().equals(JSONNAMES[3]);
+            jsonReader.nextName().equals(JSONNAMES[3]);
             Class<?> nodeFacClazz = Class.forName(jsonReader.nextString());
             Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
             INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
@@ -306,11 +306,11 @@ public final class ResourceConfiguration {
             ByteHandlerPipeline pipeline =
                 new ByteHandlerPipeline(handlerList.toArray(new IByteHandler[handlerList.size()]));
             // caring about the storage
-            assert jsonReader.nextName().equals(JSONNAMES[5]);
+            jsonReader.nextName().equals(JSONNAMES[5]);
             jsonReader.beginObject();
-            assert jsonReader.nextName().equals(JSONNAMES[6]);
+            jsonReader.nextName().equals(JSONNAMES[6]);
             Class<?> storageClazz = Class.forName(jsonReader.nextString());
-            assert jsonReader.nextName().equals(JSONNAMES[7]);
+            jsonReader.nextName().equals(JSONNAMES[7]);
             Properties props = new Properties();
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
