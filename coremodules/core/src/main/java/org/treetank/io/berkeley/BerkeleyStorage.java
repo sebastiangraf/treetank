@@ -30,6 +30,7 @@ package org.treetank.io.berkeley;
 import java.io.File;
 import java.util.Properties;
 
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -37,7 +38,6 @@ import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IConstants;
 import org.treetank.io.IOUtils;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
@@ -112,9 +112,9 @@ public final class BerkeleyStorage implements IBackend {
         IByteHandlerPipeline pByteHandler) throws TTIOException {
 
         mFile =
-            new File(new File(new File(pProperties.getProperty(IConstants.DBFILE),
+            new File(new File(new File(pProperties.getProperty(ContructorProps.DBFILE),
                 StorageConfiguration.Paths.Data.getFile().getName()), pProperties
-                .getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName());
+                .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName());
 
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;

@@ -17,7 +17,6 @@ import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactor
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.IConstants;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
@@ -66,14 +65,15 @@ public class StandardSettings extends AbstractModule {
 
     public static Properties getStandardProperties(final String mDatabase, final String resource) {
         Properties properties = new Properties();
-        properties.setProperty(IConstants.DBFILE, mDatabase);
-        properties.setProperty(IConstants.RESOURCE, resource);
+        properties.setProperty(ContructorProps.DBFILE, mDatabase);
+        properties.setProperty(ContructorProps.RESOURCE, resource);
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(properties
-            .getProperty(IConstants.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), properties
-            .getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
+            .getProperty(ContructorProps.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), properties
+            .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
             .getAbsolutePath());
+        properties.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
         properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        properties.setProperty(IConstants.JCLOUDSTYPE, "imagestore");
+        properties.setProperty(ContructorProps.JCLOUDSTYPE, "imagestore");
         // Class name for painter for imagehost
         properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
             "org.jclouds.imagestore.imagegenerator.bytepainter.HexadecimalBytesToImagePainter");

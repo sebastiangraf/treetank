@@ -72,7 +72,7 @@ public final class SaxonHelper {
         Storage.createStorage(dbConfig);
         final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH1.getFile());
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        storage.createResource(resFac.create(props, 1));
+        storage.createResource(resFac.create(props));
         final ISession session =
             storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =

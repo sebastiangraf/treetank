@@ -81,7 +81,7 @@ public final class XMLUpdateShredderTest {
         Properties props =
             StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 TestHelper.RESOURCENAME);
-        mResource = mResourceConfig.create(props, 10);
+        mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);

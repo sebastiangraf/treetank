@@ -57,7 +57,7 @@ public class TransactionLogCacheTest {
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        ResourceConfiguration conf = mResourceConfig.create(props, 10);
+        ResourceConfiguration conf = mResourceConfig.create(props);
         TestHelper.createResource(conf);
 
         cache = new TransactionLogCache(TestHelper.PATHS.PATH1.getFile(), 1, conf.mNodeFac);

@@ -62,6 +62,7 @@ import org.treetank.TestHelper;
 import org.treetank.access.Storage;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -71,7 +72,6 @@ import org.treetank.api.IStorage;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -100,8 +100,10 @@ public class TestNodeWrapper {
     @BeforeMethod
     public void beforeMethod() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        mResource = mResourceConfig.create(props, 10);
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
+        mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
 
@@ -174,15 +176,17 @@ public class TestNodeWrapper {
         Storage.createStorage(db2);
         final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.setProperty(org.treetank.io.IConstants.DBFILE, TestHelper.PATHS.PATH2.getFile().getAbsolutePath());
-        props.setProperty(org.treetank.io.IConstants.RESOURCE, TestHelper.RESOURCENAME);
-        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(
-            props.getProperty(IConstants.DBFILE), StorageConfiguration.Paths.Data.getFile()
-                .getName()), props.getProperty(IConstants.RESOURCE)),
-            ResourceConfiguration.Paths.Data.getFile().getName()).getAbsolutePath());
+        props.setProperty(org.treetank.access.conf.ContructorProps.DBFILE, TestHelper.PATHS.PATH2.getFile()
+            .getAbsolutePath());
+        props.setProperty(org.treetank.access.conf.ContructorProps.RESOURCE, TestHelper.RESOURCENAME);
+        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(props
+            .getProperty(ContructorProps.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), props
+            .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
+            .getAbsolutePath());
         props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        props.setProperty(IConstants.JCLOUDSTYPE, "filesystem");
-        storage.createResource(mResourceConfig.create(props, 1));
+        props.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");
+        props.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(5));
+        storage.createResource(mResourceConfig.create(props));
         final ISession session =
             storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =

@@ -3,6 +3,8 @@
  */
 package org.treetank.revisioning;
 
+import java.util.Properties;
+
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -25,7 +27,7 @@ public class FullDump implements IRevisioning {
      *            not really set since FullDump revisions are always restorable within one version.
      */
     @Inject
-    public FullDump(@Assisted int pRevToRestore) {
+    public FullDump(@Assisted Properties pProperties) {
     }
 
     /**

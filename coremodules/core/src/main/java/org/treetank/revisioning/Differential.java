@@ -3,6 +3,9 @@
  */
 package org.treetank.revisioning;
 
+import java.util.Properties;
+
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -30,8 +33,8 @@ public class Differential implements IRevisioning {
      *            to be set.
      */
     @Inject
-    public Differential(@Assisted int pRevToRestore) {
-        mRevToRestore = pRevToRestore;
+    public Differential(@Assisted Properties pProperties) {
+        mRevToRestore = Integer.parseInt(pProperties.getProperty(ContructorProps.NUMBERTORESTORE));
     }
 
     /**

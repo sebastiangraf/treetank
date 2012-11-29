@@ -101,7 +101,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mNewRoot = preparePreviousRevisionRootPage(pRepresentRev, pStoreRev);
         mLog =
             new TransactionLogCache(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.io.IConstants.DBFILE)), pStoreRev, pSession.getConfig().mNodeFac);
+                .getProperty(org.treetank.access.conf.ContructorProps.DBFILE)), pStoreRev, pSession.getConfig().mNodeFac);
         mPageWriter = pWriter;
 
     }

@@ -201,7 +201,7 @@ public final class StorageConfiguration {
             FileReader fileReader = new FileReader(new File(pFile, Paths.ConfigBinary.getFile().getName()));
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
-            assert jsonReader.nextName().equals("file");
+            jsonReader.nextName();
             File file = new File(jsonReader.nextString());
             jsonReader.endObject();
             jsonReader.close();

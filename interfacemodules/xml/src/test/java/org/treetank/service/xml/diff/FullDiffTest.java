@@ -70,7 +70,7 @@ public class FullDiffTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        mResource = mResourceConfig.create(props, 10);
+        mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
         mObserver = DiffTestHelper.createMock();
     }
